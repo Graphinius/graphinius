@@ -7,6 +7,7 @@ interface IBaseNode {
 	_edge_list	: Array<Edges.IBaseEdge>;
 }
 
+
 class BaseNode {
 
 }

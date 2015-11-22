@@ -1,0 +1,34 @@
+{
+  "name": "graphinius",
+  "version": "0.0.1",
+  "description": "Generic graph (analysis) library in Typescript",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cassinius/Graphinius.git"
+  },
+  "keywords": [
+    "graphs",
+    "graph library",
+    "graph theory",
+    "graph analysis"
+  ],
+  "author": "Bernd Malle",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cassinius/Graphinius/issues"
+  },
+  "homepage": "https://github.com/cassinius/Graphinius#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "mocha": "^2.3.4",
+    "should": "^7.1.1"
+  },
+  "dependencies": {
+    "requirejs": "^2.1.22",
+    "underscore": "^1.8.3"
+  }
+}
