@@ -2,9 +2,9 @@ import * as Nodes from "./Nodes";
 
 
 interface IBaseEdge {
-	id			:	number;
-	node_a	:	Nodes.IBaseNode;
-	node_b	:	Nodes.IBaseNode;
+	_id			:	number;
+	_node_a	:	Nodes.IBaseNode;
+	_node_b	:	Nodes.IBaseNode;
 }
 
 class BaseEdge {
