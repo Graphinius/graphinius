@@ -19,7 +19,7 @@ var paths = {
 //----------------------------
 // TASKS
 //----------------------------
-gulp.task('build', () => {
+gulp.task('build', function () {
 	return gulp.src(paths.typescripts)
 						 .pipe(ts({
 							 target: "ES5",
@@ -29,7 +29,7 @@ gulp.task('build', () => {
 						 .pipe(gulp.dest('build/local'));
 });
 
-gulp.task('dist', () => {
+gulp.task('dist', function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
 							 target: "ES5",
@@ -39,17 +39,17 @@ gulp.task('dist', () => {
 						 .pipe(gulp.dest('dist'));
 });
 
-gulp.task('mocha', ['build'], () => {
+gulp.task('mocha', ['build'], function () {
 	return gulp.src(paths.tests, {read: false})
 						 .pipe(mocha({reporter: 'nyan'}));
 });
 
-gulp.task('clean', () => {
+gulp.task('clean', function () {
 	return gulp.src(paths.builds, {read: false})
 						 .pipe(clean());
 });
 
-gulp.task('watch', () => {
+gulp.task('watch', function () {
 	gulp.watch(paths.typescripts, ['mocha']);
 });
 
