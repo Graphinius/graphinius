@@ -11,8 +11,8 @@ var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	builds: ['build', 'dist'],
-	tests: ['build/**/*Tests.js']
+	clean: ['src/**/*.js', 'test/**/*.js', 'dist'],
+	tests: ['test/**/*Tests.js']
 };
 
 
@@ -20,13 +20,13 @@ var paths = {
 // TASKS
 //----------------------------
 gulp.task('build', function () {
-	return gulp.src(paths.typescripts)
+	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts({
 							 target: "ES5",
 							 module: "commonjs",
 							 removeComments: true
 						 }))
-						 .pipe(gulp.dest('build/local'));
+						.pipe(gulp.dest('.'));
 });
 
 gulp.task('dist', function () {
@@ -45,7 +45,7 @@ gulp.task('mocha', ['build'], function () {
 });
 
 gulp.task('clean', function () {
-	return gulp.src(paths.builds, {read: false})
+	return gulp.src(paths.clean, {read: false})
 						 .pipe(clean());
 });
 
