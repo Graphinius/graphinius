@@ -10,7 +10,8 @@ var ts = require('gulp-typescript');
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
-	buildlocal: ['build'],
+	distsources: ['src/**/*.ts'],
+	builds: ['build', 'dist'],
 	tests: ['build/**/*Tests.js']
 };
 
@@ -28,13 +29,23 @@ gulp.task('build', () => {
 						 .pipe(gulp.dest('build/local'));
 });
 
+gulp.task('dist', () => {
+	return gulp.src(paths.distsources)
+						 .pipe(ts({
+							 target: "ES5",
+							 module: "commonjs",
+							 removeComments: true
+						 }))
+						 .pipe(gulp.dest('dist'));
+});
+
 gulp.task('mocha', ['build'], () => {
 	return gulp.src(paths.tests, {read: false})
 						 .pipe(mocha({reporter: 'nyan'}));
 });
 
 gulp.task('clean', () => {
-	return gulp.src(paths.buildlocal, {read: false})
+	return gulp.src(paths.builds, {read: false})
 						 .pipe(clean());
 });
 

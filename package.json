@@ -2,9 +2,13 @@
   "name": "graphinius",
   "version": "0.0.1",
   "description": "Generic graph (analysis) library in Typescript",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm install && gulp build",
+    "test": "npm install && gulp mocha",
+    "clean": "npm install && gulp clean",
+    "watch": "npm install && gulp watch",
+    "prepublish": "npm install && gulp dist"
   },
   "repository": {
     "type": "git",
