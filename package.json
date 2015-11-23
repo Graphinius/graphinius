@@ -23,12 +23,15 @@
   },
   "homepage": "https://github.com/cassinius/Graphinius#readme",
   "devDependencies": {
+    "chai": "^3.4.1",
     "gulp": "^3.9.0",
-    "mocha": "^2.3.4",
-    "should": "^7.1.1"
+    "gulp-clean": "^0.3.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-typescript": "^2.9.2",
+    "gulp-watch": "^4.3.5",
+    "mocha": "^2.3.4"
   },
   "dependencies": {
-    "requirejs": "^2.1.22",
     "underscore": "^1.8.3"
   }
 }
