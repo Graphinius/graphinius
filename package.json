@@ -8,7 +8,7 @@
     "test": "npm install && gulp mocha",
     "clean": "npm install && gulp clean",
     "watch": "npm install && gulp watch",
-    "prepublish": "npm install && gulp dist"
+    "prepublish": "gulp clean && gulp dist"
   },
   "repository": {
     "type": "git",
