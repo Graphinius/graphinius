@@ -6,8 +6,7 @@ import * as $N from '../../src/core/Nodes';
 var expect = chai.expect;
 
 
-describe('Trivial test suite', () => {
-	
+describe('Trivial test suite', () => {	
 	it('Should be true', () => {
 		expect(true).to.equal(true);
 	});
@@ -18,8 +17,7 @@ describe('Trivial test suite', () => {
 	
 	it('Should be blahoo', () => {
 		expect('blahoo').not.to.equal('bla');
-	});
-	
+	});	
 });
 
 
