@@ -13,16 +13,21 @@ interface IBaseEdge {
 	
 	// DIRECTION Methods
 	isDirected()						: boolean;
-	setDirected(d:boolean)	: void;
 	getDirection()					: boolean; // Exception if not directed
 	setDirection(d:boolean)	: void; // Exception if not directed
 	
 	// WEIGHT Methods
 	isWeighted()						: boolean;
-	setWeighted(w:boolean)	: void;
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
 
+	/**
+	 * An edge should either be directed or not, weighted or not.
+	 * Changing those properties on live edges is not allowed,
+	 * rather delete the edge and construct a new one altogether 
+	 */ 
+	// setDirected(d:boolean)	: void;
+	// setWeighted(w:boolean)	: void;
 }
 
 interface EdgeConstructorOptions {
@@ -45,7 +50,8 @@ class BaseEdge implements IBaseEdge {
 	{
 		options = options || {};
 		this._directed = options.directed || false;
-		this._direction = options.direction || true;					
+		// HAHA - if we do this like above, it will never accept 'false'...
+		this._direction = typeof(options.direction) === 'undefined' ? true : options.direction;
 		this._weighted = options.weighted || false;
 		this._weight = options.weight || 0;
 	}
@@ -54,32 +60,36 @@ class BaseEdge implements IBaseEdge {
 		return this._directed;
 	}
 	
-	setDirected (d:boolean)	: void {
-		
-	}
-	
 	getDirection() : boolean {
+		if ( !this._directed ) {
+			throw new Error("Undirected edge cannot be queried for direction.");
+		}
 		return this._direction;
 	}
 	
 	setDirection(d:boolean)	: void {
-		
+		if ( !this._directed ) {
+			throw new Error("Direction cannot be set on undirected edge.");
+		}
+		this._direction = d;
 	}
 	
 	isWeighted () : boolean {
 		return this._weighted;
 	}
 	
-	setWeighted(w:boolean) : void {
-		
-	}
-	
 	getWeight() : number {
+		if ( !this._weighted) {
+			throw new Error("Unweighted edge cannot be queried for weight.");
+		}
 		return this._weight;
 	}
 	
 	setWeight(w:number) : void {
-		
+		if ( !this._weighted ) {
+			throw new Error("Cannot set weight on unweighted edge.");
+		}
+		this._weight = w;
 	}
 	
 }
