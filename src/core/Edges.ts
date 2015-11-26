@@ -8,8 +8,8 @@ import * as Nodes from "./Nodes";
  */
 interface IBaseEdge {
 	// Public properties
-	_id	:	number;
-	_label: string;
+	_id			:	string;
+	_label	: string;
 	
 	// DIRECTION Methods
 	isDirected()						: boolean;
@@ -23,28 +23,64 @@ interface IBaseEdge {
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
 
-	
+}
+
+interface EdgeConstructorOptions {
+	directed?		: boolean;
+	direction? 	: boolean;
+	weighted?		: boolean;
+	weight?			: number;	
 }
 
 class BaseEdge implements IBaseEdge {
-	protected _weighted 	: boolean;
-	protected _weight			: number = 0;
 	protected _directed		: boolean;
-	protected _direction	: boolean = true;
+	protected _direction	: boolean;
+	protected _weighted 	: boolean;
+	protected _weight			: number;
 	
-	constructor (public _id,
+	constructor (public _id, public _label,
 							protected _node_a:Nodes.IBaseNode, 
 							protected _node_b:Nodes.IBaseNode, 
-							weighted:boolean=false, 
-							directed:boolean=false) {								
-								this._weighted = weighted;
-								this._directed = directed;
+							options?: EdgeConstructorOptions) 
+	{
+		options = options || {};
+		this._directed = options.directed || false;
+		this._direction = options.direction || true;					
+		this._weighted = options.weighted || false;
+		this._weight = options.weight || 0;
+	}
+	
+	isDirected () : boolean {
+		return this._directed;
+	}
+	
+	setDirected (d:boolean)	: void {
+		
+	}
+	
+	getDirection() : boolean {
+		return this._direction;
+	}
+	
+	setDirection(d:boolean)	: void {
+		
 	}
 	
 	isWeighted () : boolean {
 		return this._weighted;
 	}
 	
+	setWeighted(w:boolean) : void {
+		
+	}
+	
+	getWeight() : number {
+		return this._weight;
+	}
+	
+	setWeight(w:number) : void {
+		
+	}
 	
 }
 

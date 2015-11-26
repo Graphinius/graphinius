@@ -9,11 +9,11 @@ interface IBaseNode {
 	
 	// EDGE methods
 	// maybe simplify by internal type
-	getEdges() 			: Array<Edges.IBaseEdge>;
-	getInEdges() 		: Array<Edges.IBaseEdge>;
-	getOutEdges() 	: Array<Edges.IBaseEdge>;
-	getDirEdges() 	: Array<Edges.IBaseEdge>;
-	getUndEdges() 	: Array<Edges.IBaseEdge>;
+	// getEdges() 		: Array<Edges.IBaseEdge>;
+	// getInEdges() 	: Array<Edges.IBaseEdge>;
+	// getOutEdges() 	: Array<Edges.IBaseEdge>;
+	// getDirEdges() 	: Array<Edges.IBaseEdge>;
+	// getUndEdges() 	: Array<Edges.IBaseEdge>;
 	
 	// untyped FEATURE methods
 	// getFeature

@@ -29,7 +29,7 @@ gulp.task('build', function () {
 						.pipe(gulp.dest('.'));
 });
 
-gulp.task('dist', function () {
+gulp.task('dist', ['clean'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
 							 target: "ES5",
