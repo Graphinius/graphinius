@@ -7,8 +7,7 @@
     "build": "gulp build",
     "test": "gulp mocha",
     "clean": "gulp clean",
-    "watch": "gulp watch",
-    "prepublish": "gulp clean && gulp dist"
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
