@@ -11,6 +11,7 @@ var tdoc 	= require("gulp-typedoc");
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
+	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'test/**/*.js', 'dist', 'docs'],
 	tests: ['test/**/*Tests.js']
@@ -42,7 +43,7 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 
 gulp.task("tdoc", function() {
     return gulp
-        .src(paths.typescripts)
+        .src(paths.typesources)
         .pipe(tdoc({
             module: "commonjs",
             target: "es5",
