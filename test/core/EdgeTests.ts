@@ -8,12 +8,7 @@ var expect = chai.expect;
 var Node = $N.BaseNode;
 var Edge = $E.BaseEdge;
 
-/**
-	* Not testing cases 
-	* 1) undirected -> wrong direction
-	* 2) unweighted -> wrong direction
-	* ... as getters won't work anyways... 
-	*/ 
+
 describe('==== EDGE TESTS ====', () => {
 	var id = 1,
 			label = 'New_Edge',
