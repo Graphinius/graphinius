@@ -1,6 +1,11 @@
 import * as Nodes from './Nodes';
 
-enum GraphMode {INIT, DIRECTED, UNDIRECTED, MIXED};
+enum GraphMode {
+	INIT, 
+	DIRECTED, 
+	UNDIRECTED, 
+	MIXED
+};
 
 
 interface IGraph {
