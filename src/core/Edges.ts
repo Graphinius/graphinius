@@ -1,10 +1,14 @@
-import * as Nodes from "./Nodes";
+import * as $N from "./Nodes";
+
+// var INode = Nodes.IBaseNode;
+// var Node 	= $N.BaseNode;
 
 /**
  * Edges are the most basic components in graphinius.
  * They control no other elements below them, but hold
  * references to the nodes they are connecting...
- * @param 
+ * @param _id internal id, public
+ * @param _label edge label, public
  */
 interface IBaseEdge {
 	// Public properties
@@ -20,6 +24,11 @@ interface IBaseEdge {
 	isWeighted()						: boolean;
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
+
+	// NODE Methods
+	getNodes()	: [$N.IBaseNode, $N.IBaseNode];
+	fromNode()	: $N.IBaseNode;
+	toNode()	: $N.IBaseNode;
 
 	/**
 	 * An edge should either be directed or not, weighted or not.
@@ -44,8 +53,8 @@ class BaseEdge implements IBaseEdge {
 	protected _weight			: number;
 	
 	constructor (public _id, public _label,
-							protected _node_a:Nodes.IBaseNode, 
-							protected _node_b:Nodes.IBaseNode, 
+							protected _node_a:$N.IBaseNode, 
+							protected _node_b:$N.IBaseNode, 
 							options?: EdgeConstructorOptions) 
 	{
 		options = options || {};
@@ -92,6 +101,24 @@ class BaseEdge implements IBaseEdge {
 		this._weight = w;
 	}
 	
+	getNodes() : [$N.IBaseNode, $N.IBaseNode] {
+		return [this._node_a, this._node_b];
+	}
+	
+	fromNode() : $N.IBaseNode {
+		if ( !this._directed ) {
+			throw new Error("Undirected edge has no from node.")
+		}		
+		return this._direction ? this._node_a : this._node_b;
+	}
+	
+	toNode() : $N.IBaseNode {
+		if ( !this._directed ) {
+			throw new Error("Undirected edge has no from node.")
+		}
+		
+		return this._direction ? this._node_b : this._node_a;
+	}
 }
 
 export { IBaseEdge, BaseEdge };

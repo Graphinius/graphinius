@@ -1,7 +1,8 @@
-var gulp = require('gulp');
+var gulp 	= require('gulp');
 var clean = require('gulp-clean');
 var mocha = require('gulp-mocha');
-var ts = require('gulp-typescript');
+var ts 		= require('gulp-typescript');
+var tdoc 	= require("gulp-typedoc");
 
 
 //----------------------------
@@ -10,8 +11,9 @@ var ts = require('gulp-typescript');
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
+	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'dist'],
+	clean: ['src/**/*.js', 'test/**/*.js', 'dist', 'docs'],
 	tests: ['test/**/*Tests.js']
 };
 
@@ -29,7 +31,7 @@ gulp.task('build', function () {
 						.pipe(gulp.dest('.'));
 });
 
-gulp.task('dist', ['clean'], function () {
+gulp.task('dist', ['clean', 'tdoc'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
 							 target: "ES5",
@@ -37,6 +39,18 @@ gulp.task('dist', ['clean'], function () {
 							 removeComments: true
 						 }))
 						 .pipe(gulp.dest('dist'));
+});
+
+gulp.task("tdoc", function() {
+    return gulp
+        .src(paths.typesources)
+        .pipe(tdoc({
+            module: "commonjs",
+            target: "es5",
+            out: "docs/",
+            name: "Graphinius"
+        }))
+    ;
 });
 
 gulp.task('mocha', ['build'], function () {

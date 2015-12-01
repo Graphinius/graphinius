@@ -8,12 +8,7 @@ var expect = chai.expect;
 var Node = $N.BaseNode;
 var Edge = $E.BaseEdge;
 
-/**
-	* Not testing cases 
-	* 1) undirected -> wrong direction
-	* 2) unweighted -> wrong direction
-	* ... as getters won't work anyways... 
-	*/ 
+
 describe('==== EDGE TESTS ====', () => {
 	var id = 1,
 			label = 'New_Edge',
@@ -157,9 +152,79 @@ describe('==== EDGE TESTS ====', () => {
 				edge.setWeight(42);
 				expect(edge.getWeight()).to.equal(42);
 			});
+		});		
+	});
+	
+	
+	describe('Node Edge Tests: ', () => {
+		
+		[true, false].forEach(function(direction) {
+			it('all edges should properly return the two connected nodes', () => {
+				var opts = {directed: direction};
+				var edge = new Edge(id, label, node_a, node_b, opts);
+				expect(edge.isDirected()).to.equal(direction);
+				var nodes = edge.getNodes();
+				expect(nodes).to.be.an.instanceof(Array);			
+				expect(nodes[0]).to.be.an.instanceof(Node);
+				expect(nodes[1]).to.be.an.instanceof(Node);
+				expect(nodes[0]).to.equal(node_a);
+				expect(nodes[1]).to.equal(node_b);
+			});
 		});
-
 		
+		it('undirected edge should throw error on invoking fromNode()', () => {
+			var opts = {directed: false};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(false);
+			expect(edge.fromNode.bind(edge)).to.throw("Undirected edge has no from node.");
+		});
 		
+		it('undirected edge should throw error on invoking toNode()', () => {
+			var opts = {directed: false};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(false);
+			expect(edge.toNode.bind(edge)).to.throw("Undirected edge has no from node.");
+		});
+		
+		it('forward directed edge should return node_a as fromNode()', () => {
+			var opts = {directed: true, direction: true};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(true);
+			expect(edge.getDirection()).to.equal(true);
+			var from = edge.fromNode();
+			expect(from).to.be.an.instanceof(Node);
+			expect(from).to.equal(node_a);
+		});
+		
+		it('reverse directed edge should return node_b as fromNode()', () => {
+			var opts = {directed: true, direction: false};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(true);
+			expect(edge.getDirection()).to.equal(false);
+			var from = edge.fromNode();
+			expect(from).to.be.an.instanceof(Node);
+			expect(from).to.equal(node_b);
+		});
+		
+		it('forward directed edge should return node_b as toNode()', () => {
+			var opts = {directed: true, direction: true};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(true);
+			expect(edge.getDirection()).to.equal(true);
+			var from = edge.toNode();
+			expect(from).to.be.an.instanceof(Node);
+			expect(from).to.equal(node_b);
+		});
+		
+		it('reverse directed edge should return node_a as toNode()', () => {
+			var opts = {directed: true, direction: false};
+			var edge = new Edge(id, label, node_a, node_b, opts);
+			expect(edge.isDirected()).to.equal(true);
+			expect(edge.getDirection()).to.equal(false);
+			var from = edge.toNode();
+			expect(from).to.be.an.instanceof(Node);
+			expect(from).to.equal(node_a);
+		});		
+			
 	});
 });

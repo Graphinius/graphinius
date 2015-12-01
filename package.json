@@ -30,9 +30,13 @@
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
     "gulp-mocha": "^2.2.0",
+    "gulp-typedoc": "^1.2.1",
     "gulp-typescript": "^2.9.2",
     "gulp-watch": "^4.3.5",
-    "mocha": "^2.3.4"
+    "lodash": "^3.10.1",
+    "lodash-cli": "^3.10.1",
+    "mocha": "^2.3.4",
+    "typedoc": "^0.3.12"
   },
   "dependencies": {
     "underscore": "^1.8.3"
