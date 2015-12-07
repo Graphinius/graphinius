@@ -44,53 +44,8 @@ describe('==== EDGE TESTS ====', () => {
 					expect(edge.isDirected()).to.equal(val);					
 				});
 			});
-		});		
+		});
 		
-		// getDirection()
-		describe('getDirection()', () => {
-			it('should throw an exception when querying direction if undirected', () => {
-				var edge = new Edge(id, label, node_a, node_b);
-				expect(edge.isDirected()).to.equal(false);
-				expect(edge.getDirection.bind(edge)).to.throw("Undirected edge cannot be queried for direction.");
-			});
-			
-			it('should correctly set default direction to true', () => {
-				var opts = {directed: true};
-				var edge = new Edge(id, label, node_a, node_b, opts);
-				expect(edge.isDirected()).to.equal(true);					
-				expect(edge.getDirection()).to.equal(true);					
-			});
-			
-			[true, false].forEach(function(val) {
-				it('should correctly report direction if set & specified to ' + val, () => {
-					var opts = {directed: true, direction: val};
-					var edge = new Edge(id, label, node_a, node_b, opts);
-					expect(edge.isDirected()).to.equal(true);					
-					expect(edge.getDirection()).to.equal(val);					
-				});
-			});
-		});		
-		
-		// setDirection()
-		describe('setDirection()', () => {
-			it('Should throw an error on trying to set new direction if undirected', () => {
-				var opts = {directed: false};
-				var edge = new Edge(id, label, node_a, node_b, opts);
-				expect(edge.isDirected()).to.equal(false);
-				expect(edge.setDirection.bind(edge, true)).to.throw("Direction cannot be set on undirected edge.");
-			});
-			
-			[true, false].forEach(function(val) {
-				it('Should correctly set direction to the specified value: ' + val, () => {	
-					var opts = {directed: true, direction: false};
-					var edge = new Edge(id, label, node_a, node_b, opts);
-					expect(edge.isDirected()).to.equal(true);
-					expect(edge.getDirection()).to.equal(false);			
-					edge.setDirection(val);
-					expect(edge.getDirection()).to.equal(val);
-				});
-			});		
-		});		
 	});
 	
 	
@@ -171,60 +126,6 @@ describe('==== EDGE TESTS ====', () => {
 				expect(nodes.b).to.equal(node_b);
 			});
 		});
-		
-		it('undirected edge should throw error on invoking fromNode()', () => {
-			var opts = {directed: false};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(false);
-			expect(edge.fromNode.bind(edge)).to.throw("Undirected edge has no from node.");
-		});
-		
-		it('undirected edge should throw error on invoking toNode()', () => {
-			var opts = {directed: false};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(false);
-			expect(edge.toNode.bind(edge)).to.throw("Undirected edge has no to node.");
-		});
-		
-		it('forward directed edge should return node_a as fromNode()', () => {
-			var opts = {directed: true, direction: true};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(true);
-			expect(edge.getDirection()).to.equal(true);
-			var from = edge.fromNode();
-			expect(from).to.be.an.instanceof(Node);
-			expect(from).to.equal(node_a);
-		});
-		
-		it('reverse directed edge should return node_b as fromNode()', () => {
-			var opts = {directed: true, direction: false};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(true);
-			expect(edge.getDirection()).to.equal(false);
-			var from = edge.fromNode();
-			expect(from).to.be.an.instanceof(Node);
-			expect(from).to.equal(node_b);
-		});
-		
-		it('forward directed edge should return node_b as toNode()', () => {
-			var opts = {directed: true, direction: true};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(true);
-			expect(edge.getDirection()).to.equal(true);
-			var from = edge.toNode();
-			expect(from).to.be.an.instanceof(Node);
-			expect(from).to.equal(node_b);
-		});
-		
-		it('reverse directed edge should return node_a as toNode()', () => {
-			var opts = {directed: true, direction: false};
-			var edge = new Edge(id, label, node_a, node_b, opts);
-			expect(edge.isDirected()).to.equal(true);
-			expect(edge.getDirection()).to.equal(false);
-			var from = edge.toNode();
-			expect(from).to.be.an.instanceof(Node);
-			expect(from).to.equal(node_a);
-		});		
-			
-	});
+				
+	});	
 });

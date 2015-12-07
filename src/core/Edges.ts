@@ -19,9 +19,7 @@ interface IBaseEdge {
 	
 	// DIRECTION Methods
 	isDirected()						: boolean;
-	getDirection()					: boolean; // Exception if not directed
-	setDirection(d:boolean)	: void; // Exception if not directed
-	
+
 	// WEIGHT Methods
 	isWeighted()						: boolean;
 	getWeight()							: number; // Exception if not weighted
@@ -29,8 +27,6 @@ interface IBaseEdge {
 
 	// NODE Methods
 	getNodes()	: IConnectedNodes;
-	fromNode()	: $N.IBaseNode;
-	toNode()	: $N.IBaseNode;
 
 	/**
 	 * An edge should either be directed or not, weighted or not.
@@ -43,14 +39,12 @@ interface IBaseEdge {
 
 interface EdgeConstructorOptions {
 	directed?		: boolean;
-	direction? 	: boolean;
 	weighted?		: boolean;
 	weight?			: number;	
 }
 
 class BaseEdge implements IBaseEdge {
 	protected _directed		: boolean;
-	protected _direction	: boolean;
 	protected _weighted 	: boolean;
 	protected _weight			: number;
 	
@@ -61,28 +55,12 @@ class BaseEdge implements IBaseEdge {
 	{
 		options = options || {};
 		this._directed = options.directed || false;
-		// HAHA - if we do this like above, it will never accept 'false'...
-		this._direction = typeof(options.direction) === 'undefined' ? true : options.direction;
 		this._weighted = options.weighted || false;
 		this._weight = options.weight || 0;
 	}
 	
 	isDirected () : boolean {
 		return this._directed;
-	}
-	
-	getDirection() : boolean {
-		if ( !this._directed ) {
-			throw new Error("Undirected edge cannot be queried for direction.");
-		}
-		return this._direction;
-	}
-	
-	setDirection(d:boolean)	: void {
-		if ( !this._directed ) {
-			throw new Error("Direction cannot be set on undirected edge.");
-		}
-		this._direction = d;
 	}
 	
 	isWeighted () : boolean {
@@ -105,21 +83,6 @@ class BaseEdge implements IBaseEdge {
 	
 	getNodes() : IConnectedNodes {
 		return {a: this._node_a, b: this._node_b};
-	}
-	
-	fromNode() : $N.IBaseNode {
-		if ( !this._directed ) {
-			throw new Error("Undirected edge has no from node.")
-		}		
-		return this._direction ? this._node_a : this._node_b;
-	}
-	
-	toNode() : $N.IBaseNode {
-		if ( !this._directed ) {
-			throw new Error("Undirected edge has no to node.")
-		}
-		
-		return this._direction ? this._node_b : this._node_a;
 	}
 }
 

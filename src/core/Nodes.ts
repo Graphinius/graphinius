@@ -16,19 +16,27 @@ interface IBaseNode {
 	degree() : number;
 	
 	// EDGE methods
-	// maybe simplify by internal type => YEP
 	addEdge(edge: Edges.IBaseEdge) : void;
 	hasEdge(edge: Edges.IBaseEdge) : boolean;	
 	hasEdgeID(id: number) : boolean;
+	
 	getEdge(id: number) : Edges.IBaseEdge;
 	
-	// getEdges(type: EdgeType) : Array<Edges.IBaseEdge>;
+	inEdges() : {[k: number] : Edges.IBaseEdge};
+	outEdges() : {[k: number] : Edges.IBaseEdge};
+	undEdges() : {[k: number] : Edges.IBaseEdge};
 	
-	// removeEdge(id: number) : Edges.IBaseEdge;
+	removeEdge(edge: Edges.IBaseEdge) : void;
+	removeEdgeID(id: number) : Edges.IBaseEdge;
 	
-	// Do we need this? contemplating.....
-	// isEdgeType(id: number) : EdgeType;
+	// Do we need this? contemplating...
+	// Just for test cases it seems...
 	clearEdges() : void;
+	
+	// connected NODES methods
+	prevNodes() : Array<IBaseNode>;
+	nextNodes() : Array<IBaseNode>;
+	connNodes() : Array<IBaseNode>;
 }
 
 interface NodeConstructorOptions {
@@ -111,7 +119,7 @@ class BaseNode implements IBaseNode {
 		// Is it an undirected or directed edge?
 		if ( edge.isDirected() ) {
 			// is it outgoing or incoming?
-			if ( edge.fromNode() === this ) {
+			if ( edge.getNodes().a === this ) {
 				this._out_edges[edge._id] = edge;
 			}
 			else {
@@ -139,10 +147,82 @@ class BaseNode implements IBaseNode {
 		return edge;
 	}
 	
+	inEdges() : {[k: number] : Edges.IBaseEdge} {
+		return this._in_edges;
+	}
+	
+	outEdges() : {[k: number] : Edges.IBaseEdge} {
+		return this._out_edges;
+	}
+	
+	undEdges() : {[k: number] : Edges.IBaseEdge} {
+		return this._und_edges;
+	}
+	
+	removeEdge(edge: Edges.IBaseEdge) : void {
+		if ( !this.hasEdge(edge) ) {
+			throw new Error("Cannot remove unconnected edge.");
+		}
+		if ( this._und_edges[edge._id] ) { 
+			delete this._und_edges[edge._id];
+		}
+		if ( this._in_edges[edge._id] ) { 
+			delete this._in_edges[edge._id];
+		}
+		if ( this._out_edges[edge._id] ) { 
+			delete this._out_edges[edge._id]; 
+		}
+	}
+	
+	removeEdgeID(id: number) : Edges.IBaseEdge {
+		if ( !this.hasEdgeID(id) ) {
+			throw new Error("Cannot remove unconnected edge.");
+		}
+		var e = this._und_edges[id];
+		if ( e ) { 
+			delete this._und_edges[id];
+			return e;
+		}
+		e = this._in_edges[id];
+		if ( e ) { 
+			delete this._in_edges[id];
+			return e;
+		}
+		e = this._out_edges[id];
+		if ( e ) { 
+			delete this._out_edges[id];
+			return e;
+		}
+	}
+	
 	clearEdges() : void {
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
+	}
+	
+	prevNodes() : Array<IBaseNode> {
+		var prevs = [];
+		Object.keys(this._in_edges).forEach((e) => {
+			prevs.push(this._in_edges[e].getNodes().a);
+		});
+		return prevs;
+	}
+	
+	nextNodes() : Array<IBaseNode> {
+		var nexts = [];
+		Object.keys(this._out_edges).forEach((e) => {
+			nexts.push(this._out_edges[e].getNodes().b);
+		});
+		return nexts;
+	}
+	
+	connNodes() : Array<IBaseNode> {
+		var conns = [];
+		Object.keys(this._und_edges).forEach((e) => {
+			conns.push(this._und_edges[e].getNodes().b);
+		});
+		return conns;
 	}
 	
 }

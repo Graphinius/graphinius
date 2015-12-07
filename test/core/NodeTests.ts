@@ -114,17 +114,17 @@ describe('==== NODE TESTS ====', () => {
 			});
 			
 			
-			it('Should correctly compute degrees on adding an outgoing edge', () => {
+			it('Should correctly add an outgoing edge', () => {
 				node_a.clearEdges();
 				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
-					directed: true,
-					direction: true // node_a -> node_b
+					directed: true
 				});
 				var in_deg_a 	= node_a.inDegree(),
 						out_deg_a = node_a.outDegree(),
 						dir_deg_a = node_a.degree();
 						
-				node_a.addEdge(edge);				
+				node_a.addEdge(edge);
+				expect(node_a.getEdge(edge._id)).to.equal(edge);	
 				
 				expect(node_a.inDegree()).to.equal(in_deg_a);
 				expect(node_a.outDegree()).to.equal(out_deg_a + 1);
@@ -132,16 +132,17 @@ describe('==== NODE TESTS ====', () => {
 			});
 			
 			
-			it('Should correctly compute degrees on adding an incoming edge', () => {
+			it('Should correctly add an incoming edge', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
-					directed: true,
-					direction: false // node_b -> node_a
+				var edge = new $E.BaseEdge(e_id, e_label, node_b, node_a, {
+					directed: true
 				});
 				var in_deg_a 	= node_a.inDegree(),
 						out_deg_a = node_a.outDegree(),
 						dir_deg_a = node_a.degree();
+						
 				node_a.addEdge(edge);
+				expect(node_a.getEdge(edge._id)).to.equal(edge);
 	
 				expect(node_a.inDegree()).to.equal(in_deg_a + 1);
 				expect(node_a.outDegree()).to.equal(out_deg_a);
@@ -152,7 +153,7 @@ describe('==== NODE TESTS ====', () => {
 		
 		
 		
-		describe('Node edge queries', () => {
+		describe('Node single edge queries', () => {
 			
 			it('should assert that an added edge is connected by reference', () => {
 				node_a.clearEdges();
@@ -191,40 +192,168 @@ describe('==== NODE TESTS ====', () => {
 				expect(node_a.getEdge(edge._id)).to.equal(edge);
 			});
 			
-			/**
-			 * for the next few tests, we will always pass the same structure
-			 * 4 nodes -> a, b, c, d
-			 * 2 undirected edges: a -> b, a -> c
-			 * 3 outgoing edges: a -> a, a -> b, a -> d
-			 * 2 incoming edges: c -> a, d -> a
-			 * we instantiate the whole thing in the outer describe block and
-			 * then check if the different types of Edges were correctly set
-			 * by the node class.
-			 * Moreover, we will also test the implementations of the
-			 * prevNodes(), nextNodes() and undNodes() methods
-			 */
-			// describe('getting edges according to their type', () => {
-			// 	var n_a = new $N.BaseNode(1, "A"),
-			// 			n_b = new $N.BaseNode(2, "B"),
-			// 			n_c = new $N.BaseNode(3, "C"),
-			// 			n_d = new $N.BaseNode(4, "D"),
-			// 			e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
-			// 			e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
-			// 			e_3 = new $E.BaseEdge(3, "o_ab", n_a, n_a),
-			// 			e_4 = new $E.BaseEdge(4, "o_ab", n_a, n_b),
-			// 			e_5 = new $E.BaseEdge(5, "o_ab", n_a, n_d),
-			// 			e_6 = new $E.BaseEdge(6, "i_ab", n_a, n_c),
-			// 			e_7 = new $E.BaseEdge(7, "i_ab", n_a, n_b);
-				
-			// 	it('should correctly retrieve outgoing edges', () => {
-					
-			// 	});
-			// });		
-			
 		});
+				
+		
+		/**
+			* for the next few tests, we will always pass the same structure
+			* 4 nodes -> a, b, c, d
+			* 2 undirected edges: a -> b, a -> c
+			* 3 outgoing edges: a -> a, a -> b, a -> d
+			* 2 incoming edges: c -> a, d -> a
+			* we instantiate the whole thing in the outer describe block and
+			* then check if the different types of Edges were correctly set
+			* by the node class.
+			* Moreover, we will also test the implementations of the
+			* prevNodes(), nextNodes() and undNodes() methods
+			*/
+		describe('a little more comples scenario...', () => {
+			var n_a = new $N.BaseNode(1, "A"),
+					n_b = new $N.BaseNode(2, "B"),
+					n_c = new $N.BaseNode(3, "C"),
+					n_d = new $N.BaseNode(4, "D"),
+					e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
+					e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
+					e_3 = new $E.BaseEdge(3, "d_aa", n_a, n_a, {directed: true}),
+					e_4 = new $E.BaseEdge(4, "d_ab", n_a, n_b, {directed: true}),
+					e_5 = new $E.BaseEdge(5, "d_ad", n_a, n_d, {directed: true}),
+					e_6 = new $E.BaseEdge(6, "d_ca", n_c, n_a, {directed: true}),
+					e_7 = new $E.BaseEdge(7, "d_da", n_d, n_a, {directed: true});
+			n_a.addEdge(e_1);
+			n_a.addEdge(e_2);
+			n_a.addEdge(e_3);
+			n_a.addEdge(e_4);
+			n_a.addEdge(e_5);
+			n_a.addEdge(e_6);
+			n_a.addEdge(e_7);
+			
+			describe('degrees and retrieval', () => {
+				
+				it('should correctly have computed the degree structure', () => {
+					expect(n_a.degree()).to.equal(2);
+					expect(n_a.outDegree()).to.equal(3);
+					expect(n_a.inDegree()).to.equal(2);
+				});		
+				
+				it('should correctly retrieve undirected edges', () => {
+					var unds = n_a.undEdges();
+					expect(Object.keys(unds).length).to.equal(2);
+					expect(unds[1]).to.equal(e_1);
+					expect(unds[2]).to.equal(e_2);
+				});
+				
+				it('should correctly retrieve outgoing edges', () => {
+					var outs = n_a.outEdges();
+					expect(Object.keys(outs).length).to.equal(3);
+					expect(outs[3]).to.equal(e_3);
+					expect(outs[4]).to.equal(e_4);
+					expect(outs[5]).to.equal(e_5);
+				});
+				
+				it('should correctly retrieve incoming edges', () => {
+					var ins = n_a.inEdges();
+					expect(Object.keys(ins).length).to.equal(2);
+					expect(ins[6]).to.equal(e_6);
+					expect(ins[7]).to.equal(e_7);
+				});
+				
+			});
+			
+			
+			describe('deletion of single edges by type', () => {
+				
+				it('should find nodes c and d as previous nodes', () => {
+					var prevs = n_a.prevNodes();
+					expect(prevs).to.be.an.instanceof(Array);
+					expect(prevs.length).to.equal(2);
+					expect(prevs).not.to.contain(n_a);
+					expect(prevs).to.contain(n_c);
+					expect(prevs).to.contain(n_d);		
+				});
+
+				it('should find nodes a, b and d as next nodes', () => {
+					var nexts = n_a.nextNodes();
+					expect(nexts).to.be.an.instanceof(Array);
+					expect(nexts.length).to.equal(3);
+					expect(nexts).not.to.contain(n_c);
+					expect(nexts).to.contain(n_a);
+					expect(nexts).to.contain(n_b);
+					expect(nexts).to.contain(n_d);	
+				});
+				
+				it('should find nodes b and c as connected (undirected) nodes', () => {
+					var conns = n_a.connNodes();
+					expect(conns).to.be.an.instanceof(Array);
+					expect(conns.length).to.equal(2);
+					expect(conns).not.to.contain(n_a);
+					expect(conns).to.contain(n_b);
+					expect(conns).to.contain(n_c);	
+				});
+			});			
+			
+			
+			describe('deletion of single edges by type', () => {
+			
+				it('should throw an Error when trying to delete non-connected edge', () => {
+					var edginot = new $E.BaseEdge(9999, "Unconnected", n_b, n_c);
+					expect(n_a.removeEdge.bind(n_a, edginot)).to.throw("Cannot remove unconnected edge.");
+				});
+				
+				it('should correctly delete an undirected edge by reference', () => {
+					n_a.removeEdge(e_1);
+					var unds = n_a.undEdges();
+					expect(Object.keys(unds).length).to.equal(1);
+					expect(unds[1]).to.be.undefined;
+					expect(unds[2]).to.equal(e_2);
+				});
+				
+				it('should correctly delete an undirected edge by ID', () => {
+					var edge = n_a.removeEdgeID(e_2._id);
+					expect(edge).to.be.an.instanceof($E.BaseEdge);
+					var unds = n_a.undEdges();
+					expect(Object.keys(unds).length).to.equal(0);
+				});
+				
+				it('should correctly delete an outgoing edge by reference', () => {
+					n_a.removeEdge(e_3);
+					var outs = n_a.outEdges();
+					expect(Object.keys(outs).length).to.equal(2);
+					expect(outs[3]).to.be.undefined;
+					expect(outs[4]).to.equal(e_4);
+					expect(outs[5]).to.equal(e_5);
+				});
+				
+				it('should correctly delete an outgoing edge by ID', () => {
+					var edge = n_a.removeEdgeID(e_5._id);
+					expect(edge).to.be.an.instanceof($E.BaseEdge);
+					var outs = n_a.outEdges();
+					expect(Object.keys(outs).length).to.equal(1);
+					expect(outs[4]).to.equal(e_4);
+					expect(outs[5]).to.be.undefined;
+				});
+				
+				it('should correctly delete an incoming edge by reference', () => {
+					n_a.removeEdge(e_6);
+					var ins = n_a.inEdges();
+					expect(Object.keys(ins).length).to.equal(1);
+					expect(ins[6]).to.be.undefined;
+					expect(ins[7]).to.equal(e_7);
+				});
+				
+				it('should correctly delete an incoming edge by ID', () => {
+					var edge = n_a.removeEdgeID(e_7._id);
+					expect(edge).to.be.an.instanceof($E.BaseEdge);
+					var ins = n_a.inEdges();
+					expect(Object.keys(ins).length).to.equal(0);
+					expect(ins[7]).to.be.undefined;
+				});
+			
+			});
+			
+		});		
 		
 		
-		describe('Node edge removal', () => {
+		describe('Node edge clearing', () => {
 			
 			it('should clear all edges and set degrees back to zero', () => {
 				// reinstantiate node in order to 'clear' object
@@ -235,9 +364,8 @@ describe('==== NODE TESTS ====', () => {
 				var edge2 = new $E.BaseEdge(2, "Two", node_a, node_b, {
 					directed: true
 				});
-				var edge3 = new $E.BaseEdge(3, "Three", node_a, node_b, {
-					directed: true,
-					direction: false
+				var edge3 = new $E.BaseEdge(3, "Three", node_b, node_a, {
+					directed: true
 				});
 				node_a.addEdge(edge1);
 				node_a.addEdge(edge2);
