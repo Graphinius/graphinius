@@ -164,11 +164,11 @@ describe('==== EDGE TESTS ====', () => {
 				var edge = new Edge(id, label, node_a, node_b, opts);
 				expect(edge.isDirected()).to.equal(direction);
 				var nodes = edge.getNodes();
-				expect(nodes).to.be.an.instanceof(Array);			
-				expect(nodes[0]).to.be.an.instanceof(Node);
-				expect(nodes[1]).to.be.an.instanceof(Node);
-				expect(nodes[0]).to.equal(node_a);
-				expect(nodes[1]).to.equal(node_b);
+				expect(nodes).to.be.an.instanceof(Object);			
+				expect(nodes.a).to.be.an.instanceof(Node);
+				expect(nodes.b).to.be.an.instanceof(Node);
+				expect(nodes.a).to.equal(node_a);
+				expect(nodes.b).to.equal(node_b);
 			});
 		});
 		
@@ -183,7 +183,7 @@ describe('==== EDGE TESTS ====', () => {
 			var opts = {directed: false};
 			var edge = new Edge(id, label, node_a, node_b, opts);
 			expect(edge.isDirected()).to.equal(false);
-			expect(edge.toNode.bind(edge)).to.throw("Undirected edge has no from node.");
+			expect(edge.toNode.bind(edge)).to.throw("Undirected edge has no to node.");
 		});
 		
 		it('forward directed edge should return node_a as fromNode()', () => {

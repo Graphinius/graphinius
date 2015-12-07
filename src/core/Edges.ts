@@ -1,7 +1,9 @@
 import * as $N from "./Nodes";
 
-// var INode = Nodes.IBaseNode;
-// var Node 	= $N.BaseNode;
+interface IConnectedNodes {
+	a: $N.IBaseNode;
+	b: $N.IBaseNode;
+}
 
 /**
  * Edges are the most basic components in graphinius.
@@ -26,7 +28,7 @@ interface IBaseEdge {
 	setWeight(w:number) 		: void; // Exception if not weighted
 
 	// NODE Methods
-	getNodes()	: [$N.IBaseNode, $N.IBaseNode];
+	getNodes()	: IConnectedNodes;
 	fromNode()	: $N.IBaseNode;
 	toNode()	: $N.IBaseNode;
 
@@ -101,8 +103,8 @@ class BaseEdge implements IBaseEdge {
 		this._weight = w;
 	}
 	
-	getNodes() : [$N.IBaseNode, $N.IBaseNode] {
-		return [this._node_a, this._node_b];
+	getNodes() : IConnectedNodes {
+		return {a: this._node_a, b: this._node_b};
 	}
 	
 	fromNode() : $N.IBaseNode {
@@ -114,11 +116,11 @@ class BaseEdge implements IBaseEdge {
 	
 	toNode() : $N.IBaseNode {
 		if ( !this._directed ) {
-			throw new Error("Undirected edge has no from node.")
+			throw new Error("Undirected edge has no to node.")
 		}
 		
 		return this._direction ? this._node_b : this._node_a;
 	}
 }
 
-export { IBaseEdge, BaseEdge };
+export { IConnectedNodes, IBaseEdge, BaseEdge };
