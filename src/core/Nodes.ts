@@ -1,14 +1,20 @@
-import * as Edges from "./Edges";
+/// <reference path="../../typings/tsd.d.ts" />
 
+import * as Edges from "./Edges";
+import _ = require('lodash');
 
 interface IBaseNode {
 	// Public properties
 	_id					: number;
 	_label			: string;
 	
-	// UNTYPED feature methods
-	getUntypedFeatures() : { [k:string] : any };
-	// getFeature
+	// FEATURES methods
+	getFeatures() : { [k:string] : any };
+	getFeature(key: string) : any;
+	setFeatures( features: { [k:string]: any } ) : void;	
+	setFeature(key: string, value: any) : void;
+	deleteFeature(key: string) : any;
+	clearFeatures() : void;
 	
 	// Degrees
 	inDegree() : number;
@@ -45,7 +51,7 @@ interface NodeConstructorOptions {
 
 
 class BaseNode implements IBaseNode {
-	protected _untyped_features	: { [k:string] : any };
+	protected _features	: { [k:string] : any };
 		
 	/**
 	 * Design decision:
@@ -61,21 +67,51 @@ class BaseNode implements IBaseNode {
 	
 	
 	constructor (public _id, public _label,
-							untyped_features?: { [k:string] : any },
+							features?: { [k:string] : any },
 							options?: NodeConstructorOptions) 
 	{
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
-		this._untyped_features = untyped_features || {};
+		this._features = _.clone(features) || {};
 		options = options || {};
 		// now handle options...
 	}
 	
-	getUntypedFeatures() : { [k:string] : any } {
-		return this._untyped_features;
+	getFeatures() : { [k:string] : any } {
+		return this._features;
 	}
 	
+	getFeature(key: string) : any {
+		var feat = this._features[key];
+		if ( !feat ) {
+			throw new Error("Cannot retrieve non-existing feature.");
+		}
+		return feat;
+	}
+	
+	setFeatures( features: { [k:string]: any } ) : void {
+		this._features = _.clone(features);
+	}
+	
+	setFeature(key: string, value: any) : void {
+		this._features[key] = value;
+	}
+	
+	deleteFeature(key: string) : any {
+		var feat = this._features[key];
+		if ( !feat ) {
+			throw new Error("Cannot delete non-existing feature.");
+		}
+		delete this._features[key];
+		return feat;
+	}
+	
+	clearFeatures() : void {
+		this._features = {};
+	}
+	
+		
 	inDegree() : number {
 		return Object.keys(this._in_edges).length;
 	}

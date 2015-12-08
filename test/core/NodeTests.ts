@@ -23,33 +23,78 @@ describe('==== NODE TESTS ====', () => {
 			var node = new $N.BaseNode(id, label);
 			expect(node._label).to.equal(label);
 		});
-	});
-	
-	
-	describe('Node optional instantiation parameter tests', () => {
-		it('should correctly set default untyped features to an empty array', () => {
-			var node = new $N.BaseNode(id, label);
-			expect(node.getUntypedFeatures()).to.be.an.instanceof(Object);
-			expect(Object.keys(node.getUntypedFeatures()).length).to.equal(0);
-		});
 		
-		it('should correctly set untyped features to specified array', () => {
-			var u_feat = {name: 'Bernie'};
-			var node = new $N.BaseNode(id, label, u_feat);
-			expect(node.getUntypedFeatures()).to.be.an.instanceof(Object);
-			expect(Object.keys(node.getUntypedFeatures()).length).to.equal(1);
-			expect(node.getUntypedFeatures()).to.equal(u_feat);
-			expect(node.getUntypedFeatures()['name']).to.equal('Bernie');
-		});
-	});
-	
-	
-	describe('Node default degrees', () => {
 		it('should automatically report all degree values as zero upon instantiations', () => {
 			var node = new $N.BaseNode(id, label);
 			expect(node.inDegree()).to.equal(0);
 			expect(node.outDegree()).to.equal(0);
 			expect(node.degree()).to.equal(0);
+		});
+	});
+	
+	
+	describe('Node FEATURE vector tests', () => {
+		var feats = {name: 'Bernie', age: 36, future: 'Billionaire'};
+		var node = new $N.BaseNode(id, label, feats);
+			
+		it('should correctly set default features to an empty hash object', () => {
+			expect(node.getFeatures()).to.be.an.instanceof(Object);
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+		});
+		
+		it('should correctly set features to specified object', () => {
+			expect(node.getFeatures()).to.be.an.instanceof(Object);
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			expect(node.getFeatures()['name']).to.equal('Bernie');
+		});
+		
+		it('should throw an error when trying to retrieve an unset feature', () => {
+			expect(node.getFeature.bind(node, 'nokey')).to.throw("Cannot retrieve non-existing feature.");
+		});
+		
+		it('should correctly retrieve a set feature', () => {
+			expect(node.getFeature('future')).to.equal('Billionaire');			
+		});
+		
+		it('should allow to set new feature', () => {
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			node.setFeature('founder', 'Lemontiger');
+			expect(Object.keys(node.getFeatures()).length).to.equal(4);
+			expect(node.getFeature('founder')).to.equal('Lemontiger');			
+		});
+		
+		it('should automatically overwrite an existing feature upon renewed setting', () => {
+			node.setFeatures(feats);
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			node.setFeature('future', 'Bazillionaire');
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			expect(node.getFeature('future')).to.equal('Bazillionaire');	
+		});
+		
+		it('should throw an error upon trying to delete an unset feature', () => {
+			expect(node.deleteFeature.bind(node, 'nokey')).to.throw("Cannot delete non-existing feature.");
+		});
+		
+		it('should duly eradicate a given feature', () => {
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			expect(node.deleteFeature('age')).to.equal(36);
+			expect(Object.keys(node.getFeatures()).length).to.equal(2);
+		});
+		
+		it('should allow to replace the whole feature vector', () => {
+			var feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
+			var node = new $N.BaseNode(id, label, feats);
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			node.setFeatures({});
+			expect(Object.keys(node.getFeatures()).length).to.equal(0);	
+		});
+		
+		it('should allow to clear the whole feature vector', () => {
+			var feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
+			var node = new $N.BaseNode(id, label, feats);
+			expect(Object.keys(node.getFeatures()).length).to.equal(3);
+			node.clearFeatures();
+			expect(Object.keys(node.getFeatures()).length).to.equal(0);			
 		});
 	});
 	

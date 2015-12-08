@@ -5,4 +5,4 @@
 /// <reference path="node/node.d.ts" />
 /// <reference path="orchestrator/orchestrator.d.ts" />
 /// <reference path="q/Q.d.ts" />
-/// <reference path="underscore/underscore.d.ts" />
+/// <reference path="lodash/lodash.d.ts" />
