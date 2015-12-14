@@ -196,7 +196,7 @@ describe('==== NODE TESTS ====', () => {
 			
 		});
 		
-		
+	
 		
 		describe('Node single edge queries', () => {
 			
