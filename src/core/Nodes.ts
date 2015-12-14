@@ -147,22 +147,25 @@ class BaseNode implements IBaseNode {
 			throw new Error("Cannot add edge that does not connect to this node");
 		}
 		
-		// Edge with duplicate ID already present?
-		if ( this._in_edges[ edge._id ] || this._out_edges[ edge._id ] || this._und_edges[ edge._id ]) {
-			throw new Error("Cannot add same edge multiple times.");			
-		}
-		
 		// Is it an undirected or directed edge?
 		if ( edge.isDirected() ) {
 			// is it outgoing or incoming?
-			if ( edge.getNodes().a === this ) {
+			if ( edge.getNodes().a === this ) {				
 				this._out_edges[edge._id] = edge;
+				// Is the edge also connecting to ourselves -> loop ?
+				if ( edge.getNodes().b === this ) {				
+					this._in_edges[edge._id] = edge;
+				}
 			}
 			else {
 				this._in_edges[edge._id] = edge;
 			}
 		}
 		else {
+			// Is the edge also connecting to ourselves -> loop
+			if (this._und_edges[ edge._id ]) {
+				throw new Error("Cannot add same undirected edge multiple times.");
+			}
 			this._und_edges[edge._id] = edge;
 		}
 	}	

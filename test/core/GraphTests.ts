@@ -12,9 +12,12 @@ var Graph = $G.BaseGraph;
 
 
 describe('GRAPH TESTS: ', () => {
-	var graph : $G.BaseGraph,
-			node_a : $N.IBaseNode,
-			node_b : $N.IBaseNode;
+	var graph 	: $G.BaseGraph,
+			node_a 	: $N.IBaseNode,
+			node_b 	: $N.IBaseNode,
+			edge_1	: $E.IBaseEdge,
+			edge_2	: $E.IBaseEdge,
+			stats		: $G.GraphStats;
 	
 	describe('Basic graph instantiation and mode handling', () => {
 	
@@ -24,7 +27,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		it('should correctly add a node', () => {
-			var stats : $G.GraphStats = graph.getStats();
+			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(0);
 			node_a = graph.addNode('A');
 			expect(node_a).to.be.an.instanceof(Node);
@@ -40,17 +43,17 @@ describe('GRAPH TESTS: ', () => {
 		 * graph has 2 nodes, 1 undirected edge
 		 * graph is in UNDIRECTED mode
 		 */
-		it('should correctly add an edge between two nodes', () => {
-			var node_b = graph.addNode('B');
-			var edge = graph.addUndEdge('1', node_a, node_b); // undirected edge	
-			expect(edge.isDirected()).to.be.false;
+		it('should correctly add an undirected edge between two nodes', () => {
+			node_b = graph.addNode('B');
+			edge_1 = graph.addEdge('und_a_b', node_a, node_b); // undirected edge	
+			expect(edge_1.isDirected()).to.be.false;
 			expect(node_a.inDegree()).to.equal(0);
 			expect(node_a.outDegree()).to.equal(0);
 			expect(node_a.degree()).to.equal(1);
 			expect(node_b.inDegree()).to.equal(0);
 			expect(node_b.outDegree()).to.equal(0);
 			expect(node_b.degree()).to.equal(1);
-			var stats : $G.GraphStats = graph.getStats();
+			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(2);
 			expect(stats.nr_dir_edges).to.equal(0);
 			expect(stats.nr_und_edges).to.equal(1);
@@ -59,28 +62,219 @@ describe('GRAPH TESTS: ', () => {
 		
 		
 		/**
-		 * edge has to be undirected
+		 * edge has to be directed
+		 * node_a has in_degree 0, out_degree 1, degree 1
+		 * node_b has in_degree 1, out_degree 0, degree 1
+		 * graph has 2 nodes, 1 undirected edge, 1 directed edge
+		 * graph is in DIRECTED mode
+		 */
+		it('should correctly add a directed edge between two nodes', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			node_b = graph.addNode('B');
+			edge_1 = graph.addEdge('dir_a_b', node_a, node_b, {directed: true});
+			expect(edge_1.isDirected()).to.be.true;
+			expect(node_a.inDegree()).to.equal(0);
+			expect(node_a.outDegree()).to.equal(1);
+			expect(node_a.degree()).to.equal(0);
+			expect(node_b.inDegree()).to.equal(1);
+			expect(node_b.outDegree()).to.equal(0);
+			expect(node_b.degree()).to.equal(0);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(2);
+			expect(stats.nr_dir_edges).to.equal(1);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+		});
+		
+		
+		/**
+		 * edge has to be undirected and a loop
 		 * node_a has in_degree 0, out_degree 0, degree 1
-		 * node_b has in_degree 0, out_degree 0, degree 1
-		 * graph has 2 nodes, 1 undirected edge
+		 * graph has 1 node, 1 undirected edge
 		 * graph is in UNDIRECTED mode
 		 */
-		// it('should correctly add an edge between two nodes', () => {
-		// 	var edge = graph.addDirEdge('2', node_b, node_b); // undirected edge	
-		// 	expect(edge.isDirected()).to.be.false;
-		// 	expect(node_a.inDegree()).to.equal(0);
-		// 	expect(node_a.outDegree()).to.equal(0);
-		// 	expect(node_a.degree()).to.equal(1);
-		// 	expect(node_b.inDegree()).to.equal(0);
-		// 	expect(node_b.outDegree()).to.equal(0);
-		// 	expect(node_b.degree()).to.equal(1);
-		// 	var stats : $G.GraphStats = graph.getStats();
-		// 	expect(stats.nr_nodes).to.equal(2);
-		// 	expect(stats.nr_dir_edges).to.equal(0);
-		// 	expect(stats.nr_und_edges).to.equal(1);
-		// 	expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
-		// });
-				
+		it('should correctly add an undirected loop', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			edge_1 = graph.addEdge('und_a_a', node_a, node_a, {directed: false});
+			expect(edge_1.isDirected()).to.be.false;
+			expect(node_a.inDegree()).to.equal(0);
+			expect(node_a.outDegree()).to.equal(0);
+			expect(node_a.degree()).to.equal(1);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(1);
+			expect(stats.nr_dir_edges).to.equal(0);
+			expect(stats.nr_und_edges).to.equal(1);
+			expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
+		});
+		
+		
+		/**
+		 * edge has to be directed and a loop
+		 * node_a has in_degree 1, out_degree 1, degree 0
+		 * graph has 1 node, 1 directed edge
+		 * graph is in DIRECTED mode
+		 */
+		it('should correctly add a directed loop', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			edge_1 = graph.addEdge('und_a_a', node_a, node_a, {directed: true});
+			expect(edge_1.isDirected()).to.be.true;
+			expect(node_a.inDegree()).to.equal(1);
+			expect(node_a.outDegree()).to.equal(1);
+			expect(node_a.degree()).to.equal(0);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(1);
+			expect(stats.nr_dir_edges).to.equal(1);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+		});
+		
+		
+		/**
+		 * MIXED MODE GRAPH
+		 * edge_1 is undirected and goes from a to b
+		 * edge_2 is directed and a loop from b to b
+		 * node_a has in_degree 0, out_degree 0, degree 1
+		 * node_b has in_degree 1, out_degree 1, degree 1
+		 * graph has 2 node, 1 directed edge, 1 undirected edge
+		 * graph is in MIXED mode
+		 */
+		it('should correctly instantiate a mixed graph', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			node_b = graph.addNode('B');
+			edge_1 = graph.addEdge('und_a_b', node_a, node_b, {directed: false});
+			expect(edge_1.isDirected()).to.be.false;
+			edge_2 = graph.addEdge('dir_b_b', node_b, node_b, {directed: true});
+			expect(edge_2.isDirected()).to.be.true;
+			expect(node_a.inDegree()).to.equal(0);
+			expect(node_a.outDegree()).to.equal(0);
+			expect(node_a.degree()).to.equal(1);
+			expect(node_b.inDegree()).to.equal(1);
+			expect(node_b.outDegree()).to.equal(1);
+			expect(node_b.degree()).to.equal(1);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(2);
+			expect(stats.nr_dir_edges).to.equal(1);
+			expect(stats.nr_und_edges).to.equal(1);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+		});
+		
+		
+		it('should report the existence of a node by ID', () => {
+			
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing node', () => {
+			
+		});
+		
+		
+		it('should return a node by existing ID', () => {
+			
+		});
+		
+		
+		it('should report the existence of an edge by ID', () => {
+			
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing edge', () => {
+			
+		});
+			
+		
+		it('should return an edge by ID', () => {
+			
+		});
+		
+		
+		/**
+		 * DELETE directed edge => UNDIRECTED graph
+		 * edge_a is undirected
+		 * node_a has in_degree 0, out_degree 0, degree 1
+		 * node_b has in_degree 0, out_degree 0, degree 1
+		 * graph has 2 node, 1 undirected edge
+		 * graph is in UNDIRECTED mode
+		 */
+		it('should delete an existing directed edge, changing the graph back to UNDIRECTED mode', () => {
+			
+		});
+		
+		
+		/**
+		 * DELETE undirected edge => DIRECTED graph
+		 * edge_1 is directed
+		 * node_a has in_degree 1, out_degree 0, degree 0
+		 * node_b has in_degree 0, out_degree 1, degree 0
+		 * graph has 2 node, 1 directed edge
+		 * graph is in DIRECTED mode
+		 */
+		it('should delete an existing undirected edge, changing the graph back to DIRECTED mode', () => {
+			
+		});
+		
+		
+		/**
+		 * Node deletion WITHOUT edges
+		 */
+		it('should correctly delete an unconnected node', () => {
+			
+		});
+		
+		
+		/**
+		 * Node deletion WITH edges
+		 */
+		it('should throw an error when trying to delete a connected node', () => {
+			
+		});
+		
+		
+		/**
+		 * Node edge deletion => outgoing edges
+		 */
+		it('should allow to delete all outgoing edges of a node', () => {
+			
+		});
+		
+		
+		/**
+		 * Node edge deletion => incoming edges
+		 */
+		it('should allow to delete all incoming edges of a node', () => {
+			
+		});
+		
+		
+		/**
+		 * Node edge deletion => undirected edges
+		 */
+		it('should allow to delete all undirected edges of a node', () => {
+			
+		});
+		
+		
+		/**
+		 * Node edge deletion => all edges
+		 */
+		it('should allow to completely disconnect a node', () => {
+			
+		});
+		
+		
+		//==========================================================
+		/**
+		 * Compacting edges
+		 */
+		it('should combine the above functionality to do edge compaction', () => {
+			
+		});
+		
 		
 	});
 	

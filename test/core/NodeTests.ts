@@ -108,26 +108,41 @@ describe('==== NODE TESTS ====', () => {
 		
 		describe('Node edge addition tests', () => {
 		
-			it('Should throw an error if we add an unrelated edge', () => {
+			it('should throw an error if we add an unrelated edge', () => {
 				var node_c = new $N.BaseNode(9999, 'Not connected to node_a');
 				var edge = new $E.BaseEdge(e_id, e_label, node_b, node_c);
 				
 				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add edge that does not connect to this node");
 			});
 			
-			it('Should throw an error if we try to add an edge more than once', () => {
+			it('should throw an error if we try to add an unidrected edge more than once', () => {
 				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
 					directed: false
 				});
-										
+														
+				/**
+				 * Adding the same undirected edge twice is not necessary, even in the
+				 * case the edge is a loop.
+				 * This case should be handled by the graph class correctly, so we need
+				 * to throw an error in case the graph class is wrongly implemented.
+				 */ 
 				node_a.addEdge(edge);
-				// here we should get an exception for duplicate edges
-				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add same edge multiple times.");
-				
-				node_b.addEdge(edge);
-				// here we should get an exception for duplicate edges
-				expect(node_b.addEdge.bind(node_b, edge)).to.throw("Cannot add same edge multiple times.");
+				// here we should get an exception for duplicate undirected edge
+				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add same undirected edge multiple times.");
 			});
+			
+			it('should not throw an error if we try to connect the same edge (ID) as incoming and outgoing (the node then belongs to its own prevs and nexts)..', () => {
+				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_a, {
+					directed: true
+				});
+				var in_deg = node_a.inDegree();
+				var out_deg = node_a.outDegree();				
+				expect(node_a.addEdge.bind(node_a, edge)).not.to.throw("Cannot add same undirected edge multiple times.");
+				expect(node_a.addEdge.bind(node_a, edge)).not.to.throw("Cannot add same undirected edge multiple times.");
+				expect(node_a.inDegree()).to.equal(in_deg + 1);
+				expect(node_a.outDegree()).to.equal(out_deg + 1);
+			});
+			
 						
 		 /**
 			* A LOT has is to be expected here...
@@ -141,7 +156,7 @@ describe('==== NODE TESTS ====', () => {
 			* as the graph class will encapsulte
 			* adding edges to both nodes on its level.
 			*/
-			it('Should correctly compute degrees on adding an undirected edge', () => {
+			it('should correctly compute degrees on adding an undirected edge', () => {
 				// Clear up the node first..
 				node_a.clearEdges();
 				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
@@ -159,7 +174,7 @@ describe('==== NODE TESTS ====', () => {
 			});
 			
 			
-			it('Should correctly add an outgoing edge', () => {
+			it('should correctly add an outgoing edge', () => {
 				node_a.clearEdges();
 				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
 					directed: true
@@ -177,7 +192,7 @@ describe('==== NODE TESTS ====', () => {
 			});
 			
 			
-			it('Should correctly add an incoming edge', () => {
+			it('should correctly add an incoming edge', () => {
 				node_a.clearEdges();
 				var edge = new $E.BaseEdge(e_id, e_label, node_b, node_a, {
 					directed: true
@@ -272,12 +287,13 @@ describe('==== NODE TESTS ====', () => {
 			n_a.addEdge(e_6);
 			n_a.addEdge(e_7);
 			
+			
 			describe('degrees and retrieval', () => {
-				
+						
 				it('should correctly have computed the degree structure', () => {
 					expect(n_a.degree()).to.equal(2);
 					expect(n_a.outDegree()).to.equal(3);
-					expect(n_a.inDegree()).to.equal(2);
+					expect(n_a.inDegree()).to.equal(3);
 				});		
 				
 				it('should correctly retrieve undirected edges', () => {
@@ -297,21 +313,22 @@ describe('==== NODE TESTS ====', () => {
 				
 				it('should correctly retrieve incoming edges', () => {
 					var ins = n_a.inEdges();
-					expect(Object.keys(ins).length).to.equal(2);
+					expect(Object.keys(ins).length).to.equal(3);
+					expect(ins[3]).to.equal(e_3);
 					expect(ins[6]).to.equal(e_6);
 					expect(ins[7]).to.equal(e_7);
 				});
-				
+								
 			});
 			
 			
-			describe('deletion of single edges by type', () => {
+			describe('previous, next, and connected nodes', () => {
 				
 				it('should find nodes c and d as previous nodes', () => {
 					var prevs = n_a.prevNodes();
 					expect(prevs).to.be.an.instanceof(Array);
-					expect(prevs.length).to.equal(2);
-					expect(prevs).not.to.contain(n_a);
+					expect(prevs.length).to.equal(3);
+					expect(prevs).to.contain(n_a);
 					expect(prevs).to.contain(n_c);
 					expect(prevs).to.contain(n_d);		
 				});

@@ -26,8 +26,8 @@ interface IGraph {
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 	addNode(label: string) : $N.IBaseNode;
-	addUndEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
-	// addDirEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
+	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
+	// hasEdge()
 }
 
 
@@ -54,19 +54,36 @@ class BaseGraph implements IGraph {
 		return node;
 	}
 	
-	addUndEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge {
+	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge {
 		var edge = new $E.BaseEdge(this._und_edge_count++,
 															 label,
 															 node_a,
 															 node_b,
 															 opts || {});
+		
+		// connect edge to first node anyways			
 		node_a.addEdge(edge);
-		node_b.addEdge(edge);
-		this._und_edges[edge._id] = edge;
-		if ( !Object.keys(this._dir_edges).length ) {
-			this._mode = GraphMode.UNDIRECTED;
+		
+		if ( edge.isDirected() ) {
+			// add edge to second node too
+			node_b.addEdge(edge);			
+			this._dir_edges[edge._id] = edge;
+			if ( Object.keys(this._und_edges).length ) {
+				this._mode = GraphMode.MIXED;
+			} else {
+				this._mode = GraphMode.DIRECTED;
+			}
 		} else {
-			this._mode = GraphMode.MIXED;
+			// add edge to both nodes, except they are the same...
+			if ( node_a !== node_b ) {
+				node_b.addEdge(edge);
+			}
+			this._und_edges[edge._id] = edge;
+			if ( Object.keys(this._dir_edges).length ) {
+				this._mode = GraphMode.MIXED;
+			} else {
+				this._mode = GraphMode.UNDIRECTED;
+			}
 		}
 		return edge;
 	}
