@@ -13,9 +13,8 @@ interface IConnectedNodes {
  * @param _label edge label, public
  */
 interface IBaseEdge {
-	// Public properties
-	_id			:	string;
-	_label	: string;
+	getID() : number;
+	getLabel() : string;
 	
 	// DIRECTION Methods
 	isDirected()						: boolean;
@@ -48,7 +47,7 @@ class BaseEdge implements IBaseEdge {
 	protected _weighted 	: boolean;
 	protected _weight			: number;
 	
-	constructor (public _id, public _label,
+	constructor (protected _id, protected _label,
 							protected _node_a:$N.IBaseNode, 
 							protected _node_b:$N.IBaseNode, 
 							options?: EdgeConstructorOptions) 
@@ -57,6 +56,14 @@ class BaseEdge implements IBaseEdge {
 		this._directed = options.directed || false;
 		this._weighted = options.weighted || false;
 		this._weight = options.weight || 0;
+	}
+	
+	getID() : number {
+		return this._id;
+	}
+	
+	getLabel() : string {
+		return this._label;	
 	}
 	
 	isDirected () : boolean {

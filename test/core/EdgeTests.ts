@@ -19,12 +19,12 @@ describe('==== EDGE TESTS ====', () => {
 	describe('A basic edge instantiation', () => {				
 		it('should correctly set _id', () => {					
 			var edge = new Edge(id, label, node_a, node_b);
-			expect(edge._id).to.equal(id);	
+			expect(edge.getID()).to.equal(id);	
 		});
 		
 		it('should correctly set _label', () => {					
 			var edge = new Edge(id, label, node_a, node_b);
-			expect(edge._label).to.equal(label);			
+			expect(edge.getLabel()).to.equal(label);			
 		});				
 	});
 	

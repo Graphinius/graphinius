@@ -4,9 +4,8 @@ import * as Edges from "./Edges";
 import _ = require('lodash');
 
 interface IBaseNode {
-	// Public properties
-	_id					: number;
-	_label			: string;
+	getID()	: number;
+	getLabel() : string;
 	
 	// FEATURES methods
 	getFeatures() : { [k:string] : any };
@@ -66,7 +65,7 @@ class BaseNode implements IBaseNode {
 	protected _und_edges	: {[k: number] : Edges.IBaseEdge};
 	
 	
-	constructor (public _id, public _label,
+	constructor (protected _id, protected _label,
 							features?: { [k:string] : any },
 							options?: NodeConstructorOptions) 
 	{
@@ -76,6 +75,14 @@ class BaseNode implements IBaseNode {
 		this._features = _.clone(features) || {};
 		options = options || {};
 		// now handle options...
+	}
+	
+	getID()	: number {
+		return this._id;
+	}
+	
+	getLabel() : string {
+		return this._label;
 	}
 	
 	getFeatures() : { [k:string] : any } {
@@ -151,27 +158,27 @@ class BaseNode implements IBaseNode {
 		if ( edge.isDirected() ) {
 			// is it outgoing or incoming?
 			if ( edge.getNodes().a === this ) {				
-				this._out_edges[edge._id] = edge;
+				this._out_edges[edge.getID()] = edge;
 				// Is the edge also connecting to ourselves -> loop ?
 				if ( edge.getNodes().b === this ) {				
-					this._in_edges[edge._id] = edge;
+					this._in_edges[edge.getID()] = edge;
 				}
 			}
 			else {
-				this._in_edges[edge._id] = edge;
+				this._in_edges[edge.getID()] = edge;
 			}
 		}
 		else {
 			// Is the edge also connecting to ourselves -> loop
-			if (this._und_edges[ edge._id ]) {
+			if (this._und_edges[ edge.getID() ]) {
 				throw new Error("Cannot add same undirected edge multiple times.");
 			}
-			this._und_edges[edge._id] = edge;
+			this._und_edges[edge.getID()] = edge;
 		}
 	}	
 	
 	hasEdge(edge: Edges.IBaseEdge) : boolean {
-		return !!this._in_edges[ edge._id ] || !!this._out_edges[ edge._id ] || !!this._und_edges[ edge._id ];
+		return !!this._in_edges[ edge.getID() ] || !!this._out_edges[ edge.getID() ] || !!this._und_edges[ edge.getID() ];
 	}
 	
 	hasEdgeID(id: number) : boolean {
@@ -202,14 +209,14 @@ class BaseNode implements IBaseNode {
 		if ( !this.hasEdge(edge) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		if ( this._und_edges[edge._id] ) { 
-			delete this._und_edges[edge._id];
+		if ( this._und_edges[edge.getID()] ) { 
+			delete this._und_edges[edge.getID()];
 		}
-		if ( this._in_edges[edge._id] ) { 
-			delete this._in_edges[edge._id];
+		if ( this._in_edges[edge.getID()] ) { 
+			delete this._in_edges[edge.getID()];
 		}
-		if ( this._out_edges[edge._id] ) { 
-			delete this._out_edges[edge._id]; 
+		if ( this._out_edges[edge.getID()] ) { 
+			delete this._out_edges[edge.getID()]; 
 		}
 	}
 	

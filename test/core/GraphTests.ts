@@ -164,33 +164,82 @@ describe('GRAPH TESTS: ', () => {
 		
 		
 		it('should report the existence of a node by ID', () => {
-			
+			expect(graph.hasNodeID(Number.NaN)).to.be.false;
+			expect(graph.hasNodeID(99999)).to.be.false;
+			expect(graph.hasNodeID(node_a.getID())).to.be.true;
 		});
 		
 		
-		it('should throw an error upon trying to retrieve a non-existing node', () => {
-			
+		it('should report the existence of a node by Label', () => {
+			expect(graph.hasNodeLabel("donotexist")).to.be.false;
+			expect(graph.hasNodeLabel(node_a.getLabel())).to.be.true;
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing node by ID', () => {
+			expect(graph.getNodeById.bind(graph, Number.NaN)).to.throw("cannot retrieve node with non-existing ID.");
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing node by Label', () => {
+			expect(graph.getNodeByLabel.bind(graph, "donotexist")).to.throw("cannot retrieve node with non-existing Label.");
 		});
 		
 		
 		it('should return a node by existing ID', () => {
-			
+			expect(graph.getNodeById(node_a.getID())).to.equal(node_a);
 		});
 		
 		
+		it('should return a node by existing Label', () => {
+			expect(graph.getNodeByLabel(node_a.getLabel())).to.equal(node_a);
+		});
+		
+		
+		/**
+		 * For all edge HAS? and GET tests:
+		 * edge_1 is UNDIRECTED
+		 * edge_2 is DIRECTED
+		 */
 		it('should report the existence of an edge by ID', () => {
-			
+			expect(graph.hasEdgeID(Number.NaN)).to.be.false;
+			expect(graph.hasEdgeID(99999)).to.be.false;
+			expect(edge_1.isDirected()).to.be.false;
+			expect(graph.hasEdgeID(edge_1.getID())).to.be.true;
+			expect(edge_2.isDirected()).to.be.true;
+			expect(graph.hasEdgeID(edge_2.getID())).to.be.true;	
 		});
 		
 		
-		it('should throw an error upon trying to retrieve a non-existing edge', () => {
-			
+		it('should report the existence of an edge by Label', () => {
+			expect(graph.hasEdgeLabel("menonexistant")).to.be.false;
+			expect(edge_1.isDirected()).to.be.false;
+			expect(graph.hasEdgeLabel(edge_1.getLabel())).to.be.true;
+			expect(edge_2.isDirected()).to.be.true;
+			expect(graph.hasEdgeLabel(edge_2.getLabel())).to.be.true;	
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing edge by ID', () => {
+			expect(graph.getEdgeById.bind(graph, Number.NaN)).to.throw("cannot retrieve edge with non-existing ID.");
+		});
+		
+		
+		it('should throw an error upon trying to retrieve a non-existing edge by Label', () => {
+			expect(graph.getEdgeByLabel.bind(graph, "menonexistant")).to.throw("cannot retrieve edge with non-existing Label.");
 		});
 			
 		
 		it('should return an edge by ID', () => {
-			
+			expect(graph.getEdgeById(edge_1.getID())).to.equal(edge_1);
+			expect(graph.getEdgeById(edge_2.getID())).to.equal(edge_2);
 		});
+		
+		
+		it('should return an edge by Label', () => {
+			expect(graph.getEdgeByLabel(edge_1.getLabel())).to.equal(edge_1);
+			expect(graph.getEdgeByLabel(edge_2.getLabel())).to.equal(edge_2);
+		});		
 		
 		
 		/**

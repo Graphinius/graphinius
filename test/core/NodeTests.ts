@@ -16,12 +16,12 @@ describe('==== NODE TESTS ====', () => {
 	describe('Basic node instantiation', () => {
 		it('should correclty instantiate a node with id', () => {
 			var node = new $N.BaseNode(id, label);
-			expect(node._id).to.equal(id);
+			expect(node.getID()).to.equal(id);
 		});
 		
 		it('should correclty instantiate a node with label', () => {
 			var node = new $N.BaseNode(id, label);
-			expect(node._label).to.equal(label);
+			expect(node.getLabel()).to.equal(label);
 		});
 		
 		it('should automatically report all degree values as zero upon instantiations', () => {
@@ -184,7 +184,7 @@ describe('==== NODE TESTS ====', () => {
 						dir_deg_a = node_a.degree();
 						
 				node_a.addEdge(edge);
-				expect(node_a.getEdge(edge._id)).to.equal(edge);	
+				expect(node_a.getEdge(edge.getID())).to.equal(edge);	
 				
 				expect(node_a.inDegree()).to.equal(in_deg_a);
 				expect(node_a.outDegree()).to.equal(out_deg_a + 1);
@@ -202,7 +202,7 @@ describe('==== NODE TESTS ====', () => {
 						dir_deg_a = node_a.degree();
 						
 				node_a.addEdge(edge);
-				expect(node_a.getEdge(edge._id)).to.equal(edge);
+				expect(node_a.getEdge(edge.getID())).to.equal(edge);
 	
 				expect(node_a.inDegree()).to.equal(in_deg_a + 1);
 				expect(node_a.outDegree()).to.equal(out_deg_a);
@@ -230,7 +230,7 @@ describe('==== NODE TESTS ====', () => {
 					directed: false
 				});						
 				node_a.addEdge(edge);
-				expect(node_a.hasEdgeID(edge._id)).to.be.true;
+				expect(node_a.hasEdgeID(edge.getID())).to.be.true;
 			});
 			
 			it('should assert that non-existing edge is not connected by ID', () => {
@@ -249,7 +249,7 @@ describe('==== NODE TESTS ====', () => {
 					directed: false
 				});						
 				node_a.addEdge(edge);
-				expect(node_a.getEdge(edge._id)).to.equal(edge);
+				expect(node_a.getEdge(edge.getID())).to.equal(edge);
 			});
 			
 		});
@@ -370,7 +370,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should correctly delete an undirected edge by ID', () => {
-					var edge = n_a.removeEdgeID(e_2._id);
+					var edge = n_a.removeEdgeID(e_2.getID());
 					expect(edge).to.be.an.instanceof($E.BaseEdge);
 					var unds = n_a.undEdges();
 					expect(Object.keys(unds).length).to.equal(0);
@@ -386,7 +386,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should correctly delete an outgoing edge by ID', () => {
-					var edge = n_a.removeEdgeID(e_5._id);
+					var edge = n_a.removeEdgeID(e_5.getID());
 					expect(edge).to.be.an.instanceof($E.BaseEdge);
 					var outs = n_a.outEdges();
 					expect(Object.keys(outs).length).to.equal(1);
@@ -403,7 +403,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should correctly delete an incoming edge by ID', () => {
-					var edge = n_a.removeEdgeID(e_7._id);
+					var edge = n_a.removeEdgeID(e_7.getID());
 					expect(edge).to.be.an.instanceof($E.BaseEdge);
 					var ins = n_a.inEdges();
 					expect(Object.keys(ins).length).to.equal(0);
