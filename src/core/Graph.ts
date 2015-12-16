@@ -25,21 +25,30 @@ interface IGraph {
 	
 	getMode() : GraphMode;
 	getStats() : GraphStats;
+	
 	addNode(label: string) : $N.IBaseNode;
-	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	hasNodeID(id: number) : boolean;
 	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: number) : $N.IBaseNode;
 	getNodeByLabel(label: string) : $N.IBaseNode;
+	nrNodes() : number;
+	getRandomNode() : $N.IBaseNode;
+	// get all nodes??
 	
+	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: number) : boolean;
 	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: number) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
+	nrDirEdges() : number;
+	nrUndEdges() : number;
+	// nrEdges() : number;
+	removeEdge(edge: $E.IBaseEdge) : void;
+	getRandomDirEdge() : $E.IBaseEdge;
+	getRandomUndEdge() : $E.IBaseEdge;
 	
 	// some Algorithms require random start nodes...
 	// getRandomNode() : $N.IBaseNode;
-	// hasEdge()
 	// some Algorithms require random start edges...?
 	// getRandomEdge() : $E.IBaseEdge;
 }
@@ -104,6 +113,18 @@ class BaseGraph implements IGraph {
 		}
 		return node;
 	}
+	
+	nrNodes() : number {
+		return Object.keys(this._nodes).length;
+	}
+	
+	getRandomNode() : $N.IBaseNode {
+		var keys = Object.keys(this._nodes);
+		var idx = (Math.random() * keys.length)|0; // force into integer
+		return this._nodes[keys[idx]];
+	}
+	
+	
 	
 	hasEdgeID(id: number) : boolean {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
@@ -182,6 +203,51 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 	
+	removeEdge(edge: $E.IBaseEdge) : void {
+		var dir_edge = this._dir_edges[edge.getID()];
+		var und_edge = this._und_edges[edge.getID()];
+
+		if ( !dir_edge && ! und_edge ) {
+			throw new Error('cannot remove non-existing edge.');
+		}
+		
+		var nodes = edge.getNodes();
+		nodes.a.removeEdge(edge);
+		
+		if ( dir_edge ) {
+			delete this._dir_edges[edge.getID()];
+			nodes.b.removeEdge(edge);			
+		} else {
+			delete this._und_edges[edge.getID()];			
+			if ( nodes.a !== nodes.b ) {
+				nodes.b.removeEdge(edge);
+			}
+		}
+	}
+	
+	nrDirEdges() : number {
+		return Object.keys(this._dir_edges).length;
+	}
+	
+	nrUndEdges() : number {
+		return Object.keys(this._und_edges).length;
+	}
+	
+	// nrEdges() : number {
+	// 	return Object.keys(this._dir_edges).length + Object.keys(this._und_edges).length; 
+	// }
+	
+	getRandomDirEdge() : $E.IBaseEdge {
+		var keys = Object.keys(this._dir_edges);
+		var idx = (Math.random() * keys.length)|0; // force into integer
+		return this._dir_edges[keys[idx]];
+	}
+	
+	getRandomUndEdge() : $E.IBaseEdge {
+		var keys = Object.keys(this._und_edges);
+		var idx = (Math.random() * keys.length)|0; // force into integer
+		return this._und_edges[keys[idx]];
+	}
 	
 	
 	getStats() : GraphStats {		

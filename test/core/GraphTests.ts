@@ -192,11 +192,18 @@ describe('GRAPH TESTS: ', () => {
 		
 		it('should return a node by existing ID', () => {
 			expect(graph.getNodeById(node_a.getID())).to.equal(node_a);
+			expect(graph.getNodeById(node_b.getID())).to.equal(node_b);
 		});
 		
 		
 		it('should return a node by existing Label', () => {
 			expect(graph.getNodeByLabel(node_a.getLabel())).to.equal(node_a);
+			expect(graph.getNodeByLabel(node_b.getLabel())).to.equal(node_b);
+		});
+		
+		
+		it('should report the number of nodes currently in the graph', () => {
+			expect(graph.nrNodes()).to.equal(2);
 		});
 		
 		
@@ -244,55 +251,168 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.getEdgeByLabel(edge_1.getLabel())).to.equal(edge_1);
 			expect(graph.getEdgeByLabel(edge_2.getLabel())).to.equal(edge_2);
 		});
-	});		
+		
+		
+		it('should report the number of directed edges currently in the graph', () => {
+			expect(graph.nrDirEdges()).to.equal(1);
+		});
+		
+		
+		it('should report the number of edges currently in the graph', () => {
+			expect(graph.nrUndEdges()).to.equal(1);
+		});
+		
+		
+		// it('should report the number of edges currently in the graph', () => {
+		// 	expect(graph.nrEdges()).to.equal(2);
+		// });
+		
+		
+		it('should give you a random node currently existing in the graph', () => {
+			var rand_node = graph.getRandomNode();
+			expect(rand_node).to.be.an.instanceof(Node);
+			expect(graph.hasNodeID(rand_node.getID())).to.be.true;
+		});
+		
+		
+		it('should give you a random directed edge currently existing in the graph', () => {
+			var rand_dir_edge = graph.getRandomDirEdge();
+			expect(rand_dir_edge.isDirected()).to.be.true;
+			expect(rand_dir_edge).to.be.an.instanceof(Edge);
+			expect(graph.hasEdgeID(rand_dir_edge.getID())).to.be.true;
+		});
+		
+		
+		it('should give you a random undirected edge currently existing in the graph', () => {
+			var rand_und_edge = graph.getRandomUndEdge();
+			expect(rand_und_edge.isDirected()).to.be.false;
+			expect(rand_und_edge).to.be.an.instanceof(Edge);
+			expect(graph.hasEdgeID(rand_und_edge.getID())).to.be.true;
+		});		
+		
+	});
 		
 		
 	describe('edge and node deletion scenarios', () => {
 		
+		var graph,
+				n_a,
+				n_b,
+				n_c,
+				n_d,
+				e_1,
+				e_2,
+				e_3,
+				e_4,
+				e_5,
+				e_6,
+				e_7;
+		
 		beforeEach('instantiate a 4-node and 7-edge scenario', () => {
-			var graph = new Graph('Edge and node deletion test graph');
-			var n_a = graph.addNode('A');
-			var n_b = graph.addNode('B');
-			var n_c = graph.addNode('C');
-			var n_d = graph.addNode('D');
+			graph = new Graph('Edge and node deletion test graph');
+			n_a = graph.addNode('A');
+			n_b = graph.addNode('B');
+			n_c = graph.addNode('C');
+			n_d = graph.addNode('D');
+			e_1 = graph.addEdge('1', n_a, n_b);
+			e_2 = graph.addEdge('2', n_a, n_c);
+			e_3 = graph.addEdge('3', n_a, n_a, {directed: true});
+			e_4 = graph.addEdge('4', n_a, n_b, {directed: true});
+			e_5 = graph.addEdge('5', n_a, n_d, {directed: true});
+			e_6 = graph.addEdge('6', n_c, n_a, {directed: true});
+			e_7 = graph.addEdge('7', n_d, n_a, {directed: true});
 			
-			
-					// 	var n_a = new $N.BaseNode(1, "A"),
-					// n_b = new $N.BaseNode(2, "B"),
-					// n_c = new $N.BaseNode(3, "C"),
-					// n_d = new $N.BaseNode(4, "D"),
-					// e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
-					// e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
-					// e_3 = new $E.BaseEdge(3, "d_aa", n_a, n_a, {directed: true}),
-					// e_4 = new $E.BaseEdge(4, "d_ab", n_a, n_b, {directed: true}),
-					// e_5 = new $E.BaseEdge(5, "d_ad", n_a, n_d, {directed: true}),
-					// e_6 = new $E.BaseEdge(6, "d_ca", n_c, n_a, {directed: true}),
-					// e_7 = new $E.BaseEdge(7, "d_da", n_d, n_a, {directed: true});
+			expect(graph.nrNodes()).to.equal(4);
+			// expect(graph.nrEdges()).to.equal(7);
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.nrUndEdges()).to.equal(2);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+		});
+		
+		
+		it('should throw an error when trying to remove a non-existing edge', () => {
+			var loose_edge = new Edge(Number.MAX_VALUE, 'BLAHOO', n_a, n_b);
+			expect(graph.removeEdge.bind(graph, loose_edge)).to.throw('cannot remove non-existing edge.');
 		});
 		
 		
 		/**
-		 * DELETE directed edge => UNDIRECTED graph
-		 * edge_a is undirected
-		 * node_a has in_degree 0, out_degree 0, degree 1
-		 * node_b has in_degree 0, out_degree 0, degree 1
-		 * graph has 2 node, 1 undirected edge
-		 * graph is in UNDIRECTED mode
+		 * delete UNDIRECTED edge
+		 * e_1 is deleted
+		 * n_a has degree of one less than before
+		 * n_a inDegree and outDegree stay the same
+		 * n_b has degree of one less than before
+		 * n_b inDegree and outDegree stay the same
+		 * graph still has 4 nodes
+		 * graph has same number of directed edges
+		 * graph has one less undirected edge
 		 */
-		it('should delete an existing directed edge, changing the graph back to UNDIRECTED mode', () => {
+		it('should remove an existing undirected edge, updating graph and node stats', () => {
+			var graph_nr_nodes = graph.nrNodes(),
+				graph_nr_dir_edges = graph.nrDirEdges(),
+				graph_nr_und_edges = graph.nrUndEdges(),
+				n_a_deg = n_a.degree(),
+				n_a_in_deg = n_a.inDegree(),
+				n_a_out_deg = n_a.outDegree(),
+				n_b_deg = n_b.degree(),
+				n_b_in_deg = n_b.inDegree(),
+				n_b_out_deg = n_b.outDegree();
 			
+			graph.removeEdge(e_1);
+			
+			expect(graph.nrNodes()).to.equal(graph_nr_nodes);
+			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges);
+			expect(graph.nrUndEdges()).to.equal(graph_nr_und_edges - 1);
+			expect(n_a.degree()).to.equal(n_a_deg - 1);
+			expect(n_a.outDegree()).to.equal(n_a_out_deg);
+			expect(n_a.inDegree()).to.equal(n_a_in_deg);
+			expect(n_b.degree()).to.equal(n_b_deg - 1);
+			expect(n_b.outDegree()).to.equal(n_b_out_deg);
+			expect(n_b.inDegree()).to.equal(n_b_in_deg);	
 		});
 		
 		
 		/**
-		 * DELETE undirected edge => DIRECTED graph
-		 * edge_1 is directed
-		 * node_a has in_degree 1, out_degree 0, degree 0
-		 * node_b has in_degree 0, out_degree 1, degree 0
-		 * graph has 2 node, 1 directed edge
-		 * graph is in DIRECTED mode
+		 * delete DIRECTED edge
+		 * e_4 (A->B) is deleted
+		 * n_a has outDegree of one less than before
+		 * n_a inDegree and degree stay the same
+		 * n_b has inDegree of one less than before
+		 * n_b outDegree and degree stay the same
+		 * graph still has 4 nodes
+		 * graph has same number of undirected edges
+		 * graph has one less directed edge
 		 */
-		it('should delete an existing undirected edge, changing the graph back to DIRECTED mode', () => {
+		it('should remove an existing directed edge, updating graph and node stats', () => {
+			var graph_nr_nodes = graph.nrNodes(),
+				graph_nr_dir_edges = graph.nrDirEdges(),
+				graph_nr_und_edges = graph.nrUndEdges(),
+				n_a_deg = n_a.degree(),
+				n_a_in_deg = n_a.inDegree(),
+				n_a_out_deg = n_a.outDegree(),
+				n_b_deg = n_b.degree(),
+				n_b_in_deg = n_b.inDegree(),
+				n_b_out_deg = n_b.outDegree();
+			
+			graph.removeEdge(e_4);
+			
+			expect(graph.nrNodes()).to.equal(graph_nr_nodes);
+			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges - 1);
+			expect(graph.nrUndEdges()).to.equal(graph_nr_und_edges);
+			expect(n_a.outDegree()).to.equal(n_a_out_deg - 1);
+			expect(n_a.inDegree()).to.equal(n_a_in_deg);
+			expect(n_a.degree()).to.equal(n_a_deg);
+			expect(n_b.outDegree()).to.equal(n_b_out_deg);
+			expect(n_b.inDegree()).to.equal(n_b_in_deg - 1);			
+			expect(n_b.degree()).to.equal(n_b_deg);
+		});
+
+		
+		
+		/**
+		 * Node deletion of non-existing node
+		 */
+		it('should throw an error when trying to remove a non-existing node', () => {
 			
 		});
 		
@@ -349,9 +469,9 @@ describe('GRAPH TESTS: ', () => {
 		/**
 		 * Compacting edges
 		 */
-		it('should combine the above functionality to do edge compaction', () => {
+		// it('should combine the above functionality to do edge compaction', () => {
 			
-		});
+		// });
 		
 	});
 	
