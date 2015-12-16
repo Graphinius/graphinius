@@ -34,8 +34,10 @@ interface IBaseNode {
 	removeEdge(edge: Edges.IBaseEdge) : void;
 	removeEdgeID(id: number) : Edges.IBaseEdge;
 	
-	// Do we need this? contemplating...
-	// Just for test cases it seems...
+	// Clear different types of edges
+	clearOutEdges() : void;
+	clearInEdges() : void;
+	clearUndEdges() : void;
 	clearEdges() : void;
 	
 	// connected NODES methods
@@ -239,6 +241,18 @@ class BaseNode implements IBaseNode {
 			delete this._out_edges[id];
 			return e;
 		}
+	}
+	
+	clearOutEdges() : void {
+		this._out_edges = {};		
+	}	
+	
+	clearInEdges() : void {
+		this._in_edges = {};		
+	}
+	
+	clearUndEdges() : void {
+		this._und_edges = {};
 	}
 	
 	clearEdges() : void {

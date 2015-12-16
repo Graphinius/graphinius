@@ -162,6 +162,10 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
 		});
 		
+	});
+		
+	
+	describe('finding nodes and edges by ID and Label', () => {
 		
 		it('should report the existence of a node by ID', () => {
 			expect(graph.hasNodeID(Number.NaN)).to.be.false;
@@ -239,7 +243,32 @@ describe('GRAPH TESTS: ', () => {
 		it('should return an edge by Label', () => {
 			expect(graph.getEdgeByLabel(edge_1.getLabel())).to.equal(edge_1);
 			expect(graph.getEdgeByLabel(edge_2.getLabel())).to.equal(edge_2);
-		});		
+		});
+	});		
+		
+		
+	describe('edge and node deletion scenarios', () => {
+		
+		beforeEach('instantiate a 4-node and 7-edge scenario', () => {
+			var graph = new Graph('Edge and node deletion test graph');
+			var n_a = graph.addNode('A');
+			var n_b = graph.addNode('B');
+			var n_c = graph.addNode('C');
+			var n_d = graph.addNode('D');
+			
+			
+					// 	var n_a = new $N.BaseNode(1, "A"),
+					// n_b = new $N.BaseNode(2, "B"),
+					// n_c = new $N.BaseNode(3, "C"),
+					// n_d = new $N.BaseNode(4, "D"),
+					// e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
+					// e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
+					// e_3 = new $E.BaseEdge(3, "d_aa", n_a, n_a, {directed: true}),
+					// e_4 = new $E.BaseEdge(4, "d_ab", n_a, n_b, {directed: true}),
+					// e_5 = new $E.BaseEdge(5, "d_ad", n_a, n_d, {directed: true}),
+					// e_6 = new $E.BaseEdge(6, "d_ca", n_c, n_a, {directed: true}),
+					// e_7 = new $E.BaseEdge(7, "d_da", n_d, n_a, {directed: true});
+		});
 		
 		
 		/**
@@ -323,7 +352,6 @@ describe('GRAPH TESTS: ', () => {
 		it('should combine the above functionality to do edge compaction', () => {
 			
 		});
-		
 		
 	});
 	

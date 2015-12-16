@@ -268,6 +268,7 @@ describe('==== NODE TESTS ====', () => {
 			* prevNodes(), nextNodes() and undNodes() methods
 			*/
 		describe('a little more comples scenario...', () => {
+			
 			var n_a = new $N.BaseNode(1, "A"),
 					n_b = new $N.BaseNode(2, "B"),
 					n_c = new $N.BaseNode(3, "C"),
@@ -412,31 +413,61 @@ describe('==== NODE TESTS ====', () => {
 			
 			});
 			
-		});		
+		});
 		
 		
-		describe('Node edge clearing', () => {
-			
-			it('should clear all edges and set degrees back to zero', () => {
-				// reinstantiate node in order to 'clear' object
+		describe('Node edge clearing', () => {			
+			var node_a,
+					edge_1,
+					edge_2,
+					edge_3;
+					
+					
+			beforeEach('should initialize settings', () => {
 				node_a = new $N.BaseNode(id, label);
-				var edge1 = new $E.BaseEdge(1, "One", node_a, node_b, {
+				edge_1 = new $E.BaseEdge(1, "One", node_a, node_b, {
 					directed: false
 				});
-				var edge2 = new $E.BaseEdge(2, "Two", node_a, node_b, {
+				edge_2 = new $E.BaseEdge(2, "Two", node_a, node_b, {
 					directed: true
 				});
-				var edge3 = new $E.BaseEdge(3, "Three", node_b, node_a, {
+				edge_3 = new $E.BaseEdge(3, "Three", node_b, node_a, {
 					directed: true
 				});
-				node_a.addEdge(edge1);
-				node_a.addEdge(edge2);
-				node_a.addEdge(edge3);
-				
+				node_a.addEdge(edge_1);
+				node_a.addEdge(edge_2);
+				node_a.addEdge(edge_3);
 				expect(node_a.inDegree()).to.equal(1);
 				expect(node_a.outDegree()).to.equal(1);
-				expect(node_a.degree()).to.equal(1);
-								
+				expect(node_a.degree()).to.equal(1);			
+			});
+			
+			
+			it('should clear all outgoing edges and update degrees accordingly', () => {				
+				node_a.clearOutEdges();
+				expect(node_a.inDegree()).to.equal(1);
+				expect(node_a.outDegree()).to.equal(0);
+				expect(node_a.degree()).to.equal(1);				
+			});
+			
+			
+			it('should clear all incoming edges and update degrees accordingly', () => {
+				node_a.clearInEdges();
+				expect(node_a.inDegree()).to.equal(0);
+				expect(node_a.outDegree()).to.equal(1);
+				expect(node_a.degree()).to.equal(1);				
+			});
+			
+			
+			it('should clear all undirected edges and update degrees accordingly', () => {
+				node_a.clearUndEdges();
+				expect(node_a.inDegree()).to.equal(1);
+				expect(node_a.outDegree()).to.equal(1);
+				expect(node_a.degree()).to.equal(0);
+			});
+			
+			
+			it('should clear all edges and set degrees back to zero', () => {								
 				node_a.clearEdges();
 				expect(node_a.inDegree()).to.equal(0);
 				expect(node_a.outDegree()).to.equal(0);

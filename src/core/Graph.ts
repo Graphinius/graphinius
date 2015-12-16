@@ -147,17 +147,14 @@ class BaseGraph implements IGraph {
 			throw new Error("cannot retrieve edge with non-existing Label.");
 		}
 		return edge;
-	}
-	
-	
+	}	
 	
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge {
 		var edge = new $E.BaseEdge(this._und_edge_count++,
 															 label,
 															 node_a,
 															 node_b,
-															 opts || {});
-		
+															 opts || {});		
 		// connect edge to first node anyways			
 		node_a.addEdge(edge);
 		
@@ -184,6 +181,7 @@ class BaseGraph implements IGraph {
 		}
 		return edge;
 	}
+	
 	
 	
 	getStats() : GraphStats {		
