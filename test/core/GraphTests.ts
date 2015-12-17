@@ -293,20 +293,11 @@ describe('GRAPH TESTS: ', () => {
 	});
 		
 		
-	describe('edge and node deletion scenarios', () => {
+	describe('edge and node deletion scenarios + degree distribution', () => {
 		
 		var graph,
-				n_a,
-				n_b,
-				n_c,
-				n_d,
-				e_1,
-				e_2,
-				e_3,
-				e_4,
-				e_5,
-				e_6,
-				e_7;
+				n_a, n_b, n_c, n_d, node_vana,
+				e_1, e_2, e_3, e_4, e_5, e_6, e_7;
 		
 		beforeEach('instantiate a 4-node and 7-edge scenario', () => {
 			graph = new Graph('Edge and node deletion test graph');
@@ -322,11 +313,23 @@ describe('GRAPH TESTS: ', () => {
 			e_6 = graph.addEdge('6', n_c, n_a, {directed: true});
 			e_7 = graph.addEdge('7', n_d, n_a, {directed: true});
 			
+			node_vana = new Node(42, 'IAmNotInGraph');
+			
 			expect(graph.nrNodes()).to.equal(4);
 			// expect(graph.nrEdges()).to.equal(7);
 			expect(graph.nrDirEdges()).to.equal(5);
 			expect(graph.nrUndEdges()).to.equal(2);
 			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+		});
+		
+		
+		it('should output the correct degree distribution', () => {
+			var deg_dist : $G.DegreeDistribution = graph.degreeDistribution();
+			expect(deg_dist.und).to.deep.equal(new Uint16Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
+			expect(deg_dist.in).to.deep.equal( new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.out).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.dir).to.deep.equal(new Uint16Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
+			expect(deg_dist.all).to.deep.equal(new Uint16Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
 		});
 		
 		
@@ -346,6 +349,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph still has 4 nodes
 		 * graph has same number of directed edges
 		 * graph has one less undirected edge
+		 * graph is still in MIXED mode
 		 */
 		it('should remove an existing undirected edge, updating graph and node stats', () => {
 			var graph_nr_nodes = graph.nrNodes(),
@@ -368,7 +372,8 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_a.inDegree()).to.equal(n_a_in_deg);
 			expect(n_b.degree()).to.equal(n_b_deg - 1);
 			expect(n_b.outDegree()).to.equal(n_b_out_deg);
-			expect(n_b.inDegree()).to.equal(n_b_in_deg);	
+			expect(n_b.inDegree()).to.equal(n_b_in_deg);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
 		});
 		
 		
@@ -382,6 +387,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph still has 4 nodes
 		 * graph has same number of undirected edges
 		 * graph has one less directed edge
+		 * graph is still in MIXED mode
 		 */
 		it('should remove an existing directed edge, updating graph and node stats', () => {
 			var graph_nr_nodes = graph.nrNodes(),
@@ -405,69 +411,252 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_b.outDegree()).to.equal(n_b_out_deg);
 			expect(n_b.inDegree()).to.equal(n_b_in_deg - 1);			
 			expect(n_b.degree()).to.equal(n_b_deg);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
 		});
 
 		
+		/**
+		 * delete ALL UNDIRECTED edges
+		 * e_1 + e_2 deleted
+		 * we trust node degrees as per earlier examples
+		 * graph still has 4 nodes
+		 * graph has same number of directed edges
+		 * graph has 0 undirected edges
+		 * graph is now in DIRECTED mode
+		 */
+		it('should remove ALL undirected edges, bringing the graph into DIRECTED mode', () => {
+			var graph_nr_dir_edges = graph.nrDirEdges(),
+				graph_nr_und_edges = graph.nrUndEdges();
+			
+			graph.removeEdge(e_1);
+			graph.removeEdge(e_2);
+			
+			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges);
+			expect(graph.nrUndEdges()).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+		});
+		
 		
 		/**
-		 * Node deletion of non-existing node
+		 * delete ALL DIRECTED edges
+		 * e_3 - e_7 deleted
+		 * we trust node stats as per earlier examples
+		 * graph has same number of undirected edges
+		 * graph has 0 directed edges
+		 * graph is now in UNDIRECTED mode
 		 */
-		it('should throw an error when trying to remove a non-existing node', () => {
+		it('should remove ALL directed edges, bringing the graph into UNDIRECTED mode', () => {
+			var	graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges();
 			
+			graph.removeEdge(e_3);
+			graph.removeEdge(e_4);
+			graph.removeEdge(e_5);
+			graph.removeEdge(e_6);
+			graph.removeEdge(e_7);
+			
+			expect(graph.nrUndEdges()).to.equal(graph_nr_und_edges);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
+		});
+		
+		
+		/**
+		 * delete ALL edges
+		 * e_1 - e_7 deleted
+		 * we trust node stats as per earlier examples
+		 * graph has 0 undirected edges
+		 * graph has 0 directed edges
+		 * graph is now in INIT mode
+		 */
+		it('should remove ALL directed edges, bringing the graph into UNDIRECTED mode', () => {
+			var	graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges();
+			
+			graph.removeEdge(e_1);
+			graph.removeEdge(e_2);
+			graph.removeEdge(e_3);
+			graph.removeEdge(e_4);
+			graph.removeEdge(e_5);
+			graph.removeEdge(e_6);
+			graph.removeEdge(e_7);
+			
+			expect(graph.nrUndEdges()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
+		});
+		
+		
+	
+		/**
+		 * Node deletion of un-added node
+		 */
+		it('should throw an error when trying to remove an un-added node', () => {
+			expect(graph.removeNode.bind(graph, node_vana)).to.throw('Cannot remove un-added node.');
 		});
 		
 		
 		/**
 		 * Node deletion WITHOUT edges
 		 */
-		it('should correctly delete an unconnected node', () => {
-			
+		it('should simply delete an unconnected node', () => {
+			var node = graph.addNode('IAmInGraph');
+			var nr_nodes = graph.nrNodes();
+			graph.removeNode(node);
+			expect(graph.nrNodes()).to.equal(nr_nodes - 1);
 		});
 		
 		
 		/**
-		 * Node deletion WITH edges
+		 * Node outgoing edge deletion on NODE_VANA
 		 */
-		it('should throw an error when trying to delete a connected node', () => {
-			
+		it('should throw an error when trying to delete outgoing edges of an un-added node', () => {
+			expect(graph.deleteOutEdgesOf.bind(graph, node_vana)).to.throw('Cowardly refusing to delete edges of un-added node.');
 		});
 		
 		
 		/**
 		 * Node edge deletion => outgoing edges
 		 */
-		it('should allow to delete all outgoing edges of a node', () => {
-			
+		it('should correctly delete all outgoing edges of a node', () => {
+			graph.deleteOutEdgesOf(n_a);
+			expect(n_a.outDegree()).to.equal(0);
+			expect(n_a.inDegree()).to.equal(2);
+			expect(n_b.inDegree()).to.equal(0);
+			expect(n_d.inDegree()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(2);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);		
+		});
+		
+		
+		/**
+		 * Node incoming edge deletion on NODE_VANA
+		 */
+		it('should throw an error when trying to delete incoming edges of an un-added node', () => {
+			expect(graph.deleteInEdgesOf.bind(graph, node_vana)).to.throw('Cowardly refusing to delete edges of un-added node.');
 		});
 		
 		
 		/**
 		 * Node edge deletion => incoming edges
 		 */
-		it('should allow to delete all incoming edges of a node', () => {
-			
+		it('should correctly delete all incoming edges of a node', () => {
+			graph.deleteInEdgesOf(n_a);
+			expect(n_a.inDegree()).to.equal(0);
+			expect(n_a.outDegree()).to.equal(2);
+			expect(n_c.outDegree()).to.equal(0);
+			expect(n_d.outDegree()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(2);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);			
+		});
+		
+		
+		/**
+		 * Node directed edge deletion on NODE_VANA
+		 */
+		it('should throw an error when trying to delete directed edges of an un-added node', () => {
+			expect(graph.deleteDirEdgesOf.bind(graph, node_vana)).to.throw('Cowardly refusing to delete edges of un-added node.');
+		});
+		
+		
+		/**
+		 * Node edge deletion => directed edges
+		 */
+		it('should correctly delete all directed edges of a node', () => {
+			graph.deleteDirEdgesOf(n_a);
+			expect(n_a.inDegree()).to.equal(0);
+			expect(n_a.outDegree()).to.equal(0);
+			expect(n_b.inDegree()).to.equal(0);
+			expect(n_c.outDegree()).to.equal(0);
+			expect(n_d.inDegree()).to.equal(0);
+			expect(n_d.outDegree()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(2);
+			expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);		
+		});
+		
+		
+		/**
+		 * Node undirected edge deletion on NODE_VANA
+		 */
+		it('should throw an error when trying to delete undirected edges of an un-added node', () => {
+			expect(graph.deleteUndEdgesOf.bind(graph, node_vana)).to.throw('Cowardly refusing to delete edges of un-added node.');
 		});
 		
 		
 		/**
 		 * Node edge deletion => undirected edges
 		 */
-		it('should allow to delete all undirected edges of a node', () => {
-			
+		it('should correctly delete all undirected edges of a node', () => {
+			graph.deleteUndEdgesOf(n_a);
+			expect(n_a.degree()).to.equal(0);
+			expect(n_b.degree()).to.equal(0);
+			expect(n_c.degree()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+		});
+		
+		
+		/**
+		 * Node ALL edge deletion on NODE_VANA
+		 */
+		it('should throw an error when trying to delete all edges of an un-added node', () => {
+			expect(graph.deleteAllEdgesOf.bind(graph, node_vana)).to.throw('Cowardly refusing to delete edges of un-added node.');
 		});
 		
 		
 		/**
 		 * Node edge deletion => all edges
 		 */
-		it('should allow to completely disconnect a node', () => {
-			
+		it('should correctly delete all edges of a node', () => {
+			graph.deleteAllEdgesOf(n_a);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);
+			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
+		});
+		
+		
+		/**
+		 * Node deletion WITH edges
+		 * Delete C node -> only 2 edges, 1 undirected and 1 directed
+		 * A node should have 1 less undirected and 1 less incoming
+		 * graph should still be in mixed mode
+		 */
+		it('should correctly delete a formerly node, test case 1', () => {
+			graph.removeNode(n_c);
+			expect(n_a.degree()).to.equal(1);
+			expect(n_a.inDegree()).to.equal(2);
+			expect(graph.nrNodes()).to.equal(3);
+			expect(graph.nrDirEdges()).to.equal(4);
+			expect(graph.nrUndEdges()).to.equal(1);
+			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+		});
+		
+		
+		/**
+		 * Node deletion WITH edges
+		 * Delete A node -> connected to ALL edges
+		 * graph and all remaining nodes should be left without edges
+		 * graph should be in INIT mode...
+		 */
+		it('should correctly delete a formerly node, test case 2', () => {
+			// console.dir(graph.getStats());
+			// console.dir(graph.degreeDistribution());
+			graph.removeNode(n_a);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);
+			expect(graph.nrNodes()).to.equal(3);
+			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
+			// console.dir(graph.getStats());
+			// console.dir(graph.degreeDistribution());
 		});
 		
 		
 		//==========================================================
 		/**
-		 * Compacting edges
+		 * !!! LATER !!!
+		 * Compacting nodes / edges
 		 */
 		// it('should combine the above functionality to do edge compaction', () => {
 			

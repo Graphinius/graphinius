@@ -32,7 +32,7 @@ interface IBaseNode {
 	undEdges() : {[k: number] : Edges.IBaseEdge};
 	
 	removeEdge(edge: Edges.IBaseEdge) : void;
-	removeEdgeID(id: number) : Edges.IBaseEdge;
+	removeEdgeID(id: number) : void;
 	
 	// Clear different types of edges
 	clearOutEdges() : void;
@@ -211,35 +211,36 @@ class BaseNode implements IBaseNode {
 		if ( !this.hasEdge(edge) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		if ( this._und_edges[edge.getID()] ) { 
-			delete this._und_edges[edge.getID()];
+		var id = edge.getID();		
+		var e = this._und_edges[id];
+		if ( e ) { 
+			delete this._und_edges[id];
 		}
-		if ( this._in_edges[edge.getID()] ) { 
-			delete this._in_edges[edge.getID()];
+		e = this._in_edges[id];
+		if ( e ) { 
+			delete this._in_edges[id];
 		}
-		if ( this._out_edges[edge.getID()] ) { 
-			delete this._out_edges[edge.getID()]; 
+		e = this._out_edges[id];
+		if ( e ) { 
+			delete this._out_edges[id];
 		}
 	}
 	
-	removeEdgeID(id: number) : Edges.IBaseEdge {
+	removeEdgeID(id: number) : void {
 		if ( !this.hasEdgeID(id) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
 		var e = this._und_edges[id];
 		if ( e ) { 
 			delete this._und_edges[id];
-			return e;
 		}
 		e = this._in_edges[id];
 		if ( e ) { 
 			delete this._in_edges[id];
-			return e;
 		}
 		e = this._out_edges[id];
 		if ( e ) { 
 			delete this._out_edges[id];
-			return e;
 		}
 	}
 	
