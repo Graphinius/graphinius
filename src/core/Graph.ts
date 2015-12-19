@@ -23,9 +23,11 @@ interface DegreeDistribution {
 
 
 interface GraphStats {
+	mode					: GraphMode;
 	nr_nodes			: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
+	degree_dist		: DegreeDistribution;
 }
 
 
@@ -42,6 +44,7 @@ interface IGraph {
 	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: number) : $N.IBaseNode;
 	getNodeByLabel(label: string) : $N.IBaseNode;
+	getNodes() : {[key: number] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
 	removeNode(node) : void;
@@ -55,6 +58,9 @@ interface IGraph {
 	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: number) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
+	getDirEdges() : {[key: number] : $E.IBaseEdge};
+	getUndEdges() : {[key: number] : $E.IBaseEdge};
+	
 	nrDirEdges() : number;
 	nrUndEdges() : number;
 	removeEdge(edge: $E.IBaseEdge) : void;
@@ -89,9 +95,11 @@ class BaseGraph implements IGraph {
 	
 	getStats() : GraphStats {		
 		return {
+			mode: this._mode,
 			nr_nodes: Object.keys(this._nodes).length,
 			nr_und_edges: Object.keys(this._und_edges).length,
-			nr_dir_edges: Object.keys(this._dir_edges).length
+			nr_dir_edges: Object.keys(this._dir_edges).length,
+			degree_dist: this.degreeDistribution()
 		}
 	}
 
@@ -140,7 +148,7 @@ class BaseGraph implements IGraph {
 	}
 	
 	/**
-	 * Use hasNodeLabel with CAUTION -> 
+	 * Use hasNodeLabel with CAUTION ->
 	 * it has LINEAR runtime in the graph's #nodes
 	 */
 	hasNodeLabel(label: string) : boolean {
@@ -174,6 +182,10 @@ class BaseGraph implements IGraph {
 	
 	nrNodes() : number {
 		return Object.keys(this._nodes).length;
+	}
+	
+	getNodes() : {[key: number] : $N.IBaseNode} {
+		return this._nodes;
 	}
 	
 	getRandomNode() : $N.IBaseNode {
@@ -241,8 +253,16 @@ class BaseGraph implements IGraph {
 			throw new Error("cannot retrieve edge with non-existing Label.");
 		}
 		return edge;
-	}	
+	}
 	
+	getDirEdges() : {[key: number] : $E.IBaseEdge} {
+		return this._dir_edges;
+	}
+	
+	getUndEdges() : {[key: number] : $E.IBaseEdge} {
+		return this._und_edges;
+	}
+		
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge {
 		var edge = new $E.BaseEdge(this._und_edge_count++,
 															 label,
@@ -397,7 +417,7 @@ class BaseGraph implements IGraph {
 	
 	protected updateGraphMode() {
 		var nr_dir = this.nrDirEdges(),
-		nr_und = this.nrUndEdges();
+				nr_und = this.nrUndEdges();
 		
 		if ( nr_dir && nr_und  ) {
 			this._mode = GraphMode.MIXED;

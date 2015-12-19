@@ -293,7 +293,7 @@ describe('GRAPH TESTS: ', () => {
 	});
 		
 		
-	describe('edge and node deletion scenarios + degree distribution', () => {
+	describe('A little more complex scenario with 4 nodes and 7 edges, mixed mode', () => {
 		
 		var graph,
 				n_a, n_b, n_c, n_d, node_vana,
@@ -320,6 +320,35 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrDirEdges()).to.equal(5);
 			expect(graph.nrUndEdges()).to.equal(2);
 			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+		});
+		
+		
+		it('should return the nodes list', () => {
+			var nodes = graph.getNodes();
+			expect(Object.keys(nodes).length).to.equal(4);
+			expect(nodes[n_a.getID()]).to.equal(n_a);
+			expect(nodes[n_b.getID()]).to.equal(n_b);
+			expect(nodes[n_c.getID()]).to.equal(n_c);
+			expect(nodes[n_d.getID()]).to.equal(n_d);
+		});
+		
+		
+		it('should return the list of undirected edges', () => {
+			var edges = graph.getUndEdges();
+			expect(Object.keys(edges).length).to.equal(2);
+			expect(edges[e_1.getID()]).to.equal(e_1);
+			expect(edges[e_2.getID()]).to.equal(e_2);
+		});
+		
+		
+		it('should return the list of directed edges', () => {
+			var edges = graph.getDirEdges();
+			expect(Object.keys(edges).length).to.equal(5);
+			expect(edges[e_3.getID()]).to.equal(e_3);
+			expect(edges[e_4.getID()]).to.equal(e_4);
+			expect(edges[e_5.getID()]).to.equal(e_5);
+			expect(edges[e_6.getID()]).to.equal(e_6);
+			expect(edges[e_7.getID()]).to.equal(e_7);
 		});
 		
 		

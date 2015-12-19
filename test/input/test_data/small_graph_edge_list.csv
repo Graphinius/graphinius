@@ -1,0 +1,9 @@
+A, B, u
+A, B, d
+A, C, u
+A, D, d
+B, A, u
+C, A, u
+C, A, d
+D, A, d
+A, A, d
