@@ -93,7 +93,7 @@ class BaseGraph implements IGraph {
 		return this._mode;
 	}
 	
-	getStats() : GraphStats {		
+	getStats() : GraphStats {
 		return {
 			mode: this._mode,
 			nr_nodes: Object.keys(this._nodes).length,
@@ -139,7 +139,7 @@ class BaseGraph implements IGraph {
 	
 	addNode(id: string, opts? : {}) : $N.IBaseNode {
 		var node = new $N.BaseNode(id, opts);
-		this._nodes[node.getID()] = node;		
+		this._nodes[node.getID()] = node;
 		return node;
 	}
 	
@@ -281,7 +281,7 @@ class BaseGraph implements IGraph {
 			else {
 				this._mode = GraphMode.DIRECTED;
 			}
-		} 
+		}
 		else {
 			// add edge to both nodes, except they are the same...
 			if ( node_a !== node_b ) {

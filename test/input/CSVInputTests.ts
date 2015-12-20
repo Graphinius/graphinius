@@ -38,15 +38,22 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			csv = new CSV();
 		});
 		
+		
+		// it('should throw an error when trying to read a file from directory structure inside the browser', () => {
+		// 	// Simulate browser environment
+		// 	// how?
+		// 	expect(csv.readFromAdjacenyList.bind(csv, '../i/dont/exist.csv')).to.throw('Cannot read file in browser environment.');
+		// });
+		
 		/**
 		 * We are going to use the 'slightly more complex scenario'
 		 * from our Graph tests (4 nodes, 7 edges)
 		 * The CSV will be encoded as an adjacency list
 		 */ 
 		it('should construct a very small graph from an adjacency list and produce the right stats', () => {
-			var file = "./test_data/small_graph_adj_list_def_sep.csv";
+			var file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
 			var graph = csv.readFromAdjacenyList(file);
-			// checkSmallGraphStats(graph);
+			checkSmallGraphStats(graph);
 		});
 		
 		
@@ -56,9 +63,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		 * The CSV will be encoded as an edge list
 		 */ 
 		it('should construct a very small graph from an edge list and produce the right stats', () => {
-			
-			
-			
+			csv._separator = " ";
+			var file = "./test/input/test_data/small_graph_adj_list_ws_sep.csv";
+			var graph = csv.readFromAdjacenyList(file);
+			checkSmallGraphStats(graph);			
 		});
 		
 		
@@ -118,13 +126,13 @@ describe('GRAPH CSV INPUT TESTS', () => {
 					e_acu = und_edges["ACu"];
 					
 			expect(e_abu).not.to.be.undefined;
-			expect(e_abu.getLabel()).to.equal("1");
+			expect(e_abu.getLabel()).to.equal("ABu");
 			expect(e_abu.isDirected()).to.be.false;
 			expect(e_abu.getNodes().a).to.equal(n_a);
 			expect(e_abu.getNodes().b).to.equal(n_b);			
 			
 			expect(e_acu).not.to.be.undefined;
-			expect(e_acu.getLabel()).to.equal("2");
+			expect(e_acu.getLabel()).to.equal("ACu");
 			expect(e_acu.isDirected()).to.be.false;
 			expect(e_acu.getNodes().a).to.equal(n_a);
 			expect(e_acu.getNodes().b).to.equal(n_c);		
@@ -137,37 +145,36 @@ describe('GRAPH CSV INPUT TESTS', () => {
 					e_dad = dir_edges["DAd"];
 					
 			expect(e_aad).not.to.be.undefined;
-			expect(e_aad.getLabel()).to.equal("3");
+			expect(e_aad.getLabel()).to.equal("AAd");
 			expect(e_aad.isDirected()).to.be.true;
 			expect(e_aad.getNodes().a).to.equal(n_a);
 			expect(e_aad.getNodes().b).to.equal(n_a);
 			
 			expect(e_abd).not.to.be.undefined;
-			expect(e_abd.getLabel()).to.equal("4");
+			expect(e_abd.getLabel()).to.equal("ABd");
 			expect(e_abd.isDirected()).to.be.true;
 			expect(e_abd.getNodes().a).to.equal(n_a);
 			expect(e_abd.getNodes().b).to.equal(n_b);
 			
 			expect(e_add).not.to.be.undefined;
-			expect(e_add.getLabel()).to.equal("5");
+			expect(e_add.getLabel()).to.equal("ADd");
 			expect(e_add.isDirected()).to.be.true;
 			expect(e_add.getNodes().a).to.equal(n_a);
 			expect(e_add.getNodes().b).to.equal(n_d);
 			
 			expect(e_cad).not.to.be.undefined;
-			expect(e_cad.getLabel()).to.equal("6");
+			expect(e_cad.getLabel()).to.equal("CAd");
 			expect(e_cad.isDirected()).to.be.true;
 			expect(e_cad.getNodes().a).to.equal(n_c);
 			expect(e_cad.getNodes().b).to.equal(n_a);
 			
 			expect(e_dad).not.to.be.undefined;
-			expect(e_dad.getLabel()).to.equal("5");
+			expect(e_dad.getLabel()).to.equal("DAd");
 			expect(e_dad.isDirected()).to.be.true;
 			expect(e_dad.getNodes().a).to.equal(n_d);
 			expect(e_dad.getNodes().b).to.equal(n_a);
 		}
-		
-		
+			
 	});	
 	
 });
