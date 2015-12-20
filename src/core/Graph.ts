@@ -39,12 +39,12 @@ interface IGraph {
 	degreeDistribution() : DegreeDistribution;
 	
 	// NODE STUFF
-	addNode(label: string) : $N.IBaseNode;
-	hasNodeID(id: number) : boolean;
+	addNode(id: string, opts? : {}) : $N.IBaseNode;
+	hasNodeID(id: string) : boolean;
 	hasNodeLabel(label: string) : boolean;
-	getNodeById(id: number) : $N.IBaseNode;
+	getNodeById(id: string) : $N.IBaseNode;
 	getNodeByLabel(label: string) : $N.IBaseNode;
-	getNodes() : {[key: number] : $N.IBaseNode};
+	getNodes() : {[key: string] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
 	removeNode(node) : void;
@@ -54,12 +54,12 @@ interface IGraph {
 	
 	// EDGE STUFF
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
-	hasEdgeID(id: number) : boolean;
+	hasEdgeID(id: string) : boolean;
 	hasEdgeLabel(label: string) : boolean;
-	getEdgeById(id: number) : $E.IBaseEdge;
+	getEdgeById(id: string) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
-	getDirEdges() : {[key: number] : $E.IBaseEdge};
-	getUndEdges() : {[key: number] : $E.IBaseEdge};
+	getDirEdges() : {[key: string] : $E.IBaseEdge};
+	getUndEdges() : {[key: string] : $E.IBaseEdge};
 	
 	nrDirEdges() : number;
 	nrUndEdges() : number;
@@ -82,9 +82,9 @@ class BaseGraph implements IGraph {
 	protected _node_count : number = 0;
 	protected _dir_edge_count : number = 0;
 	protected _und_edge_count : number = 0;
-	protected _nodes : { [key: number] : $N.IBaseNode } = {};
-	protected _dir_edges : { [key: number] : $E.IBaseEdge } = {};
-	protected _und_edges : { [key: number] : $E.IBaseEdge } = {};
+	protected _nodes : { [key: string] : $N.IBaseNode } = {};
+	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {};
+	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};
 	
 	
 	constructor (public _label) {	}
@@ -137,13 +137,13 @@ class BaseGraph implements IGraph {
 	
 	
 	
-	addNode(label: string) : $N.IBaseNode {
-		var node = new $N.BaseNode(this._node_count++, label);
+	addNode(id: string, opts? : {}) : $N.IBaseNode {
+		var node = new $N.BaseNode(id, opts);
 		this._nodes[node.getID()] = node;		
 		return node;
 	}
 	
-	hasNodeID(id: number) : boolean {
+	hasNodeID(id: string) : boolean {
 		return !!this._nodes[id];
 	}
 	
@@ -157,7 +157,7 @@ class BaseGraph implements IGraph {
 		});
 	}
 	
-	getNodeById(id: number) : $N.IBaseNode {
+	getNodeById(id: string) : $N.IBaseNode {
 		var node = this._nodes[id];
 		if ( !node ) {
 			throw new Error("cannot retrieve node with non-existing ID.");
@@ -184,7 +184,7 @@ class BaseGraph implements IGraph {
 		return Object.keys(this._nodes).length;
 	}
 	
-	getNodes() : {[key: number] : $N.IBaseNode} {
+	getNodes() : {[key: string] : $N.IBaseNode} {
 		return this._nodes;
 	}
 	
@@ -211,7 +211,7 @@ class BaseGraph implements IGraph {
 		delete this._nodes[node.getID()];
 	}
 	
-	hasEdgeID(id: number) : boolean {
+	hasEdgeID(id: string) : boolean {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
 	}
 	
@@ -229,7 +229,7 @@ class BaseGraph implements IGraph {
 		return !!dir_id || !!und_id;
 	}
 	
-	getEdgeById(id: number) : $E.IBaseEdge {
+	getEdgeById(id: string) : $E.IBaseEdge {
 		var edge = this._dir_edges[id] || this._und_edges[id];
 		if ( !edge ) {
 			throw new Error("cannot retrieve edge with non-existing ID.");
@@ -255,17 +255,16 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 	
-	getDirEdges() : {[key: number] : $E.IBaseEdge} {
+	getDirEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._dir_edges;
 	}
 	
-	getUndEdges() : {[key: number] : $E.IBaseEdge} {
+	getUndEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._und_edges;
 	}
 		
-	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge {
-		var edge = new $E.BaseEdge(this._und_edge_count++,
-															 label,
+	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
+		var edge = new $E.BaseEdge(id,
 															 node_a,
 															 node_b,
 															 opts || {});		

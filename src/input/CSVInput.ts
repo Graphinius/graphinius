@@ -15,8 +15,7 @@ interface ICSVInput {
 
 class CSVInput implements ICSVInput {
 	
-	constructor(public _separator : string = ',') {
-		
+	constructor(public _separator : string = ',') {		
 	}
 	
 	

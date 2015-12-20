@@ -10,22 +10,35 @@ var Edge = $E.BaseEdge;
 
 
 describe('==== NODE TESTS ====', () => {
-	var id = 42;
-	var label = "New Node"
+	var id = "New Node";
 
 	describe('Basic node instantiation', () => {
 		it('should correclty instantiate a node with id', () => {
-			var node = new $N.BaseNode(id, label);
+			var node = new $N.BaseNode(id);
 			expect(node.getID()).to.equal(id);
 		});
 		
+		it('should set default label to ID', () => {
+			var node = new $N.BaseNode(id);
+			expect(node.getLabel()).to.equal(id);
+		});
+		
 		it('should correclty instantiate a node with label', () => {
-			var node = new $N.BaseNode(id, label);
+			var label = "New Label";
+			var node = new $N.BaseNode(id, {label: label});
 			expect(node.getLabel()).to.equal(label);
 		});
 		
+		it('should allow setting new label', () => {
+			var label = "New Label";
+			var node = new $N.BaseNode(id, {label: label});
+			expect(node.getLabel()).to.equal(label);
+			node.setLabel("Even newer");
+			expect(node.getLabel()).to.equal("Even newer");
+		});
+		
 		it('should automatically report all degree values as zero upon instantiations', () => {
-			var node = new $N.BaseNode(id, label);
+			var node = new $N.BaseNode(id);
 			expect(node.inDegree()).to.equal(0);
 			expect(node.outDegree()).to.equal(0);
 			expect(node.degree()).to.equal(0);
@@ -35,7 +48,7 @@ describe('==== NODE TESTS ====', () => {
 	
 	describe('Node FEATURE vector tests', () => {
 		var feats = {name: 'Bernie', age: 36, future: 'Billionaire'};
-		var node = new $N.BaseNode(id, label, feats);
+		var node = new $N.BaseNode(id, feats);
 			
 		it('should correctly set default features to an empty hash object', () => {
 			expect(node.getFeatures()).to.be.an.instanceof(Object);
@@ -83,7 +96,7 @@ describe('==== NODE TESTS ====', () => {
 		
 		it('should allow to replace the whole feature vector', () => {
 			var feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			var node = new $N.BaseNode(id, label, feats);
+			var node = new $N.BaseNode(id, feats);
 			expect(Object.keys(node.getFeatures()).length).to.equal(3);
 			node.setFeatures({});
 			expect(Object.keys(node.getFeatures()).length).to.equal(0);	
@@ -91,7 +104,7 @@ describe('==== NODE TESTS ====', () => {
 		
 		it('should allow to clear the whole feature vector', () => {
 			var feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			var node = new $N.BaseNode(id, label, feats);
+			var node = new $N.BaseNode(id, feats);
 			expect(Object.keys(node.getFeatures()).length).to.equal(3);
 			node.clearFeatures();
 			expect(Object.keys(node.getFeatures()).length).to.equal(0);			
@@ -100,23 +113,22 @@ describe('==== NODE TESTS ====', () => {
 	
 	
 	describe('Node edge addition / query / removal tests', () => {
-		var node_a = new $N.BaseNode(id, label),
-				node_b = new $N.BaseNode(id, label),
-				e_id = 55,
-				e_label = "Edgy";
+		var node_a 	= new $N.BaseNode(id),
+				node_b 	= new $N.BaseNode(id),
+				e_id		= "Edgy";
 		
 		
 		describe('Node edge addition tests', () => {
 		
 			it('should throw an error if we add an unrelated edge', () => {
 				var node_c = new $N.BaseNode(9999, 'Not connected to node_a');
-				var edge = new $E.BaseEdge(e_id, e_label, node_b, node_c);
+				var edge = new $E.BaseEdge(e_id, node_b, node_c);
 				
 				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add edge that does not connect to this node");
 			});
 			
 			it('should throw an error if we try to add an unidrected edge more than once', () => {
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 														
@@ -132,7 +144,7 @@ describe('==== NODE TESTS ====', () => {
 			});
 			
 			it('should not throw an error if we try to connect the same edge (ID) as incoming and outgoing (the node then belongs to its own prevs and nexts)..', () => {
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_a, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_a, {
 					directed: true
 				});
 				var in_deg = node_a.inDegree();
@@ -159,7 +171,7 @@ describe('==== NODE TESTS ====', () => {
 			it('should correctly add an undirected edge and recompute degrees', () => {
 				// Clear up the node first..
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 				var in_deg_a 	= node_a.inDegree(),
@@ -176,7 +188,7 @@ describe('==== NODE TESTS ====', () => {
 			
 			it('should correctly add an outgoing edge and recompute degrees', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: true
 				});
 				var in_deg_a 	= node_a.inDegree(),
@@ -194,7 +206,7 @@ describe('==== NODE TESTS ====', () => {
 			
 			it('should correctly add an incoming edge and recompute degrees', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_b, node_a, {
+				var edge = new $E.BaseEdge(e_id, node_b, node_a, {
 					directed: true
 				});
 				var in_deg_a 	= node_a.inDegree(),
@@ -210,14 +222,13 @@ describe('==== NODE TESTS ====', () => {
 			});		
 			
 		});
-		
-	
+			
 		
 		describe('Node single edge queries', () => {
 			
 			it('should assert that an added edge is connected by reference', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});						
 				node_a.addEdge(edge);				
@@ -226,7 +237,7 @@ describe('==== NODE TESTS ====', () => {
 			
 			it('should assert that an added edge is connected by ID', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});						
 				node_a.addEdge(edge);
@@ -235,17 +246,17 @@ describe('==== NODE TESTS ====', () => {
 			
 			it('should assert that non-existing edge is not connected by ID', () => {
 				node_a.clearEdges();
-				expect(node_a.hasEdgeID(9999)).to.be.false;
+				expect(node_a.hasEdgeID("Idontexist")).to.be.false;
 			});
 			
 			it('should throw an error upon trying to retrieve a non-existing edge', () => {
 				node_a.clearEdges();
-				expect(node_a.getEdge.bind(node_a, 9999)).to.throw("Cannot retrieve non-existing edge.");
+				expect(node_a.getEdge.bind(node_a, "Idontexist")).to.throw("Cannot retrieve non-existing edge.");
 			});
 			
 			it('should correctly retrieve exising edge by ID', () => {
 				node_a.clearEdges();
-				var edge = new $E.BaseEdge(e_id, e_label, node_a, node_b, {
+				var edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});						
 				node_a.addEdge(edge);
@@ -273,13 +284,13 @@ describe('==== NODE TESTS ====', () => {
 					n_b = new $N.BaseNode(2, "B"),
 					n_c = new $N.BaseNode(3, "C"),
 					n_d = new $N.BaseNode(4, "D"),
-					e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
-					e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
-					e_3 = new $E.BaseEdge(3, "d_aa", n_a, n_a, {directed: true}),
-					e_4 = new $E.BaseEdge(4, "d_ab", n_a, n_b, {directed: true}),
-					e_5 = new $E.BaseEdge(5, "d_ad", n_a, n_d, {directed: true}),
-					e_6 = new $E.BaseEdge(6, "d_ca", n_c, n_a, {directed: true}),
-					e_7 = new $E.BaseEdge(7, "d_da", n_d, n_a, {directed: true});
+					e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
+					e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
+					e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
+					e_4 = new $E.BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true}),
+					e_5 = new $E.BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true}),
+					e_6 = new $E.BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true}),
+					e_7 = new $E.BaseEdge("7", n_d, n_a, {label: "d_da", directed: true});
 			n_a.addEdge(e_1);
 			n_a.addEdge(e_2);
 			n_a.addEdge(e_3);
@@ -364,14 +375,14 @@ describe('==== NODE TESTS ====', () => {
 					n_b = new $N.BaseNode(2, "B"),
 					n_c = new $N.BaseNode(3, "C"),
 					n_d = new $N.BaseNode(4, "D"),
-					e_1 = new $E.BaseEdge(1, "u_ab", n_a, n_b),
-					e_2 = new $E.BaseEdge(2, "u_ac", n_a, n_c),
-					e_3 = new $E.BaseEdge(3, "d_aa", n_a, n_a, {directed: true}),
-					e_4 = new $E.BaseEdge(4, "d_ab", n_a, n_b, {directed: true}),
-					e_5 = new $E.BaseEdge(5, "d_ad", n_a, n_d, {directed: true}),
-					e_6 = new $E.BaseEdge(6, "d_ca", n_c, n_a, {directed: true}),
-					e_7 = new $E.BaseEdge(7, "d_da", n_d, n_a, {directed: true});
-					e_8 = new $E.BaseEdge(8, "u_bb", n_a, n_a);
+					e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
+					e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
+					e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
+					e_4 = new $E.BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true}),
+					e_5 = new $E.BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true}),
+					e_6 = new $E.BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true}),
+					e_7 = new $E.BaseEdge("7", n_d, n_a, {label: "d_da", directed: true}),
+					e_8 = new $E.BaseEdge("8", n_a, n_a, {label: "d_da"});
 					n_a.addEdge(e_1);
 					n_a.addEdge(e_2);
 					n_a.addEdge(e_3);
@@ -391,7 +402,7 @@ describe('==== NODE TESTS ====', () => {
 				
 			
 				it('should throw an Error when trying to delete non-connected edge', () => {
-					var edginot = new $E.BaseEdge(9999, "Unconnected", n_b, n_c);
+					var edginot = new $E.BaseEdge("Unconnected", n_b, n_c);
 					expect(n_a.removeEdge.bind(n_a, edginot)).to.throw("Cannot remove unconnected edge.");
 				});
 				
@@ -488,14 +499,14 @@ describe('==== NODE TESTS ====', () => {
 					
 					
 			beforeEach('should initialize settings', () => {
-				node_a = new $N.BaseNode(id, label);
-				edge_1 = new $E.BaseEdge(1, "One", node_a, node_b, {
+				node_a = new $N.BaseNode(id);
+				edge_1 = new $E.BaseEdge("1", node_a, node_b, {
 					directed: false
 				});
-				edge_2 = new $E.BaseEdge(2, "Two", node_a, node_b, {
+				edge_2 = new $E.BaseEdge("2", node_a, node_b, {
 					directed: true
 				});
-				edge_3 = new $E.BaseEdge(3, "Three", node_b, node_a, {
+				edge_3 = new $E.BaseEdge("3", node_b, node_a, {
 					directed: true
 				});
 				node_a.addEdge(edge_1);
@@ -536,8 +547,7 @@ describe('==== NODE TESTS ====', () => {
 				expect(node_a.inDegree()).to.equal(0);
 				expect(node_a.outDegree()).to.equal(0);
 				expect(node_a.degree()).to.equal(0);
-			});
-			
+			});			
 			
 		});
 		

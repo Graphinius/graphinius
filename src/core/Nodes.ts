@@ -4,8 +4,9 @@ import * as Edges from "./Edges";
 import _ = require('lodash');
 
 interface IBaseNode {
-	getID()	: number;
+	getID()	: string;
 	getLabel() : string;
+	setLabel(label : string) : void;
 	
 	// FEATURES methods
 	getFeatures() : { [k:string] : any };
@@ -23,16 +24,15 @@ interface IBaseNode {
 	// EDGE methods
 	addEdge(edge: Edges.IBaseEdge) : void;
 	hasEdge(edge: Edges.IBaseEdge) : boolean;	
-	hasEdgeID(id: number) : boolean;
+	hasEdgeID(id: string) : boolean;	
+	getEdge(id: string) : Edges.IBaseEdge;
 	
-	getEdge(id: number) : Edges.IBaseEdge;
-	
-	inEdges() : {[k: number] : Edges.IBaseEdge};
-	outEdges() : {[k: number] : Edges.IBaseEdge};
-	undEdges() : {[k: number] : Edges.IBaseEdge};
+	inEdges() : {[k: string] : Edges.IBaseEdge};
+	outEdges() : {[k: string] : Edges.IBaseEdge};
+	undEdges() : {[k: string] : Edges.IBaseEdge};
 	
 	removeEdge(edge: Edges.IBaseEdge) : void;
-	removeEdgeID(id: number) : void;
+	removeEdgeID(id: string) : void;
 	
 	// Clear different types of edges
 	clearOutEdges() : void;
@@ -44,10 +44,6 @@ interface IBaseNode {
 	prevNodes() : Array<IBaseNode>;
 	nextNodes() : Array<IBaseNode>;
 	connNodes() : Array<IBaseNode>;
-}
-
-interface NodeConstructorOptions {
-	
 }
 
 
@@ -62,24 +58,22 @@ class BaseNode implements IBaseNode {
 	 * execution of graph algorithms is pretty common,
 	 * it's logical to separate the structures.
 	 */
-	protected _in_edges		: {[k: number] : Edges.IBaseEdge};
-	protected _out_edges	: {[k: number] : Edges.IBaseEdge};
-	protected _und_edges	: {[k: number] : Edges.IBaseEdge};
+	protected _in_edges		: {[k: string] : Edges.IBaseEdge};
+	protected _out_edges	: {[k: string] : Edges.IBaseEdge};
+	protected _und_edges	: {[k: string] : Edges.IBaseEdge};
+	protected _label : string;
 	
-	
-	constructor (protected _id, protected _label,
-							features?: { [k:string] : any },
-							options?: NodeConstructorOptions) 
+	constructor (protected _id,
+							features?: { [k:string] : any }) 
 	{
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
 		this._features = _.clone(features) || {};
-		options = options || {};
-		// now handle options...
+		this._label = this._features["label"] || this._id;
 	}
 	
-	getID()	: number {
+	getID()	: string {
 		return this._id;
 	}
 	
@@ -87,6 +81,10 @@ class BaseNode implements IBaseNode {
 		return this._label;
 	}
 	
+	setLabel(label : string) : void {
+		this._label = label;
+	}
+		
 	getFeatures() : { [k:string] : any } {
 		return this._features;
 	}
@@ -120,7 +118,7 @@ class BaseNode implements IBaseNode {
 		this._features = {};
 	}
 	
-		
+			
 	inDegree() : number {
 		return Object.keys(this._in_edges).length;
 	}
@@ -183,11 +181,11 @@ class BaseNode implements IBaseNode {
 		return !!this._in_edges[ edge.getID() ] || !!this._out_edges[ edge.getID() ] || !!this._und_edges[ edge.getID() ];
 	}
 	
-	hasEdgeID(id: number) : boolean {
+	hasEdgeID(id: string) : boolean {
 		return !!this._in_edges[ id ] || !!this._out_edges[ id ] || !!this._und_edges[ id ];
 	}
 	
-	getEdge(id: number) : Edges.IBaseEdge {
+	getEdge(id: string) : Edges.IBaseEdge {
 		var edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
 		if ( !edge ) {
 			throw new Error("Cannot retrieve non-existing edge.");
@@ -195,15 +193,15 @@ class BaseNode implements IBaseNode {
 		return edge;
 	}
 	
-	inEdges() : {[k: number] : Edges.IBaseEdge} {
+	inEdges() : {[k: string] : Edges.IBaseEdge} {
 		return this._in_edges;
 	}
 	
-	outEdges() : {[k: number] : Edges.IBaseEdge} {
+	outEdges() : {[k: string] : Edges.IBaseEdge} {
 		return this._out_edges;
 	}
 	
-	undEdges() : {[k: number] : Edges.IBaseEdge} {
+	undEdges() : {[k: string] : Edges.IBaseEdge} {
 		return this._und_edges;
 	}
 	
@@ -226,7 +224,7 @@ class BaseNode implements IBaseNode {
 		}
 	}
 	
-	removeEdgeID(id: number) : void {
+	removeEdgeID(id: string) : void {
 		if ( !this.hasEdgeID(id) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}

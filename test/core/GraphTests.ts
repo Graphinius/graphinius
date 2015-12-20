@@ -168,8 +168,7 @@ describe('GRAPH TESTS: ', () => {
 	describe('finding nodes and edges by ID and Label', () => {
 		
 		it('should report the existence of a node by ID', () => {
-			expect(graph.hasNodeID(Number.NaN)).to.be.false;
-			expect(graph.hasNodeID(99999)).to.be.false;
+			expect(graph.hasNodeID("IDontExistInGraph")).to.be.false;
 			expect(graph.hasNodeID(node_a.getID())).to.be.true;
 		});
 		
@@ -213,8 +212,7 @@ describe('GRAPH TESTS: ', () => {
 		 * edge_2 is DIRECTED
 		 */
 		it('should report the existence of an edge by ID', () => {
-			expect(graph.hasEdgeID(Number.NaN)).to.be.false;
-			expect(graph.hasEdgeID(99999)).to.be.false;
+			expect(graph.hasEdgeID("IdontExist")).to.be.false;
 			expect(edge_1.isDirected()).to.be.false;
 			expect(graph.hasEdgeID(edge_1.getID())).to.be.true;
 			expect(edge_2.isDirected()).to.be.true;
@@ -363,7 +361,7 @@ describe('GRAPH TESTS: ', () => {
 		
 		
 		it('should throw an error when trying to remove a non-existing edge', () => {
-			var loose_edge = new Edge(Number.MAX_VALUE, 'BLAHOO', n_a, n_b);
+			var loose_edge = new Edge('IdontExistInGraph', n_a, n_b);
 			expect(graph.removeEdge.bind(graph, loose_edge)).to.throw('cannot remove non-existing edge.');
 		});
 		
