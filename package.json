@@ -28,6 +28,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "gulp": "^3.9.0",
+    "gulp-browserify": "^0.5.1",
     "gulp-clean": "^0.3.1",
     "gulp-mocha": "^2.2.0",
     "gulp-typedoc": "^1.2.1",
@@ -40,6 +41,7 @@
   },
   "dependencies": {
     "lodash": "^3.10.1",
+    "request": "^2.67.0",
     "underscore": "^1.8.3"
   }
 }

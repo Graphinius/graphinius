@@ -14,8 +14,13 @@ interface ICSVInput {
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
 	
-	readFromAdjacenyList(file : string) : $G.IGraph;
-	readFromEdgeList(file : string) : $G.IGraph;
+	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromAdjacencyListURL(fileurl : string, cb : Function);
+	
+	readFromEdgeListFile(filepath : string) : $G.IGraph;
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromEdgeListURL(fileurl : string, cb : Function);
 }
 
 class CSVInput implements ICSVInput {
@@ -26,16 +31,117 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromAdjacenyList(filepath : string) : $G.IGraph {
-		// TODO: need proper test case for environment checks...
-		this.checkNodeEnvironment();
+	readFromAdjacencyListURL(fileurl : string, cb : Function) {
+		// Node or browser ??
+		// if ( !window ) {
+		// 	throw new Error("This function is unsupported on the server");
+		// }
+		var self = this;
+		var graph_name = path.basename(fileurl);
+		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
 		
+		var request = require('request');		
+		request({
+			url: fileurl,
+			json: false
+		}, function (err, res, input) {		
+			if (!err && res.statusCode === 200) {
+					// Print the json response
+					input = input.toString().split('\n');
+					// console.log(input);
+					graph = self.readFromAdjacencyList(graph, input);					
+					cb(graph, undefined);
+			}
+		});
+		// this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	}
+	
+	
+	readFromEdgeListURL(fileurl : string, cb : Function) {
+		// Node or browser ??
+		// if ( !window ) {
+		// 	throw new Error("This function is unsupported on the server");
+		// }
+		var self = this;
+		var graph_name = path.basename(fileurl);
+		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
+		
+		var request = require('request');		
+		request({
+			url: fileurl,
+			json: false
+		}, function (err, res, input) {		
+			if (!err && res.statusCode === 200) {
+					// Print the json response
+					input = input.toString().split('\n');
+					// console.log(input);
+					graph = self.readFromEdgeList(graph, input);					
+					cb(graph, undefined);
+			}
+		});		
+	}
+	
+	
+	// private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {
+	// 	// Node or browser ??
+	// 	// if ( !window ) {
+	// 	// 	throw new Error("This function is unsupported on the server");
+	// 	// }
+	// 	var self = this;
+	// 	var graph_name = path.basename(fileurl);
+	// 	var graph : $G.IGraph = new $G.BaseGraph(graph_name);
+		
+	// 	var request = require('request');		
+	// 	request({
+	// 		url: fileurl,
+	// 		json: false
+	// 	}, function (err, res, input) {		
+	// 		if (!err && res.statusCode === 200) {
+	// 				// Print the json response
+	// 				input = input.toString().split('\n');
+	// 				// console.log(input);
+	// 				graph = localFun(graph, input);			
+	// 				cb(graph, undefined);
+	// 		}
+	// 	});	
+	// }
+	
+	
+	readFromAdjacencyListFile(filepath : string) : $G.IGraph {
+		// return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
+		
+		this.checkNodeEnvironment();
 		var graph_name = path.basename(filepath);
 		var graph = new $G.BaseGraph(graph_name);
-		var input = fs.readFileSync(filepath).toString().split('\n');		
+		var input = fs.readFileSync(filepath).toString().split('\n');
+		return this.readFromAdjacencyList(graph, input);	
+	}
+	
+
+	readFromEdgeListFile(filepath : string) : $G.IGraph {
+		// return this.readFileAndReturn(filepath, this.readFromEdgeList);
 		
-		for ( var idx in input ) {
+		this.checkNodeEnvironment();
+		var graph_name = path.basename(filepath);
+		var graph = new $G.BaseGraph(graph_name);
+		var input = fs.readFileSync(filepath).toString().split('\n');
+		return this.readFromEdgeList(graph, input);
+	}
+	
+	
+	// private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
+	// 	this.checkNodeEnvironment();
+	// 	var graph_name = path.basename(filepath);
+	// 	var graph = new $G.BaseGraph(graph_name);
+	// 	var input = fs.readFileSync(filepath).toString().split('\n');
+	// 	// console.log(input);
+	// 	return func.call(graph, input);
+	// }
 			
+	
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
+		// console.log("THIS separator: " + this._separator);
+		for ( var idx in input ) {			
 			var line = input[idx],
 					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator),
 					node_id = elements[0],
@@ -96,14 +202,8 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(filepath : string) : $G.IGraph {
-		// TODO: need proper test case for environment checks...
-		this.checkNodeEnvironment();
-		
-		var graph_name = path.basename(filepath);
-		var graph = new $G.BaseGraph(graph_name);		
-		var input = fs.readFileSync(filepath).toString().split('\n');
-		
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
+				
 		for ( var idx in input ) {
 			var line = input[idx],
 					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);

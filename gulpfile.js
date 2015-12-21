@@ -1,8 +1,9 @@
-var gulp 	= require('gulp');
-var clean = require('gulp-clean');
-var mocha = require('gulp-mocha');
-var ts 		= require('gulp-typescript');
-var tdoc 	= require("gulp-typedoc");
+var gulp 				= require('gulp');
+var clean 			= require('gulp-clean');
+var mocha 			= require('gulp-mocha');
+var ts 					= require('gulp-typescript');
+var tdoc 				= require("gulp-typedoc");
+var browserify 	= require('gulp-browserify');
 
 
 //----------------------------
@@ -13,7 +14,7 @@ var paths = {
 	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'dist', 'docs'],
+	clean: ['src/**/*.js', 'test/**/*.js', 'build', 'dist', 'docs'],
 	tests: ['test/**/*Tests.js']
 };
 
@@ -30,6 +31,18 @@ gulp.task('build', function () {
 						 }))
 						.pipe(gulp.dest('.'));
 });
+
+ 
+// Browserify
+gulp.task('browserify', function() {
+	// Single entry point to browserify 
+	gulp.src('./index.js')
+		.pipe(browserify({
+		  insertGlobals : false
+		}))
+		.pipe(gulp.dest('./build/graphinius'))
+});
+
 
 gulp.task('dist', ['clean', 'tdoc'], function () {
 	return gulp.src(paths.distsources)
