@@ -5,6 +5,7 @@ import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/CSVInput';
+import * as $C from '../../test/input/common';
 
 var expect 	= chai.expect;
 var Node 		= $N.BaseNode;
@@ -24,7 +25,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 	
 	describe('Basic instantiation tests', () => {
 		
-		it('should instantiabe a default version of CSVInput', () => {
+		it('should instantiate a default version of CSVInput', () => {
 			csv = new CSV();
 			expect(csv).to.be.an.instanceof(CSV);
 			expect(csv._separator).to.equal(DEFAULT_SEP);
@@ -37,13 +38,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		beforeEach('instantiate the CSV input class', () => {
 			csv = new CSV();
 		});
-		
-		
-		// it('should throw an error when trying to read a file from directory structure inside the browser', () => {
-		// 	// Simulate browser environment
-		// 	// how?
-		// 	expect(csv.readFromAdjacenyList.bind(csv, '../i/dont/exist.csv')).to.throw('Cannot read file in browser environment.');
-		// });
+
 		
 		/**
 		 * We are going to use the 'slightly more complex scenario'
@@ -51,9 +46,50 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		 * The CSV will be encoded as an adjacency list
 		 */ 
 		it('should construct a very small graph from an adjacency list and produce the right stats', () => {
-			var file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
-			var graph = csv.readFromAdjacenyList(file);
-			checkSmallGraphStats(graph);
+			input_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			$C.checkSmallGraphStats(graph);
+		});
+		
+		
+		it('should be able to use a specified separator', () => {
+			csv._separator = " ";
+			input_file = "./test/input/test_data/small_graph_adj_list_ws_sep.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			$C.checkSmallGraphStats(graph);
+		});
+		
+		
+		/**
+		 * Adjacency list, but with mode set to 'undirected'
+		 * graph should only have 4 undirected edges now.
+		 */ 
+		it('should construct a very small graph from an adjacency list with edges set to undirected', () => {
+			csv._explicit_direction = false;
+			input_file = "./test/input/test_data/small_graph_adj_list_no_dir.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(0);
+			expect(stats.nr_und_edges).to.equal(4);
+			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
+		});
+		
+		
+		/**
+		 * Adjacency list, but with mode set to 'directed'
+		 * graph should have 7 directed edges now.
+		 */ 
+		it('should construct a very small graph from an adjacency list with edges set to directed', () => {
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			input_file = "./test/input/test_data/small_graph_adj_list_no_dir.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(7);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 		});
 		
 		
@@ -63,117 +99,85 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		 * The CSV will be encoded as an edge list
 		 */ 
 		it('should construct a very small graph from an edge list and produce the right stats', () => {
-			csv._separator = " ";
-			var file = "./test/input/test_data/small_graph_adj_list_ws_sep.csv";
-			var graph = csv.readFromAdjacenyList(file);
-			checkSmallGraphStats(graph);			
+			csv._separator = ",";
+			input_file = "./test/input/test_data/small_graph_edge_list.csv";
+			graph = csv.readFromEdgeList(input_file);
+			$C.checkSmallGraphStats(graph);
 		});
 		
 		
-		it('should be able to use a specified separator', () => {
-			
-			
-			
-		});
-		
-		
-		function checkSmallGraphStats(graph : $G.IGraph) {
-			var stats = graph.getStats();
+		/**
+		 * Edge list, but with mode set to 'undirected'
+		 * graph should only have 4 undirected edges now.
+		 */ 
+		it('should construct a very small graph from an edge list with edges set to undirected', () => {
+			csv._explicit_direction = false;
+			input_file = "./test/input/test_data/small_graph_edge_list_no_dir.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(4);
-			expect(stats.nr_dir_edges).to.equal(5);
-			expect(stats.nr_und_edges).to.equal(2);
-			expect(stats.mode).to.equal($G.GraphMode.MIXED);
+			expect(stats.nr_dir_edges).to.equal(0);
+			expect(stats.nr_und_edges).to.equal(4);
+			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
+		});
+		
+		
+		/**
+		 * Edge list, but with mode set to 'directed'
+		 * graph should have 7 directed edges now.
+		 */ 
+		it('should construct a very small graph from an edge list with edges set to directed', () => {
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			input_file = "./test/input/test_data/small_graph_edge_list_no_dir.csv";
+			graph = csv.readFromAdjacenyList(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(7);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
+		});
+		
+		
+		/**
+		 * Edge list, but with a REAL graph now, edges set to undirected
+		 * graph should have 5937 nodes.
+		 * 
+		 */ 
+		it('should construct a real sized graph from an edge list with edges set to undirected', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = false;
+			input_file = "./test/input/test_data/real_graph_edge_list_no_dir.csv";
+			graph = csv.readFromEdgeList(input_file);
+			stats = graph.getStats();			
+			expect(stats.nr_nodes).to.equal(5937);
+			expect(stats.nr_dir_edges).to.equal(0);
+			expect(stats.nr_und_edges).to.equal(17777);
+			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
 			
-			var deg_dist : $G.DegreeDistribution = graph.degreeDistribution();
-			expect(deg_dist.und).to.deep.equal(new Uint16Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
-			expect(deg_dist.in).to.deep.equal( new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.out).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.dir).to.deep.equal(new Uint16Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
-			expect(deg_dist.all).to.deep.equal(new Uint16Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
+			// console.dir(stats);
+		});
+		
+		
+		/**
+		 * Edge list, but with a REAL graph now
+		 * graph should have 5937 nodes.
+		 */ 
+		it('should construct a real sized graph from an edge list with edges set to directed', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			input_file = "./test/input/test_data/real_graph_edge_list_no_dir.csv";
+			graph = csv.readFromEdgeList(input_file);
+			stats = graph.getStats();	
+			expect(stats.nr_nodes).to.equal(5937);
+			expect(stats.nr_dir_edges).to.equal(17777);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 			
-			var nodes = graph.getNodes();
-			var n_a = nodes["A"],
-					n_b = nodes["B"],
-					n_c = nodes["C"],
-					n_d = nodes["D"];
-					
-			expect(n_a).not.to.be.undefined;
-			expect(n_a.getLabel()).to.equal('A');
-			expect(n_a.inDegree()).to.equal(3);
-			expect(n_a.outDegree()).to.equal(3);
-			expect(n_a.degree()).to.equal(2);
-			
-			expect(n_b).not.to.be.undefined;
-			expect(n_b.getLabel()).to.equal('B');
-			expect(n_b.inDegree()).to.equal(1);
-			expect(n_b.outDegree()).to.equal(0);
-			expect(n_b.degree()).to.equal(1);
-			
-			expect(n_c).not.to.be.undefined;
-			expect(n_c.getLabel()).to.equal('C');
-			expect(n_c.inDegree()).to.equal(0);
-			expect(n_c.outDegree()).to.equal(1);
-			expect(n_c.degree()).to.equal(1);
-			
-			expect(n_d).not.to.be.undefined;
-			expect(n_d.getLabel()).to.equal('D');
-			expect(n_d.inDegree()).to.equal(1);
-			expect(n_d.outDegree()).to.equal(1);
-			expect(n_d.degree()).to.equal(0);
-			
-			var und_edges = graph.getUndEdges();
-			var e_abu = und_edges["ABu"],
-					e_acu = und_edges["ACu"];
-					
-			expect(e_abu).not.to.be.undefined;
-			expect(e_abu.getLabel()).to.equal("ABu");
-			expect(e_abu.isDirected()).to.be.false;
-			expect(e_abu.getNodes().a).to.equal(n_a);
-			expect(e_abu.getNodes().b).to.equal(n_b);			
-			
-			expect(e_acu).not.to.be.undefined;
-			expect(e_acu.getLabel()).to.equal("ACu");
-			expect(e_acu.isDirected()).to.be.false;
-			expect(e_acu.getNodes().a).to.equal(n_a);
-			expect(e_acu.getNodes().b).to.equal(n_c);		
-			
-			var dir_edges = graph.getDirEdges();
-			var e_aad = dir_edges["AAd"],
-					e_abd = dir_edges["ABd"],
-					e_add = dir_edges["ADd"],
-					e_cad = dir_edges["CAd"],
-					e_dad = dir_edges["DAd"];
-					
-			expect(e_aad).not.to.be.undefined;
-			expect(e_aad.getLabel()).to.equal("AAd");
-			expect(e_aad.isDirected()).to.be.true;
-			expect(e_aad.getNodes().a).to.equal(n_a);
-			expect(e_aad.getNodes().b).to.equal(n_a);
-			
-			expect(e_abd).not.to.be.undefined;
-			expect(e_abd.getLabel()).to.equal("ABd");
-			expect(e_abd.isDirected()).to.be.true;
-			expect(e_abd.getNodes().a).to.equal(n_a);
-			expect(e_abd.getNodes().b).to.equal(n_b);
-			
-			expect(e_add).not.to.be.undefined;
-			expect(e_add.getLabel()).to.equal("ADd");
-			expect(e_add.isDirected()).to.be.true;
-			expect(e_add.getNodes().a).to.equal(n_a);
-			expect(e_add.getNodes().b).to.equal(n_d);
-			
-			expect(e_cad).not.to.be.undefined;
-			expect(e_cad.getLabel()).to.equal("CAd");
-			expect(e_cad.isDirected()).to.be.true;
-			expect(e_cad.getNodes().a).to.equal(n_c);
-			expect(e_cad.getNodes().b).to.equal(n_a);
-			
-			expect(e_dad).not.to.be.undefined;
-			expect(e_dad.getLabel()).to.equal("DAd");
-			expect(e_dad.isDirected()).to.be.true;
-			expect(e_dad.getNodes().a).to.equal(n_d);
-			expect(e_dad.getNodes().b).to.equal(n_a);
-		}
+			// console.dir(stats);
+		});
 			
 	});	
 	

@@ -1,0 +1,32 @@
+{
+  "name": "Small graph test scenario",
+  "nodes": 4,
+  "edges": 7,
+	"data": {
+		"A": {
+			"edges": [
+				"B u",
+				"C u",
+				"A d",
+				"B d",
+				"D d"
+			]
+		},
+		"B": {
+			"edges": [				
+				"A u"
+			]
+		},
+		"C": {
+			"edges": [
+				"A u",
+				"A d"
+			]
+		},
+		"D": {
+			"edges": [
+				"A d"
+			]
+		}
+	}
+}
