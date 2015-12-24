@@ -49,29 +49,21 @@ class CSVInput implements ICSVInput {
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
 			// Browser...
-			throw new Error("This function is not implemented yet.");
-			// request = new XMLHttpRequest();			
-			// request.onreadystatechange = function() {
-			// 		if (request.readyState == 4 && request.status == 200) {
-						
-			// 			console.log(request.response);
-			// 			console.log(request.responseText);
-						
-						
-			// 			var input = request.responseText.toString().split('\n');
-						
-			// 			console.log(input);
-						
-			// 			localFun(graph, request.responseText, self);
-			// 		}
-			// };
-			// request.open("GET", fileurl, true);
-			// request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
-			// request.send();
+			request = new XMLHttpRequest();			
+			request.onreadystatechange = function() {
+					if (request.readyState == 4 && request.status == 200) {
+						var input = request.responseText.split('\n');
+						graph = localFun(graph, input, self);
+						cb(graph, undefined);
+					}
+			};
+			request.open("GET", fileurl, true);
+			request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+			request.send();
 		}
 		else {
 			// Node.js
-			request = require('request');		
+			request = require('request');
 			request({
 				url: fileurl,
 				json: false
@@ -109,10 +101,7 @@ class CSVInput implements ICSVInput {
 	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>, selfy?) : $G.IGraph {
 		var self = selfy ? selfy : this;
 		
-		// console.dir(self);
-		
 		for ( var idx in input ) {
-		// for ( var idx = 0; idx < input.length; idx++ ) {	
 			var line = input[idx],
 					elements = self._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(self._separator),
 					node_id = elements[0],
@@ -125,17 +114,12 @@ class CSVInput implements ICSVInput {
 					directed: boolean,
 					edge_id: string,
 					edge_id_u2: string;
-					
-			// console.log(line);
-			// console.log('Edges: ' + edge_array);
 			
 			if ( !node_id ) {
 				// We have just seen the last line...
 				return graph;
 			}
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
-			
-			// console.log(node);
 			
 			for ( var e = 0; e < edge_array.length; ) {
 				
@@ -146,8 +130,6 @@ class CSVInput implements ICSVInput {
 				
 				target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 				
-				// console.log("Target node: " + target_node);
-				
 				/**
 				 * The direction determines if we have to check for the existence
 				 * of an edge in 'both' directions or only from one node to the other
@@ -155,9 +137,6 @@ class CSVInput implements ICSVInput {
 				 * as we are following a rigorous naming scheme anyways...
 				 */
 				dir_char = self._explicit_direction ? edge_array[e++] : self._direction_mode ? 'd' : 'u';
-				
-				// console.log("EDGE ARRAY: " + edge_array);
-				// console.log("EDGE HAS DIRECTION: " + dir_char);
 				
 				if ( dir_char !== 'd' && dir_char !== 'u' ) {
 					throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -172,8 +151,6 @@ class CSVInput implements ICSVInput {
 					continue;
 				}
 				else {
-					// console.log("Adding edge: " + edge_id);
-					
 					edge = graph.addEdge(edge_id, node, target_node, {directed: directed});
 				}				
 			}			
