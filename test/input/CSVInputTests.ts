@@ -210,7 +210,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		/**
 		 * And the whole thing as a REMOTE test...
 		 */
-		it('should construct a real sized graph from an edge list with edges set to directed', (done) => {
+		it('should construct a real sized graph from a remote URL (edge list)', (done) => {
 			csv._separator = " ";
 			csv._explicit_direction = false;
 			csv._direction_mode = true;
@@ -222,8 +222,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 				expect(stats.nr_und_edges).to.equal(0);
 				expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 				done();
-			});	
-			
+			});			
 		});
 
 	});

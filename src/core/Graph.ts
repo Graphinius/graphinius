@@ -79,9 +79,6 @@ interface IGraph {
 
 class BaseGraph implements IGraph {
 	protected _mode : GraphMode = GraphMode.INIT;
-	protected _node_count : number = 0;
-	protected _dir_edge_count : number = 0;
-	protected _und_edge_count : number = 0;
 	protected _nodes : { [key: string] : $N.IBaseNode } = {};
 	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {};
 	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};

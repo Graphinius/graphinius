@@ -32,18 +32,6 @@ gulp.task('build', function () {
 						.pipe(gulp.dest('.'));
 });
 
- 
-// Browserify
-gulp.task('browserify', function() {
-	// Single entry point to browserify 
-	gulp.src('./index.js')
-		.pipe(browserify({
-		  insertGlobals : false
-		}))
-		.pipe(gulp.dest('./build/graphinius'))
-});
-
-
 gulp.task('dist', ['clean', 'tdoc'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
@@ -52,6 +40,15 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 							 removeComments: true
 						 }))
 						 .pipe(gulp.dest('dist'));
+});
+
+gulp.task('browserify', ['dist'], function() {
+	// Single entry point to browserify 
+	gulp.src('./index.js')
+		.pipe(browserify({
+		  insertGlobals : false
+		}))
+		.pipe(gulp.dest('./build/graphinius'))
 });
 
 gulp.task("tdoc", function() {

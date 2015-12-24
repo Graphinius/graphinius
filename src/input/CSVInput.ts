@@ -15,11 +15,11 @@ interface ICSVInput {
 	_direction_mode			: boolean; // true => directed
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>, selfy? : Function) : $G.IGraph;
 	readFromAdjacencyListURL(fileurl : string, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>, selfy? : Function) : $G.IGraph;
 	readFromEdgeListURL(fileurl : string, cb : Function);
 }
 
@@ -32,118 +32,89 @@ class CSVInput implements ICSVInput {
 	
 	
 	readFromAdjacencyListURL(fileurl : string, cb : Function) {
-		// Node or browser ??
-		// if ( !window ) {
-		// 	throw new Error("This function is unsupported on the server");
-		// }
-		var self = this;
-		var graph_name = path.basename(fileurl);
-		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
-		
-		var request = require('request');		
-		request({
-			url: fileurl,
-			json: false
-		}, function (err, res, input) {		
-			if (!err && res.statusCode === 200) {
-					// Print the json response
-					input = input.toString().split('\n');
-					// console.log(input);
-					graph = self.readFromAdjacencyList(graph, input);					
-					cb(graph, undefined);
-			}
-		});
-		// this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+		this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
 	}
 	
 	
 	readFromEdgeListURL(fileurl : string, cb : Function) {
-		// Node or browser ??
-		// if ( !window ) {
-		// 	throw new Error("This function is unsupported on the server");
-		// }
-		var self = this;
-		var graph_name = path.basename(fileurl);
-		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
-		
-		var request = require('request');		
-		request({
-			url: fileurl,
-			json: false
-		}, function (err, res, input) {		
-			if (!err && res.statusCode === 200) {
-					// Print the json response
-					input = input.toString().split('\n');
-					// console.log(input);
-					graph = self.readFromEdgeList(graph, input);					
-					cb(graph, undefined);
-			}
-		});		
+		this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
 	}
 	
 	
-	// private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {
-	// 	// Node or browser ??
-	// 	// if ( !window ) {
-	// 	// 	throw new Error("This function is unsupported on the server");
-	// 	// }
-	// 	var self = this;
-	// 	var graph_name = path.basename(fileurl);
-	// 	var graph : $G.IGraph = new $G.BaseGraph(graph_name);
-		
-	// 	var request = require('request');		
-	// 	request({
-	// 		url: fileurl,
-	// 		json: false
-	// 	}, function (err, res, input) {		
-	// 		if (!err && res.statusCode === 200) {
-	// 				// Print the json response
-	// 				input = input.toString().split('\n');
-	// 				// console.log(input);
-	// 				graph = localFun(graph, input);			
-	// 				cb(graph, undefined);
-	// 		}
-	// 	});	
-	// }
+	private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {	
+		var self = this;
+		var graph_name = path.basename(fileurl);
+		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
+		var request;
+		// Node or browser ??
+		if ( typeof window !== 'undefined' ) {
+			// Browser...
+			throw new Error("This function is not implemented yet.");
+			// request = new XMLHttpRequest();			
+			// request.onreadystatechange = function() {
+			// 		if (request.readyState == 4 && request.status == 200) {
+						
+			// 			console.log(request.response);
+			// 			console.log(request.responseText);
+						
+						
+			// 			var input = request.responseText.toString().split('\n');
+						
+			// 			console.log(input);
+						
+			// 			localFun(graph, request.responseText, self);
+			// 		}
+			// };
+			// request.open("GET", fileurl, true);
+			// request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+			// request.send();
+		}
+		else {
+			// Node.js
+			request = require('request');		
+			request({
+				url: fileurl,
+				json: false
+			}, function (err, res, input) {		
+				if (!err && res.statusCode === 200) {
+						// Deal with the CSV response
+						input = input.toString().split('\n');
+						graph = localFun(graph, input, self);			
+						cb(graph, undefined);
+				}
+			});
+		}
+	}
 	
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph {
-		// return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
-		
-		this.checkNodeEnvironment();
-		var graph_name = path.basename(filepath);
-		var graph = new $G.BaseGraph(graph_name);
-		var input = fs.readFileSync(filepath).toString().split('\n');
-		return this.readFromAdjacencyList(graph, input);	
+		return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
 	}
 	
 
 	readFromEdgeListFile(filepath : string) : $G.IGraph {
-		// return this.readFileAndReturn(filepath, this.readFromEdgeList);
-		
+		return this.readFileAndReturn(filepath, this.readFromEdgeList);
+	}
+	
+	
+	private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
 		this.checkNodeEnvironment();
 		var graph_name = path.basename(filepath);
 		var graph = new $G.BaseGraph(graph_name);
 		var input = fs.readFileSync(filepath).toString().split('\n');
-		return this.readFromEdgeList(graph, input);
+		return func(graph, input, this);
 	}
-	
-	
-	// private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
-	// 	this.checkNodeEnvironment();
-	// 	var graph_name = path.basename(filepath);
-	// 	var graph = new $G.BaseGraph(graph_name);
-	// 	var input = fs.readFileSync(filepath).toString().split('\n');
-	// 	// console.log(input);
-	// 	return func.call(graph, input);
-	// }
 			
 	
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
-		// console.log("THIS separator: " + this._separator);
-		for ( var idx in input ) {			
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>, selfy?) : $G.IGraph {
+		var self = selfy ? selfy : this;
+		
+		// console.dir(self);
+		
+		for ( var idx in input ) {
+		// for ( var idx = 0; idx < input.length; idx++ ) {	
 			var line = input[idx],
-					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator),
+					elements = self._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(self._separator),
 					node_id = elements[0],
 					node : $N.IBaseNode,
 					edge_array = elements.slice(1),
@@ -154,6 +125,9 @@ class CSVInput implements ICSVInput {
 					directed: boolean,
 					edge_id: string,
 					edge_id_u2: string;
+					
+			// console.log(line);
+			// console.log('Edges: ' + edge_array);
 			
 			if ( !node_id ) {
 				// We have just seen the last line...
@@ -161,22 +135,26 @@ class CSVInput implements ICSVInput {
 			}
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
 			
+			// console.log(node);
+			
 			for ( var e = 0; e < edge_array.length; ) {
 				
-				if ( this._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
+				if ( self._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
 					throw new Error('Wrong edge description found in file.');
 				}
-				target_node_id = edge_array[e++];
+				target_node_id = edge_array[e++];				
 				
 				target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
-								
+				
+				// console.log("Target node: " + target_node);
+				
 				/**
 				 * The direction determines if we have to check for the existence
 				 * of an edge in 'both' directions or only from one node to the other
 				 * Within the CSV module this check is done simply via ID check,
 				 * as we are following a rigorous naming scheme anyways...
 				 */
-				dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
+				dir_char = self._explicit_direction ? edge_array[e++] : self._direction_mode ? 'd' : 'u';
 				
 				// console.log("EDGE ARRAY: " + edge_array);
 				// console.log("EDGE HAS DIRECTION: " + dir_char);
@@ -194,6 +172,8 @@ class CSVInput implements ICSVInput {
 					continue;
 				}
 				else {
+					// console.log("Adding edge: " + edge_id);
+					
 					edge = graph.addEdge(edge_id, node, target_node, {directed: directed});
 				}				
 			}			
@@ -202,11 +182,12 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
-				
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>, selfy?) : $G.IGraph {
+		var self = selfy ? selfy : this;
+		
 		for ( var idx in input ) {
 			var line = input[idx],
-					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
+					elements = self._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(self._separator);
 			
 			if ( ! elements ) {
 				// end of file (empty line)
@@ -222,7 +203,7 @@ class CSVInput implements ICSVInput {
 					target_node : $N.IBaseNode,
 					edge : $E.IBaseEdge,
 					target_node_id = elements[1],
-					dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u',
+					dir_char = self._explicit_direction ? elements[2] : self._direction_mode ? 'd' : 'u',
 					directed: boolean,
 					edge_id: string,
 					edge_id_u2: string;
