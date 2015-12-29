@@ -33,16 +33,6 @@ gulp.task('build', function () {
 						.pipe(gulp.dest('.'));
 });
 
-gulp.task('build-async', function () {
-	return gulp.src(paths.build_async, {base: "."})
-						 .pipe(ts({
-							 target: "ES5",
-							 module: "commonjs",
-							 removeComments: true
-						 }))
-						.pipe(gulp.dest('.'));
-});
-
 gulp.task('dist', ['clean', 'tdoc'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
@@ -76,12 +66,14 @@ gulp.task("tdoc", function() {
 
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests, {read: false})
-						 .pipe(mocha({reporter: 'nyan'}));
+						 .pipe(mocha({reporter: 'nyan',
+						 							timeout: 5000}));
 });
 
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
-						 .pipe(mocha({reporter: 'nyan'}));
+						 .pipe(mocha({reporter: 'nyan',
+						 							timeout: 5000}));
 });
 
 gulp.task('clean', function () {
