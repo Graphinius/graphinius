@@ -11,11 +11,12 @@ var browserify 	= require('gulp-browserify');
 //----------------------------
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
-	typescripts: ['src/**/*.ts', 'test/**/*.ts'],
+	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*Tests.ts'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'build', 'dist', 'docs'],
-	tests: ['test/**/*Tests.js']
+	clean: ['src/**/*.js', 'test/**/*.js', 'test_async_nomock/**/*Tests.js', 'build', 'dist', 'docs'],
+	tests: ['test/**/*Tests.js'],
+	tests_async: ['test_async_nomock/**/*Tests.js']
 };
 
 
@@ -24,6 +25,16 @@ var paths = {
 //----------------------------
 gulp.task('build', function () {
 	return gulp.src(paths.typescripts, {base: "."})
+						 .pipe(ts({
+							 target: "ES5",
+							 module: "commonjs",
+							 removeComments: true
+						 }))
+						.pipe(gulp.dest('.'));
+});
+
+gulp.task('build-async', function () {
+	return gulp.src(paths.build_async, {base: "."})
 						 .pipe(ts({
 							 target: "ES5",
 							 module: "commonjs",
@@ -63,8 +74,13 @@ gulp.task("tdoc", function() {
     ;
 });
 
-gulp.task('mocha', ['build'], function () {
+gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests, {read: false})
+						 .pipe(mocha({reporter: 'nyan'}));
+});
+
+gulp.task('test-async', ['build'], function () {
+	return gulp.src(paths.tests_async, {read: false})
 						 .pipe(mocha({reporter: 'nyan'}));
 });
 
@@ -74,7 +90,11 @@ gulp.task('clean', function () {
 });
 
 gulp.task('watch', function () {
-	gulp.watch(paths.typescripts, ['mocha']);
+	gulp.watch(paths.typescripts, ['test']);
+});
+
+gulp.task('watch-async', function () {
+	gulp.watch(paths.typescripts, ['test-async']);
 });
 
 gulp.task('default', ['watch']);

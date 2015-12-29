@@ -15,11 +15,11 @@ interface ICSVInput {
 	_direction_mode			: boolean; // true => directed
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>, selfy? : Function) : $G.IGraph;
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
 	readFromAdjacencyListURL(fileurl : string, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>, selfy? : Function) : $G.IGraph;
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
 	readFromEdgeListURL(fileurl : string, cb : Function);
 }
 
@@ -53,7 +53,7 @@ class CSVInput implements ICSVInput {
 			request.onreadystatechange = function() {
 					if (request.readyState == 4 && request.status == 200) {
 						var input = request.responseText.split('\n');
-						graph = localFun(graph, input, self);
+						graph = localFun.apply(self, [graph, input]);
 						cb(graph, undefined);
 					}
 			};
@@ -71,7 +71,7 @@ class CSVInput implements ICSVInput {
 				if (!err && res.statusCode === 200) {
 						// Deal with the CSV response
 						input = input.toString().split('\n');
-						graph = localFun(graph, input, self);			
+						graph = localFun.apply(self, [graph, input]);
 						cb(graph, undefined);
 				}
 			});
@@ -94,16 +94,15 @@ class CSVInput implements ICSVInput {
 		var graph_name = path.basename(filepath);
 		var graph = new $G.BaseGraph(graph_name);
 		var input = fs.readFileSync(filepath).toString().split('\n');
-		return func(graph, input, this);
+		return func.apply(this, [graph, input]);
 	}
 			
 	
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>, selfy?) : $G.IGraph {
-		var self = selfy ? selfy : this;
+	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
 		
 		for ( var idx in input ) {
 			var line = input[idx],
-					elements = self._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(self._separator),
+					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator),
 					node_id = elements[0],
 					node : $N.IBaseNode,
 					edge_array = elements.slice(1),
@@ -123,7 +122,7 @@ class CSVInput implements ICSVInput {
 			
 			for ( var e = 0; e < edge_array.length; ) {
 				
-				if ( self._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
+				if ( this._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
 					throw new Error('Wrong edge description found in file.');
 				}
 				target_node_id = edge_array[e++];				
@@ -136,7 +135,7 @@ class CSVInput implements ICSVInput {
 				 * Within the CSV module this check is done simply via ID check,
 				 * as we are following a rigorous naming scheme anyways...
 				 */
-				dir_char = self._explicit_direction ? edge_array[e++] : self._direction_mode ? 'd' : 'u';
+				dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
 				
 				if ( dir_char !== 'd' && dir_char !== 'u' ) {
 					throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -159,12 +158,11 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>, selfy?) : $G.IGraph {
-		var self = selfy ? selfy : this;
-		
+	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
+				
 		for ( var idx in input ) {
 			var line = input[idx],
-					elements = self._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(self._separator);
+					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
 			
 			if ( ! elements ) {
 				// end of file (empty line)
@@ -180,7 +178,7 @@ class CSVInput implements ICSVInput {
 					target_node : $N.IBaseNode,
 					edge : $E.IBaseEdge,
 					target_node_id = elements[1],
-					dir_char = self._explicit_direction ? elements[2] : self._direction_mode ? 'd' : 'u',
+					dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u',
 					directed: boolean,
 					edge_id: string,
 					edge_id_u2: string;

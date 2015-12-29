@@ -12,7 +12,7 @@ var expect = chai.expect,
 		Edge = $E.BaseEdge,
 		Graph = $G.BaseGraph,
 		CSV = $I.CSVInput,
-		REMOTE_URL = "http://berndmalle.com/graphinius-demo/test_data/";
+		REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/";
 
 
 describe('GRAPH CSV INPUT TESTS', () => {
@@ -50,19 +50,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			input_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
 			graph = csv.readFromAdjacencyListFile(input_file);
 			$C.checkSmallGraphStats(graph);
-		});
-		
-		
-		/**
-		 * REMOTE test
-		 * The CSV will be encoded as an adjacency list
-		 */ 
-		it('should construct the same graph from a remote location', (done) => {
-			input_file = REMOTE_URL + "small_graph_adj_list_def_sep.csv";
-			csv.readFromAdjacencyListURL(input_file, function(graph, err) {
-				$C.checkSmallGraphStats(graph);
-				done();
-			});			
 		});
 		
 		
@@ -121,19 +108,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		/**
-		 * REMOTE test
-		 * The CSV will be encoded as an edge list
-		 */ 
-		it('should construct the same graph from a remote location', (done) => {
-			input_file = REMOTE_URL + "small_graph_edge_list.csv";
-			csv.readFromEdgeListURL(input_file, function(graph, err) {
-				$C.checkSmallGraphStats(graph);
-				done();
-			});			
-		});
-		
-		
-		/**
 		 * Edge list, but with mode set to 'undirected'
 		 * graph should only have 4 undirected edges now.
 		 */
@@ -182,8 +156,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.nr_dir_edges).to.equal(0);
 			expect(stats.nr_und_edges).to.equal(17777);
 			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
-			
-			// console.dir(stats);
 		});
 		
 		
@@ -202,27 +174,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.nr_dir_edges).to.equal(17777);
 			expect(stats.nr_und_edges).to.equal(0);
 			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
-			
-			// console.dir(stats);
-		});
-		
-		
-		/**
-		 * And the whole thing as a REMOTE test...
-		 */
-		it('should construct a real sized graph from a remote URL (edge list)', (done) => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			input_file = REMOTE_URL + "real_graph_edge_list_no_dir.csv";			
-			csv.readFromEdgeListURL(input_file, function(graph, err) {
-				stats = graph.getStats();
-				expect(stats.nr_nodes).to.equal(5937);
-				expect(stats.nr_dir_edges).to.equal(17777);
-				expect(stats.nr_und_edges).to.equal(0);
-				expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
-				done();
-			});			
 		});
 
 	});

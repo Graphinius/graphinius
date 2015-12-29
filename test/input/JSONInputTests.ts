@@ -14,7 +14,7 @@ var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
 
-describe('GRAPH CSV INPUT TESTS', () => {
+describe('GRAPH JSON INPUT TESTS', () => {
 	
 	var json 					: $I.IJSONInput,
 			input_file		: string,
@@ -33,21 +33,47 @@ describe('GRAPH CSV INPUT TESTS', () => {
 	
 	describe('Small test graph', () => {
 				
-		it('should instantiate a default version of CSVInput', () => {
+		it('should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions', () => {
 			json = new JSON_IN();
 			input_file = "./test/input/test_data/small_graph.json";
 			graph = json.readFromJSONFile(input_file);
 			$C.checkSmallGraphStats(graph);
-		});		
+		});
+		
+		
+		it('should correctly generate our small example graph out of a JSON file with direction mode set to undirected', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false; // undirected graph
+			input_file = "./test/input/test_data/small_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			expect(graph.nrNodes()).to.equal(4);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(4);
+		});
+		
+		
+		it('should correctly generate our small example graph out of a JSON file with direction mode set to directed', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = true; // undirected graph
+			input_file = "./test/input/test_data/small_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			expect(graph.nrNodes()).to.equal(4);
+			expect(graph.nrDirEdges()).to.equal(7);
+			expect(graph.nrUndEdges()).to.equal(0);
+		});
+		
 	});
 	
 	
 	describe('Real graph from JSON', () => {
+		
 		/**
 		 * Edge list, but with a REAL graph now
-		 * graph should have 5937 nodes.
+		 * graph should have 5937 undirected nodes.
 		 */ 
-		it('should construct a real sized graph from an edge list with edges set to directed', () => {
+		it('should construct a real sized graph from an edge list with edges set to undirected', () => {
 			json = new JSON_IN();
 			input_file = "./test/input/test_data/real_graph.json";
 			graph = json.readFromJSONFile(input_file);
@@ -59,7 +85,27 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			
 			// console.dir(stats);
 		});
+		
+		
+		/**
+		 * Edge list, but with a REAL graph now
+		 * graph should have 5937 directed nodes.
+		 */ 
+		it('should construct a real sized graph from an edge list with edges set to directed', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = true;
+			input_file = "./test/input/test_data/real_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(5937);
+			expect(stats.nr_dir_edges).to.equal(17777);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
+			
+			// console.dir(stats);
+		});
 	
-	});	
+	});
 	
 });

@@ -19,15 +19,20 @@ interface JSONGraph {
 	data			: {[key:string] : JSONNode}
 }
 
-interface IJSONInput {	
+interface IJSONInput {
+	_explicit_direction	: boolean;
+	_direction_mode			: boolean; // true => directed
+	
 	readFromJSONFile(file : string) : $G.IGraph;
 	readFromJSON(json : {}) : $G.IGraph;
+	readFromJSONURL(fileurl: string, cb: Function) : void;
 }
 
 
 class JSONInput implements IJSONInput {
 	
-	constructor() {		
+	constructor(public _explicit_direction : boolean = true,
+							public _direction_mode : boolean = false) {
 	}
 	
 	readFromJSONFile(filepath : string) : $G.IGraph {
@@ -35,6 +40,43 @@ class JSONInput implements IJSONInput {
 
 		var json = JSON.parse(fs.readFileSync(filepath).toString());
 		return this.readFromJSON(json);
+	}
+	
+	readFromJSONURL(fileurl: string, cb: Function) : void {	
+		var self = this,
+				graph_name = path.basename(fileurl),
+				graph : $G.IGraph,
+				request,
+				json : JSON;
+		// Node or browser ??
+		if ( typeof window !== 'undefined' ) {
+			// Browser...
+			request = new XMLHttpRequest();			
+			request.onreadystatechange = function() {
+					if (request.readyState == 4 && request.status == 200) {
+						var json = JSON.parse(request.responseText);
+						graph = self.readFromJSON(json);
+						cb(graph, undefined);
+					}
+			};
+			request.open("GET", fileurl, true);
+			request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+			request.send();
+		}
+		else {
+			// Node.js
+			request = require('request');
+			request({
+				url: fileurl,
+				json: true
+			}, function (err, res, json) {		
+				if (!err && res.statusCode === 200) {
+						// Deal with the CSV response
+						graph = self.readFromJSON(json);
+						cb(graph, undefined);
+				}
+			});
+		}
 	}
 	
 	/**
@@ -51,7 +93,7 @@ class JSONInput implements IJSONInput {
 			for ( var e in edges ) {
 				var edge_input = String(edges[e]).match(/\S+/g),
 						target_node_id = edge_input[0],
-						dir_char = edge_input[1],
+						dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u',
 						directed = dir_char === 'd',
 						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 						
