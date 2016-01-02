@@ -11,11 +11,11 @@ var browserify 	= require('gulp-browserify');
 //----------------------------
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
-	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*Tests.ts'],
+	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*.ts'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'test/**/*.js', 'test_async_nomock/**/*Tests.js', 'build', 'dist', 'docs'],
-	tests: ['test/**/*Tests.js'],
+	tests: ['test/**/*.js'],
 	tests_async: ['test_async_nomock/**/*Tests.js']
 };
 
