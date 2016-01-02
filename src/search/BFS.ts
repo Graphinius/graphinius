@@ -6,10 +6,46 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-function BFS(graph : $G.IGraph) {
+interface SearchResultEntry {
+	distance	:	number;
+	parent		:	$N.IBaseNode;
+}
 
+
+function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : SearchResultEntry} {
+	var result : {[id: string] : SearchResultEntry} = {};			
 	
+	var nodes = graph.getNodes();
+	for ( var key in nodes ) {
+		result[key] = {
+			distance : Number.POSITIVE_INFINITY,
+			parent : null
+		};
+	}
 	
+	var queue : Array<$N.IBaseNode> = [];
+	queue.push(root);
+	result[root.getID()] = {
+		distance	: 0,
+		parent		: null
+	};
+	
+	while ( queue.length ) {
+		var current = queue.shift();
+		var adj_nodes = current.adjNodes();
+		for ( var adj_idx in adj_nodes ) {
+			var adj_node = adj_nodes[adj_idx];
+			if ( result[adj_node.getID()].distance === Number.POSITIVE_INFINITY ) {
+				result[adj_node.getID()] = {
+					distance : result[current.getID()].distance + 1,
+					parent 	 : current
+				}
+				queue.push(adj_node);
+			}
+		}
+	}
+	
+	return result;
 }
 
 
@@ -34,4 +70,4 @@ function BFS(graph : $G.IGraph) {
 // 19                 n.parent = current
 // 20                 Q.enqueue(n)
 
-export { BFS };
+export { BFS, SearchResultEntry };

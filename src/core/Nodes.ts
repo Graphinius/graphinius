@@ -44,6 +44,7 @@ interface IBaseNode {
 	prevNodes() : Array<IBaseNode>;
 	nextNodes() : Array<IBaseNode>;
 	connNodes() : Array<IBaseNode>;
+	adjNodes() 	: Array<IBaseNode>;
 }
 
 
@@ -261,7 +262,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	prevNodes() : Array<IBaseNode> {
-		var prevs = [];
+		var prevs : Array<IBaseNode> = [];
 		Object.keys(this._in_edges).forEach((e) => {
 			prevs.push(this._in_edges[e].getNodes().a);
 		});
@@ -269,7 +270,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	nextNodes() : Array<IBaseNode> {
-		var nexts = [];
+		var nexts : Array<IBaseNode> = [];
 		Object.keys(this._out_edges).forEach((e) => {
 			nexts.push(this._out_edges[e].getNodes().b);
 		});
@@ -277,11 +278,21 @@ class BaseNode implements IBaseNode {
 	}
 	
 	connNodes() : Array<IBaseNode> {
-		var conns = [];
+		var conns : Array<IBaseNode> = [];
 		Object.keys(this._und_edges).forEach((e) => {
-			conns.push(this._und_edges[e].getNodes().b);
+			var nodes = this._und_edges[e].getNodes();
+			if ( nodes.a === this ) {
+				conns.push(nodes.b);
+			}
+			else {
+				conns.push(nodes.a);
+			}
 		});
 		return conns;
+	}
+	
+	adjNodes() : Array<IBaseNode> {
+		return _.union(this.nextNodes(), this.connNodes());
 	}
 	
 }

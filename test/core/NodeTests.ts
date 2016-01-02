@@ -298,6 +298,8 @@ describe('==== NODE TESTS ====', () => {
 			n_a.addEdge(e_5);
 			n_a.addEdge(e_6);
 			n_a.addEdge(e_7);
+			n_b.addEdge(e_1);
+			n_b.addEdge(e_4);
 			
 			
 			describe('degrees and retrieval', () => {
@@ -333,7 +335,7 @@ describe('==== NODE TESTS ====', () => {
 								
 			});			
 			
-			describe('previous, next, and connected nodes', () => {
+			describe('previous, next, connected and adjacent nodes', () => {
 				
 				it('should find nodes c and d as previous nodes', () => {
 					var prevs = n_a.prevNodes();
@@ -361,6 +363,36 @@ describe('==== NODE TESTS ====', () => {
 					expect(conns).not.to.contain(n_a);
 					expect(conns).to.contain(n_b);
 					expect(conns).to.contain(n_c);	
+				});
+				
+				it('should find nodes a, b, c and d as adjacent (reachable) nodes', () => {
+					var adjs = n_a.adjNodes();
+					expect(adjs).to.be.an.instanceof(Array);
+					expect(adjs.length).to.equal(4);
+					expect(adjs).to.contain(n_a);
+					expect(adjs).to.contain(n_b);
+					expect(adjs).to.contain(n_c);	
+					expect(adjs).to.contain(n_d);
+				});
+				
+				it('should find node a as undirected neighbor node from node b', () => {
+					var conns = n_b.connNodes();
+					expect(conns).to.be.an.instanceof(Array);
+					expect(conns.length).to.equal(1);
+					expect(conns).to.contain(n_a);
+					expect(conns).not.to.contain(n_b);
+					expect(conns).not.to.contain(n_c);	
+					expect(conns).not.to.contain(n_d);
+				});
+				
+				it('should find node a as directed previous neighbor from node b', () => {
+					var prevs = n_b.prevNodes();
+					expect(prevs).to.be.an.instanceof(Array);
+					expect(prevs.length).to.equal(1);
+					expect(prevs).to.contain(n_a);
+					expect(prevs).not.to.contain(n_b);
+					expect(prevs).not.to.contain(n_c);	
+					expect(prevs).not.to.contain(n_d);
 				});
 			});			
 			
