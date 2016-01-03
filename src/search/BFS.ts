@@ -6,29 +6,34 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-interface SearchResultEntry {
+interface BFSResult {
 	distance	:	number;
 	parent		:	$N.IBaseNode;
+	counter		: number; // order of discovery
 }
 
 
-function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : SearchResultEntry} {
-	var result : {[id: string] : SearchResultEntry} = {};			
+function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : BFSResult} {
+	var result : {[id: string] : BFSResult} = {};			
 	
 	var nodes = graph.getNodes();
 	for ( var key in nodes ) {
 		result[key] = {
 			distance : Number.POSITIVE_INFINITY,
-			parent : null
+			parent 	 : null,
+			counter	 : -1
 		};
 	}
 	
+	var counter = 0;	
 	var queue : Array<$N.IBaseNode> = [];
 	queue.push(root);
 	result[root.getID()] = {
 		distance	: 0,
-		parent		: null
+		parent		: root,
+		counter		: counter++
 	};
+	
 	
 	while ( queue.length ) {
 		var current = queue.shift();
@@ -38,7 +43,8 @@ function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : SearchRes
 			if ( result[adj_node.getID()].distance === Number.POSITIVE_INFINITY ) {
 				result[adj_node.getID()] = {
 					distance : result[current.getID()].distance + 1,
-					parent 	 : current
+					parent 	 : current,
+					counter	 : counter++
 				}
 				queue.push(adj_node);
 			}
@@ -49,25 +55,4 @@ function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : SearchRes
 }
 
 
-//  1 Breadth-First-Search(Graph, root):
-//  2 
-//  3     for each node n in Graph:            
-//  4         n.distance = INFINITY        
-//  5         n.parent = NIL
-//  6 
-//  7     create empty queue Q      
-//  8 
-//  9     root.distance = 0
-// 10     Q.enqueue(root)                      
-// 11 
-// 12     while Q is not empty:        
-// 13     
-// 14         current = Q.dequeue()
-// 15     
-// 16         for each node n that is adjacent to current:
-// 17             if n.distance == INFINITY:
-// 18                 n.distance = current.distance + 1
-// 19                 n.parent = current
-// 20                 Q.enqueue(n)
-
-export { BFS, SearchResultEntry };
+export { BFS, BFSResult };
