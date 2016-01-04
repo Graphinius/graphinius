@@ -20,8 +20,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			input_file		: string,
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats,
-			visit_res			: {[id: string] : $DFS.DFS_Visit_Results},
-			visit_cbs			: $DFS.DFS_Visit_Callbacks;
+			visit_res			: {[id: string] : $DFS.DFS_Result_Entry},
+			dfs_result		: {[id: string] : $DFS.DFS_Result_Entry},
+			callbacks			: $DFS.DFS_Callbacks;
 	
 	
 	describe('testing DFS visit on small test graph', () => {
@@ -38,12 +39,12 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				
 		it('should correctly compute distances from node A', () => {
 			var root = graph.getNodeById('A');
-			var counter = -1;
-			visit_cbs = {
+			var counter = 0;
+			callbacks = {
 				counter : function() { return counter++; }
 			};
 			visit_res = {};
-			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
+			$DFS.DFSVisit(graph, root, visit_res, callbacks);
 						
 			expect(Object.keys(visit_res).length).to.equal(6);
 			
@@ -70,12 +71,12 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		it('should correctly compute distances from node D', () => {
 			var root = graph.getNodeById('D');
 			
-			var counter = -1;
-			visit_cbs = {
+			var counter = 0;
+			callbacks = {
 				counter : function() { return counter++; }
 			};
 			visit_res = {};
-			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
+			$DFS.DFSVisit(graph, root, visit_res, callbacks);
 						
 			expect(Object.keys(visit_res).length).to.equal(6);
 			
@@ -98,12 +99,12 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		it('should correctly compute distances from node E', () => {
 			var root = graph.getNodeById('E');
 			
-			var counter = -1;
-			visit_cbs = {
+			var counter = 0;
+			callbacks = {
 				counter : function() { return counter++; }
 			};
 			visit_res = {};
-			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
+			$DFS.DFSVisit(graph, root, visit_res, callbacks);
 						
 			expect(Object.keys(visit_res).length).to.equal(2);			
 			expect(visit_res['E'].counter).to.equal(0);
@@ -117,13 +118,13 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		it('should correctly compute distances from node G', () => {
 			var root = graph.getNodeById('G');
 			
-			var counter = -1;
-			visit_cbs = {
+			var counter = 0;
+			callbacks = {
 				counter : function() { return counter++; }
 			};
 			visit_res = {};
 			
-			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
+			$DFS.DFSVisit(graph, root, visit_res, callbacks);
 			
 			expect(Object.keys(visit_res).length).to.equal(1);			
 			expect(visit_res['G'].counter).to.equal(0);			
@@ -136,13 +137,54 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
 	describe('testing DFS on small test graph (including unconnected component)', () => {
 		
-		// it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+		it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+			var counter = 0;
+			dfs_result = {};
+			callbacks = {
+				counter : function() { return counter++; },
+				init : function(nodes : {[id:string] : $N.IBaseNode}) {
+					for ( var node_id in nodes ) {
+						dfs_result[node_id] = {
+							parent: null,
+							counter: -1
+						}
+					}
+				}
+			};
+				
+			$DFS.DFS(graph, dfs_result, callbacks);
 			
-		// });
+			expect(Object.keys(dfs_result).length).to.equal(7);
+			expect(counter).to.equal(7);
+			for ( var node_id in dfs_result ) {
+				expect(dfs_result[node_id].counter).not.to.equal(-1);
+			}
+		});
 		
-		// it('should not leave any nodes without a parent (even if self)', () => {
+		
+		it('should not leave any nodes without a parent (even if self)', () => {
+			var counter = 0;
+			dfs_result = {};
+			callbacks = {
+				counter : function() { return counter++; },
+				init : function(nodes : {[id:string] : $N.IBaseNode}) {
+					for ( var node_id in nodes ) {
+						dfs_result[node_id] = {
+							parent: null,
+							counter: -1
+						}
+					}
+				}
+			};
 			
-		// });
+			$DFS.DFS(graph, dfs_result, callbacks);
+			
+			expect(Object.keys(dfs_result).length).to.equal(7);
+			expect(counter).to.equal(7);
+			for ( var node_id in dfs_result ) {
+				expect(dfs_result[node_id].parent).not.to.be.null;
+			}
+		});
 		
 	});
 	

@@ -7,14 +7,16 @@ import _ = require('lodash');
 
 
 
-interface DFS_Visit_Results {
-	parent		: $N.IBaseNode;
-	counter 	: number;
+interface DFS_Result_Entry {
+	parent?		: $N.IBaseNode;
+	counter? 	: number;
 }
 
 
-interface DFS_Visit_Callbacks {
-	counter? : Function;	
+interface DFS_Callbacks {
+	init?						: Function;
+	counter? 				: Function;
+	treatOuterNode?	: Function;
 }
 
 
@@ -26,11 +28,10 @@ interface StackEntry {
 
 function DFSVisit(graph 				: $G.IGraph, 
 									current_root 	: $N.IBaseNode,
-									results?			: {[id: string] : DFS_Visit_Results},
-									callbacks			: DFS_Visit_Callbacks = {}) {										
+									results?			: {[id: string] : DFS_Result_Entry},
+									callbacks			: DFS_Callbacks = {}) {										
 	
-	var	marked_temp : {[id: string] : boolean} = {};
-	
+	var	marked_temp : {[id: string] : boolean} = {};	
 	
 	var stack : Array<StackEntry> = [];
 	stack.push({
@@ -46,8 +47,8 @@ function DFSVisit(graph 				: $G.IGraph,
 	 */
 	if ( results ) {
 		results[current_root.getID()] = {
-			parent 	: current_root,
-			counter : callbacks.counter ? callbacks.counter() : undefined
+			parent 	: current_root
+			// counter : undefined // results[current_root.getID()]
 		};
 	}
 	
@@ -61,11 +62,11 @@ function DFSVisit(graph 				: $G.IGraph,
 			/**
 			 * Again, we only populate a results object if provided
 			 */
-			if ( results ) {				
+			if ( results ) {						
 				results[current.getID()] = {
 					parent 	: stack_entry.parent,
 					counter : callbacks.counter ? callbacks.counter() : undefined
-				}
+				};
 			}
 						
 			var adj_nodes = current.adjNodes();
@@ -74,34 +75,40 @@ function DFSVisit(graph 				: $G.IGraph,
 					node: adj_nodes[adj_idx],
 					parent: current
 				});
+			}
+			
+			/**
+			 * If we run from an outer loop, maybe we have to 
+			 * execute some callback in that context...
+			 */
+			if ( callbacks.treatOuterNode ) {
+				callbacks.treatOuterNode(current);
 			}			
-		}
-		else {
-			// result[current.getID()].toposort = toposort--;
 		}
 	}
 }
 
 
 
-
-
-
-
-function DFS(graph : $G.IGraph) {
+function DFS( graph 		: $G.IGraph,
+							results		: {[id: string] : DFS_Result_Entry} = {},
+							callbacks	: DFS_Callbacks = {} ) {
 		
-	// var nodes = graph.getNodes();
-	// for ( var key in nodes ) {
-	// 	result[key] = {
-	// 		parent 		: null,
-	// 		// toposort	: Number.NEGATIVE_INFINITY,
-	// 		counter		: -1
-	// 	};
-	// 	visited[key] = false;
-	// }
+	var	marked : {[id: string] : boolean} = {};
+	var nodes = graph.getNodes();
 	
+	if ( callbacks.init ) {
+		callbacks.init(nodes);
+	}
 	
+	callbacks.treatOuterNode = function(node:$N.IBaseNode) { marked[node.getID()] = true };
+	
+	for ( var node_id in nodes ) {		
+		if ( !marked[node_id] ) {			
+			DFSVisit(graph, nodes[node_id], results, callbacks);
+		}
+	}	
 }
 
 
-export { DFSVisit, DFS, DFS_Visit_Results, DFS_Visit_Callbacks };
+export { DFSVisit, DFS, DFS_Result_Entry, DFS_Callbacks };
