@@ -20,10 +20,11 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			input_file		: string,
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats,
-			search_res		: {[id: string] : $DFS.DFS_Result};
+			visit_res			: {[id: string] : $DFS.DFS_Visit_Results},
+			visit_cbs			: $DFS.DFS_Visit_Callbacks;
 	
 	
-	describe('DFS on small test graph', () => {
+	describe('testing DFS visit on small test graph', () => {
 		
 		it('should correctly instantiate the search graph', () => {
 			json = new JSON_IN();
@@ -37,101 +38,111 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				
 		it('should correctly compute distances from node A', () => {
 			var root = graph.getNodeById('A');
-			search_res = $DFS.DFS(graph, root);
+			var counter = -1;
+			visit_cbs = {
+				counter : function() { return counter++; }
+			};
+			visit_res = {};
+			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
 						
-			expect(Object.keys(search_res).length).to.equal(7);
+			expect(Object.keys(visit_res).length).to.equal(6);
 			
-			// console.dir(search_res);
+			// console.dir(visit_res);
 			
 			// undirected before directed...
-			// shall we sort those nodes by id first?? 
-			// nope......			
-			expect(search_res['A'].counter).to.equal(0);
-			expect(search_res['B'].counter).to.equal(5);
-			expect(search_res['C'].counter).to.equal(4);
-			expect(search_res['D'].counter).to.equal(1);
-			expect(search_res['E'].counter).to.equal(2);
-			expect(search_res['F'].counter).to.equal(3);
-			expect(search_res['G'].counter).to.equal(-1);
+			// shall we sort those nodes by id first??
+			expect(visit_res['A'].counter).to.equal(0);
+			expect(visit_res['B'].counter).to.equal(5);
+			expect(visit_res['C'].counter).to.equal(4);
+			expect(visit_res['D'].counter).to.equal(1);
+			expect(visit_res['E'].counter).to.equal(2);
+			expect(visit_res['F'].counter).to.equal(3);
 			
-			expect(search_res['A'].parent).to.equal(root);
-			expect(search_res['B'].parent).to.equal(root);
-			expect(search_res['C'].parent).to.equal(root);
-			expect(search_res['D'].parent).to.equal(root);
-			expect(search_res['E'].parent).to.equal(graph.getNodeById('D'));
-			expect(search_res['F'].parent).to.equal(graph.getNodeById('E'));
-			expect(search_res['G'].parent).to.equal(null);
+			expect(visit_res['A'].parent).to.equal(root);
+			expect(visit_res['B'].parent).to.equal(root);
+			expect(visit_res['C'].parent).to.equal(root);
+			expect(visit_res['D'].parent).to.equal(root);
+			expect(visit_res['E'].parent).to.equal(graph.getNodeById('D'));
+			expect(visit_res['F'].parent).to.equal(graph.getNodeById('E'));
 		});
 		
 		
 		it('should correctly compute distances from node D', () => {
 			var root = graph.getNodeById('D');
-			search_res = $DFS.DFS(graph, root);
+			
+			var counter = -1;
+			visit_cbs = {
+				counter : function() { return counter++; }
+			};
+			visit_res = {};
+			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
 						
-			expect(Object.keys(search_res).length).to.equal(7);
+			expect(Object.keys(visit_res).length).to.equal(6);
 			
-			expect(search_res['A'].counter).to.equal(1);
-			expect(search_res['B'].counter).to.equal(4);
-			expect(search_res['C'].counter).to.equal(3);
-			expect(search_res['D'].counter).to.equal(0);
-			expect(search_res['E'].counter).to.equal(5);
-			expect(search_res['F'].counter).to.equal(2);
-			expect(search_res['G'].counter).to.equal(-1);
+			expect(visit_res['A'].counter).to.equal(1);
+			expect(visit_res['B'].counter).to.equal(4);
+			expect(visit_res['C'].counter).to.equal(3);
+			expect(visit_res['D'].counter).to.equal(0);
+			expect(visit_res['E'].counter).to.equal(5);
+			expect(visit_res['F'].counter).to.equal(2);
 			
-			expect(search_res['A'].parent).to.equal(root);
-			expect(search_res['B'].parent).to.equal(graph.getNodeById('A'));
-			expect(search_res['C'].parent).to.equal(graph.getNodeById('A'));
-			expect(search_res['D'].parent).to.equal(root);
-			expect(search_res['E'].parent).to.equal(root);
-			expect(search_res['F'].parent).to.equal(graph.getNodeById('A'));
-			expect(search_res['G'].parent).to.equal(null);
+			expect(visit_res['A'].parent).to.equal(root);
+			expect(visit_res['B'].parent).to.equal(graph.getNodeById('A'));
+			expect(visit_res['C'].parent).to.equal(graph.getNodeById('A'));
+			expect(visit_res['D'].parent).to.equal(root);
+			expect(visit_res['E'].parent).to.equal(root);
+			expect(visit_res['F'].parent).to.equal(graph.getNodeById('A'));
 		});
+		
 		
 		it('should correctly compute distances from node E', () => {
 			var root = graph.getNodeById('E');
-			search_res = $DFS.DFS(graph, root);
+			
+			var counter = -1;
+			visit_cbs = {
+				counter : function() { return counter++; }
+			};
+			visit_res = {};
+			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
 						
-			expect(Object.keys(search_res).length).to.equal(7);
+			expect(Object.keys(visit_res).length).to.equal(2);			
+			expect(visit_res['E'].counter).to.equal(0);
+			expect(visit_res['F'].counter).to.equal(1);
 			
-			expect(search_res['A'].counter).to.equal(-1);
-			expect(search_res['B'].counter).to.equal(-1);
-			expect(search_res['C'].counter).to.equal(-1);
-			expect(search_res['D'].counter).to.equal(-1);
-			expect(search_res['E'].counter).to.equal(0);
-			expect(search_res['F'].counter).to.equal(1);
-			expect(search_res['G'].counter).to.equal(-1);
-			
-			expect(search_res['A'].parent).to.equal(null);
-			expect(search_res['B'].parent).to.equal(null);
-			expect(search_res['C'].parent).to.equal(null);
-			expect(search_res['D'].parent).to.equal(null);
-			expect(search_res['E'].parent).to.equal(root);
-			expect(search_res['F'].parent).to.equal(root);
-			expect(search_res['G'].parent).to.equal(null);
+			expect(visit_res['E'].parent).to.equal(root);
+			expect(visit_res['F'].parent).to.equal(root);
 		});
+		
 		
 		it('should correctly compute distances from node G', () => {
 			var root = graph.getNodeById('G');
-			search_res = $DFS.DFS(graph, root);
-						
-			expect(Object.keys(search_res).length).to.equal(7);
 			
-			expect(search_res['A'].counter).to.equal(-1);
-			expect(search_res['B'].counter).to.equal(-1);
-			expect(search_res['C'].counter).to.equal(-1);
-			expect(search_res['D'].counter).to.equal(-1);
-			expect(search_res['E'].counter).to.equal(-1);
-			expect(search_res['F'].counter).to.equal(-1);
-			expect(search_res['G'].counter).to.equal(0);
+			var counter = -1;
+			visit_cbs = {
+				counter : function() { return counter++; }
+			};
+			visit_res = {};
 			
-			expect(search_res['A'].parent).to.equal(null);
-			expect(search_res['B'].parent).to.equal(null);
-			expect(search_res['C'].parent).to.equal(null);
-			expect(search_res['D'].parent).to.equal(null);
-			expect(search_res['E'].parent).to.equal(null);
-			expect(search_res['F'].parent).to.equal(null);
-			expect(search_res['G'].parent).to.equal(root);
+			$DFS.DFSVisit(graph, root, visit_res, visit_cbs);
+			
+			expect(Object.keys(visit_res).length).to.equal(1);			
+			expect(visit_res['G'].counter).to.equal(0);			
+			expect(visit_res['G'].parent).to.equal(root);
 		});
+		
+	});
+	
+	
+	
+	describe('testing DFS on small test graph (including unconnected component)', () => {
+		
+		// it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+			
+		// });
+		
+		// it('should not leave any nodes without a parent (even if self)', () => {
+			
+		// });
 		
 	});
 	

@@ -59,7 +59,8 @@ gulp.task("tdoc", function() {
             module: "commonjs",
             target: "es5",
             out: "docs/",
-            name: "Graphinius"
+            name: "Graphinius",
+						theme: "minimal"
         }))
     ;
 });

@@ -6,10 +6,15 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-interface DFS_Result {
+
+interface DFS_Visit_Results {
 	parent		: $N.IBaseNode;
-	// toposort	: number;
-	counter		: number; // just to check exploration order
+	counter 	: number;
+}
+
+
+interface DFS_Visit_Callbacks {
+	counter? : Function;	
 }
 
 
@@ -19,41 +24,50 @@ interface StackEntry {
 }
 
 
-function DFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : DFS_Result} {
-	var result  : {[id: string] : DFS_Result} = {},
-			visited : {[id: string] : boolean} = {};
+function DFSVisit(graph 				: $G.IGraph, 
+									current_root 	: $N.IBaseNode,
+									results?			: {[id: string] : DFS_Visit_Results},
+									callbacks			: DFS_Visit_Callbacks = {}) {										
 	
-
-	var nodes = graph.getNodes();
-	var toposort = Object.keys(nodes).length;
+	var	marked_temp : {[id: string] : boolean} = {};
 	
-	for ( var key in nodes ) {
-		result[key] = {
-			parent 		: null,
-			// toposort	: Number.NEGATIVE_INFINITY,
-			counter		: -1
-		};
-		visited[key] = false;
-	}
 	
-	var counter = 0;
 	var stack : Array<StackEntry> = [];
 	stack.push({
-		node		: root,
-		parent	: root
+		node		: current_root,
+		parent	: current_root
 	});
-	result[root.getID()].parent = root;
+	
+	/**
+	 * We only need to populate a result object if it is
+	 * required by an outside caller. In case of e.g.
+	 * cycle detection this will be unnecessary, and in
+	 * case of toposort the structure will be different.
+	 */
+	if ( results ) {
+		results[current_root.getID()] = {
+			parent 	: current_root,
+			counter : callbacks.counter ? callbacks.counter() : undefined
+		};
+	}
 	
 	while ( stack.length ) {
 		var stack_entry = stack.pop();
 		var current = stack_entry.node;
 		
-		if ( !visited[current.getID()] ) {
+		if ( !marked_temp[current.getID()] ) {			
+			marked_temp[current.getID()] = true;
 			
-			visited[current.getID()] = true;
-			result[current.getID()].parent = stack_entry.parent;
-			result[current.getID()].counter = counter++;
-			
+			/**
+			 * Again, we only populate a results object if provided
+			 */
+			if ( results ) {				
+				results[current.getID()] = {
+					parent 	: stack_entry.parent,
+					counter : callbacks.counter ? callbacks.counter() : undefined
+				}
+			}
+						
 			var adj_nodes = current.adjNodes();
 			for ( var adj_idx in adj_nodes ) {
 				stack.push({
@@ -66,9 +80,28 @@ function DFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : DFS_Resul
 			// result[current.getID()].toposort = toposort--;
 		}
 	}
-
-	return result;
 }
 
 
-export { DFS, DFS_Result };
+
+
+
+
+
+function DFS(graph : $G.IGraph) {
+		
+	// var nodes = graph.getNodes();
+	// for ( var key in nodes ) {
+	// 	result[key] = {
+	// 		parent 		: null,
+	// 		// toposort	: Number.NEGATIVE_INFINITY,
+	// 		counter		: -1
+	// 	};
+	// 	visited[key] = false;
+	// }
+	
+	
+}
+
+
+export { DFSVisit, DFS, DFS_Visit_Results, DFS_Visit_Callbacks };
