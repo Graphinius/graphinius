@@ -6,17 +6,13 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-
-interface DFS_Result_Entry {
-	parent?		: $N.IBaseNode;
-	counter? 	: number;
-}
-
-
 interface DFS_Callbacks {
-	init?						: Function;
-	counter? 				: Function;
-	treatOuterNode?	: Function;
+	init_dfs?					: Array<Function>;
+	init_dfs_visit?		: Array<Function>;
+	node_popped?			: Array<Function>;
+	node_marked?			: Array<Function>;
+	node_unmarked?		: Array<Function>;
+	adj_nodes_pushed?	: Array<Function>;
 }
 
 
@@ -28,48 +24,58 @@ interface StackEntry {
 
 function DFSVisit(graph 				: $G.IGraph, 
 									current_root 	: $N.IBaseNode,
-									results?			: {[id: string] : DFS_Result_Entry},
-									callbacks			: DFS_Callbacks = {}) {										
+									callbacks			: DFS_Callbacks = {}) {
 	
-	var	marked_temp : {[id: string] : boolean} = {};	
+	var	marked_temp : {[id: string] : boolean} = {},
+			stack 			: Array<StackEntry> = [],
+			stack_entry : StackEntry,
+			current			: $N.IBaseNode,
+			adj_nodes		: Array<$N.IBaseNode>;
+			
+	var scope = {
+		marked_temp: marked_temp,
+		stack: stack,
+		stack_entry : stack_entry,
+		current: current,
+		adj_nodes: adj_nodes,
+		current_root: current_root
+	};
+				
 	
-	var stack : Array<StackEntry> = [];
+	/**
+	 * HOOK 1 - INIT (INNER DFS VISIT):
+	 * Initializing a possible result object,
+	 * possibly with the current_root;
+	 */
+	if ( callbacks.init_dfs_visit ) {
+		execCallbacks(callbacks.init_dfs_visit, scope);
+	}
+	
 	stack.push({
 		node		: current_root,
 		parent	: current_root
 	});
 	
-	/**
-	 * We only need to populate a result object if it is
-	 * required by an outside caller. In case of e.g.
-	 * cycle detection this will be unnecessary, and in
-	 * case of toposort the structure will be different.
-	 */
-	if ( results ) {
-		results[current_root.getID()] = {
-			parent 	: current_root
-			// counter : undefined // results[current_root.getID()]
-		};
-	}
 	
 	while ( stack.length ) {
-		var stack_entry = stack.pop();
-		var current = stack_entry.node;
+		stack_entry = stack.pop();
+		current = stack_entry.node;
+		
+		/**
+		 * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
+		 */
 		
 		if ( !marked_temp[current.getID()] ) {			
 			marked_temp[current.getID()] = true;
 			
 			/**
-			 * Again, we only populate a results object if provided
+			 * HOOK 3 - CURRENT NODE UNMARKED
 			 */
-			if ( results ) {						
-				results[current.getID()] = {
-					parent 	: stack_entry.parent,
-					counter : callbacks.counter ? callbacks.counter() : undefined
-				};
+			if ( callbacks.node_unmarked ) {
+				execCallbacks(callbacks.node_unmarked, scope);
 			}
 						
-			var adj_nodes = current.adjNodes();
+			adj_nodes = current.adjNodes();
 			for ( var adj_idx in adj_nodes ) {
 				stack.push({
 					node: adj_nodes[adj_idx],
@@ -78,12 +84,21 @@ function DFSVisit(graph 				: $G.IGraph,
 			}
 			
 			/**
+			 * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
+			 */
+			
+			/**
 			 * If we run from an outer loop, maybe we have to 
 			 * execute some callback in that context...
 			 */
-			if ( callbacks.treatOuterNode ) {
-				callbacks.treatOuterNode(current);
-			}			
+			if ( callbacks.adj_nodes_pushed ) {
+				execCallbacks(callbacks.adj_nodes_pushed, scope);
+			}
+		}
+		else {
+			/**
+			 * HOOK 5 - CURRENT NODE ALREADY MARKED
+			 */
 		}
 	}
 }
@@ -91,24 +106,41 @@ function DFSVisit(graph 				: $G.IGraph,
 
 
 function DFS( graph 		: $G.IGraph,
-							results		: {[id: string] : DFS_Result_Entry} = {},
 							callbacks	: DFS_Callbacks = {} ) {
 		
 	var	marked : {[id: string] : boolean} = {};
 	var nodes = graph.getNodes();
 	
-	if ( callbacks.init ) {
-		callbacks.init(nodes);
+	/**
+	 * HOOK 1 - INIT (OUTER DFS)
+	 */
+	if ( callbacks.init_dfs ) {
+		execCallbacks(callbacks.init_dfs, this);
 	}
 	
-	callbacks.treatOuterNode = function(node:$N.IBaseNode) { marked[node.getID()] = true };
+	var adj_nodes_pushed = callbacks.adj_nodes_pushed || {};
+	adj_nodes_pushed["treatOuterNode"] = function(node:$N.IBaseNode) { 
+		marked[node.getID()] = true 
+	};
 	
 	for ( var node_id in nodes ) {		
 		if ( !marked[node_id] ) {			
-			DFSVisit(graph, nodes[node_id], results, callbacks);
+			DFSVisit(graph, nodes[node_id], callbacks);
 		}
 	}	
 }
 
 
-export { DFSVisit, DFS, DFS_Result_Entry, DFS_Callbacks };
+/**
+ * @param context this pointer to the DFS or DFSVisit function
+ */
+function execCallbacks(cbs : Array<Function>, context) {
+	cbs.forEach( function(cb) {
+		if ( typeof cb === 'function' ) {
+			cb(context);
+		}
+	});
+}
+
+
+export { DFSVisit, DFS, DFS_Callbacks };
