@@ -20,200 +20,328 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			input_file		: string,
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats,
-			// vis_result		: {[id: string] : $DFS.DFS_Result_Entry},
-			// dfs_result		: {[id: string] : $DFS.DFS_Result_Entry},
 			callbacks			: $DFS.DFS_Callbacks;
 	
 	
 	describe('testing callback execution', () => {
 		
-		it('should properly execute the different callback stages', () => {
+		it('should correctly instantiate the search graph', () => {
+			json = new JSON_IN();
+			input_file = "./test/input/test_data/search_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(7);
+			expect(stats.nr_dir_edges).to.equal(7);
+			expect(stats.nr_und_edges).to.equal(2);
+		});
+		
+		/**
+		 * HUGE TODO:
+		 * Make sure the callbacks are not only executed, but
+		 * executed at the right stage of the code
+		 * Don't know how yet...
+		 */
+		describe('should properly execute the different callback stages', () => {
+			
+			/**
+			 * TODO: outSource execCallbacks function to utility module
+			 */
+			it('should execute an array of callback functions', () => {
+				var scope = {
+					msg_a: "",
+					msg_b: ""
+				}
+				var funcArray = [];
+				funcArray.push( function( context ) {
+					context["msg_a"] = "Hello from func A.";
+				});
+				funcArray.push( function( context ) {
+					context["msg_b"] = "Hello from func B.";
+				});
+				$DFS.execCallbacks(funcArray, scope);
+				expect(scope.msg_a).to.equal("Hello from func A.");
+				expect(scope.msg_b).to.equal("Hello from func B.");				
+			});
+			
+			
+			it('should execute the DFS VISIT INIT callbacks', () => {
+				var root = graph.getNodeById('A'),
+						result = {},
+						count = 0;
+				
+				callbacks = {
+					init_dfs_visit : []
+				};
+				var dfsVisitInitTestCallback = function() {
+					result['test_message'] = "DFS VISIT INIT callback executed.";
+				};
+				callbacks.init_dfs_visit.push(dfsVisitInitTestCallback);
+				$DFS.DFSVisit(graph, root, callbacks);
+				expect(result['test_message']).to.equal("DFS VISIT INIT callback executed.");
+			});
+			
+			
+			it('should execute the DFS VISIT NODE POPPED callbacks', () => {
+				var root = graph.getNodeById('A'),
+						result = {},
+						count = 0;
+				
+				callbacks = {
+					node_popped : []
+				};
+				var dfsVisitNodePoppedTestCallback = function() {
+					result['test_message'] = "DFS VISIT NODE POPPED callback executed.";
+				};
+				callbacks.node_popped.push(dfsVisitNodePoppedTestCallback);
+				$DFS.DFSVisit(graph, root, callbacks);
+				expect(result['test_message']).to.equal("DFS VISIT NODE POPPED callback executed.");
+			});
+			
+			
+			it('should execute the DFS VISIT NODE MARKED callbacks', () => {
+				var root = graph.getNodeById('A'),
+						result = {},
+						count = 0;
+				
+				callbacks = {
+					node_marked : []
+				};
+				var dfsVisitNodeMarkedTestCallback = function() {
+					result['test_message'] = "DFS VISIT NODE MARKED callback executed.";
+				};
+				callbacks.node_marked.push(dfsVisitNodeMarkedTestCallback);
+				$DFS.DFSVisit(graph, root, callbacks);
+				expect(result['test_message']).to.equal("DFS VISIT NODE MARKED callback executed.");
+			});
+			
+			
+			it('should execute the DFS VISIT NODE UNMARKED callbacks', () => {
+				var root = graph.getNodeById('A'),
+						result = {},
+						count = 0;
+				
+				callbacks = {
+					node_unmarked : []
+				};
+				var dfsVisitNodeUnMarkedTestCallback = function() {
+					result['test_message'] = "DFS VISIT NODE UNMARKED callback executed.";
+				};
+				callbacks.node_unmarked.push(dfsVisitNodeUnMarkedTestCallback);
+				$DFS.DFSVisit(graph, root, callbacks);
+				expect(result['test_message']).to.equal("DFS VISIT NODE UNMARKED callback executed.");
+			});
+			
+			
+			it('should execute the DFS VISIT ADJ NODES PUSHED callbacks', () => {
+				var root = graph.getNodeById('A'),
+						result = {},
+						count = 0;
+				
+				callbacks = {
+					adj_nodes_pushed : []
+				};
+				var dfsVisitAdjNodesPushedTestCallback = function() {
+					result['test_message'] = "DFS VISIT ADJ NODES PUSHED callback executed.";
+				};
+				callbacks.adj_nodes_pushed.push(dfsVisitAdjNodesPushedTestCallback);
+				$DFS.DFSVisit(graph, root, callbacks);
+				expect(result['test_message']).to.equal("DFS VISIT ADJ NODES PUSHED callback executed.");
+			});
+			
+			
+			it('should execute the DFS INIT callbacks', () => {
+				var result = {},
+						count = 0;
+				
+				callbacks = {
+					init_dfs : []
+				};
+				var dfsInitTestCallback = function() {
+					result['test_message'] = "DFS INIT callback executed.";
+				};
+				callbacks.init_dfs.push(dfsInitTestCallback);
+				$DFS.DFS(graph, callbacks);
+				expect(result['test_message']).to.equal("DFS INIT callback executed.");
+			});
 			
 		});
 		
 	});
 	
-	// describe('testing DFS visit on small test graph', () => {
-		
-	// 	it('should correctly instantiate the search graph', () => {
-	// 		json = new JSON_IN();
-	// 		input_file = "./test/input/test_data/search_graph.json";
-	// 		graph = json.readFromJSONFile(input_file);
-	// 		stats = graph.getStats();
-	// 		expect(stats.nr_nodes).to.equal(7);
-	// 		expect(stats.nr_dir_edges).to.equal(7);
-	// 		expect(stats.nr_und_edges).to.equal(2);
-	// 	})
+	
+	describe('testing DFS visit on small test graph', () => {
 				
-	// 	it('should correctly compute distances from node A', () => {
-	// 		var root = graph.getNodeById('A');
-			
-	// 		var result = {};
-	// 		var count = 0;
-	// 		var counter = function() { return count++; };			
-	// 		callbacks = {
-	// 			init_dfs_visit : [],
-	// 			node_unmarked  : []
-	// 		};
-			
-	// 		var initDFSVisit = function( context ) {
-	// 			console.dir(context);
-	// 			result[context.current_root.getID()] = {
-	// 				parent 	: context.current_root
-	// 			};
-	// 		};
-	// 		callbacks.init_dfs_visit.push(initDFSVisit);
+		it('should correctly compute distances from node A', () => {
+			var root = graph.getNodeById('A'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks);
 						
-	// 		var setResultEntry = function( context ) {
-	// 			result[context.current.getID()] = {
-	// 				parent 	: context.stack_entry.parent,
-	// 				counter : counter()
-	// 			};
-	// 		};
-	// 		callbacks.node_unmarked.push(setResultEntry);			
+			expect(Object.keys(result).length).to.equal(6);
 			
-	// 		$DFS.DFSVisit(graph, root, callbacks);
+			// console.dir(visit_res);
+			
+			// undirected before directed...
+			// shall we sort those nodes by id first??
+			expect(result['A'].counter).to.equal(0);
+			expect(result['B'].counter).to.equal(5);
+			expect(result['C'].counter).to.equal(4);
+			expect(result['D'].counter).to.equal(1);
+			expect(result['E'].counter).to.equal(2);
+			expect(result['F'].counter).to.equal(3);
+			
+			expect(result['A'].parent).to.equal(root);
+			expect(result['B'].parent).to.equal(root);
+			expect(result['C'].parent).to.equal(root);
+			expect(result['D'].parent).to.equal(root);
+			expect(result['E'].parent).to.equal(graph.getNodeById('D'));
+			expect(result['F'].parent).to.equal(graph.getNodeById('E'));
+		});
+		
+		
+		it('should correctly compute distances from node D', () => {
+			var root = graph.getNodeById('D'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};			
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks);
 						
-	// 		expect(Object.keys(result).length).to.equal(6);
+			expect(Object.keys(result).length).to.equal(6);
 			
-	// 		// console.dir(visit_res);
+			expect(result['A'].counter).to.equal(1);
+			expect(result['B'].counter).to.equal(4);
+			expect(result['C'].counter).to.equal(3);
+			expect(result['D'].counter).to.equal(0);
+			expect(result['E'].counter).to.equal(5);
+			expect(result['F'].counter).to.equal(2);
 			
-	// 		// undirected before directed...
-	// 		// shall we sort those nodes by id first??
-	// 		expect(result['A'].counter).to.equal(0);
-	// 		expect(result['B'].counter).to.equal(5);
-	// 		expect(result['C'].counter).to.equal(4);
-	// 		expect(result['D'].counter).to.equal(1);
-	// 		expect(result['E'].counter).to.equal(2);
-	// 		expect(result['F'].counter).to.equal(3);
-			
-	// 		expect(result['A'].parent).to.equal(root);
-	// 		expect(result['B'].parent).to.equal(root);
-	// 		expect(result['C'].parent).to.equal(root);
-	// 		expect(result['D'].parent).to.equal(root);
-	// 		expect(result['E'].parent).to.equal(graph.getNodeById('D'));
-	// 		expect(result['F'].parent).to.equal(graph.getNodeById('E'));
-	// 	});
+			expect(result['A'].parent).to.equal(root);
+			expect(result['B'].parent).to.equal(graph.getNodeById('A'));
+			expect(result['C'].parent).to.equal(graph.getNodeById('A'));
+			expect(result['D'].parent).to.equal(root);
+			expect(result['E'].parent).to.equal(root);
+			expect(result['F'].parent).to.equal(graph.getNodeById('A'));
+		});
 		
 		
-	// 	it('should correctly compute distances from node D', () => {
-	// 		var root = graph.getNodeById('D');
-			
-	// 		var counter = 0;
-	// 		callbacks = {
-	// 			counter : function() { return counter++; }
-	// 		};
-	// 		vis_result = {};
-	// 		$DFS.DFSVisit(graph, root, vis_result, callbacks);
+		it('should correctly compute distances from node E', () => {
+			var root = graph.getNodeById('E'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};			
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks);
 						
-	// 		expect(Object.keys(vis_result).length).to.equal(6);
+			expect(Object.keys(result).length).to.equal(2);			
+			expect(result['E'].counter).to.equal(0);
+			expect(result['F'].counter).to.equal(1);
 			
-	// 		expect(vis_result['A'].counter).to.equal(1);
-	// 		expect(vis_result['B'].counter).to.equal(4);
-	// 		expect(vis_result['C'].counter).to.equal(3);
-	// 		expect(vis_result['D'].counter).to.equal(0);
-	// 		expect(vis_result['E'].counter).to.equal(5);
-	// 		expect(vis_result['F'].counter).to.equal(2);
-			
-	// 		expect(vis_result['A'].parent).to.equal(root);
-	// 		expect(vis_result['B'].parent).to.equal(graph.getNodeById('A'));
-	// 		expect(vis_result['C'].parent).to.equal(graph.getNodeById('A'));
-	// 		expect(vis_result['D'].parent).to.equal(root);
-	// 		expect(vis_result['E'].parent).to.equal(root);
-	// 		expect(vis_result['F'].parent).to.equal(graph.getNodeById('A'));
-	// 	});
+			expect(result['E'].parent).to.equal(root);
+			expect(result['F'].parent).to.equal(root);
+		});
 		
 		
-	// 	it('should correctly compute distances from node E', () => {
-	// 		var root = graph.getNodeById('E');
+		it('should correctly compute distances from node G', () => {
+			var root = graph.getNodeById('G'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
 			
-	// 		var counter = 0;
-	// 		callbacks = {
-	// 			counter : function() { return counter++; }
-	// 		};
-	// 		vis_result = {};
-	// 		$DFS.DFSVisit(graph, root, vis_result, callbacks);
-						
-	// 		expect(Object.keys(vis_result).length).to.equal(2);			
-	// 		expect(vis_result['E'].counter).to.equal(0);
-	// 		expect(vis_result['F'].counter).to.equal(1);
+			prepareDFSVisitTestCBs(result, callbacks, count);
 			
-	// 		expect(vis_result['E'].parent).to.equal(root);
-	// 		expect(vis_result['F'].parent).to.equal(root);
-	// 	});
-		
-		
-	// 	it('should correctly compute distances from node G', () => {
-	// 		var root = graph.getNodeById('G');
+			$DFS.DFSVisit(graph, root, callbacks);
 			
-	// 		var counter = 0;
-	// 		callbacks = {
-	// 			counter : function() { return counter++; }
-	// 		};
-	// 		vis_result = {};
-			
-	// 		$DFS.DFSVisit(graph, root, vis_result, callbacks);
-			
-	// 		expect(Object.keys(vis_result).length).to.equal(1);			
-	// 		expect(vis_result['G'].counter).to.equal(0);			
-	// 		expect(vis_result['G'].parent).to.equal(root);
-	// 	});
-		
-	// });
-	
-	
-	
-	// describe('testing DFS on small test graph (including unconnected component)', () => {
-		
-	// 	it('should not leave any nodes with a counter of -1 (unvisited)', () => {
-	// 		var counter = 0;
-	// 		dfs_result = {};
-	// 		callbacks = {
-	// 			counter : function() { return counter++; },
-	// 			init : function(nodes : {[id:string] : $N.IBaseNode}) {
-	// 				for ( var node_id in nodes ) {
-	// 					dfs_result[node_id] = {
-	// 						parent: null,
-	// 						counter: -1
-	// 					}
-	// 				}
-	// 			}
-	// 		};
-				
-	// 		$DFS.DFS(graph, dfs_result, callbacks);
-			
-	// 		expect(Object.keys(dfs_result).length).to.equal(7);
-	// 		expect(counter).to.equal(7);
-	// 		for ( var node_id in dfs_result ) {
-	// 			expect(dfs_result[node_id].counter).not.to.equal(-1);
-	// 		}
-	// 	});
-		
-		
-	// 	it('should not leave any nodes without a parent (even if self)', () => {
-	// 		var counter = 0;
-	// 		dfs_result = {};
-	// 		callbacks = {
-	// 			counter : function() { return counter++; },
-	// 			init : function(nodes : {[id:string] : $N.IBaseNode}) {
-	// 				for ( var node_id in nodes ) {
-	// 					dfs_result[node_id] = {
-	// 						parent: null,
-	// 						counter: -1
-	// 					}
-	// 				}
-	// 			}
-	// 		};
-			
-	// 		$DFS.DFS(graph, dfs_result, callbacks);
-			
-	// 		expect(Object.keys(dfs_result).length).to.equal(7);
-	// 		expect(counter).to.equal(7);
-	// 		for ( var node_id in dfs_result ) {
-	// 			expect(dfs_result[node_id].parent).not.to.be.null;
-	// 		}
-	// 	});
+			expect(Object.keys(result).length).to.equal(1);			
+			expect(result['G'].counter).to.equal(0);			
+			expect(result['G'].parent).to.equal(root);
+		});
 		
 	});
 	
+	
+	describe('testing DFS on small test graph (including unconnected component)', () => {
+		
+		it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+			var result = {},
+					count = 0;
+							
+			callbacks = {};			
+			prepareDFSTestCBs(result, callbacks, count);				
+			$DFS.DFS(graph, callbacks);
+			
+			expect(Object.keys(result).length).to.equal(7);
+			// checking that all the counters have been increased
+			// and are therefore at 7 also
+			for ( var node_id in result ) {
+				expect(result[node_id].counter).not.to.equal(-1);
+			}
+		});
+		
+		
+		it('should not leave any nodes without a parent (even if self)', () => {
+			var result = {},
+					count = 0;
+					
+			callbacks = {};
+			prepareDFSTestCBs(result, callbacks, count);				
+			$DFS.DFS(graph, callbacks);
+			
+			expect(Object.keys(result).length).to.equal(7);
+			for ( var node_id in result ) {
+				expect(result[node_id].parent).not.to.be.null;
+			}
+		});
+		
+	});
+	
+	
+	function prepareDFSVisitTestCBs(result: {}, 
+																	callbacks: $DFS.DFS_Callbacks, 
+																	count: number) {																		
+		var counter = function() { 
+			return count++;
+		};
+		callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
+		callbacks.node_unmarked = callbacks.node_unmarked || [];			
+		var initDFSVisit = function( context : $DFS.DFSVisitScope ) {
+			result[context.current_root.getID()] = {
+				parent 	: context.current_root
+			};
+		};
+		callbacks.init_dfs_visit.push(initDFSVisit);						
+		var setResultEntry = function( context : $DFS.DFSVisitScope) {
+			result[context.current.getID()] = {
+				parent 	: context.stack_entry.parent,
+				counter : counter()
+			};
+		};
+		callbacks.node_unmarked.push(setResultEntry);	
+	}
+	
+	
+	function prepareDFSTestCBs( result: {},
+															callbacks: $DFS.DFS_Callbacks,
+															count: number) {
+		// First prepare Visit callbacks
+		prepareDFSVisitTestCBs(result, callbacks, count);
+		// Now add outer DFS INIT callback
+		callbacks.init_dfs = callbacks.init_dfs || [];		
+		var setInitialResultEntries = function( context : $DFS.DFSScope ) {
+			for ( var node_id in context.nodes ) {
+				result[node_id] = {
+					parent: null,
+					counter: -1
+				}
+			}
+		};
+		callbacks.init_dfs.push(setInitialResultEntries);
+	};
+		
 });

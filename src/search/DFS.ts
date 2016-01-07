@@ -22,25 +22,34 @@ interface StackEntry {
 }
 
 
+interface DFSVisitScope {
+	marked_temp 	: {[id: string] : boolean};
+	stack 				: Array<StackEntry>;
+	adj_nodes			: Array<$N.IBaseNode>;
+	stack_entry 	: StackEntry;
+	current				: $N.IBaseNode;
+	current_root	: $N.IBaseNode;
+}
+
+
+interface DFSScope {
+	marked 	: {[id: string] : boolean};
+	nodes		: {[id: string] : $N.IBaseNode};
+}
+
+
 function DFSVisit(graph 				: $G.IGraph, 
 									current_root 	: $N.IBaseNode,
 									callbacks			: DFS_Callbacks = {}) {
 	
-	var	marked_temp : {[id: string] : boolean} = {},
-			stack 			: Array<StackEntry> = [],
-			stack_entry : StackEntry,
-			current			: $N.IBaseNode,
-			adj_nodes		: Array<$N.IBaseNode>;
-			
-	var scope = {
-		marked_temp: marked_temp,
-		stack: stack,
-		stack_entry : stack_entry,
-		current: current,
-		adj_nodes: adj_nodes,
-		current_root: current_root
-	};
-				
+	var scope : DFSVisitScope = {
+		marked_temp		: {},
+		stack					: [],
+		adj_nodes			: [],
+		stack_entry		: null,
+		current				: null,
+		current_root	: current_root
+	}				
 	
 	/**
 	 * HOOK 1 - INIT (INNER DFS VISIT):
@@ -51,22 +60,26 @@ function DFSVisit(graph 				: $G.IGraph,
 		execCallbacks(callbacks.init_dfs_visit, scope);
 	}
 	
-	stack.push({
+	// Start py pushing current root to the stack
+	scope.stack.push({
 		node		: current_root,
 		parent	: current_root
 	});
 	
 	
-	while ( stack.length ) {
-		stack_entry = stack.pop();
-		current = stack_entry.node;
+	while ( scope.stack.length ) {
+		scope.stack_entry = scope.stack.pop();
+		scope.current = scope.stack_entry.node;
 		
 		/**
 		 * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
 		 */
+		if ( callbacks.node_popped ) {
+			execCallbacks(callbacks.node_popped, scope);
+		}
 		
-		if ( !marked_temp[current.getID()] ) {			
-			marked_temp[current.getID()] = true;
+		if ( !scope.marked_temp[scope.current.getID()] ) {			
+			scope.marked_temp[scope.current.getID()] = true;
 			
 			/**
 			 * HOOK 3 - CURRENT NODE UNMARKED
@@ -75,59 +88,60 @@ function DFSVisit(graph 				: $G.IGraph,
 				execCallbacks(callbacks.node_unmarked, scope);
 			}
 						
-			adj_nodes = current.adjNodes();
-			for ( var adj_idx in adj_nodes ) {
-				stack.push({
-					node: adj_nodes[adj_idx],
-					parent: current
+			scope.adj_nodes = scope.current.adjNodes();
+			for ( var adj_idx in scope.adj_nodes ) {
+				scope.stack.push({
+					node: scope.adj_nodes[adj_idx],
+					parent: scope.current
 				});
 			}
 			
 			/**
 			 * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
 			 */
-			
-			/**
-			 * If we run from an outer loop, maybe we have to 
-			 * execute some callback in that context...
-			 */
 			if ( callbacks.adj_nodes_pushed ) {
 				execCallbacks(callbacks.adj_nodes_pushed, scope);
 			}
+
 		}
 		else {
 			/**
 			 * HOOK 5 - CURRENT NODE ALREADY MARKED
 			 */
+			if ( callbacks.node_marked ) {
+				execCallbacks(callbacks.node_marked, scope);
+			}
 		}
 	}
 }
 
 
-
 function DFS( graph 		: $G.IGraph,
 							callbacks	: DFS_Callbacks = {} ) {
-		
-	var	marked : {[id: string] : boolean} = {};
-	var nodes = graph.getNodes();
+	
+	var scope : DFSScope = {
+		marked 	: {},
+		nodes 	: graph.getNodes()
+	}	
 	
 	/**
 	 * HOOK 1 - INIT (OUTER DFS)
 	 */
 	if ( callbacks.init_dfs ) {
-		execCallbacks(callbacks.init_dfs, this);
+		execCallbacks(callbacks.init_dfs, scope);
 	}
 	
-	var adj_nodes_pushed = callbacks.adj_nodes_pushed || {};
-	adj_nodes_pushed["treatOuterNode"] = function(node:$N.IBaseNode) { 
-		marked[node.getID()] = true 
+	callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
+	var markNode = function ( context : DFSVisitScope ) { 
+		scope.marked[context.current.getID()] = true 
 	};
+	callbacks.adj_nodes_pushed.push(markNode);
 	
-	for ( var node_id in nodes ) {		
-		if ( !marked[node_id] ) {			
-			DFSVisit(graph, nodes[node_id], callbacks);
+	for ( var node_id in scope.nodes ) {		
+		if ( !scope.marked[node_id] ) {			
+			DFSVisit(graph, scope.nodes[node_id], callbacks);
 		}
-	}	
+	}
 }
 
 
@@ -143,4 +157,4 @@ function execCallbacks(cbs : Array<Function>, context) {
 }
 
 
-export { DFSVisit, DFS, DFS_Callbacks };
+export { DFSVisit, DFS, DFS_Callbacks, DFSVisitScope, DFSScope, execCallbacks };
