@@ -33,6 +33,7 @@ gulp.task('build', function () {
 						.pipe(gulp.dest('.'));
 });
 
+// Packaging - Node / Commonjs
 gulp.task('dist', ['clean', 'tdoc'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
@@ -43,6 +44,7 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 						 .pipe(gulp.dest('dist'));
 });
 
+// Packaging - Browser
 gulp.task('browserify', ['dist'], function() {
 	// Single entry point to browserify 
 	gulp.src('./index.js')
@@ -52,6 +54,7 @@ gulp.task('browserify', ['dist'], function() {
 		.pipe(gulp.dest('./build/graphinius'))
 });
 
+// Documentation (type doc)
 gulp.task("tdoc", function() {
     return gulp
         .src(paths.typesources)

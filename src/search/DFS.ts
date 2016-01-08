@@ -40,7 +40,8 @@ interface DFSScope {
 
 function DFSVisit(graph 				: $G.IGraph, 
 									current_root 	: $N.IBaseNode,
-									callbacks			: DFS_Callbacks = {}) {
+									callbacks			: DFS_Callbacks = {},
+									dir_mode			: $G.GraphMode = $G.GraphMode.MIXED) {
 	
 	var scope : DFSVisitScope = {
 		marked_temp		: {},
@@ -49,7 +50,14 @@ function DFSVisit(graph 				: $G.IGraph,
 		stack_entry		: null,
 		current				: null,
 		current_root	: current_root
-	}				
+	};
+	
+	/**
+	 * We are not traversing a blank graph...
+	 */
+	if ( dir_mode === $G.GraphMode.INIT ) {
+		throw new Error('Cowardly refusing to traverse graph without edges.');
+	}
 	
 	/**
 	 * HOOK 1 - INIT (INNER DFS VISIT):
@@ -87,9 +95,26 @@ function DFSVisit(graph 				: $G.IGraph,
 			if ( callbacks.node_unmarked ) {
 				execCallbacks(callbacks.node_unmarked, scope);
 			}
-						
-			scope.adj_nodes = scope.current.adjNodes();
+			
+			/**
+			 * Do we move only in the directed subgraph, 
+			 * undirected subgraph or complete (mixed) graph?
+			 */
+			if ( dir_mode === $G.GraphMode.MIXED ) {
+				scope.adj_nodes = scope.current.adjNodes();
+			}
+			else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
+				scope.adj_nodes = scope.current.connNodes();
+			}
+			else if ( dir_mode === $G.GraphMode.DIRECTED ) {
+				scope.adj_nodes = scope.current.nextNodes();
+			}
+			
 			for ( var adj_idx in scope.adj_nodes ) {
+				/**
+				 * HOOK 6 - NODE OR EDGE TYPE CHECK...
+				 * LATER !!
+				 */
 				scope.stack.push({
 					node: scope.adj_nodes[adj_idx],
 					parent: scope.current
@@ -117,7 +142,8 @@ function DFSVisit(graph 				: $G.IGraph,
 
 
 function DFS( graph 		: $G.IGraph,
-							callbacks	: DFS_Callbacks = {} ) {
+							callbacks	: DFS_Callbacks = {},
+							dir_mode	: $G.GraphMode = $G.GraphMode.MIXED) {
 	
 	var scope : DFSScope = {
 		marked 	: {},
@@ -139,7 +165,7 @@ function DFS( graph 		: $G.IGraph,
 	
 	for ( var node_id in scope.nodes ) {		
 		if ( !scope.marked[node_id] ) {			
-			DFSVisit(graph, scope.nodes[node_id], callbacks);
+			DFSVisit(graph, scope.nodes[node_id], callbacks, dir_mode);
 		}
 	}
 }

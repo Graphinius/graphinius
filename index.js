@@ -5,7 +5,9 @@ var Graph 		= require("./dist/core/Graph.js");
 var CsvInput 	= require("./dist/input/CSVInput");
 var JsonInput = require("./dist/input/JSONInput");
 
-// Encapsulate ALL functions within Graph....!!
+// TODO:
+// Encapsulate ALL functions within Graph for
+// easier access and less import / new ceremony
 
 var out = typeof window !== 'undefined' ? window : global;
 

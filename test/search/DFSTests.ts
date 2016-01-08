@@ -168,8 +168,182 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		
 	});
 	
+	describe('testing DFS visit on small test graph, INIT MODE', () => {
+		
+		it('should throw an error upon trying to traverse a blank graph (INIT)', () => {
+			var root = graph.getNodeById('A'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);
+			
+			expect($DFS.DFSVisit.bind($DFS.DFSVisit, graph, root, callbacks, $G.GraphMode.INIT)).to.throw('Cowardly refusing to traverse graph without edges.');
+		});
+		
+	});
 	
-	describe('testing DFS visit on small test graph', () => {
+	
+	describe('testing DFS visit on small test graph, DIRECTED MODE', () => {
+				
+		it('should correctly compute distances from node A', () => {
+			var root = graph.getNodeById('A'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(4);
+			
+			expect(result['D']).to.be.undefined;
+			expect(result['E']).to.be.undefined;
+			expect(result['G']).to.be.undefined;
+			
+			expect(result['A'].counter).to.equal(0);
+			expect(result['B'].counter).to.equal(3);
+			expect(result['C'].counter).to.equal(2);
+			expect(result['F'].counter).to.equal(1);
+			
+			expect(result['A'].parent).to.equal(root);
+			expect(result['B'].parent).to.equal(root);
+			expect(result['C'].parent).to.equal(root);
+			expect(result['F'].parent).to.equal(root);
+		});
+		
+		
+		it('should correctly compute distances from node D', () => {
+			var root = graph.getNodeById('D'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(3);
+			
+			expect(result['A']).to.be.undefined;
+			expect(result['B']).to.be.undefined;
+			expect(result['C']).to.be.undefined;
+			expect(result['G']).to.be.undefined;
+			
+			expect(result['D'].counter).to.equal(0);
+			expect(result['E'].counter).to.equal(1);
+			expect(result['F'].counter).to.equal(2);
+			
+			expect(result['D'].parent).to.equal(root);
+			expect(result['E'].parent).to.equal(root);
+			expect(result['F'].parent).to.equal(graph.getNodeById('E'));
+		});
+		
+		
+		it('should correctly compute distances from node G', () => {
+			var root = graph.getNodeById('G'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(1);
+			
+			expect(result['A']).to.be.undefined;
+			expect(result['B']).to.be.undefined;
+			expect(result['C']).to.be.undefined;
+			expect(result['D']).to.be.undefined;
+			expect(result['E']).to.be.undefined;
+			expect(result['F']).to.be.undefined;
+			
+			expect(result['G'].counter).to.equal(0);
+			
+			expect(result['G'].parent).to.equal(root);
+		});
+		
+	});
+	
+	
+	describe('testing DFS visit on small test graph, UNDIRECTED MODE', () => {
+				
+		it('should correctly compute distances from node A', () => {
+			var root = graph.getNodeById('A'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(2);
+			
+			expect(result['B']).to.be.undefined;
+			expect(result['C']).to.be.undefined;
+			expect(result['E']).to.be.undefined;
+			expect(result['F']).to.be.undefined;
+			expect(result['G']).to.be.undefined;
+			
+			expect(result['A'].counter).to.equal(0);
+			expect(result['D'].counter).to.equal(1);
+			
+			expect(result['A'].parent).to.equal(root);
+			expect(result['D'].parent).to.equal(root);
+		});
+		
+		
+		it('should correctly compute distances from node D', () => {
+			var root = graph.getNodeById('D'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(2);
+			
+			expect(result['B']).to.be.undefined;
+			expect(result['C']).to.be.undefined;
+			expect(result['E']).to.be.undefined;
+			expect(result['F']).to.be.undefined;
+			expect(result['G']).to.be.undefined;
+			
+			expect(result['A'].counter).to.equal(1);
+			expect(result['D'].counter).to.equal(0);
+			
+			expect(result['A'].parent).to.equal(root);
+			expect(result['D'].parent).to.equal(root);
+		});
+		
+		
+		it('should correctly compute distances from node G', () => {
+			var root = graph.getNodeById('G'),
+					result = {},
+					count = 0;
+										
+			callbacks = {};
+			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
+						
+			expect(Object.keys(result).length).to.equal(1);
+			
+			expect(result['A']).to.be.undefined;
+			expect(result['B']).to.be.undefined;
+			expect(result['C']).to.be.undefined;
+			expect(result['D']).to.be.undefined;
+			expect(result['E']).to.be.undefined;
+			expect(result['F']).to.be.undefined;
+			
+			expect(result['G'].counter).to.equal(0);
+			
+			expect(result['G'].parent).to.equal(root);
+		});
+		
+	});
+	
+	
+	describe('testing DFS visit on small test graph, MIXED MODE', () => {
 				
 		it('should correctly compute distances from node A', () => {
 			var root = graph.getNodeById('A'),
@@ -268,38 +442,57 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
 	describe('testing DFS on small test graph (including unconnected component)', () => {
 		
-		it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+		it('should throw an error upon trying to traverse a blank graph (INIT)', () => {
 			var result = {},
 					count = 0;
-							
-			callbacks = {};			
-			prepareDFSTestCBs(result, callbacks, count);				
-			$DFS.DFS(graph, callbacks);
-			
-			expect(Object.keys(result).length).to.equal(7);
-			// checking that all the counters have been increased
-			// and are therefore at 7 also
-			for ( var node_id in result ) {
-				expect(result[node_id].counter).not.to.equal(-1);
-			}
-		});
-		
-		
-		it('should not leave any nodes without a parent (even if self)', () => {
-			var result = {},
-					count = 0;
-					
+										
 			callbacks = {};
 			prepareDFSTestCBs(result, callbacks, count);				
-			$DFS.DFS(graph, callbacks);
 			
-			expect(Object.keys(result).length).to.equal(7);
-			for ( var node_id in result ) {
-				expect(result[node_id].parent).not.to.be.null;
-			}
+			expect($DFS.DFS.bind($DFS.DFS, graph, callbacks, $G.GraphMode.INIT)).to.throw('Cowardly refusing to traverse graph without edges.');
 		});
 		
-	});
+		
+		/**
+		 * $G.GraphMode enum holds 0-init (no edges), 1-directed, 
+		 * 2-undirected, 3-mixed
+		 */		
+		for ( var i = 1; i < 4; i++ ) {
+			
+			it('should not leave any nodes with a counter of -1 (unvisited)', () => {
+				var result = {},
+						count = 0;
+								
+				callbacks = {};			
+				prepareDFSTestCBs(result, callbacks, count);				
+				$DFS.DFS(graph, callbacks, i);
+				
+				expect(Object.keys(result).length).to.equal(7);
+				// checking that all the counters have been increased
+				// and are therefore at 7 also
+				for ( var node_id in result ) {
+					expect(result[node_id].counter).not.to.equal(-1);
+				}
+			});
+			
+			
+			it('should not leave any nodes without a parent (even if self)', () => {
+				var result = {},
+						count = 0;
+						
+				callbacks = {};
+				prepareDFSTestCBs(result, callbacks, count);				
+				$DFS.DFS(graph, callbacks, i);
+				
+				expect(Object.keys(result).length).to.equal(7);
+				for ( var node_id in result ) {
+					expect(result[node_id].parent).not.to.be.null;
+				}
+			});
+		
+		}
+		
+	});	
 	
 	
 	function prepareDFSVisitTestCBs(result: {}, 
