@@ -105,6 +105,43 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			
 			// console.dir(stats);
 		});
+		
+		
+		it('tests the time Object keys takes to return the length of the keys array', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false;
+			input_file = "./test/input/test_data/real_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			var start = +new Date(),
+					end;
+			
+			for ( var i = 0; i < 5000; i++ ) {
+				graph.nrNodes();
+			}
+			
+			end = +new Date();
+			console.log("counted graph nodes 5000 times in " + (end-start) + " ms.");
+		});
+		
+		
+		/**
+		 * Funny use case - see how long it takes to mutilate graph...
+		 */ 
+		// it('should construct a real sized graph from an edge list with edges set to directed', () => {
+		// 	json = new JSON_IN();
+		// 	json._explicit_direction = false;
+		// 	json._direction_mode = false;
+		// 	input_file = "./test/input/test_data/real_graph.json";
+		// 	graph = json.readFromJSONFile(input_file);
+			
+		// 	var nr_nodes = graph.nrNodes();
+		// 	while ( nr_nodes ) {
+		// 		graph.removeNode(graph.getNodeById(String(--nr_nodes)));
+		// 		console.log(nr_nodes);
+		// 	}
+		// 	expect(graph.nrNodes()).to.equal(0);			
+		// });
 	
 	});
 	

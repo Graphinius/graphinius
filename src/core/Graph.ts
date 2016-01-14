@@ -202,9 +202,20 @@ class BaseGraph implements IGraph {
 		var deg = node.degree();
 		
 		// Delete all edges brutally...
-		if ( in_deg || out_deg || deg ) {
-			this.deleteAllEdgesOf(node);
+		// if ( in_deg || out_deg || deg ) {
+		// 	this.deleteAllEdgesOf(node);
+		// }
+		if ( in_deg ) {
+			this.deleteInEdgesOf(node);
 		}
+		if ( out_deg ) {
+			this.deleteOutEdgesOf(node);
+		}
+		// if ( deg ) {
+		// 	console.log('removing undirected edge');
+		// 	this.deleteUndEdgesOf(node);
+		// }
+		
 		delete this._nodes[node.getID()];
 	}
 	
