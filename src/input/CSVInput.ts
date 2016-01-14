@@ -15,11 +15,11 @@ interface ICSVInput {
 	_direction_mode			: boolean; // true => directed
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
 	readFromAdjacencyListURL(fileurl : string, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph;
+	readFromEdgeList(input : Array<string>, graph_name: string) : $G.IGraph;
 	readFromEdgeListURL(fileurl : string, cb : Function);
 }
 
@@ -42,10 +42,10 @@ class CSVInput implements ICSVInput {
 	
 	
 	private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {	
-		var self = this;
-		var graph_name = path.basename(fileurl);
-		var graph : $G.IGraph = new $G.BaseGraph(graph_name);
-		var request;
+		var self = this,
+				graph_name = path.basename(fileurl),
+				graph : $G.IGraph,
+				request;
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
 			// Browser...
@@ -53,7 +53,7 @@ class CSVInput implements ICSVInput {
 			request.onreadystatechange = function() {
 					if (request.readyState == 4 && request.status == 200) {
 						var input = request.responseText.split('\n');
-						graph = localFun.apply(self, [graph, input]);
+						graph = localFun.apply(self, [input, graph_name]);
 						cb(graph, undefined);
 					}
 			};
@@ -71,7 +71,7 @@ class CSVInput implements ICSVInput {
 				if (!err && res.statusCode === 200) {
 						// Deal with the CSV response
 						input = input.toString().split('\n');
-						graph = localFun.apply(self, [graph, input]);
+						graph = localFun.apply(self, [input, graph_name]);
 						cb(graph, undefined);
 				}
 			});
@@ -92,13 +92,14 @@ class CSVInput implements ICSVInput {
 	private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
 		this.checkNodeEnvironment();
 		var graph_name = path.basename(filepath);
-		var graph = new $G.BaseGraph(graph_name);
 		var input = fs.readFileSync(filepath).toString().split('\n');
-		return func.apply(this, [graph, input]);
+		return func.apply(this, [input, graph_name]);
 	}
 			
 	
-	readFromAdjacencyList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
+	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph {
+		
+		var graph = new $G.BaseGraph(graph_name);
 		
 		for ( var idx in input ) {
 			var line = input[idx],
@@ -158,8 +159,10 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(graph : $G.IGraph, input : Array<string>) : $G.IGraph {
-				
+	readFromEdgeList(input : Array<string>, graph_name : string) : $G.IGraph {
+		
+		var graph = new $G.BaseGraph(graph_name);
+		
 		for ( var idx in input ) {
 			var line = input[idx],
 					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
