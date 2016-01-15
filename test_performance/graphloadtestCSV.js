@@ -1,21 +1,22 @@
 require('../index.js');
 var yargs = require('yargs').argv;
 
-var start = +new Date(),
+var init = +new Date(),
+    start = +new Date(),
     end,
     node_id = "1",
     graph_mode = 2;
 
-yargs.name = yargs.name || "SCC100k";
+yargs.graph = yargs.graph || "SCC100k";
 
 //----------------------------------------------------------------
 //                           LOAD TEST
 //----------------------------------------------------------------
-var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_graphs/' + yargs.name + '.csv';
+var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_graphs/' + yargs.graph + '.csv';
 var csv = new $G.CsvInput(' ', false, false);
 var graph = csv.readFromEdgeListFile(file);
 end = +new Date();
-console.log("Read graph " + yargs.name + " with " + graph.nrNodes() + " nodes and " + 
+console.log("Read graph " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
@@ -27,7 +28,7 @@ start = +new Date();
 var root = graph.getNodeById(node_id);
 var bfs = $Search.BFS(graph, root);
 end = +new Date();
-console.log("Computed BFS of " + yargs.name + " with " + graph.nrNodes() + " nodes and " + 
+console.log("Computed BFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
@@ -58,16 +59,22 @@ $Search.prepareStandardDFSCBs(result, callbacks, count);
 $Search.DFS(graph, callbacks, graph_mode);
 
 end = +new Date();
-console.log("Computed DFS of " + yargs.name + " with " + graph.nrNodes() + " nodes and " + 
+console.log("Computed DFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
+console.log("Whole run took: " + (end-init) + " ms.");
 
 
 
+// PRELIMINARY RESULTS AFTER 5 RUNS:
 
-
-
+// time_user = 11599
+// time_sys = 488
+// time_bfs_user = 2551
+// time_bfs_sys = 107
+// => a little faster than networkx, but 1-1.5 orders of magnitude slower
+//    than optimized c libraries...
 
 
 
