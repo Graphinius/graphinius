@@ -176,7 +176,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);
 			
 			expect($DFS.DFSVisit.bind($DFS.DFSVisit, graph, root, callbacks, $G.GraphMode.INIT)).to.throw('Cowardly refusing to traverse graph without edges.');
 		});
@@ -192,7 +192,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(4);
@@ -219,7 +219,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(3);
@@ -245,7 +245,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.DIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(1);
@@ -273,7 +273,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(2);
@@ -298,7 +298,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(2);
@@ -323,7 +323,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks, $G.GraphMode.UNDIRECTED);
 						
 			expect(Object.keys(result).length).to.equal(1);
@@ -351,7 +351,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks);
 						
 			expect(Object.keys(result).length).to.equal(6);
@@ -382,7 +382,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};			
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks);
 						
 			expect(Object.keys(result).length).to.equal(6);
@@ -409,7 +409,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};			
-			prepareDFSVisitTestCBs(result, callbacks, count);			
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);			
 			$DFS.DFSVisit(graph, root, callbacks);
 						
 			expect(Object.keys(result).length).to.equal(2);			
@@ -428,7 +428,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 										
 			callbacks = {};
 			
-			prepareDFSVisitTestCBs(result, callbacks, count);
+			$DFS.prepareStandardDFSVisitCBs(result, callbacks, count);
 			
 			$DFS.DFSVisit(graph, root, callbacks);
 			
@@ -447,7 +447,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					count = 0;
 										
 			callbacks = {};
-			prepareDFSTestCBs(result, callbacks, count);				
+			$DFS.prepareStandardDFSCBs(result, callbacks, count);				
 			
 			expect($DFS.DFS.bind($DFS.DFS, graph, callbacks, $G.GraphMode.INIT)).to.throw('Cowardly refusing to traverse graph without edges.');
 		});
@@ -464,7 +464,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						count = 0;
 								
 				callbacks = {};			
-				prepareDFSTestCBs(result, callbacks, count);				
+				$DFS.prepareStandardDFSCBs(result, callbacks, count);				
 				$DFS.DFS(graph, callbacks, i);
 				
 				expect(Object.keys(result).length).to.equal(7);
@@ -481,7 +481,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						count = 0;
 						
 				callbacks = {};
-				prepareDFSTestCBs(result, callbacks, count);				
+				$DFS.prepareStandardDFSCBs(result, callbacks, count);				
 				$DFS.DFS(graph, callbacks, i);
 				
 				expect(Object.keys(result).length).to.equal(7);
@@ -494,47 +494,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		
 	});	
 	
-	
-	function prepareDFSVisitTestCBs(result: {}, 
-																	callbacks: $DFS.DFS_Callbacks, 
-																	count: number) {																		
-		var counter = function() { 
-			return count++;
-		};
-		callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-		callbacks.node_unmarked = callbacks.node_unmarked || [];			
-		var initDFSVisit = function( context : $DFS.DFSVisitScope ) {
-			result[context.current_root.getID()] = {
-				parent 	: context.current_root
-			};
-		};
-		callbacks.init_dfs_visit.push(initDFSVisit);						
-		var setResultEntry = function( context : $DFS.DFSVisitScope) {
-			result[context.current.getID()] = {
-				parent 	: context.stack_entry.parent,
-				counter : counter()
-			};
-		};
-		callbacks.node_unmarked.push(setResultEntry);	
-	}
+
 	
 	
-	function prepareDFSTestCBs( result: {},
-															callbacks: $DFS.DFS_Callbacks,
-															count: number) {
-		// First prepare Visit callbacks
-		prepareDFSVisitTestCBs(result, callbacks, count);
-		// Now add outer DFS INIT callback
-		callbacks.init_dfs = callbacks.init_dfs || [];		
-		var setInitialResultEntries = function( context : $DFS.DFSScope ) {
-			for ( var node_id in context.nodes ) {
-				result[node_id] = {
-					parent: null,
-					counter: -1
-				}
-			}
-		};
-		callbacks.init_dfs.push(setInitialResultEntries);
-	};
+	
 		
 });

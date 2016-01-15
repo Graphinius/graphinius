@@ -34,9 +34,9 @@ function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : BFSResult
 		counter		: counter++
 	};
 	
-	
-	while ( queue.length ) {
-		var current = queue.shift();
+	var i = 0;
+	while ( i < queue.length ) {
+		var current = queue[i++];
 		var adj_nodes = current.adjNodes();
 		for ( var adj_idx in adj_nodes ) {
 			var adj_node = adj_nodes[adj_idx];

@@ -68,7 +68,7 @@ function DFSVisit(graph 				: $G.IGraph,
 		execCallbacks(callbacks.init_dfs_visit, scope);
 	}
 	
-	// Start py pushing current root to the stack
+	// Start by pushing current root to the stack
 	scope.stack.push({
 		node		: current_root,
 		parent	: current_root
@@ -171,6 +171,49 @@ function DFS( graph 		: $G.IGraph,
 }
 
 
+function prepareStandardDFSVisitCBs( result: {}, 
+																		 callbacks: DFS_Callbacks, 
+																		 count: number) {																		
+	var counter = function() { 
+		return count++;
+	};
+	callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
+	callbacks.node_unmarked = callbacks.node_unmarked || [];			
+	var initDFSVisit = function( context : DFSVisitScope ) {
+		result[context.current_root.getID()] = {
+			parent 	: context.current_root
+		};
+	};
+	callbacks.init_dfs_visit.push(initDFSVisit);						
+	var setResultEntry = function( context : DFSVisitScope) {
+		result[context.current.getID()] = {
+			parent 	: context.stack_entry.parent,
+			counter : counter()
+		};
+	};
+	callbacks.node_unmarked.push(setResultEntry);	
+}
+
+
+function prepareStandardDFSCBs( result: {},
+												callbacks: DFS_Callbacks,
+												count: number) {
+	// First prepare Visit callbacks
+	prepareStandardDFSVisitCBs(result, callbacks, count);
+	// Now add outer DFS INIT callback
+	callbacks.init_dfs = callbacks.init_dfs || [];		
+	var setInitialResultEntries = function( context : DFSScope ) {
+		for ( var node_id in context.nodes ) {
+			result[node_id] = {
+				parent: null,
+				counter: -1
+			}
+		}
+	};
+	callbacks.init_dfs.push(setInitialResultEntries);
+};
+
+
 /**
  * @param context this pointer to the DFS or DFSVisit function
  */
@@ -183,4 +226,5 @@ function execCallbacks(cbs : Array<Function>, context) {
 }
 
 
-export { DFSVisit, DFS, DFS_Callbacks, DFSVisitScope, DFSScope, execCallbacks };
+export { DFSVisit, DFS, DFS_Callbacks, DFSVisitScope, DFSScope, prepareStandardDFSVisitCBs, 
+				 prepareStandardDFSCBs, execCallbacks };

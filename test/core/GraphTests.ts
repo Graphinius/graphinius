@@ -650,7 +650,7 @@ describe('GRAPH TESTS: ', () => {
 		 * A node should have 1 less undirected and 1 less incoming
 		 * graph should still be in mixed mode
 		 */
-		it('should correctly delete a formerly node, test case 1', () => {
+		it('should correctly delete a node including edges, test case 1', () => {
 			graph.removeNode(n_c);
 			expect(n_a.degree()).to.equal(1);
 			expect(n_a.inDegree()).to.equal(2);
@@ -667,16 +667,12 @@ describe('GRAPH TESTS: ', () => {
 		 * graph and all remaining nodes should be left without edges
 		 * graph should be in INIT mode...
 		 */
-		it('should correctly delete a formerly node, test case 2', () => {
-			// console.dir(graph.getStats());
-			// console.dir(graph.degreeDistribution());
-			graph.removeNode(n_a);
+		it('should correctly delete a node including edges, test case 2', () => {
+			graph.removeNode(n_a);			
 			expect(graph.nrDirEdges()).to.equal(0);
 			expect(graph.nrUndEdges()).to.equal(0);
 			expect(graph.nrNodes()).to.equal(3);
 			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
-			// console.dir(graph.getStats());
-			// console.dir(graph.degreeDistribution());
 		});
 		
 		
