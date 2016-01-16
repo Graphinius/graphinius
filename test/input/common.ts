@@ -108,4 +108,40 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(e_dad.getNodes().b).to.equal(n_a);
 }
 
-export {checkSmallGraphStats}
+
+function checkSmallGraphCoords(graph: $G.IGraph) {
+	var a_coords = graph.getNodeById("A").getFeature("coords");
+	
+	expect(typeof a_coords.x).to.equal('number');
+	expect(a_coords.x).to.equal(15);
+	expect(typeof a_coords.y).to.equal('number');
+	expect(a_coords.y).to.equal(2);
+	expect(typeof a_coords.z).to.equal('number');
+	expect(a_coords.z).to.equal(57);
+	
+	var b_coords = graph.getNodeById("B").getFeature("coords");
+	expect(typeof b_coords.x).to.equal('number');
+	expect(b_coords.x).to.equal(55);
+	expect(typeof b_coords.y).to.equal('number');
+	expect(b_coords.y).to.equal(25);
+	expect(typeof b_coords.z).to.equal('number');
+	expect(b_coords.z).to.equal(7);
+	
+	var c_coords = graph.getNodeById("C").getFeature("coords");
+	expect(typeof c_coords.x).to.equal('number');
+	expect(c_coords.x).to.equal(1);
+	expect(typeof c_coords.y).to.equal('number');
+	expect(c_coords.y).to.equal(-12);
+	expect(typeof c_coords.z).to.equal('number');
+	expect(c_coords.z).to.equal(33);
+	
+	var d_coords = graph.getNodeById("D").getFeature("coords");
+	expect(typeof d_coords.x).to.equal('number');
+	expect(d_coords.x).to.equal(17);
+	expect(typeof d_coords.y).to.equal('number');
+	expect(d_coords.y).to.equal(-4);
+	expect(typeof d_coords.z).to.equal('number');
+	expect(d_coords.z).to.equal(-13);
+}
+
+export { checkSmallGraphStats, checkSmallGraphCoords }

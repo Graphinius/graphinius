@@ -42,9 +42,17 @@ var JSONInput = (function () {
         }
     };
     JSONInput.prototype.readFromJSON = function (json) {
-        var graph = new $G.BaseGraph(json.name);
+        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature, feature_val;
         for (var node_id in json.data) {
             var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+            if (json.data[node_id].coords) {
+                coords_json = json.data[node_id].coords;
+                coords = {};
+                for (coord_idx in coords_json) {
+                    coords[coord_idx] = +coords_json[coord_idx];
+                }
+                node.setFeature('coords', coords);
+            }
             var edges = json.data[node_id].edges;
             for (var e in edges) {
                 var edge_input = String(edges[e]).match(/\S+/g), target_node_id = edge_input[0], dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u', directed = dir_char === 'd', target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);

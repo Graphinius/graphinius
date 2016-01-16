@@ -99,11 +99,11 @@ class BaseNode implements IBaseNode {
 	}
 	
 	getFeature(key: string) : any {
-		var feat = this._features[key];
-		if ( !feat ) {
-			throw new Error("Cannot retrieve non-existing feature.");
-		}
-		return feat;
+		return this._features[key];
+		// if ( !feat ) {
+		// 	throw new Error("Cannot retrieve non-existing feature.");
+		// }
+		// return feat;
 	}
 	
 	setFeatures( features: { [k:string]: any } ) : void {
@@ -116,9 +116,9 @@ class BaseNode implements IBaseNode {
 	
 	deleteFeature(key: string) : any {
 		var feat = this._features[key];
-		if ( !feat ) {
-			throw new Error("Cannot delete non-existing feature.");
-		}
+		// if ( !feat ) {
+		// 	throw new Error("Cannot delete non-existing feature.");
+		// }
 		delete this._features[key];
 		return feat;
 	}

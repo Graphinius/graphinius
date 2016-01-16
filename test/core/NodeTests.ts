@@ -61,9 +61,9 @@ describe('==== NODE TESTS ====', () => {
 			expect(node.getFeatures()['name']).to.equal('Bernie');
 		});
 		
-		it('should throw an error when trying to retrieve an unset feature', () => {
-			expect(node.getFeature.bind(node, 'nokey')).to.throw("Cannot retrieve non-existing feature.");
-		});
+		// it('should throw an error when trying to retrieve a non-set feature', () => {
+		// 	expect(node.getFeature.bind(node, 'nokey')).to.throw("Cannot retrieve non-existing feature.");
+		// });
 		
 		it('should correctly retrieve a set feature', () => {
 			expect(node.getFeature('future')).to.equal('Billionaire');			
@@ -84,9 +84,9 @@ describe('==== NODE TESTS ====', () => {
 			expect(node.getFeature('future')).to.equal('Bazillionaire');	
 		});
 		
-		it('should throw an error upon trying to delete an unset feature', () => {
-			expect(node.deleteFeature.bind(node, 'nokey')).to.throw("Cannot delete non-existing feature.");
-		});
+		// it('should throw an error upon trying to delete an unset feature', () => {
+		// 	expect(node.deleteFeature.bind(node, 'nokey')).to.throw("Cannot delete non-existing feature.");
+		// });
 		
 		it('should duly eradicate a given feature', () => {
 			expect(Object.keys(node.getFeatures()).length).to.equal(3);

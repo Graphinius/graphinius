@@ -9,7 +9,9 @@ import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 
 interface JSONNode {
-	edges: Array<string>;
+	edges			: Array<string>;
+	coords?		: {[key: string] : Number};
+	features?	: {[key: string] : any};
 }
 
 interface JSONGraph {
@@ -86,9 +88,29 @@ class JSONInput implements IJSONInput {
 	 * we'll leave that for now, as we will produce apt JSON sources later anyways...
 	 */
 	readFromJSON(json : JSONGraph) : $G.IGraph {
-		var graph = new $G.BaseGraph(json.name);
+		var graph				: $G.IGraph = new $G.BaseGraph(json.name),
+				coords_json	: {[key: string] : any},
+				coords			: {[key: string] : Number},
+				coord_idx		: string,
+				coord_val		: number,
+				features		: {[key: string] : any},
+				feature			: string,
+				feature_val	: any;
+				
 		for ( var node_id in json.data ) {
 			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+			
+			// Reading and instantiating coordinates
+			if ( json.data[node_id].coords ) {
+				coords_json = json.data[node_id].coords;
+				coords = {};				
+				for ( coord_idx in coords_json ) {
+					coords[coord_idx] = +coords_json[coord_idx];
+				}
+				node.setFeature('coords', coords);
+			}
+			
+			// Reading and instantiating edges
 			var edges = json.data[node_id].edges	
 			for ( var e in edges ) {
 				var edge_input = String(edges[e]).match(/\S+/g),

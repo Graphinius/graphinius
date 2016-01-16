@@ -56,7 +56,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph out of a JSON file with direction mode set to directed', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = true; // undirected graph
+			json._direction_mode = true; // directed graph
 			input_file = "./test/input/test_data/small_graph.json";
 			graph = json.readFromJSONFile(input_file);
 			expect(graph.nrNodes()).to.equal(4);
@@ -106,7 +106,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		
 				
 		/**
-		 * Funny use case - see how long it takes to mutilate graph...
+		 * PERFORMANCE test case - see how long it takes to mutilate graph...
 		 */ 
 		it('should mutilate a graph (delte nodes) until it is completely empty - in a performant way', () => {
 			json = new JSON_IN();
@@ -125,7 +125,32 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			expect(graph.nrDirEdges()).to.equal(0);
 			expect(graph.nrUndEdges()).to.equal(0);
 		});
+		
+		
+		/**
+		 * Test for coordinates - take the 'small_graph.json'
+		 * which contains x, y, z coords and check for their
+		 * exact values upon instantiation (cloning?)
+		 */
+		it('should correctly copy the node coordinates contained in a json file', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false;
+			input_file = "./test/input/test_data/small_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			$C.checkSmallGraphCoords(graph);
+		});
 	
+	
+		/**
+		 * Test for features - take the 'small_graph.json'
+		 * which contains some feature vectors check for their
+		 * exact values upon instantiation (cloning?)
+		 */
+		it('should correctly copy the node features contained in a json file', () => {
+			
+		});
+		
 	});
 	
 });

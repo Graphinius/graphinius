@@ -24,11 +24,7 @@ var BaseNode = (function () {
         return this._features;
     };
     BaseNode.prototype.getFeature = function (key) {
-        var feat = this._features[key];
-        if (!feat) {
-            throw new Error("Cannot retrieve non-existing feature.");
-        }
-        return feat;
+        return this._features[key];
     };
     BaseNode.prototype.setFeatures = function (features) {
         this._features = _.clone(features);
@@ -38,9 +34,6 @@ var BaseNode = (function () {
     };
     BaseNode.prototype.deleteFeature = function (key) {
         var feat = this._features[key];
-        if (!feat) {
-            throw new Error("Cannot delete non-existing feature.");
-        }
         delete this._features[key];
         return feat;
     };
