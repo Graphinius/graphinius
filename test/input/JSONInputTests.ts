@@ -132,13 +132,26 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 * which contains x, y, z coords and check for their
 		 * exact values upon instantiation (cloning?)
 		 */
-		it('should correctly copy the node coordinates contained in a json file', () => {
+		it('should correctly read the node coordinates contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
 			input_file = "./test/input/test_data/small_graph.json";
 			graph = json.readFromJSONFile(input_file);
 			$C.checkSmallGraphCoords(graph);
+		});
+		
+		
+		it('should not assign the coords feature if no coordinates are contained in a json file', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false;
+			input_file = "./test/input/test_data/search_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			var nodes = graph.getNodes();
+			for ( var node_idx in nodes ) {
+				expect(nodes[node_idx].getFeature("coords")).to.be.undefined;
+			}
 		});
 	
 	
@@ -147,8 +160,26 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 * which contains some feature vectors check for their
 		 * exact values upon instantiation (cloning?)
 		 */
-		it('should correctly copy the node features contained in a json file', () => {
-			
+		it('should correctly read the node features contained in a json file', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false;
+			input_file = "./test/input/test_data/small_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			$C.checkSmallGraphFeatures(graph);
+		});
+		
+		
+		it('should not assign any features if no features entry is contained in a json file', () => {
+			json = new JSON_IN();
+			json._explicit_direction = false;
+			json._direction_mode = false;
+			input_file = "./test/input/test_data/search_graph.json";
+			graph = json.readFromJSONFile(input_file);
+			var nodes = graph.getNodes();
+			for ( var node_idx in nodes ) {
+				expect(nodes[node_idx].getFeatures()).to.be.empty;
+			}
 		});
 		
 	});

@@ -110,8 +110,7 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 
 
 function checkSmallGraphCoords(graph: $G.IGraph) {
-	var a_coords = graph.getNodeById("A").getFeature("coords");
-	
+	var a_coords = graph.getNodeById("A").getFeature("coords");	
 	expect(typeof a_coords.x).to.equal('number');
 	expect(a_coords.x).to.equal(15);
 	expect(typeof a_coords.y).to.equal('number');
@@ -144,4 +143,16 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(d_coords.z).to.equal(-13);
 }
 
-export { checkSmallGraphStats, checkSmallGraphCoords }
+
+function checkSmallGraphFeatures(graph: $G.IGraph) {
+	['A', 'B', 'C', 'D'].forEach((id, idx) => {
+		var feats = graph.getNodeById(id).getFeatures();
+		console.log(feats);
+		expect(feats['foo']).not.to.be.undefined;
+		expect(feats['foo']).to.equal('bar');	
+		expect(feats['true']).not.to.be.undefined;
+		expect(feats['true']).to.be.true;
+	});	
+}
+
+export { checkSmallGraphStats, checkSmallGraphCoords, checkSmallGraphFeatures }

@@ -94,21 +94,36 @@ class JSONInput implements IJSONInput {
 				coord_idx		: string,
 				coord_val		: number,
 				features		: {[key: string] : any},
-				feature			: string,
-				feature_val	: any;
+				feature			: string;
+				// feature_val	: any;
 				
 		for ( var node_id in json.data ) {
 			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
 			
-			// Reading and instantiating coordinates
-			if ( json.data[node_id].coords ) {
-				coords_json = json.data[node_id].coords;
+			/**
+			 * Reading and instantiating features
+			 * We are using the shortcut setFeatures here,
+			 * so we have to read them before any special features
+			 */
+			if ( features = json.data[node_id].features ) {
+				// for ( feature in features ) {
+				// 	node.setFeature(feature, features[feature]);
+				// }
+				node.setFeatures(features);
+			}
+			
+			/**
+			 * Reading and instantiating coordinates
+			 * Coordinates are treated as special features,
+			 * and are therefore added after general features
+			 */ 
+			if ( coords_json = json.data[node_id].coords ) {
 				coords = {};				
 				for ( coord_idx in coords_json ) {
 					coords[coord_idx] = +coords_json[coord_idx];
 				}
 				node.setFeature('coords', coords);
-			}
+			}			
 			
 			// Reading and instantiating edges
 			var edges = json.data[node_id].edges	
