@@ -54,6 +54,8 @@ interface IGraph {
 	
 	// EDGE STUFF
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
+	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
+	
 	hasEdgeID(id: string) : boolean;
 	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
@@ -178,11 +180,7 @@ class BaseGraph implements IGraph {
 	}
 	
 	getNodeById(id: string) : $N.IBaseNode {
-		var node = this._nodes[id];
-		if ( !node ) {
-			throw new Error("cannot retrieve node with non-existing ID.");
-		}
-		return node;
+		return this._nodes[id];
 	}
 	
 	/**
@@ -193,11 +191,7 @@ class BaseGraph implements IGraph {
 		var id = _.findKey(this._nodes, function(node : $N.IBaseNode) {
 			return node.getLabel() === label;
 		});
-		var node = this._nodes[id];
-		if ( !node ) {
-			throw new Error("cannot retrieve node with non-existing Label.");
-		}
-		return node;
+		return this._nodes[id];
 	}
 	
 	getNodes() : {[key: string] : $N.IBaseNode} {
@@ -286,6 +280,20 @@ class BaseGraph implements IGraph {
 	
 	getUndEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._und_edges;
+	}
+	
+	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge {
+		var node_a = this.getNodeById(node_a_id),
+				node_b = this.getNodeById(node_b_id);
+		if ( !node_a ) {
+			throw new Error("Cannot add edge. Node A does not exist");
+		}
+		else if ( !node_b ) {
+			throw new Error("Cannot add edge. Node B does not exist");
+		}
+		else {
+			return this.addEdge(label, node_a, node_b, opts);
+		}
 	}
 		
 	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {

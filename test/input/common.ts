@@ -147,7 +147,6 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 function checkSmallGraphFeatures(graph: $G.IGraph) {
 	['A', 'B', 'C', 'D'].forEach((id, idx) => {
 		var feats = graph.getNodeById(id).getFeatures();
-		console.log(feats);
 		expect(feats['foo']).not.to.be.undefined;
 		expect(feats['foo']).to.equal('bar');	
 		expect(feats['true']).not.to.be.undefined;

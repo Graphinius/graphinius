@@ -85,21 +85,13 @@ var BaseGraph = (function () {
         });
     };
     BaseGraph.prototype.getNodeById = function (id) {
-        var node = this._nodes[id];
-        if (!node) {
-            throw new Error("cannot retrieve node with non-existing ID.");
-        }
-        return node;
+        return this._nodes[id];
     };
     BaseGraph.prototype.getNodeByLabel = function (label) {
         var id = _.findKey(this._nodes, function (node) {
             return node.getLabel() === label;
         });
-        var node = this._nodes[id];
-        if (!node) {
-            throw new Error("cannot retrieve node with non-existing Label.");
-        }
-        return node;
+        return this._nodes[id];
     };
     BaseGraph.prototype.getNodes = function () {
         return this._nodes;
@@ -164,6 +156,18 @@ var BaseGraph = (function () {
     };
     BaseGraph.prototype.getUndEdges = function () {
         return this._und_edges;
+    };
+    BaseGraph.prototype.addEdgeByNodeIDs = function (label, node_a_id, node_b_id, opts) {
+        var node_a = this.getNodeById(node_a_id), node_b = this.getNodeById(node_b_id);
+        if (!node_a) {
+            throw new Error("Cannot add edge. Node A does not exist");
+        }
+        else if (!node_b) {
+            throw new Error("Cannot add edge. Node B does not exist");
+        }
+        else {
+            return this.addEdge(label, node_a, node_b, opts);
+        }
     };
     BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
         var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});

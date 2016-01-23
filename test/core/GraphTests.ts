@@ -133,6 +133,43 @@ describe('GRAPH TESTS: ', () => {
 		
 		
 		/**
+		 * Adding edge by Node IDs
+		 * Node A does not exist
+		 */
+		it('should refuse to add an edge if node A does not exist', () => {
+			graph = new Graph('Test graph');
+			expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node A does not exist');
+		});
+		
+		
+		/**
+		 * Adding edge by Node IDs
+		 * Node B does not exist
+		 */
+		it('should refuse to add an edge if node B does not exist', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node B does not exist');
+		});
+		
+		
+		/**
+		 * Adding edge by Node IDs
+		 * Both nodes exist
+		 */
+		it('should correctly add an edge to existing nodes specified by ID', () => {
+			graph = new Graph('Test graph');
+			node_a = graph.addNode('A');
+			node_b = graph.addNode('B');
+			var edge = graph.addEdgeByNodeIDs("Edgy", "A", "B");
+			expect(edge).not.to.be.undefined;
+			expect(edge).to.be.instanceof($E.BaseEdge);
+			expect(edge.getNodes().a).to.equal(node_a);
+			expect(edge.getNodes().b).to.equal(node_b);
+		});
+		
+		
+		/**
 		 * MIXED MODE GRAPH
 		 * edge_1 is undirected and goes from a to b
 		 * edge_2 is directed and a loop from b to b
@@ -179,13 +216,13 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should throw an error upon trying to retrieve a non-existing node by ID', () => {
-			expect(graph.getNodeById.bind(graph, Number.NaN)).to.throw("cannot retrieve node with non-existing ID.");
+		it('should return undefined when trying to retrieve a non-existing node by ID', () => {
+			expect(graph.getNodeById("idontexist")).to.be.undefined;
 		});
 		
 		
-		it('should throw an error upon trying to retrieve a non-existing node by Label', () => {
-			expect(graph.getNodeByLabel.bind(graph, "donotexist")).to.throw("cannot retrieve node with non-existing Label.");
+		it('should return undefined when trying to retrieve a non-existing node by Label', () => {
+			expect(graph.getNodeByLabel("idontexist")).to.be.undefined;
 		});
 		
 		
@@ -259,11 +296,6 @@ describe('GRAPH TESTS: ', () => {
 		it('should report the number of edges currently in the graph', () => {
 			expect(graph.nrUndEdges()).to.equal(1);
 		});
-		
-		
-		// it('should report the number of edges currently in the graph', () => {
-		// 	expect(graph.nrEdges()).to.equal(2);
-		// });
 		
 		
 		it('should give you a random node currently existing in the graph', () => {
