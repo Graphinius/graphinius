@@ -751,58 +751,129 @@ describe('GRAPH TESTS: ', () => {
 	 * This is a VERY WEAK test however, for even the addition or
 	 * deletion of a single edge would lead to the same result...
 	 * TODO figure out how to test this properly
+	 * PLUS - how to test for runtime ???
 	 */
 	describe('Randomly generate edges in a graph (create a random graph)', () => {
 		var test_graph_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv",
 				probability : number,
+				min	: number,
+				max : number,
 				deg_dist : $G.DegreeDistribution;
 				
-		it('should throw an error if probability is smaller 0', () => {
-			probability = -1;
-			graph = csv.readFromAdjacencyListFile(test_graph_file);
-			deg_dist = graph.degreeDistribution();
-			graph.clearAllEdges();
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);		
-			expect(graph.createRandomEdges.bind(graph, probability, true)).to.throw('Probability out of range');
-		});
+		describe('Random edge generation via probability', () => {
+				
+			it('should throw an error if probability is smaller 0', () => {
+				probability = -1;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.createRandomEdgesProb.bind(graph, probability, true)).to.throw('Probability out of range');
+			});
+			
+			it('should throw an error if probability is greater 1', () => {
+				probability = 2;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.createRandomEdgesProb.bind(graph, probability, true)).to.throw('Probability out of range');
+			});
+			
+			it('DIRECTED - should randomly generate directed edges', () => {
+				probability = 0.5;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				graph.createRandomEdgesProb(probability, true);
+				expect(graph.nrDirEdges()).not.to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+			
+			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
+				probability = 0.5;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				graph.createRandomEdgesProb(probability, false);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
 		
-		it('should throw an error if probability is greater 1', () => {
-			probability = 2;
-			graph = csv.readFromAdjacencyListFile(test_graph_file);
-			deg_dist = graph.degreeDistribution();
-			graph.clearAllEdges();
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);		
-			expect(graph.createRandomEdges.bind(graph, probability, true)).to.throw('Probability out of range');
 		});
+				
 		
-		it('DIRECTED - should randomly generate directed edges', () => {
-			probability = 0.5;
-			graph = csv.readFromAdjacencyListFile(test_graph_file);
-			deg_dist = graph.degreeDistribution();
-			graph.clearAllEdges();
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);		
-			graph.createRandomEdges(probability, true);
-			expect(graph.nrDirEdges()).not.to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);		
-			expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
-		});
+		/**
+		 * Although we clearly specify min / max in this case,
+		 * we can still not test for specific node degree (ranges),
+		 * except for the general fact that a nodes degree
+		 * should be in the range [0, max+n-1], as
+		 * all n-1 other nodes might have an edge to that node
+		 */
+		describe('Random edge generation via min / max #edges per node', () => {
+				
+			it('should throw an error if min is smaller 0', () => {
+				min = -1;
+				max = 10;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.createRandomEdgesSpan.bind(graph, min, max)).to.throw('Minimum degree cannot be negative.');
+			});
+			
+			
+			it('should throw an error if max is greater (n-1)', () => {
+				min = 0;
+				max = 4;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.createRandomEdgesSpan.bind(graph, min, max)).to.throw('Maximum degree exceeds number of reachable nodes.');
+			});
+
+			
+			it('DIRECTED - should randomly generate directed edges', () => {
+				min = 0;
+				max = 3;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				graph.createRandomEdgesSpan(min, max, true);
+				expect(graph.nrDirEdges()).not.to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+			
+			
+			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
+				min = 0;
+				max = 3;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				graph.createRandomEdgesSpan(min, max, false);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
 		
-		it('UNDIRECTED - should randomly generate directed edges', () => {
-			probability = 0.5;
-			graph = csv.readFromAdjacencyListFile(test_graph_file);
-			deg_dist = graph.degreeDistribution();
-			graph.clearAllEdges();
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);		
-			graph.createRandomEdges(probability, false);
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).not.to.equal(0);		
-			expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
-		});
-		
+		});		
 		
 	});
 	

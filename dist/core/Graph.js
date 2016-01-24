@@ -176,12 +176,7 @@ var BaseGraph = (function () {
             node_b.addEdge(edge);
             this._dir_edges[edge.getID()] = edge;
             this._nr_dir_edges += 1;
-            if (this._nr_und_edges) {
-                this._mode = GraphMode.MIXED;
-            }
-            else {
-                this._mode = GraphMode.DIRECTED;
-            }
+            this.updateGraphMode();
         }
         else {
             if (node_a !== node_b) {
@@ -189,12 +184,7 @@ var BaseGraph = (function () {
             }
             this._und_edges[edge.getID()] = edge;
             this._nr_und_edges += 1;
-            if (this._nr_dir_edges) {
-                this._mode = GraphMode.MIXED;
-            }
-            else {
-                this._mode = GraphMode.UNDIRECTED;
-            }
+            this.updateGraphMode();
         }
         return edge;
     };
@@ -293,16 +283,44 @@ var BaseGraph = (function () {
         this.clearAllDirEdges();
         this.clearAllUndEdges();
     };
-    BaseGraph.prototype.createRandomEdges = function (probability, directed) {
+    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed) {
+        if (directed === void 0) { directed = false; }
         if (0 > probability || 1 < probability) {
             throw new Error("Probability out of range.");
         }
-        var nodes = this._nodes, node_a, node_b, edge_id;
+        var nodes = this._nodes, node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
         for (node_a in nodes) {
             for (node_b in nodes) {
                 if (node_a !== node_b && Math.random() < probability) {
-                    edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + "_d";
+                    edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + dir;
                     this.addEdge(edge_id, nodes[node_a], nodes[node_b], { directed: directed });
+                }
+            }
+        }
+    };
+    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed) {
+        if (directed === void 0) { directed = false; }
+        if (min < 0) {
+            throw new Error('Minimum degree cannot be negative.');
+        }
+        if (max >= this.nrNodes()) {
+            throw new Error('Maximum degree exceeds number of reachable nodes.');
+        }
+        var min = min | 0, max = max | 0, nodes = this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
+        for (idx_a in nodes) {
+            node_a = nodes[idx_a];
+            rand_idx = 0;
+            rand_deg = (Math.random() * max + min) | 0;
+            while (rand_deg) {
+                rand_idx = (keys_len * Math.random()) | 0;
+                node_b = nodes[node_keys[rand_idx]];
+                if (node_a !== node_b) {
+                    edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+                    if (node_a.hasEdgeID(edge_id)) {
+                        continue;
+                    }
+                    this.addEdge(edge_id, node_a, node_b, { directed: directed });
+                    --rand_deg;
                 }
             }
         }
