@@ -47,35 +47,37 @@ interface IGraph {
 	getNodes() : {[key: string] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
-	removeNode(node) : void;
-	
-	
-	// get all nodes??
+	deleteNode(node) : void;
 	
 	// EDGE STUFF
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
-	
 	hasEdgeID(id: string) : boolean;
-	hasEdgeLabel(label: string) : boolean;
+	hasEdgeLabel(label: string) : boolean;	
 	getEdgeById(id: string) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
-	getUndEdges() : {[key: string] : $E.IBaseEdge};
-	
+	getUndEdges() : {[key: string] : $E.IBaseEdge};	
 	nrDirEdges() : number;
 	nrUndEdges() : number;
-	removeEdge(edge: $E.IBaseEdge) : void;
+	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
 	
+	// HANDLE ALL EDGES OF NODES
 	deleteInEdgesOf(node: $N.IBaseNode) : void;
 	deleteOutEdgesOf(node: $N.IBaseNode) : void;
 	deleteDirEdgesOf(node: $N.IBaseNode) : void;
 	deleteUndEdgesOf(node: $N.IBaseNode) : void;
 	deleteAllEdgesOf(node: $N.IBaseNode) : void;
 	
-	// clearEdges all over graph ???
+	// HANDLE ALL EDGES IN GRAPH
+	clearAllDirEdges() : void;
+	clearAllUndEdges() : void;
+	clearAllEdges() : void;
+	
+	// CREATE RANDOM EDGES
+	createRandomEdges( probability: number, directed: boolean ) : void;
 }
 
 
@@ -205,7 +207,7 @@ class BaseGraph implements IGraph {
 		return this.pickRandomProperty(this._nodes);
 	}
 	
-	removeNode(node) : void {
+	deleteNode(node) : void {
 		var rem_node = this._nodes[node.getID()];
 		if ( !rem_node ) {
 			throw new Error('Cannot remove un-added node.');
@@ -333,7 +335,7 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 	
-	removeEdge(edge: $E.IBaseEdge) : void {
+	deleteEdge(edge: $E.IBaseEdge) : void {
 		var dir_edge = this._dir_edges[edge.getID()];
 		var und_edge = this._und_edges[edge.getID()];
 
@@ -433,6 +435,51 @@ class BaseGraph implements IGraph {
 	deleteAllEdgesOf(node: $N.IBaseNode) : void {
 		this.deleteDirEdgesOf(node);
 		this.deleteUndEdgesOf(node);
+	}
+	
+	/**
+	 * Remove all the (un)directed edges in the graph
+	 */
+	clearAllDirEdges() : void {
+		for (var edge in this._dir_edges) {
+			this.deleteEdge(this._dir_edges[edge]);
+		}
+	}
+	
+	clearAllUndEdges() : void {
+		for (var edge in this._und_edges) {
+			this.deleteEdge(this._und_edges[edge]);
+		}
+	}
+	
+	clearAllEdges() : void {
+		this.clearAllDirEdges();
+		this.clearAllUndEdges();
+	}
+	
+	/**
+	 * Simple edge generator:
+	 * Go through all node combinations, and
+	 * add an directed edge with 
+	 * @param probability and
+	 * @direction true or false
+	 */
+	createRandomEdges( probability: number, directed: boolean ) : void {
+		if (0 > probability || 1 < probability) {
+			throw new Error("Probability out of range.");
+		}
+		var nodes = this._nodes,
+				node_a, 
+				node_b,
+				edge_id;
+		for (node_a in nodes) {
+			for (node_b in nodes) {
+				if (node_a !== node_b && Math.random() < probability) {
+					edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + "_d";
+					this.addEdge(edge_id, nodes[node_a], nodes[node_b], {directed: directed});
+				}
+			}
+		}
 	}
 	
 	/**

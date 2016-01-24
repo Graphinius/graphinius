@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
+import * as $CSV from '../../src/input/CSVInput';
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
@@ -12,12 +13,13 @@ var Graph = $G.BaseGraph;
 
 
 describe('GRAPH TESTS: ', () => {
-	var graph 	: $G.BaseGraph,
+	var graph 	: $G.IGraph,
 			node_a 	: $N.IBaseNode,
 			node_b 	: $N.IBaseNode,
 			edge_1	: $E.IBaseEdge,
 			edge_2	: $E.IBaseEdge,
-			stats		: $G.GraphStats;
+			stats		: $G.GraphStats,
+			csv			: $CSV.CSVInput = new $CSV.CSVInput();
 	
 	describe('Basic graph instantiation and mode handling', () => {
 	
@@ -394,7 +396,7 @@ describe('GRAPH TESTS: ', () => {
 		
 		it('should throw an error when trying to remove a non-existing edge', () => {
 			var loose_edge = new Edge('IdontExistInGraph', n_a, n_b);
-			expect(graph.removeEdge.bind(graph, loose_edge)).to.throw('cannot remove non-existing edge.');
+			expect(graph.deleteEdge.bind(graph, loose_edge)).to.throw('cannot remove non-existing edge.');
 		});
 		
 		
@@ -421,7 +423,7 @@ describe('GRAPH TESTS: ', () => {
 				n_b_in_deg = n_b.inDegree(),
 				n_b_out_deg = n_b.outDegree();
 			
-			graph.removeEdge(e_1);
+			graph.deleteEdge(e_1);
 			
 			expect(graph.nrNodes()).to.equal(graph_nr_nodes);
 			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges);
@@ -459,7 +461,7 @@ describe('GRAPH TESTS: ', () => {
 				n_b_in_deg = n_b.inDegree(),
 				n_b_out_deg = n_b.outDegree();
 			
-			graph.removeEdge(e_4);
+			graph.deleteEdge(e_4);
 			
 			expect(graph.nrNodes()).to.equal(graph_nr_nodes);
 			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges - 1);
@@ -487,8 +489,8 @@ describe('GRAPH TESTS: ', () => {
 			var graph_nr_dir_edges = graph.nrDirEdges(),
 				graph_nr_und_edges = graph.nrUndEdges();
 			
-			graph.removeEdge(e_1);
-			graph.removeEdge(e_2);
+			graph.deleteEdge(e_1);
+			graph.deleteEdge(e_2);
 			
 			expect(graph.nrDirEdges()).to.equal(graph_nr_dir_edges);
 			expect(graph.nrUndEdges()).to.equal(0);
@@ -508,11 +510,11 @@ describe('GRAPH TESTS: ', () => {
 			var	graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges();
 			
-			graph.removeEdge(e_3);
-			graph.removeEdge(e_4);
-			graph.removeEdge(e_5);
-			graph.removeEdge(e_6);
-			graph.removeEdge(e_7);
+			graph.deleteEdge(e_3);
+			graph.deleteEdge(e_4);
+			graph.deleteEdge(e_5);
+			graph.deleteEdge(e_6);
+			graph.deleteEdge(e_7);
 			
 			expect(graph.nrUndEdges()).to.equal(graph_nr_und_edges);
 			expect(graph.nrDirEdges()).to.equal(0);
@@ -532,13 +534,13 @@ describe('GRAPH TESTS: ', () => {
 			var	graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges();
 			
-			graph.removeEdge(e_1);
-			graph.removeEdge(e_2);
-			graph.removeEdge(e_3);
-			graph.removeEdge(e_4);
-			graph.removeEdge(e_5);
-			graph.removeEdge(e_6);
-			graph.removeEdge(e_7);
+			graph.deleteEdge(e_1);
+			graph.deleteEdge(e_2);
+			graph.deleteEdge(e_3);
+			graph.deleteEdge(e_4);
+			graph.deleteEdge(e_5);
+			graph.deleteEdge(e_6);
+			graph.deleteEdge(e_7);
 			
 			expect(graph.nrUndEdges()).to.equal(0);
 			expect(graph.nrDirEdges()).to.equal(0);
@@ -551,7 +553,7 @@ describe('GRAPH TESTS: ', () => {
 		 * Node deletion of un-added node
 		 */
 		it('should throw an error when trying to remove an un-added node', () => {
-			expect(graph.removeNode.bind(graph, node_vana)).to.throw('Cannot remove un-added node.');
+			expect(graph.deleteNode.bind(graph, node_vana)).to.throw('Cannot remove un-added node.');
 		});
 		
 		
@@ -561,7 +563,7 @@ describe('GRAPH TESTS: ', () => {
 		it('should simply delete an unconnected node', () => {
 			var node = graph.addNode('IAmInGraph');
 			var nr_nodes = graph.nrNodes();
-			graph.removeNode(node);
+			graph.deleteNode(node);
 			expect(graph.nrNodes()).to.equal(nr_nodes - 1);
 		});
 		
@@ -683,7 +685,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph should still be in mixed mode
 		 */
 		it('should correctly delete a node including edges, test case 1', () => {
-			graph.removeNode(n_c);
+			graph.deleteNode(n_c);
 			expect(n_a.degree()).to.equal(1);
 			expect(n_a.inDegree()).to.equal(2);
 			expect(graph.nrNodes()).to.equal(3);
@@ -700,22 +702,107 @@ describe('GRAPH TESTS: ', () => {
 		 * graph should be in INIT mode...
 		 */
 		it('should correctly delete a node including edges, test case 2', () => {
-			graph.removeNode(n_a);			
+			graph.deleteNode(n_a);			
 			expect(graph.nrDirEdges()).to.equal(0);
 			expect(graph.nrUndEdges()).to.equal(0);
 			expect(graph.nrNodes()).to.equal(3);
 			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
 		});
 		
-		
-		//==========================================================
-		/**
-		 * !!! LATER !!!
-		 * Compacting nodes / edges
-		 */
-		// it('should combine the above functionality to do edge compaction', () => {
+	});
+	
+	
+	describe('Clearing ALL (un)directed edges from a graph', () => {
+		var test_graph_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
 			
-		// });
+		it('should delete all directed edges from a graph', () => {
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.nrUndEdges()).to.equal(2);
+			graph.clearAllDirEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(2);			
+		});
+		
+		it('should delete all undirected edges from a graph', () => {
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.nrUndEdges()).to.equal(2);
+			graph.clearAllUndEdges();
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.nrUndEdges()).to.equal(0);			
+		});
+		
+		it('should delete ALL edges from a graph', () => {
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			expect(graph.nrDirEdges()).to.equal(5);
+			expect(graph.nrUndEdges()).to.equal(2);
+			graph.clearAllEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);			
+		});
+		
+	});
+	
+	
+	/**
+	 * We don't know how to test RANDOM generation of something yet,
+	 * so we fall back to simply test differences in the degree distribution
+	 * This is a VERY WEAK test however, for even the addition or
+	 * deletion of a single edge would lead to the same result...
+	 * TODO figure out how to test this properly
+	 */
+	describe('Randomly generate edges in a graph (create a random graph)', () => {
+		var test_graph_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv",
+				probability : number,
+				deg_dist : $G.DegreeDistribution;
+				
+		it('should throw an error if probability is smaller 0', () => {
+			probability = -1;
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			deg_dist = graph.degreeDistribution();
+			graph.clearAllEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);		
+			expect(graph.createRandomEdges.bind(graph, probability, true)).to.throw('Probability out of range');
+		});
+		
+		it('should throw an error if probability is greater 1', () => {
+			probability = 2;
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			deg_dist = graph.degreeDistribution();
+			graph.clearAllEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);		
+			expect(graph.createRandomEdges.bind(graph, probability, true)).to.throw('Probability out of range');
+		});
+		
+		it('DIRECTED - should randomly generate directed edges', () => {
+			probability = 0.5;
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			deg_dist = graph.degreeDistribution();
+			graph.clearAllEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);		
+			graph.createRandomEdges(probability, true);
+			expect(graph.nrDirEdges()).not.to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);		
+			expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+		});
+		
+		it('UNDIRECTED - should randomly generate directed edges', () => {
+			probability = 0.5;
+			graph = csv.readFromAdjacencyListFile(test_graph_file);
+			deg_dist = graph.degreeDistribution();
+			graph.clearAllEdges();
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);		
+			graph.createRandomEdges(probability, false);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).not.to.equal(0);		
+			expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+		});
+		
 		
 	});
 	

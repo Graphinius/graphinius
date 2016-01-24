@@ -99,7 +99,7 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getRandomNode = function () {
         return this.pickRandomProperty(this._nodes);
     };
-    BaseGraph.prototype.removeNode = function (node) {
+    BaseGraph.prototype.deleteNode = function (node) {
         var rem_node = this._nodes[node.getID()];
         if (!rem_node) {
             throw new Error('Cannot remove un-added node.');
@@ -198,7 +198,7 @@ var BaseGraph = (function () {
         }
         return edge;
     };
-    BaseGraph.prototype.removeEdge = function (edge) {
+    BaseGraph.prototype.deleteEdge = function (edge) {
         var dir_edge = this._dir_edges[edge.getID()];
         var und_edge = this._und_edges[edge.getID()];
         if (!dir_edge && !und_edge) {
@@ -278,6 +278,34 @@ var BaseGraph = (function () {
     BaseGraph.prototype.deleteAllEdgesOf = function (node) {
         this.deleteDirEdgesOf(node);
         this.deleteUndEdgesOf(node);
+    };
+    BaseGraph.prototype.clearAllDirEdges = function () {
+        for (var edge in this._dir_edges) {
+            this.deleteEdge(this._dir_edges[edge]);
+        }
+    };
+    BaseGraph.prototype.clearAllUndEdges = function () {
+        for (var edge in this._und_edges) {
+            this.deleteEdge(this._und_edges[edge]);
+        }
+    };
+    BaseGraph.prototype.clearAllEdges = function () {
+        this.clearAllDirEdges();
+        this.clearAllUndEdges();
+    };
+    BaseGraph.prototype.createRandomEdges = function (probability, directed) {
+        if (0 > probability || 1 < probability) {
+            throw new Error("Probability out of range.");
+        }
+        var nodes = this._nodes, node_a, node_b, edge_id;
+        for (node_a in nodes) {
+            for (node_b in nodes) {
+                if (node_a !== node_b && Math.random() < probability) {
+                    edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + "_d";
+                    this.addEdge(edge_id, nodes[node_a], nodes[node_b], { directed: directed });
+                }
+            }
+        }
     };
     BaseGraph.prototype.getRandomDirEdge = function () {
         return this.pickRandomProperty(this._dir_edges);

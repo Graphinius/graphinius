@@ -117,8 +117,8 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			
 			var nr_nodes = graph.nrNodes();
 			while ( nr_nodes-- ) {
-				graph.removeNode(graph.getNodeById(String(nr_nodes)));
-				// graph.removeNode(graph.getRandomNode());
+				graph.deleteNode(graph.getNodeById(String(nr_nodes)));
+				// graph.deleteNode(graph.getRandomNode());
 				// console.log(nr_nodes);
 			}
 			expect(graph.nrNodes()).to.equal(0);
