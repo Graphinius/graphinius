@@ -8,8 +8,8 @@ import * as $I from '../../src/input/JSONInput';
 import * as $DFS from '../../src/search/DFS';
 
 var expect 	= chai.expect;
-var Node 		= $N.BaseNode;
-var Edge 		= $E.BaseEdge;
+var Node 	  = $N.BaseNode;
+var Edge 	  = $E.BaseEdge;
 var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 

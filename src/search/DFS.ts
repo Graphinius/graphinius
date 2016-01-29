@@ -7,9 +7,9 @@ import _ = require('lodash');
 
 
 interface DFS_Callbacks {
-	init_dfs?					: Array<Function>;
+	init_dfs?			     : Array<Function>;
 	init_dfs_visit?		: Array<Function>;
-	node_popped?			: Array<Function>;
+	node_popped?	 		: Array<Function>;
 	node_marked?			: Array<Function>;
 	node_unmarked?		: Array<Function>;
 	adj_nodes_pushed?	: Array<Function>;

@@ -62,7 +62,7 @@ var CSVInput = (function () {
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
             if (!node_id) {
-                return graph;
+                continue;
             }
             node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
             for (var e = 0; e < edge_array.length;) {
@@ -93,7 +93,7 @@ var CSVInput = (function () {
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
             if (!elements) {
-                return graph;
+                continue;
             }
             if (elements.length < 2) {
                 throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');

@@ -116,8 +116,8 @@ class CSVInput implements ICSVInput {
 					edge_id_u2: string;
 			
 			if ( !node_id ) {
-				// We have just seen the last line...
-				return graph;
+				// end of file or empty line, just treat like an empty line...
+				continue;
 			}
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
 			
@@ -168,8 +168,8 @@ class CSVInput implements ICSVInput {
 					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
 			
 			if ( ! elements ) {
-				// end of file (empty line)
-				return graph;
+				// end of file or empty line, just treat like an empty line...
+				continue;
 			}
 			
 			if ( elements.length < 2 ) {
