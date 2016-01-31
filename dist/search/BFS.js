@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 function BFS(graph, root) {
     var result = {};
     var nodes = graph.getNodes();

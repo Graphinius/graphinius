@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 var $N = require('./Nodes');
 var $E = require('./Edges');
 var _ = require('lodash');
@@ -31,6 +32,9 @@ var BaseGraph = (function () {
             nr_dir_edges: this._nr_dir_edges
         };
     };
+    /**
+     * We assume graphs in which no node has higher total degree than 65536
+     */
     BaseGraph.prototype.degreeDistribution = function () {
         var max_deg = 0, key, node, all_deg;
         for (key in this._nodes) {
@@ -59,6 +63,7 @@ var BaseGraph = (function () {
             deg_dist.und[node.degree()]++;
             deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
         }
+        // console.dir(deg_dist);
         return deg_dist;
     };
     BaseGraph.prototype.nrNodes = function () {
@@ -79,6 +84,10 @@ var BaseGraph = (function () {
     BaseGraph.prototype.hasNodeID = function (id) {
         return !!this._nodes[id];
     };
+    /**
+     * Use hasNodeLabel with CAUTION ->
+     * it has LINEAR runtime in the graph's #nodes
+     */
     BaseGraph.prototype.hasNodeLabel = function (label) {
         return !!_.findKey(this._nodes, function (node) {
             return node.getLabel() === label;
@@ -87,6 +96,10 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getNodeById = function (id) {
         return this._nodes[id];
     };
+    /**
+     * Use getNodeByLabel with CAUTION ->
+     * it has LINEAR runtime in the graph's #nodes
+     */
     BaseGraph.prototype.getNodeByLabel = function (label) {
         var id = _.findKey(this._nodes, function (node) {
             return node.getLabel() === label;
@@ -96,6 +109,9 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getNodes = function () {
         return this._nodes;
     };
+    /**
+     * CAUTION - This function takes linear time in # nodes
+     */
     BaseGraph.prototype.getRandomNode = function () {
         return this.pickRandomProperty(this._nodes);
     };
@@ -104,9 +120,11 @@ var BaseGraph = (function () {
         if (!rem_node) {
             throw new Error('Cannot remove un-added node.');
         }
+        // Edges?
         var in_deg = node.inDegree();
         var out_deg = node.outDegree();
         var deg = node.degree();
+        // Delete all edges brutally...
         if (in_deg) {
             this.deleteInEdgesOf(node);
         }
@@ -122,6 +140,10 @@ var BaseGraph = (function () {
     BaseGraph.prototype.hasEdgeID = function (id) {
         return !!this._dir_edges[id] || !!this._und_edges[id];
     };
+    /**
+     * Use hasEdgeLabel with CAUTION ->
+     * it has LINEAR runtime in the graph's #edges
+     */
     BaseGraph.prototype.hasEdgeLabel = function (label) {
         var dir_id = _.findKey(this._dir_edges, function (edge) {
             return edge.getLabel() === label;
@@ -138,6 +160,10 @@ var BaseGraph = (function () {
         }
         return edge;
     };
+    /**
+     * Use hasEdgeLabel with CAUTION ->
+     * it has LINEAR runtime in the graph's #edges
+     */
     BaseGraph.prototype.getEdgeByLabel = function (label) {
         var dir_id = _.findKey(this._dir_edges, function (edge) {
             return edge.getLabel() === label;
@@ -171,14 +197,17 @@ var BaseGraph = (function () {
     };
     BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
         var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+        // connect edge to first node anyways			
         node_a.addEdge(edge);
         if (edge.isDirected()) {
+            // add edge to second node too
             node_b.addEdge(edge);
             this._dir_edges[edge.getID()] = edge;
             this._nr_dir_edges += 1;
             this.updateGraphMode();
         }
         else {
+            // add edge to both nodes, except they are the same...
             if (node_a !== node_b) {
                 node_b.addEdge(edge);
             }
@@ -209,6 +238,7 @@ var BaseGraph = (function () {
         }
         this.updateGraphMode();
     };
+    // Some atomicity / rollback feature would be nice here...
     BaseGraph.prototype.deleteInEdgesOf = function (node) {
         this.checkConnectedNodeOrThrow(node);
         var in_edges = node.inEdges();
@@ -225,6 +255,7 @@ var BaseGraph = (function () {
         node.clearInEdges();
         this.updateGraphMode();
     };
+    // Some atomicity / rollback feature would be nice here...
     BaseGraph.prototype.deleteOutEdgesOf = function (node) {
         this.checkConnectedNodeOrThrow(node);
         var out_edges = node.outEdges();
@@ -241,10 +272,12 @@ var BaseGraph = (function () {
         node.clearOutEdges();
         this.updateGraphMode();
     };
+    // Some atomicity / rollback feature would be nice here...
     BaseGraph.prototype.deleteDirEdgesOf = function (node) {
         this.deleteInEdgesOf(node);
         this.deleteOutEdgesOf(node);
     };
+    // Some atomicity / rollback feature would be nice here...
     BaseGraph.prototype.deleteUndEdgesOf = function (node) {
         this.checkConnectedNodeOrThrow(node);
         var und_edges = node.undEdges();
@@ -265,10 +298,14 @@ var BaseGraph = (function () {
         node.clearUndEdges();
         this.updateGraphMode();
     };
+    // Some atomicity / rollback feature would be nice here...
     BaseGraph.prototype.deleteAllEdgesOf = function (node) {
         this.deleteDirEdgesOf(node);
         this.deleteUndEdgesOf(node);
     };
+    /**
+     * Remove all the (un)directed edges in the graph
+     */
     BaseGraph.prototype.clearAllDirEdges = function () {
         for (var edge in this._dir_edges) {
             this.deleteEdge(this._dir_edges[edge]);
@@ -283,6 +320,14 @@ var BaseGraph = (function () {
         this.clearAllDirEdges();
         this.clearAllUndEdges();
     };
+    /**
+     * Simple edge generator:
+     * Go through all node combinations, and
+     * add an (un)directed edge with
+     * @param probability and
+     * @direction true or false
+     * CAUTION: this algorithm takes quadratic runtime in #nodes
+     */
     BaseGraph.prototype.createRandomEdgesProb = function (probability, directed) {
         if (directed === void 0) { directed = false; }
         if (0 > probability || 1 < probability) {
@@ -298,6 +343,14 @@ var BaseGraph = (function () {
             }
         }
     };
+    /**
+     * Simple edge generator:
+     * Go through all nodes, and
+     * add [min, max] (un)directed edges to
+     * a randomly chosen node
+     * CAUTION: this algorithm could take quadratic runtime in #nodes
+     * but should be much faster
+     */
     BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed) {
         if (directed === void 0) { directed = false; }
         if (min < 0) {
@@ -306,13 +359,14 @@ var BaseGraph = (function () {
         if (max >= this.nrNodes()) {
             throw new Error('Maximum degree exceeds number of reachable nodes.');
         }
+        // Do we need to set them integers before the calculations?
         var min = min | 0, max = max | 0, nodes = this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
         for (idx_a in nodes) {
             node_a = nodes[idx_a];
             rand_idx = 0;
             rand_deg = (Math.random() * max + min) | 0;
             while (rand_deg) {
-                rand_idx = (keys_len * Math.random()) | 0;
+                rand_idx = (keys_len * Math.random()) | 0; // should never reach keys_len...
                 node_b = nodes[node_keys[rand_idx]];
                 if (node_a !== node_b) {
                     edge_id = node_a.getID() + "_" + node_b.getID() + dir;
@@ -325,9 +379,15 @@ var BaseGraph = (function () {
             }
         }
     };
+    /**
+     * CAUTION - This function is linear in # directed edges
+     */
     BaseGraph.prototype.getRandomDirEdge = function () {
         return this.pickRandomProperty(this._dir_edges);
     };
+    /**
+     * CAUTION - This function is linear in # undirected edges
+     */
     BaseGraph.prototype.getRandomUndEdge = function () {
         return this.pickRandomProperty(this._und_edges);
     };

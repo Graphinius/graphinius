@@ -6,7 +6,7 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-interface DFS_Callbacks {
+export interface DFS_Callbacks {
 	init_dfs?			     : Array<Function>;
 	init_dfs_visit?		: Array<Function>;
 	node_popped?	 		: Array<Function>;
@@ -16,13 +16,13 @@ interface DFS_Callbacks {
 }
 
 
-interface StackEntry {
+export interface StackEntry {
 	node		: $N.IBaseNode;
 	parent	: $N.IBaseNode;
 }
 
 
-interface DFSVisitScope {
+export interface DFSVisitScope {
 	marked_temp 	: {[id: string] : boolean};
 	stack 				: Array<StackEntry>;
 	adj_nodes			: Array<$N.IBaseNode>;
@@ -32,7 +32,7 @@ interface DFSVisitScope {
 }
 
 
-interface DFSScope {
+export interface DFSScope {
 	marked 	: {[id: string] : boolean};
 	nodes		: {[id: string] : $N.IBaseNode};
 }
@@ -226,5 +226,5 @@ function execCallbacks(cbs : Array<Function>, context) {
 }
 
 
-export { DFSVisit, DFS, DFS_Callbacks, DFSVisitScope, DFSScope, prepareStandardDFSVisitCBs, 
+export { DFSVisit, DFS, prepareStandardDFSVisitCBs, 
 				 prepareStandardDFSCBs, execCallbacks };

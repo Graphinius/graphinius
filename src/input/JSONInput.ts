@@ -8,20 +8,20 @@ import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 
-interface JSONNode {
+export interface JSONNode {
 	edges			: Array<string>;
 	coords?		: {[key: string] : Number};
 	features?	: {[key: string] : any};
 }
 
-interface JSONGraph {
+export interface JSONGraph {
 	name			: string;
 	nodes			: number;
 	edges			: number;
 	data			: {[key:string] : JSONNode}
 }
 
-interface IJSONInput {
+export interface IJSONInput {
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
 	
@@ -157,4 +157,4 @@ class JSONInput implements IJSONInput {
 	
 }
 
-export {IJSONInput, JSONInput};
+export {JSONInput};

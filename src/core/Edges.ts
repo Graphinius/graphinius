@@ -1,6 +1,6 @@
 import * as $N from "./Nodes";
 
-interface IConnectedNodes {
+export interface IConnectedNodes {
 	a: $N.IBaseNode;
 	b: $N.IBaseNode;
 }
@@ -12,7 +12,7 @@ interface IConnectedNodes {
  * @param _id internal id, public
  * @param _label edge label, public
  */
-interface IBaseEdge {
+export interface IBaseEdge {
 	getID() : string;
 	getLabel() : string;
 	setLabel(label : string) : void;
@@ -37,7 +37,7 @@ interface IBaseEdge {
 	// setWeighted(w:boolean)	: void;
 }
 
-interface EdgeConstructorOptions {
+export interface EdgeConstructorOptions {
 	directed?		: boolean;
 	weighted?		: boolean;
 	weight?			: number;
@@ -101,4 +101,4 @@ class BaseEdge implements IBaseEdge {
 	}
 }
 
-export { IConnectedNodes, IBaseEdge, BaseEdge, EdgeConstructorOptions };
+export { BaseEdge };

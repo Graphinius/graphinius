@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 var fs = require('fs');
 var path = require('path');
 var $G = require('../core/Graph');
@@ -15,7 +16,9 @@ var JSONInput = (function () {
     };
     JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
         var self = this, graph_name = path.basename(fileurl), graph, request, json;
+        // Node or browser ??
         if (typeof window !== 'undefined') {
+            // Browser...
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (request.readyState == 4 && request.status == 200) {
@@ -29,25 +32,47 @@ var JSONInput = (function () {
             request.send();
         }
         else {
+            // Node.js
             request = require('request');
             request({
                 url: fileurl,
                 json: true
             }, function (err, res, json) {
                 if (!err && res.statusCode === 200) {
+                    // Deal with the CSV response
                     graph = self.readFromJSON(json);
                     cb(graph, undefined);
                 }
             });
         }
     };
+    /**
+     * In this case, there is one great difference to the CSV edge list cases:
+     * If you don't explicitly define a directed edge, it will simply
+     * instantiate an undirected one
+     * we'll leave that for now, as we will produce apt JSON sources later anyways...
+     */
     JSONInput.prototype.readFromJSON = function (json) {
         var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
+        // feature_val	: any;
         for (var node_id in json.data) {
             var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+            /**
+             * Reading and instantiating features
+             * We are using the shortcut setFeatures here,
+             * so we have to read them before any special features
+             */
             if (features = json.data[node_id].features) {
+                // for ( feature in features ) {
+                // 	node.setFeature(feature, features[feature]);
+                // }
                 node.setFeatures(features);
             }
+            /**
+             * Reading and instantiating coordinates
+             * Coordinates are treated as special features,
+             * and are therefore added after general features
+             */
             if (coords_json = json.data[node_id].coords) {
                 coords = {};
                 for (coord_idx in coords_json) {
@@ -55,11 +80,13 @@ var JSONInput = (function () {
                 }
                 node.setFeature('coords', coords);
             }
+            // Reading and instantiating edges
             var edges = json.data[node_id].edges;
             for (var e in edges) {
                 var edge_input = String(edges[e]).match(/\S+/g), target_node_id = edge_input[0], dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u', directed = dir_char === 'd', target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
                 var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
                 if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+                    // The completely same edge should only be added once...
                     continue;
                 }
                 else {

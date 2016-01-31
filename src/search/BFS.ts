@@ -6,7 +6,7 @@ import * as $G from '../core/Graph';
 import _ = require('lodash');
 
 
-interface BFSResult {
+export interface BFSResult {
 	distance	:	number;
 	parent		:	$N.IBaseNode;
 	counter		: number; // order of discovery
@@ -55,4 +55,4 @@ function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : BFSResult
 }
 
 
-export { BFS, BFSResult };
+export { BFS };

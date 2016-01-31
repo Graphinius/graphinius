@@ -1,7 +1,12 @@
+/// <reference path="../../typings/tsd.d.ts" />
 var _ = require('lodash');
 var BaseNode = (function () {
     function BaseNode(_id, features) {
         this._id = _id;
+        /**
+         * degrees - let's hold them separate in order
+         * to avoid Object.keys(...)
+         */
         this._in_degree = 0;
         this._out_degree = 0;
         this._und_degree = 0;
@@ -25,6 +30,10 @@ var BaseNode = (function () {
     };
     BaseNode.prototype.getFeature = function (key) {
         return this._features[key];
+        // if ( !feat ) {
+        // 	throw new Error("Cannot retrieve non-existing feature.");
+        // }
+        // return feat;
     };
     BaseNode.prototype.setFeatures = function (features) {
         this._features = _.clone(features);
@@ -34,6 +43,9 @@ var BaseNode = (function () {
     };
     BaseNode.prototype.deleteFeature = function (key) {
         var feat = this._features[key];
+        // if ( !feat ) {
+        // 	throw new Error("Cannot delete non-existing feature.");
+        // }
         delete this._features[key];
         return feat;
     };
@@ -49,16 +61,36 @@ var BaseNode = (function () {
     BaseNode.prototype.degree = function () {
         return this._und_degree;
     };
+    /**
+     * We have to:
+     * 1. throw an error if the edge is already attached
+     * 2. add it to the edge array
+     * 3. check type of edge (directed / undirected)
+     * 4. update our degrees accordingly
+     * This is a design decision we can defend by pointing out
+     * that querying degrees will occur much more often
+     * than modifying the edge structure of a node (??)
+     * One further point: do we also check for duplicate
+     * edges not in the sense of duplicate ID's but duplicate
+     * structure (nodes, direction) ?
+     * => Not for now, as we would have to check every edge
+     * instead of simply checking the hash id...
+     * ALTHOUGH: adding edges will (presumably) not occur often...
+     */
     BaseNode.prototype.addEdge = function (edge) {
+        // is this edge connected to us at all?
         var nodes = edge.getNodes();
         if (nodes.a !== this && nodes.b !== this) {
             throw new Error("Cannot add edge that does not connect to this node");
         }
         var edge_id = edge.getID();
+        // Is it an undirected or directed edge?
         if (edge.isDirected()) {
+            // is it outgoing or incoming?
             if (nodes.a === this && !this._out_edges[edge_id]) {
                 this._out_edges[edge_id] = edge;
                 this._out_degree += 1;
+                // Is the edge also connecting to ourselves -> loop ?
                 if (nodes.b === this && !this._in_edges[edge_id]) {
                     this._in_edges[edge.getID()] = edge;
                     this._in_degree += 1;
@@ -70,6 +102,7 @@ var BaseNode = (function () {
             }
         }
         else {
+            // Is the edge also connecting to ourselves -> loop
             if (this._und_edges[edge.getID()]) {
                 throw new Error("Cannot add same undirected edge multiple times.");
             }

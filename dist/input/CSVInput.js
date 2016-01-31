@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 var fs = require('fs');
 var path = require('path');
 var $G = require('../core/Graph');
@@ -18,7 +19,9 @@ var CSVInput = (function () {
     };
     CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
         var self = this, graph_name = path.basename(fileurl), graph, request;
+        // Node or browser ??
         if (typeof window !== 'undefined') {
+            // Browser...
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (request.readyState == 4 && request.status == 200) {
@@ -32,12 +35,14 @@ var CSVInput = (function () {
             request.send();
         }
         else {
+            // Node.js
             request = require('request');
             request({
                 url: fileurl,
                 json: false
             }, function (err, res, input) {
                 if (!err && res.statusCode === 200) {
+                    // Deal with the CSV response
                     input = input.toString().split('\n');
                     graph = localFun.apply(self, [input, graph_name]);
                     cb(graph, undefined);
@@ -62,6 +67,7 @@ var CSVInput = (function () {
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
             if (!node_id) {
+                // end of file or empty line, just treat like an empty line...
                 continue;
             }
             node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
@@ -71,6 +77,12 @@ var CSVInput = (function () {
                 }
                 target_node_id = edge_array[e++];
                 target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+                /**
+                 * The direction determines if we have to check for the existence
+                 * of an edge in 'both' directions or only from one node to the other
+                 * Within the CSV module this check is done simply via ID check,
+                 * as we are following a rigorous naming scheme anyways...
+                 */
                 dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
                 if (dir_char !== 'd' && dir_char !== 'u') {
                     throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -79,6 +91,7 @@ var CSVInput = (function () {
                 edge_id = node_id + "_" + target_node_id + "_" + dir_char;
                 edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
                 if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+                    // The completely same edge should only be added once...
                     continue;
                 }
                 else {
@@ -93,6 +106,7 @@ var CSVInput = (function () {
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
             if (!elements) {
+                // end of file or empty line, just treat like an empty line...
                 continue;
             }
             if (elements.length < 2) {
@@ -100,6 +114,7 @@ var CSVInput = (function () {
             }
             var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
             if (!node_id) {
+                // We have just seen the last line...
                 return graph;
             }
             node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
@@ -111,6 +126,7 @@ var CSVInput = (function () {
             edge_id = node_id + "_" + target_node_id + "_" + dir_char;
             edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
             if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+                // The completely same edge should only be added once...
                 continue;
             }
             else {

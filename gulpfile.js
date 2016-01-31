@@ -4,6 +4,8 @@ var mocha 			= require('gulp-mocha');
 var ts 					= require('gulp-typescript');
 var tdoc 				= require("gulp-typedoc");
 var browserify 	= require('gulp-browserify');
+var concat			= require('gulp-concat');
+var merge 			= require('merge2');
 
 
 //----------------------------
@@ -19,29 +21,34 @@ var paths = {
 	tests_async: ['test_async_nomock/**/*Tests.js']
 };
 
+var tsProject = ts.createProject({
+	target: "ES5",
+	module: "commonjs",
+	declaration: true,
+	noExternalResolve: false
+});
 
 //----------------------------
 // TASKS
 //----------------------------
 gulp.task('build', function () {
 	return gulp.src(paths.typescripts, {base: "."})
-						 .pipe(ts({
-							 target: "ES5",
-							 module: "commonjs",
-							 removeComments: true
-						 }))
-						.pipe(gulp.dest('.'));
+						 .pipe(ts(tsProject))
+						 .pipe(gulp.dest('.'));						
 });
 
 // Packaging - Node / Commonjs
 gulp.task('dist', ['clean', 'tdoc'], function () {
-	return gulp.src(paths.distsources)
-						 .pipe(ts({
-							 target: "ES5",
-							 module: "commonjs",
-							 removeComments: true
-						 }))
-						 .pipe(gulp.dest('dist'));
+	var tsResult = gulp.src(paths.distsources)
+						 				 .pipe(ts(tsProject))
+											
+	// Merge the two output streams, so this task is finished  
+	// when the IO of both operations are done.
+	return merge([ 
+		tsResult.dts.pipe(concat('graphinius.d.ts'))
+								.pipe(gulp.dest('.')),		
+		tsResult.js.pipe(gulp.dest('./dist/'))
+	]);
 });
 
 // Packaging - Browser
