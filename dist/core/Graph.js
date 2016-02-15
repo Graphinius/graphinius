@@ -2,14 +2,13 @@
 var $N = require('./Nodes');
 var $E = require('./Edges');
 var _ = require('lodash');
-var GraphMode;
 (function (GraphMode) {
     GraphMode[GraphMode["INIT"] = 0] = "INIT";
     GraphMode[GraphMode["DIRECTED"] = 1] = "DIRECTED";
     GraphMode[GraphMode["UNDIRECTED"] = 2] = "UNDIRECTED";
     GraphMode[GraphMode["MIXED"] = 3] = "MIXED";
-})(GraphMode || (GraphMode = {}));
-exports.GraphMode = GraphMode;
+})(exports.GraphMode || (exports.GraphMode = {}));
+var GraphMode = exports.GraphMode;
 var BaseGraph = (function () {
     function BaseGraph(_label) {
         this._label = _label;

@@ -16,7 +16,7 @@ export interface IBaseEdge {
 	getID() : string;
 	getLabel() : string;
 	setLabel(label : string) : void;
-	
+
 	// DIRECTION Methods
 	isDirected()						: boolean;
 
@@ -31,8 +31,8 @@ export interface IBaseEdge {
 	/**
 	 * An edge should either be directed or not, weighted or not.
 	 * Changing those properties on live edges is not allowed,
-	 * rather delete the edge and construct a new one altogether 
-	 */ 
+	 * rather delete the edge and construct a new one altogether
+	 */
 	// setDirected(d:boolean)	: void;
 	// setWeighted(w:boolean)	: void;
 }
@@ -49,11 +49,11 @@ class BaseEdge implements IBaseEdge {
 	protected _weighted 	: boolean;
 	protected _weight			: number;
 	protected _label			: string;
-	
+
 	constructor (protected _id,
-							protected _node_a:$N.IBaseNode, 
-							protected _node_b:$N.IBaseNode, 
-							options?: EdgeConstructorOptions) 
+							protected _node_a:$N.IBaseNode,
+							protected _node_b:$N.IBaseNode,
+							options?: EdgeConstructorOptions)
 	{
 		options = options || {};
 		this._directed = options.directed || false;
@@ -61,41 +61,41 @@ class BaseEdge implements IBaseEdge {
 		this._weight = options.weight || 0;
 		this._label = options.label || this._id;
 	}
-	
+
 	getID() : string {
 		return this._id;
 	}
-	
+
 	getLabel() : string {
-		return this._label;	
+		return this._label;
 	}
-	
+
 	setLabel(label : string) : void {
 		this._label = label;
 	}
-	
+
 	isDirected () : boolean {
 		return this._directed;
 	}
-	
+
 	isWeighted () : boolean {
 		return this._weighted;
 	}
-	
+
 	getWeight() : number {
 		if ( !this._weighted) {
 			throw new Error("Unweighted edge cannot be queried for weight.");
 		}
 		return this._weight;
 	}
-	
+
 	setWeight(w:number) : void {
 		if ( !this._weighted ) {
 			throw new Error("Cannot set weight on unweighted edge.");
 		}
 		this._weight = w;
 	}
-	
+
 	getNodes() : IConnectedNodes {
 		return {a: this._node_a, b: this._node_b};
 	}

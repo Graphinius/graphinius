@@ -9,7 +9,7 @@ import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 
 
-interface ICSVInput {
+export interface ICSVInput {
 	_separator					: string;
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
@@ -223,4 +223,4 @@ class CSVInput implements ICSVInput {
 	
 }
 
-export {ICSVInput, CSVInput};
+export {CSVInput};

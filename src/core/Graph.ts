@@ -5,7 +5,7 @@ import * as $E from './Edges';
 import _ = require('lodash');
 
 
-enum GraphMode {
+export enum GraphMode {
 	INIT, 
 	DIRECTED, 
 	UNDIRECTED, 
@@ -13,7 +13,7 @@ enum GraphMode {
 }
 
 
-interface DegreeDistribution {
+export interface DegreeDistribution {
 	in	: Uint16Array;
 	out	: Uint16Array;
 	dir	: Uint16Array;
@@ -22,7 +22,7 @@ interface DegreeDistribution {
 }
 
 
-interface GraphStats {
+export interface GraphStats {
 	mode					: GraphMode;
 	nr_nodes			: number;
 	nr_und_edges	: number;
@@ -31,7 +31,7 @@ interface GraphStats {
 }
 
 
-interface IGraph {
+export interface IGraph {
 	_label : string;
 	
 	getMode() : GraphMode;
@@ -577,4 +577,4 @@ class BaseGraph implements IGraph {
 }
 
 
-export {DegreeDistribution, GraphMode, GraphStats, IGraph, BaseGraph};
+export {BaseGraph};

@@ -7,7 +7,7 @@ import _ = require('lodash');
 
 
 export interface DFS_Callbacks {
-	init_dfs?			     : Array<Function>;
+	init_dfs?			    : Array<Function>;
 	init_dfs_visit?		: Array<Function>;
 	node_popped?	 		: Array<Function>;
 	node_marked?			: Array<Function>;
@@ -38,11 +38,11 @@ export interface DFSScope {
 }
 
 
-function DFSVisit(graph 				: $G.IGraph, 
+function DFSVisit(graph 				: $G.IGraph,
 									current_root 	: $N.IBaseNode,
 									callbacks			: DFS_Callbacks = {},
 									dir_mode			: $G.GraphMode = $G.GraphMode.MIXED) {
-	
+
 	var scope : DFSVisitScope = {
 		marked_temp		: {},
 		stack					: [],
@@ -51,14 +51,14 @@ function DFSVisit(graph 				: $G.IGraph,
 		current				: null,
 		current_root	: current_root
 	};
-	
+
 	/**
 	 * We are not traversing a blank graph...
 	 */
 	if ( dir_mode === $G.GraphMode.INIT ) {
 		throw new Error('Cowardly refusing to traverse graph without edges.');
 	}
-	
+
 	/**
 	 * HOOK 1 - INIT (INNER DFS VISIT):
 	 * Initializing a possible result object,
@@ -67,37 +67,37 @@ function DFSVisit(graph 				: $G.IGraph,
 	if ( callbacks.init_dfs_visit ) {
 		execCallbacks(callbacks.init_dfs_visit, scope);
 	}
-	
+
 	// Start by pushing current root to the stack
 	scope.stack.push({
 		node		: current_root,
 		parent	: current_root
 	});
-	
-	
+
+
 	while ( scope.stack.length ) {
 		scope.stack_entry = scope.stack.pop();
 		scope.current = scope.stack_entry.node;
-		
+
 		/**
 		 * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
 		 */
 		if ( callbacks.node_popped ) {
 			execCallbacks(callbacks.node_popped, scope);
 		}
-		
-		if ( !scope.marked_temp[scope.current.getID()] ) {			
+
+		if ( !scope.marked_temp[scope.current.getID()] ) {
 			scope.marked_temp[scope.current.getID()] = true;
-			
+
 			/**
 			 * HOOK 3 - CURRENT NODE UNMARKED
 			 */
 			if ( callbacks.node_unmarked ) {
 				execCallbacks(callbacks.node_unmarked, scope);
 			}
-			
+
 			/**
-			 * Do we move only in the directed subgraph, 
+			 * Do we move only in the directed subgraph,
 			 * undirected subgraph or complete (mixed) graph?
 			 */
 			if ( dir_mode === $G.GraphMode.MIXED ) {
@@ -109,7 +109,7 @@ function DFSVisit(graph 				: $G.IGraph,
 			else if ( dir_mode === $G.GraphMode.DIRECTED ) {
 				scope.adj_nodes = scope.current.nextNodes();
 			}
-			
+
 			for ( var adj_idx in scope.adj_nodes ) {
 				/**
 				 * HOOK 6 - NODE OR EDGE TYPE CHECK...
@@ -120,7 +120,7 @@ function DFSVisit(graph 				: $G.IGraph,
 					parent: scope.current
 				});
 			}
-			
+
 			/**
 			 * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
 			 */
@@ -144,54 +144,54 @@ function DFSVisit(graph 				: $G.IGraph,
 function DFS( graph 		: $G.IGraph,
 							callbacks	: DFS_Callbacks = {},
 							dir_mode	: $G.GraphMode = $G.GraphMode.MIXED) {
-	
+
 	var scope : DFSScope = {
 		marked 	: {},
 		nodes 	: graph.getNodes()
-	}	
-	
+	}
+
 	/**
 	 * HOOK 1 - INIT (OUTER DFS)
 	 */
 	if ( callbacks.init_dfs ) {
 		execCallbacks(callbacks.init_dfs, scope);
 	}
-	
+
 	callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
-	var markNode = function ( context : DFSVisitScope ) { 
-		scope.marked[context.current.getID()] = true 
+	var markNode = function ( context : DFSVisitScope ) {
+		scope.marked[context.current.getID()] = true
 	};
 	callbacks.adj_nodes_pushed.push(markNode);
-	
-	for ( var node_id in scope.nodes ) {		
-		if ( !scope.marked[node_id] ) {			
+
+	for ( var node_id in scope.nodes ) {
+		if ( !scope.marked[node_id] ) {
 			DFSVisit(graph, scope.nodes[node_id], callbacks, dir_mode);
 		}
 	}
 }
 
 
-function prepareStandardDFSVisitCBs( result: {}, 
-																		 callbacks: DFS_Callbacks, 
-																		 count: number) {																		
-	var counter = function() { 
+function prepareStandardDFSVisitCBs( result: {},
+																		 callbacks: DFS_Callbacks,
+																		 count: number) {
+	var counter = function() {
 		return count++;
 	};
 	callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-	callbacks.node_unmarked = callbacks.node_unmarked || [];			
+	callbacks.node_unmarked = callbacks.node_unmarked || [];
 	var initDFSVisit = function( context : DFSVisitScope ) {
 		result[context.current_root.getID()] = {
 			parent 	: context.current_root
 		};
 	};
-	callbacks.init_dfs_visit.push(initDFSVisit);						
+	callbacks.init_dfs_visit.push(initDFSVisit);
 	var setResultEntry = function( context : DFSVisitScope) {
 		result[context.current.getID()] = {
 			parent 	: context.stack_entry.parent,
 			counter : counter()
 		};
 	};
-	callbacks.node_unmarked.push(setResultEntry);	
+	callbacks.node_unmarked.push(setResultEntry);
 }
 
 
@@ -201,7 +201,7 @@ function prepareStandardDFSCBs( result: {},
 	// First prepare Visit callbacks
 	prepareStandardDFSVisitCBs(result, callbacks, count);
 	// Now add outer DFS INIT callback
-	callbacks.init_dfs = callbacks.init_dfs || [];		
+	callbacks.init_dfs = callbacks.init_dfs || [];
 	var setInitialResultEntries = function( context : DFSScope ) {
 		for ( var node_id in context.nodes ) {
 			result[node_id] = {
@@ -226,5 +226,5 @@ function execCallbacks(cbs : Array<Function>, context) {
 }
 
 
-export { DFSVisit, DFS, prepareStandardDFSVisitCBs, 
+export { DFSVisit, DFS, prepareStandardDFSVisitCBs,
 				 prepareStandardDFSCBs, execCallbacks };
