@@ -1,0 +1,22 @@
+{
+  "name": "Small graph test scenario",
+  "nodes": 4,
+  "edges": 7,
+	"data": {
+		"A": {
+			"features": {
+				"foo": "bar",
+				"true": true
+			},
+			"coords": {
+        "x": 15,
+        "y": 2,
+        "z": 57
+      },
+			"edges": [
+				"A u",
+				"A d blahoo"
+			]
+		}
+	}
+}

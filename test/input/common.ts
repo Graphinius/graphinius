@@ -57,6 +57,7 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	var und_edges = graph.getUndEdges();
   for (var edge in und_edges) {
     expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+    expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
   }	
 	var e_abu = und_edges["A_B_u"],
 			e_acu = und_edges["A_C_u"];					
@@ -74,8 +75,9 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(e_acu.getNodes().b).to.equal(n_c);		
 	
 	var dir_edges = graph.getDirEdges();
-  for (var edge in und_edges) {
+  for (var edge in dir_edges) {
     expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+    expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
   }	
 	var e_aad = dir_edges["A_A_d"],
 			e_abd = dir_edges["A_B_d"],

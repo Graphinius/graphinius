@@ -138,7 +138,8 @@ class JSONInput implements IJSONInput {
 						dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u',
 						directed = dir_char === 'd',
             // Is there any weight information?,
-            weight_info = edge_input[2] && ~~edge_input[2] === ~~edge_input[2] ? ~~edge_input[2] : DEFAULT_WEIGHT,
+            weight_float = parseFloat(edge_input[2]),
+            weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
             edge_weight = this._weighted_mode ? weight_info : undefined, 
 						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 						

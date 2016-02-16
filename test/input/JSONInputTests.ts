@@ -140,13 +140,13 @@ describe('GRAPH JSON INPUT TESTS', () => {
   });
   
   
+  /**
+   * Test for coordinates - take the 'small_graph.json'
+   * which contains x, y, z coords and check for their
+   * exact values upon instantiation (cloning?)
+   */
   describe('Node coordinates - ', () => {
 		
-		/**
-		 * Test for coordinates - take the 'small_graph.json'
-		 * which contains x, y, z coords and check for their
-		 * exact values upon instantiation (cloning?)
-		 */
 		it('should correctly read the node coordinates contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
@@ -171,13 +171,14 @@ describe('GRAPH JSON INPUT TESTS', () => {
     
   });
 	
-	
+  
+	/**
+   * Test for features - take the 'small_graph.json'
+   * which contains some feature vectors and check for their
+   * exact values upon instantiation (cloning?)
+   */
   describe('Node features - ', () => {
-		/**
-		 * Test for features - take the 'small_graph.json'
-		 * which contains some feature vectors and check for their
-		 * exact values upon instantiation (cloning?)
-		 */
+		
 		it('should correctly read the node features contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
@@ -203,24 +204,59 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	});
   
   
-  describe('Edge weights - ', () => {
-    
-    
-    /**
-		 * Test for features - take the 'small_graph_weights.json'
-		 * which contains weights for each edge and check for their
-		 * exact (number) values upon instantiation
-		 */
+  /**
+   * Test for weights - take the 'small_graph_weights.json'
+   * which contains weights for each edge and check for their
+   * exact (number) values upon instantiation
+   */
+  describe('Edge weights - ', () => {  
+
 		it('should correctly read the edge weights contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
       json._weighted_mode = true;
 			input_file = "./test/input/test_data/small_graph_weights.json";
-			graph = json.readFromJSONFile(input_file);
-			
+			graph = json.readFromJSONFile(input_file);			
       $C.checkSmallGraphEdgeWeights(graph);
 		});
     
+    
+    it('should correctly set edge weights to undefined if in unweighted mode', () => {
+			json = new JSON_IN();
+			json._explicit_direction = true;
+      json._weighted_mode = false;
+			input_file = "./test/input/test_data/small_graph_weights.json";
+			graph = json.readFromJSONFile(input_file);
+			var und_edges = graph.getUndEdges();
+      for (var edge in und_edges) {
+        expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+        expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
+      }
+      var dir_edges = graph.getDirEdges();
+      for (var edge in dir_edges) {
+        expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+        expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
+      }
+		});
+    
+    
+    it('should correctly set edge weights to default of 1 if info contained in json file is crappy', () => {
+			json = new JSON_IN();
+			json._explicit_direction = true;
+      json._weighted_mode = true;
+			input_file = "./test/input/test_data/small_graph_weights_crap.json";
+			graph = json.readFromJSONFile(input_file);			
+      var und_edges = graph.getUndEdges();
+      for (var edge in und_edges) {
+        expect(graph.getEdgeById(edge).isWeighted()).to.be.true;
+        expect(graph.getEdgeById(edge).getWeight()).to.equal(1);
+      }
+      var dir_edges = graph.getDirEdges();
+      for (var edge in dir_edges) {
+        expect(graph.getEdgeById(edge).isWeighted()).to.be.true;
+        expect(graph.getEdgeById(edge).getWeight()).to.equal(1);
+      }
+		});
     
   });
 	
