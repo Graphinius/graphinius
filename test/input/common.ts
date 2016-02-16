@@ -54,7 +54,10 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(n_d.outDegree()).to.equal(1);
 	expect(n_d.degree()).to.equal(0);
 	
-	var und_edges = graph.getUndEdges();			
+	var und_edges = graph.getUndEdges();
+  for (var edge in und_edges) {
+    expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+  }	
 	var e_abu = und_edges["A_B_u"],
 			e_acu = und_edges["A_C_u"];					
 			
@@ -71,6 +74,9 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(e_acu.getNodes().b).to.equal(n_c);		
 	
 	var dir_edges = graph.getDirEdges();
+  for (var edge in und_edges) {
+    expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
+  }	
 	var e_aad = dir_edges["A_A_d"],
 			e_abd = dir_edges["A_B_d"],
 			e_add = dir_edges["A_D_d"],
@@ -151,7 +157,29 @@ function checkSmallGraphFeatures(graph: $G.IGraph) {
 		expect(feats['foo']).to.equal('bar');	
 		expect(feats['true']).not.to.be.undefined;
 		expect(feats['true']).to.be.true;
-	});	
+	});
 }
 
-export { checkSmallGraphStats, checkSmallGraphCoords, checkSmallGraphFeatures }
+
+function checkSmallGraphEdgeWeights(graph: $G.IGraph) {
+  expect(graph.getEdgeById("A_B_u").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("A_B_u").getWeight()).to.equal(3);
+  expect(graph.getEdgeById("A_C_u").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("A_C_u").getWeight()).to.equal(0);
+  expect(graph.getEdgeById("A_A_d").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("A_A_d").getWeight()).to.equal(7);
+  expect(graph.getEdgeById("A_B_d").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("A_B_d").getWeight()).to.equal(1);
+  expect(graph.getEdgeById("A_D_d").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("A_D_d").getWeight()).to.equal(-33);
+  expect(graph.getEdgeById("C_A_d").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("C_A_d").getWeight()).to.equal(11);
+  expect(graph.getEdgeById("D_A_d").isWeighted()).to.be.true;
+  expect(graph.getEdgeById("D_A_d").getWeight()).to.equal(6);
+}
+
+
+export { checkSmallGraphStats, 
+         checkSmallGraphCoords, 
+         checkSmallGraphFeatures,
+         checkSmallGraphEdgeWeights }

@@ -6,7 +6,7 @@ var BaseEdge = (function () {
         options = options || {};
         this._directed = options.directed || false;
         this._weighted = options.weighted || false;
-        this._weight = options.weight || 0;
+        this._weight = this._weighted ? options.weight || 1 : undefined;
         this._label = options.label || this._id;
     }
     BaseEdge.prototype.getID = function () {
@@ -25,9 +25,6 @@ var BaseEdge = (function () {
         return this._weighted;
     };
     BaseEdge.prototype.getWeight = function () {
-        if (!this._weighted) {
-            throw new Error("Unweighted edge cannot be queried for weight.");
-        }
         return this._weight;
     };
     BaseEdge.prototype.setWeight = function (w) {

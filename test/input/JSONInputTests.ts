@@ -21,11 +21,22 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats;
 	
-	describe('Basic instantiation tests', () => {
+	describe('Basic instantiation tests - ', () => {
 		
-		it('should instantiate a default version of JSONInput', () => {
+		it('should correctly instantiate a default version of JSONInput', () => {
 			json = new JSON_IN();
 			expect(json).to.be.an.instanceof(JSON_IN);
+      expect(json._explicit_direction).to.be.true;
+      expect(json._direction_mode).to.be.false;
+      expect(json._weighted_mode).to.be.false;
+		});
+    
+    it('should correclty set modes of JSONInput', () => {
+			json = new JSON_IN(false, true, true);
+			expect(json).to.be.an.instanceof(JSON_IN);
+      expect(json._explicit_direction).to.be.false;
+      expect(json._direction_mode).to.be.true;
+      expect(json._weighted_mode).to.be.true;
 		});
 		
 	});
@@ -126,6 +137,10 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			expect(graph.nrUndEdges()).to.equal(0);
 		});
 		
+  });
+  
+  
+  describe('Node coordinates - ', () => {
 		
 		/**
 		 * Test for coordinates - take the 'small_graph.json'
@@ -153,11 +168,14 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				expect(nodes[node_idx].getFeature("coords")).to.be.undefined;
 			}
 		});
+    
+  });
 	
 	
+  describe('Node features - ', () => {
 		/**
 		 * Test for features - take the 'small_graph.json'
-		 * which contains some feature vectors check for their
+		 * which contains some feature vectors and check for their
 		 * exact values upon instantiation (cloning?)
 		 */
 		it('should correctly read the node features contained in a json file', () => {
@@ -183,5 +201,27 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
 		
 	});
+  
+  
+  describe('Edge weights - ', () => {
+    
+    
+    /**
+		 * Test for features - take the 'small_graph_weights.json'
+		 * which contains weights for each edge and check for their
+		 * exact (number) values upon instantiation
+		 */
+		it('should correctly read the edge weights contained in a json file', () => {
+			json = new JSON_IN();
+			json._explicit_direction = true;
+      json._weighted_mode = true;
+			input_file = "./test/input/test_data/small_graph_weights.json";
+			graph = json.readFromJSONFile(input_file);
+			
+      $C.checkSmallGraphEdgeWeights(graph);
+		});
+    
+    
+  });
 	
 });

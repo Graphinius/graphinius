@@ -55,10 +55,15 @@ describe('==== EDGE TESTS ====', () => {
 		
 	});
 	
-	
+	/**
+   * Right now, we are making a difference between
+   * weighted and unweighted edges. An unweighted edge will
+   * return undefined when queried for its weight, whereas
+   * a weighted edge with unspecified weight defaults to w=1
+   */
 	describe('Weight Edge Tests', () => {
 		
-		// Constructor + isWeighted()
+    
 		describe('Constructor + isWeighted', () => {
 			it('should correctly set default _directed to false', () => {
 				var edge = new Edge(id, node_a, node_b);
@@ -74,19 +79,19 @@ describe('==== EDGE TESTS ====', () => {
 			});
 		});		
 		
-		// getWeight()
+    
 		describe('getWeight()', () => {
 			it('should throw an exception when querying weight if unweighted', () => {
 				var edge = new Edge(id, node_a, node_b);
 				expect(edge.isWeighted()).to.equal(false);
-				expect(edge.getWeight.bind(edge)).to.throw("Unweighted edge cannot be queried for weight.");
+        expect(edge.getWeight()).to.be.undefined;
 			});
 			
 			it('should correctly set default weight to 0', () => {
 				var opts = {weighted: true};
 				var edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).to.equal(true);					
-				expect(edge.getWeight()).to.equal(0);					
+				expect(edge.getWeight()).to.equal(1);					
 			});
 			
 			it('should correctly report weight if set & specified', () => {
@@ -97,7 +102,8 @@ describe('==== EDGE TESTS ====', () => {
 			});
 		});
 		
-		// setWeight()
+    
+    
 		describe('setWeight()', () => {
 			it('Should throw an error on trying to set a weight if unweighted', () => {
 				var opts = {weighted: false};
@@ -110,7 +116,7 @@ describe('==== EDGE TESTS ====', () => {
 				var opts = {weighted: true};
 				var edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).to.equal(true);
-				expect(edge.getWeight()).to.equal(0);			
+				expect(edge.getWeight()).to.equal(1);			
 				edge.setWeight(42);
 				expect(edge.getWeight()).to.equal(42);
 			});

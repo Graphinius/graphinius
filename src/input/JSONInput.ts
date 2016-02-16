@@ -8,6 +8,8 @@ import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 
+var DEFAULT_WEIGHT = 1;
+
 export interface JSONNode {
 	edges			: Array<string>;
 	coords?		: {[key: string] : Number};
@@ -24,6 +26,7 @@ export interface JSONGraph {
 export interface IJSONInput {
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
+  _weighted_mode      : boolean;
 	
 	readFromJSONFile(file : string) : $G.IGraph;
 	readFromJSON(json : {}) : $G.IGraph;
@@ -34,7 +37,8 @@ export interface IJSONInput {
 class JSONInput implements IJSONInput {
 	
 	constructor(public _explicit_direction : boolean = true,
-							public _direction_mode : boolean = false) {
+							public _direction_mode : boolean = false,
+              public _weighted_mode : boolean = false) {
 	}
 	
 	readFromJSONFile(filepath : string) : $G.IGraph {
@@ -130,8 +134,12 @@ class JSONInput implements IJSONInput {
 			for ( var e in edges ) {
 				var edge_input = String(edges[e]).match(/\S+/g),
 						target_node_id = edge_input[0],
+            // Is there any direction information?
 						dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u',
 						directed = dir_char === 'd',
+            // Is there any weight information?,
+            weight_info = edge_input[2] && ~~edge_input[2] === ~~edge_input[2] ? ~~edge_input[2] : DEFAULT_WEIGHT,
+            edge_weight = this._weighted_mode ? weight_info : undefined, 
 						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 						
 				var edge_id = node_id + "_" + target_node_id + "_" + dir_char,
@@ -142,7 +150,10 @@ class JSONInput implements IJSONInput {
 					continue;
 				}
 				else {
-					var edge = graph.addEdge(edge_id, node, target_node, {directed: directed});
+					var edge = graph.addEdge(edge_id, node, target_node, {directed: directed, weighted: this._weighted_mode});
+          if ( this._weighted_mode ) {
+            edge.setWeight(edge_weight);
+          }
 				}
 			}
 		}		

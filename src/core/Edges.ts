@@ -58,7 +58,7 @@ class BaseEdge implements IBaseEdge {
 		options = options || {};
 		this._directed = options.directed || false;
 		this._weighted = options.weighted || false;
-		this._weight = options.weight || 0;
+		this._weight = this._weighted ? options.weight || 1 : undefined;
 		this._label = options.label || this._id;
 	}
 
@@ -83,9 +83,6 @@ class BaseEdge implements IBaseEdge {
 	}
 
 	getWeight() : number {
-		if ( !this._weighted) {
-			throw new Error("Unweighted edge cannot be queried for weight.");
-		}
 		return this._weight;
 	}
 

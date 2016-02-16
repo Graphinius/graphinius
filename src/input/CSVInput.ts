@@ -126,7 +126,7 @@ class CSVInput implements ICSVInput {
 				if ( this._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
 					throw new Error('Wrong edge description found in file.');
 				}
-				target_node_id = edge_array[e++];				
+				target_node_id = edge_array[e++];
 				
 				target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 				

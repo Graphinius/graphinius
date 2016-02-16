@@ -2,12 +2,15 @@
 var fs = require('fs');
 var path = require('path');
 var $G = require('../core/Graph');
+var DEFAULT_WEIGHT = 1;
 var JSONInput = (function () {
-    function JSONInput(_explicit_direction, _direction_mode) {
+    function JSONInput(_explicit_direction, _direction_mode, _weighted_mode) {
         if (_explicit_direction === void 0) { _explicit_direction = true; }
         if (_direction_mode === void 0) { _direction_mode = false; }
+        if (_weighted_mode === void 0) { _weighted_mode = false; }
         this._explicit_direction = _explicit_direction;
         this._direction_mode = _direction_mode;
+        this._weighted_mode = _weighted_mode;
     }
     JSONInput.prototype.readFromJSONFile = function (filepath) {
         this.checkNodeEnvironment();
@@ -83,14 +86,21 @@ var JSONInput = (function () {
             // Reading and instantiating edges
             var edges = json.data[node_id].edges;
             for (var e in edges) {
-                var edge_input = String(edges[e]).match(/\S+/g), target_node_id = edge_input[0], dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u', directed = dir_char === 'd', target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+                var edge_input = String(edges[e]).match(/\S+/g), target_node_id = edge_input[0], 
+                // Is there any direction information?
+                dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u', directed = dir_char === 'd', 
+                // Is there any weight information?,
+                weight_info = edge_input[2] && ~~edge_input[2] === ~~edge_input[2] ? ~~edge_input[2] : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
                 var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
                 if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
                     // The completely same edge should only be added once...
                     continue;
                 }
                 else {
-                    var edge = graph.addEdge(edge_id, node, target_node, { directed: directed });
+                    var edge = graph.addEdge(edge_id, node, target_node, { directed: directed, weighted: this._weighted_mode });
+                    if (this._weighted_mode) {
+                        edge.setWeight(edge_weight);
+                    }
                 }
             }
         }
