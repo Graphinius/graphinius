@@ -87,7 +87,7 @@ describe('==== EDGE TESTS ====', () => {
         expect(edge.getWeight()).to.be.undefined;
 			});
 			
-			it('should correctly set default weight to 0', () => {
+			it('should correctly set default weight to 1', () => {
 				var opts = {weighted: true};
 				var edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).to.equal(true);					

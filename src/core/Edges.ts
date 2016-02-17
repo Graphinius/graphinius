@@ -58,7 +58,8 @@ class BaseEdge implements IBaseEdge {
 		options = options || {};
 		this._directed = options.directed || false;
 		this._weighted = options.weighted || false;
-		this._weight = this._weighted ? options.weight || 1 : undefined;
+    // @NOTE isNaN and Number.isNaN confusion...
+		this._weight = this._weighted ? ( isNaN(options.weight) ? 1 : options.weight ) : undefined;
 		this._label = options.label || this._id;
 	}
 
