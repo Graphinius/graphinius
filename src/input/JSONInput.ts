@@ -10,13 +10,20 @@ import * as $G from '../core/Graph';
 
 var DEFAULT_WEIGHT = 1;
 
-export interface JSONNode {
-	edges			: Array<string>;
+interface JSONEdge {
+  to          : string;
+  directed?   : string;
+  weight?     : string;
+  type?       : string;  
+}
+
+interface JSONNode {
+	edges			: Array<JSONEdge>;
 	coords?		: {[key: string] : Number};
 	features?	: {[key: string] : any};
 }
 
-export interface JSONGraph {
+interface JSONGraph {
 	name			: string;
 	nodes			: number;
 	edges			: number;
@@ -127,24 +134,25 @@ class JSONInput implements IJSONInput {
 					coords[coord_idx] = +coords_json[coord_idx];
 				}
 				node.setFeature('coords', coords);
-			}			
+			}
 			
 			// Reading and instantiating edges
-			var edges = json.data[node_id].edges	
+			var edges = json.data[node_id].edges;
 			for ( var e in edges ) {
-				var edge_input = String(edges[e]).match(/\S+/g),
-						target_node_id = edge_input[0],
+				var edge_input = edges[e],
+						target_node_id = edge_input.to,
             // Is there any direction information?
-						dir_char = this._explicit_direction ? edge_input[1] : this._direction_mode ? 'd' : 'u',
-						directed = dir_char === 'd',
+            
+						directed = this._explicit_direction ? edge_input.directed : this._direction_mode,
+            dir_char = directed ? 'd' : 'u',
             // Is there any weight information?,
-            weight_float = parseFloat(edge_input[2]),
+            weight_float = parseFloat(edge_input.weight),
             weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
             edge_weight = this._weighted_mode ? weight_info : undefined, 
-						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
-						
+						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);      
+            
 				var edge_id = node_id + "_" + target_node_id + "_" + dir_char,
-						edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;		
+						edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 								
 				if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
 					// The completely same edge should only be added once...

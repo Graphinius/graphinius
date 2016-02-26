@@ -13,6 +13,12 @@ var Edge 		= $E.BaseEdge;
 var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
+var REAL_GRAPH_NR_NODES = 6204,
+    REAL_GRAPH_NR_EDGES = 18550,
+    small_graph = "./test/input/test_data/small_graph.json",
+    small_graph_weights_crap = "./test/input/test_data/small_graph_weights_crap.json",
+    real_graph = "./test/input/test_data/real_graph.json";
+
 
 describe('GRAPH JSON INPUT TESTS', () => {
 	
@@ -46,8 +52,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				
 		it('should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions', () => {
 			json = new JSON_IN();
-			input_file = "./test/input/test_data/small_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphStats(graph);
 		});
 		
@@ -55,9 +60,8 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph out of a JSON file with direction mode set to undirected', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false; // undirected graph
-			input_file = "./test/input/test_data/small_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			json._direction_mode = false;
+			graph = json.readFromJSONFile(small_graph);
 			expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(0);
 			expect(graph.nrUndEdges()).to.equal(4);
@@ -67,9 +71,8 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph out of a JSON file with direction mode set to directed', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = true; // directed graph
-			input_file = "./test/input/test_data/small_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			json._direction_mode = true;
+			graph = json.readFromJSONFile(small_graph);
 			expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(7);
 			expect(graph.nrUndEdges()).to.equal(0);
@@ -86,12 +89,11 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 */ 
 		it('should construct a real sized graph from an edge list with edges set to undirected', () => {
 			json = new JSON_IN();
-			input_file = "./test/input/test_data/real_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(real_graph);
 			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(5937);
+			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
 			expect(stats.nr_dir_edges).to.equal(0);
-			expect(stats.nr_und_edges).to.equal(17777);
+			expect(stats.nr_und_edges).to.equal(REAL_GRAPH_NR_EDGES);
 			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
 			
 			// console.dir(stats);
@@ -106,11 +108,10 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = true;
-			input_file = "./test/input/test_data/real_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(real_graph);
 			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(5937);
-			expect(stats.nr_dir_edges).to.equal(17777);
+			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
+			expect(stats.nr_dir_edges).to.equal(REAL_GRAPH_NR_EDGES);
 			expect(stats.nr_und_edges).to.equal(0);
 			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 		});
@@ -123,14 +124,11 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			input_file = "./test/input/test_data/real_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(real_graph);
 			
 			var nr_nodes = graph.nrNodes();
 			while ( nr_nodes-- ) {
 				graph.deleteNode(graph.getNodeById(String(nr_nodes)));
-				// graph.deleteNode(graph.getRandomNode());
-				// console.log(nr_nodes);
 			}
 			expect(graph.nrNodes()).to.equal(0);
 			expect(graph.nrDirEdges()).to.equal(0);
@@ -151,8 +149,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			input_file = "./test/input/test_data/small_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphCoords(graph);
 		});
 		
@@ -161,8 +158,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			input_file = "./test/input/test_data/search_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {
 				expect(nodes[node_idx].getFeature("coords")).to.be.undefined;
@@ -184,7 +180,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json._explicit_direction = false;
 			json._direction_mode = false;
 			input_file = "./test/input/test_data/small_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphFeatures(graph);
 		});
 		
@@ -194,7 +190,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json._explicit_direction = false;
 			json._direction_mode = false;
 			input_file = "./test/input/test_data/search_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {
 				expect(nodes[node_idx].getFeatures()).to.be.empty;
@@ -215,8 +211,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
       json._weighted_mode = true;
-			input_file = "./test/input/test_data/small_graph_weights.json";
-			graph = json.readFromJSONFile(input_file);			
+			graph = json.readFromJSONFile(small_graph);			
       $C.checkSmallGraphEdgeWeights(graph);
 		});
     
@@ -225,8 +220,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
       json._weighted_mode = false;
-			input_file = "./test/input/test_data/small_graph_weights.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(small_graph);
 			var und_edges = graph.getUndEdges();
       for (var edge in und_edges) {
         expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
@@ -244,8 +238,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
       json._weighted_mode = true;
-			input_file = "./test/input/test_data/small_graph_weights_crap.json";
-			graph = json.readFromJSONFile(input_file);			
+			graph = json.readFromJSONFile(small_graph_weights_crap);			
       var und_edges = graph.getUndEdges();
       for (var edge in und_edges) {
         expect(graph.getEdgeById(edge).isWeighted()).to.be.true;

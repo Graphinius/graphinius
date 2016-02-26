@@ -13,6 +13,8 @@ var Edge 	  = $E.BaseEdge;
 var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
+var search_graph = "./test/input/test_data/search_graph.json";
+
 
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
@@ -27,8 +29,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		
 		it('should correctly instantiate the search graph', () => {
 			json = new JSON_IN();
-			input_file = "./test/input/test_data/search_graph.json";
-			graph = json.readFromJSONFile(input_file);
+			graph = json.readFromJSONFile(search_graph);
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(7);
 			expect(stats.nr_dir_edges).to.equal(7);

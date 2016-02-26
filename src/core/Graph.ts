@@ -100,7 +100,7 @@ class BaseGraph implements IGraph {
 	
 	getMode() : GraphMode {
 		return this._mode;
-	}
+	} 
 	
 	getStats() : GraphStats {
 		return {

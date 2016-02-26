@@ -14,8 +14,15 @@
         "z": 57
       },
 			"edges": [
-				"A u",
-				"A d blahoo"
+        {
+          "to": "A",
+          "directed": false
+        },
+        {
+          "to": "B",
+          "directed": true,
+          "weight": "blahoo"
+        }
 			]
 		}
 	}
