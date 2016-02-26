@@ -1,0 +1,76 @@
+{
+  "name": "SEARCH graph test scenario",
+  "nodes": 7,
+  "dir_edges": 7,
+	"und_edges": 2,
+	"data": {
+		"A": {
+			"edges": [
+				{
+					"to": "B",
+					"directed": true
+				},
+				{
+					"to": "C",
+					"directed": true
+				},
+				{
+					"to": "D",
+					"directed": false
+				},
+				{
+					"to": "F",
+					"directed": true
+				}
+			]
+		},
+		"B": {
+			"edges": [
+			]
+		},
+		"C": {
+			"edges": [
+				{
+					"to": "C",
+					"directed": false
+				},
+				{
+					"to": "A",
+					"directed": true
+				}
+			]
+		},
+		"D": {
+			"edges": [
+				{
+					"to": "A",
+					"directed": false
+				},
+				{
+					"to": "D",
+					"directed": true
+				},
+				{
+					"to": "E",
+					"directed": true
+				}
+			]
+		},
+		"E": {
+			"edges": [
+				{
+					"to": "F",
+					"directed": true
+				}
+			]
+		},
+		"F": {
+			"edges": [
+			]
+		},
+		"G": {
+			"edges": [
+			]
+		}
+	}
+}

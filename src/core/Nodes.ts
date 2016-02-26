@@ -3,7 +3,7 @@
 import * as $E from "./Edges";
 import _ = require('lodash');
 
-interface IBaseNode {
+export interface IBaseNode {
 	getID()	: string;
 	getLabel() : string;
 	setLabel(label : string) : void;
@@ -335,4 +335,4 @@ class BaseNode implements IBaseNode {
 }
 
 
-export { IBaseNode, BaseNode };
+export { BaseNode };

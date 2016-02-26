@@ -10,6 +10,9 @@ var _ = require('lodash');
 })(exports.GraphMode || (exports.GraphMode = {}));
 var GraphMode = exports.GraphMode;
 var BaseGraph = (function () {
+    // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
+    // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
+    // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
     function BaseGraph(_label) {
         this._label = _label;
         this._nr_nodes = 0;

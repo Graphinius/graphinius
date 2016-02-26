@@ -13,7 +13,7 @@ var Edge 		= $E.BaseEdge;
 var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
-var search_graph = "./test/input/test_data/small_graph.json";
+var search_graph = "./test/input/test_data/search_graph.json";
 
 
 describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {

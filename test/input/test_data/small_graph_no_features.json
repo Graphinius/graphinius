@@ -4,16 +4,6 @@
   "edges": 7,
 	"data": {
 		"A": {
-      "type": "interneuron",
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
-        "x": 15,
-        "y": 2,
-        "z": 57
-      },
 			"edges": [
         {
           "to": "B",
@@ -43,15 +33,6 @@
 			]
 		},
 		"B": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
-        "x": 55,
-        "y": 25,
-        "z": 7
-      },
 			"edges": [
         {
           "to": "A",
@@ -61,15 +42,6 @@
 			]
 		},
 		"C": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
-        "x": 1,
-        "y": -12,
-        "z": 33
-      },
 			"edges": [        
         {
           "to": "A",
@@ -84,15 +56,6 @@
 			]
 		},
 		"D": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
-        "x": 17,
-        "y": -4,
-        "z": -13
-      },
 			"edges": [
         {
           "to": "A",

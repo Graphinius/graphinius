@@ -16,6 +16,7 @@ var JSON_IN	= $I.JSONInput;
 var REAL_GRAPH_NR_NODES = 6204,
     REAL_GRAPH_NR_EDGES = 18550,
     small_graph = "./test/input/test_data/small_graph.json",
+		small_graph_no_features = "./test/input/test_data/small_graph_no_features.json",
     small_graph_weights_crap = "./test/input/test_data/small_graph_weights_crap.json",
     real_graph = "./test/input/test_data/real_graph.json";
 
@@ -158,7 +159,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			graph = json.readFromJSONFile(small_graph);
+			graph = json.readFromJSONFile(small_graph_no_features);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {
 				expect(nodes[node_idx].getFeature("coords")).to.be.undefined;
@@ -179,7 +180,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			input_file = "./test/input/test_data/small_graph.json";
 			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphFeatures(graph);
 		});
@@ -189,8 +189,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction_mode = false;
-			input_file = "./test/input/test_data/search_graph.json";
-			graph = json.readFromJSONFile(small_graph);
+			graph = json.readFromJSONFile(small_graph_no_features);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {
 				expect(nodes[node_idx].getFeatures()).to.be.empty;
