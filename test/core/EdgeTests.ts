@@ -77,7 +77,7 @@ describe('==== EDGE TESTS ====', () => {
 					expect(edge.isWeighted()).to.equal(val);					
 				});
 			});
-		});		
+		});
 		
     
 		describe('getWeight()', () => {
@@ -101,7 +101,6 @@ describe('==== EDGE TESTS ====', () => {
 				expect(edge.getWeight()).to.equal(42);					
 			});
 		});
-		
     
     
 		describe('setWeight()', () => {
@@ -140,5 +139,5 @@ describe('==== EDGE TESTS ====', () => {
 			});
 		});
 				
-	});	
+	});
 });

@@ -97,6 +97,7 @@ class BaseEdge implements IBaseEdge {
 	getNodes() : IConnectedNodes {
 		return {a: this._node_a, b: this._node_b};
 	}
+
 }
 
 export { BaseEdge };

@@ -34,26 +34,26 @@ var tsProject = ts.createProject({
 gulp.task('build', function () {
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts(tsProject))
-						 .pipe(gulp.dest('.'));						
+						 .pipe(gulp.dest('.'));
 });
 
 // Packaging - Node / Commonjs
 gulp.task('dist', ['clean', 'tdoc'], function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject))
-											
-	// Merge the two output streams, so this task is finished  
+
+	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
-	return merge([ 
+	return merge([
 		tsResult.dts//.pipe(concat('graphinius.d.ts'))
-								.pipe(gulp.dest('.')),		
+								.pipe(gulp.dest('.')),
 		tsResult.js.pipe(gulp.dest('./dist/'))
 	]);
 });
 
 // Packaging - Browser
 gulp.task('browserify', ['dist'], function() {
-	// Single entry point to browserify 
+	// Single entry point to browserify
 	gulp.src('./index.js')
 		.pipe(browserify({
 		  insertGlobals : false

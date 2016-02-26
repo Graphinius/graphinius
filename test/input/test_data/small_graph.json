@@ -4,6 +4,7 @@
   "edges": 7,
 	"data": {
 		"A": {
+      "type": "interneuron",
 			"features": {
 				"foo": "bar",
 				"true": true

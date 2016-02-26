@@ -91,7 +91,11 @@ class BaseGraph implements IGraph {
 	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {}; 
 	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};
 	
-	
+  // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
+  // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
+  // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
+  
+  
 	constructor (public _label) {	}
 	
 	getMode() : GraphMode {
