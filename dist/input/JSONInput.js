@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var fs = require('fs');
 var path = require('path');
 var $G = require('../core/Graph');
@@ -113,5 +114,5 @@ var JSONInput = (function () {
         }
     };
     return JSONInput;
-})();
+}());
 exports.JSONInput = JSONInput;

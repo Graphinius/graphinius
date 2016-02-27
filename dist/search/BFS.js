@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 function BFS(graph, root) {
     var result = {};
     var nodes = graph.getNodes();

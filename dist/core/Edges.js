@@ -1,3 +1,4 @@
+"use strict";
 var BaseEdge = (function () {
     function BaseEdge(_id, _node_a, _node_b, options) {
         this._id = _id;
@@ -38,5 +39,5 @@ var BaseEdge = (function () {
         return { a: this._node_a, b: this._node_b };
     };
     return BaseEdge;
-})();
+}());
 exports.BaseEdge = BaseEdge;

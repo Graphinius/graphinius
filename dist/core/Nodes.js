@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var _ = require('lodash');
 var BaseNode = (function () {
     function BaseNode(_id, features) {
@@ -230,5 +231,5 @@ var BaseNode = (function () {
         return _.union(this.nextNodes(), this.connNodes());
     };
     return BaseNode;
-})();
+}());
 exports.BaseNode = BaseNode;

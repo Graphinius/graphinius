@@ -12,8 +12,8 @@ var Edge = $E.BaseEdge;
 describe('==== EDGE TESTS ====', () => {
 	var id = 'New Edge',
 			label = 'New Edge',
-			node_a = new Node(1, 'Node_A'),
-			node_b = new Node(2, 'Node_B');
+			node_a = new Node(1),
+			node_b = new Node(2);
 					
 	
 	describe('A basic edge instantiation', () => {				

@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var $G = require('../core/Graph');
 function DFSVisit(graph, current_root, callbacks, dir_mode) {
     if (callbacks === void 0) { callbacks = {}; }
