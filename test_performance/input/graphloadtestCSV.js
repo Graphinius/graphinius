@@ -1,4 +1,4 @@
-require('../index.js');
+require('../../index.js');
 var yargs = require('yargs').argv;
 
 var init = +new Date(),
@@ -7,12 +7,12 @@ var init = +new Date(),
     node_id = "1",
     graph_mode = 2;
 
-yargs.graph = yargs.graph || "SCC100k";
+yargs.graph = yargs.graph || "SCC15k";
 
 //----------------------------------------------------------------
 //                           LOAD TEST
 //----------------------------------------------------------------
-var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_graphs/' + yargs.graph + '.csv';
+var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_data/CSV/' + yargs.graph + '.csv';
 var csv = new $G.CsvInput(' ', false, false);
 var graph = csv.readFromEdgeListFile(file);
 end = +new Date();
@@ -55,8 +55,8 @@ var root = graph.getNodeById(node_id);
 var result = {},
     count = 0,
     callbacks = {};
-$Search.prepareStandardDFSCBs(result, callbacks, count);
-$Search.DFS(graph, callbacks, graph_mode);
+$Search.prepareDFSStandardConfig();
+$Search.DFS(graph, root);
 
 end = +new Date();
 console.log("Computed DFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
