@@ -60,8 +60,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       expect(config.dir_mode).not.to.be.undefined;
       expect(config.dir_mode).to.equal($G.GraphMode.MIXED);
       
-      expect(config.result).not.to.be.undefined;
-      expect(config.result).to.deep.equal({});
+      expect(config.visit_result).not.to.be.undefined;
+      expect(config.visit_result).to.deep.equal({});
       
       expect(config.callbacks).not.to.be.undefined;
       var idv = config.callbacks.init_dfs_visit;
@@ -91,8 +91,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       expect(config.dir_mode).not.to.be.undefined;
       expect(config.dir_mode).to.equal($G.GraphMode.MIXED);
       
-      expect(config.result).not.to.be.undefined;
-      expect(config.result).to.deep.equal({});
+      expect(config.visit_result).not.to.be.undefined;
+      expect(config.visit_result).to.deep.equal({});
       
       expect(config.callbacks).not.to.be.undefined;
       var idf = config.callbacks.init_dfs;
@@ -146,7 +146,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			it('should execute the DFS VISIT INIT callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 init_dfs_visit : []
               },
@@ -154,18 +156,20 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
 				
 				var dfsVisitInitTestCallback = function() {
-					config.result['test_message'] = "DFS VISIT INIT callback executed.";
+					config.messages['test_message'] = "DFS VISIT INIT callback executed.";
 				};
 				config.callbacks.init_dfs_visit.push(dfsVisitInitTestCallback);
 				var result = $DFS.DFSVisit(graph, root, config);
-				expect(result['test_message']).to.equal("DFS VISIT INIT callback executed.");
+				expect(config.messages['test_message']).to.equal("DFS VISIT INIT callback executed.");
 			});
 			
 			
 			it('should execute the DFS VISIT NODE POPPED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 node_popped : []
               },
@@ -173,18 +177,20 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
         
 				var dfsVisitNodePoppedTestCallback = function() {
-					config.result['test_message'] = "DFS VISIT NODE POPPED callback executed.";
+					config.messages['test_message'] = "DFS VISIT NODE POPPED callback executed.";
 				};
 				config.callbacks.node_popped.push(dfsVisitNodePoppedTestCallback);
 				var result = $DFS.DFSVisit(graph, root, config);
-				expect(result['test_message']).to.equal("DFS VISIT NODE POPPED callback executed.");
+				expect(config.messages['test_message']).to.equal("DFS VISIT NODE POPPED callback executed.");
 			});
 			
 			
 			it('should execute the DFS VISIT NODE MARKED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 node_marked : []
               },
@@ -192,18 +198,20 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
         
 				var dfsVisitNodeMarkedTestCallback = function() {
-					config.result['test_message'] = "DFS VISIT NODE MARKED callback executed.";
+					config.messages['test_message'] = "DFS VISIT NODE MARKED callback executed.";
 				};
 				config.callbacks.node_marked.push(dfsVisitNodeMarkedTestCallback);
 				var result = $DFS.DFSVisit(graph, root, config);
-				expect(result['test_message']).to.equal("DFS VISIT NODE MARKED callback executed.");
+				expect(config.messages['test_message']).to.equal("DFS VISIT NODE MARKED callback executed.");
 			});
 			
 			
 			it('should execute the DFS VISIT NODE UNMARKED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 node_unmarked : []
               },
@@ -211,18 +219,20 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
             
 				var dfsVisitNodeUnMarkedTestCallback = function() {
-					config.result['test_message'] = "DFS VISIT NODE UNMARKED callback executed.";
+					config.messages['test_message'] = "DFS VISIT NODE UNMARKED callback executed.";
 				};
 				config.callbacks.node_unmarked.push(dfsVisitNodeUnMarkedTestCallback);
 				var result = $DFS.DFSVisit(graph, root, config);
-				expect(result['test_message']).to.equal("DFS VISIT NODE UNMARKED callback executed.");
+				expect(config.messages['test_message']).to.equal("DFS VISIT NODE UNMARKED callback executed.");
 			});
 			
 			
 			it('should execute the DFS VISIT ADJ NODES PUSHED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 adj_nodes_pushed : []
               },
@@ -230,18 +240,20 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
 				
 				var dfsVisitAdjNodesPushedTestCallback = function() {
-					config.result['test_message'] = "DFS VISIT ADJ NODES PUSHED callback executed.";
+					config.messages['test_message'] = "DFS VISIT ADJ NODES PUSHED callback executed.";
 				};
 				config.callbacks.adj_nodes_pushed.push(dfsVisitAdjNodesPushedTestCallback);
 				var result = $DFS.DFSVisit(graph, root, config);
-				expect(result['test_message']).to.equal("DFS VISIT ADJ NODES PUSHED callback executed.");
+				expect(config.messages['test_message']).to.equal("DFS VISIT ADJ NODES PUSHED callback executed.");
 			});
 			
 			
 			it('should execute the DFS INIT callbacks', () => {
         var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
-              result: {},
+              visit_result: {},
+              dfs_visit_marked: {},
+              messages: {},
               callbacks: {
                 init_dfs : []
               },
@@ -249,12 +261,12 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             };
             
 				var dfsInitTestCallback = function() {
-					config.result['test_message'] = "DFS INIT callback executed.";
+					config.messages['test_message'] = "DFS INIT callback executed.";
 				};
 				config.callbacks.init_dfs.push(dfsInitTestCallback);
         
-				var result = $DFS.DFS(graph, config);
-				expect(result['test_message']).to.equal("DFS INIT callback executed.");
+				var result = $DFS.DFS(graph, root, config);
+				expect(config.messages['test_message']).to.equal("DFS INIT callback executed.");
 			});
 			
 		});
@@ -262,9 +274,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	});
   
 	
-	describe('testing DFS visit - empty graph and invalid dir_mode', () => {
+	describe('testing DFS visit - empty graph and invalid dir_mode - ', () => {
 		
-		it('should throw an error upon trying to traverse an empty graph (INIT)', () => {
+		it('DFSVisit should throw an error upon trying to traverse an empty graph (INIT)', () => {
 			var root = graph.getNodeById('A'),
           empty_graph = new $G.BaseGraph("iamemptygraph");
           		
@@ -272,10 +284,11 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
     
     
-    it('should throw an error upon trying to traverse a graph with dir_mode set to INIT', () => {
+    it('DFSVisit should throw an error upon trying to traverse a graph with dir_mode set to INIT', () => {
 			var root = graph.getNodeById('A'),
           config : $DFS.DFS_Config = {
-            result: {},
+            visit_result: {},
+            dfs_visit_marked: {},
             callbacks: {},
             dir_mode: $G.GraphMode.INIT
           }
@@ -284,7 +297,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
     
     
-    it('should throw an error upon trying to traverse a blank graph (INIT)', () => {
+    it('DFS should throw an error upon trying to traverse a blank graph (INIT)', () => {
       var root = graph.getNodeById('A'),
           empty_graph = new $G.BaseGraph("iamemptygraph");
           
@@ -292,23 +305,24 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
     
     
-    it('should throw an error upon trying to traverse a graph with dir_mode set to INIT', () => {
+    it('DFS should throw an error upon trying to traverse a graph with dir_mode set to INIT', () => {
 			var root = graph.getNodeById('A'),
           config : $DFS.DFS_Config = {
-            result: {},
+            visit_result: {},
+            dfs_visit_marked: {},
             callbacks: {},
             dir_mode: $G.GraphMode.INIT
           }
           		
-			expect($DFS.DFS.bind($DFS.DFSVisit, graph, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');
+			expect($DFS.DFS.bind($DFS.DFS, graph, root, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');
 		});    
 		
 	});
 	
 	
-	describe('testing DFS visit on small test graph, DIRECTED MODE', () => {
-				
-		it('should correctly compute distances from node A', () => {
+	describe('testing DFS visit on small search graph, DIRECTED MODE', () => {
+		
+		it('should correctly compute lookup distance from node A', () => {
 			var root = graph.getNodeById('A'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.DIRECTED;
@@ -332,7 +346,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node D', () => {
+		it('should correctly compute lookup distance from node D', () => {
 			var root = graph.getNodeById('D'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.DIRECTED;
@@ -355,7 +369,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node G', () => {
+		it('should correctly compute lookup distance from node G', () => {
 			var root = graph.getNodeById('G'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.DIRECTED;
@@ -377,9 +391,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	});
 	
 	
-	describe('testing DFS visit on small test graph, UNDIRECTED MODE', () => {
+	describe('testing DFS visit on small search graph, UNDIRECTED MODE', () => {
 				
-		it('should correctly compute distances from node A', () => {
+		it('should correctly compute lookup distance from node A', () => {
 			var root = graph.getNodeById('A'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -401,7 +415,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node D', () => {
+		it('should correctly compute lookup distance from node D', () => {
 			var root = graph.getNodeById('D'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -422,8 +436,11 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			expect(result['D'].parent).to.equal(root);
 		});
 		
-		
-		it('should correctly compute distances from node G', () => {
+		/**
+     * Because of our graph, this currently yields the same
+     * result as our test case in DIRECTED mode...
+     */
+		it('should correctly compute lookup distance from node G', () => {
 			var root = graph.getNodeById('G'),
           config = $DFS.prepareDFSVisitStandardConfig();          
       config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -445,12 +462,11 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
   });
 	
 	
-	describe('testing DFS visit on small test graph, MIXED MODE', () => {
+	describe('testing DFS visit on small search graph, MIXED MODE', () => {
 				
-		it('should correctly compute distances from node A', () => {
+		it('should correctly compute lookup distance from node A', () => {
 			var root = graph.getNodeById('A'),
-          config = $DFS.prepareDFSVisitStandardConfig(),
-			    result = $DFS.DFSVisit(graph, root, config);
+			    result = $DFS.DFSVisit(graph, root);
 						
 			expect(Object.keys(result).length).to.equal(6);
 			
@@ -472,10 +488,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node D', () => {
+		it('should correctly compute lookup distance from node D', () => {
 			var root = graph.getNodeById('D'),
-          config = $DFS.prepareDFSVisitStandardConfig(),
-			    result = $DFS.DFSVisit(graph, root, config);						
+			    result = $DFS.DFSVisit(graph, root);						
 						
 			expect(Object.keys(result).length).to.equal(6);
 			
@@ -495,10 +510,9 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node E', () => {
+		it('should correctly compute lookup distance from node E', () => {
 			var root = graph.getNodeById('E'),
-          config = $DFS.prepareDFSVisitStandardConfig(),
-			    result = $DFS.DFSVisit(graph, root, config);	
+			    result = $DFS.DFSVisit(graph, root);	
 						
 			expect(Object.keys(result).length).to.equal(2);			
 			expect(result['E'].counter).to.equal(0);
@@ -509,7 +523,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 		
 		
-		it('should correctly compute distances from node G', () => {
+		it('should correctly compute lookup distance from node G', () => {
 			var root = graph.getNodeById('G'),
           config = $DFS.prepareDFSVisitStandardConfig(),
 			    result = $DFS.DFSVisit(graph, root, config);	
@@ -521,34 +535,30 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
     
   });
   
-  
-
 	
-	describe('testing DFS on small test graph (including unconnected component)', () => {
-		
+	describe('testing DFS on small search graph (including unconnected component)', () => {		
 		
 		/**
-		 * $G.GraphMode enum holds 0-init (no edges), 1-directed, 
-		 * 2-undirected, 3-mixed
+		 * $G.GraphMode enum holds 0-init (no edges), 
+     * 1-directed, 2-undirected, 3-mixed
      * 
      * TODO - WRITE TESTS FOR SPECIFIC VERTICES AND THEN
      * CHECK RESULTS ACCORDINGLY...
 		 */		
-		for ( var i = 1; i < 4; i++ ) {
+		[1, 2, 3].forEach((i) => {
 			
 			it('should not leave any nodes with a counter of -1 (unvisited)', () => {	
 				var root = graph.getNodeById('A'),
             config = $DFS.prepareDFSStandardConfig();
           
         config.dir_mode = i;
-        var result = $DFS.DFS(graph, config);
-				
-				expect(Object.keys(result).length).to.equal(7);
-				// checking that all the counters have been increased
-				// and are therefore at 7 also
-				for ( var node_id in result ) {
-					expect(result[node_id].counter).not.to.equal(-1);
-				}
+        var dfs_result = $DFS.DFS(graph, root, config);
+        
+        var nr_nodes_visited = 0;
+        for (var seg_idx in dfs_result) {
+          nr_nodes_visited += Object.keys(dfs_result[seg_idx]).length;
+        }				
+				expect(nr_nodes_visited).to.equal(7);
 			});
 			
 			
@@ -557,16 +567,173 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             config = $DFS.prepareDFSStandardConfig();
           
         config.dir_mode = i;
-        var result = $DFS.DFS(graph, config);
-				
-				expect(Object.keys(result).length).to.equal(7);
-				for ( var node_id in result ) {
-					expect(result[node_id].parent).not.to.be.null;
-				}
+        var dfs_result = $DFS.DFS(graph, root, config);
+        
+        for (var seg_idx in dfs_result) {
+          for (var node_key in dfs_result[seg_idx]) {
+            var node = dfs_result[seg_idx][node_key];
+            expect(node.parent).not.to.be.null;
+          }
+        }
 			});
-		
-		}
-		
+      
+    });    
+    
+    describe('lookup DFS distance calculations - DIRECTED Mode - ', () => {
+          
+      it('should correctly compute lookup distance from node A', () => {
+        var root = graph.getNodeById('A'),
+            config = $DFS.prepareDFSStandardConfig();
+            
+        config.dir_mode = $G.GraphMode.DIRECTED;
+        var dfs_result = $DFS.DFS(graph, root, config);		
+        
+        expect(dfs_result.length).to.equal(3);				
+        
+        var seg_0 = dfs_result[0];
+        expect(Object.keys(seg_0).length).to.equal(4);        
+        expect(seg_0['A'].counter).to.equal(0);
+        expect(seg_0['F'].counter).to.equal(1);
+        expect(seg_0['C'].counter).to.equal(2);
+        expect(seg_0['B'].counter).to.equal(3);
+        expect(seg_0['A'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['F'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['C'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['B'].parent).to.equal(graph.getNodeById('A'));
+        
+        var seg_1 = dfs_result[1];
+        expect(Object.keys(seg_1).length).to.equal(2);        
+        expect(seg_1['D'].counter).to.equal(4);
+        expect(seg_1['E'].counter).to.equal(5);
+        expect(seg_1['D'].parent).to.equal(graph.getNodeById('D'));
+        expect(seg_1['E'].parent).to.equal(graph.getNodeById('D'));
+        
+        var seg_2 = dfs_result[2];
+        expect(Object.keys(seg_2).length).to.equal(1);        
+        expect(seg_2['G'].counter).to.equal(6);
+        expect(seg_2['G'].parent).to.equal(graph.getNodeById('G'));
+        
+      });
+          
+    
+      it('should correctly compute lookup distance from node D', () => {
+        var root = graph.getNodeById('D'),
+            config = $DFS.prepareDFSStandardConfig();
+            
+        config.dir_mode = $G.GraphMode.DIRECTED;
+        var dfs_result = $DFS.DFS(graph, root, config);
+        
+        expect(dfs_result.length).to.equal(3);	
+        
+        var seg_0 = dfs_result[0];
+        expect(Object.keys(seg_0).length).to.equal(3);        
+        expect(seg_0['D'].counter).to.equal(0);
+        expect(seg_0['E'].counter).to.equal(1);
+        expect(seg_0['F'].counter).to.equal(2);
+        expect(seg_0['D'].parent).to.equal(graph.getNodeById('D'));
+        expect(seg_0['E'].parent).to.equal(graph.getNodeById('D'));
+        expect(seg_0['F'].parent).to.equal(graph.getNodeById('E'));
+        
+        var seg_1 = dfs_result[1];
+        expect(Object.keys(seg_1).length).to.equal(3);        
+        expect(seg_1['A'].counter).to.equal(3);      
+        expect(seg_1['C'].counter).to.equal(4);
+        expect(seg_1['B'].counter).to.equal(5);
+        expect(seg_1['A'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_1['C'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_1['B'].parent).to.equal(graph.getNodeById('A'));
+        
+        var seg_2 = dfs_result[2];
+        expect(Object.keys(seg_2).length).to.equal(1);        
+        expect(seg_2['G'].counter).to.equal(6);
+        expect(seg_2['G'].parent).to.equal(graph.getNodeById('G'));
+        
+      });
+    
+    });
+    
+    
+    describe('lookup DFS distance calculations - UNDIRECTED Mode - ', () => {
+          
+      it('should correctly compute lookup distance from node A', () => {
+        var root = graph.getNodeById('A'),
+            config = $DFS.prepareDFSStandardConfig();
+            
+        config.dir_mode = $G.GraphMode.UNDIRECTED;
+        var dfs_result = $DFS.DFS(graph, root, config);
+        
+        expect(dfs_result.length).to.equal(6);					
+        
+        var seg_0 = dfs_result[0];
+        expect(Object.keys(seg_0).length).to.equal(2);        
+        expect(seg_0['A'].counter).to.equal(0);
+        expect(seg_0['D'].counter).to.equal(1);
+        expect(seg_0['A'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['D'].parent).to.equal(graph.getNodeById('A'));
+        
+        var seg_1 = dfs_result[1];
+        expect(Object.keys(seg_1).length).to.equal(1);        
+        expect(seg_1['B'].counter).to.equal(2);
+        expect(seg_1['B'].parent).to.equal(graph.getNodeById('B'));
+        
+        var seg_2 = dfs_result[2];
+        expect(Object.keys(seg_2).length).to.equal(1);        
+        expect(seg_2['C'].counter).to.equal(3);
+        expect(seg_2['C'].parent).to.equal(graph.getNodeById('C'));
+        
+        var seg_3 = dfs_result[3];
+        expect(Object.keys(seg_3).length).to.equal(1);        
+        expect(seg_3['F'].counter).to.equal(4);
+        expect(seg_3['F'].parent).to.equal(graph.getNodeById('F'));
+        
+        var seg_4 = dfs_result[4];
+        expect(Object.keys(seg_4).length).to.equal(1);        
+        expect(seg_4['E'].counter).to.equal(5);
+        expect(seg_4['E'].parent).to.equal(graph.getNodeById('E'));
+        
+        var seg_5 = dfs_result[5];
+        expect(Object.keys(seg_5).length).to.equal(1);        
+        expect(seg_5['G'].counter).to.equal(6);
+        expect(seg_5['G'].parent).to.equal(graph.getNodeById('G'));
+        
+      });
+    
+    });
+    
+    
+    describe('lookup DFS distance calculations - MIXED Mode - ', () => {
+          
+      it('should correctly compute lookup distance from node D', () => {
+        var root = graph.getNodeById('D'),
+            config = $DFS.prepareDFSStandardConfig(),
+            dfs_result = $DFS.DFS(graph, root);
+        
+        expect(dfs_result.length).to.equal(2);
+        
+        var seg_0 = dfs_result[0];
+        expect(Object.keys(seg_0).length).to.equal(6);        
+        expect(seg_0['D'].counter).to.equal(0);
+        expect(seg_0['A'].counter).to.equal(1);     
+        expect(seg_0['F'].counter).to.equal(2);
+        expect(seg_0['C'].counter).to.equal(3);     
+        expect(seg_0['B'].counter).to.equal(4);  
+        expect(seg_0['E'].counter).to.equal(5);
+        expect(seg_0['D'].parent).to.equal(graph.getNodeById('D'));
+        expect(seg_0['A'].parent).to.equal(graph.getNodeById('D'));
+        expect(seg_0['F'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['C'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['B'].parent).to.equal(graph.getNodeById('A'));
+        expect(seg_0['E'].parent).to.equal(graph.getNodeById('D'));
+        
+        var seg_1 = dfs_result[1];
+        expect(Object.keys(seg_1).length).to.equal(1);        
+        expect(seg_1['G'].counter).to.equal(6);
+        expect(seg_1['G'].parent).to.equal(graph.getNodeById('G'));       
+        
+      });
+    
+    });    
+    
 	});
 		
 });

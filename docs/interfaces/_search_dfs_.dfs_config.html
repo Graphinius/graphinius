@@ -86,9 +86,11 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#callbacks" class="tsd-kind-icon">callbacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#dfs_visit_marked" class="tsd-kind-icon">dfs_<wbr>visit_<wbr>marked</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#filters" class="tsd-kind-icon">filters</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#result" class="tsd-kind-icon">result</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#messages" class="tsd-kind-icon">messages</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#visit_result" class="tsd-kind-icon">visit_<wbr>result</a></li>
 							</ul>
 						</section>
 					</div>
@@ -107,6 +109,24 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="dfs_visit_marked" class="tsd-anchor"></a>
+					<h3>dfs_<wbr>visit_<wbr>marked</h3>
+					<div class="tsd-signature tsd-kind-icon">dfs_<wbr>visit_<wbr>marked<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L13">search/DFS.ts:13</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">boolean</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="dir_mode" class="tsd-anchor"></a>
 					<h3>dir_<wbr>mode</h3>
 					<div class="tsd-signature tsd-kind-icon">dir_<wbr>mode<span class="tsd-signature-symbol">:</span> <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a></div>
@@ -122,14 +142,29 @@
 					<div class="tsd-signature tsd-kind-icon">filters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L13">search/DFS.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L16">search/DFS.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="result" class="tsd-anchor"></a>
-					<h3>result</h3>
-					<div class="tsd-signature tsd-kind-icon">result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<a name="messages" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> messages</h3>
+					<div class="tsd-signature tsd-kind-icon">messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L15">search/DFS.ts:15</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="visit_result" class="tsd-anchor"></a>
+					<h3>visit_<wbr>result</h3>
+					<div class="tsd-signature tsd-kind-icon">visit_<wbr>result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L10">search/DFS.ts:10</a></li>
@@ -192,13 +227,19 @@
 								<a href="_search_dfs_.dfs_config.html#callbacks" class="tsd-kind-icon">callbacks</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_search_dfs_.dfs_config.html#dfs_visit_marked" class="tsd-kind-icon">dfs_<wbr>visit_<wbr>marked</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_search_dfs_.dfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_search_dfs_.dfs_config.html#filters" class="tsd-kind-icon">filters</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#result" class="tsd-kind-icon">result</a>
+								<a href="_search_dfs_.dfs_config.html#messages" class="tsd-kind-icon">messages</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_search_dfs_.dfs_config.html#visit_result" class="tsd-kind-icon">visit_<wbr>result</a>
 							</li>
 						</ul>
 					</li>

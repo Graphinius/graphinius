@@ -2,8 +2,7 @@
 "use strict";
 var $G = require('../core/Graph');
 function DFSVisit(graph, current_root, config) {
-    var scope = {
-        marked_temp: {},
+    var dfsVisitScope = {
         stack: [],
         adj_nodes: [],
         stack_entry: null,
@@ -29,58 +28,58 @@ function DFSVisit(graph, current_root, config) {
      * possibly with the current_root;
      */
     if (callbacks.init_dfs_visit) {
-        execCallbacks(callbacks.init_dfs_visit, scope);
+        execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
     }
     // Start by pushing current root to the stack
-    scope.stack.push({
+    dfsVisitScope.stack.push({
         node: current_root,
         parent: current_root
     });
-    while (scope.stack.length) {
-        scope.stack_entry = scope.stack.pop();
-        scope.current = scope.stack_entry.node;
+    while (dfsVisitScope.stack.length) {
+        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
+        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
         /**
          * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
          */
         if (callbacks.node_popped) {
-            execCallbacks(callbacks.node_popped, scope);
+            execCallbacks(callbacks.node_popped, dfsVisitScope);
         }
-        if (!scope.marked_temp[scope.current.getID()]) {
-            scope.marked_temp[scope.current.getID()] = true;
+        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
+            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
             /**
              * HOOK 3 - CURRENT NODE UNMARKED
              */
             if (callbacks.node_unmarked) {
-                execCallbacks(callbacks.node_unmarked, scope);
+                execCallbacks(callbacks.node_unmarked, dfsVisitScope);
             }
             /**
              * Do we move only in the directed subgraph,
              * undirected subgraph or complete (mixed) graph?
              */
             if (dir_mode === $G.GraphMode.MIXED) {
-                scope.adj_nodes = scope.current.adjNodes();
+                dfsVisitScope.adj_nodes = dfsVisitScope.current.adjNodes();
             }
             else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-                scope.adj_nodes = scope.current.connNodes();
+                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
             }
             else if (dir_mode === $G.GraphMode.DIRECTED) {
-                scope.adj_nodes = scope.current.nextNodes();
+                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
             }
-            for (var adj_idx in scope.adj_nodes) {
+            for (var adj_idx in dfsVisitScope.adj_nodes) {
                 /**
                  * HOOK 6 - NODE OR EDGE TYPE CHECK...
                  * LATER !!
                  */
-                scope.stack.push({
-                    node: scope.adj_nodes[adj_idx],
-                    parent: scope.current
+                dfsVisitScope.stack.push({
+                    node: dfsVisitScope.adj_nodes[adj_idx],
+                    parent: dfsVisitScope.current
                 });
             }
             /**
              * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
              */
             if (callbacks.adj_nodes_pushed) {
-                execCallbacks(callbacks.adj_nodes_pushed, scope);
+                execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
             }
         }
         else {
@@ -88,17 +87,17 @@ function DFSVisit(graph, current_root, config) {
              * HOOK 5 - CURRENT NODE ALREADY MARKED
              */
             if (callbacks.node_marked) {
-                execCallbacks(callbacks.node_marked, scope);
+                execCallbacks(callbacks.node_marked, dfsVisitScope);
             }
         }
     }
-    return config.result;
+    return config.visit_result;
 }
 exports.DFSVisit = DFSVisit;
 /**
  * OuterDFS function
  */
-function DFS(graph, config) {
+function DFS(graph, root, config) {
     var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
     if (graph.getMode() === $G.GraphMode.INIT) {
         throw new Error('Cowardly refusing to traverse graph without edges.');
@@ -106,7 +105,7 @@ function DFS(graph, config) {
     if (dir_mode === $G.GraphMode.INIT) {
         throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
     }
-    var scope = {
+    var dfsScope = {
         marked: {},
         nodes: graph.getNodes()
     };
@@ -114,19 +113,50 @@ function DFS(graph, config) {
      * HOOK 1 - INIT (OUTER DFS)
      */
     if (callbacks.init_dfs) {
-        execCallbacks(callbacks.init_dfs, scope);
+        execCallbacks(callbacks.init_dfs, dfsScope);
     }
     callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
     var markNode = function (context) {
-        scope.marked[context.current.getID()] = true;
+        dfsScope.marked[context.current.getID()] = true;
     };
     callbacks.adj_nodes_pushed.push(markNode);
-    for (var node_id in scope.nodes) {
-        if (!scope.marked[node_id]) {
-            DFSVisit(graph, scope.nodes[node_id], config);
+    // We need to put our results into segments
+    // for easy counting of 'components'
+    // TODO refactor for count & counter...
+    var dfs_result = [{}];
+    var dfs_idx = 0;
+    var count = 0;
+    var counter = function () {
+        return count++;
+    };
+    /**
+     * We not only add new nodes to the result object
+     * of DFSVisit, but also to it's appropriate
+     * segment of the dfs_result object
+     */
+    var addToProperSegment = function (context) {
+        dfs_result[dfs_idx][context.current.getID()] = {
+            parent: context.stack_entry.parent,
+            counter: counter()
+        };
+    };
+    // check if a callbacks object has been instantiated
+    if (callbacks && callbacks.node_unmarked) {
+        callbacks.node_unmarked.push(addToProperSegment);
+    }
+    // Start with root node, no matter what
+    DFSVisit(graph, root, config);
+    // Now take the rest in 'normal' order
+    for (var node_key in dfsScope.nodes) {
+        if (!dfsScope.marked[node_key]) {
+            // Next segment in dfs_results
+            dfs_idx++;
+            dfs_result.push({});
+            DFSVisit(graph, dfsScope.nodes[node_key], config);
         }
     }
-    return config.result;
+    // console.dir(dfs_result);
+    return dfs_result;
 }
 exports.DFS = DFS;
 /**
@@ -137,10 +167,12 @@ exports.DFS = DFS;
  */
 function prepareDFSVisitStandardConfig() {
     var config = {
-        result: {},
+        visit_result: {},
         callbacks: {},
+        messages: {},
+        dfs_visit_marked: {},
         dir_mode: $G.GraphMode.MIXED
-    }, result = config.result, callbacks = config.callbacks;
+    }, result = config.visit_result, callbacks = config.callbacks;
     // internal variable for order of visit
     // during DFS Visit                      
     var count = 0;
@@ -171,16 +203,16 @@ exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
  */
 function prepareDFSStandardConfig() {
     // First prepare DFS Visit callbacks
-    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.result;
+    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
     // Now add outer DFS INIT callback
     callbacks.init_dfs = callbacks.init_dfs || [];
     var setInitialResultEntries = function (context) {
-        for (var node_id in context.nodes) {
-            result[node_id] = {
-                parent: null,
-                counter: -1
-            };
-        }
+        // for ( var node_id in context.nodes ) {
+        // 	result[node_id] = {
+        // 		parent: null,
+        // 		counter: -1
+        // 	}
+        // }
     };
     callbacks.init_dfs.push(setInitialResultEntries);
     return config;
