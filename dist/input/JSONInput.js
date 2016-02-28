@@ -5,12 +5,12 @@ var path = require('path');
 var $G = require('../core/Graph');
 var DEFAULT_WEIGHT = 1;
 var JSONInput = (function () {
-    function JSONInput(_explicit_direction, _direction_mode, _weighted_mode) {
+    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
         if (_explicit_direction === void 0) { _explicit_direction = true; }
-        if (_direction_mode === void 0) { _direction_mode = false; }
+        if (_direction === void 0) { _direction = false; }
         if (_weighted_mode === void 0) { _weighted_mode = false; }
         this._explicit_direction = _explicit_direction;
-        this._direction_mode = _direction_mode;
+        this._direction = _direction;
         this._weighted_mode = _weighted_mode;
     }
     JSONInput.prototype.readFromJSONFile = function (filepath) {
@@ -89,7 +89,7 @@ var JSONInput = (function () {
             for (var e in edges) {
                 var edge_input = edges[e], target_node_id = edge_input.to, 
                 // Is there any direction information?
-                directed = this._explicit_direction ? edge_input.directed : this._direction_mode, dir_char = directed ? 'd' : 'u', 
+                directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', 
                 // Is there any weight information?,
                 weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
                 var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;

@@ -34,7 +34,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN();
 			expect(json).to.be.an.instanceof(JSON_IN);
       expect(json._explicit_direction).to.be.true;
-      expect(json._direction_mode).to.be.false;
+      expect(json._direction).to.be.false;
       expect(json._weighted_mode).to.be.false;
 		});
     
@@ -42,7 +42,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json = new JSON_IN(false, true, true);
 			expect(json).to.be.an.instanceof(JSON_IN);
       expect(json._explicit_direction).to.be.false;
-      expect(json._direction_mode).to.be.true;
+      expect(json._direction).to.be.true;
       expect(json._weighted_mode).to.be.true;
 		});
 		
@@ -61,7 +61,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph out of a JSON file with direction mode set to undirected', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(small_graph);
 			expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(0);
@@ -72,7 +72,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph out of a JSON file with direction mode set to directed', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = true;
+			json._direction = true;
 			graph = json.readFromJSONFile(small_graph);
 			expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(7);
@@ -108,7 +108,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should construct a real sized graph from an edge list with edges set to directed', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = true;
+			json._direction = true;
 			graph = json.readFromJSONFile(real_graph);
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
@@ -124,7 +124,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should mutilate a graph (delte nodes) until it is completely empty - in a performant way', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(real_graph);
 			
 			var nr_nodes = graph.nrNodes();
@@ -149,7 +149,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly read the node coordinates contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphCoords(graph);
 		});
@@ -158,7 +158,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should not assign the coords feature if no coordinates are contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(small_graph_no_features);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {
@@ -179,7 +179,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should correctly read the node features contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphFeatures(graph);
 		});
@@ -188,7 +188,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should not assign any features if no features entry is contained in a json file', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false;
+			json._direction = false;
 			graph = json.readFromJSONFile(small_graph_no_features);
 			var nodes = graph.getNodes();
 			for ( var node_idx in nodes ) {

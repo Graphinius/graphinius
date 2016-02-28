@@ -77,6 +77,7 @@
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_dfs_.dfsscope.html" class="tsd-kind-icon">DFSScope</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_dfs_.dfsvisitscope.html" class="tsd-kind-icon">DFSVisit<wbr>Scope</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-kind-icon">DFS_<wbr><wbr>Callbacks</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-kind-icon">DFS_<wbr><wbr>Config</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_dfs_.stackentry.html" class="tsd-kind-icon">Stack<wbr>Entry</a></li>
 							</ul>
 						</section>
@@ -86,8 +87,8 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#dfs" class="tsd-kind-icon">DFS</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#dfsvisit" class="tsd-kind-icon">DFSVisit</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#execcallbacks" class="tsd-kind-icon">exec<wbr>Callbacks</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#preparestandarddfscbs" class="tsd-kind-icon">prepare<wbr>StandardDFSCBs</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#preparestandarddfsvisitcbs" class="tsd-kind-icon">prepare<wbr>StandardDFSVisitCBs</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#preparedfsstandardconfig" class="tsd-kind-icon">prepareDFSStandard<wbr>Config</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_dfs_.html#preparedfsvisitstandardconfig" class="tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,28 +100,32 @@
 					<a name="dfs" class="tsd-anchor"></a>
 					<h3>DFS</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">DFS<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, callbacks<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a>, dir_mode<span class="tsd-signature-symbol">?: </span><a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">DFS<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L144">search/DFS.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L166">search/DFS.ts:166</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>OuterDFS function</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> callbacks: <a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> dir_mode: <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a><span class="tsd-signature-symbol"> =&nbsp;$G.GraphMode.MIXED</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+							</ul>
 						</li>
 					</ul>
 				</section>
@@ -128,13 +133,13 @@
 					<a name="dfsvisit" class="tsd-anchor"></a>
 					<h3>DFSVisit</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">DFSVisit<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, current_root<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a>, callbacks<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a>, dir_mode<span class="tsd-signature-symbol">?: </span><a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">DFSVisit<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, current_root<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L41">search/DFS.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L49">search/DFS.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -146,13 +151,12 @@
 									<h5>current_root: <a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> callbacks: <a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> dir_mode: <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a><span class="tsd-signature-symbol"> =&nbsp;$G.GraphMode.MIXED</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+							</ul>
 						</li>
 					</ul>
 				</section>
@@ -166,7 +170,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L220">search/DFS.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L281">search/DFS.ts:281</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -188,64 +192,49 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="preparestandarddfscbs" class="tsd-anchor"></a>
-					<h3>prepare<wbr>StandardDFSCBs</h3>
+					<a name="preparedfsstandardconfig" class="tsd-anchor"></a>
+					<h3>prepareDFSStandard<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">prepare<wbr>StandardDFSCBs<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, callbacks<span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">prepareDFSStandard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L198">search/DFS.ts:198</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L256">search/DFS.ts:256</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>result: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
-								</li>
-								<li>
-									<h5>callbacks: <a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a></h5>
-								</li>
-								<li>
-									<h5>count: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>First instantiates config file for DFSVisit, then
+									enhances it with outer DFS init callback</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="preparestandarddfsvisitcbs" class="tsd-anchor"></a>
-					<h3>prepare<wbr>StandardDFSVisitCBs</h3>
+					<a name="preparedfsvisitstandardconfig" class="tsd-anchor"></a>
+					<h3>prepareDFSVisit<wbr>Standard<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">prepare<wbr>StandardDFSVisitCBs<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span>, callbacks<span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a>, count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L174">search/DFS.ts:174</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L214">search/DFS.ts:214</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>result: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
-								</li>
-								<li>
-									<h5>callbacks: <a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a></h5>
-								</li>
-								<li>
-									<h5>count: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This is the only place in which a config object
+									is instantiated (except manually, of course)</p>
+								</div>
+								<p>Therefore, we do not take any arguments</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-signature-type">DFS_Config</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -292,6 +281,9 @@
 						<a href="../interfaces/_search_dfs_.dfs_callbacks.html" class="tsd-kind-icon">DFS_<wbr><wbr>Callbacks</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_search_dfs_.dfs_config.html" class="tsd-kind-icon">DFS_<wbr><wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/_search_dfs_.stackentry.html" class="tsd-kind-icon">Stack<wbr>Entry</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -304,10 +296,10 @@
 						<a href="_search_dfs_.html#execcallbacks" class="tsd-kind-icon">exec<wbr>Callbacks</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_dfs_.html#preparestandarddfscbs" class="tsd-kind-icon">prepare<wbr>StandardDFSCBs</a>
+						<a href="_search_dfs_.html#preparedfsstandardconfig" class="tsd-kind-icon">prepareDFSStandard<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_dfs_.html#preparestandarddfsvisitcbs" class="tsd-kind-icon">prepare<wbr>StandardDFSVisitCBs</a>
+						<a href="_search_dfs_.html#preparedfsvisitstandardconfig" class="tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config</a>
 					</li>
 				</ul>
 			</nav>

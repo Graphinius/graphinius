@@ -32,7 +32,7 @@ interface JSONGraph {
 
 export interface IJSONInput {
 	_explicit_direction	: boolean;
-	_direction_mode			: boolean; // true => directed
+	_direction			: boolean; // true => directed
   _weighted_mode      : boolean;
 	
 	readFromJSONFile(file : string) : $G.IGraph;
@@ -44,8 +44,8 @@ export interface IJSONInput {
 class JSONInput implements IJSONInput {
 	
 	constructor(public _explicit_direction : boolean = true,
-							public _direction_mode : boolean = false,
-              public _weighted_mode : boolean = false) {
+							public _direction          : boolean = false,
+              public _weighted_mode      : boolean = false) {
 	}
 	
 	readFromJSONFile(filepath : string) : $G.IGraph {
@@ -143,7 +143,7 @@ class JSONInput implements IJSONInput {
 						target_node_id = edge_input.to,
             // Is there any direction information?
             
-						directed = this._explicit_direction ? edge_input.directed : this._direction_mode,
+						directed = this._explicit_direction ? edge_input.directed : this._direction,
             dir_char = directed ? 'd' : 'u',
             // Is there any weight information?,
             weight_float = parseFloat(edge_input.weight),

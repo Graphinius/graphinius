@@ -1,9 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
 var $G = require('../core/Graph');
-function DFSVisit(graph, current_root, callbacks, dir_mode) {
-    if (callbacks === void 0) { callbacks = {}; }
-    if (dir_mode === void 0) { dir_mode = $G.GraphMode.MIXED; }
+function DFSVisit(graph, current_root, config) {
     var scope = {
         marked_temp: {},
         stack: [],
@@ -12,11 +10,18 @@ function DFSVisit(graph, current_root, callbacks, dir_mode) {
         current: null,
         current_root: current_root
     };
+    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
     /**
-     * We are not traversing a blank graph...
+     * We are not traversing an empty graph...
      */
-    if (dir_mode === $G.GraphMode.INIT) {
+    if (graph.getMode() === $G.GraphMode.INIT) {
         throw new Error('Cowardly refusing to traverse graph without edges.');
+    }
+    /**
+       * We are not traversing a graph taking NO edges into account
+       */
+    if (dir_mode === $G.GraphMode.INIT) {
+        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
     }
     /**
      * HOOK 1 - INIT (INNER DFS VISIT):
@@ -87,11 +92,20 @@ function DFSVisit(graph, current_root, callbacks, dir_mode) {
             }
         }
     }
+    return config.result;
 }
 exports.DFSVisit = DFSVisit;
-function DFS(graph, callbacks, dir_mode) {
-    if (callbacks === void 0) { callbacks = {}; }
-    if (dir_mode === void 0) { dir_mode = $G.GraphMode.MIXED; }
+/**
+ * OuterDFS function
+ */
+function DFS(graph, config) {
+    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+    if (graph.getMode() === $G.GraphMode.INIT) {
+        throw new Error('Cowardly refusing to traverse graph without edges.');
+    }
+    if (dir_mode === $G.GraphMode.INIT) {
+        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+    }
     var scope = {
         marked: {},
         nodes: graph.getNodes()
@@ -109,23 +123,38 @@ function DFS(graph, callbacks, dir_mode) {
     callbacks.adj_nodes_pushed.push(markNode);
     for (var node_id in scope.nodes) {
         if (!scope.marked[node_id]) {
-            DFSVisit(graph, scope.nodes[node_id], callbacks, dir_mode);
+            DFSVisit(graph, scope.nodes[node_id], config);
         }
     }
+    return config.result;
 }
 exports.DFS = DFS;
-function prepareStandardDFSVisitCBs(result, callbacks, count) {
+/**
+ * This is the only place in which a config object
+ * is instantiated (except manually, of course)
+ *
+ * Therefore, we do not take any arguments
+ */
+function prepareDFSVisitStandardConfig() {
+    var config = {
+        result: {},
+        callbacks: {},
+        dir_mode: $G.GraphMode.MIXED
+    }, result = config.result, callbacks = config.callbacks;
+    // internal variable for order of visit
+    // during DFS Visit                      
+    var count = 0;
     var counter = function () {
         return count++;
     };
     callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-    callbacks.node_unmarked = callbacks.node_unmarked || [];
     var initDFSVisit = function (context) {
         result[context.current_root.getID()] = {
             parent: context.current_root
         };
     };
     callbacks.init_dfs_visit.push(initDFSVisit);
+    callbacks.node_unmarked = callbacks.node_unmarked || [];
     var setResultEntry = function (context) {
         result[context.current.getID()] = {
             parent: context.stack_entry.parent,
@@ -133,11 +162,16 @@ function prepareStandardDFSVisitCBs(result, callbacks, count) {
         };
     };
     callbacks.node_unmarked.push(setResultEntry);
+    return config;
 }
-exports.prepareStandardDFSVisitCBs = prepareStandardDFSVisitCBs;
-function prepareStandardDFSCBs(result, callbacks, count) {
-    // First prepare Visit callbacks
-    prepareStandardDFSVisitCBs(result, callbacks, count);
+exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
+/**
+ * First instantiates config file for DFSVisit, then
+ * enhances it with outer DFS init callback
+ */
+function prepareDFSStandardConfig() {
+    // First prepare DFS Visit callbacks
+    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.result;
     // Now add outer DFS INIT callback
     callbacks.init_dfs = callbacks.init_dfs || [];
     var setInitialResultEntries = function (context) {
@@ -149,8 +183,9 @@ function prepareStandardDFSCBs(result, callbacks, count) {
         }
     };
     callbacks.init_dfs.push(setInitialResultEntries);
+    return config;
 }
-exports.prepareStandardDFSCBs = prepareStandardDFSCBs;
+exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
 ;
 /**
  * @param context this pointer to the DFS or DFSVisit function

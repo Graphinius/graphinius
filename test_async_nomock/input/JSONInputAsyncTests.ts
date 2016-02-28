@@ -38,7 +38,7 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph from a remotely fetched JSON file with direction mode set to undirected', (done) => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = false; // undirected graph
+			json._direction = false; // undirected graph
 			remote_file = REMOTE_HOST + "small_graph.json";
 			json.readFromJSONURL(remote_file, function(graph, err) {
 				expect(graph.nrNodes()).to.equal(4);
@@ -53,7 +53,7 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		it('should correctly generate our small example graph from a remotely fetched JSON file with direction mode set to undirected', (done) => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
-			json._direction_mode = true; // undirected graph
+			json._direction = true; // undirected graph
 			remote_file = REMOTE_HOST + "small_graph.json";
 			json.readFromJSONURL(remote_file, function(graph, err) {
 				expect(graph.nrNodes()).to.equal(4);

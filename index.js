@@ -22,11 +22,11 @@ out.$G = {
 };
 
 out.$Search = {
-	BFS													: BFS.BFS,
-	DFS 												: DFS.DFS,
-	DFSVisit										: DFS.DFSVisit,
-	prepareStandardDFSCBs				: DFS.prepareStandardDFSCBs,
-	prepareStandardDFSVisitCBs	: DFS.prepareStandardDFSVisitCBs
+	BFS													   : BFS.BFS,
+	DFS 												   : DFS.DFS,
+	DFSVisit										   : DFS.DFSVisit,
+	prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
+	prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig
 }
 
 module.exports = {

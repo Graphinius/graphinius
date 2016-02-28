@@ -1,6 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
-function BFS(graph, root) {
+function BFS(graph, v) {
     var result = {};
     var nodes = graph.getNodes();
     for (var key in nodes) {
@@ -12,10 +12,10 @@ function BFS(graph, root) {
     }
     var counter = 0;
     var queue = [];
-    queue.push(root);
-    result[root.getID()] = {
+    queue.push(v);
+    result[v.getID()] = {
         distance: 0,
-        parent: root,
+        parent: v,
         counter: counter++
     };
     var i = 0;

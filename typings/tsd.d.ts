@@ -6,3 +6,5 @@
 /// <reference path="orchestrator/orchestrator.d.ts" />
 /// <reference path="q/Q.d.ts" />
 /// <reference path="lodash/lodash.d.ts" />
+/// <reference path="sinon-chai/sinon-chai.d.ts" />
+/// <reference path="sinon/sinon.d.ts" />

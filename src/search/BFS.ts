@@ -13,7 +13,7 @@ export interface BFSResult {
 }
 
 
-function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : BFSResult} {
+function BFS(graph : $G.IGraph, v : $N.IBaseNode) : {[id: string] : BFSResult} {
 	var result : {[id: string] : BFSResult} = {};			
 	
 	var nodes = graph.getNodes();
@@ -27,10 +27,11 @@ function BFS(graph : $G.IGraph, root : $N.IBaseNode) : {[id: string] : BFSResult
 	
 	var counter = 0;	
 	var queue : Array<$N.IBaseNode> = [];
-	queue.push(root);
-	result[root.getID()] = {
+	queue.push(v);
+  
+	result[v.getID()] = {
 		distance	: 0,
-		parent		: root,
+		parent		: v,
 		counter		: counter++
 	};
 	
