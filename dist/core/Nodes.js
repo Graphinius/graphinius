@@ -196,7 +196,11 @@ var BaseNode = (function () {
         var key, edge;
         for (key in this._in_edges) {
             if (this._in_edges.hasOwnProperty(key)) {
-                prevs.push(this._in_edges[key].getNodes().a);
+                edge = this._in_edges[key];
+                prevs.push({
+                    node: edge.getNodes().a,
+                    edge: edge
+                });
             }
         }
         return prevs;
@@ -206,7 +210,11 @@ var BaseNode = (function () {
         var key, edge;
         for (key in this._out_edges) {
             if (this._out_edges.hasOwnProperty(key)) {
-                nexts.push(this._out_edges[key].getNodes().b);
+                edge = this._out_edges[key];
+                nexts.push({
+                    node: edge.getNodes().b,
+                    edge: edge
+                });
             }
         }
         return nexts;
@@ -216,19 +224,28 @@ var BaseNode = (function () {
         var key, edge;
         for (key in this._und_edges) {
             if (this._und_edges.hasOwnProperty(key)) {
-                var nodes = this._und_edges[key].getNodes();
+                edge = this._und_edges[key];
+                var nodes = edge.getNodes();
                 if (nodes.a === this) {
-                    conns.push(nodes.b);
+                    conns.push({
+                        node: edge.getNodes().b,
+                        edge: edge
+                    });
                 }
                 else {
-                    conns.push(nodes.a);
+                    conns.push({
+                        node: edge.getNodes().a,
+                        edge: edge
+                    });
                 }
             }
         }
         return conns;
     };
     BaseNode.prototype.adjNodes = function () {
-        return _.union(this.nextNodes(), this.connNodes());
+        return _.uniq(_.union(this.nextNodes(), this.connNodes()), function (item, key, a) {
+            return item.node.getID();
+        });
     };
     return BaseNode;
 }());

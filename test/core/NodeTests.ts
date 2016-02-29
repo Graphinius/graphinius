@@ -3,10 +3,22 @@
 import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
+import _ = require('lodash');
 
 var expect = chai.expect;
 var Edge = $E.BaseEdge;
 
+
+/**
+ * TODO Test
+ */
+function collectNodesFromNeighbors(neighbors: Array<$N.NeighborEntry>) : Array<$N.IBaseNode> {
+  var nodes : Array<$N.IBaseNode> = [];  
+  for ( var n_idx in neighbors ) {
+    nodes.push( neighbors[n_idx].node );
+  }  
+  return nodes;
+}
 
 
 describe('==== NODE TESTS ====', () => {
@@ -338,7 +350,7 @@ describe('==== NODE TESTS ====', () => {
 			describe('previous, next, connected and adjacent nodes', () => {
 				
 				it('should find nodes c and d as previous nodes', () => {
-					var prevs = n_a.prevNodes();
+					var prevs = collectNodesFromNeighbors(n_a.prevNodes());
 					expect(prevs).to.be.an.instanceof(Array);
 					expect(prevs.length).to.equal(3);
 					expect(prevs).to.contain(n_a);
@@ -347,7 +359,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 
 				it('should find nodes a, b and d as next nodes', () => {
-					var nexts = n_a.nextNodes();
+					var nexts = collectNodesFromNeighbors(n_a.nextNodes());
 					expect(nexts).to.be.an.instanceof(Array);
 					expect(nexts.length).to.equal(3);
 					expect(nexts).not.to.contain(n_c);
@@ -357,7 +369,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should find nodes b and c as connected (undirected) nodes', () => {
-					var conns = n_a.connNodes();
+					var conns = collectNodesFromNeighbors(n_a.connNodes());
 					expect(conns).to.be.an.instanceof(Array);
 					expect(conns.length).to.equal(2);
 					expect(conns).not.to.contain(n_a);
@@ -366,7 +378,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should find nodes a, b, c and d as adjacent (reachable) nodes', () => {
-					var adjs = n_a.adjNodes();
+					var adjs = collectNodesFromNeighbors(n_a.adjNodes());
 					expect(adjs).to.be.an.instanceof(Array);
 					expect(adjs.length).to.equal(4);
 					expect(adjs).to.contain(n_a);
@@ -376,7 +388,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should find node a as undirected neighbor node from node b', () => {
-					var conns = n_b.connNodes();
+					var conns = collectNodesFromNeighbors(n_b.connNodes());
 					expect(conns).to.be.an.instanceof(Array);
 					expect(conns.length).to.equal(1);
 					expect(conns).to.contain(n_a);
@@ -386,7 +398,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should find node a as directed previous neighbor from node b', () => {
-					var prevs = n_b.prevNodes();
+					var prevs = collectNodesFromNeighbors(n_b.prevNodes());
 					expect(prevs).to.be.an.instanceof(Array);
 					expect(prevs.length).to.equal(1);
 					expect(prevs).to.contain(n_a);

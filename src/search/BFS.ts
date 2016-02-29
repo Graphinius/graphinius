@@ -40,7 +40,7 @@ function BFS(graph : $G.IGraph, v : $N.IBaseNode) : {[id: string] : BFSResult} {
 		var current = queue[i++];
 		var adj_nodes = current.adjNodes();
 		for ( var adj_idx in adj_nodes ) {
-			var adj_node = adj_nodes[adj_idx];
+			var adj_node = adj_nodes[adj_idx].node;
 			if ( result[adj_node.getID()].distance === Number.POSITIVE_INFINITY ) {
 				result[adj_node.getID()] = {
 					distance : result[current.getID()].distance + 1,

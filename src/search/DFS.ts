@@ -30,12 +30,13 @@ export interface DFS_Callbacks {
 export interface StackEntry {
 	node		: $N.IBaseNode;
 	parent	: $N.IBaseNode;
+  weight? : number;
 }
 
 
 export interface DFSVisitScope {
 	stack 				: Array<StackEntry>;
-	adj_nodes			: Array<$N.IBaseNode>;
+	adj_nodes			: Array<$N.NeighborEntry>;
 	stack_entry 	: StackEntry;
 	current				: $N.IBaseNode;
 	current_root	: $N.IBaseNode;
@@ -89,7 +90,8 @@ function DFSVisit(graph 				: $G.IGraph,
 	// Start by pushing current root to the stack
 	dfsVisitScope.stack.push({
 		node		: current_root,
-		parent	: current_root
+		parent	: current_root,
+    weight  : 0 // initial weight cost from current_root
 	});
 
 
@@ -133,9 +135,14 @@ function DFSVisit(graph 				: $G.IGraph,
 				 * HOOK 6 - NODE OR EDGE TYPE CHECK...
 				 * LATER !!
 				 */
+        if ( callbacks ) {
+        }
+        
+        
 				dfsVisitScope.stack.push({
-					node: dfsVisitScope.adj_nodes[adj_idx],
-					parent: dfsVisitScope.current
+					node: dfsVisitScope.adj_nodes[adj_idx].node,
+					parent: dfsVisitScope.current,
+          weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
 				});
 			}
 

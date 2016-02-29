@@ -33,7 +33,8 @@ function DFSVisit(graph, current_root, config) {
     // Start by pushing current root to the stack
     dfsVisitScope.stack.push({
         node: current_root,
-        parent: current_root
+        parent: current_root,
+        weight: 0 // initial weight cost from current_root
     });
     while (dfsVisitScope.stack.length) {
         dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
@@ -70,9 +71,12 @@ function DFSVisit(graph, current_root, config) {
                  * HOOK 6 - NODE OR EDGE TYPE CHECK...
                  * LATER !!
                  */
+                if (callbacks) {
+                }
                 dfsVisitScope.stack.push({
-                    node: dfsVisitScope.adj_nodes[adj_idx],
-                    parent: dfsVisitScope.current
+                    node: dfsVisitScope.adj_nodes[adj_idx].node,
+                    parent: dfsVisitScope.current,
+                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
                 });
             }
             /**

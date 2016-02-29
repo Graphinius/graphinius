@@ -3,6 +3,11 @@
 import * as $E from "./Edges";
 import _ = require('lodash');
 
+export interface NeighborEntry {
+  node: IBaseNode;
+  edge: $E.IBaseEdge;
+}
+
 export interface IBaseNode {
 	getID()	: string;
 	getLabel() : string;
@@ -41,10 +46,10 @@ export interface IBaseNode {
 	clearEdges() : void;
 	
 	// connected NODES methods
-	prevNodes() : Array<IBaseNode>;
-	nextNodes() : Array<IBaseNode>;
-	connNodes() : Array<IBaseNode>;
-	adjNodes() 	: Array<IBaseNode>;
+	prevNodes() : Array<NeighborEntry>;
+	nextNodes() : Array<NeighborEntry>;
+	connNodes() : Array<NeighborEntry>;
+	adjNodes() 	: Array<NeighborEntry>;
 }
 
 
@@ -283,53 +288,70 @@ class BaseNode implements IBaseNode {
 		this.clearUndEdges();
 	}
 	
-	prevNodes() : Array<IBaseNode> {
-		var prevs : Array<IBaseNode> = [];
+	prevNodes() : Array<NeighborEntry> {
+		var prevs : Array<NeighborEntry> = [];
 		var key 	: string,
 				edge 	: $E.IBaseEdge;
 				
 		for ( key in this._in_edges ) {
 			if ( this._in_edges.hasOwnProperty(key) ) {
-				prevs.push(this._in_edges[key].getNodes().a);
+        edge = this._in_edges[key];
+				prevs.push({
+          node: edge.getNodes().a,
+          edge: edge
+        });
 			}
 		}		
 		return prevs;
 	}
 	
-	nextNodes() : Array<IBaseNode> {
-		var nexts : Array<IBaseNode> = [];
+	nextNodes() : Array<NeighborEntry> {
+		var nexts : Array<NeighborEntry> = [];
 		var key 	: string,
 				edge 	: $E.IBaseEdge;
 		
 		for ( key in this._out_edges ) {
 			if ( this._out_edges.hasOwnProperty(key) ) {
-				nexts.push(this._out_edges[key].getNodes().b);
+        edge = this._out_edges[key];
+				nexts.push({
+          node: edge.getNodes().b,
+          edge: edge
+        });
 			}
 		}
 		return nexts;
 	}
 	
-	connNodes() : Array<IBaseNode> {
-		var conns : Array<IBaseNode> = [];
+	connNodes() : Array<NeighborEntry> {
+		var conns : Array<NeighborEntry> = [];
 		var key 	: string,
 				edge 	: $E.IBaseEdge;
 		
 		for ( key in this._und_edges ) {
 			if ( this._und_edges.hasOwnProperty(key) ) {
-				var nodes = this._und_edges[key].getNodes();
+        edge = this._und_edges[key];
+				var nodes = edge.getNodes();
 				if ( nodes.a === this ) {
-					conns.push(nodes.b);
+					conns.push({
+            node: edge.getNodes().b,
+            edge: edge
+          });
 				}
 				else {
-					conns.push(nodes.a);
+					conns.push({
+            node: edge.getNodes().a,
+            edge: edge
+          });
 				}
 			}
 		}
 		return conns;
 	}
 	
-	adjNodes() : Array<IBaseNode> {
-		return _.union(this.nextNodes(), this.connNodes());
+	adjNodes() : Array<NeighborEntry> {
+		return _.uniq(_.union(this.nextNodes(), this.connNodes()), function(item, key, a) { 
+      return item.node.getID();
+    });
 	}
 	
 }

@@ -22,8 +22,8 @@ var search_graph = "./test/input/test_data/search_graph.json";
 
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
-	var json 					: $I.IJSONInput = new JSON_IN(),
-			graph					: $G.IGraph = json.readFromJSONFile(search_graph),
+	var jsonReader 					: $I.IJSONInput = new JSON_IN(),
+	    graph					: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
 			stats					: $G.GraphStats = graph.getStats(),
 			callbacks			: $DFS.DFS_Callbacks;
 	
@@ -705,7 +705,6 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
           
       it('should correctly compute lookup distance from node D', () => {
         var root = graph.getNodeById('D'),
-            config = $DFS.prepareDFSStandardConfig(),
             dfs_result = $DFS.DFS(graph, root);
         
         expect(dfs_result.length).to.equal(2);
@@ -735,5 +734,46 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
     });    
     
 	});
-		
+  
+  
+  describe('lookup DFS distance calculations - WEIGHTED EDGES - Mixed Mode - ', () => {
+          
+    it('should correctly compute lookup distance from node D', () => {      
+      jsonReader._weighted_mode = true;
+      var graph = jsonReader.readFromJSONFile(search_graph),
+          root = graph.getNodeById('D'),
+          config = $DFS.prepareDFSStandardConfig();
+          
+      console.dir(graph.getUndEdges());
+      console.dir(graph.getDirEdges());
+      
+      var dfs_result = $DFS.DFS(graph, root);
+      
+      expect(dfs_result.length).to.equal(2);
+      
+      var seg_0 = dfs_result[0];
+      expect(Object.keys(seg_0).length).to.equal(6);        
+      expect(seg_0['D'].counter).to.equal(0);
+      expect(seg_0['A'].counter).to.equal(1);     
+      expect(seg_0['F'].counter).to.equal(2);
+      expect(seg_0['C'].counter).to.equal(3);     
+      expect(seg_0['B'].counter).to.equal(4);  
+      expect(seg_0['E'].counter).to.equal(5);
+      expect(seg_0['D'].parent).to.equal(graph.getNodeById('D'));
+      expect(seg_0['A'].parent).to.equal(graph.getNodeById('D'));
+      expect(seg_0['F'].parent).to.equal(graph.getNodeById('A'));
+      expect(seg_0['C'].parent).to.equal(graph.getNodeById('A'));
+      expect(seg_0['B'].parent).to.equal(graph.getNodeById('A'));
+      expect(seg_0['E'].parent).to.equal(graph.getNodeById('D'));
+      
+      var seg_1 = dfs_result[1];
+      expect(Object.keys(seg_1).length).to.equal(1);        
+      expect(seg_1['G'].counter).to.equal(6);
+      expect(seg_1['G'].parent).to.equal(graph.getNodeById('G'));       
+      
+    });
+  
+  });    
+  
 });
+		

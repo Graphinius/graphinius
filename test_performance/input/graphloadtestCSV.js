@@ -45,17 +45,15 @@ end = +new Date();
 console.log("Computed max reachable distance in graph of " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.\n Max distance is: " + max_distance);
 
+console.log("Whole run took: " + (end-init) + " ms.");
+
+
 
 //----------------------------------------------------------------
 //                           DFS TEST
 //----------------------------------------------------------------
 start = +new Date();
 var root = graph.getNodeById(node_id);
-
-var result = {},
-    count = 0,
-    callbacks = {};
-$Search.prepareDFSStandardConfig();
 $Search.DFS(graph, root);
 
 end = +new Date();
@@ -75,8 +73,4 @@ console.log("Whole run took: " + (end-init) + " ms.");
 // time_bfs_sys = 107
 // => a little faster than networkx, but 1-1.5 orders of magnitude slower
 //    than optimized c libraries...
-
-
-
-
 
