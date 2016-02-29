@@ -374,7 +374,7 @@ describe('==== NODE TESTS ====', () => {
 					expect(conns.length).to.equal(2);
 					expect(conns).not.to.contain(n_a);
 					expect(conns).to.contain(n_b);
-					expect(conns).to.contain(n_c);	
+					expect(conns).to.contain(n_c);
 				});
 				
 				it('should find nodes a, b, c and d as adjacent (reachable) nodes', () => {

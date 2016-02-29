@@ -736,44 +736,96 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	});
   
   
-  describe('lookup DFS distance calculations - WEIGHTED EDGES - Mixed Mode - ', () => {
+  describe('lookup DFS distance calculations - WEIGHTED EDGES - ', () => {
           
-    it('should correctly compute lookup distance from node D', () => {      
+    it('should correctly compute lookup distance from node D - MIXED Mode', () => {      
       jsonReader._weighted_mode = true;
       var graph = jsonReader.readFromJSONFile(search_graph),
           root = graph.getNodeById('D'),
           config = $DFS.prepareDFSStandardConfig();
           
-      console.dir(graph.getUndEdges());
-      console.dir(graph.getDirEdges());
+      var weight_costs = {};
+      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+        var parent = context.stack_entry.parent;
+        var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
+        
+        // console.log("Parent ID: " + parent.getID());
+        // console.log("Parent accumulated weight: " + weight_costs[parent.getID()]);
+        // console.log("Current edge weight: " + context.stack_entry.weight);
+        
+        weight_costs[context.current.getID()] = parent_accumulated_weight 
+                                              + context.stack_entry.weight;
+      }
+      config.callbacks.node_unmarked.push(setWeightCost);
       
-      var dfs_result = $DFS.DFS(graph, root);
+      var dfs_result = $DFS.DFS(graph, root, config);
+       
+      expect(weight_costs['A']).to.equal(7);      
+      expect(weight_costs['B']).to.equal(11);
+      expect(weight_costs['C']).to.equal(9);
+      expect(weight_costs['D']).to.equal(0);
+      expect(weight_costs['E']).to.equal(5);
+      expect(weight_costs['F']).to.equal(15);
+      expect(weight_costs['G']).to.equal(0);      
+    });
+    
+    
+    it('should correctly compute lookup distance from node A - DIRECTED Mode', () => {      
+      jsonReader._weighted_mode = true;
+      var graph = jsonReader.readFromJSONFile(search_graph),
+          root = graph.getNodeById('A'),
+          config = $DFS.prepareDFSStandardConfig();
+      config.dir_mode = $G.GraphMode.DIRECTED;
       
-      expect(dfs_result.length).to.equal(2);
+      var weight_costs = {};
+      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+        var parent = context.stack_entry.parent;
+        var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
+        weight_costs[context.current.getID()] = parent_accumulated_weight 
+                                              + context.stack_entry.weight;
+      }
+      config.callbacks.node_unmarked.push(setWeightCost);
       
-      var seg_0 = dfs_result[0];
-      expect(Object.keys(seg_0).length).to.equal(6);        
-      expect(seg_0['D'].counter).to.equal(0);
-      expect(seg_0['A'].counter).to.equal(1);     
-      expect(seg_0['F'].counter).to.equal(2);
-      expect(seg_0['C'].counter).to.equal(3);     
-      expect(seg_0['B'].counter).to.equal(4);  
-      expect(seg_0['E'].counter).to.equal(5);
-      expect(seg_0['D'].parent).to.equal(graph.getNodeById('D'));
-      expect(seg_0['A'].parent).to.equal(graph.getNodeById('D'));
-      expect(seg_0['F'].parent).to.equal(graph.getNodeById('A'));
-      expect(seg_0['C'].parent).to.equal(graph.getNodeById('A'));
-      expect(seg_0['B'].parent).to.equal(graph.getNodeById('A'));
-      expect(seg_0['E'].parent).to.equal(graph.getNodeById('D'));
+      var dfs_result = $DFS.DFS(graph, root, config);
+       
+      expect(weight_costs['A']).to.equal(0);      
+      expect(weight_costs['B']).to.equal(4);
+      expect(weight_costs['C']).to.equal(2);
+      expect(weight_costs['D']).to.equal(0);
+      expect(weight_costs['E']).to.equal(5);
+      expect(weight_costs['F']).to.equal(8);
+      expect(weight_costs['G']).to.equal(0);      
+    });
+    
+    
+    it('should correctly compute lookup distance from node A - UNDIRECTED Mode', () => {      
+      jsonReader._weighted_mode = true;
+      var graph = jsonReader.readFromJSONFile(search_graph),
+          root = graph.getNodeById('A'),
+          config = $DFS.prepareDFSStandardConfig();
+      config.dir_mode = $G.GraphMode.UNDIRECTED;
       
-      var seg_1 = dfs_result[1];
-      expect(Object.keys(seg_1).length).to.equal(1);        
-      expect(seg_1['G'].counter).to.equal(6);
-      expect(seg_1['G'].parent).to.equal(graph.getNodeById('G'));       
+      var weight_costs = {};
+      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+        var parent = context.stack_entry.parent;
+        var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
+        weight_costs[context.current.getID()] = parent_accumulated_weight 
+                                              + context.stack_entry.weight;
+      }
+      config.callbacks.node_unmarked.push(setWeightCost);
       
+      var dfs_result = $DFS.DFS(graph, root, config);
+       
+      expect(weight_costs['A']).to.equal(0);      
+      expect(weight_costs['B']).to.equal(0);
+      expect(weight_costs['C']).to.equal(0);
+      expect(weight_costs['D']).to.equal(7);
+      expect(weight_costs['E']).to.equal(0);
+      expect(weight_costs['F']).to.equal(0);
+      expect(weight_costs['G']).to.equal(0);      
     });
   
-  });    
+  });
   
 });
 		

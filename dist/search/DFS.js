@@ -156,10 +156,11 @@ function DFS(graph, root, config) {
             // Next segment in dfs_results
             dfs_idx++;
             dfs_result.push({});
+            // Explore and fill next subsegment
             DFSVisit(graph, dfsScope.nodes[node_key], config);
         }
     }
-    // console.dir(dfs_result);
+    // console.dir(config.visit_result);
     return dfs_result;
 }
 exports.DFS = DFS;

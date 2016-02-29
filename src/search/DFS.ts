@@ -220,7 +220,7 @@ function DFS( graph 		  : $G.IGraph,
    * of DFSVisit, but also to it's appropriate
    * segment of the dfs_result object
    */
-  var addToProperSegment = function( context: DFSVisitScope ) {
+  var addToProperSegment = function( context: DFSVisitScope ) {    
     dfs_result[dfs_idx][context.current.getID()] = {
 			parent 	: context.stack_entry.parent,
 			counter : counter()
@@ -241,12 +241,12 @@ function DFS( graph 		  : $G.IGraph,
       // Next segment in dfs_results
       dfs_idx++;
       dfs_result.push({});
-      
+      // Explore and fill next subsegment
       DFSVisit(graph, dfsScope.nodes[node_key], config);
     }
 	}
   
-  // console.dir(dfs_result);
+  // console.dir(config.visit_result);
   return dfs_result;
 }
 
