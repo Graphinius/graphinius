@@ -2,10 +2,10 @@
 var Edges			= require("./dist/core/Edges.js");
 var Nodes 		= require("./dist/core/Nodes.js");
 var Graph 		= require("./dist/core/Graph.js");
-var CsvInput 	= require("./dist/input/CSVInput");
-var JsonInput = require("./dist/input/JSONInput");
-var BFS				= require("./dist/search/BFS");
-var DFS				= require("./dist/search/DFS");
+var CsvInput 	= require("./dist/input/CSVInput.js");
+var JsonInput = require("./dist/input/JSONInput.js");
+var BFS				= require("./dist/search/BFS.js");
+var DFS				= require("./dist/search/DFS.js");
 
 // TODO:
 // Encapsulate ALL functions within Graph for
@@ -27,9 +27,9 @@ out.$Search = {
 	DFSVisit										   : DFS.DFSVisit,
 	prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
 	prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig
-}
+};
 
 module.exports = {
 	$G			:	out.$G,
 	$Search : out.$Search
-}
+};

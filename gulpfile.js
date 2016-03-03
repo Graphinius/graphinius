@@ -6,6 +6,8 @@ var tdoc 				= require("gulp-typedoc");
 var browserify 	= require('gulp-browserify');
 var concat			= require('gulp-concat');
 var merge 			= require('merge2');
+var webpack 		= require('webpack-stream');
+
 
 
 //----------------------------
@@ -52,27 +54,33 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 });
 
 // Packaging - Browser
-gulp.task('browserify', ['dist'], function() {
-	// Single entry point to browserify
-	gulp.src('./index.js')
-		.pipe(browserify({
-		  insertGlobals : false
-		}))
-		.pipe(gulp.dest('./build/graphinius'))
+// gulp.task('browserify', ['dist'], function() {
+// 	// Single entry point to browserify
+// 	gulp.src('./index.js')
+// 		.pipe(browserify({
+// 		  insertGlobals : false
+// 		}))
+// 		.pipe(gulp.dest('./build/graphinius'))
+// });
+
+gulp.task('bundle', ['dist'], function() {
+	return gulp.src('src/entry.js')
+		.pipe(webpack( require('./webpack.config.js') ))
+		.pipe(gulp.dest('dist/'));
 });
 
 // Documentation (type doc)
 gulp.task("tdoc", function() {
-    return gulp
-        .src(paths.typesources)
-        .pipe(tdoc({
-            module: "commonjs",
-            target: "es5",
-            out: "docs/",
-            name: "Graphinius"//,
-						// theme: "minimal"
-        }))
-    ;
+	return gulp
+			.src(paths.typesources)
+			.pipe(tdoc({
+					module: "commonjs",
+					target: "es5",
+					out: "docs/",
+					name: "Graphinius"//,
+					// theme: "minimal"
+			}))
+	;
 });
 
 gulp.task('test', ['build'], function () {

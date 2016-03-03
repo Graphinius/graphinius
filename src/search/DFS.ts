@@ -1,7 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import _ = require('lodash');
 

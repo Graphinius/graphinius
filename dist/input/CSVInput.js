@@ -1,7 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
-var fs = require('fs');
 var path = require('path');
+var fs = require('fs');
 var $G = require('../core/Graph');
 var CSVInput = (function () {
     function CSVInput(_separator, _explicit_direction, _direction_mode) {

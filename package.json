@@ -35,11 +35,13 @@
     "gulp-typedoc": "^1.2.1",
     "gulp-typescript": "^2.9.2",
     "gulp-watch": "^4.3.5",
+    "json-loader": "^0.5.4",
     "merge2": "^1.0.0",
     "mocha": "^2.3.4",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
-    "typedoc": "^0.3.12"
+    "typedoc": "^0.3.12",
+    "webpack-stream": "^3.1.0"
   },
   "dependencies": {
     "lodash": "^3.10.1",

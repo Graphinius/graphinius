@@ -1,8 +1,8 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import _ 		= require('lodash');
-import fs 	= require('fs');
 import path = require('path');
+import fs = require('fs');
 
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';

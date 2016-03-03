@@ -36,3 +36,6 @@ npm-debug.log
 src/**/*.js
 test/**/*.js
 test_async_nomock/**/*.js
+
+# IDEA project directory
+.idea/**
