@@ -40,7 +40,7 @@ gulp.task('build', function () {
 });
 
 // Packaging - Node / Commonjs
-gulp.task('dist', ['clean', 'tdoc'], function () {
+gulp.task('dist', ['tdoc'], function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject))
 
@@ -54,23 +54,24 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 });
 
 // Packaging - Browser
-// gulp.task('browserify', ['dist'], function() {
-// 	// Single entry point to browserify
-// 	gulp.src('./index.js')
-// 		.pipe(browserify({
-// 		  insertGlobals : false
-// 		}))
-// 		.pipe(gulp.dest('./build/graphinius'))
-// });
+gulp.task('browserify', ['dist'], function() {
+	// Single entry point to browserify
+	gulp.src('./index.js')
+		.pipe(browserify({
+		  insertGlobals : false
+		}))
+		.pipe(gulp.dest('./build/graphinius'))
+});
 
-gulp.task('bundle', ['dist'], function() {
+// Packaging - Webpack
+gulp.task('pack', ['dist'], function() {
 	return gulp.src('src/entry.js')
 		.pipe(webpack( require('./webpack.config.js') ))
 		.pipe(gulp.dest('dist/'));
 });
 
 // Documentation (type doc)
-gulp.task("tdoc", function() {
+gulp.task("tdoc", ['clean'], function() {
 	return gulp
 			.src(paths.typesources)
 			.pipe(tdoc({
