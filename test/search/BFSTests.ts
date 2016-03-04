@@ -34,7 +34,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			expect(stats.nr_nodes).to.equal(7);
 			expect(stats.nr_dir_edges).to.equal(7);
 			expect(stats.nr_und_edges).to.equal(2);
-		})
+		});
 				
 		it('should correctly compute distances from node A', () => {
 			var root = graph.getNodeById('A');

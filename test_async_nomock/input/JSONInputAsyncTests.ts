@@ -20,8 +20,10 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 			remote_file		: string,
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats,
-			REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/";
-	
+			REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/json/";
+
+	var REAL_GRAPH_NR_NODES = 6204,
+			REAL_GRAPH_NR_EDGES = 18550;
 	
 	describe('Small test graph', () => {
 				
@@ -78,9 +80,9 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 			remote_file = REMOTE_HOST + "real_graph.json";
 			json.readFromJSONURL(remote_file, function(graph, err) {
 				stats = graph.getStats();
-				expect(stats.nr_nodes).to.equal(5937);
+				expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).to.equal(0);
-				expect(stats.nr_und_edges).to.equal(17777);
+				expect(stats.nr_und_edges).to.equal(REAL_GRAPH_NR_EDGES);
 				expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
 				done();
 			});

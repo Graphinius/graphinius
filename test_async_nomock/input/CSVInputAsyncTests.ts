@@ -12,9 +12,10 @@ var expect = chai.expect,
 		Edge = $E.BaseEdge,
 		Graph = $G.BaseGraph,
 		CSV = $I.CSVInput,
-		REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/";
-		
-		
+		REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/csv/";
+
+var REAL_GRAPH_NR_NODES = 5937,
+		REAL_GRAPH_NR_EDGES = 17777;
 
 describe("Async CSVInput Tests, fetching the files from a remote server", () => {
 	
@@ -29,7 +30,7 @@ describe("Async CSVInput Tests, fetching the files from a remote server", () => 
 	/**
 		* REMOTE test
 		* The CSV will be encoded as an adjacency list
-		*/ 
+		*/
 	it('should construct a very small graph from a REMOTELY FETCHED adjacency list and produce the right stats', (done) => {
 		csv = new $I.CSVInput();
 		input_file = REMOTE_HOST + "small_graph_adj_list_def_sep.csv";
@@ -38,21 +39,21 @@ describe("Async CSVInput Tests, fetching the files from a remote server", () => 
 			done();
 		});
 	});
-	
-	
+
+
 	/**
 		* REMOTE test
 		* The CSV will be encoded as an edge list
-		*/ 
+		*/
 	it('should construct a very small graph from a REMOTELY FETCHED edge list and produce the right stats', (done) => {
 		input_file = REMOTE_HOST + "small_graph_edge_list.csv";
 		csv.readFromEdgeListURL(input_file, function(graph, err) {
 			$C.checkSmallGraphStats(graph);
 			done();
-		});			
+		});
 	});
-		
-		
+
+
 	/**
 		* Remotely fetched edge list with a REAL sized graph, edges set to directed
 		* graph should have 5937 nodes.
@@ -61,15 +62,15 @@ describe("Async CSVInput Tests, fetching the files from a remote server", () => 
 		csv._separator = " ";
 		csv._explicit_direction = false;
 		csv._direction_mode = true;
-		input_file = REMOTE_HOST + "real_graph_edge_list_no_dir.csv";			
+		input_file = REMOTE_HOST + "real_graph_edge_list_no_dir.csv";
 		csv.readFromEdgeListURL(input_file, function(graph, err) {
 			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(5937);
-			expect(stats.nr_dir_edges).to.equal(17777);
+			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
+			expect(stats.nr_dir_edges).to.equal(REAL_GRAPH_NR_EDGES);
 			expect(stats.nr_und_edges).to.equal(0);
 			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 			done();
-		});			
+		});
 	});
 		
 });

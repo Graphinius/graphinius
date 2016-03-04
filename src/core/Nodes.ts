@@ -1,7 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $E from "./Edges";
-import _ = require('lodash');
+import * as $DS from "../utils/structUtils";
 
 export interface NeighborEntry {
   node: IBaseNode;
@@ -83,11 +83,11 @@ class BaseNode implements IBaseNode {
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
-		this._features = _.clone(features) || {};
+		this._features = typeof features !== 'undefined' ? $DS.clone(features) : {};
 		this._label = this._features["label"] || this._id;
 	}
 	
-	getID()	: string {
+	getID()	: string { 
 		return this._id;
 	}
 	
@@ -112,7 +112,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	setFeatures( features: { [k:string]: any } ) : void {
-		this._features = _.clone(features);
+		this._features = $DS.clone(features);
 	}
 	
 	setFeature(key: string, value: any) : void {
@@ -347,11 +347,14 @@ class BaseNode implements IBaseNode {
 		}
 		return conns;
 	}
-	
+
+
 	adjNodes() : Array<NeighborEntry> {
-		return _.uniq(_.union(this.nextNodes(), this.connNodes()), function(item, key, a) { 
-      return item.node.getID();
-    });
+		// console.log(this.nextNodes());
+    return $DS.merge([this.nextNodes(), this.connNodes()],
+											function(ne: NeighborEntry) {
+												return ne.node.getID()
+											});
 	}
 	
 }

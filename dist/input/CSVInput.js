@@ -3,6 +3,7 @@
 var path = require('path');
 var fs = require('fs');
 var $G = require('../core/Graph');
+var $R = require('../utils/remoteUtils');
 var CSVInput = (function () {
     function CSVInput(_separator, _explicit_direction, _direction_mode) {
         if (_separator === void 0) { _separator = ','; }
@@ -37,17 +38,10 @@ var CSVInput = (function () {
         }
         else {
             // Node.js
-            request = require('request');
-            request({
-                url: fileurl,
-                json: false
-            }, function (err, res, input) {
-                if (!err && res.statusCode === 200) {
-                    // Deal with the CSV response
-                    input = input.toString().split('\n');
-                    graph = localFun.apply(self, [input, graph_name]);
-                    cb(graph, undefined);
-                }
+            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+                var input = raw_graph.toString().split('\n');
+                graph = localFun.apply(self, [input, graph_name]);
+                cb(graph, undefined);
             });
         }
     };

@@ -1,6 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
-var _ = require('lodash');
+var $DS = require("../utils/structUtils");
 var BaseNode = (function () {
     function BaseNode(_id, features) {
         this._id = _id;
@@ -14,7 +14,7 @@ var BaseNode = (function () {
         this._in_edges = {};
         this._out_edges = {};
         this._und_edges = {};
-        this._features = _.clone(features) || {};
+        this._features = typeof features !== 'undefined' ? $DS.clone(features) : {};
         this._label = this._features["label"] || this._id;
     }
     BaseNode.prototype.getID = function () {
@@ -37,7 +37,7 @@ var BaseNode = (function () {
         // return feat;
     };
     BaseNode.prototype.setFeatures = function (features) {
-        this._features = _.clone(features);
+        this._features = $DS.clone(features);
     };
     BaseNode.prototype.setFeature = function (key, value) {
         this._features[key] = value;
@@ -243,8 +243,9 @@ var BaseNode = (function () {
         return conns;
     };
     BaseNode.prototype.adjNodes = function () {
-        return _.uniq(_.union(this.nextNodes(), this.connNodes()), function (item, key, a) {
-            return item.node.getID();
+        // console.log(this.nextNodes());
+        return $DS.merge([this.nextNodes(), this.connNodes()], function (ne) {
+            return ne.node.getID();
         });
     };
     return BaseNode;

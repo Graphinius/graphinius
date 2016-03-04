@@ -3,7 +3,6 @@
 import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
-import _ = require('lodash');
 
 var expect = chai.expect;
 var Edge = $E.BaseEdge;
@@ -124,7 +123,7 @@ describe('==== NODE TESTS ====', () => {
 	});
 	
 	
-	describe('Node edge addition / query / removal tests', () => {
+	describe('Node edge addition / query / removal tests - ', () => {
 		var node_a 	= new $N.BaseNode(id),
 				node_b 	= new $N.BaseNode(id),
 				e_id		= "Edgy";
@@ -290,7 +289,7 @@ describe('==== NODE TESTS ====', () => {
 			* Moreover, we will also test the implementations of the
 			* prevNodes(), nextNodes() and undNodes() methods
 			*/
-		describe('a little more complex scenario...', () => {
+		describe('a little more complex scenario - ', () => {
 			
 			var n_a = new $N.BaseNode(1, {label: "A"}),
 					n_b = new $N.BaseNode(2, {label: "B"}),

@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   entry: './index.js',
   output: {
@@ -7,7 +9,10 @@ module.exports = {
   target: "web",
   module: {
     loaders: [
-      // { test: /\.css$/, loader: 'style!css!' },
+      // {
+      //   test: /\.css$/,
+      //   loader: 'style!css!'
+      // },
       {
         test: /\.json$/,
         loader: 'json!'
@@ -16,8 +21,16 @@ module.exports = {
   },
   node: {
     fs: "empty",
-    request: "empty",
+    http: "empty",
     net: "empty",
     tls: "empty"
+  },
+  resolve: {
+    root: [
+      path.join( __dirname, 'node_modules' ),
+      path.join( __dirname, 'src' ),
+      path.join( __dirname, 'node_modules/har-validator/lib/schemas/')
+    ],
+    extensions: [ '', '.js', 'json']
   }
 };

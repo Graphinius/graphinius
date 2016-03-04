@@ -1,12 +1,10 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import _ 		= require('lodash');
 import fs		= require('fs');
 import path = require('path');
 
-import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
+import * as $R from '../utils/remoteUtils';
 
 var DEFAULT_WEIGHT = 1;
 
@@ -57,10 +55,10 @@ class JSONInput implements IJSONInput {
 	
 	readFromJSONURL(fileurl: string, cb: Function) : void {	
 		var self = this,
-				graph_name = path.basename(fileurl),
 				graph : $G.IGraph,
 				request,
 				json : JSON;
+
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
 			// Browser...
@@ -78,16 +76,9 @@ class JSONInput implements IJSONInput {
 		}
 		else {
 			// Node.js
-			request = require('request');
-			request({
-				url: fileurl,
-				json: true
-			}, function (err, res, json) {		
-				if (!err && res.statusCode === 200) {
-						// Deal with the CSV response
-						graph = self.readFromJSON(json);
-						cb(graph, undefined);
-				}
+			$R.retrieveRemoteFile(fileurl, function(raw_graph) {
+				graph = self.readFromJSON(JSON.parse(raw_graph));
+				cb(graph, undefined);
 			});
 		}
 	}

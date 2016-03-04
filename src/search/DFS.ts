@@ -2,7 +2,6 @@
 
 import * as $N from '../core/Nodes';
 import * as $G from '../core/Graph';
-import _ = require('lodash');
 
 
 export interface DFS_Config {
@@ -12,7 +11,7 @@ export interface DFS_Config {
   dfs_visit_marked: {[id: string] : boolean};
   
   messages?: {};
-  filters? : any; // for now...
+  filters? : any;
 }
 
 

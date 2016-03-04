@@ -2,7 +2,7 @@
 
 import * as $N from './Nodes';
 import * as $E from './Edges';
-import _ = require('lodash');
+import * as $DS from '../utils/structUtils';
 
 
 export enum GraphMode {
@@ -136,8 +136,8 @@ class BaseGraph implements IGraph {
 			dir: new Uint16Array(max_deg),
 			und: new Uint16Array(max_deg),
 			all: new Uint16Array(max_deg)
-		}
-		
+		};
+
 		for ( key in this._nodes ) {
 			if ( !this._nodes.hasOwnProperty(key) ) {
 				continue;
@@ -181,7 +181,7 @@ class BaseGraph implements IGraph {
 	 * it has LINEAR runtime in the graph's #nodes
 	 */
 	hasNodeLabel(label: string) : boolean {
-		return !!_.findKey(this._nodes, function(node : $N.IBaseNode) {
+		return !!$DS.findKey(this._nodes, function(node : $N.IBaseNode) {
 			return node.getLabel() === label;
 		});
 	}
@@ -195,7 +195,7 @@ class BaseGraph implements IGraph {
 	 * it has LINEAR runtime in the graph's #nodes
 	 */
 	getNodeByLabel(label: string) : $N.IBaseNode {
-		var id = _.findKey(this._nodes, function(node : $N.IBaseNode) {
+		var id = $DS.findKey(this._nodes, function(node : $N.IBaseNode) {
 			return node.getLabel() === label;
 		});
 		return this._nodes[id];
@@ -246,10 +246,10 @@ class BaseGraph implements IGraph {
 	 * it has LINEAR runtime in the graph's #edges
 	 */
 	hasEdgeLabel(label: string) : boolean {
-		var dir_id = _.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
+		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
 			return edge.getLabel() === label;
 		});
-		var und_id = _.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
+		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
 			return edge.getLabel() === label;
 		});		
 		return !!dir_id || !!und_id;
@@ -268,10 +268,10 @@ class BaseGraph implements IGraph {
 	 * it has LINEAR runtime in the graph's #edges
 	 */
 	getEdgeByLabel(label: string) : $E.IBaseEdge {
-		var dir_id = _.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
+		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
 			return edge.getLabel() === label;
 		});
-		var und_id = _.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
+		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
 			return edge.getLabel() === label;
 		});
 		var edge = this._dir_edges[dir_id] || this._und_edges[und_id];

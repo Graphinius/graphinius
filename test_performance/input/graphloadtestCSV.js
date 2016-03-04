@@ -13,7 +13,7 @@ yargs.graph = yargs.graph || "SCC15k";
 //                           LOAD TEST
 //----------------------------------------------------------------
 var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_data/CSV/' + yargs.graph + '.csv';
-var csv = new $G.CsvInput(' ', false, false);
+var csv = new $G.input.CsvInput(' ', false, false);
 var graph = csv.readFromEdgeListFile(file);
 end = +new Date();
 console.log("Read graph " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
@@ -26,7 +26,7 @@ console.log("Read graph " + yargs.graph + " with " + graph.nrNodes() + " nodes a
 start = +new Date();
 // var root = graph.getRandomNode();
 var root = graph.getNodeById(node_id);
-var bfs = $Search.BFS(graph, root);
+var bfs = $G.search.BFS(graph, root);
 end = +new Date();
 console.log("Computed BFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
@@ -54,7 +54,7 @@ console.log("Whole run took: " + (end-init) + " ms.");
 //----------------------------------------------------------------
 start = +new Date();
 var root = graph.getNodeById(node_id);
-$Search.DFS(graph, root);
+$G.search.DFS(graph, root);
 
 end = +new Date();
 console.log("Computed DFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 

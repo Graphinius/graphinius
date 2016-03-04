@@ -3,10 +3,11 @@ var clean 			= require('gulp-clean');
 var mocha 			= require('gulp-mocha');
 var ts 					= require('gulp-typescript');
 var tdoc 				= require("gulp-typedoc");
-var browserify 	= require('gulp-browserify');
 var concat			= require('gulp-concat');
 var merge 			= require('merge2');
 var webpack 		= require('webpack-stream');
+var uglify 			= require('gulp-uglify');
+var rename 			= require('gulp-rename');
 
 
 
@@ -18,10 +19,11 @@ var paths = {
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*.ts'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'test_async_nomock/**/*Tests.js', 'build', 'dist', 'docs'],
+	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async_nomock/**/*Tests.js', 'test_async_nomock/**/*.map', 'build', 'dist', 'docs'],
 	tests: ['test/**/*.js'],
 	tests_async: ['test_async_nomock/**/*Tests.js']
 };
+
 
 var tsProject = ts.createProject({
 	target: "ES5",
@@ -29,6 +31,7 @@ var tsProject = ts.createProject({
 	declaration: false,
 	noExternalResolve: false
 });
+
 
 //----------------------------
 // TASKS
@@ -39,10 +42,11 @@ gulp.task('build', function () {
 						 .pipe(gulp.dest('.'));
 });
 
+
 // Packaging - Node / Commonjs
 gulp.task('dist', ['tdoc'], function () {
 	var tsResult = gulp.src(paths.distsources)
-						 				 .pipe(ts(tsProject))
+						 				 .pipe(ts(tsProject));
 
 	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
@@ -53,22 +57,23 @@ gulp.task('dist', ['tdoc'], function () {
 	]);
 });
 
-// Packaging - Browser
-gulp.task('browserify', ['dist'], function() {
-	// Single entry point to browserify
-	gulp.src('./index.js')
-		.pipe(browserify({
-		  insertGlobals : false
-		}))
-		.pipe(gulp.dest('./build/graphinius'))
-});
 
 // Packaging - Webpack
 gulp.task('pack', ['dist'], function() {
-	return gulp.src('src/entry.js')
+	return gulp.src('./index.js')
 		.pipe(webpack( require('./webpack.config.js') ))
-		.pipe(gulp.dest('dist/'));
+		.pipe(gulp.dest('build/'));
 });
+
+
+// Uglification...
+gulp.task('bundle', ['pack'], function() {
+	return gulp.src('build/graphinius.js')
+		.pipe(uglify())
+		.pipe(rename('graphinius.min.js'))
+		.pipe(gulp.dest('build'));
+});
+
 
 // Documentation (type doc)
 gulp.task("tdoc", ['clean'], function() {
@@ -84,11 +89,13 @@ gulp.task("tdoc", ['clean'], function() {
 	;
 });
 
+
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
 						 							timeout: 5000}));
 });
+
 
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
@@ -96,17 +103,32 @@ gulp.task('test-async', ['build'], function () {
 						 							timeout: 5000}));
 });
 
+
 gulp.task('clean', function () {
 	return gulp.src(paths.clean, {read: false})
 						 .pipe(clean());
 });
 
+
 gulp.task('watch', function () {
 	gulp.watch(paths.typescripts, ['test']);
 });
+
 
 gulp.task('watch-async', function () {
 	gulp.watch(paths.typescripts, ['test-async']);
 });
 
+
 gulp.task('default', ['watch']);
+
+
+// Packaging - Browser
+// gulp.task('browserify', ['dist'], function() {
+// 	// Single entry point to browserify
+// 	gulp.src('./index.js')
+// 		.pipe(browserify({
+// 		  insertGlobals : false
+// 		}))
+// 		.pipe(gulp.dest('./build/graphinius'))
+// });

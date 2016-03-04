@@ -1,8 +1,8 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
 var fs = require('fs');
-var path = require('path');
 var $G = require('../core/Graph');
+var $R = require('../utils/remoteUtils');
 var DEFAULT_WEIGHT = 1;
 var JSONInput = (function () {
     function JSONInput(_explicit_direction, _direction, _weighted_mode) {
@@ -19,7 +19,7 @@ var JSONInput = (function () {
         return this.readFromJSON(json);
     };
     JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
-        var self = this, graph_name = path.basename(fileurl), graph, request, json;
+        var self = this, graph, request, json;
         // Node or browser ??
         if (typeof window !== 'undefined') {
             // Browser...
@@ -37,16 +37,9 @@ var JSONInput = (function () {
         }
         else {
             // Node.js
-            request = require('request');
-            request({
-                url: fileurl,
-                json: true
-            }, function (err, res, json) {
-                if (!err && res.statusCode === 200) {
-                    // Deal with the CSV response
-                    graph = self.readFromJSON(json);
-                    cb(graph, undefined);
-                }
+            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+                graph = self.readFromJSON(JSON.parse(raw_graph));
+                cb(graph, undefined);
             });
         }
     };

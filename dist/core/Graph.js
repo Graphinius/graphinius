@@ -2,7 +2,7 @@
 "use strict";
 var $N = require('./Nodes');
 var $E = require('./Edges');
-var _ = require('lodash');
+var $DS = require('../utils/structUtils');
 (function (GraphMode) {
     GraphMode[GraphMode["INIT"] = 0] = "INIT";
     GraphMode[GraphMode["DIRECTED"] = 1] = "DIRECTED";
@@ -92,7 +92,7 @@ var BaseGraph = (function () {
      * it has LINEAR runtime in the graph's #nodes
      */
     BaseGraph.prototype.hasNodeLabel = function (label) {
-        return !!_.findKey(this._nodes, function (node) {
+        return !!$DS.findKey(this._nodes, function (node) {
             return node.getLabel() === label;
         });
     };
@@ -104,7 +104,7 @@ var BaseGraph = (function () {
      * it has LINEAR runtime in the graph's #nodes
      */
     BaseGraph.prototype.getNodeByLabel = function (label) {
-        var id = _.findKey(this._nodes, function (node) {
+        var id = $DS.findKey(this._nodes, function (node) {
             return node.getLabel() === label;
         });
         return this._nodes[id];
@@ -148,10 +148,10 @@ var BaseGraph = (function () {
      * it has LINEAR runtime in the graph's #edges
      */
     BaseGraph.prototype.hasEdgeLabel = function (label) {
-        var dir_id = _.findKey(this._dir_edges, function (edge) {
+        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
             return edge.getLabel() === label;
         });
-        var und_id = _.findKey(this._und_edges, function (edge) {
+        var und_id = $DS.findKey(this._und_edges, function (edge) {
             return edge.getLabel() === label;
         });
         return !!dir_id || !!und_id;
@@ -168,10 +168,10 @@ var BaseGraph = (function () {
      * it has LINEAR runtime in the graph's #edges
      */
     BaseGraph.prototype.getEdgeByLabel = function (label) {
-        var dir_id = _.findKey(this._dir_edges, function (edge) {
+        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
             return edge.getLabel() === label;
         });
-        var und_id = _.findKey(this._und_edges, function (edge) {
+        var und_id = $DS.findKey(this._und_edges, function (edge) {
             return edge.getLabel() === label;
         });
         var edge = this._dir_edges[dir_id] || this._und_edges[und_id];

@@ -234,8 +234,6 @@ declare module Graphinius {
 
 }
 
-declare var $G : Graphinius;
-
 declare module "graphinius" {
-  export = $G;
+  export = Graphinius;
 }

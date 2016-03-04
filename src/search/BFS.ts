@@ -1,9 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import _ = require('lodash');
 
 
 export interface BFSResult {
@@ -46,7 +44,7 @@ function BFS(graph : $G.IGraph, v : $N.IBaseNode) : {[id: string] : BFSResult} {
 					distance : result[current.getID()].distance + 1,
 					parent 	 : current,
 					counter	 : counter++
-				}
+				};
 				queue.push(adj_node);
 			}
 		}

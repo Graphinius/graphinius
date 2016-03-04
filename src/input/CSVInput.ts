@@ -1,12 +1,13 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import _ 		= require('lodash');
 import path = require('path');
 import fs = require('fs');
+import http = require('http');
 
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
+import * as $R from '../utils/remoteUtils';
 
 
 export interface ICSVInput {
@@ -63,17 +64,10 @@ class CSVInput implements ICSVInput {
 		}
 		else {
 			// Node.js
-			request = require('request');
-			request({
-				url: fileurl,
-				json: false
-			}, function (err, res, input) {		
-				if (!err && res.statusCode === 200) {
-						// Deal with the CSV response
-						input = input.toString().split('\n');
-						graph = localFun.apply(self, [input, graph_name]);
-						cb(graph, undefined);
-				}
+			$R.retrieveRemoteFile(fileurl, function(raw_graph) {
+				var input = raw_graph.toString().split('\n');
+				graph = localFun.apply(self, [input, graph_name]);
+				cb(graph, undefined);
 			});
 		}
 	}
