@@ -1,6 +1,6 @@
 {
   "name": "graphinius",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Generic graph (analysis) library in Typescript",
   "main": "index.js",
   "scripts": {
