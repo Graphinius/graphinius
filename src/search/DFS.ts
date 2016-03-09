@@ -2,18 +2,17 @@
 
 import * as $N from '../core/Nodes';
 import * as $G from '../core/Graph';
+import * as $CB from '../utils/callbackUtils';
 
 
 export interface DFS_Config {
   visit_result: {};
   callbacks: DFS_Callbacks;
-  dir_mode: $G.GraphMode;  
+  dir_mode: $G.GraphMode;
   dfs_visit_marked: {[id: string] : boolean};
-  
   messages?: {};
-  filters? : any;
+  filters?: any;
 }
-
 
 export interface DFS_Callbacks {
 	init_dfs?			    : Array<Function>;
@@ -24,13 +23,11 @@ export interface DFS_Callbacks {
 	adj_nodes_pushed?	: Array<Function>;
 }
 
-
 export interface StackEntry {
 	node		: $N.IBaseNode;
 	parent	: $N.IBaseNode;
   weight? : number;
 }
-
 
 export interface DFSVisitScope {
 	stack 				: Array<StackEntry>;
@@ -40,17 +37,27 @@ export interface DFSVisitScope {
 	current_root	: $N.IBaseNode;
 }
 
-
 export interface DFSScope {
 	marked 	  : {[id: string] : boolean};
 	nodes		  : {[id: string] : $N.IBaseNode};
 }
 
 
+/**
+ * DFS Visit - one run to see what nodes are reachable
+ * from a given "current" root node
+ *
+ * @param graph
+ * @param current_root
+ * @param config
+ * @returns {{}}
+ * @constructor
+ */
 function DFSVisit(graph 				: $G.IGraph,
 									current_root 	: $N.IBaseNode,
                   config?       : DFS_Config) {
 
+	// scope to pass to callbacks at different stages of execution
 	var dfsVisitScope : DFSVisitScope = {
 		stack					: [],
 		adj_nodes			: [],
@@ -82,7 +89,7 @@ function DFSVisit(graph 				: $G.IGraph,
 	 * possibly with the current_root;
 	 */
 	if ( callbacks.init_dfs_visit ) {
-		execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
+		$CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
 	}
 
 	// Start by pushing current root to the stack
@@ -101,7 +108,7 @@ function DFSVisit(graph 				: $G.IGraph,
 		 * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
 		 */
 		if ( callbacks.node_popped ) {
-			execCallbacks(callbacks.node_popped, dfsVisitScope);
+			$CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
 		}
 
 		if ( !config.dfs_visit_marked[dfsVisitScope.current.getID()] ) {
@@ -111,7 +118,7 @@ function DFSVisit(graph 				: $G.IGraph,
 			 * HOOK 3 - CURRENT NODE UNMARKED
 			 */
 			if ( callbacks.node_unmarked ) {
-				execCallbacks(callbacks.node_unmarked, dfsVisitScope);
+				$CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
 			}
 
 			/**
@@ -148,7 +155,7 @@ function DFSVisit(graph 				: $G.IGraph,
 			 * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
 			 */
 			if ( callbacks.adj_nodes_pushed ) {
-				execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
+				$CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
 			}
 
 		}
@@ -157,17 +164,28 @@ function DFSVisit(graph 				: $G.IGraph,
 			 * HOOK 5 - CURRENT NODE ALREADY MARKED
 			 */
 			if ( callbacks.node_marked ) {
-				execCallbacks(callbacks.node_marked, dfsVisitScope);
+				$CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
 			}
 		}
 	}
 
   return config.visit_result;
+
+
 }
-
-
 /**
- * OuterDFS function
+ * Depth first search - used for reachability / exploration
+ * of graph structure and as a basis for topological sorting
+ * and component / community analysis.
+ * Because DFS can be used as a basis for many other algorithms,
+ * we want to keep the result as generic as possible to be
+ * populated by the caller rather than the core DFS algorithm.
+ *
+ * @param graph
+ * @param root
+ * @param config
+ * @returns {{}[]}
+ * @constructor
  */
 function DFS( graph 		  : $G.IGraph,
 							root      	: $N.IBaseNode,
@@ -193,7 +211,7 @@ function DFS( graph 		  : $G.IGraph,
 	 * HOOK 1 - INIT (OUTER DFS)
 	 */
 	if ( callbacks.init_dfs ) {
-		execCallbacks(callbacks.init_dfs, dfsScope);
+		$CB.execCallbacks(callbacks.init_dfs, dfsScope);
 	}
 
 	callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
@@ -223,7 +241,7 @@ function DFS( graph 		  : $G.IGraph,
 			parent 	: context.stack_entry.parent,
 			counter : counter()
 		};
-  }
+  };
   
   // check if a callbacks object has been instantiated
   if ( callbacks && callbacks.node_unmarked ) {
@@ -265,12 +283,11 @@ function prepareDFSVisitStandardConfig() {
     dir_mode: $G.GraphMode.MIXED
   },
   result = config.visit_result,
-  callbacks = config.callbacks;                        
+  callbacks = config.callbacks;
               
   // internal variable for order of visit
   // during DFS Visit                      
-  var count = 0;
-  
+  var count = 0;  
 	var counter = function() {
 		return count++;
 	};
@@ -321,22 +338,8 @@ function prepareDFSStandardConfig() {
   return config;
 };
 
-
-/**
- * @param context this pointer to the DFS or DFSVisit function
- */
-function execCallbacks(cbs : Array<Function>, context) {
-	cbs.forEach( function(cb) {
-		if ( typeof cb === 'function' ) {
-			cb(context);
-		}
-	});
-}
-
-
 export { DFSVisit, 
          DFS,
          prepareDFSVisitStandardConfig,
-         prepareDFSStandardConfig,
-         execCallbacks
+         prepareDFSStandardConfig
        };

@@ -3,7 +3,6 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
@@ -104,16 +103,16 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
     });
     
   });
-  
-	
+
+
 	describe('testing callback execution', () => {
-		
+
 		it('should correctly instantiate the search graph', () => {
 			expect(stats.nr_nodes).to.equal(7);
 			expect(stats.nr_dir_edges).to.equal(7);
 			expect(stats.nr_und_edges).to.equal(2);
 		});
-    
+
 		/**
 		 * HUGE TODO:
 		 * Make sure the callbacks are not only executed, but
@@ -121,28 +120,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		 * Don't know how yet...
 		 */
 		describe('should properly execute the different callback stages', () => {
-			
-			/**
-			 * TODO: outSource execCallbacks function to utility module
-			 */
-			it('should execute an array of callback functions', () => {
-				var scope = {
-					msg_a: "",
-					msg_b: ""
-				}
-				var funcArray = [];
-				funcArray.push( function( context ) {
-					context["msg_a"] = "Hello from func A.";
-				});
-				funcArray.push( function( context ) {
-					context["msg_b"] = "Hello from func B.";
-				});
-				$DFS.execCallbacks(funcArray, scope);
-				expect(scope.msg_a).to.equal("Hello from func A.");
-				expect(scope.msg_b).to.equal("Hello from func B.");				
-			});
-			
-			
+
 			it('should execute the DFS VISIT INIT callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -154,7 +132,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-				
+
 				var dfsVisitInitTestCallback = function() {
 					config.messages['test_message'] = "DFS VISIT INIT callback executed.";
 				};
@@ -162,8 +140,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				var result = $DFS.DFSVisit(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS VISIT INIT callback executed.");
 			});
-			
-			
+
+
 			it('should execute the DFS VISIT NODE POPPED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -175,7 +153,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-        
+
 				var dfsVisitNodePoppedTestCallback = function() {
 					config.messages['test_message'] = "DFS VISIT NODE POPPED callback executed.";
 				};
@@ -183,8 +161,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				var result = $DFS.DFSVisit(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS VISIT NODE POPPED callback executed.");
 			});
-			
-			
+
+
 			it('should execute the DFS VISIT NODE MARKED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -196,7 +174,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-        
+
 				var dfsVisitNodeMarkedTestCallback = function() {
 					config.messages['test_message'] = "DFS VISIT NODE MARKED callback executed.";
 				};
@@ -204,8 +182,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				var result = $DFS.DFSVisit(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS VISIT NODE MARKED callback executed.");
 			});
-			
-			
+
+
 			it('should execute the DFS VISIT NODE UNMARKED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -217,7 +195,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-            
+
 				var dfsVisitNodeUnMarkedTestCallback = function() {
 					config.messages['test_message'] = "DFS VISIT NODE UNMARKED callback executed.";
 				};
@@ -225,8 +203,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				var result = $DFS.DFSVisit(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS VISIT NODE UNMARKED callback executed.");
 			});
-			
-			
+
+
 			it('should execute the DFS VISIT ADJ NODES PUSHED callbacks', () => {
 				var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -238,7 +216,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-				
+
 				var dfsVisitAdjNodesPushedTestCallback = function() {
 					config.messages['test_message'] = "DFS VISIT ADJ NODES PUSHED callback executed.";
 				};
@@ -246,8 +224,8 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				var result = $DFS.DFSVisit(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS VISIT ADJ NODES PUSHED callback executed.");
 			});
-			
-			
+
+
 			it('should execute the DFS INIT callbacks', () => {
         var root = graph.getNodeById('A'),
 						config : $DFS.DFS_Config = {
@@ -259,18 +237,18 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
               },
               dir_mode: $G.GraphMode.MIXED
             };
-            
+
 				var dfsInitTestCallback = function() {
 					config.messages['test_message'] = "DFS INIT callback executed.";
 				};
 				config.callbacks.init_dfs.push(dfsInitTestCallback);
-        
+
 				var result = $DFS.DFS(graph, root, config);
 				expect(config.messages['test_message']).to.equal("DFS INIT callback executed.");
 			});
-			
+
 		});
-		
+
 	});
   
 	
@@ -755,7 +733,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
         
         weight_costs[context.current.getID()] = parent_accumulated_weight 
                                               + context.stack_entry.weight;
-      }
+      };
       config.callbacks.node_unmarked.push(setWeightCost);
       
       var dfs_result = $DFS.DFS(graph, root, config);
@@ -783,7 +761,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
         var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
         weight_costs[context.current.getID()] = parent_accumulated_weight 
                                               + context.stack_entry.weight;
-      }
+      };
       config.callbacks.node_unmarked.push(setWeightCost);
       
       var dfs_result = $DFS.DFS(graph, root, config);
@@ -811,7 +789,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
         var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
         weight_costs[context.current.getID()] = parent_accumulated_weight 
                                               + context.stack_entry.weight;
-      }
+      };
       config.callbacks.node_unmarked.push(setWeightCost);
       
       var dfs_result = $DFS.DFS(graph, root, config);

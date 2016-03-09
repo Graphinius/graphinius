@@ -845,7 +845,7 @@ describe('GRAPH TESTS: ', () => {
 
 			
 			it('DIRECTED - should randomly generate directed edges', () => {
-				min = 0;
+				min = 1;
 				max = 3;
 				graph = csv.readFromAdjacencyListFile(test_graph_file);
 				deg_dist = graph.degreeDistribution();
@@ -860,7 +860,7 @@ describe('GRAPH TESTS: ', () => {
 			
 			
 			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
-				min = 0;
+				min = 1;
 				max = 3;
 				graph = csv.readFromAdjacencyListFile(test_graph_file);
 				deg_dist = graph.degreeDistribution();
@@ -873,7 +873,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
 			});
 		
-		});		
+		});
 		
 	});
 	
