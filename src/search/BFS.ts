@@ -23,7 +23,7 @@ export interface BFS_Callbacks {
 	init_bfs?			 : Array<Function>;
 	node_unmarked? : Array<Function>;
 	node_marked?	 : Array<Function>;
-	sort_nodes?		 : Array<Function>;
+	sort_nodes?		 : Function;
 }
 
 export interface BFS_Scope {
@@ -53,7 +53,24 @@ export interface BFS_Scope {
 function BFS(graph 	 : $G.IGraph, 
 						 v 			 : $N.IBaseNode,
 						 config? : BFS_Config) : {[id: string] : BFS_ResultEntry} {
-	
+
+	var config = config || prepareBFSStandardConfig(),
+		callbacks = config.callbacks,
+		dir_mode = config.dir_mode;
+
+	/**
+	 * We are not traversing an empty graph...
+	 */
+	if ( graph.getMode() === $G.GraphMode.INIT ) {
+		throw new Error('Cowardly refusing to traverse graph without edges.');
+	}
+	/**
+	 * We are not traversing a graph taking NO edges into account
+	 */
+	if ( dir_mode === $G.GraphMode.INIT ) {
+		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	}
+
 	// scope to pass to callbacks at different stages of execution
 	var bfsScope : BFS_Scope = {
 		marked: {},
@@ -64,10 +81,6 @@ function BFS(graph 	 : $G.IGraph,
 		root_node: v,
 		adj_nodes: []
 	};
-
-	var config = config || prepareBFSStandardConfig(),
-		callbacks = config.callbacks,
-		dir_mode = config.dir_mode;
 
   /**
 	 * HOOK 1: BFS INIT
@@ -81,12 +94,28 @@ function BFS(graph 	 : $G.IGraph,
 	var i = 0;
 	while ( i < bfsScope.queue.length ) {
 		bfsScope.current = bfsScope.queue[i++];
-
-		// Take DIR mode into consideration
-		bfsScope.adj_nodes = bfsScope.current.adjNodes();
 		/**
 		 * HOOK 2 - Sort adjacent nodes
 		 */
+		if ( typeof callbacks.sort_nodes === 'function' ) {
+			callbacks.sort_nodes(bfsScope);
+		}
+
+		
+		/**
+		 * Do we move only in the directed subgraph,
+		 * undirected subgraph or complete (mixed) graph?
+		 */
+		if ( dir_mode === $G.GraphMode.MIXED ) {
+			bfsScope.adj_nodes = bfsScope.current.adjNodes();
+		}
+		else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
+			bfsScope.adj_nodes = bfsScope.current.connNodes();
+		}
+		else if ( dir_mode === $G.GraphMode.DIRECTED ) {
+			bfsScope.adj_nodes = bfsScope.current.nextNodes();
+		}
+		
 
 		for ( var adj_idx in bfsScope.adj_nodes ) {
 			if ( !bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {
@@ -105,6 +134,9 @@ function BFS(graph 	 : $G.IGraph,
 				/**
 				 * HOOK 4 - Node marked
 				 */
+				if ( callbacks.node_marked ) {
+					$CB.execCallbacks(callbacks.node_marked, bfsScope);
+				}
 			}
 		}
 	}
@@ -116,8 +148,13 @@ function BFS(graph 	 : $G.IGraph,
 function prepareBFSStandardConfig() {
 	var config : BFS_Config = {
 		result: {},
-		callbacks: {},
-		dir_mode: $G.GraphMode.INIT,
+		callbacks: {
+			init_bfs: [],
+			node_unmarked: [],
+			node_marked: [],
+			sort_nodes: undefined
+		},
+		dir_mode: $G.GraphMode.MIXED,
 		messages: {},
 		filters: {}
 	},
