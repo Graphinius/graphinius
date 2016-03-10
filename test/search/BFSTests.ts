@@ -53,7 +53,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 		it('should execute the BFS INIT callbacks', () => {
 			var root = graph.getNodeById('A'),
-				config = $BFS.prepareBFSStandardConfig();
+					config = $BFS.prepareBFSStandardConfig();
 
 			var bfsInitTestCallback = function() {
 				config.messages['test_message'] = "BFS INIT callback executed.";
@@ -66,7 +66,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 		it('should execute the NODE UNMARKED callbacks', () => {
 			var root = graph.getNodeById('A'),
-				config = $BFS.prepareBFSStandardConfig();
+					config = $BFS.prepareBFSStandardConfig();
 
 			var bfsNodeUnmarkedTestCallback = function() {
 				config.messages['test_message'] = "NODE UNMARKED callback executed.";
@@ -79,7 +79,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 		it('should execute the NODE MARKED callbacks', () => {
 			var root = graph.getNodeById('A'),
-				config = $BFS.prepareBFSStandardConfig();
+					config = $BFS.prepareBFSStandardConfig();
 
 			var bfsNodeMarkedTestCallback = function() {
 				config.messages['test_message'] = "NODE MARKED callback executed.";
@@ -92,7 +92,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 		it('should execute the SORT NODES callback', () => {
 			var root = graph.getNodeById('A'),
-				config = $BFS.prepareBFSStandardConfig();
+					config = $BFS.prepareBFSStandardConfig();
 
 			var bfsSortNodesTestCallback = function() {
 				config.messages['test_message'] = "SORT NODES callback executed.";
@@ -107,7 +107,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 	
 	
-	describe('BFS on small test graph', () => {
+	describe('BFS on small test graph - ', () => {
 
 
 		it('should refuse to traverse an empty graph', () => {
@@ -125,7 +125,287 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 
-		describe('computing distances in MIXED mode', () => {
+		describe('computing distances in UNDIRECTED mode - ', () => {
+
+			it('should correctly compute distances from node A', () => {
+				var root = graph.getNodeById('A'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(0);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(-1);
+				expect(bfs_res['D'].counter).to.equal(1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(-1);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(0);
+				expect(bfs_res['A'].parent).to.equal(root);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['C'].parent).to.equal(null);
+				expect(bfs_res['D'].distance).to.equal(1);
+				expect(bfs_res['D'].parent).to.equal(root);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['F'].parent).to.equal(null);
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node C', () => {
+				var root = graph.getNodeById('C'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(-1);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(0);
+				expect(bfs_res['D'].counter).to.equal(-1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(-1);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['A'].parent).to.equal(null);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(0);
+				expect(bfs_res['C'].parent).to.equal(root);
+				expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['D'].parent).to.equal(null);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['F'].parent).to.equal(null);
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node D', () => {
+				var root = graph.getNodeById('D'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(1);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(-1);
+				expect(bfs_res['D'].counter).to.equal(0);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(-1);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(1);
+				expect(bfs_res['A'].parent).to.equal(root);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['C'].parent).to.equal(null);
+				expect(bfs_res['D'].distance).to.equal(0);
+				expect(bfs_res['D'].parent).to.equal(root);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['F'].parent).to.equal(null);
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node G', () => {
+				var root = graph.getNodeById('G'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(-1);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(-1);
+				expect(bfs_res['D'].counter).to.equal(-1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(-1);
+				expect(bfs_res['G'].counter).to.equal(0);
+
+				expect(bfs_res['A'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['A'].parent).to.equal(null);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['C'].parent).to.equal(null);
+				expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['D'].parent).to.equal(null);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['F'].parent).to.equal(null);
+				expect(bfs_res['G'].distance).to.equal(0);
+				expect(bfs_res['G'].parent).to.equal(root);
+			});
+
+		});
+
+
+		describe('computing distances in DIRECTED mode - ', () => {
+
+			it('should correctly compute distances from node A', () => {
+				var root = graph.getNodeById('A'),
+						config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.DIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(0);
+				expect(bfs_res['B'].counter).to.equal(1);
+				expect(bfs_res['C'].counter).to.equal(2);
+				expect(bfs_res['D'].counter).to.equal(-1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(3);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(0);
+				expect(bfs_res['A'].parent).to.equal(root);
+				expect(bfs_res['B'].distance).to.equal(1);
+				expect(bfs_res['B'].parent).to.equal(root);
+				expect(bfs_res['C'].distance).to.equal(1);
+				expect(bfs_res['C'].parent).to.equal(root);
+				expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['D'].parent).to.equal(null);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(1);
+				expect(bfs_res['F'].parent).to.equal(root);
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node D', () => {
+				var root = graph.getNodeById('D'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.DIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(-1);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(-1);
+				expect(bfs_res['D'].counter).to.equal(0);
+				expect(bfs_res['E'].counter).to.equal(1);
+				expect(bfs_res['F'].counter).to.equal(2);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['A'].parent).to.equal(null);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['C'].parent).to.equal(null);
+				expect(bfs_res['D'].distance).to.equal(0);
+				expect(bfs_res['D'].parent).to.equal(root);
+				expect(bfs_res['E'].distance).to.equal(1);
+				expect(bfs_res['E'].parent).to.equal(root);
+				expect(bfs_res['F'].distance).to.equal(2);
+				expect(bfs_res['F'].parent).to.equal(graph.getNodeById('E'));
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node C', () => {
+				var root = graph.getNodeById('C'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.DIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(1);
+				expect(bfs_res['B'].counter).to.equal(2);
+				expect(bfs_res['C'].counter).to.equal(0);
+				expect(bfs_res['D'].counter).to.equal(-1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(3);
+				expect(bfs_res['G'].counter).to.equal(-1);
+
+				expect(bfs_res['A'].distance).to.equal(1);
+				expect(bfs_res['A'].parent).to.equal(root);
+				expect(bfs_res['B'].distance).to.equal(2);
+				expect(bfs_res['B'].parent).to.equal(graph.getNodeById('A'));
+				expect(bfs_res['C'].distance).to.equal(0);
+				expect(bfs_res['C'].parent).to.equal(root);
+				expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['D'].parent).to.equal(null);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(2);
+				expect(bfs_res['F'].parent).to.equal(graph.getNodeById('A'));
+				expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['G'].parent).to.equal(null);
+			});
+
+
+			it('should correctly compute distances from node G', () => {
+				var root = graph.getNodeById('G'),
+					config = $BFS.prepareBFSStandardConfig();
+
+				config.dir_mode = $G.GraphMode.DIRECTED;
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+
+				expect(bfs_res['A'].counter).to.equal(-1);
+				expect(bfs_res['B'].counter).to.equal(-1);
+				expect(bfs_res['C'].counter).to.equal(-1);
+				expect(bfs_res['D'].counter).to.equal(-1);
+				expect(bfs_res['E'].counter).to.equal(-1);
+				expect(bfs_res['F'].counter).to.equal(-1);
+				expect(bfs_res['G'].counter).to.equal(0);
+
+				expect(bfs_res['A'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['A'].parent).to.equal(null);
+				expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['B'].parent).to.equal(null);
+				expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['C'].parent).to.equal(null);
+				expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['D'].parent).to.equal(null);
+				expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['E'].parent).to.equal(null);
+				expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+				expect(bfs_res['F'].parent).to.equal(null);
+				expect(bfs_res['G'].distance).to.equal(0);
+				expect(bfs_res['G'].parent).to.equal(root);
+			});
+
+		});
+
+
+		describe('computing distances in MIXED mode - ', () => {
 
 			it('should correctly compute distances from node A', () => {
 				var root = graph.getNodeById('A');
