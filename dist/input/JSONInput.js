@@ -1,5 +1,4 @@
 /// <reference path="../../typings/tsd.d.ts" />
-"use strict";
 var fs = require('fs');
 var $G = require('../core/Graph');
 var $R = require('../utils/remoteUtils');
@@ -107,5 +106,5 @@ var JSONInput = (function () {
         }
     };
     return JSONInput;
-}());
+})();
 exports.JSONInput = JSONInput;

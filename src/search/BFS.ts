@@ -1,6 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $N from '../core/Nodes';
+import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
 
@@ -32,6 +33,7 @@ export interface BFS_Scope {
 	queue				: Array<$N.IBaseNode>;
 	current			: $N.IBaseNode;
 	next_node		: $N.IBaseNode;
+	next_edge		: $E.IBaseEdge;
 	root_node		: $N.IBaseNode;
 	adj_nodes		: Array<$N.NeighborEntry>;
 }
@@ -78,6 +80,7 @@ function BFS(graph 	 : $G.IGraph,
 		queue: [],
 		current: null,
 		next_node: null,
+		next_edge: null,
 		root_node: v,
 		adj_nodes: []
 	};
@@ -122,6 +125,7 @@ function BFS(graph 	 : $G.IGraph,
 				continue;
 			}
 			bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
+			bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
 			/**
 			 * HOOK 3 - Node unmarked
 			 */

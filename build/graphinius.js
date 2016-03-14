@@ -50,7 +50,7 @@
 	var CsvInput 	= __webpack_require__(5);
 	var JsonInput = __webpack_require__(10);
 	var BFS				= __webpack_require__(11);
-	var DFS				= __webpack_require__(12);
+	var DFS				= __webpack_require__(13);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -87,7 +87,6 @@
 /* 1 */
 /***/ function(module, exports) {
 
-	"use strict";
 	var BaseEdge = (function () {
 	    function BaseEdge(_id, _node_a, _node_b, options) {
 	        this._id = _id;
@@ -128,7 +127,7 @@
 	        return { a: this._node_a, b: this._node_b };
 	    };
 	    return BaseEdge;
-	}());
+	})();
 	exports.BaseEdge = BaseEdge;
 
 
@@ -137,7 +136,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
 	var $DS = __webpack_require__(3);
 	var BaseNode = (function () {
 	    function BaseNode(_id, features) {
@@ -387,7 +385,7 @@
 	        });
 	    };
 	    return BaseNode;
-	}());
+	})();
 	exports.BaseNode = BaseNode;
 
 
@@ -395,7 +393,6 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	"use strict";
 	/**
 	 * Method to deep clone an object, should already have been tested..
 	 * @TODO: Test it more..
@@ -495,7 +492,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
@@ -922,7 +918,7 @@
 	        return obj[key];
 	    };
 	    return BaseGraph;
-	}());
+	})();
 	exports.BaseGraph = BaseGraph;
 
 
@@ -931,7 +927,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
 	var path = __webpack_require__(6);
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);
@@ -1068,7 +1063,7 @@
 	        }
 	    };
 	    return CSVInput;
-	}());
+	})();
 	exports.CSVInput = CSVInput;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
@@ -1411,7 +1406,6 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
 	var http = __webpack_require__(8);
 	/**
 	 * @TODO: Test it !!!
@@ -1443,7 +1437,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(9);
@@ -1551,64 +1544,201 @@
 	        }
 	    };
 	    return JSONInput;
-	}());
+	})();
 	exports.JSONInput = JSONInput;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 11 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
-	function BFS(graph, v) {
-	    var result = {};
-	    var nodes = graph.getNodes();
-	    for (var key in nodes) {
-	        result[key] = {
-	            distance: Number.POSITIVE_INFINITY,
-	            parent: null,
-	            counter: -1
-	        };
+	var $G = __webpack_require__(4);
+	var $CB = __webpack_require__(12);
+	/**
+	 * Breadth first search - usually performed to see
+	 * reachability etc. Therefore we do not want 'segments'
+	 * or 'components' of our graph, but simply one well
+	 * defined result segment covering the whole graph.
+	 *
+	 * @param graph the graph to perform BFS on
+	 * @param v the vertex to use as a start vertex
+	 * @param config an optional config object, will be
+	 * automatically instantiated if not passed by caller
+	 * @returns {{}}
+	 * @constructor
+	 */
+	function BFS(graph, v, config) {
+	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    /**
+	     * We are not traversing an empty graph...
+	     */
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    var counter = 0;
-	    var queue = [];
-	    queue.push(v);
-	    result[v.getID()] = {
-	        distance: 0,
-	        parent: v,
-	        counter: counter++
+	    /**
+	     * We are not traversing a graph taking NO edges into account
+	     */
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    // scope to pass to callbacks at different stages of execution
+	    var bfsScope = {
+	        marked: {},
+	        nodes: graph.getNodes(),
+	        queue: [],
+	        current: null,
+	        next_node: null,
+	        next_edge: null,
+	        root_node: v,
+	        adj_nodes: []
 	    };
+	    /**
+	       * HOOK 1: BFS INIT
+	       */
+	    if (callbacks.init_bfs) {
+	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
+	    }
+	    bfsScope.queue.push(v);
 	    var i = 0;
-	    while (i < queue.length) {
-	        var current = queue[i++];
-	        var adj_nodes = current.adjNodes();
-	        for (var adj_idx in adj_nodes) {
-	            var adj_node = adj_nodes[adj_idx].node;
-	            if (result[adj_node.getID()].distance === Number.POSITIVE_INFINITY) {
-	                result[adj_node.getID()] = {
-	                    distance: result[current.getID()].distance + 1,
-	                    parent: current,
-	                    counter: counter++
-	                };
-	                queue.push(adj_node);
+	    while (i < bfsScope.queue.length) {
+	        bfsScope.current = bfsScope.queue[i++];
+	        /**
+	         * HOOK 2 - Sort adjacent nodes
+	         */
+	        if (typeof callbacks.sort_nodes === 'function') {
+	            callbacks.sort_nodes(bfsScope);
+	        }
+	        /**
+	         * Do we move only in the directed subgraph,
+	         * undirected subgraph or complete (mixed) graph?
+	         */
+	        if (dir_mode === $G.GraphMode.MIXED) {
+	            bfsScope.adj_nodes = bfsScope.current.adjNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.connNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.DIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
+	        }
+	        for (var adj_idx in bfsScope.adj_nodes) {
+	            if (!bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {
+	                continue;
+	            }
+	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
+	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
+	            /**
+	             * HOOK 3 - Node unmarked
+	             */
+	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
+	                if (callbacks.node_unmarked) {
+	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
+	                }
+	            }
+	            else {
+	                /**
+	                 * HOOK 4 - Node marked
+	                 */
+	                if (callbacks.node_marked) {
+	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
+	                }
 	            }
 	        }
 	    }
-	    return result;
+	    return config.result;
 	}
 	exports.BFS = BFS;
+	function prepareBFSStandardConfig() {
+	    var config = {
+	        result: {},
+	        callbacks: {
+	            init_bfs: [],
+	            node_unmarked: [],
+	            node_marked: [],
+	            sort_nodes: undefined
+	        },
+	        dir_mode: $G.GraphMode.MIXED,
+	        messages: {},
+	        filters: {}
+	    }, result = config.result, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    // Standard INIT callback
+	    callbacks.init_bfs = callbacks.init_bfs || [];
+	    var initBFS = function (context) {
+	        // initialize all nodes to infinite distance
+	        for (var key in context.nodes) {
+	            config.result[key] = {
+	                distance: Number.POSITIVE_INFINITY,
+	                parent: null,
+	                counter: -1
+	            };
+	        }
+	        // initialize root node entry
+	        config.result[context.root_node.getID()] = {
+	            distance: 0,
+	            parent: context.root_node,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.init_bfs.push(initBFS);
+	    // Standard Node unmarked callback
+	    // have to populate respective result entry
+	    callbacks.node_unmarked = callbacks.node_unmarked || [];
+	    var nodeUnmarked = function (context) {
+	        config.result[context.next_node.getID()] = {
+	            distance: result[context.current.getID()].distance + 1,
+	            parent: context.current,
+	            counter: counter()
+	        };
+	        context.queue.push(context.next_node);
+	    };
+	    callbacks.node_unmarked.push(nodeUnmarked);
+	    return config;
+	}
+	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
 
 
 /***/ },
 /* 12 */
+/***/ function(module, exports) {
+
+	/**
+	 * @param context this pointer to the DFS or DFSVisit function
+	 */
+	function execCallbacks(cbs, context) {
+	    cbs.forEach(function (cb) {
+	        if (typeof cb === 'function') {
+	            cb(context);
+	        }
+	    });
+	}
+	exports.execCallbacks = execCallbacks;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
-	"use strict";
 	var $G = __webpack_require__(4);
+	var $CB = __webpack_require__(12);
+	/**
+	 * DFS Visit - one run to see what nodes are reachable
+	 * from a given "current" root node
+	 *
+	 * @param graph
+	 * @param current_root
+	 * @param config
+	 * @returns {{}}
+	 * @constructor
+	 */
 	function DFSVisit(graph, current_root, config) {
+	    // scope to pass to callbacks at different stages of execution
 	    var dfsVisitScope = {
 	        stack: [],
 	        adj_nodes: [],
@@ -1635,7 +1765,7 @@
 	     * possibly with the current_root;
 	     */
 	    if (callbacks.init_dfs_visit) {
-	        execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
+	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
 	    }
 	    // Start by pushing current root to the stack
 	    dfsVisitScope.stack.push({
@@ -1650,7 +1780,7 @@
 	         * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
 	         */
 	        if (callbacks.node_popped) {
-	            execCallbacks(callbacks.node_popped, dfsVisitScope);
+	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
 	        }
 	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
 	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
@@ -1658,7 +1788,7 @@
 	             * HOOK 3 - CURRENT NODE UNMARKED
 	             */
 	            if (callbacks.node_unmarked) {
-	                execCallbacks(callbacks.node_unmarked, dfsVisitScope);
+	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
 	            }
 	            /**
 	             * Do we move only in the directed subgraph,
@@ -1690,7 +1820,7 @@
 	             * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
 	             */
 	            if (callbacks.adj_nodes_pushed) {
-	                execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
+	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
 	            }
 	        }
 	        else {
@@ -1698,7 +1828,7 @@
 	             * HOOK 5 - CURRENT NODE ALREADY MARKED
 	             */
 	            if (callbacks.node_marked) {
-	                execCallbacks(callbacks.node_marked, dfsVisitScope);
+	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
 	            }
 	        }
 	    }
@@ -1706,7 +1836,18 @@
 	}
 	exports.DFSVisit = DFSVisit;
 	/**
-	 * OuterDFS function
+	 * Depth first search - used for reachability / exploration
+	 * of graph structure and as a basis for topological sorting
+	 * and component / community analysis.
+	 * Because DFS can be used as a basis for many other algorithms,
+	 * we want to keep the result as generic as possible to be
+	 * populated by the caller rather than the core DFS algorithm.
+	 *
+	 * @param graph
+	 * @param root
+	 * @param config
+	 * @returns {{}[]}
+	 * @constructor
 	 */
 	function DFS(graph, root, config) {
 	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
@@ -1724,7 +1865,7 @@
 	     * HOOK 1 - INIT (OUTER DFS)
 	     */
 	    if (callbacks.init_dfs) {
-	        execCallbacks(callbacks.init_dfs, dfsScope);
+	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
 	    }
 	    callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
 	    var markNode = function (context) {
@@ -1831,17 +1972,6 @@
 	}
 	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
 	;
-	/**
-	 * @param context this pointer to the DFS or DFSVisit function
-	 */
-	function execCallbacks(cbs, context) {
-	    cbs.forEach(function (cb) {
-	        if (typeof cb === 'function') {
-	            cb(context);
-	        }
-	    });
-	}
-	exports.execCallbacks = execCallbacks;
 
 
 /***/ }

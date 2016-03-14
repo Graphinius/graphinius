@@ -16,6 +16,7 @@ var JSON_IN	= $I.JSONInput;
 var search_graph = "./test/input/test_data/search_graph.json";
 
 
+
 describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	
 	var json 					: $I.IJSONInput,
@@ -530,8 +531,79 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				expect(bfs_res['G'].parent).to.equal(root);
 			});
 
-
 		});
+		
+		
+		describe('computing distance weights in MIXED mode - ', () => {
+
+			it('should correctly compute weights from node A', () => {				
+				json._weighted_mode = true;
+				var graph = json.readFromJSONFile(search_graph),
+						root = graph.getNodeById('A'),
+						config = $BFS.prepareBFSStandardConfig(),
+						weights = {},
+						nodes = graph.getNodes();
+					
+				for( var node_idx in nodes ) {
+					weights[node_idx] = Number.POSITIVE_INFINITY;
+				}
+				weights[root.getID()] = 0;
+						
+				var setWeightDistance = ( context: $BFS.BFS_Scope ) => {
+					weights[context.next_node.getID()] = weights[context.current.getID()] + context.next_edge.getWeight();
+				}
+				config.callbacks.node_unmarked.push(setWeightDistance);
+										
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+				expect(weights['A']).to.equal(0);
+				expect(weights['B']).to.equal(4);
+				expect(weights['C']).to.equal(2);
+				expect(weights['D']).to.equal(7);
+				expect(weights['E']).to.equal(12);
+				expect(weights['F']).to.equal(8);
+				expect(weights['G']).to.equal(Number.POSITIVE_INFINITY);				
+			});
+			
+			
+			it('should correctly compute weights from node C', () => {				
+				json._weighted_mode = true;
+				var graph = json.readFromJSONFile(search_graph),
+						root = graph.getNodeById('C'),
+						config = $BFS.prepareBFSStandardConfig(),
+						weights = {},
+						nodes = graph.getNodes();
+					
+				for( var node_idx in nodes ) {
+					weights[node_idx] = Number.POSITIVE_INFINITY;
+				}
+				weights[root.getID()] = 0;
+						
+				var setWeightDistance = ( context: $BFS.BFS_Scope ) => {
+					weights[context.next_node.getID()] = weights[context.current.getID()] + context.next_edge.getWeight();
+				}
+				config.callbacks.node_unmarked.push(setWeightDistance);
+										
+				bfs_res = $BFS.BFS(graph, root, config);
+
+				expect(Object.keys(bfs_res).length).to.equal(7);
+				expect(weights['A']).to.equal(3);
+				expect(weights['B']).to.equal(7);
+				expect(weights['C']).to.equal(0);
+				expect(weights['D']).to.equal(10);
+				expect(weights['E']).to.equal(15);
+				expect(weights['F']).to.equal(11);
+				expect(weights['G']).to.equal(Number.POSITIVE_INFINITY);				
+			});
+			
+		});
+		
+		/**
+		 * Do we need weight tests for undirected or directed mode??
+		 * Probably not, as we have already tested correct DFS
+		 * graph traversal extensively above...
+		 */
 		
 	});
 	

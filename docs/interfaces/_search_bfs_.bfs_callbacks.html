@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DFS_Callbacks | Graphinius</title>
+	<title>BFS_Callbacks | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_search_dfs_.html">&quot;search/DFS&quot;</a>
+					<a href="../modules/_search_bfs_.html">&quot;search/BFS&quot;</a>
 				</li>
 				<li>
-					<a href="_search_dfs_.dfs_callbacks.html">DFS_Callbacks</a>
+					<a href="_search_bfs_.bfs_callbacks.html">BFS_Callbacks</a>
 				</li>
 			</ul>
-			<h1>Interface DFS_Callbacks</h1>
+			<h1>Interface BFS_Callbacks</h1>
 		</div>
 	</div>
 </header>
@@ -74,7 +74,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DFS_Callbacks</span>
+						<span class="target">BFS_Callbacks</span>
 					</li>
 				</ul>
 			</section>
@@ -85,12 +85,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#adj_nodes_pushed" class="tsd-kind-icon">adj_<wbr>nodes_<wbr>pushed</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#init_dfs" class="tsd-kind-icon">init_<wbr>dfs</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#init_dfs_visit" class="tsd-kind-icon">init_<wbr>dfs_<wbr>visit</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#node_marked" class="tsd-kind-icon">node_<wbr>marked</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#node_popped" class="tsd-kind-icon">node_<wbr>popped</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_callbacks.html#node_unmarked" class="tsd-kind-icon">node_<wbr>unmarked</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_bfs_.bfs_callbacks.html#init_bfs" class="tsd-kind-icon">init_<wbr>bfs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_bfs_.bfs_callbacks.html#node_marked" class="tsd-kind-icon">node_<wbr>marked</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_bfs_.bfs_callbacks.html#node_unmarked" class="tsd-kind-icon">node_<wbr>unmarked</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_bfs_.bfs_callbacks.html#sort_nodes" class="tsd-kind-icon">sort_<wbr>nodes</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,32 +97,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="adj_nodes_pushed" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> adj_<wbr>nodes_<wbr>pushed</h3>
-					<div class="tsd-signature tsd-kind-icon">adj_<wbr>nodes_<wbr>pushed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="init_bfs" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> init_<wbr>bfs</h3>
+					<div class="tsd-signature tsd-kind-icon">init_<wbr>bfs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L23">search/DFS.ts:23</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="init_dfs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> init_<wbr>dfs</h3>
-					<div class="tsd-signature tsd-kind-icon">init_<wbr>dfs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L18">search/DFS.ts:18</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="init_dfs_visit" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> init_<wbr>dfs_<wbr>visit</h3>
-					<div class="tsd-signature tsd-kind-icon">init_<wbr>dfs_<wbr>visit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L19">search/DFS.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/BFS.ts#L24">search/BFS.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -134,17 +112,7 @@
 					<div class="tsd-signature tsd-kind-icon">node_<wbr>marked<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L21">search/DFS.ts:21</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="node_popped" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> node_<wbr>popped</h3>
-					<div class="tsd-signature tsd-kind-icon">node_<wbr>popped<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L20">search/DFS.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/BFS.ts#L26">search/BFS.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +122,17 @@
 					<div class="tsd-signature tsd-kind-icon">node_<wbr>unmarked<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L22">search/DFS.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/BFS.ts#L25">search/BFS.ts:25</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="sort_nodes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sort_<wbr>nodes</h3>
+					<div class="tsd-signature tsd-kind-icon">sort_<wbr>nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/BFS.ts#L27">search/BFS.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,10 +159,10 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_input_jsoninput_.html">"input/JSONInput"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_search_bfs_.html">"search/BFS"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_search_dfs_.html">"search/DFS"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -200,56 +178,41 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfsscope.html" class="tsd-kind-icon">DFSScope</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfsvisitscope.html" class="tsd-kind-icon">DFSVisit<wbr>Scope</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_callbacks.html" class="tsd-kind-icon">DFS_<wbr><wbr>Callbacks</a>
+						<a href="_search_bfs_.bfs_callbacks.html" class="tsd-kind-icon">BFS_<wbr><wbr>Callbacks</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#adj_nodes_pushed" class="tsd-kind-icon">adj_<wbr>nodes_<wbr>pushed</a>
+								<a href="_search_bfs_.bfs_callbacks.html#init_bfs" class="tsd-kind-icon">init_<wbr>bfs</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#init_dfs" class="tsd-kind-icon">init_<wbr>dfs</a>
+								<a href="_search_bfs_.bfs_callbacks.html#node_marked" class="tsd-kind-icon">node_<wbr>marked</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#init_dfs_visit" class="tsd-kind-icon">init_<wbr>dfs_<wbr>visit</a>
+								<a href="_search_bfs_.bfs_callbacks.html#node_unmarked" class="tsd-kind-icon">node_<wbr>unmarked</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#node_marked" class="tsd-kind-icon">node_<wbr>marked</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#node_popped" class="tsd-kind-icon">node_<wbr>popped</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_callbacks.html#node_unmarked" class="tsd-kind-icon">node_<wbr>unmarked</a>
+								<a href="_search_bfs_.bfs_callbacks.html#sort_nodes" class="tsd-kind-icon">sort_<wbr>nodes</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_config.html" class="tsd-kind-icon">DFS_<wbr><wbr>Config</a>
+						<a href="_search_bfs_.bfs_config.html" class="tsd-kind-icon">BFS_<wbr><wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.stackentry.html" class="tsd-kind-icon">Stack<wbr>Entry</a>
+						<a href="_search_bfs_.bfs_resultentry.html" class="tsd-kind-icon">BFS_<wbr><wbr>Result<wbr>Entry</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="_search_bfs_.bfs_scope.html" class="tsd-kind-icon">BFS_<wbr><wbr>Scope</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfs" class="tsd-kind-icon">DFS</a>
+						<a href="../modules/_search_bfs_.html#bfs" class="tsd-kind-icon">BFS</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfsvisit" class="tsd-kind-icon">DFSVisit</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsstandardconfig" class="tsd-kind-icon">prepareDFSStandard<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsvisitstandardconfig" class="tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config</a>
+						<a href="../modules/_search_bfs_.html#preparebfsstandardconfig" class="tsd-kind-icon">prepareBFSStandard<wbr>Config</a>
 					</li>
 				</ul>
 			</nav>

@@ -1,5 +1,4 @@
 /// <reference path="../../typings/tsd.d.ts" />
-"use strict";
 var $N = require('./Nodes');
 var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
@@ -426,5 +425,5 @@ var BaseGraph = (function () {
         return obj[key];
     };
     return BaseGraph;
-}());
+})();
 exports.BaseGraph = BaseGraph;

@@ -1,4 +1,3 @@
-"use strict";
 var http = require('http');
 /**
  * @TODO: Test it !!!

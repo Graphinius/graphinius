@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Method to deep clone an object, should already have been tested..
  * @TODO: Test it more..

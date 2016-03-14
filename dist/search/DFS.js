@@ -1,7 +1,18 @@
 /// <reference path="../../typings/tsd.d.ts" />
-"use strict";
 var $G = require('../core/Graph');
+var $CB = require('../utils/callbackUtils');
+/**
+ * DFS Visit - one run to see what nodes are reachable
+ * from a given "current" root node
+ *
+ * @param graph
+ * @param current_root
+ * @param config
+ * @returns {{}}
+ * @constructor
+ */
 function DFSVisit(graph, current_root, config) {
+    // scope to pass to callbacks at different stages of execution
     var dfsVisitScope = {
         stack: [],
         adj_nodes: [],
@@ -28,7 +39,7 @@ function DFSVisit(graph, current_root, config) {
      * possibly with the current_root;
      */
     if (callbacks.init_dfs_visit) {
-        execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
+        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
     }
     // Start by pushing current root to the stack
     dfsVisitScope.stack.push({
@@ -43,7 +54,7 @@ function DFSVisit(graph, current_root, config) {
          * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
          */
         if (callbacks.node_popped) {
-            execCallbacks(callbacks.node_popped, dfsVisitScope);
+            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
         }
         if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
             config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
@@ -51,7 +62,7 @@ function DFSVisit(graph, current_root, config) {
              * HOOK 3 - CURRENT NODE UNMARKED
              */
             if (callbacks.node_unmarked) {
-                execCallbacks(callbacks.node_unmarked, dfsVisitScope);
+                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
             }
             /**
              * Do we move only in the directed subgraph,
@@ -83,7 +94,7 @@ function DFSVisit(graph, current_root, config) {
              * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
              */
             if (callbacks.adj_nodes_pushed) {
-                execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
+                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
             }
         }
         else {
@@ -91,7 +102,7 @@ function DFSVisit(graph, current_root, config) {
              * HOOK 5 - CURRENT NODE ALREADY MARKED
              */
             if (callbacks.node_marked) {
-                execCallbacks(callbacks.node_marked, dfsVisitScope);
+                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
             }
         }
     }
@@ -99,7 +110,18 @@ function DFSVisit(graph, current_root, config) {
 }
 exports.DFSVisit = DFSVisit;
 /**
- * OuterDFS function
+ * Depth first search - used for reachability / exploration
+ * of graph structure and as a basis for topological sorting
+ * and component / community analysis.
+ * Because DFS can be used as a basis for many other algorithms,
+ * we want to keep the result as generic as possible to be
+ * populated by the caller rather than the core DFS algorithm.
+ *
+ * @param graph
+ * @param root
+ * @param config
+ * @returns {{}[]}
+ * @constructor
  */
 function DFS(graph, root, config) {
     var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
@@ -117,7 +139,7 @@ function DFS(graph, root, config) {
      * HOOK 1 - INIT (OUTER DFS)
      */
     if (callbacks.init_dfs) {
-        execCallbacks(callbacks.init_dfs, dfsScope);
+        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
     }
     callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
     var markNode = function (context) {
@@ -224,14 +246,3 @@ function prepareDFSStandardConfig() {
 }
 exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
 ;
-/**
- * @param context this pointer to the DFS or DFSVisit function
- */
-function execCallbacks(cbs, context) {
-    cbs.forEach(function (cb) {
-        if (typeof cb === 'function') {
-            cb(context);
-        }
-    });
-}
-exports.execCallbacks = execCallbacks;

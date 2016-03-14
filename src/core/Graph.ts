@@ -487,7 +487,7 @@ class BaseGraph implements IGraph {
 	 * CAUTION: this algorithm could take quadratic runtime in #nodes
 	 * but should be much faster
 	 */
-	createRandomEdgesSpan( min: number, max: number,  directed: boolean = false ) : void {
+	createRandomEdgesSpan( min: number, max: number, directed: boolean = false ) : void {
 		if (min < 0) {
 			throw new Error('Minimum degree cannot be negative.');
 		}
