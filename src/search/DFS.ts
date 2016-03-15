@@ -21,7 +21,7 @@ export interface DFS_Callbacks {
 	node_marked?			: Array<Function>;
 	node_unmarked?		: Array<Function>;
 	adj_nodes_pushed?	: Array<Function>;
-	
+	sort_nodes?				: Function;
 }
 
 export interface StackEntry {
@@ -136,9 +136,16 @@ function DFSVisit(graph 				: $G.IGraph,
 				dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
 			}
 
+			/**
+			 * HOOK 4 - SORT ADJACENT NODES
+			 */
+			if ( typeof callbacks.sort_nodes === 'function' ) {
+				callbacks.sort_nodes(dfsVisitScope);
+			}
+
 			for ( var adj_idx in dfsVisitScope.adj_nodes ) {
 				/**
-				 * HOOK 6 - NODE OR EDGE TYPE CHECK...
+				 * HOOK 5 - NODE OR EDGE TYPE CHECK...
 				 * LATER !!
 				 */
         if ( callbacks ) {
@@ -153,7 +160,7 @@ function DFSVisit(graph 				: $G.IGraph,
 			}
 
 			/**
-			 * HOOK 4 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
+			 * HOOK 6 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
 			 */
 			if ( callbacks.adj_nodes_pushed ) {
 				$CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
@@ -162,7 +169,7 @@ function DFSVisit(graph 				: $G.IGraph,
 		}
 		else {
 			/**
-			 * HOOK 5 - CURRENT NODE ALREADY MARKED
+			 * HOOK 7 - CURRENT NODE ALREADY MARKED
 			 */
 			if ( callbacks.node_marked ) {
 				$CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
