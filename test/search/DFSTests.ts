@@ -4,7 +4,6 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/JSONInput';
 import * as $DFS from '../../src/search/DFS';
@@ -12,9 +11,6 @@ import * as $DFS from '../../src/search/DFS';
 chai.use(sinonChai);
 
 var expect 	= chai.expect;
-var Node 	  = $N.BaseNode;
-var Edge 	  = $E.BaseEdge;
-var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 var search_graph = "./test/input/test_data/search_graph.json";
 
@@ -741,24 +737,18 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       var graph = jsonReader.readFromJSONFile(search_graph),
           root = graph.getNodeById('D'),
           config = $DFS.prepareDFSStandardConfig();
-          
-      var weight_costs = {};
-      var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-        var parent = context.stack_entry.parent;
-        var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
-        weight_costs[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-      };
-      config.callbacks.node_unmarked.push(setWeightCost);
-      
+
+      var weight_dists = {};
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
       $DFS.DFS(graph, root, config);
        
-      expect(weight_costs['A']).to.equal(7);      
-      expect(weight_costs['B']).to.equal(11);
-      expect(weight_costs['C']).to.equal(9);
-      expect(weight_costs['D']).to.equal(0);
-      expect(weight_costs['E']).to.equal(5);
-      expect(weight_costs['F']).to.equal(15);
-      expect(weight_costs['G']).to.equal(0);      
+      expect(weight_dists['A']).to.equal(7);      
+      expect(weight_dists['B']).to.equal(11);
+      expect(weight_dists['C']).to.equal(9);
+      expect(weight_dists['D']).to.equal(0);
+      expect(weight_dists['E']).to.equal(5);
+      expect(weight_dists['F']).to.equal(15);
+      expect(weight_dists['G']).to.equal(0);      
     });
     
     
@@ -767,25 +757,19 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       var graph = jsonReader.readFromJSONFile(search_graph),
           root = graph.getNodeById('A'),
           config = $DFS.prepareDFSStandardConfig();
+
       config.dir_mode = $G.GraphMode.DIRECTED;
-      
-      var weight_costs = {};
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
-				weight_costs[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-      
+      var weight_dists = {};
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
       $DFS.DFS(graph, root, config);
        
-      expect(weight_costs['A']).to.equal(0);      
-      expect(weight_costs['B']).to.equal(4);
-      expect(weight_costs['C']).to.equal(2);
-      expect(weight_costs['D']).to.equal(0);
-      expect(weight_costs['E']).to.equal(5);
-      expect(weight_costs['F']).to.equal(8);
-      expect(weight_costs['G']).to.equal(0);      
+      expect(weight_dists['A']).to.equal(0);      
+      expect(weight_dists['B']).to.equal(4);
+      expect(weight_dists['C']).to.equal(2);
+      expect(weight_dists['D']).to.equal(0);
+      expect(weight_dists['E']).to.equal(5);
+      expect(weight_dists['F']).to.equal(8);
+      expect(weight_dists['G']).to.equal(0);      
     });
     
     
@@ -794,25 +778,19 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       var graph = jsonReader.readFromJSONFile(search_graph),
           root = graph.getNodeById('A'),
           config = $DFS.prepareDFSStandardConfig();
+
       config.dir_mode = $G.GraphMode.UNDIRECTED;
-      
-      var weight_costs = {};
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
-				weight_costs[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-      
+      var weight_dists = {};
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
       $DFS.DFS(graph, root, config);
        
-      expect(weight_costs['A']).to.equal(0);      
-      expect(weight_costs['B']).to.equal(0);
-      expect(weight_costs['C']).to.equal(0);
-      expect(weight_costs['D']).to.equal(7);
-      expect(weight_costs['E']).to.equal(0);
-      expect(weight_costs['F']).to.equal(0);
-      expect(weight_costs['G']).to.equal(0);      
+      expect(weight_dists['A']).to.equal(0);      
+      expect(weight_dists['B']).to.equal(0);
+      expect(weight_dists['C']).to.equal(0);
+      expect(weight_dists['D']).to.equal(7);
+      expect(weight_dists['E']).to.equal(0);
+      expect(weight_dists['F']).to.equal(0);
+      expect(weight_dists['G']).to.equal(0);      
     });
   
   });
@@ -847,11 +825,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			var root = graph.getNodeById('A'),
 					config = $DFS.prepareDFSVisitStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = ascSortDFS;
 			var dfs_res = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(dfs_res).length).to.equal(6);
@@ -876,11 +850,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			var root = graph.getNodeById('B'),
 				config = $DFS.prepareDFSVisitStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = ascSortDFS;
 			var dfs_res = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(dfs_res).length).to.equal(4);
@@ -897,44 +867,11 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 
 
-		it('Should traverse search graph in correct order, ascending, root is A', () => {
-			var root = graph.getNodeById('A'),
-				config = $DFS.prepareDFSVisitStandardConfig();
-
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
-			var dfs_res = $DFS.DFSVisit(graph, root, config);
-
-			expect(Object.keys(dfs_res).length).to.equal(6);
-
-			expect(dfs_res['A'].counter).to.equal(0);
-			expect(dfs_res['B'].counter).to.equal(4);
-			expect(dfs_res['C'].counter).to.equal(2);
-			expect(dfs_res['D'].counter).to.equal(1);
-			expect(dfs_res['E'].counter).to.equal(3);
-			expect(dfs_res['F'].counter).to.equal(5);
-
-			expect(dfs_res['A'].parent).to.equal(root);
-			expect(dfs_res['B'].parent).to.equal(root);
-			expect(dfs_res['C'].parent).to.equal(graph.getNodeById('D'));
-			expect(dfs_res['D'].parent).to.equal(root);
-			expect(dfs_res['E'].parent).to.equal(graph.getNodeById('C'));
-			expect(dfs_res['F'].parent).to.equal(graph.getNodeById('B'));
-		});
-
-
 		it('Should traverse search graph in correct order, DEscending, root is A', () => {
 			var root = graph.getNodeById('A'),
 				config = $DFS.prepareDFSVisitStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = descSortDFS;
 			var dfs_res = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(dfs_res).length).to.equal(6);
@@ -959,11 +896,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			var root = graph.getNodeById('B'),
 				config = $DFS.prepareDFSVisitStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = descSortDFS;
 			var dfs_res = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(dfs_res).length).to.equal(4);
@@ -986,119 +919,94 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		it('Should correctly compute weight distance with ascending sort function, root is A', () => {
 			var root = graph.getNodeById('A'),
 				config = $DFS.prepareDFSStandardConfig(),
-				weights_dist = {};
+				weight_dists = {};
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
-
-			weights_dist[root.getID()] = 0;
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weights_dist[parent.getID()]) ? 0 : weights_dist[parent.getID()];
-				weights_dist[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-
+			config.callbacks.sort_nodes = ascSortDFS;
+			weight_dists[root.getID()] = 0;
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 			$DFS.DFS(graph, root, config);
 
-			expect(weights_dist['A']).to.equal(0);
-			expect(weights_dist['B']).to.equal(3);
-			expect(weights_dist['C']).to.equal(7);
-			expect(weights_dist['D']).to.equal(1);
-			expect(weights_dist['E']).to.equal(8);
-			expect(weights_dist['F']).to.equal(4);
+			expect(weight_dists['A']).to.equal(0);
+			expect(weight_dists['B']).to.equal(3);
+			expect(weight_dists['C']).to.equal(7);
+			expect(weight_dists['D']).to.equal(1);
+			expect(weight_dists['E']).to.equal(8);
+			expect(weight_dists['F']).to.equal(4);
 		});
 
 
 		it('Should correctly compute weight distance with ascending sort function, root is B', () => {
 			var root = graph.getNodeById('B'),
 				config = $DFS.prepareDFSStandardConfig(),
-				weights_dist = {};
+				weight_dists = {};
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
-
-			weights_dist[root.getID()] = 0;
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weights_dist[parent.getID()]) ? 0 : weights_dist[parent.getID()];
-				weights_dist[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-
+			config.callbacks.sort_nodes = ascSortDFS;
+			weight_dists[root.getID()] = 0;
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 			$DFS.DFS(graph, root, config);
 
-			expect(weights_dist['B']).to.equal(0);
-			expect(weights_dist['C']).to.equal(2);
-			expect(weights_dist['E']).to.equal(6);
-			expect(weights_dist['F']).to.equal(1);
+			expect(weight_dists['B']).to.equal(0);
+			expect(weight_dists['C']).to.equal(2);
+			expect(weight_dists['E']).to.equal(6);
+			expect(weight_dists['F']).to.equal(1);
 		});
 
 
 		it('Should correctly compute weight distance with DEscending sort function, root is A', () => {
 			var root = graph.getNodeById('A'),
 				config = $DFS.prepareDFSStandardConfig(),
-				weights_dist = {};
+				weight_dists = {};
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
-
-			weights_dist[root.getID()] = 0;
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weights_dist[parent.getID()]) ? 0 : weights_dist[parent.getID()];
-				weights_dist[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-
+			config.callbacks.sort_nodes = descSortDFS;
+			weight_dists[root.getID()] = 0;
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 			$DFS.DFS(graph, root, config);
 
-			expect(weights_dist['A']).to.equal(0);
-			expect(weights_dist['B']).to.equal(3);
-			expect(weights_dist['C']).to.equal(4);
-			expect(weights_dist['D']).to.equal(1);
-			expect(weights_dist['E']).to.equal(5);
-			expect(weights_dist['F']).to.equal(4);
+			expect(weight_dists['A']).to.equal(0);
+			expect(weight_dists['B']).to.equal(3);
+			expect(weight_dists['C']).to.equal(4);
+			expect(weight_dists['D']).to.equal(1);
+			expect(weight_dists['E']).to.equal(5);
+			expect(weight_dists['F']).to.equal(4);
 		});
 
 
-		it('Should correctly compute weight distance with ascending sort function, root is B', () => {
+		it('Should correctly compute weight distance with DEscending sort function, root is B', () => {
 			var root = graph.getNodeById('B'),
 				config = $DFS.prepareDFSStandardConfig(),
-				weights_dist = {};
+				weight_dists = {};
 
-			config.callbacks.sort_nodes = (context: $DFS.DFSVisit_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
-
-			weights_dist[root.getID()] = 0;
-			var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
-				var parent = context.stack_entry.parent;
-				var parent_accumulated_weight = isNaN(weights_dist[parent.getID()]) ? 0 : weights_dist[parent.getID()];
-				weights_dist[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
-			};
-			config.callbacks.node_unmarked.push(setWeightCost);
-
+			config.callbacks.sort_nodes = descSortDFS;
+			weight_dists[root.getID()] = 0;
+			config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 			$DFS.DFS(graph, root, config);
 
-			expect(weights_dist['B']).to.equal(0);
-			expect(weights_dist['C']).to.equal(2);
-			expect(weights_dist['E']).to.equal(3);
-			expect(weights_dist['F']).to.equal(1);
+			expect(weight_dists['B']).to.equal(0);
+			expect(weight_dists['C']).to.equal(2);
+			expect(weight_dists['E']).to.equal(3);
+			expect(weight_dists['F']).to.equal(1);
 		});
 
 	});
   
 });
+
+var ascSortDFS = (context: $DFS.DFSVisit_Scope) => {
+	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
+		return b.edge.getWeight() - a.edge.getWeight();
+	});
+};
 		
+var descSortDFS = (context: $DFS.DFSVisit_Scope) => {
+	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
+		return a.edge.getWeight() - b.edge.getWeight();
+	});
+};
+
+var setWeightCostsDFS = (weight_dists ) => {
+	return (context: $DFS.DFSVisit_Scope) => {
+		var parent = context.stack_entry.parent;
+		var parent_accumulated_weight = isNaN(weight_dists[parent.getID()]) ? 0 : weight_dists[parent.getID()];
+		weight_dists[context.current.getID()] = parent_accumulated_weight + context.stack_entry.weight;
+	}
+};

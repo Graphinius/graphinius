@@ -2,15 +2,11 @@
 
 import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 
 var expect 	= chai.expect;
-var Node 		= $N.BaseNode;
-var Edge 		= $E.BaseEdge;
-var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
 var search_graph = "./test/input/test_data/search_graph.json";
@@ -532,67 +528,59 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 		
 		
-		describe('computing distance WEIGHTS in MIXED mode - ', () => {
+		describe('computing distance weight_dists in MIXED mode - ', () => {
 
-			it('should correctly compute weights from node A', () => {				
+			it('should correctly compute weight_dists from node A', () => {				
 				json._weighted_mode = true;
 				var graph = json.readFromJSONFile(search_graph),
 						root = graph.getNodeById('A'),
 						config = $BFS.prepareBFSStandardConfig(),
-						weights = {},
+						weight_dists = {},
 						nodes = graph.getNodes();
 					
 				for( var node_idx in nodes ) {
-					weights[node_idx] = Number.POSITIVE_INFINITY;
+					weight_dists[node_idx] = Number.POSITIVE_INFINITY;
 				}
-				weights[root.getID()] = 0;
-						
-				var setWeightDistance = ( context: $BFS.BFS_Scope ) => {
-					weights[context.next_node.getID()] = weights[context.current.getID()] + context.next_edge.getWeight();
-				};
-				config.callbacks.node_unmarked.push(setWeightDistance);
+				weight_dists[root.getID()] = 0;
+				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 										
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).to.equal(7);
-				expect(weights['A']).to.equal(0);
-				expect(weights['B']).to.equal(4);
-				expect(weights['C']).to.equal(2);
-				expect(weights['D']).to.equal(7);
-				expect(weights['E']).to.equal(12);
-				expect(weights['F']).to.equal(8);
-				expect(weights['G']).to.equal(Number.POSITIVE_INFINITY);				
+				expect(weight_dists['A']).to.equal(0);
+				expect(weight_dists['B']).to.equal(4);
+				expect(weight_dists['C']).to.equal(2);
+				expect(weight_dists['D']).to.equal(7);
+				expect(weight_dists['E']).to.equal(12);
+				expect(weight_dists['F']).to.equal(8);
+				expect(weight_dists['G']).to.equal(Number.POSITIVE_INFINITY);				
 			});
 			
 			
-			it('should correctly compute weights from node C', () => {				
+			it('should correctly compute weight_dists from node C', () => {				
 				json._weighted_mode = true;
 				var graph = json.readFromJSONFile(search_graph),
 						root = graph.getNodeById('C'),
 						config = $BFS.prepareBFSStandardConfig(),
-						weights = {},
+						weight_dists = {},
 						nodes = graph.getNodes();
 					
 				for( var node_idx in nodes ) {
-					weights[node_idx] = Number.POSITIVE_INFINITY;
+					weight_dists[node_idx] = Number.POSITIVE_INFINITY;
 				}
-				weights[root.getID()] = 0;
-						
-				var setWeightDistance = ( context: $BFS.BFS_Scope ) => {
-					weights[context.next_node.getID()] = weights[context.current.getID()] + context.next_edge.getWeight();
-				};
-				config.callbacks.node_unmarked.push(setWeightDistance);
+				weight_dists[root.getID()] = 0;
+				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 										
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).to.equal(7);
-				expect(weights['A']).to.equal(3);
-				expect(weights['B']).to.equal(7);
-				expect(weights['C']).to.equal(0);
-				expect(weights['D']).to.equal(10);
-				expect(weights['E']).to.equal(15);
-				expect(weights['F']).to.equal(11);
-				expect(weights['G']).to.equal(Number.POSITIVE_INFINITY);				
+				expect(weight_dists['A']).to.equal(3);
+				expect(weight_dists['B']).to.equal(7);
+				expect(weight_dists['C']).to.equal(0);
+				expect(weight_dists['D']).to.equal(10);
+				expect(weight_dists['E']).to.equal(15);
+				expect(weight_dists['F']).to.equal(11);
+				expect(weight_dists['G']).to.equal(Number.POSITIVE_INFINITY);				
 			});
 			
 		});
@@ -609,8 +597,8 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	/**
 	 * Sorted BFS on small search graph PFS JSON
 	 * 
-	 * Running four tests on function sorting by weights ascending,
-	 * then four more tests on sorting by weights descending
+	 * Running four tests on function sorting by weight_dists ascending,
+	 * then four more tests on sorting by weight_dists descending
 	 */
 	describe('PFS_BFS graph traversal tests with edge weight ascending sort - ', () => {
 
@@ -629,11 +617,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};			
+			config.callbacks.sort_nodes = ascSortBFS;
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
@@ -665,11 +649,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var root = graph.getNodeById('D'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = ascSortBFS;
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
@@ -701,11 +681,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = descSortBFS;
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
@@ -737,11 +713,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var root = graph.getNodeById('D'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
+			config.callbacks.sort_nodes = descSortBFS;
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
@@ -770,135 +742,125 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 		/**
-		 * NOW WITH WEIGHTS...
+		 * NOW WITH weight_dists...
 		 */
 		it('Should correctly compute weight distance with ascending sort function, root is A', () => {
 			var root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig(),
-				weights_dist = {},
+				weight_dists = {},
 				nodes = graph.getNodes();
 
 			for ( var node_id in nodes ) {
-				weights_dist[node_id] = Number.POSITIVE_INFINITY;
+				weight_dists[node_id] = Number.POSITIVE_INFINITY;
 			}
-			weights_dist[root.getID()] = 0;
-
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
-			config.callbacks.node_unmarked.push( (context: $BFS.BFS_Scope) => {
-				weights_dist[context.next_node.getID()] = weights_dist[context.current.getID()] + context.next_edge.getWeight();
-			});
+			weight_dists[root.getID()] = 0;
+			config.callbacks.sort_nodes = ascSortBFS;
+			config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
 
-			expect(weights_dist['A']).to.equal(0);
-			expect(weights_dist['B']).to.equal(3);
-			expect(weights_dist['C']).to.equal(4);
-			expect(weights_dist['D']).to.equal(1);
-			expect(weights_dist['E']).to.equal(18);
-			expect(weights_dist['F']).to.equal(4);
+			expect(weight_dists['A']).to.equal(0);
+			expect(weight_dists['B']).to.equal(3);
+			expect(weight_dists['C']).to.equal(4);
+			expect(weight_dists['D']).to.equal(1);
+			expect(weight_dists['E']).to.equal(18);
+			expect(weight_dists['F']).to.equal(4);
 		});
 
 
 		it('Should correctly compute weight distance with ascending sort function, root is B', () => {
 			var root = graph.getNodeById('B'),
 				config = $BFS.prepareBFSStandardConfig(),
-				weights_dist = {},
+				weight_dists = {},
 				nodes = graph.getNodes();
 
 			for ( var node_id in nodes ) {
-				weights_dist[node_id] = Number.POSITIVE_INFINITY;
+				weight_dists[node_id] = Number.POSITIVE_INFINITY;
 			}
-			weights_dist[root.getID()] = 0;
-
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return a.edge.getWeight() - b.edge.getWeight();
-				});
-			};
-			config.callbacks.node_unmarked.push( (context: $BFS.BFS_Scope) => {
-				weights_dist[context.next_node.getID()] = weights_dist[context.current.getID()] + context.next_edge.getWeight();
-			});
+			weight_dists[root.getID()] = 0;
+			config.callbacks.sort_nodes = ascSortBFS;
+			config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
 
-			expect(weights_dist['A']).to.equal(Number.POSITIVE_INFINITY);
-			expect(weights_dist['B']).to.equal(0);
-			expect(weights_dist['C']).to.equal(2);
-			expect(weights_dist['D']).to.equal(Number.POSITIVE_INFINITY);
-			expect(weights_dist['E']).to.equal(6);
-			expect(weights_dist['F']).to.equal(1);
+			expect(weight_dists['A']).to.equal(Number.POSITIVE_INFINITY);
+			expect(weight_dists['B']).to.equal(0);
+			expect(weight_dists['C']).to.equal(2);
+			expect(weight_dists['D']).to.equal(Number.POSITIVE_INFINITY);
+			expect(weight_dists['E']).to.equal(6);
+			expect(weight_dists['F']).to.equal(1);
 		});
 
 
-		it('Should correctly compute weight distance with ascending sort function, root is A', () => {
+		it('Should correctly compute weight distance with DEscending sort function, root is A', () => {
 			var root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig(),
-				weights_dist = {},
+				weight_dists = {},
 				nodes = graph.getNodes();
 
 			for ( var node_id in nodes ) {
-				weights_dist[node_id] = Number.POSITIVE_INFINITY;
+				weight_dists[node_id] = Number.POSITIVE_INFINITY;
 			}
-			weights_dist[root.getID()] = 0;
-
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
-			config.callbacks.node_unmarked.push( (context: $BFS.BFS_Scope) => {
-				weights_dist[context.next_node.getID()] = weights_dist[context.current.getID()] + context.next_edge.getWeight();
-			});
+			weight_dists[root.getID()] = 0;
+			config.callbacks.sort_nodes = descSortBFS;
+			config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
 
-			expect(weights_dist['A']).to.equal(0);
-			expect(weights_dist['B']).to.equal(3);
-			expect(weights_dist['C']).to.equal(4);
-			expect(weights_dist['D']).to.equal(1);
-			expect(weights_dist['E']).to.equal(5);
-			expect(weights_dist['F']).to.equal(4);
+			expect(weight_dists['A']).to.equal(0);
+			expect(weight_dists['B']).to.equal(3);
+			expect(weight_dists['C']).to.equal(4);
+			expect(weight_dists['D']).to.equal(1);
+			expect(weight_dists['E']).to.equal(5);
+			expect(weight_dists['F']).to.equal(4);
 		});
 
 
-		it('Should correctly compute weight distance with ascending sort function, root is B', () => {
+		it('Should correctly compute weight distance with DEscending sort function, root is B', () => {
 			var root = graph.getNodeById('B'),
 				config = $BFS.prepareBFSStandardConfig(),
-				weights_dist = {},
+				weight_dists = {},
 				nodes = graph.getNodes();
 
 			for ( var node_id in nodes ) {
-				weights_dist[node_id] = Number.POSITIVE_INFINITY;
+				weight_dists[node_id] = Number.POSITIVE_INFINITY;
 			}
-			weights_dist[root.getID()] = 0;
-
-			config.callbacks.sort_nodes = (context: $BFS.BFS_Scope) => {
-				return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
-					return b.edge.getWeight() - a.edge.getWeight();
-				});
-			};
-			config.callbacks.node_unmarked.push( (context: $BFS.BFS_Scope) => {
-				weights_dist[context.next_node.getID()] = weights_dist[context.current.getID()] + context.next_edge.getWeight();
-			});
+			weight_dists[root.getID()] = 0;
+			config.callbacks.sort_nodes = descSortBFS;
+			config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
 			var bfs_res = $BFS.BFS(graph, root, config);
 
 			expect(Object.keys(bfs_res).length).to.equal(6);
 
-			expect(weights_dist['A']).to.equal(Number.POSITIVE_INFINITY);
-			expect(weights_dist['B']).to.equal(0);
-			expect(weights_dist['C']).to.equal(2);
-			expect(weights_dist['D']).to.equal(Number.POSITIVE_INFINITY);
-			expect(weights_dist['E']).to.equal(3);
-			expect(weights_dist['F']).to.equal(1);
+			expect(weight_dists['A']).to.equal(Number.POSITIVE_INFINITY);
+			expect(weight_dists['B']).to.equal(0);
+			expect(weight_dists['C']).to.equal(2);
+			expect(weight_dists['D']).to.equal(Number.POSITIVE_INFINITY);
+			expect(weight_dists['E']).to.equal(3);
+			expect(weight_dists['F']).to.equal(1);
 		});
 
 	});
 	
 });
+
+var ascSortBFS = (context: $BFS.BFS_Scope) => {
+	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
+		return a.edge.getWeight() - b.edge.getWeight();
+	});
+};
+
+var descSortBFS = (context: $BFS.BFS_Scope) => {
+	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
+		return b.edge.getWeight() - a.edge.getWeight();
+	});
+};
+
+var setWeightCostsBFS = (weight_dists ) => {
+	return (context: $BFS.BFS_Scope) => {
+		weight_dists[context.next_node.getID()] = weight_dists[context.current.getID()] + context.next_edge.getWeight();
+	}
+};
