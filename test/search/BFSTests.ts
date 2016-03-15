@@ -582,7 +582,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 						
 				var setWeightDistance = ( context: $BFS.BFS_Scope ) => {
 					weights[context.next_node.getID()] = weights[context.current.getID()] + context.next_edge.getWeight();
-				}
+				};
 				config.callbacks.node_unmarked.push(setWeightDistance);
 										
 				bfs_res = $BFS.BFS(graph, root, config);

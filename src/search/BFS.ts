@@ -7,11 +7,11 @@ import * as $CB from '../utils/callbackUtils';
 
 
 export interface BFS_Config {
-	result: {[id: string]: BFS_ResultEntry};
-	callbacks: BFS_Callbacks;
-	dir_mode: $G.GraphMode;
-	messages?: {};
-	filters?: any;
+	result			:	{[id: string]: BFS_ResultEntry};
+	callbacks		:	BFS_Callbacks;
+	dir_mode		:	$G.GraphMode;
+	messages?		: {};
+	filters?		: any;
 }
 
 export interface BFS_ResultEntry {
@@ -97,13 +97,6 @@ function BFS(graph 	 : $G.IGraph,
 	var i = 0;
 	while ( i < bfsScope.queue.length ) {
 		bfsScope.current = bfsScope.queue[i++];
-		/**
-		 * HOOK 2 - Sort adjacent nodes
-		 */
-		if ( typeof callbacks.sort_nodes === 'function' ) {
-			callbacks.sort_nodes(bfsScope);
-		}
-
 		
 		/**
 		 * Do we move only in the directed subgraph,
@@ -117,6 +110,13 @@ function BFS(graph 	 : $G.IGraph,
 		}
 		else if ( dir_mode === $G.GraphMode.DIRECTED ) {
 			bfsScope.adj_nodes = bfsScope.current.nextNodes();
+		}
+
+		/**
+		 * HOOK 2 - Sort adjacent nodes
+		 */
+		if ( typeof callbacks.sort_nodes === 'function' ) {
+			callbacks.sort_nodes(bfsScope);
 		}
 		
 
