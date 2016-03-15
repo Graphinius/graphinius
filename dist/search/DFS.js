@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var $G = require('../core/Graph');
 var $CB = require('../utils/callbackUtils');
 /**

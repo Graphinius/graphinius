@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var $DS = require("../utils/structUtils");
 var BaseNode = (function () {
     function BaseNode(_id, features) {
@@ -248,5 +249,5 @@ var BaseNode = (function () {
         });
     };
     return BaseNode;
-})();
+}());
 exports.BaseNode = BaseNode;

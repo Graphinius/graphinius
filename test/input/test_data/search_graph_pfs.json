@@ -1,0 +1,77 @@
+{
+  "name": "SEARCH graph for Priority First Search / Toposort",
+  "nodes": 7,
+  "dir_edges": 9,
+	"und_edges": 0,
+	"data": {
+		"A": {
+			"edges": [
+				{
+					"to": "B",
+					"directed": true,
+          "weight": 3
+				},
+				{
+					"to": "C",
+					"directed": true,
+          "weight": 4
+				},
+				{
+					"to": "D",
+					"directed": true,
+          "weight": 1
+				}
+			]
+		},
+		"B": {
+			"edges": [
+				{
+					"to": "F",
+					"directed": true,
+					"weight": 1
+				},
+				{
+					"to": "C",
+					"directed": true,
+					"weight": 2
+				}
+			]
+		},
+		"C": {
+			"edges": [
+				{
+					"to": "E",
+					"directed": true,
+          "weight": 1
+				}
+			]
+		},
+		"D": {
+			"edges": [
+				{
+					"to": "C",
+					"directed": true,
+          "weight": 6
+				},
+				{
+					"to": "E",
+					"directed": true,
+          "weight": 17
+				}
+			]
+		},
+		"E": {
+			"edges": [
+			]
+		},
+		"F": {
+			"edges": [
+				{
+					"to": "E",
+					"directed": true,
+					"weight": 5
+				}
+			]
+		}
+	}
+}

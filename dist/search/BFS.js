@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var $G = require('../core/Graph');
 var $CB = require('../utils/callbackUtils');
 /**
@@ -50,12 +51,6 @@ function BFS(graph, v, config) {
     while (i < bfsScope.queue.length) {
         bfsScope.current = bfsScope.queue[i++];
         /**
-         * HOOK 2 - Sort adjacent nodes
-         */
-        if (typeof callbacks.sort_nodes === 'function') {
-            callbacks.sort_nodes(bfsScope);
-        }
-        /**
          * Do we move only in the directed subgraph,
          * undirected subgraph or complete (mixed) graph?
          */
@@ -67,6 +62,12 @@ function BFS(graph, v, config) {
         }
         else if (dir_mode === $G.GraphMode.DIRECTED) {
             bfsScope.adj_nodes = bfsScope.current.nextNodes();
+        }
+        /**
+         * HOOK 2 - Sort adjacent nodes
+         */
+        if (typeof callbacks.sort_nodes === 'function') {
+            callbacks.sort_nodes(bfsScope);
         }
         for (var adj_idx in bfsScope.adj_nodes) {
             if (!bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {

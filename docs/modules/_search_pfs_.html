@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;utils/callbackUtils&quot; | Graphinius</title>
+	<title>&quot;search/PFS&quot; | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_utils_callbackutils_.html">&quot;utils/callbackUtils&quot;</a>
+					<a href="_search_pfs_.html">&quot;search/PFS&quot;</a>
 				</li>
 			</ul>
-			<h1>External module &quot;utils/callbackUtils&quot;</h1>
+			<h1>External module &quot;search/PFS&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -71,10 +71,19 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-kind-icon">PFS_<wbr><wbr>Config</a></li>
+							</ul>
+						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_utils_callbackutils_.html#execcallbacks" class="tsd-kind-icon">exec<wbr>Callbacks</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#pfs_bfs" class="tsd-kind-icon">PFS_<wbr>BFS</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#pfs_dfs" class="tsd-kind-icon">PFS_<wbr>DFS</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#preparepfsbfsstandardconfig" class="tsd-kind-icon">preparePFSBFSStandard<wbr>Config</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#preparepfsdfsstandardconfig" class="tsd-kind-icon">preparePFSDFSStandard<wbr>Config</a></li>
 							</ul>
 						</section>
 					</div>
@@ -83,33 +92,116 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="execcallbacks" class="tsd-anchor"></a>
-					<h3>exec<wbr>Callbacks</h3>
+					<a name="pfs_bfs" class="tsd-anchor"></a>
+					<h3>PFS_<wbr>BFS</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">exec<wbr>Callbacks<span class="tsd-signature-symbol">(</span>cbs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span>, context<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">PFS_<wbr>BFS<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, v<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/utils/callbackUtils.ts#L4">utils/callbackUtils.ts:4</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L29">search/PFS.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Priority first search on BFS</p>
+								</div>
+								<p>By default we are going to implement
+									greedy best-first-search (pure heuristic search)
+									which expands the path along the edges
+								of least weight, if no other cost function is given</p>
+								<dl class="tsd-comment-tags">
+									<dt>constructor</dt>
+									<dd></dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>cbs: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
 								</li>
 								<li>
-									<h5>context: <span class="tsd-signature-type">any</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>this pointer to the DFS or DFSVisit function</p>
-									</div>
+									<h5>v: <a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../interfaces/_search_bfs_.bfs_resultentry.html" class="tsd-signature-type">BFS_ResultEntry</a></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="pfs_dfs" class="tsd-anchor"></a>
+					<h3>PFS_<wbr>DFS</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">PFS_<wbr>DFS<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L67">search/PFS.ts:67</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Priority first search on DFS</p>
+								</div>
+								<p>Same default heuristics as PFS_BFS</p>
+								<dl class="tsd-comment-tags">
+									<dt>constructor</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>config: <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="preparepfsbfsstandardconfig" class="tsd-anchor"></a>
+					<h3>preparePFSBFSStandard<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">preparePFSBFSStandard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L43">search/PFS.ts:43</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="preparepfsdfsstandardconfig" class="tsd-anchor"></a>
+					<h3>preparePFSDFSStandard<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">preparePFSDFSStandard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L72">search/PFS.ts:72</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -142,10 +234,10 @@
 					<li class=" tsd-kind-external-module">
 						<a href="_search_dfs_.html">"search/DFS"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="_search_pfs_.html">"search/PFS"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="_utils_callbackutils_.html">"utils/callback<wbr>Utils"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -158,8 +250,20 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-kind-icon">PFS_<wbr><wbr>Config</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_utils_callbackutils_.html#execcallbacks" class="tsd-kind-icon">exec<wbr>Callbacks</a>
+						<a href="_search_pfs_.html#pfs_bfs" class="tsd-kind-icon">PFS_<wbr>BFS</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_pfs_.html#pfs_dfs" class="tsd-kind-icon">PFS_<wbr>DFS</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_pfs_.html#preparepfsbfsstandardconfig" class="tsd-kind-icon">preparePFSBFSStandard<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_pfs_.html#preparepfsdfsstandardconfig" class="tsd-kind-icon">preparePFSDFSStandard<wbr>Config</a>
 					</li>
 				</ul>
 			</nav>

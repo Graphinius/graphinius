@@ -87,6 +87,7 @@
 /* 1 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var BaseEdge = (function () {
 	    function BaseEdge(_id, _node_a, _node_b, options) {
 	        this._id = _id;
@@ -127,7 +128,7 @@
 	        return { a: this._node_a, b: this._node_b };
 	    };
 	    return BaseEdge;
-	})();
+	}());
 	exports.BaseEdge = BaseEdge;
 
 
@@ -136,6 +137,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var $DS = __webpack_require__(3);
 	var BaseNode = (function () {
 	    function BaseNode(_id, features) {
@@ -385,7 +387,7 @@
 	        });
 	    };
 	    return BaseNode;
-	})();
+	}());
 	exports.BaseNode = BaseNode;
 
 
@@ -393,6 +395,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	"use strict";
 	/**
 	 * Method to deep clone an object, should already have been tested..
 	 * @TODO: Test it more..
@@ -492,6 +495,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
@@ -918,7 +922,7 @@
 	        return obj[key];
 	    };
 	    return BaseGraph;
-	})();
+	}());
 	exports.BaseGraph = BaseGraph;
 
 
@@ -927,6 +931,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var path = __webpack_require__(6);
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);
@@ -1063,7 +1068,7 @@
 	        }
 	    };
 	    return CSVInput;
-	})();
+	}());
 	exports.CSVInput = CSVInput;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
@@ -1406,6 +1411,7 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var http = __webpack_require__(8);
 	/**
 	 * @TODO: Test it !!!
@@ -1437,6 +1443,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(9);
@@ -1544,7 +1551,7 @@
 	        }
 	    };
 	    return JSONInput;
-	})();
+	}());
 	exports.JSONInput = JSONInput;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
@@ -1554,6 +1561,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(12);
 	/**
@@ -1605,12 +1613,6 @@
 	    while (i < bfsScope.queue.length) {
 	        bfsScope.current = bfsScope.queue[i++];
 	        /**
-	         * HOOK 2 - Sort adjacent nodes
-	         */
-	        if (typeof callbacks.sort_nodes === 'function') {
-	            callbacks.sort_nodes(bfsScope);
-	        }
-	        /**
 	         * Do we move only in the directed subgraph,
 	         * undirected subgraph or complete (mixed) graph?
 	         */
@@ -1622,6 +1624,12 @@
 	        }
 	        else if (dir_mode === $G.GraphMode.DIRECTED) {
 	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
+	        }
+	        /**
+	         * HOOK 2 - Sort adjacent nodes
+	         */
+	        if (typeof callbacks.sort_nodes === 'function') {
+	            callbacks.sort_nodes(bfsScope);
 	        }
 	        for (var adj_idx in bfsScope.adj_nodes) {
 	            if (!bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {
@@ -1707,6 +1715,7 @@
 /* 12 */
 /***/ function(module, exports) {
 
+	"use strict";
 	/**
 	 * @param context this pointer to the DFS or DFSVisit function
 	 */
@@ -1725,6 +1734,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(12);
 	/**

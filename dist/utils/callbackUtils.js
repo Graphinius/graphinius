@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @param context this pointer to the DFS or DFSVisit function
  */

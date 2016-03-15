@@ -189,7 +189,7 @@ declare module Graphinius {
   }
   
   /**
-   * @TODO Declare function DFSScope
+   * @TODO Declare function DFS_Scope
    */
   
   export interface DFS_Callbacks {

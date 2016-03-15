@@ -723,7 +723,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
           config = $DFS.prepareDFSStandardConfig();
           
       var weight_costs = {};
-      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+      var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
         var parent = context.stack_entry.parent;
         var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
         
@@ -756,7 +756,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       config.dir_mode = $G.GraphMode.DIRECTED;
       
       var weight_costs = {};
-      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+      var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
         var parent = context.stack_entry.parent;
         var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
         weight_costs[context.current.getID()] = parent_accumulated_weight 
@@ -784,7 +784,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
       config.dir_mode = $G.GraphMode.UNDIRECTED;
       
       var weight_costs = {};
-      var setWeightCost = function( context: $DFS.DFSVisitScope ) {
+      var setWeightCost = function( context: $DFS.DFSVisit_Scope ) {
         var parent = context.stack_entry.parent;
         var parent_accumulated_weight = isNaN(weight_costs[parent.getID()]) ? 0 : weight_costs[parent.getID()];
         weight_costs[context.current.getID()] = parent_accumulated_weight 

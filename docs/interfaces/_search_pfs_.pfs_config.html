@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DFSVisitScope | Graphinius</title>
+	<title>PFS_Config | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_search_dfs_.html">&quot;search/DFS&quot;</a>
+					<a href="../modules/_search_pfs_.html">&quot;search/PFS&quot;</a>
 				</li>
 				<li>
-					<a href="_search_dfs_.dfsvisitscope.html">DFSVisitScope</a>
+					<a href="_search_pfs_.pfs_config.html">PFS_Config</a>
 				</li>
 			</ul>
-			<h1>Interface DFSVisitScope</h1>
+			<h1>Interface PFS_Config</h1>
 		</div>
 	</div>
 </header>
@@ -74,7 +74,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DFSVisitScope</span>
+						<span class="target">PFS_Config</span>
 					</li>
 				</ul>
 			</section>
@@ -85,11 +85,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfsvisitscope.html#adj_nodes" class="tsd-kind-icon">adj_<wbr>nodes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfsvisitscope.html#current" class="tsd-kind-icon">current</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfsvisitscope.html#current_root" class="tsd-kind-icon">current_<wbr>root</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfsvisitscope.html#stack" class="tsd-kind-icon">stack</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfsvisitscope.html#stack_entry" class="tsd-kind-icon">stack_<wbr>entry</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_config.html#cost_function" class="tsd-kind-icon">cost_<wbr>function</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,52 +95,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="adj_nodes" class="tsd-anchor"></a>
-					<h3>adj_<wbr>nodes</h3>
-					<div class="tsd-signature tsd-kind-icon">adj_<wbr>nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="cost_function" class="tsd-anchor"></a>
+					<h3>cost_<wbr>function</h3>
+					<div class="tsd-signature tsd-kind-icon">cost_<wbr>function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L34">search/DFS.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L12">search/PFS.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="current" class="tsd-anchor"></a>
-					<h3>current</h3>
-					<div class="tsd-signature tsd-kind-icon">current<span class="tsd-signature-symbol">:</span> <a href="_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></div>
+					<a name="dir_mode" class="tsd-anchor"></a>
+					<h3>dir_<wbr>mode</h3>
+					<div class="tsd-signature tsd-kind-icon">dir_<wbr>mode<span class="tsd-signature-symbol">:</span> <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L36">search/DFS.ts:36</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="current_root" class="tsd-anchor"></a>
-					<h3>current_<wbr>root</h3>
-					<div class="tsd-signature tsd-kind-icon">current_<wbr>root<span class="tsd-signature-symbol">:</span> <a href="_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L37">search/DFS.ts:37</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="stack" class="tsd-anchor"></a>
-					<h3>stack</h3>
-					<div class="tsd-signature tsd-kind-icon">stack<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_search_dfs_.stackentry.html" class="tsd-signature-type">StackEntry</a><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L33">search/DFS.ts:33</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="stack_entry" class="tsd-anchor"></a>
-					<h3>stack_<wbr>entry</h3>
-					<div class="tsd-signature tsd-kind-icon">stack_<wbr>entry<span class="tsd-signature-symbol">:</span> <a href="_search_dfs_.stackentry.html" class="tsd-signature-type">StackEntry</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L35">search/DFS.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L11">search/PFS.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -173,8 +140,11 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_search_bfs_.html">"search/BFS"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_search_dfs_.html">"search/DFS"</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_search_pfs_.html">"search/PFS"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_utils_callbackutils_.html">"utils/callback<wbr>Utils"</a>
@@ -189,53 +159,32 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfsscope.html" class="tsd-kind-icon">DFSScope</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfsvisitscope.html" class="tsd-kind-icon">DFSVisit<wbr>Scope</a>
+						<a href="_search_pfs_.pfs_config.html" class="tsd-kind-icon">PFS_<wbr><wbr>Config</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfsvisitscope.html#adj_nodes" class="tsd-kind-icon">adj_<wbr>nodes</a>
+								<a href="_search_pfs_.pfs_config.html#cost_function" class="tsd-kind-icon">cost_<wbr>function</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfsvisitscope.html#current" class="tsd-kind-icon">current</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfsvisitscope.html#current_root" class="tsd-kind-icon">current_<wbr>root</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfsvisitscope.html#stack" class="tsd-kind-icon">stack</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfsvisitscope.html#stack_entry" class="tsd-kind-icon">stack_<wbr>entry</a>
+								<a href="_search_pfs_.pfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_callbacks.html" class="tsd-kind-icon">DFS_<wbr><wbr>Callbacks</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_config.html" class="tsd-kind-icon">DFS_<wbr><wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.stackentry.html" class="tsd-kind-icon">Stack<wbr>Entry</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_search_pfs_.html#pfs_bfs" class="tsd-kind-icon">PFS_<wbr>BFS</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfs" class="tsd-kind-icon">DFS</a>
+						<a href="../modules/_search_pfs_.html#pfs_dfs" class="tsd-kind-icon">PFS_<wbr>DFS</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfsvisit" class="tsd-kind-icon">DFSVisit</a>
+						<a href="../modules/_search_pfs_.html#preparepfsbfsstandardconfig" class="tsd-kind-icon">preparePFSBFSStandard<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsstandardconfig" class="tsd-kind-icon">prepareDFSStandard<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsvisitstandardconfig" class="tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config</a>
+						<a href="../modules/_search_pfs_.html#preparepfsdfsstandardconfig" class="tsd-kind-icon">preparePFSDFSStandard<wbr>Config</a>
 					</li>
 				</ul>
 			</nav>

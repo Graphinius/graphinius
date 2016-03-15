@@ -21,14 +21,26 @@ export interface PFS_Config {
  * which expands the path along the edges
  * of least weight, if no other cost function is given
  *
+ * @param graph
+ * @param v
  * @param config
  * @constructor
  */
-function PFS_BFS( config: PFS_Config ) {
+function PFS_BFS( graph   : $G.IGraph,
+                  v       : $N.IBaseNode,
+                  config? : PFS_Config ) {
 
+  var config = config || preparePFSBFSStandardConfig(),
+      bfs_config = $BFS.prepareBFSStandardConfig();
+
+  bfs_config.callbacks.sort_nodes = config.cost_function;
+  bfs_config.dir_mode = config.dir_mode;
+
+  return $BFS.BFS(graph, v, bfs_config);
 }
 
-function prepareStandardPFSBFSConfig() {
+
+function preparePFSBFSStandardConfig() {
   var config : PFS_Config = {
     dir_mode: $G.GraphMode.MIXED,
     cost_function: null
@@ -44,8 +56,36 @@ function prepareStandardPFSBFSConfig() {
 }
 
 
-function prepareStandardPFSDFSConfig() {
+/**
+ * Priority first search on DFS
+ *
+ * Same default heuristics as PFS_BFS
+ *
+ * @param config
+ * @constructor
+ */
+function PFS_DFS( config: PFS_Config ) {
 
 }
 
-export { PFS_BFS, prepareStandardPFSBFSConfig };
+
+function preparePFSDFSStandardConfig() {
+  var config : PFS_Config = {
+    dir_mode: $G.GraphMode.MIXED,
+    cost_function: null
+  };
+
+  config.cost_function = ( context: $DFS.DFSVisit_Scope ) => {
+    return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
+      return a.edge.getWeight() - b.edge.getWeight();
+    });
+  };
+
+  return config;
+}
+
+export {  PFS_BFS,
+          PFS_DFS,
+          preparePFSBFSStandardConfig,
+          preparePFSDFSStandardConfig
+       };

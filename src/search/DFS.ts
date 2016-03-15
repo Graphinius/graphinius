@@ -21,6 +21,7 @@ export interface DFS_Callbacks {
 	node_marked?			: Array<Function>;
 	node_unmarked?		: Array<Function>;
 	adj_nodes_pushed?	: Array<Function>;
+	
 }
 
 export interface StackEntry {
@@ -29,7 +30,7 @@ export interface StackEntry {
   weight? : number;
 }
 
-export interface DFSVisitScope {
+export interface DFSVisit_Scope {
 	stack 				: Array<StackEntry>;
 	adj_nodes			: Array<$N.NeighborEntry>;
 	stack_entry 	: StackEntry;
@@ -37,7 +38,7 @@ export interface DFSVisitScope {
 	current_root	: $N.IBaseNode;
 }
 
-export interface DFSScope {
+export interface DFS_Scope {
 	marked 	  : {[id: string] : boolean};
 	nodes		  : {[id: string] : $N.IBaseNode};
 }
@@ -58,7 +59,7 @@ function DFSVisit(graph 				: $G.IGraph,
                   config?       : DFS_Config) {
 
 	// scope to pass to callbacks at different stages of execution
-	var dfsVisitScope : DFSVisitScope = {
+	var dfsVisitScope : DFSVisit_Scope = {
 		stack					: [],
 		adj_nodes			: [],
 		stack_entry		: null,
@@ -202,7 +203,7 @@ function DFS( graph 		  : $G.IGraph,
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
   
-	var dfsScope : DFSScope = {
+	var dfsScope : DFS_Scope = {
       marked 	  : {},
       nodes 	  : graph.getNodes()
   };
@@ -215,7 +216,7 @@ function DFS( graph 		  : $G.IGraph,
 	}
 
 	callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
-	var markNode = function ( context : DFSVisitScope ) {
+	var markNode = function ( context : DFSVisit_Scope ) {
 		dfsScope.marked[context.current.getID()] = true;
 	};
 	callbacks.adj_nodes_pushed.push(markNode);
@@ -236,7 +237,7 @@ function DFS( graph 		  : $G.IGraph,
    * of DFSVisit, but also to it's appropriate
    * segment of the dfs_result object
    */
-  var addToProperSegment = function( context: DFSVisitScope ) {    
+  var addToProperSegment = function( context: DFSVisit_Scope ) {    
     dfs_result[dfs_idx][context.current.getID()] = {
 			parent 	: context.stack_entry.parent,
 			counter : counter()
@@ -293,7 +294,7 @@ function prepareDFSVisitStandardConfig() {
 	};
   
 	callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-	var initDFSVisit = function( context : DFSVisitScope ) {
+	var initDFSVisit = function( context : DFSVisit_Scope ) {
 		result[context.current_root.getID()] = {
 			parent 	: context.current_root
 		};
@@ -301,7 +302,7 @@ function prepareDFSVisitStandardConfig() {
 	callbacks.init_dfs_visit.push(initDFSVisit);
   
 	callbacks.node_unmarked = callbacks.node_unmarked || [];
-	var setResultEntry = function( context : DFSVisitScope ) {
+	var setResultEntry = function( context : DFSVisit_Scope ) {
 		result[context.current.getID()] = {
 			parent 	: context.stack_entry.parent,
 			counter : counter()
@@ -325,7 +326,7 @@ function prepareDFSStandardConfig() {
   
 	// Now add outer DFS INIT callback
 	callbacks.init_dfs = callbacks.init_dfs || [];
-	var setInitialResultEntries = function( context : DFSScope ) {
+	var setInitialResultEntries = function( context : DFS_Scope ) {
 		// for ( var node_id in context.nodes ) {
 		// 	result[node_id] = {
 		// 		parent: null,

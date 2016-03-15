@@ -1,4 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
+"use strict";
 var path = require('path');
 var fs = require('fs');
 var $G = require('../core/Graph');
@@ -135,5 +136,5 @@ var CSVInput = (function () {
         }
     };
     return CSVInput;
-})();
+}());
 exports.CSVInput = CSVInput;
