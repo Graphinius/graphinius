@@ -432,7 +432,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		
 		/**
      * Because of our graph, this currently yields the same
-     * result as our test case in DIRECTED mode...
+     * result as our test case in DIRECTED _mode...
      */
 		it('should correctly compute lookup distance from node G', () => {
 			var root = graph.getNodeById('G'),

@@ -21,7 +21,7 @@ describe('GRAPH TESTS: ', () => {
 			stats		: $G.GraphStats,
 			csv			: $CSV.CSVInput = new $CSV.CSVInput();
 	
-	describe('Basic graph instantiation and mode handling', () => {
+	describe('Basic graph instantiation and _mode handling', () => {
 	
 		it('should correctly instantiate a graph with GraphMode INIT (no edges added)', () => {
 			graph = new Graph('Test graph');
@@ -43,7 +43,7 @@ describe('GRAPH TESTS: ', () => {
 		 * node_a has in_degree 0, out_degree 0, degree 1
 		 * node_b has in_degree 0, out_degree 0, degree 1
 		 * graph has 2 nodes, 1 undirected edge
-		 * graph is in UNDIRECTED mode
+		 * graph is in UNDIRECTED _mode
 		 */
 		it('should correctly add an undirected edge between two nodes', () => {
 			node_b = graph.addNode('B');
@@ -68,7 +68,7 @@ describe('GRAPH TESTS: ', () => {
 		 * node_a has in_degree 0, out_degree 1, degree 1
 		 * node_b has in_degree 1, out_degree 0, degree 1
 		 * graph has 2 nodes, 1 undirected edge, 1 directed edge
-		 * graph is in DIRECTED mode
+		 * graph is in DIRECTED _mode
 		 */
 		it('should correctly add a directed edge between two nodes', () => {
 			graph = new Graph('Test graph');
@@ -94,7 +94,7 @@ describe('GRAPH TESTS: ', () => {
 		 * edge has to be undirected and a loop
 		 * node_a has in_degree 0, out_degree 0, degree 1
 		 * graph has 1 node, 1 undirected edge
-		 * graph is in UNDIRECTED mode
+		 * graph is in UNDIRECTED _mode
 		 */
 		it('should correctly add an undirected loop', () => {
 			graph = new Graph('Test graph');
@@ -116,7 +116,7 @@ describe('GRAPH TESTS: ', () => {
 		 * edge has to be directed and a loop
 		 * node_a has in_degree 1, out_degree 1, degree 0
 		 * graph has 1 node, 1 directed edge
-		 * graph is in DIRECTED mode
+		 * graph is in DIRECTED _mode
 		 */
 		it('should correctly add a directed loop', () => {
 			graph = new Graph('Test graph');
@@ -178,7 +178,7 @@ describe('GRAPH TESTS: ', () => {
 		 * node_a has in_degree 0, out_degree 0, degree 1
 		 * node_b has in_degree 1, out_degree 1, degree 1
 		 * graph has 2 node, 1 directed edge, 1 undirected edge
-		 * graph is in MIXED mode
+		 * graph is in MIXED _mode
 		 */
 		it('should correctly instantiate a mixed graph', () => {
 			graph = new Graph('Test graph');
@@ -325,7 +325,7 @@ describe('GRAPH TESTS: ', () => {
 	});
 		
 		
-	describe('A little more complex scenario with 4 nodes and 7 edges, mixed mode', () => {
+	describe('A little more complex scenario with 4 nodes and 7 edges, mixed _mode', () => {
 		
 		var graph,
 				n_a, n_b, n_c, n_d, node_vana,
@@ -410,7 +410,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph still has 4 nodes
 		 * graph has same number of directed edges
 		 * graph has one less undirected edge
-		 * graph is still in MIXED mode
+		 * graph is still in MIXED _mode
 		 */
 		it('should remove an existing undirected edge, updating graph and node stats', () => {
 			var graph_nr_nodes = graph.nrNodes(),
@@ -448,7 +448,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph still has 4 nodes
 		 * graph has same number of undirected edges
 		 * graph has one less directed edge
-		 * graph is still in MIXED mode
+		 * graph is still in MIXED _mode
 		 */
 		it('should remove an existing directed edge, updating graph and node stats', () => {
 			var graph_nr_nodes = graph.nrNodes(),
@@ -483,9 +483,9 @@ describe('GRAPH TESTS: ', () => {
 		 * graph still has 4 nodes
 		 * graph has same number of directed edges
 		 * graph has 0 undirected edges
-		 * graph is now in DIRECTED mode
+		 * graph is now in DIRECTED _mode
 		 */
-		it('should remove ALL undirected edges, bringing the graph into DIRECTED mode', () => {
+		it('should remove ALL undirected edges, bringing the graph into DIRECTED _mode', () => {
 			var graph_nr_dir_edges = graph.nrDirEdges(),
 				graph_nr_und_edges = graph.nrUndEdges();
 			
@@ -504,9 +504,9 @@ describe('GRAPH TESTS: ', () => {
 		 * we trust node stats as per earlier examples
 		 * graph has same number of undirected edges
 		 * graph has 0 directed edges
-		 * graph is now in UNDIRECTED mode
+		 * graph is now in UNDIRECTED _mode
 		 */
-		it('should remove ALL directed edges, bringing the graph into UNDIRECTED mode', () => {
+		it('should remove ALL directed edges, bringing the graph into UNDIRECTED _mode', () => {
 			var	graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges();
 			
@@ -528,9 +528,9 @@ describe('GRAPH TESTS: ', () => {
 		 * we trust node stats as per earlier examples
 		 * graph has 0 undirected edges
 		 * graph has 0 directed edges
-		 * graph is now in INIT mode
+		 * graph is now in INIT _mode
 		 */
-		it('should remove ALL directed edges, bringing the graph into UNDIRECTED mode', () => {
+		it('should remove ALL directed edges, bringing the graph into UNDIRECTED _mode', () => {
 			var	graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges();
 			
@@ -682,7 +682,7 @@ describe('GRAPH TESTS: ', () => {
 		 * Node deletion WITH edges
 		 * Delete C node -> only 2 edges, 1 undirected and 1 directed
 		 * A node should have 1 less undirected and 1 less incoming
-		 * graph should still be in mixed mode
+		 * graph should still be in mixed _mode
 		 */
 		it('should correctly delete a node including edges, test case 1', () => {
 			graph.deleteNode(n_c);
@@ -699,7 +699,7 @@ describe('GRAPH TESTS: ', () => {
 		 * Node deletion WITH edges
 		 * Delete A node -> connected to ALL edges
 		 * graph and all remaining nodes should be left without edges
-		 * graph should be in INIT mode...
+		 * graph should be in INIT _mode...
 		 */
 		it('should correctly delete a node including edges, test case 2', () => {
 			graph.deleteNode(n_a);			

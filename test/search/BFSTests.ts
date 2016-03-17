@@ -112,7 +112,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 
-		it('should refuse to traverse a graph with mode set to INIT', () => {
+		it('should refuse to traverse a graph with _mode set to INIT', () => {
 			var root = graph.getRandomNode(),
 					config = $BFS.prepareBFSStandardConfig();
 			config.dir_mode = $G.GraphMode.INIT;
@@ -120,7 +120,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 
-		describe('computing distances in UNDIRECTED mode - ', () => {
+		describe('computing distances in UNDIRECTED _mode - ', () => {
 
 			it('should correctly compute distances from node A', () => {
 				var root = graph.getNodeById('A'),
@@ -260,7 +260,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 
-		describe('computing distances in DIRECTED mode - ', () => {
+		describe('computing distances in DIRECTED _mode - ', () => {
 
 			it('should correctly compute distances from node A', () => {
 				var root = graph.getNodeById('A'),
@@ -400,7 +400,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 
-		describe('computing distances in MIXED mode - ', () => {
+		describe('computing distances in MIXED _mode - ', () => {
 
 			it('should correctly compute distances from node A', () => {
 				var root = graph.getNodeById('A');
@@ -528,7 +528,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 		
 		
-		describe('computing distance weight_dists in MIXED mode - ', () => {
+		describe('computing distance weight_dists in MIXED _mode - ', () => {
 
 			it('should correctly compute weight_dists from node A', () => {				
 				json._weighted_mode = true;
@@ -586,7 +586,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 		
 		/**
-		 * Do we need weight tests for undirected or directed mode??
+		 * Do we need weight tests for undirected or directed _mode??
 		 * Probably not, as we have already tested correct DFS
 		 * graph traversal extensively above...
 		 */

@@ -58,7 +58,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
 		
 		
-		it('should correctly generate our small example graph out of a JSON file with direction mode set to undirected', () => {
+		it('should correctly generate our small example graph out of a JSON file with direction _mode set to undirected', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = false;
@@ -69,7 +69,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
 		
 		
-		it('should correctly generate our small example graph out of a JSON file with direction mode set to directed', () => {
+		it('should correctly generate our small example graph out of a JSON file with direction _mode set to directed', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = true;
@@ -215,7 +215,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
     
     
-    it('should correctly set edge weights to undefined if in unweighted mode', () => {
+    it('should correctly set edge weights to undefined if in unweighted _mode', () => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
       json._weighted_mode = false;

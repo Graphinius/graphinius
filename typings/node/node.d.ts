@@ -1176,41 +1176,41 @@ declare module "fs" {
      */
     export function rmdirSync(path: string): void;
     /*
-     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {mode} defaults to 0777.
+     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {_mode} defaults to 0777.
      *
      * @param path
      * @param callback No arguments other than a possible exception are given to the completion callback.
      */
     export function mkdir(path: string, callback?: (err?: NodeJS.ErrnoException) => void): void;
     /*
-     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {mode} defaults to 0777.
+     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {_mode} defaults to 0777.
      *
      * @param path
-     * @param mode
+     * @param _mode
      * @param callback No arguments other than a possible exception are given to the completion callback.
      */
     export function mkdir(path: string, mode: number, callback?: (err?: NodeJS.ErrnoException) => void): void;
     /*
-     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {mode} defaults to 0777.
+     * Asynchronous mkdir - creates the directory specified in {path}.  Parameter {_mode} defaults to 0777.
      *
      * @param path
-     * @param mode
+     * @param _mode
      * @param callback No arguments other than a possible exception are given to the completion callback.
      */
     export function mkdir(path: string, mode: string, callback?: (err?: NodeJS.ErrnoException) => void): void;
     /*
-     * Synchronous mkdir - creates the directory specified in {path}.  Parameter {mode} defaults to 0777.
+     * Synchronous mkdir - creates the directory specified in {path}.  Parameter {_mode} defaults to 0777.
      *
      * @param path
-     * @param mode
+     * @param _mode
      * @param callback No arguments other than a possible exception are given to the completion callback.
      */
     export function mkdirSync(path: string, mode?: number): void;
     /*
-     * Synchronous mkdir - creates the directory specified in {path}.  Parameter {mode} defaults to 0777.
+     * Synchronous mkdir - creates the directory specified in {path}.  Parameter {_mode} defaults to 0777.
      *
      * @param path
-     * @param mode
+     * @param _mode
      * @param callback No arguments other than a possible exception are given to the completion callback.
      */
     export function mkdirSync(path: string, mode?: string): void;

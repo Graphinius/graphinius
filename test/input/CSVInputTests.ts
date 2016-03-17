@@ -62,7 +62,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		/**
-		 * Adjacency list, but with mode set to 'undirected'
+		 * Adjacency list, but with _mode set to 'undirected'
 		 * graph should only have 4 undirected edges now.
 		 */
 		it('should construct a very small graph from an adjacency list with edges set to undirected', () => {
@@ -78,7 +78,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		/**
-		 * Adjacency list, but with mode set to 'directed'
+		 * Adjacency list, but with _mode set to 'directed'
 		 * graph should have 7 directed edges now.
 		 */
 		it('should construct a very small graph from an adjacency list with edges set to directed', () => {
@@ -108,7 +108,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		/**
-		 * Edge list, but with mode set to 'undirected'
+		 * Edge list, but with _mode set to 'undirected'
 		 * graph should only have 4 undirected edges now.
 		 */
 		it('should construct a very small graph from an edge list with edges set to undirected', () => {
@@ -124,7 +124,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		/**
-		 * Edge list, but with mode set to 'directed'
+		 * Edge list, but with _mode set to 'directed'
 		 * graph should have 7 directed edges now.
 		 */
 		it('should construct a very small graph from an edge list with edges set to directed', () => {
