@@ -115,7 +115,7 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('should not accept functions as input', () => {
       expect(binHeap.evalInputKey(()=>{})).to.be.NaN;
-    })
+    });
 
   });
 
@@ -157,6 +157,14 @@ describe('BINARY HEAP TESTS - ', () => {
 
   describe('Adding / removing elements tests - ', () => {
 
+    beforeEach(() => {
+      binHeap = new $BH.BinaryHeap();
+    });
+    
+    it('should refuse to add an element whose priority evaluates to NaN', () => {
+      expect(binHeap.insert.bind(binHeap, "blahoo")).to.throw("Cannot insert object without numeric priority.");
+    });
+
     it('should successfully add an element to the internal array');
 
     it('should successfully remove an element from the internal array');
@@ -165,7 +173,6 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
   describe('Ordering tests - MIN heap property - ', () => {
-
 
 
   });
