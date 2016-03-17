@@ -1,18 +1,12 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/CSVInput';
 import * as $C from '../../test/input/common';
 
 var expect = chai.expect,
-		Node = $N.BaseNode,
-		Edge = $E.BaseEdge,
-		Graph = $G.BaseGraph,
-		CSV = $I.CSVInput,
-		REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/";
+		CSV = $I.CSVInput;
 
 
 describe('GRAPH CSV INPUT TESTS', () => {

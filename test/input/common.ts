@@ -1,14 +1,9 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 
 var expect 	= chai.expect;
-var Node 		= $N.BaseNode;
-var Edge 		= $E.BaseEdge;
-var Graph 	= $G.BaseGraph;
 		
 function checkSmallGraphStats(graph : $G.IGraph) {
 	var stats = graph.getStats();
