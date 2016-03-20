@@ -49,6 +49,12 @@ var BinaryHeap = (function () {
     BinaryHeap.prototype.evalInputObjID = function (obj) {
         return this._evalObjID(obj);
     };
+    BinaryHeap.prototype.peek = function () {
+        return this._array[0];
+    };
+    BinaryHeap.prototype.pop = function () {
+        return this.remove(this._array[0]);
+    };
     /**
      * Insert - Adding an object to the heap
      * @param obj the obj to add to the heap
@@ -59,6 +65,7 @@ var BinaryHeap = (function () {
             throw new Error("Cannot insert object without numeric priority.");
         }
         this._array.push(obj);
+        this.trickleUp(this._array.length - 1);
     };
     BinaryHeap.prototype.remove = function (obj) {
         if (isNaN(this._evalPriority(obj))) {
@@ -71,140 +78,68 @@ var BinaryHeap = (function () {
                 found = this._array[i];
                 // we pop the last element
                 var last = this._array.pop();
-                // if the last one was (incidentally) the correct one, we are done
-                if (this._array.length - 1 === i) {
-                    return found;
-                }
-                else if (this.size()) {
+                // if this was not the last element (we're down to size 0),
+                // we switch the last with the found element
+                // and restore the heaps order, but only if the
+                // heap size is not down to zero
+                if (this.size()) {
                     this._array[i] = last;
                     // now trickle...
                     this.trickleUp(i);
                     this.trickleDown(i);
                 }
             }
+            return found;
         }
         return found;
     };
     BinaryHeap.prototype.trickleDown = function (i) {
+        var parent = this._array[i];
+        // run until we manually break
+        while (true) {
+            var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
+            // check if left child exists
+            if (left_child && !this.orderCorrect(parent, left_child)) {
+                swap = left_child_idx;
+            }
+            if (right_child && !this.orderCorrect(parent, right_child)
+                && !this.orderCorrect(left_child, right_child)) {
+                swap = right_child_idx;
+            }
+            if (swap === null) {
+                break;
+            }
+            // we only have to swap one child, doesn't matter which one
+            this._array[i] = this._array[swap];
+            this._array[swap] = parent;
+            i = swap;
+        }
     };
     BinaryHeap.prototype.trickleUp = function (i) {
+        var child = this._array[i];
+        // Can only trickle up from positive levels
+        while (i) {
+            var parent_idx = Math.floor((i + 1) / 2) - 1, parent = this._array[parent_idx];
+            if (parent && this.orderCorrect(parent, child)) {
+                break;
+            }
+            else {
+                this._array[parent_idx] = child;
+                this._array[i] = parent;
+                i = parent_idx;
+            }
+        }
     };
-    /**
-     *
-     */
-    BinaryHeap.prototype.swap = function (obj_a, obj_b) {
+    BinaryHeap.prototype.orderCorrect = function (parent, child) {
+        var parent_pr = this._evalPriority(parent);
+        var child_pr = this._evalPriority(child);
+        if (this._mode === BinaryHeapMode.MIN) {
+            return parent_pr <= child_pr;
+        }
+        else {
+            return parent_pr >= child_pr;
+        }
     };
     return BinaryHeap;
 }());
 exports.BinaryHeap = BinaryHeap;
-//
-// BinaryMinHeap.prototype = {
-//   push: function(element) {
-//     // Add the new element to the end of the array.
-//     this.content.push(element);
-//     // Allow it to bubble up.
-//     this.bubbleUp(this.content.length - 1);
-//   },
-//
-//   pop: function() {
-//     // Store the first element so we can return it later.
-//     var result = this.content[0];
-//     // Get the element at the end of the array.
-//     var end = this.content.pop();
-//     // If there are any elements left, put the end element at the
-//     // start, and let it sink down.
-//     if (this.content.length > 0) {
-//       this.content[0] = end;
-//       this.sinkDown(0);
-//     }
-//     return result;
-//   },
-//
-//   remove: function(node) {
-//     var length = this.content.length;
-//     // To remove a value, we must search through the array to find
-//     // it.
-//     for (var i = 0; i < length; i++) {
-//       if (this.content[i] != node) continue;
-//       // When it is found, the process seen in 'pop' is repeated
-//       // to fill up the hole.
-//       var end = this.content.pop();
-//       // If the element we popped was the one we needed to remove,
-//       // we're done.
-//       if (i == length - 1) break;
-//       // Otherwise, we replace the removed element with the popped
-//       // one, and allow it to float up or sink down as appropriate.
-//       this.content[i] = end;
-//       this.bubbleUp(i);
-//       this.sinkDown(i);
-//       break;
-//     }
-//   },
-//
-//   size: function() {
-//     return this.content.length;
-//   },
-//
-//   bubbleUp: function(n) {
-//     // Fetch the element that has to be moved.
-//     var element = this.content[n], score = this.scoreFunction(element);
-//     // When at 0, an element can not go up any further.
-//     while (n > 0) {
-//       // Compute the parent element's index, and fetch it.
-//       var parentN = Math.floor((n + 1) / 2) - 1,
-//         parent = this.content[parentN];
-//       // If the parent has a lesser score, things are in order and we
-//       // are done.
-//       if (score >= this.scoreFunction(parent))
-//         break;
-//
-//       // Otherwise, swap the parent with the current element and
-//       // continue.
-//       this.content[parentN] = element;
-//       this.content[n] = parent;
-//       n = parentN;
-//     }
-//   },
-//
-//   sinkDown: function(n) {
-//     // Look up the target element and its score.
-//     var length = this.content.length,
-//       element = this.content[n],
-//       elemScore = this.scoreFunction(element);
-//
-//     while(true) {
-//       // Compute the indices of the child elements.
-//       var child2N = (n + 1) * 2, child1N = child2N - 1;
-//       // This is used to store the new position of the element,
-//       // if any.
-//       var swap = null;
-//       // If the first child exists (is inside the array)...
-//       if (child1N < length) {
-//         // Look it up and compute its score.
-//         var child1 = this.content[child1N],
-//           child1Score = this.scoreFunction(child1);
-//         // If the score is less than our element's, we need to swap.
-//         if (child1Score < elemScore)
-//           swap = child1N;
-//       }
-//       // Do the same checks for the other child.
-//       if (child2N < length) {
-//         var child2 = this.content[child2N],
-//           child2Score = this.scoreFunction(child2);
-//         if (child2Score < (swap == null ? elemScore : child1Score))
-//           swap = child2N;
-//       }
-//
-//       // No need to swap further, we are done.
-//       if (swap == null) break;
-//
-//       // Otherwise, swap and continue.
-//       this.content[n] = this.content[swap];
-//       this.content[swap] = element;
-//       n = swap;
-//     }
-//   },
-//
-//   getMin: function() {
-//     return this.content[0];
-//   },

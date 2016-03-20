@@ -276,70 +276,87 @@ describe('BINARY HEAP TESTS - ', () => {
 
   describe('Ordering tests on single elements - ', () => {
     
-    // it('should trickle down a smaller element in a MIN HEAP', () => {
-    //   binHeap = new $BH.BinaryHeap();
-    //   binHeap.insert(5);
-    //   binHeap.insert(15);
-    //   binHeap.insert(155);
-    //   binHeap.insert(55);
-    //   expect(binHeap.peek()).to.equal(5);
-    // });
-    //
-    //
-    // it('should trickle down a larger element in a MAX HEAP', () => {
-    //   binHeap = new $BH.BinaryHeap(Mode.MAX);
-    //   binHeap.insert(115);
-    //   binHeap.insert(55);
-    //   binHeap.insert(75);
-    //   binHeap.insert(5);
-    //
-    //   console.dir(binHeap);
-    //   expect(binHeap.peek()).to.equal(115);
-    // });
-    //
-    //
-    // it('should trickle up correctly upon removing an object, MIN HEAP', () => {
-    //   binHeap = new $BH.BinaryHeap();
-    //   binHeap.insert(5);
-    //   binHeap.insert(1);
-    //   binHeap.insert(16);
-    //   binHeap.insert(7);
-    //   binHeap.insert(8);
-    //
-    //   console.dir(binHeap);
-    //   expect(binHeap.getMin()).to.equal(1);
-    //   expect(binHeap.peek()).to.equal(5);
-    // });
-    //
-    //
-    // it('should trickle up correctly upon removing an object, MAX HEAP', () => {
-    //   binHeap = new $BH.BinaryHeap(Mode.MAX);
-    //   binHeap.insert(5);
-    //   binHeap.insert(1);
-    //   binHeap.insert(16);
-    //   binHeap.insert(7);
-    //   binHeap.insert(8);
-    //
-    //   console.dir(binHeap);
-    //
-    //   expect(binHeap.remove(16)).to.equal(16);
-    //
-    //   console.dir(binHeap);
-    //   expect(binHeap.peek()).to.equal(8);
-    // });
+    it('should trickle down a smaller element in a MIN HEAP', () => {
+      binHeap = new $BH.BinaryHeap();
+      binHeap.insert(5);
+      binHeap.insert(15);
+      binHeap.insert(155);
+      binHeap.insert(55);
+      expect(binHeap.peek()).to.equal(5);
+    });
 
 
-    // it('tests MIN heap on a slightly larger example', () => {
-    //   binHeap = new $BH.BinaryHeap();
-    //   for ( var i = 0; i < 500; i++ ) {
-    //     binHeap.insert((Math.random()*100000 - 50000)|0);
-    //   }
-    //   // console.dir(binHeap);
-    //   var priority = Number.NEGATIVE_INFINITY;
-    //   for ( var i = 0; i < 500; i++ ) {
-    //     binHeap.insert((Math.random()*100000 - 50000)|0);
-    //   }
-    // });
+    it('should trickle down a larger element in a MAX HEAP', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MAX);
+      binHeap.insert(55);
+      binHeap.insert(75);
+      binHeap.insert(115);
+      binHeap.insert(5);
+      binHeap.insert(1);
+      expect(binHeap.peek()).to.equal(115);
+    });
+
+
+    it('should trickle up correctly upon removing an object, MIN HEAP', () => {
+      binHeap = new $BH.BinaryHeap();
+      binHeap.insert(5);
+      binHeap.insert(1);
+      binHeap.insert(16);
+      binHeap.insert(7);
+      binHeap.insert(8);
+
+      expect(binHeap.pop()).to.equal(1);
+      expect(binHeap.pop()).to.equal(5);
+      expect(binHeap.pop()).to.equal(7);
+      expect(binHeap.pop()).to.equal(8);
+      expect(binHeap.pop()).to.equal(16);
+    });
+    
+    
+    it('should trickle up correctly upon removing an object, MAX HEAP', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MAX);
+      binHeap.insert(5);
+      binHeap.insert(1);
+      binHeap.insert(16);
+      binHeap.insert(7);
+      binHeap.insert(8);
+    
+      expect(binHeap.remove(16)).to.equal(16);
+      expect(binHeap.pop()).to.equal(8);
+      expect(binHeap.pop()).to.equal(7);
+      expect(binHeap.pop()).to.equal(5);
+      expect(binHeap.pop()).to.equal(1);
+    });
+
+
+    it('tests MIN heap on a slightly larger example', () => {
+      binHeap = new $BH.BinaryHeap();
+      for ( var i = 0; i < 500; i++ ) {
+        binHeap.insert((Math.random()*100000 - 50000)|0);
+      }
+      var last = Number.NEGATIVE_INFINITY,
+          current;
+      for ( var i = 0; i < 500; i++ ) {
+        current = binHeap.pop();
+        expect(current).to.be.at.least(last);
+        last = current;
+      }
+    });
+
+
+    it('tests MIN heap on a slightly larger example', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MAX);
+      for ( var i = 0; i < 500; i++ ) {
+        binHeap.insert((Math.random()*100000 - 50000)|0);
+      }
+      var last = Number.POSITIVE_INFINITY,
+        current;
+      for ( var i = 0; i < 500; i++ ) {
+        current = binHeap.pop();
+        expect(current).to.be.at.most(last);
+        last = current;
+      }
+    });
 
   });
 

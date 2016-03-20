@@ -19,8 +19,8 @@ export interface IBinaryHeap {
   // Actual heap operations
   insert(obj: any)              : void;
   remove(obj: any)              : any;
-  getMin()                      : any;
   peek()                        : any;
+  pop()                         : any;
 }
 
 
@@ -76,7 +76,7 @@ class BinaryHeap implements IBinaryHeap {
     return this._array[0];
   }
 
-  getMin() {
+  pop() {
     return this.remove(this._array[0]);
   }
 
@@ -90,8 +90,8 @@ class BinaryHeap implements IBinaryHeap {
       throw new Error("Cannot insert object without numeric priority.")
     }
 
-    this._array.unshift(obj);
-    this.trickleDown(0);
+    this._array.push(obj);
+    this.trickleUp(this._array.length - 1);
   }
   
   remove(obj: any) : any {
@@ -105,29 +105,28 @@ class BinaryHeap implements IBinaryHeap {
         found = this._array[i];
         // we pop the last element
         var last = this._array.pop();
-        // if the last one was (incidentally) the correct one, we are done
-        if ( this._array.length - 1 === i ) {
-          return found;
-        }
-        // else we switch the last with the found element
+        // if this was not the last element (we're down to size 0),
+        // we switch the last with the found element
         // and restore the heaps order, but only if the
         // heap size is not down to zero
-        else if ( this.size() ) {
+        if ( this.size() ) {
           this._array[i] = last;
           // now trickle...
           this.trickleUp(i);
           this.trickleDown(i);
         }
       }
+      return found;
     }
     return found;
   }
 
   private trickleDown(i: number) {
+    var parent = this._array[i];
+
     // run until we manually break
     while (true) {
-      var parent = this._array[i],
-          right_child_idx = (i + 1) * 2,
+          var right_child_idx = (i + 1) * 2,
           left_child_idx = right_child_idx - 1,
           right_child = this._array[right_child_idx],
           left_child = this._array[left_child_idx],
@@ -138,7 +137,8 @@ class BinaryHeap implements IBinaryHeap {
         swap = left_child_idx;
       }
 
-      if ( right_child && !this.orderCorrect( parent, right_child ) ) {
+      if ( right_child && !this.orderCorrect( parent, right_child )
+                       && !this.orderCorrect( left_child, right_child ) ) {
         swap = right_child_idx;
       }
 
@@ -154,10 +154,11 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   private trickleUp(i: number) {
+    var child = this._array[i];
+
     // Can only trickle up from positive levels
     while ( i ) {
-      var child = this._array[i],
-          parent_idx = (Math.floor(i + 1) / 2) - 1,
+      var parent_idx = Math.floor((i + 1) / 2) - 1,
           parent = this._array[parent_idx];
       if ( parent && this.orderCorrect( parent, child ) ) {
         break;
