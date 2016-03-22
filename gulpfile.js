@@ -8,6 +8,7 @@ var merge 			= require('merge2');
 var webpack 		= require('webpack-stream');
 var uglify 			= require('gulp-uglify');
 var rename 			= require('gulp-rename');
+var istanbul 		= require('gulp-istanbul');
 
 
 
@@ -17,11 +18,13 @@ var rename 			= require('gulp-rename');
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*.ts'],
+	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async_nomock/**/*Tests.js', 'test_async_nomock/**/*.map', 'build', 'dist', 'docs'],
-	tests: ['test/**/*.js'],
-	tests_async: ['test_async_nomock/**/*Tests.js']
+	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async_nomock/**/*Tests.js', 'test_async_nomock/**/*.map', 'build', 'dist', 'docs', 'coverage'],
+	tests_sync: ['test/**/*.js'],
+	tests_async: ['test_async_nomock/**/*Tests.js'],
+	tests_all: ['test/**/*.js', 'test_async_nomock/**/*Tests.js']
 };
 
 
@@ -36,10 +39,24 @@ var tsProject = ts.createProject({
 //----------------------------
 // TASKS
 //----------------------------
-gulp.task('build', function () {
+gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts(tsProject))
 						 .pipe(gulp.dest('.'));
+});
+
+
+// Documentation (type doc)
+gulp.task("tdoc", ['clean'], function() {
+	return gulp
+		.src(paths.typesources)
+		.pipe(tdoc({
+			module: "commonjs",
+			target: "es5",
+			out: "docs/",
+			name: "Graphinius"//,
+			// theme: "minimal"
+		}));
 });
 
 
@@ -75,25 +92,28 @@ gulp.task('bundle', ['pack'], function() {
 });
 
 
-// Documentation (type doc)
-gulp.task("tdoc", ['clean'], function() {
-	return gulp
-			.src(paths.typesources)
-			.pipe(tdoc({
-					module: "commonjs",
-					target: "es5",
-					out: "docs/",
-					name: "Graphinius"//,
-					// theme: "minimal"
-			}))
-	;
+gulp.task('test', ['build'], function () {
+	return gulp.src(paths.tests_sync, {read: false})
+						 .pipe(mocha({reporter: 'nyan',
+						 							timeout: 2000}));
 });
 
 
-gulp.task('test', ['build'], function () {
-	return gulp.src(paths.tests, {read: false})
+gulp.task('cov-test', ['pre-cov-test'], function () {
+	return gulp.src(paths.tests_all, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
-						 							timeout: 5000}));
+													timeout: 10000}))
+						 .pipe(istanbul.writeReports());
+					// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })); ;
+});
+
+
+gulp.task('pre-cov-test', ['build'], function () {
+	return gulp.src(paths.testsources)
+		// Covering files
+		.pipe(istanbul())
+		// Force `require` to return covered files
+		.pipe(istanbul.hookRequire());
 });
 
 
