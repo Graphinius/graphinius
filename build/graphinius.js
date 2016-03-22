@@ -271,6 +271,12 @@
 	    BaseNode.prototype.undEdges = function () {
 	        return this._und_edges;
 	    };
+	    BaseNode.prototype.dirEdges = function () {
+	        return $DS.mergeObjects([this._in_edges, this._out_edges]);
+	    };
+	    BaseNode.prototype.allEdges = function () {
+	        return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+	    };
 	    BaseNode.prototype.removeEdge = function (edge) {
 	        if (!this.hasEdge(edge)) {
 	            throw new Error("Cannot remove unconnected edge.");
@@ -382,7 +388,7 @@
 	    };
 	    BaseNode.prototype.adjNodes = function () {
 	        // console.log(this.nextNodes());
-	        return $DS.merge([this.nextNodes(), this.connNodes()], function (ne) {
+	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], function (ne) {
 	            return ne.node.getID();
 	        });
 	    };
@@ -453,11 +459,11 @@
 	 * if this is duplicate, the object will not be stored in result.
 	 * @returns {Array}
 	 */
-	function merge(args, cb) {
+	function mergeArrays(args, cb) {
 	    if (cb === void 0) { cb = undefined; }
 	    for (var arg_idx in args) {
 	        if (!Array.isArray(args[arg_idx])) {
-	            throw new Error('Will only merge arrays');
+	            throw new Error('Will only mergeArrays arrays');
 	        }
 	    }
 	    var seen = {}, result = [], identity;
@@ -472,7 +478,29 @@
 	    }
 	    return result;
 	}
-	exports.merge = merge;
+	exports.mergeArrays = mergeArrays;
+	/**
+	 * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
+	 * @param args Array of all the object to take keys from
+	 * @returns result object
+	 */
+	function mergeObjects(args) {
+	    for (var i = 0; i < args.length; i++) {
+	        if (Object.prototype.toString.call(args[i]) !== '[object Object]') {
+	            throw new Error('Will only take objects as inputs');
+	        }
+	    }
+	    var result = {};
+	    for (var i = 0; i < args.length; i++) {
+	        for (var key in args[i]) {
+	            if (args[i].hasOwnProperty(key)) {
+	                result[key] = args[i][key];
+	            }
+	        }
+	    }
+	    return result;
+	}
+	exports.mergeObjects = mergeObjects;
 	/**
 	 * @TODO Test !!!
 	 *

@@ -137,7 +137,7 @@ declare class Mocha {
     run(onComplete?: (failures: number) => void): Mocha.IRunner;
 }
 
-// merge the Mocha class declaration with a module
+// mergeArrays the Mocha class declaration with a module
 declare module Mocha {
     /** Partial interface for Mocha's `Runnable` class. */
     interface IRunnable {

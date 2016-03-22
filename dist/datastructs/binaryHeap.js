@@ -78,18 +78,16 @@ var BinaryHeap = (function () {
                 found = this._array[i];
                 // we pop the last element
                 var last = this._array.pop();
-                // if this was not the last element (we're down to size 0),
                 // we switch the last with the found element
                 // and restore the heaps order, but only if the
                 // heap size is not down to zero
                 if (this.size()) {
                     this._array[i] = last;
-                    // now trickle...
                     this.trickleUp(i);
                     this.trickleDown(i);
                 }
+                return found;
             }
-            return found;
         }
         return found;
     };

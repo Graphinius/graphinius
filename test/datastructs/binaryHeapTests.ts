@@ -344,7 +344,7 @@ describe('BINARY HEAP TESTS - ', () => {
     });
 
 
-    it('tests MIN heap on a slightly larger example', () => {
+    it('tests MAX heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap(Mode.MAX);
       for ( var i = 0; i < 500; i++ ) {
         binHeap.insert((Math.random()*100000 - 50000)|0);

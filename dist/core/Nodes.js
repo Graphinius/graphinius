@@ -133,6 +133,12 @@ var BaseNode = (function () {
     BaseNode.prototype.undEdges = function () {
         return this._und_edges;
     };
+    BaseNode.prototype.dirEdges = function () {
+        return $DS.mergeObjects([this._in_edges, this._out_edges]);
+    };
+    BaseNode.prototype.allEdges = function () {
+        return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+    };
     BaseNode.prototype.removeEdge = function (edge) {
         if (!this.hasEdge(edge)) {
             throw new Error("Cannot remove unconnected edge.");
@@ -244,7 +250,7 @@ var BaseNode = (function () {
     };
     BaseNode.prototype.adjNodes = function () {
         // console.log(this.nextNodes());
-        return $DS.merge([this.nextNodes(), this.connNodes()], function (ne) {
+        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], function (ne) {
             return ne.node.getID();
         });
     };

@@ -20,7 +20,7 @@ declare module _ {
         * after, assign, bind, bindAll, bindKey, chain, chunk, compact, compose, concat, countBy,
         * createCallback, curry, debounce, defaults, defer, delay, difference, filter, flatten,
         * forEach, forEachRight, forIn, forInRight, forOwn, forOwnRight, functions, groupBy,
-        * indexBy, initial, intersection, invert, invoke, keys, map, max, memoize, merge, min,
+        * indexBy, initial, intersection, invert, invoke, keys, map, max, memoize, mergeArrays, min,
         * object, omit, once, pairs, partial, partialRight, pick, pluck, pull, push, range, reject,
         * remove, rest, reverse, sample, shuffle, slice, sort, sortBy, splice, tap, throttle, times,
         * toArray, transform, union, uniq, unshift, unzip, values, where, without, wrap, and zip
@@ -11695,7 +11695,7 @@ declare module _ {
         mapValues<TResult>(where: Dictionary<TResult>): LoDashImplicitArrayWrapper<boolean>;
     }
 
-    //_.merge
+    //_.mergeArrays
     interface MergeCustomizer {
         (value: any, srcValue: any, key?: string, object?: Object, source?: Object): any;
     }
@@ -11722,7 +11722,7 @@ declare module _ {
         ): TResult;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TObject, TSource1, TSource2, TResult>(
             object: TObject,
@@ -11733,7 +11733,7 @@ declare module _ {
         ): TResult;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TObject, TSource1, TSource2, TSource3, TResult>(
             object: TObject,
@@ -11745,7 +11745,7 @@ declare module _ {
         ): TResult;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TObject, TSource1, TSource2, TSource3, TSource4, TResult>(
             object: TObject,
@@ -11758,7 +11758,7 @@ declare module _ {
         ): TResult;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TObject, TResult>(
             object: TObject,
@@ -11768,7 +11768,7 @@ declare module _ {
 
     interface LoDashImplicitObjectWrapper<T> {
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TSource, TResult>(
             source: TSource,
@@ -11777,7 +11777,7 @@ declare module _ {
         ): LoDashImplicitObjectWrapper<TResult>;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TSource1, TSource2, TResult>(
             source1: TSource1,
@@ -11787,7 +11787,7 @@ declare module _ {
         ): LoDashImplicitObjectWrapper<TResult>;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TSource1, TSource2, TSource3, TResult>(
             source1: TSource1,
@@ -11798,7 +11798,7 @@ declare module _ {
         ): LoDashImplicitObjectWrapper<TResult>;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TSource1, TSource2, TSource3, TSource4, TResult>(
             source1: TSource1,
@@ -11810,7 +11810,7 @@ declare module _ {
         ): LoDashImplicitObjectWrapper<TResult>;
 
         /**
-         * @see _.merge
+         * @see _.mergeArrays
          */
         merge<TResult>(
             ...otherArgs: any[]

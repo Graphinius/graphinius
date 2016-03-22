@@ -343,6 +343,28 @@ describe('==== NODE TESTS ====', () => {
 					expect(ins[6]).to.equal(e_6);
 					expect(ins[7]).to.equal(e_7);
 				});
+
+				it('should correctly retrieve all directed edges', () => {
+					var dirs = n_a.dirEdges();
+					expect(Object.keys(dirs).length).to.equal(5);
+					expect(dirs[3]).to.equal(e_3);
+					expect(dirs[4]).to.equal(e_4);
+					expect(dirs[5]).to.equal(e_5);
+					expect(dirs[6]).to.equal(e_6);
+					expect(dirs[7]).to.equal(e_7);
+				});
+
+				it('should correctly retrieve ALL edges', () => {
+					var alls = n_a.allEdges();
+					expect(Object.keys(alls).length).to.equal(7);
+					expect(alls[1]).to.equal(e_1);
+					expect(alls[2]).to.equal(e_2);
+					expect(alls[3]).to.equal(e_3);
+					expect(alls[4]).to.equal(e_4);
+					expect(alls[5]).to.equal(e_5);
+					expect(alls[6]).to.equal(e_6);
+					expect(alls[7]).to.equal(e_7);
+				});
 								
 			});			
 			

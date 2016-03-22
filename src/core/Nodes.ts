@@ -35,6 +35,9 @@ export interface IBaseNode {
 	inEdges() : {[k: string] : $E.IBaseEdge};
 	outEdges() : {[k: string] : $E.IBaseEdge};
 	undEdges() : {[k: string] : $E.IBaseEdge};
+	// TODO hack!! figure out how to appease type system
+	dirEdges() : {};
+	allEdges() : {};
 	
 	removeEdge(edge: $E.IBaseEdge) : void;
 	removeEdgeID(id: string) : void;
@@ -223,6 +226,14 @@ class BaseNode implements IBaseNode {
 	undEdges() : {[k: string] : $E.IBaseEdge} {
 		return this._und_edges;
 	}
+
+	dirEdges() : {} {
+		return $DS.mergeObjects([this._in_edges, this._out_edges]);
+	}
+
+	allEdges() : {} {
+		return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+	}
 	
 	removeEdge(edge: $E.IBaseEdge) : void {
 		if ( !this.hasEdge(edge) ) {
@@ -351,7 +362,7 @@ class BaseNode implements IBaseNode {
 
 	adjNodes() : Array<NeighborEntry> {
 		// console.log(this.nextNodes());
-    return $DS.merge([this.nextNodes(), this.connNodes()],
+    return $DS.mergeArrays([this.nextNodes(), this.connNodes()],
 											function(ne: NeighborEntry) {
 												return ne.node.getID()
 											});
