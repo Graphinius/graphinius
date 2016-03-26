@@ -28,6 +28,9 @@ var paths = {
 };
 
 
+//----------------------------
+// CONFIG
+//----------------------------
 var tsProject = ts.createProject({
 	target: "ES5",
 	module: "commonjs",
@@ -64,7 +67,6 @@ gulp.task("tdoc", ['clean'], function() {
 gulp.task('dist', ['tdoc'], function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject));
-
 	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
 	return merge([
@@ -95,16 +97,14 @@ gulp.task('bundle', ['pack'], function() {
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests_sync, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
-						 							timeout: 2000}));
+						 							timeout: 5000}));
 });
 
 
-gulp.task('cov-test', ['pre-cov-test'], function () {
-	return gulp.src(paths.tests_all, {read: false})
+gulp.task('test-async', ['build'], function () {
+	return gulp.src(paths.tests_async, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
-													timeout: 10000}))
-						 .pipe(istanbul.writeReports());
-					// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })); ;
+						 							timeout: 60000}));
 });
 
 
@@ -117,12 +117,13 @@ gulp.task('pre-cov-test', ['build'], function () {
 });
 
 
-gulp.task('test-async', ['build'], function () {
-	return gulp.src(paths.tests_async, {read: false})
-						 .pipe(mocha({reporter: 'nyan',
-						 							timeout: 5000}));
+gulp.task('cov-test', ['pre-cov-test'], function () {
+	return gulp.src(paths.tests_all, {read: false})
+		.pipe(mocha({reporter: 'nyan',
+			timeout: 60000}))
+		.pipe(istanbul.writeReports());
+	// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })); ;
 });
-
 
 gulp.task('clean', function () {
 	return gulp.src(paths.clean, {read: false})
@@ -141,14 +142,3 @@ gulp.task('watch-async', function () {
 
 
 gulp.task('default', ['watch']);
-
-
-// Packaging - Browser
-// gulp.task('browserify', ['dist'], function() {
-// 	// Single entry point to browserify
-// 	gulp.src('./index.js')
-// 		.pipe(browserify({
-// 		  insertGlobals : false
-// 		}))
-// 		.pipe(gulp.dest('./build/graphinius'))
-// });
