@@ -16,7 +16,8 @@ out.$G = {
 	core: {
 		Edge 				: Edges.BaseEdge,
 		Node 				: Nodes.BaseNode,
-		Graph 			: Graph.BaseGraph
+		Graph 			: Graph.BaseGraph,
+		GraphMode		: Graph.GraphMode
 	},
 	input: {
 		CsvInput 		: CsvInput.CSVInput,

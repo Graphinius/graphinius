@@ -28,10 +28,13 @@ var JSONInput = (function () {
                 if (request.readyState == 4 && request.status == 200) {
                     var json = JSON.parse(request.responseText);
                     graph = self.readFromJSON(json);
-                    cb(graph, undefined);
+                    if (cb) {
+                        cb(graph, undefined);
+                    }
                 }
             };
             request.open("GET", fileurl, true);
+            request.timeout = 60000;
             request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
             request.send();
         }

@@ -1,14 +1,16 @@
-var gulp 				= require('gulp');
-var clean 			= require('gulp-clean');
-var mocha 			= require('gulp-mocha');
-var ts 					= require('gulp-typescript');
-var tdoc 				= require("gulp-typedoc");
-var concat			= require('gulp-concat');
-var merge 			= require('merge2');
-var webpack 		= require('webpack-stream');
-var uglify 			= require('gulp-uglify');
-var rename 			= require('gulp-rename');
-var istanbul 		= require('gulp-istanbul');
+var gulp 						= require('gulp');
+var clean 					= require('gulp-clean');
+var mocha 					= require('gulp-mocha');
+var ts 							= require('gulp-typescript');
+var tdoc 						= require("gulp-typedoc");
+var concat					= require('gulp-concat');
+var merge 					= require('merge2');
+var webpack 				= require('webpack-stream');
+var uglify 					= require('gulp-uglify');
+var rename 					= require('gulp-rename');
+var istanbul 				= require('gulp-istanbul');
+var mochaPhantomJS	= require('gulp-mocha-phantomjs');
+var istanbulReport 	= require('gulp-istanbul-report');
 
 
 
@@ -94,6 +96,10 @@ gulp.task('bundle', ['pack'], function() {
 });
 
 
+//----------------------------
+// TEST TASKS
+//----------------------------
+// 'Normal' synchronous tests
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests_sync, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
@@ -101,6 +107,7 @@ gulp.task('test', ['build'], function () {
 });
 
 
+// 'Async tests - usually take a tad longer'
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
@@ -108,7 +115,32 @@ gulp.task('test-async', ['build'], function () {
 });
 
 
-gulp.task('pre-cov-test', ['build'], function () {
+// PHANTOM JS TESTS
+var coverageFile = './coverage/coverage.json';
+var mochaPhantomOpts = {
+	phantomjs: {
+		hooks: 'mocha-phantomjs-istanbul',
+		coverageFile: coverageFile,
+		reporter: 'spec',
+		settings: 'webSecurityEnabled=false; localToRemoteUrlAccess=true'
+	}
+};
+gulp.task('test-phantom', ['bundle'], function () {
+	// return gulp
+	// 	.src('test_phantomjs/testrunner.html')
+	// 	.pipe(mochaPhantomJS({reporter: 'spec'}));
+
+	gulp.src('test_phantomjs/testrunner.html', {read: false})
+		.pipe(mochaPhantomJS(mochaPhantomOpts))
+		.on('finish', function() {
+			gulp.src(coverageFile)
+				.pipe(istanbulReport())
+		});
+});
+
+
+// COVERAGE TESTS
+gulp.task('pre-cov-test', ['bundle'], function () {
 	return gulp.src(paths.testsources)
 		// Covering files
 		.pipe(istanbul())
@@ -124,6 +156,7 @@ gulp.task('cov-test', ['pre-cov-test'], function () {
 		.pipe(istanbul.writeReports());
 	// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })); ;
 });
+
 
 gulp.task('clean', function () {
 	return gulp.src(paths.clean, {read: false})
