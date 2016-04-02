@@ -1,6 +1,11 @@
+// var Mocha = require('mocha');
+// var chai = require('chai');
+// var $G = require('../build/graphinius.min.js');
+
 mocha.setup('bdd');
 mocha.timeout(60000);
 // mocha.reporter("nyan"); // has no effect, don't know why...
+
 var expect = chai.expect;
 
 var BASE_URL = 'http://berndmalle.com/graphinius-demo/test_data/json/';

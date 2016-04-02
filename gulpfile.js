@@ -11,6 +11,7 @@ var rename 					= require('gulp-rename');
 var istanbul 				= require('gulp-istanbul');
 var mochaPhantomJS	= require('gulp-mocha-phantomjs');
 var istanbulReport 	= require('gulp-istanbul-report');
+var shell           = require('gulp-shell');
 
 
 
@@ -116,36 +117,39 @@ gulp.task('test-async', ['build'], function () {
 
 
 // MANUAL PHANTOM TEST EXECUTION - WORKS
-
 // phantomjs --web-security=false  node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test_phantomjs/testrunner.html
 // mocha-phantomjs --setting webSecurityEnabled=false test_phantomjs/testrunner.html
+// gulp.task('pre-cov-phantom-test', ['bundle'], function () {
+// 	return gulp.src(paths.testsources)
+// 		// Covering files
+// 		.pipe(istanbul())
+// 		// Force `require` to return covered files
+// 		.pipe(istanbul.hookRequire());
+// });
 
-// PHANTOM JS TESTS - DON'T WORK
-var coverageFile = './coverage/coverage.json';
-var mochaPhantomOpts = {
-	phantomjs: {
-		hooks: 'mocha-phantomjs-istanbul',
-		coverageFile: coverageFile,
-		reporter: 'spec'
-	},
-	settings: 'webSecurityEnabled=false'
-};
-gulp.task('test-phantom', ['bundle'], function () {
-	// return gulp
-	// 	.src('test_phantomjs/testrunner.html')
-	// 	.pipe(mochaPhantomJS({reporter: 'spec'}));
+// gulp.task('test-phantom', ['pre-cov-phantom-test'], function () {
+//   return gulp.src('./test_phantomjs/testrunner.html', {read: false})
+//     .pipe(shell([
+//       "mocha-phantomjs --setting webSecurityEnabled=false test_phantomjs/testrunner.html --hooks test_phantomjs/phantom_hooks.js"
+//     ]))
+//     .pipe(istanbul.writeReports());
+// });
 
-	return gulp
-		.src('test_phantomjs/testrunner.html', {read: false})
-		.pipe(mochaPhantomJS(mochaPhantomOpts));
-		// .on('finish', function() {
-		// 	gulp.src(coverageFile)
-		// 		.pipe(istanbulReport())
-		// });
+
+gulp.task('test-browser', ['bundle'], function () {
+  gulp.src('test_phantomjs/testrunner.html', {read: false})
+    .pipe(mochaPhantomJS({
+      phantomjs: {
+        hooks: 'mocha-phantomjs-istanbul',
+        coverageFile: './coverage/coverage.json',
+        settings: 'webSecurity=false'
+      },
+      reporter: 'spec'
+  }));
 });
 
 
-// COVERAGE TESTS
+// COVERAGE TESTS SOURCE COVER
 gulp.task('pre-cov-test', ['build'], function () {
 	return gulp.src(paths.testsources)
 		// Covering files
