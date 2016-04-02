@@ -1,5 +1,5 @@
 
-var BASE_URL = 'http://berndmalle.com/graphinius-demo/test_data/json/';
+var BASE_URL_JSON = 'http://berndmalle.com/graphinius-demo/test_data/json/';
 
 
 describe('loading graph from remote URL - ', function() {
@@ -15,7 +15,7 @@ describe('loading graph from remote URL - ', function() {
     };
 
     var json      = new $G.input.JsonInput(false, false, false),
-        input_url = BASE_URL + 'small_graph.json',
+        input_url = BASE_URL_JSON + 'small_graph.json',
         graph     = json.readFromJSONURL(input_url, cb);
   });
 
@@ -33,7 +33,7 @@ describe('loading graph from remote URL - ', function() {
     };
 
     var json      = new $G.input.JsonInput(false, true, false),
-        input_url = BASE_URL + 'real_graph.json',
+        input_url = BASE_URL_JSON + 'real_graph.json',
         graph     = json.readFromJSONURL(input_url, cb);
   });
 

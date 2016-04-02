@@ -122,27 +122,32 @@ gulp.task('test-async', ['build'], function () {
 // mocha-phantomjs --setting webSecurityEnabled=false test_phantomjs/testrunner.html
 // COVERAGE TESTS SOURCE COVER
 gulp.task('pre-cov-phantom-test', ['bundle'], function () {
-	return gulp.src('./build/graphinius.min.js')
+	return gulp.src('./build/graphinius.js') // paths.testsources
 		// Covering files
-		.pipe(istanbul())
-		.pipe(gulp.dest('./build/istanbul'));
+		.pipe(istanbul({includeUntested: true}));
+    // .pipe(istanbul.hookRequire());
 });
 
 
 gulp.task('test-browser', ['pre-cov-phantom-test'], function () {
-	gulp.src('test_phantomjs/testrunner.html', {read: false})
+	return gulp.src('test_phantomjs/testrunner.html', {read: false})
 	.pipe(mochaPhantomJS({
 		phantomjs: {
 			hooks: 'mocha-phantomjs-istanbul',
-			coverageFile: './coverage/coverage.json',
+		  coverageFile: 'browser_coverage.json',
 			settings: {
 				webSecurityEnabled: false //,
 				// localToRemoteUrlAccessEnabled: false
 			}
 		},
-		reporter: 'spec'
+		reporter: 'spec',
 	}))
-	.pipe(istanbul.writeReports());
+  .pipe(istanbul.writeReports());
+  // .pipe(istanbul.writeReports({
+  //   dir: './coverage/browser-tests',
+  //   reporters: [ 'json' ],
+  //   reportOpts: { dir: './coverage/browser-tests'}
+  // }));
 });
 
 

@@ -9,23 +9,22 @@
 <body>
 <div id="mocha"></div>
 
-<script src="../build/istanbul/graphinius.min.js"></script>
+<script src="../build/graphinius.min.js"></script>
 <script src="../node_modules/chai/chai.js"></script>
 <script src="../node_modules/mocha/mocha.js"></script>
 <script>
   mocha.ui('bdd');
   mocha.timeout(60000);
-  mocha.reporter('nyan');
   expect = chai.expect;
 </script>
 
 <!-- THE ACTUAL TEST CASES -->
 <script src="remoteLoadJSONTests.js"></script>
+<script src="remoteLoadCSVTests.js"></script>
 
 <script>
   mocha.run();
 </script>
-
 
 </body>
 </html>
