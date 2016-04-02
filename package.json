@@ -49,6 +49,7 @@
     "mocha-phantomjs": "^4.0.2",
     "mocha-phantomjs-core": "^2.0.1",
     "mocha-phantomjs-istanbul": "0.0.2",
+    "requirejs": "^2.2.0",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
     "typedoc": "^0.3.12",

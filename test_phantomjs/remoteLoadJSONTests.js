@@ -1,3 +1,6 @@
+console.log(chai);
+
+// var JsonInput = require('../src/input/JSONInput');
 
 var BASE_URL_JSON = 'http://berndmalle.com/graphinius-demo/test_data/json/';
 
@@ -29,6 +32,7 @@ describe('loading graph from remote URL - ', function() {
       expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES);
       expect(graph.nrUndEdges()).to.equal(0);
       expect(graph.getMode()).to.equal($G.core.GraphMode.DIRECTED);
+      graph.degreeDistribution();
       done();
     };
 

@@ -9,7 +9,7 @@
 <body>
 <div id="mocha"></div>
 
-<script src="../build/graphinius.min.js"></script>
+<script src="../build/istanbul/graphinius.js"></script>
 <script src="../node_modules/chai/chai.js"></script>
 <script src="../node_modules/mocha/mocha.js"></script>
 <script>
@@ -20,10 +20,14 @@
 
 <!-- THE ACTUAL TEST CASES -->
 <script src="remoteLoadJSONTests.js"></script>
-<script src="remoteLoadCSVTests.js"></script>
+<!--<script src="remoteLoadCSVTests.js"></script>-->
 
 <script>
-  mocha.run();
+  if (window.mochaPhantomJS) {
+    mochaPhantomJS.run();
+  } else {
+    mocha.run();
+  }  
 </script>
 
 </body>
