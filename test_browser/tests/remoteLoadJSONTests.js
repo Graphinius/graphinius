@@ -1,15 +1,5 @@
-// var Mocha = require('mocha');
 var chai = require('chai');
-var $G = require('../index.js').$G;
-
-// var mocha = new Mocha({
-//     ui: 'bdd',
-//     reporter: 'nyan',
-//     timeout: 60000
-// });
-
-// mocha.ui('bdd');
-// mocha.timeout(60000);
+var $G = require('../../index.js').$G;
 
 var expect = chai.expect;
 
@@ -52,6 +42,3 @@ describe('loading graph from remote URL - ', function() {
   });
 
 });
-
-
-// mocha.run();
