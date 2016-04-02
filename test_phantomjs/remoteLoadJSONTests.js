@@ -1,17 +1,3 @@
-// var Mocha = require('mocha');
-var chai = require('chai');
-var $G = require('../index.js').$G;
-
-// var mocha = new Mocha({
-//     ui: 'bdd',
-//     reporter: 'nyan',
-//     timeout: 60000
-// });
-
-// mocha.ui('bdd');
-// mocha.timeout(60000);
-
-var expect = chai.expect;
 
 var BASE_URL = 'http://berndmalle.com/graphinius-demo/test_data/json/';
 
@@ -52,6 +38,3 @@ describe('loading graph from remote URL - ', function() {
   });
 
 });
-
-
-// mocha.run();

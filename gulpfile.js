@@ -12,6 +12,7 @@ var istanbul 				= require('gulp-istanbul');
 var mochaPhantomJS	= require('gulp-mocha-phantomjs');
 var istanbulReport 	= require('gulp-istanbul-report');
 var shell           = require('gulp-shell');
+var inject					= require('gulp-inject');
 
 
 
@@ -119,33 +120,29 @@ gulp.task('test-async', ['build'], function () {
 // MANUAL PHANTOM TEST EXECUTION - WORKS
 // phantomjs --web-security=false  node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test_phantomjs/testrunner.html
 // mocha-phantomjs --setting webSecurityEnabled=false test_phantomjs/testrunner.html
-// gulp.task('pre-cov-phantom-test', ['bundle'], function () {
-// 	return gulp.src(paths.testsources)
-// 		// Covering files
-// 		.pipe(istanbul())
-// 		// Force `require` to return covered files
-// 		.pipe(istanbul.hookRequire());
-// });
-
-// gulp.task('test-phantom', ['pre-cov-phantom-test'], function () {
-//   return gulp.src('./test_phantomjs/testrunner.html', {read: false})
-//     .pipe(shell([
-//       "mocha-phantomjs --setting webSecurityEnabled=false test_phantomjs/testrunner.html --hooks test_phantomjs/phantom_hooks.js"
-//     ]))
-//     .pipe(istanbul.writeReports());
-// });
+// COVERAGE TESTS SOURCE COVER
+gulp.task('pre-cov-phantom-test', ['bundle'], function () {
+	return gulp.src('./build/graphinius.min.js')
+		// Covering files
+		.pipe(istanbul())
+		.pipe(gulp.dest('./build/istanbul'));
+});
 
 
-gulp.task('test-browser', ['bundle'], function () {
-  gulp.src('test_phantomjs/testrunner.html', {read: false})
-    .pipe(mochaPhantomJS({
-      phantomjs: {
-        hooks: 'mocha-phantomjs-istanbul',
-        coverageFile: './coverage/coverage.json',
-        settings: 'webSecurity=false'
-      },
-      reporter: 'spec'
-  }));
+gulp.task('test-browser', ['pre-cov-phantom-test'], function () {
+	gulp.src('test_phantomjs/testrunner.html', {read: false})
+	.pipe(mochaPhantomJS({
+		phantomjs: {
+			hooks: 'mocha-phantomjs-istanbul',
+			coverageFile: './coverage/coverage.json',
+			settings: {
+				webSecurityEnabled: false //,
+				// localToRemoteUrlAccessEnabled: false
+			}
+		},
+		reporter: 'spec'
+	}))
+	.pipe(istanbul.writeReports());
 });
 
 
