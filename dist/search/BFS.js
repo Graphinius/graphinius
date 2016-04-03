@@ -70,9 +70,6 @@ function BFS(graph, v, config) {
             callbacks.sort_nodes(bfsScope);
         }
         for (var adj_idx in bfsScope.adj_nodes) {
-            if (!bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {
-                continue;
-            }
             bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
             bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
             /**

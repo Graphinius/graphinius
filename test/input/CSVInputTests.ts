@@ -33,12 +33,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		beforeEach('instantiate the CSV input class', () => {
 			csv = new CSV();
 		});
-    
-    
-    it('should throw an error if the entries of an edge list are too short', () => {
-      input_file = "./test/input/test_data/edge_list_entries_too_short.csv";
-			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
-    });
 
 		
 		/**
@@ -176,6 +170,39 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 		});
 
+	});
+		
+		
+	describe('Wrong input formats / corrupted files', () => {
+		
+		beforeEach('instantiate the CSV input class', () => {
+			csv = new CSV();
+		});
+		
+		
+		it('should throw an error if the entries of an edge list are too short', () => {
+			input_file = "./test/input/test_data/csv_erroneous/edge_list_entries_too_short.csv";
+			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
+		});
+		
+		
+		it('should throw an error if the direction markers of an edge list are wrong', () => {
+			input_file = "./test/input/test_data/csv_erroneous/edge_list_wrong_dir_marker.csv";
+			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Specification of edge direction invalid (d and u are valid).');
+		});
+		
+		
+		it('should throw an error if the direction markers of an adj list are wrong', () => {
+			input_file = "./test/input/test_data/csv_erroneous/adj_list_wrong_dir_marker.csv";
+			expect(csv.readFromAdjacencyListFile.bind(csv, input_file)).to.throw('Specification of edge direction invalid (d and u are valid).');
+		});
+		
+		
+		it('should throw an error if the direction markers of an adj list are wrong', () => {
+			input_file = "./test/input/test_data/csv_erroneous/adj_list_edge_dir_undefined.csv";
+			expect(csv.readFromAdjacencyListFile.bind(csv, input_file)).to.throw('Every edge entry has to contain its direction info in explicit mode.');
+		});
+	
 	});
 
 });

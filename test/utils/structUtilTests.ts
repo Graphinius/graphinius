@@ -164,5 +164,26 @@ describe('Datastructure Utils Tests - ', () => {
     });
 
   });
+  
+  
+  describe('Clone Object tests', () => {
+    
+    it('should return whatever non-object is passed in', () => {
+      expect($DS.clone(undefined)).to.be.undefined;
+      expect($DS.clone(true)).to.be.true;
+      expect($DS.clone(55)).to.equal(55);
+      expect($DS.clone('bla')).to.equal('bla');
+      var date = +new Date;
+      expect($DS.clone(date)).to.equal(date);
+      expect($DS.clone([1, 2, 3])).to.deep.equal([1, 2, 3]);
+    });
+    
+    
+    it('should correctly clone an object', () => {
+      var obj = {1: {bla: 'hoo'}, 2: true, 'false': true};
+      expect($DS.clone(obj)).to.deep.equal(obj);
+    })
+    
+  });
 
 });

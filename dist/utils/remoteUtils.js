@@ -8,6 +8,9 @@ var http = require('http');
  * @returns {ClientRequest}
  */
 function retrieveRemoteFile(url, cb) {
+    if (typeof cb !== 'function') {
+        throw new Error('Provided callback is not a function.');
+    }
     return http.get(url, function (response) {
         // Continuously update stream with data
         var body = '';
@@ -16,9 +19,7 @@ function retrieveRemoteFile(url, cb) {
         });
         response.on('end', function () {
             // Received data in body...
-            if (cb) {
-                cb(body);
-            }
+            cb(body);
         });
     });
 }

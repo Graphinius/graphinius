@@ -8,6 +8,12 @@ import * as $CB from '../../src/utils/callbackUtils';
 var expect = chai.expect;
 
 describe('general callback util tests - ', () => {
+  
+  it('should throw an error it trying to execute something else than a function', () => {
+    var funcArray = [undefined];
+    expect($CB.execCallbacks.bind($CB, funcArray)).to.throw('Provided callback is not a function.');
+  });
+  
 
   it('should execute an array of callback functions', () => {
     var scope = {

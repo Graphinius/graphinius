@@ -1,8 +1,8 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 
-class fibonacciHeap {
+// class fibonacciHeap {
 
-}
+// }
 
-export { fibonacciHeap };
+// export { fibonacciHeap };

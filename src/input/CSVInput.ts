@@ -118,7 +118,7 @@ class CSVInput implements ICSVInput {
 			for ( var e = 0; e < edge_array.length; ) {
 				
 				if ( this._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
-					throw new Error('Wrong edge description found in file.');
+					throw new Error('Every edge entry has to contain its direction info in explicit mode.');
 				}
 				target_node_id = edge_array[e++];
 				

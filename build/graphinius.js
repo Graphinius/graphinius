@@ -404,54 +404,26 @@
 
 	"use strict";
 	/**
-	 * Method to deep clone an object, should already have been tested..
-	 * @TODO: Test it more..
+	 * Method to deep clone an object
 	 *
-	 * @param originalObject
-	 * @param circular
+	 * @param obj
 	 * @returns {*}
 	 *
-	 * This code was taken from:
-	 * https://github.com/cronvel/tree-kit/blob/master/lib/clone.js
 	 */
-	function clone(originalObject, circular) {
-	    if (circular === void 0) { circular = true; }
-	    // First create an empty object with
-	    // same prototype of our original source
-	    var propertyIndex, descriptor, keys, current, nextSource, indexOf, copies = [{
-	            source: originalObject,
-	            target: Object.create(Object.getPrototypeOf(originalObject))
-	        }], cloneObject = copies[0].target, sourceReferences = [originalObject], targetReferences = [cloneObject];
-	    // First in, first out
-	    while (current = copies.shift()) {
-	        keys = Object.getOwnPropertyNames(current.source);
-	        for (propertyIndex = 0; propertyIndex < keys.length; propertyIndex++) {
-	            // Save the source's descriptor
-	            descriptor = Object.getOwnPropertyDescriptor(current.source, keys[propertyIndex]);
-	            if (!descriptor.value || typeof descriptor.value !== 'object') {
-	                Object.defineProperty(current.target, keys[propertyIndex], descriptor);
-	                continue;
-	            }
-	            nextSource = descriptor.value;
-	            descriptor.value = Array.isArray(nextSource) ?
-	                [] :
-	                Object.create(Object.getPrototypeOf(nextSource));
-	            if (circular) {
-	                indexOf = sourceReferences.indexOf(nextSource);
-	                if (indexOf !== -1) {
-	                    // The source is already referenced, just assign reference
-	                    descriptor.value = targetReferences[indexOf];
-	                    Object.defineProperty(current.target, keys[propertyIndex], descriptor);
-	                    continue;
-	                }
-	                sourceReferences.push(nextSource);
-	                targetReferences.push(descriptor.value);
-	            }
-	            Object.defineProperty(current.target, keys[propertyIndex], descriptor);
-	            copies.push({ source: nextSource, target: descriptor.value });
+	function clone(obj) {
+	    if (obj === null || typeof obj !== 'object') {
+	        return obj;
+	    }
+	    var cloneObj = obj.constructor();
+	    for (var attribute in obj) {
+	        if (typeof obj[attribute] === "object") {
+	            cloneObj[attribute] = clone(obj[attribute]);
+	        }
+	        else {
+	            cloneObj[attribute] = obj[attribute];
 	        }
 	    }
-	    return cloneObject;
+	    return cloneObj;
 	}
 	exports.clone = clone;
 	/**
@@ -1029,7 +1001,7 @@
 	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
 	            for (var e = 0; e < edge_array.length;) {
 	                if (this._explicit_direction && (!edge_array || edge_array.length % 2)) {
-	                    throw new Error('Wrong edge description found in file.');
+	                    throw new Error('Every edge entry has to contain its direction info in explicit mode.');
 	                }
 	                target_node_id = edge_array[e++];
 	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
@@ -1445,6 +1417,9 @@
 	 * @returns {ClientRequest}
 	 */
 	function retrieveRemoteFile(url, cb) {
+	    if (typeof cb !== 'function') {
+	        throw new Error('Provided callback is not a function.');
+	    }
 	    return http.get(url, function (response) {
 	        // Continuously update stream with data
 	        var body = '';
@@ -1453,9 +1428,7 @@
 	        });
 	        response.on('end', function () {
 	            // Received data in body...
-	            if (cb) {
-	                cb(body);
-	            }
+	            cb(body);
 	        });
 	    });
 	}
@@ -1659,9 +1632,6 @@
 	            callbacks.sort_nodes(bfsScope);
 	        }
 	        for (var adj_idx in bfsScope.adj_nodes) {
-	            if (!bfsScope.adj_nodes.hasOwnProperty(adj_idx)) {
-	                continue;
-	            }
 	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
 	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
 	            /**
@@ -1750,6 +1720,9 @@
 	    cbs.forEach(function (cb) {
 	        if (typeof cb === 'function') {
 	            cb(context);
+	        }
+	        else {
+	            throw new Error('Provided callback is not a function.');
 	        }
 	    });
 	}
