@@ -16,14 +16,14 @@ var istanbul 				= require('gulp-istanbul');
 //----------------------------
 var paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
-	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*.ts'],
+	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async/**/*.ts'],
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async_nomock/**/*Tests.js', 'test_async_nomock/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
+	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
 	tests_sync: ['test/**/*.js'],
-	tests_async: ['test_async_nomock/**/*Tests.js'],
-	tests_all: ['test/**/*.js', 'test_async_nomock/**/*Tests.js']
+	tests_async: ['test_async/**/*Tests.js'],
+	tests_all: ['test/**/*.js', 'test_async/**/*Tests.js']
 };
 
 
@@ -132,7 +132,7 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 		// 	reportOpts: { dir: './coverage/node-tests'}
 		// }));
 		.pipe(istanbul.writeReports());
-		// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } })); ;
+		// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
 });
 
 

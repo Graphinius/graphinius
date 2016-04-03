@@ -457,6 +457,11 @@ describe('==== NODE TESTS ====', () => {
 					n_a.addEdge(e_7);
 					n_a.addEdge(e_8);
 				});
+        
+        
+        it('should throw an error upon trying to remove an unconnected edge', () => {
+          expect(n_a.removeEdgeID.bind(n_a, 'menotexists')).to.throw('Cannot remove unconnected edge.');
+        });
 				
 				
 				it('should confirm our expectations about node degrees in this example', () => {	

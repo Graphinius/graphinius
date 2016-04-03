@@ -180,11 +180,6 @@ class CSVInput implements ICSVInput {
 					edge_id: string,
 					edge_id_u2: string;
 			
-			if ( !node_id ) {
-				// We have just seen the last line...
-				return graph;
-			}
-			
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
 			target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 						
@@ -210,7 +205,7 @@ class CSVInput implements ICSVInput {
 	
 	
 	private checkNodeEnvironment() : void {
-		if ( !global ) {
+		if ( typeof window !== 'undefined' ) {
 			throw new Error('Cannot read file in browser environment.');
 		}
 	}

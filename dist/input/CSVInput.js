@@ -108,10 +108,6 @@ var CSVInput = (function () {
                 throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
             }
             var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
-            if (!node_id) {
-                // We have just seen the last line...
-                return graph;
-            }
             node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
             target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
             if (dir_char !== 'd' && dir_char !== 'u') {
@@ -131,7 +127,7 @@ var CSVInput = (function () {
         return graph;
     };
     CSVInput.prototype.checkNodeEnvironment = function () {
-        if (!global) {
+        if (typeof window !== 'undefined') {
             throw new Error('Cannot read file in browser environment.');
         }
     };

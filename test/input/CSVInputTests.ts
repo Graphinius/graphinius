@@ -33,6 +33,12 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		beforeEach('instantiate the CSV input class', () => {
 			csv = new CSV();
 		});
+    
+    
+    it('should throw an error if the entries of an edge list are too short', () => {
+      input_file = "./test/input/test_data/edge_list_entries_too_short.csv";
+			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
+    });
 
 		
 		/**

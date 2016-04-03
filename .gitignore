@@ -32,10 +32,10 @@ npm-debug.log
 # VS Code local files
 .vscode/**
 
-# All Javascript files under src, test and test_async_nomock
+# All Javascript files under src, test and test_async
 src/**/*.js
 test/**/*.js
-test_async_nomock/**/*.js
+test_async/**/*.js
 
 # IDEA project directory
 .idea/**

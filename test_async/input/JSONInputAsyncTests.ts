@@ -95,7 +95,8 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 	describe('Loading graphs in simulated browser environment', () => {		
 		// Mocking the XHR object
 		var mock = require('xhr-mock');
-		var jsDomCleanup = null;
+		var jsDomCleanup = null,
+        mocked = false;
 		
 		// URL to replace with path
 		var small_graph_url = REMOTE_HOST + "small_graph.json";
@@ -103,7 +104,7 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		
 		beforeEach(() => {		
 			// Injecting browser globals into our Node environment
-			jsDomCleanup = require('jsdom-global')();			
+			jsDomCleanup = require('jsdom-global')();
 			
 			// Access to local filesystem for mocking service
 			var fs = require('fs');
@@ -113,7 +114,8 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 			mock.setup();
 			
 			// Mocking Browser GET request to test server
-			mock.get(small_graph_url, function(req, res) {		
+			mock.get(small_graph_url, function(req, res) {
+        mocked = true;
 				return res
 					.status(200)
 					.header('Content-Type', 'application/json')
@@ -128,6 +130,7 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		afterEach(() => {
 			mock.teardown();
 			jsDomCleanup();
+      mocked = false;
 		});
 		
 		
@@ -141,9 +144,9 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 				
 		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
 			json = new JSON_IN();
-			remote_file = REMOTE_HOST + "small_graph.json";
-			json.readFromJSONURL(remote_file, function(graph, err) {
+			json.readFromJSONURL(small_graph_url, function(graph, err) {
 				$C.checkSmallGraphStats(graph);
+        expect(mocked).to.be.true;
 				done();
 			});
 		});
