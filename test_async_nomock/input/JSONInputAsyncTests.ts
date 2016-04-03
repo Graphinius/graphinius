@@ -89,5 +89,65 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		});
 	
 	});
+	
+	
+	
+	describe('Loading graphs in simulated browser environment', () => {		
+		// Mocking the XHR object
+		var mock = require('xhr-mock');
+		var jsDomCleanup = null;
+		
+		// URL to replace with path
+		var small_graph_url = REMOTE_HOST + "small_graph.json";
+		var small_graph_path = 'test/input/test_data/small_graph.json';
+		
+		beforeEach(() => {		
+			// Injecting browser globals into our Node environment
+			jsDomCleanup = require('jsdom-global')();			
+			
+			// Access to local filesystem for mocking service
+			var fs = require('fs');
+			var json = fs.readFileSync(small_graph_path).toString();
+		
+			//replace the real XHR object with the mock XHR object
+			mock.setup();
+			
+			// Mocking Browser GET request to test server
+			mock.get(small_graph_url, function(req, res) {		
+				return res
+					.status(200)
+					.header('Content-Type', 'application/json')
+					.body(
+						json
+					)
+				;
+			});
+		});
+		
+		
+		afterEach(() => {
+			mock.teardown();
+			jsDomCleanup();
+		});
+		
+		
+		it('should throw an error when trying to read a file in the browser environment', () => {
+			json = new JSON_IN();
+			json._explicit_direction = true;
+      json._weighted_mode = false;
+			expect(json.readFromJSONFile.bind(json, small_graph_path)).to.throw('Cannot read file in browser environment.');
+		});
+		
+				
+		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
+			json = new JSON_IN();
+			remote_file = REMOTE_HOST + "small_graph.json";
+			json.readFromJSONURL(remote_file, function(graph, err) {
+				$C.checkSmallGraphStats(graph);
+				done();
+			});
+		});
+		
+	});
 			
 });

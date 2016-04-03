@@ -22,9 +22,11 @@ var JSONInput = (function () {
         var self = this, graph, request, json;
         // Node or browser ??
         if (typeof window !== 'undefined') {
-            // Browser...
+            // Browser...			
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
+                // console.log("Ready state: " + request.readyState);
+                // console.log("Reqst status: " + request.status);
                 if (request.readyState == 4 && request.status == 200) {
                     var json = JSON.parse(request.responseText);
                     graph = self.readFromJSON(json);
@@ -35,7 +37,7 @@ var JSONInput = (function () {
             };
             request.open("GET", fileurl, true);
             request.timeout = 60000;
-            request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+            request.setRequestHeader('Content-Type', 'application/json');
             request.send();
         }
         else {
@@ -54,7 +56,6 @@ var JSONInput = (function () {
      */
     JSONInput.prototype.readFromJSON = function (json) {
         var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
-        // feature_val	: any;
         for (var node_id in json.data) {
             var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
             /**
@@ -105,7 +106,7 @@ var JSONInput = (function () {
         return graph;
     };
     JSONInput.prototype.checkNodeEnvironment = function () {
-        if (!global) {
+        if (typeof window !== 'undefined') {
             throw new Error('Cannot read file in browser environment.');
         }
     };

@@ -1,7 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import fs		= require('fs');
-import path = require('path');
+import fs				= require('fs');
+import path 		= require('path');
 
 import * as $G from '../core/Graph';
 import * as $R from '../utils/remoteUtils';
@@ -12,7 +12,7 @@ interface JSONEdge {
   to          : string;
   directed?   : string;
   weight?     : string;
-  type?       : string;  
+  type?       : string;
 }
 
 interface JSONNode {
@@ -60,21 +60,24 @@ class JSONInput implements IJSONInput {
 				json : JSON;
 
 		// Node or browser ??
-		if ( typeof window !== 'undefined' ) {
-			// Browser...
+		if ( typeof window !== 'undefined' ) {			
+			// Browser...			
 			request = new XMLHttpRequest();			
 			request.onreadystatechange = function() {
-					if (request.readyState == 4 && request.status == 200) {
-						var json = JSON.parse(request.responseText);
-						graph = self.readFromJSON(json);
-            if ( cb ) {
-              cb(graph, undefined);
-            }
+				// console.log("Ready state: " + request.readyState);
+				// console.log("Reqst status: " + request.status);
+				
+				if (request.readyState == 4 && request.status == 200) {					
+					var json = JSON.parse(request.responseText);
+					graph = self.readFromJSON(json);
+					if ( cb ) {
+						cb(graph, undefined);
 					}
+				}
 			};
 			request.open("GET", fileurl, true);
       request.timeout = 60000;
-			request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+			request.setRequestHeader('Content-Type', 'application/json');			
 			request.send();
 		}
 		else {
@@ -100,7 +103,6 @@ class JSONInput implements IJSONInput {
 				coord_val		: number,
 				features		: {[key: string] : any},
 				feature			: string;
-				// feature_val	: any;
 				
 		for ( var node_id in json.data ) {
 			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
@@ -166,7 +168,7 @@ class JSONInput implements IJSONInput {
 	}
 	
 	private checkNodeEnvironment() : void {
-		if ( !global ) {
+		if ( typeof window !== 'undefined' ) {
 			throw new Error('Cannot read file in browser environment.');
 		}
 	}
