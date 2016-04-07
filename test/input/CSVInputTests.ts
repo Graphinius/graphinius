@@ -171,8 +171,8 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		});
 
 	});
-		
-		
+
+
 	describe('Wrong input formats / corrupted files', () => {
 		
 		beforeEach('instantiate the CSV input class', () => {

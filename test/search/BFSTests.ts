@@ -5,7 +5,12 @@ import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
+import * as $CB from '../../src/utils/callbackUtils';
 
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+
+chai.use(sinonChai);
 var expect 	= chai.expect;
 var JSON_IN	= $I.JSONInput;
 
@@ -96,7 +101,33 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var result = $BFS.BFS(graph, root, config);
 			expect(config.messages['test_message']).to.equal("SORT NODES callback executed.");
 		});
-
+		
+		
+		it('should not execute any callback at all', () => {
+			// prepare Spy...
+			var execCBSpy = sinon.spy($CB.execCallbacks);
+			var origExecCB = $CB.execCallbacks;
+			$CB.execCallbacks = execCBSpy;
+			
+			// execute test
+			var root = graph.getNodeById('A'),
+					config = $BFS.prepareBFSStandardConfig();
+			// set config.callbacks to emtpy object
+			config.callbacks = {};
+			// manually initialize distance object
+			for (var key in graph.getNodes()) {
+            config.result[key] = {
+                distance: Number.POSITIVE_INFINITY,
+                parent: null,
+                counter: -1
+            };
+        }
+			var bfs_res = $BFS.BFS(graph, root, config);
+			
+			expect(execCBSpy).to.have.not.been.called;
+			// restore original function
+			$CB.execCallbacks = origExecCB;
+		});
 
 	});
 
@@ -118,6 +149,40 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			config.dir_mode = $G.GraphMode.INIT;
 			expect($BFS.BFS.bind($BFS.BFS, graph, root, config)).to.throw("Cannot traverse a graph with dir_mode set to INIT.");
 		});
+		
+		
+		it('should never expand a node when DIR mode is set to a meaningless value', () => {
+			var root = graph.getNodeById('A'),
+					config = $BFS.prepareBFSStandardConfig();
+
+			config.dir_mode = 9999;
+			bfs_res = $BFS.BFS(graph, root, config);
+
+			expect(Object.keys(bfs_res).length).to.equal(7);
+
+			expect(bfs_res['A'].counter).to.equal(0);
+			expect(bfs_res['B'].counter).to.equal(-1);
+			expect(bfs_res['C'].counter).to.equal(-1);
+			expect(bfs_res['D'].counter).to.equal(-1);
+			expect(bfs_res['E'].counter).to.equal(-1);
+			expect(bfs_res['F'].counter).to.equal(-1);
+			expect(bfs_res['G'].counter).to.equal(-1);
+
+			expect(bfs_res['A'].distance).to.equal(0);
+			expect(bfs_res['A'].parent).to.equal(root);
+			expect(bfs_res['B'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['B'].parent).to.equal(null);
+			expect(bfs_res['C'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['C'].parent).to.equal(null);
+			expect(bfs_res['D'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['D'].parent).to.equal(null);
+			expect(bfs_res['E'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['E'].parent).to.equal(null);
+			expect(bfs_res['F'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['F'].parent).to.equal(null);
+			expect(bfs_res['G'].distance).to.equal(Number.POSITIVE_INFINITY);
+			expect(bfs_res['G'].parent).to.equal(null);
+		});		
 
 
 		describe('computing distances in UNDIRECTED _mode - ', () => {

@@ -807,6 +807,19 @@ describe('GRAPH TESTS: ', () => {
 				expect(graph.nrUndEdges()).not.to.equal(0);		
 				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
 			});
+			
+			it('UNDIRECTED - should default to UNdirected edges if no direction is provided', () => {
+				probability = 0.5;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				graph.createRandomEdgesProb(probability);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
 		
 		});
 				

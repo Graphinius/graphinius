@@ -538,9 +538,6 @@
 	    BaseGraph.prototype.degreeDistribution = function () {
 	        var max_deg = 0, key, node, all_deg;
 	        for (key in this._nodes) {
-	            if (!this._nodes.hasOwnProperty(key)) {
-	                continue;
-	            }
 	            node = this._nodes[key];
 	            all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
 	            max_deg = all_deg > max_deg ? all_deg : max_deg;
@@ -553,9 +550,6 @@
 	            all: new Uint16Array(max_deg)
 	        };
 	        for (key in this._nodes) {
-	            if (!this._nodes.hasOwnProperty(key)) {
-	                continue;
-	            }
 	            node = this._nodes[key];
 	            deg_dist.in[node.inDegree()]++;
 	            deg_dist.out[node.outDegree()]++;
@@ -744,9 +738,6 @@
 	        var in_edges = node.inEdges();
 	        var key, edge;
 	        for (key in in_edges) {
-	            if (!in_edges.hasOwnProperty(key)) {
-	                continue;
-	            }
 	            edge = in_edges[key];
 	            edge.getNodes().a.removeEdge(edge);
 	            delete this._dir_edges[edge.getID()];
@@ -761,9 +752,6 @@
 	        var out_edges = node.outEdges();
 	        var key, edge;
 	        for (key in out_edges) {
-	            if (!out_edges.hasOwnProperty(key)) {
-	                continue;
-	            }
 	            edge = out_edges[key];
 	            edge.getNodes().b.removeEdge(edge);
 	            delete this._dir_edges[edge.getID()];
@@ -783,9 +771,6 @@
 	        var und_edges = node.undEdges();
 	        var key, edge;
 	        for (key in und_edges) {
-	            if (!und_edges.hasOwnProperty(key)) {
-	                continue;
-	            }
 	            edge = und_edges[key];
 	            var conns = edge.getNodes();
 	            conns.a.removeEdge(edge);
@@ -829,10 +814,10 @@
 	     * CAUTION: this algorithm takes quadratic runtime in #nodes
 	     */
 	    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed) {
-	        if (directed === void 0) { directed = false; }
 	        if (0 > probability || 1 < probability) {
 	            throw new Error("Probability out of range.");
 	        }
+	        directed = directed || false;
 	        var nodes = this._nodes, node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
 	        for (node_a in nodes) {
 	            for (node_b in nodes) {
@@ -852,13 +837,13 @@
 	     * but should be much faster
 	     */
 	    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed) {
-	        if (directed === void 0) { directed = false; }
 	        if (min < 0) {
 	            throw new Error('Minimum degree cannot be negative.');
 	        }
 	        if (max >= this.nrNodes()) {
 	            throw new Error('Maximum degree exceeds number of reachable nodes.');
 	        }
+	        directed = directed || false;
 	        // Do we need to set them integers before the calculations?
 	        var min = min | 0, max = max | 0, nodes = this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
 	        for (idx_a in nodes) {
@@ -1625,6 +1610,9 @@
 	        else if (dir_mode === $G.GraphMode.DIRECTED) {
 	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
 	        }
+	        else {
+	            bfsScope.adj_nodes = [];
+	        }
 	        /**
 	         * HOOK 2 - Sort adjacent nodes
 	         */
@@ -1673,7 +1661,6 @@
 	        return count++;
 	    };
 	    // Standard INIT callback
-	    callbacks.init_bfs = callbacks.init_bfs || [];
 	    var initBFS = function (context) {
 	        // initialize all nodes to infinite distance
 	        for (var key in context.nodes) {
@@ -1693,7 +1680,6 @@
 	    callbacks.init_bfs.push(initBFS);
 	    // Standard Node unmarked callback
 	    // have to populate respective result entry
-	    callbacks.node_unmarked = callbacks.node_unmarked || [];
 	    var nodeUnmarked = function (context) {
 	        config.result[context.next_node.getID()] = {
 	            distance: result[context.current.getID()].distance + 1,

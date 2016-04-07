@@ -63,6 +63,9 @@ function BFS(graph, v, config) {
         else if (dir_mode === $G.GraphMode.DIRECTED) {
             bfsScope.adj_nodes = bfsScope.current.nextNodes();
         }
+        else {
+            bfsScope.adj_nodes = [];
+        }
         /**
          * HOOK 2 - Sort adjacent nodes
          */
@@ -111,7 +114,6 @@ function prepareBFSStandardConfig() {
         return count++;
     };
     // Standard INIT callback
-    callbacks.init_bfs = callbacks.init_bfs || [];
     var initBFS = function (context) {
         // initialize all nodes to infinite distance
         for (var key in context.nodes) {
@@ -131,7 +133,6 @@ function prepareBFSStandardConfig() {
     callbacks.init_bfs.push(initBFS);
     // Standard Node unmarked callback
     // have to populate respective result entry
-    callbacks.node_unmarked = callbacks.node_unmarked || [];
     var nodeUnmarked = function (context) {
         config.result[context.next_node.getID()] = {
             distance: result[context.current.getID()].distance + 1,

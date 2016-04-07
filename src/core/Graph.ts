@@ -77,8 +77,8 @@ export interface IGraph {
 	clearAllEdges() : void;
 	
 	// CREATE RANDOM EDGES
-	createRandomEdgesProb( probability: number, directed: boolean ) : void;
-	createRandomEdgesSpan( min: number, max: number,  directed: boolean ) : void;
+	createRandomEdgesProb( probability: number, directed?: boolean ) : void;
+	createRandomEdgesSpan( min: number, max: number,  directed?: boolean ) : void;
 }
 
 
@@ -122,9 +122,6 @@ class BaseGraph implements IGraph {
 				all_deg : number;
 				
 		for ( key in this._nodes ) {
-			if ( !this._nodes.hasOwnProperty(key) ) {
-				continue;
-			}
 			node = this._nodes[key];
 			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
 			max_deg =  all_deg > max_deg ? all_deg : max_deg;
@@ -139,9 +136,6 @@ class BaseGraph implements IGraph {
 		};
 
 		for ( key in this._nodes ) {
-			if ( !this._nodes.hasOwnProperty(key) ) {
-				continue;
-			}
 			node = this._nodes[key];
 			deg_dist.in[node.inDegree()]++;
 			deg_dist.out[node.outDegree()]++;
@@ -364,9 +358,6 @@ class BaseGraph implements IGraph {
 				edge	: $E.IBaseEdge;
 		
 		for (key in in_edges) {
-			if ( !in_edges.hasOwnProperty(key) ) {
-				continue;
-			}
 			edge = in_edges[key];
 			edge.getNodes().a.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
@@ -384,9 +375,6 @@ class BaseGraph implements IGraph {
 				edge	: $E.IBaseEdge;
 		
 		for (key in out_edges) {
-			if ( !out_edges.hasOwnProperty(key) ) {
-				continue;
-			}
 			edge = out_edges[key];
 			edge.getNodes().b.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
@@ -410,9 +398,6 @@ class BaseGraph implements IGraph {
 				edge	: $E.IBaseEdge;
 		
 		for (key in und_edges) {
-			if ( !und_edges.hasOwnProperty(key) ) {
-				continue;
-			}
 			edge = und_edges[key];
 			var conns = edge.getNodes();
 			conns.a.removeEdge(edge);
@@ -460,10 +445,11 @@ class BaseGraph implements IGraph {
 	 * @direction true or false
 	 * CAUTION: this algorithm takes quadratic runtime in #nodes
 	 */
-	createRandomEdgesProb( probability: number, directed: boolean = false ) : void {
+	createRandomEdgesProb( probability: number, directed?: boolean) : void {
 		if (0 > probability || 1 < probability) {
 			throw new Error("Probability out of range.");
 		}
+		directed = directed || false;
 		var nodes = this._nodes,
 				node_a, 
 				node_b,
@@ -487,13 +473,14 @@ class BaseGraph implements IGraph {
 	 * CAUTION: this algorithm could take quadratic runtime in #nodes
 	 * but should be much faster
 	 */
-	createRandomEdgesSpan( min: number, max: number, directed: boolean = false ) : void {
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean ) : void {
 		if (min < 0) {
 			throw new Error('Minimum degree cannot be negative.');
 		}
 		if (max >= this.nrNodes()) {
 			throw new Error('Maximum degree exceeds number of reachable nodes.');
 		}
+		directed = directed || false;
 		// Do we need to set them integers before the calculations?
 		var min = min | 0,
 				max = max | 0,

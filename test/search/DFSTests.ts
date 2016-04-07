@@ -17,7 +17,7 @@ var search_graph = "./test/input/test_data/search_graph.json";
 
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
-	var jsonReader 					: $I.IJSONInput = new JSON_IN(),
+	var jsonReader 		: $I.IJSONInput = new JSON_IN(),
 	    graph					: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
 			stats					: $G.GraphStats = graph.getStats(),
 			callbacks			: $DFS.DFS_Callbacks;

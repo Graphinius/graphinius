@@ -90,4 +90,5 @@ function findKey( obj: Object, cb: Function ) : string {
   return undefined;
 }
 
-export { clone, mergeArrays, mergeObjects, findKey }
+
+export { clone, mergeArrays, mergeObjects, findKey };
