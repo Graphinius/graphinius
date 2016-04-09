@@ -276,41 +276,96 @@ describe('BINARY HEAP TESTS - ', () => {
 
   describe('Ordering tests on single elements - ', () => {
     
-    it('should trickle down a smaller element in a MIN HEAP', () => {
+    it('should trickle up a smaller element in a MIN HEAP', () => {
       binHeap = new $BH.BinaryHeap();
-      binHeap.insert(5);
-      binHeap.insert(15);
       binHeap.insert(155);
       binHeap.insert(55);
-      expect(binHeap.peek()).to.equal(5);
+      binHeap.insert(15);
+      binHeap.insert(5);
+      binHeap.insert(1);
+      expect(binHeap.peek()).to.equal(1);
+    });
+    
+    
+    it('should trickle up a smaller element in a MIN HEAP, with ZERO', () => {
+      binHeap = new $BH.BinaryHeap();
+      binHeap.insert(155);
+      binHeap.insert(0);
+      // console.log(binHeap.getArray());
+      binHeap.insert(15);
+      binHeap.insert(5);
+      binHeap.insert(1);
+      
+      expect(binHeap.pop()).to.equal(0);
+      expect(binHeap.pop()).to.equal(1);
+      expect(binHeap.pop()).to.equal(5);
+      expect(binHeap.pop()).to.equal(15);
+      expect(binHeap.pop()).to.equal(155);
     });
 
 
-    it('should trickle down a larger element in a MAX HEAP', () => {
+    it('should trickle up a larger element in a MAX HEAP', () => {
       binHeap = new $BH.BinaryHeap(Mode.MAX);
+      binHeap.insert(1);
+      binHeap.insert(5);
       binHeap.insert(55);
       binHeap.insert(75);
-      binHeap.insert(115);
-      binHeap.insert(5);
-      binHeap.insert(1);
+      binHeap.insert(115);  
       expect(binHeap.peek()).to.equal(115);
     });
 
 
-    it('should trickle up correctly upon removing an object, MIN HEAP', () => {
+    it('should trickle correctly upon removing an object, MIN HEAP', () => {
       binHeap = new $BH.BinaryHeap();
       binHeap.insert(5);
-      binHeap.insert(1);
-      binHeap.insert(16);
+      binHeap.insert(9);
+      binHeap.insert(11);
+      binHeap.insert(14);
+      binHeap.insert(18);
+      binHeap.insert(19);
+      binHeap.insert(21);
+      binHeap.insert(33);
+      binHeap.insert(17);
+      binHeap.insert(27);
+      expect(binHeap.getArray()).to.deep.equal([5, 9, 11, 14, 18, 19, 21, 33, 17, 27]);
+      
       binHeap.insert(7);
-      binHeap.insert(8);
-
-      expect(binHeap.pop()).to.equal(1);
+      expect(binHeap.getArray()).to.deep.equal([5, 7, 11, 14, 9, 19, 21, 33, 17, 27, 18]);
+      
       expect(binHeap.pop()).to.equal(5);
+      expect(binHeap.getArray()).to.deep.equal([7, 9, 11, 14, 18, 19, 21, 33, 17, 27]);
+      
       expect(binHeap.pop()).to.equal(7);
-      expect(binHeap.pop()).to.equal(8);
-      expect(binHeap.pop()).to.equal(16);
+      expect(binHeap.getArray()).to.deep.equal([9, 14, 11, 17, 18, 19, 21, 33, 27]);
+      
+      expect(binHeap.pop()).to.equal(9);
+      expect(binHeap.getArray()).to.deep.equal([11, 14, 19, 17, 18, 27, 21, 33]);
+      
+      expect(binHeap.pop()).to.equal(11);
+      expect(binHeap.getArray()).to.deep.equal([14, 17, 19, 33, 18, 27, 21]);
+      
+      expect(binHeap.pop()).to.equal(14);
+      expect(binHeap.getArray()).to.deep.equal([17, 18, 19, 33, 21, 27]);
+      
+      expect(binHeap.pop()).to.equal(17);
+      expect(binHeap.getArray()).to.deep.equal([18, 21, 19, 33, 27]);
+      
+      expect(binHeap.pop()).to.equal(18);
+      expect(binHeap.getArray()).to.deep.equal([19, 21, 27, 33]);
+      
+      expect(binHeap.pop()).to.equal(19);
+      expect(binHeap.getArray()).to.deep.equal([21, 33, 27]);
+      
+      expect(binHeap.pop()).to.equal(21);
+      expect(binHeap.getArray()).to.deep.equal([27, 33]);
+      
+      expect(binHeap.pop()).to.equal(27);
+      expect(binHeap.getArray()).to.deep.equal([33]);
+      
+      expect(binHeap.pop()).to.equal(33);
+      expect(binHeap.getArray()).to.deep.equal([]);
     });
+    
     
     
     it('should trickle up correctly upon removing an object, MAX HEAP', () => {
@@ -331,12 +386,29 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('tests MIN heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap();
-      for ( var i = 0; i < 500; i++ ) {
+      for ( var i = 0; i < 50000; i++ ) {
         binHeap.insert((Math.random()*100000 - 50000)|0);
       }
+      
+      var binArray = binHeap.getArray(),
+          ith = 0,
+          left_child_idx = 0,
+          right_child_idx = 0;
+      for ( var i = 0; i < binArray.length; i++ ) {
+        ith = binArray[i],
+        left_child_idx = (i+1)*2-1,
+        right_child_idx = (i+1)*2;
+        if ( left_child_idx < binArray.length ) {
+          expect(ith).to.be.at.most(binArray[left_child_idx]);
+        }
+        if ( right_child_idx < binArray.length ) {
+          expect(ith).to.be.at.most(binArray[right_child_idx]);
+        }
+      }
+          
       var last = Number.NEGATIVE_INFINITY,
-          current;
-      for ( var i = 0; i < 500; i++ ) {
+          current = Number.NEGATIVE_INFINITY;
+      for ( var i = 0; i < 50000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.least(last);
         last = current;
@@ -346,12 +418,29 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('tests MAX heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap(Mode.MAX);
-      for ( var i = 0; i < 500; i++ ) {
+      for ( var i = 0; i < 50000; i++ ) {
         binHeap.insert((Math.random()*100000 - 50000)|0);
       }
+      
+      var binArray = binHeap.getArray(),
+          ith = 0,
+          left_child_idx = 0,
+          right_child_idx = 0;
+      for ( var i = 0; i < binArray.length; i++ ) {
+        ith = binArray[i],
+        left_child_idx = (i+1)*2-1,
+        right_child_idx = (i+1)*2;
+        if ( left_child_idx < binArray.length ) {
+          expect(ith).to.be.at.least(binArray[left_child_idx]);
+        }
+        if ( right_child_idx < binArray.length ) {
+          expect(ith).to.be.at.least(binArray[right_child_idx]);
+        }
+      }
+      
       var last = Number.POSITIVE_INFINITY,
         current;
-      for ( var i = 0; i < 500; i++ ) {
+      for ( var i = 0; i < 50000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.most(last);
         last = current;

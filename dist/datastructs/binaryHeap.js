@@ -34,6 +34,9 @@ var BinaryHeap = (function () {
     BinaryHeap.prototype.getMode = function () {
         return this._mode;
     };
+    BinaryHeap.prototype.getArray = function () {
+        return this._array;
+    };
     BinaryHeap.prototype.size = function () {
         return this._array.length;
     };
@@ -97,10 +100,10 @@ var BinaryHeap = (function () {
         while (true) {
             var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
             // check if left child exists
-            if (left_child && !this.orderCorrect(parent, left_child)) {
+            if (left_child_idx < this.size() && !this.orderCorrect(parent, left_child)) {
                 swap = left_child_idx;
             }
-            if (right_child && !this.orderCorrect(parent, right_child)
+            if (right_child_idx < this.size() && !this.orderCorrect(parent, right_child)
                 && !this.orderCorrect(left_child, right_child)) {
                 swap = right_child_idx;
             }
@@ -118,7 +121,7 @@ var BinaryHeap = (function () {
         // Can only trickle up from positive levels
         while (i) {
             var parent_idx = Math.floor((i + 1) / 2) - 1, parent = this._array[parent_idx];
-            if (parent && this.orderCorrect(parent, child)) {
+            if (this.orderCorrect(parent, child)) {
                 break;
             }
             else {
@@ -128,14 +131,14 @@ var BinaryHeap = (function () {
             }
         }
     };
-    BinaryHeap.prototype.orderCorrect = function (parent, child) {
-        var parent_pr = this._evalPriority(parent);
-        var child_pr = this._evalPriority(child);
+    BinaryHeap.prototype.orderCorrect = function (obj_a, obj_b) {
+        var obj_a_pr = this._evalPriority(obj_a);
+        var obj_b_pr = this._evalPriority(obj_b);
         if (this._mode === BinaryHeapMode.MIN) {
-            return parent_pr <= child_pr;
+            return obj_a_pr <= obj_b_pr;
         }
         else {
-            return parent_pr >= child_pr;
+            return obj_a_pr >= obj_b_pr;
         }
     };
     return BinaryHeap;
