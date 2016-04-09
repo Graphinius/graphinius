@@ -386,8 +386,8 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('tests MIN heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap();
-      for ( var i = 0; i < 50000; i++ ) {
-        binHeap.insert((Math.random()*100000 - 50000)|0);
+      for ( var i = 0; i < 5000; i++ ) {
+        binHeap.insert((Math.random()*1000 - 500)|0);
       }
       
       var binArray = binHeap.getArray(),
@@ -408,7 +408,7 @@ describe('BINARY HEAP TESTS - ', () => {
           
       var last = Number.NEGATIVE_INFINITY,
           current = Number.NEGATIVE_INFINITY;
-      for ( var i = 0; i < 50000; i++ ) {
+      for ( var i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.least(last);
         last = current;
@@ -418,8 +418,8 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('tests MAX heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap(Mode.MAX);
-      for ( var i = 0; i < 50000; i++ ) {
-        binHeap.insert((Math.random()*100000 - 50000)|0);
+      for ( var i = 0; i < 5000; i++ ) {
+        binHeap.insert((Math.random()*1000 - 500)|0);
       }
       
       var binArray = binHeap.getArray(),
@@ -440,7 +440,7 @@ describe('BINARY HEAP TESTS - ', () => {
       
       var last = Number.POSITIVE_INFINITY,
         current;
-      for ( var i = 0; i < 50000; i++ ) {
+      for ( var i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.most(last);
         last = current;
