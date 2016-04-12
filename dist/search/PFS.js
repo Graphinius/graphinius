@@ -1,6 +1,8 @@
 /// <reference path="../../typings/tsd.d.ts" />
 "use strict";
+var $E = require('../core/Edges');
 var $G = require('../core/Graph');
+var $CB = require('../utils/callbackUtils');
 var $BH = require('../../src/datastructs/binaryHeap');
 /**
  * Priority first search
@@ -15,8 +17,7 @@ var $BH = require('../../src/datastructs/binaryHeap');
  * in BFS, automatically instantiated if not given..
  */
 function PFS(graph, v, config) {
-    var config = config || preparePFSStandardConfig();
-    var dir_mode = config.dir_mode;
+    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
     /**
        * We are not traversing an empty graph...
        */
@@ -50,6 +51,48 @@ function PFS(graph, v, config) {
         root_node: v,
         adj_nodes: []
     };
+    /**
+       * HOOK 1: PFS INIT
+       */
+    if (callbacks.init_pfs) {
+        $CB.execCallbacks(callbacks.init_pfs, scope);
+    }
+    // We need to push NeighborEntries
+    // TODO: Virtual edge addition OK?
+    var start_ne = {
+        node: v,
+        edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 })
+    };
+    scope.OPEN_HEAP.insert(start_ne);
+    /**
+     * Main loop
+     */
+    while (scope.OPEN_HEAP.size()) {
+        scope.current = scope.OPEN_HEAP.pop();
+        // TODO what if we already reached the goal?
+        if (scope.current.node === config.goal_node) {
+            // first execCallbacks if given
+            if (config.callbacks.goal_reached) {
+                $CB.execCallbacks(config.callbacks.goal_reached);
+            }
+        }
+        /**
+             * Do we move only in the directed subgraph,
+             * undirected subgraph or complete (mixed) graph?
+             */
+        if (dir_mode === $G.GraphMode.MIXED) {
+            scope.adj_nodes = scope.current.node.adjNodes();
+        }
+        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+            scope.adj_nodes = scope.current.node.connNodes();
+        }
+        else if (dir_mode === $G.GraphMode.DIRECTED) {
+            scope.adj_nodes = scope.current.node.nextNodes();
+        }
+        else {
+            scope.adj_nodes = [];
+        }
+    }
     return {};
 }
 exports.PFS = PFS;

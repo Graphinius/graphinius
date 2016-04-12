@@ -43,8 +43,9 @@ export interface PFS_Scope {
   OPEN_HEAP   : $BH.BinaryHeap;
   OPEN   	  	: {[id: string] : boolean};
   CLOSED      : {[id: string] : boolean};
+  // TODO need that ???
 	nodes		  	: {[id: string] : $N.IBaseNode};
-	current			: $N.IBaseNode;
+	current			: $N.NeighborEntry;
 	next_node		: $N.IBaseNode;
 	next_edge		: $E.IBaseEdge;
 	root_node		: $N.IBaseNode;
@@ -67,8 +68,9 @@ function PFS(graph 	 : $G.IGraph,
 						 v 			 : $N.IBaseNode,
              config  : PFS_Config) : {[id: string] : PFS_ResultEntry} {
 
-  var config = config || preparePFSStandardConfig();
-  var dir_mode = config.dir_mode;
+  var config = config || preparePFSStandardConfig(),
+      callbacks = config.callbacks,
+      dir_mode = config.dir_mode;
   
   /**
 	 * We are not traversing an empty graph...
@@ -106,6 +108,57 @@ function PFS(graph 	 : $G.IGraph,
     root_node : v,
     adj_nodes : []
   }
+  
+  /**
+	 * HOOK 1: PFS INIT
+	 */
+	if ( callbacks.init_pfs ) {
+		$CB.execCallbacks(callbacks.init_pfs, scope);
+	}
+  
+  // We need to push NeighborEntries
+  // TODO: Virtual edge addition OK?
+  var start_ne : $N.NeighborEntry = {
+    node: v,
+    edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0})
+  }
+  scope.OPEN_HEAP.insert(start_ne);
+  
+  /**
+   * Main loop
+   */
+  while ( scope.OPEN_HEAP.size() ) {
+    scope.current = scope.OPEN_HEAP.pop();
+    
+    // TODO what if we already reached the goal?
+    if ( scope.current.node === config.goal_node ) {
+      // first execCallbacks if given
+      if ( config.callbacks.goal_reached ) {
+        $CB.execCallbacks(config.callbacks.goal_reached);
+      }
+    }
+    
+    
+    /**
+		 * Do we move only in the directed subgraph,
+		 * undirected subgraph or complete (mixed) graph?
+		 */
+		if ( dir_mode === $G.GraphMode.MIXED ) {
+			scope.adj_nodes = scope.current.node.adjNodes();
+		}
+		else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
+			scope.adj_nodes = scope.current.node.connNodes();
+		}
+		else if ( dir_mode === $G.GraphMode.DIRECTED ) {
+			scope.adj_nodes = scope.current.node.nextNodes();
+		}
+		else {
+			scope.adj_nodes = [];
+		}
+    
+    
+  }
+  
   
  
   return {};               

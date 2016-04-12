@@ -40,7 +40,7 @@ describe('PFS TESTS - ', () => {
      * prerequisites are not met ??
      */
     it('should refuse to traverse a graph with DIR mode set to init', () => {
-      var start = graph.getNodeById('A'),
+      var root = graph.getNodeById('A'),
           config : $PFS.PFS_Config = {
             result    : {},
             callbacks : {},
@@ -48,7 +48,7 @@ describe('PFS TESTS - ', () => {
             goal_node : null
           };
           
-      expect($PFS.PFS.bind($PFS.PFS, graph, start, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');
+      expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');
     });
   
   });
@@ -136,6 +136,54 @@ describe('PFS TESTS - ', () => {
       expect(config.callbacks.init_pfs[0]).not.to.be.undefined;
       expect(config.callbacks.init_pfs[0]).to.be.instanceof(Function);
     });
+    
+  });
+  
+  
+  describe('Callback execution tests in different stages - ', () => {
+    
+    it('should execute the initPFS callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+
+			var pfsInitTestCallback = function() {
+				config.messages.init_pfs_msgs['test_message'] = "BFS INIT callback executed.";
+			};
+			config.callbacks.init_pfs.push(pfsInitTestCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.init_pfs_msgs['test_message']).to.equal("BFS INIT callback executed.");
+    });
+    
+    
+    it('should execute the goal reached callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+      
+      config.goal_node = root;
+
+			var pfsGoalReachedCallback = function() {
+				config.messages.goal_reached_msgs['test_message'] = "GOAL REACHED callback executed.";
+			};
+			config.callbacks.goal_reached.push(pfsGoalReachedCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.goal_reached_msgs['test_message']).to.equal("GOAL REACHED callback executed.");
+    });
+    
+    
+    /**
+     * Node open callback scenario
+     */
+    it('should execute the node open callback');
+    
+    /**
+     * Node closed callback scenario
+     */
+    it('should execute the node closed callback');
+    
+    /**
+     * Better path (found) callback scenario
+     */
+    it('should execute the better path (found) callback');
     
   });
   
