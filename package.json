@@ -1,8 +1,4 @@
 {
-  "name": "graphinius",
-  "version": "0.2.7",
-  "description": "Generic graph (analysis) library in Typescript",
-  "main": "index.js",
   "scripts": {
     "build": "gulp build",
     "test": "gulp mocha",
@@ -19,6 +15,10 @@
     "graph theory",
     "graph analysis"
   ],
+  "name": "graphinius",
+  "version": "0.2.7",
+  "description": "Generic graph (analysis) library in Typescript",
+  "main": "index.js",
   "author": "Bernd Malle",
   "license": "Apache-2.0",
   "bugs": {
@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/cassinius/Graphinius#readme",
   "devDependencies": {
-    "browserify-istanbul": "^2.0.0",
     "chai": "^3.4.1",
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
@@ -44,7 +43,6 @@
     "json-loader": "^0.5.4",
     "merge2": "^1.0.0",
     "mocha": "^2.3.4",
-    "requirejs": "^2.2.0",
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
     "typedoc": "^0.3.12",

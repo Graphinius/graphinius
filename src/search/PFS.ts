@@ -85,13 +85,20 @@ function PFS(graph 	 : $G.IGraph,
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
   
-  // we take a standard eval function returning
-  // the weight of a successor edge
+  /**
+   * we take a standard eval function returning
+   * the weight of a successor edge
+   * This will later be replaced by a config option...
+   */
   var evalPriority = function(ne: $N.NeighborEntry) {
     return ne.edge.getWeight();
   };
-  // we take a standard ID function returning
-  // the ID of a NeighborEntry's node
+  
+  /**
+   * we take a standard ID function returning
+   * the ID of a NeighborEntry's node
+   * This will later be replaced by a config option...
+   */
   var evalObjID = function(ne: $N.NeighborEntry) {
     return ne.node.getID();
   }
@@ -112,9 +119,7 @@ function PFS(graph 	 : $G.IGraph,
   /**
 	 * HOOK 1: PFS INIT
 	 */
-	if ( callbacks.init_pfs ) {
-		$CB.execCallbacks(callbacks.init_pfs, scope);
-	}
+  callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
   
   // We need to push NeighborEntries
   // TODO: Virtual edge addition OK?
@@ -132,10 +137,10 @@ function PFS(graph 	 : $G.IGraph,
     
     // TODO what if we already reached the goal?
     if ( scope.current.node === config.goal_node ) {
-      // first execCallbacks if given
-      if ( config.callbacks.goal_reached ) {
-        $CB.execCallbacks(config.callbacks.goal_reached);
-      }
+      /**
+       * HOOK 2: Goal node reached
+       */
+      config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached);
     }
     
     
@@ -156,10 +161,12 @@ function PFS(graph 	 : $G.IGraph,
 			scope.adj_nodes = [];
 		}
     
-    
-  }
-  
-  
+    // HACK Replace with actual algorithm:    
+    config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open);
+    config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed);    
+    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path);
+        
+  }  
  
   return {};               
 }

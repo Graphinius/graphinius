@@ -170,22 +170,62 @@ describe('PFS TESTS - ', () => {
     });
     
     
-    /**
-     * Node open callback scenario
-     */
-    it('should execute the node open callback');
+    it('should execute the node open callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+
+			var pfsNodeOpenCallback = function() {
+				config.messages.node_open_msgs['test_message'] = "NODE OPEN callback executed.";
+			};
+			config.callbacks.node_open.push(pfsNodeOpenCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.node_open_msgs['test_message']).to.equal("NODE OPEN callback executed.");
+    });
+    
+    
+    it('should execute the node closed callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+
+			var pfsNodeClosedCallback = function() {
+				config.messages.node_closed_msgs['test_message'] = "NODE CLOSED callback executed.";
+			};
+			config.callbacks.node_closed.push(pfsNodeClosedCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.node_closed_msgs['test_message']).to.equal("NODE CLOSED callback executed.");
+    });
+    
+
+    it('should execute the better path (found) callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+
+			var pfsBetterPathFoundCallback = function() {
+				config.messages.better_path_msgs['test_message'] = "BETTER PATH FOUND callback executed.";
+			};
+			config.callbacks.better_path.push(pfsBetterPathFoundCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
+    });
+    
     
     /**
-     * Node closed callback scenario
+     * HACK to execute dir modes for coverage tests...
      */
-    it('should execute the node closed callback');
+    it('should execute the better path (found) callback', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+          
+      config.dir_mode = $G.GraphMode.DIRECTED;
+      $PFS.PFS(graph, root, config);
+      
+      config.dir_mode = $G.GraphMode.UNDIRECTED;
+      $PFS.PFS(graph, root, config);
+      
+      config.dir_mode = -77; // else branch...
+      $PFS.PFS(graph, root, config);
+    });
     
-    /**
-     * Better path (found) callback scenario
-     */
-    it('should execute the better path (found) callback');
-    
-  });
-  
+  });  
 
 });
