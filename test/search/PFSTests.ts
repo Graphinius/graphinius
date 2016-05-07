@@ -113,7 +113,7 @@ describe('PFS TESTS - ', () => {
       expect(config.messages.node_open_msgs).not.to.be.undefined;
       expect(Array.isArray(config.messages.node_open_msgs)).to.be.true;     
       expect(config.messages.node_closed_msgs).not.to.be.undefined;
-      expect(Array.isArray(config.messages.node_closed_msgs)).to.be.true;     
+      expect(Array.isArray(config.messages.node_closed_msgs)).to.be.true;
       expect(config.messages.better_path_msgs).not.to.be.undefined;
       expect(Array.isArray(config.messages.better_path_msgs)).to.be.true;     
       expect(config.messages.goal_reached_msgs).not.to.be.undefined;
@@ -125,7 +125,7 @@ describe('PFS TESTS - ', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).not.to.be.undefined;
       expect(config.goal_node).not.to.be.undefined;
-    });   
+    });
         
     
     it('should instantiate a default config object with an existing init_pfs callback', () => {

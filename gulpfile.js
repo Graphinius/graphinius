@@ -57,7 +57,7 @@ gulp.task("tdoc", ['clean'], function() {
 			target: "es5",
 			out: "docs/",
 			name: "Graphinius"//,
-			// theme: "minimal"
+			//theme: "minimal"
 		}));
 });
 

@@ -65,8 +65,25 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="graphinius">Graphinius</h1>
+				<h1 id="graphinius-js">Graphinius JS</h1>
 				<p>Generic graph (analysis) library in Typescript</p>
+				<h2 id="demo">Demo</h2>
+				<p>GraphiniusJS is integrated in our current <a href="http://berndmalle.com/GraphiniusVis">GraphiniusVIS Demo Site.</a></p>
+				<p>Execute the following lines of code in succession to arrive at a simple degree distribution:</p>
+				<p><img src="https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/deg_dist.png" alt="Simple Degree Distribution"></p>
+				<p>Then reproduce the code given below to visualize a first graph:</p>
+				<p><img src="https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/loadingGraphInREPL.png" alt="First graph visualization"></p>
+				<p>You can execute a BFS algorithm starting at a random node, then explore the resulting data structure by following this example:</p>
+				<p><img src="https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/colorBFSREPL.png" alt="BFS Color Map"></p>
+				<p>In the above code, the BFS coloring does not necessarily correspond to the BFS result computed in line 3. Colors run from green (start node) to red (most distant node).</p>
+				<p>You can configure the JSON graph loader for directed mode first:</p>
+				<pre><code class="lang-javascript"><span class="hljs-comment">// ignore explicit direction as specified by file content</span>
+jsonReader._explicit_direction = <span class="hljs-literal">false</span>;
+<span class="hljs-comment">// interpret all edges as directed instead</span>
+jsonReader._direction = <span class="hljs-literal">true</span>;
+</code></pre>
+				<p>Then execute the following lines of code to obtain a (random) DFS segmentation:</p>
+				<p><img src="https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/colorDFSREPL.png" alt="DFS Color Map"></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

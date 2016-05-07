@@ -7,7 +7,9 @@ var init = +new Date(),
     node_id = "1",
     graph_mode = 2;
 
-yargs.graph = yargs.graph || "SCC15k";
+
+yargs.graph = yargs.graph || "SCC100k";
+
 
 //----------------------------------------------------------------
 //                           LOAD TEST
@@ -16,8 +18,17 @@ var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_data/CSV/' + yargs.graph 
 var csv = new $G.input.CsvInput(' ', false, false);
 var graph = csv.readFromEdgeListFile(file);
 end = +new Date();
-console.log("Read graph " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
+console.log(" \nRead graph " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
+
+
+//----------------------------------------------------------------
+//                           DEGREE DISTRIBUTION
+//----------------------------------------------------------------
+start = +new Date();
+var deg_dist = graph.degreeDistribution();
+end = +new Date();
+console.log("Calculated degree distribution of " + yargs.graph + " in " + (end-start) + " ms.");
 
 
 //----------------------------------------------------------------
@@ -32,20 +43,20 @@ console.log("Computed BFS of " + yargs.graph + " with " + graph.nrNodes() + " no
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
-start = +new Date();
-var max_distance = 0;
-for (var node_idx in bfs) {
-  if ( bfs.hasOwnProperty(node_idx) ) {
-    if ( bfs[node_idx].distance > max_distance && bfs[node_idx].distance !== Number.POSITIVE_INFINITY ) {
-      max_distance = bfs[node_idx].distance;
-    }
-  }
-}
-end = +new Date();
-console.log("Computed max reachable distance in graph of " + graph.nrNodes() + " nodes and " + 
-            graph.nrUndEdges() + " edges in " + (end-start) + " ms.\n Max distance is: " + max_distance);
+// start = +new Date();
+// var max_distance = 0;
+// for (var node_idx in bfs) {
+//   if ( bfs.hasOwnProperty(node_idx) ) {
+//     if ( bfs[node_idx].distance > max_distance && bfs[node_idx].distance !== Number.POSITIVE_INFINITY ) {
+//       max_distance = bfs[node_idx].distance;
+//     }
+//   }
+// }
+// end = +new Date();
+// console.log("Computed max reachable distance in graph of " + graph.nrNodes() + " nodes and " + 
+//             graph.nrUndEdges() + " edges in " + (end-start)); // + " ms.\n Max distance is: " + max_distance
 
-console.log("Whole run took: " + (end-init) + " ms.");
+// console.log("Whole run took: " + (end-init) + " ms.");
 
 
 
@@ -61,7 +72,7 @@ console.log("Computed DFS of " + yargs.graph + " with " + graph.nrNodes() + " no
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
-console.log("Whole run took: " + (end-init) + " ms.");
+// console.log("Whole run took: " + (end-init) + " ms.");
 
 
 
