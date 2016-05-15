@@ -618,7 +618,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				expect(weight_dists['D']).to.equal(7);
 				expect(weight_dists['E']).to.equal(12);
 				expect(weight_dists['F']).to.equal(8);
-				expect(weight_dists['G']).to.equal(Number.POSITIVE_INFINITY);				
+				expect(weight_dists['G']).to.equal(Number.POSITIVE_INFINITY);
 			});
 			
 			
