@@ -51,11 +51,11 @@ function PFS(graph, v, config) {
         OPEN: {},
         CLOSED: {},
         nodes: graph.getNodes(),
-        current: null,
-        next_node: null,
-        next_edge: null,
         root_node: v,
-        adj_nodes: []
+        current: null,
+        adj_nodes: [],
+        next: null,
+        better_dist: Number.POSITIVE_INFINITY,
     };
     /**
        * HOOK 1: PFS INIT
@@ -68,7 +68,6 @@ function PFS(graph, v, config) {
         edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
         best: 0
     };
-    // console.log("Start NE: " + start_ne.node.getID());
     scope.OPEN_HEAP.insert(start_ne);
     scope.OPEN[start_ne.node.getID()] = start_ne;
     /**
@@ -77,7 +76,6 @@ function PFS(graph, v, config) {
     while (scope.OPEN_HEAP.size()) {
         // get currently best node
         scope.current = scope.OPEN_HEAP.pop();
-        // console.log('POPPED NODE: ' + scope.current.node.getID() + ' with best distance: ' + scope.current.best);
         // remove from OPEN
         scope.OPEN[scope.current.node.getID()] = undefined;
         // add it to CLOSED
@@ -87,16 +85,13 @@ function PFS(graph, v, config) {
             /**
              * HOOK 2: Goal node reached
              */
-            config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached);
-            // TODO: WHICH RESULT DO WE RETURN???
+            config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
+            // If a goal node is set from the outside & we reach it, we stop.
             return config.result;
         }
         /**
          * Extend the current node, also called
          * "create n's successors"...
-         *
-             * Do we move only in the directed subgraph,
-             * undirected subgraph or complete (mixed) graph?
              */
         // TODO: Reverse callback logic to NOT merge anything by default!!!
         if (dir_mode === $G.GraphMode.MIXED) {
@@ -111,60 +106,48 @@ function PFS(graph, v, config) {
         else {
             scope.adj_nodes = [];
         }
+        /**
+         * EXPAND AND EXAMINE NEIGHBORHOOD
+         */
         for (var adj_idx in scope.adj_nodes) {
-            var ne = scope.adj_nodes[adj_idx];
-            // Have we already dealt with that node and all it's neighbors?
-            if (scope.CLOSED[ne.node.getID()]) {
+            scope.next = scope.adj_nodes[adj_idx];
+            if (scope.CLOSED[scope.next.node.getID()]) {
+                /**
+                 * HOOK 3: Goal node already closed
+                 */
+                config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
                 continue;
             }
-            // Have we encountered this node before but it's still in OPEN?
-            if (scope.OPEN[ne.node.getID()]) {
-                // Either our best value is already explicitly stored,
-                // or it's the current distance plus edge weight
-                ne.best = scope.OPEN[ne.node.getID()].best;
-                // console.log("Encountered node " + ne.node.getID() + " with distance: " + ne.best);
-                // reevaluate this neighborhood entry (& replace it in HEAP)
-                var new_best = scope.current.best + ne.edge.getWeight();
-                if (ne.best > new_best) {
-                    // console.log("NE BEST: " + ne.best + " to node " + ne.node.getID());
-                    // console.log("NEW BEST: " + new_best);
-                    scope.OPEN_HEAP.remove(ne);
-                    ne.best = new_best;
-                    scope.OPEN_HEAP.insert(ne);
-                    // also update in OPEN datastruct
-                    scope.OPEN[ne.node.getID()].best = new_best;
-                    // set new distance and parent...
-                    // TODO defer to better path callback later
-                    config.result[ne.node.getID()].distance = new_best;
-                    config.result[ne.node.getID()].parent = scope.current.node;
+            if (scope.OPEN[scope.next.node.getID()]) {
+                // First let's recover the previous best solution from our OPEN structure,
+                // as the node's neighborhood-retrieving function cannot know it...
+                scope.next.best = scope.OPEN[scope.next.node.getID()].best;
+                /**
+                 * HOOK 4: Goal node already visited, but not yet closed
+                 */
+                config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
+                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+                if (scope.next.best > scope.better_dist) {
+                    /**
+                     * HOOK 5: Better path found
+                     */
+                    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
+                    // HEAP operations are necessary for internal traversal,
+                    // so we handle them here in the main loop
+                    scope.OPEN_HEAP.remove(scope.next);
+                    scope.next.best = scope.better_dist;
+                    scope.OPEN_HEAP.insert(scope.next);
+                    scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
                 }
                 continue;
             }
-            // We have never encountered this node - evaluate it,
-            // setting it's best score to actual distance + edge weight
-            // and add it to OPEN
-            ne.best = scope.current.best + ne.edge.getWeight();
-            // console.log('PUSHING NODE: ' + ne.node.getID() + ' with best distance: ' + ne.best);
-            scope.OPEN_HEAP.insert(ne);
-            scope.OPEN[ne.node.getID()] = ne;
-            config.result[ne.node.getID()] = {
-                distance: ne.best,
-                parent: scope.current.node,
-                counter: undefined
-            };
+            // NODE NOT ENCOUNTERED
+            config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
+            // HEAP operations are necessary for internal traversal,
+            // so we handle them here in the main loop
+            scope.OPEN_HEAP.insert(scope.next);
+            scope.OPEN[scope.next.node.getID()] = scope.next;
         }
-        /**
-         *  TODO: replace callbacks with / add to them:
-         *
-         *  - target found
-         *  - not_encountered
-         *  - node_open
-         *  - node_closed
-         */
-        // HACK Replace with actual algorithm:  
-        config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open);
-        config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed);
-        config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path);
     }
     return config.result;
 }
@@ -174,6 +157,7 @@ function preparePFSStandardConfig() {
         result: {},
         callbacks: {
             init_pfs: [],
+            not_encountered: [],
             node_open: [],
             node_closed: [],
             better_path: [],
@@ -181,6 +165,7 @@ function preparePFSStandardConfig() {
         },
         messages: {
             init_pfs_msgs: [],
+            not_enc_msgs: [],
             node_open_msgs: [],
             node_closed_msgs: [],
             better_path_msgs: [],
@@ -212,6 +197,24 @@ function preparePFSStandardConfig() {
         };
     };
     callbacks.init_pfs.push(initPFS);
+    // Node not yet encountered callback
+    var notEncountered = function (context) {
+        // setting it's best score to actual distance + edge weight
+        // and update result structure
+        context.next.best = context.current.best + context.next.edge.getWeight();
+        config.result[context.next.node.getID()] = {
+            distance: context.next.best,
+            parent: context.current.node,
+            counter: undefined
+        };
+    };
+    callbacks.not_encountered.push(notEncountered);
+    // Callback for when we find a better solution
+    var betterPathFound = function (context) {
+        config.result[context.next.node.getID()].distance = context.better_dist;
+        config.result[context.next.node.getID()].parent = context.current.node;
+    };
+    callbacks.better_path.push(betterPathFound);
     return config;
 }
 exports.preparePFSStandardConfig = preparePFSStandardConfig;

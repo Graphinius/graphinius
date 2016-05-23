@@ -89,9 +89,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#open" class="tsd-kind-icon">OPEN</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#open_heap" class="tsd-kind-icon">OPEN_<wbr>HEAP</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#adj_nodes" class="tsd-kind-icon">adj_<wbr>nodes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#better_dist" class="tsd-kind-icon">better_<wbr>dist</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#current" class="tsd-kind-icon">current</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#next_edge" class="tsd-kind-icon">next_<wbr>edge</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#next_node" class="tsd-kind-icon">next_<wbr>node</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#next" class="tsd-kind-icon">next</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#nodes" class="tsd-kind-icon">nodes</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_pfs_.pfs_scope.html#root_node" class="tsd-kind-icon">root_<wbr>node</a></li>
 							</ul>
@@ -107,7 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">CLOSED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L45">search/PFS.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L47">search/PFS.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -125,7 +125,7 @@
 					<div class="tsd-signature tsd-kind-icon">OPEN<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L44">search/PFS.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L46">search/PFS.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -143,7 +143,7 @@
 					<div class="tsd-signature tsd-kind-icon">OPEN_<wbr>HEAP<span class="tsd-signature-symbol">:</span> <a href="../classes/_datastructs_binaryheap_.binaryheap.html" class="tsd-signature-type">BinaryHeap</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L43">search/PFS.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L45">search/PFS.ts:45</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,7 +153,17 @@
 					<div class="tsd-signature tsd-kind-icon">adj_<wbr>nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L54">search/PFS.ts:54</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L51">search/PFS.ts:51</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="better_dist" class="tsd-anchor"></a>
+					<h3>better_<wbr>dist</h3>
+					<div class="tsd-signature tsd-kind-icon">better_<wbr>dist<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L53">search/PFS.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -168,22 +178,12 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="next_edge" class="tsd-anchor"></a>
-					<h3>next_<wbr>edge</h3>
-					<div class="tsd-signature tsd-kind-icon">next_<wbr>edge<span class="tsd-signature-symbol">:</span> <a href="_core_edges_.ibaseedge.html" class="tsd-signature-type">IBaseEdge</a></div>
+					<a name="next" class="tsd-anchor"></a>
+					<h3>next</h3>
+					<div class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">:</span> <a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L52">search/PFS.ts:52</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="next_node" class="tsd-anchor"></a>
-					<h3>next_<wbr>node</h3>
-					<div class="tsd-signature tsd-kind-icon">next_<wbr>node<span class="tsd-signature-symbol">:</span> <a href="_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L51">search/PFS.ts:51</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +211,7 @@
 					<div class="tsd-signature tsd-kind-icon">root_<wbr>node<span class="tsd-signature-symbol">:</span> <a href="_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L53">search/PFS.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L49">search/PFS.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -296,13 +296,13 @@
 								<a href="_search_pfs_.pfs_scope.html#adj_nodes" class="tsd-kind-icon">adj_<wbr>nodes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_search_pfs_.pfs_scope.html#better_dist" class="tsd-kind-icon">better_<wbr>dist</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_search_pfs_.pfs_scope.html#current" class="tsd-kind-icon">current</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_pfs_.pfs_scope.html#next_edge" class="tsd-kind-icon">next_<wbr>edge</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_pfs_.pfs_scope.html#next_node" class="tsd-kind-icon">next_<wbr>node</a>
+								<a href="_search_pfs_.pfs_scope.html#next" class="tsd-kind-icon">next</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_search_pfs_.pfs_scope.html#nodes" class="tsd-kind-icon">nodes</a>

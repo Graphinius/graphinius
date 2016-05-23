@@ -142,7 +142,7 @@ describe('PFS TESTS - ', () => {
   
   describe('Callback execution tests in different stages - ', () => {
     
-    it('should execute the initPFS callback', () => {
+    it('should execute the initPFS callbacks', () => {
       var root = graph.getNodeById('A'),
 					config = $PFS.preparePFSStandardConfig();
 
@@ -155,7 +155,7 @@ describe('PFS TESTS - ', () => {
     });
     
     
-    it('should execute the goal reached callback', () => {
+    it('should execute the goal reached callbacks', () => {
       var root = graph.getNodeById('A'),
 					config = $PFS.preparePFSStandardConfig();
       
@@ -168,9 +168,22 @@ describe('PFS TESTS - ', () => {
 			var result = $PFS.PFS(graph, root, config);
 			expect(config.messages.goal_reached_msgs['test_message']).to.equal("GOAL REACHED callback executed.");
     });
+
+
+    it('should execute the not encountered callbacks', () => {
+      var root = graph.getNodeById('A'),
+        config = $PFS.preparePFSStandardConfig();
+
+      var pfsnotEncCallback = function() {
+        config.messages.not_enc_msgs['test_message'] = "NOT ENCOUNTERED callback executed.";
+      };
+      config.callbacks.not_encountered.push(pfsnotEncCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.not_enc_msgs['test_message']).to.equal("NOT ENCOUNTERED callback executed.");
+    });
     
     
-    it('should execute the node open callback', () => {
+    it('should execute the node open callbacks', () => {
       var root = graph.getNodeById('A'),
 					config = $PFS.preparePFSStandardConfig();
 
@@ -183,7 +196,7 @@ describe('PFS TESTS - ', () => {
     });
     
     
-    it('should execute the node closed callback', () => {
+    it('should execute the node closed callbacks', () => {
       var root = graph.getNodeById('A'),
 					config = $PFS.preparePFSStandardConfig();
 
@@ -196,7 +209,7 @@ describe('PFS TESTS - ', () => {
     });
     
 
-    it('should execute the better path (found) callback', () => {
+    it('should execute the better path (found) callbacks', () => {
       var root = graph.getNodeById('A'),
 					config = $PFS.preparePFSStandardConfig();
 
@@ -206,24 +219,6 @@ describe('PFS TESTS - ', () => {
 			config.callbacks.better_path.push(pfsBetterPathFoundCallback);
 			var result = $PFS.PFS(graph, root, config);
 			expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
-    });
-    
-    
-    /**
-     * HACK to execute dir modes for coverage tests...
-     */
-    it('should execute the better path (found) callback', () => {
-      var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
-          
-      config.dir_mode = $G.GraphMode.DIRECTED;
-      $PFS.PFS(graph, root, config);
-      
-      config.dir_mode = $G.GraphMode.UNDIRECTED;
-      $PFS.PFS(graph, root, config);
-      
-      config.dir_mode = -77; // else branch...
-      $PFS.PFS(graph, root, config);
     });
     
   });
