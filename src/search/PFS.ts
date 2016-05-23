@@ -41,10 +41,12 @@ export interface PFS_Messages {
 export interface PFS_Scope {
   // OPEN is the heap we use for getting the best choice
   OPEN_HEAP   : $BH.BinaryHeap;
-  OPEN   	  	: {[id: string] : boolean};
-  CLOSED      : {[id: string] : boolean};
+  OPEN   	  	: {[id: string] : $N.NeighborEntry};
+  CLOSED      : {[id: string] : $N.NeighborEntry};
+
   // TODO need that ???
 	nodes		  	: {[id: string] : $N.IBaseNode};
+
 	current			: $N.NeighborEntry;
 	next_node		: $N.IBaseNode;
 	next_edge		: $E.IBaseEdge;
@@ -91,7 +93,7 @@ function PFS(graph 	 : $G.IGraph,
    * This will later be replaced by a config option...
    */
   var evalPriority = function(ne: $N.NeighborEntry) {
-    return ne.edge.getWeight();
+    return ne.best;
   };
   
   /**
@@ -101,7 +103,7 @@ function PFS(graph 	 : $G.IGraph,
    */
   var evalObjID = function(ne: $N.NeighborEntry) {
     return ne.node.getID();
-  }
+  };
   
   
   var scope : PFS_Scope = {
@@ -114,7 +116,7 @@ function PFS(graph 	 : $G.IGraph,
     next_edge : null,
     root_node : v,
     adj_nodes : []
-  }
+  };
   
   /**
 	 * HOOK 1: PFS INIT
@@ -125,15 +127,29 @@ function PFS(graph 	 : $G.IGraph,
   // TODO: Virtual edge addition OK?
   var start_ne : $N.NeighborEntry = {
     node: v,
-    edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0})
-  }
+    edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0}),
+    best: 0
+  };
+
+  console.log("Start NE: " + start_ne.node.getID());
+
   scope.OPEN_HEAP.insert(start_ne);
+  scope.OPEN[start_ne.node.getID()] = start_ne;
   
   /**
    * Main loop
    */
   while ( scope.OPEN_HEAP.size() ) {
+    // get currently best node
     scope.current = scope.OPEN_HEAP.pop();
+    
+    console.log('POPPED NODE: ' + scope.current.node.getID() + ' with best distance: ' + scope.current.best);
+    
+    // remove from OPEN
+    scope.OPEN[scope.current.node.getID()] = undefined;
+    
+    // add it to CLOSED
+    scope.CLOSED[scope.current.node.getID()] = scope.current;
     
     // TODO what if we already reached the goal?
     if ( scope.current.node === config.goal_node ) {
@@ -141,10 +157,17 @@ function PFS(graph 	 : $G.IGraph,
        * HOOK 2: Goal node reached
        */
       config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached);
+      
+      
+      // TODO: WHICH RESULT DO WE RETURN???
+      return config.result;
     }
     
     
     /**
+     * Extend the current node, also called
+     * "create n's successors"...
+     * 
 		 * Do we move only in the directed subgraph,
 		 * undirected subgraph or complete (mixed) graph?
 		 */
@@ -160,15 +183,77 @@ function PFS(graph 	 : $G.IGraph,
 		else {
 			scope.adj_nodes = [];
 		}
+
+
+    for ( var adj_idx in scope.adj_nodes ) {
+      var ne = scope.adj_nodes[adj_idx];
+      
+      // Have we already dealt with that node and all it's neighbors?
+      if ( scope.CLOSED[ne.node.getID()] ) {
+        continue;
+      }
+      
+      // Have we encountered this node before but it's still in OPEN?
+      if ( scope.OPEN[ne.node.getID()] ) {
+
+        // Either our best value is already explicitly stored,
+        // or it's the current distance plus edge weight
+        ne.best = scope.OPEN[ne.node.getID()].best;
+        
+        // reevaluate this neighborhood entry (& replace it in HEAP)
+        var new_best = scope.current.best + ne.edge.getWeight();
+        if ( ne.best > new_best ) {
+
+          console.log("NE BEST: " + ne.best);
+          console.log("NEW BEST: " + new_best);
+          scope.OPEN_HEAP.remove(ne);
+          ne.best = new_best;
+          scope.OPEN_HEAP.insert(ne);
+          // also update in OPEN datastruct
+          scope.OPEN[ne.node.getID()].best = new_best;
+          
+          // set new distance and parent...
+          // TODO defer to better path callback later
+          config.result[ne.node.getID()].distance = new_best;
+          config.result[ne.node.getID()].parent = scope.current.node;
+        }
+        continue;
+      }
+      
+      // We have never encountered this node - evaluate it,
+      // setting it's best score to actual distance + edge weight
+      // and add it to OPEN
+      ne.best = scope.current.best + ne.edge.getWeight();
+
+      console.log('PUSHING NODE: ' + ne.node.getID() + ' with best distance: ' + ne.best);
+      scope.OPEN_HEAP.insert(ne);
+      scope.OPEN[ne.node.getID()] = ne;
+      
+      config.result[ne.node.getID()] = {
+        distance  : ne.best,
+        parent    : scope.current.node,
+        counter   : undefined
+      };
+    }
     
-    // HACK Replace with actual algorithm:    
-    config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open);
+    
+    /**
+     *  TODO: replace callbacks with / add to them:
+     * 
+     *  - target found
+     *  - not_encountered
+     *  - node_open
+     *  - node_closed
+     */
+    
+    // HACK Replace with actual algorithm:  
+    config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open);  
     config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed);    
     config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path);
         
-  }  
+  }
  
-  return {};               
+  return config.result;           
 }
 
 
@@ -192,7 +277,6 @@ function preparePFSStandardConfig() : PFS_Config {
     dir_mode  : $G.GraphMode.MIXED,
     goal_node : null
   },
-    result = config.result,
     callbacks = config.callbacks;
     
   var count = 0;

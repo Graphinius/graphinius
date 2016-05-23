@@ -4,8 +4,10 @@ import * as $E from "./Edges";
 import * as $DS from "../utils/structUtils";
 
 export interface NeighborEntry {
-  node: IBaseNode;
-  edge: $E.IBaseEdge;
+  node  : IBaseNode;
+  edge  : $E.IBaseEdge;
+  // only used (and tested) in PFS
+  best? : number;
 }
 
 export interface IBaseNode {

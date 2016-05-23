@@ -99,6 +99,10 @@ class BinaryHeap implements IBinaryHeap {
     this.trickleUp(this._array.length - 1);
   }
   
+  
+  /**
+   * 
+   */
   remove(obj: any) : any {
     if ( isNaN( this._evalPriority(obj) ) ) {
       throw new Error('Object invalid.');

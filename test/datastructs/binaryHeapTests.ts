@@ -364,8 +364,7 @@ describe('BINARY HEAP TESTS - ', () => {
       
       expect(binHeap.pop()).to.equal(33);
       expect(binHeap.getArray()).to.deep.equal([]);
-    });
-    
+    });   
     
     
     it('should trickle up correctly upon removing an object, MAX HEAP', () => {
@@ -382,7 +381,7 @@ describe('BINARY HEAP TESTS - ', () => {
       expect(binHeap.pop()).to.equal(5);
       expect(binHeap.pop()).to.equal(1);
     });
-
+    
 
     it('tests MIN heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap();

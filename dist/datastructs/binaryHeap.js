@@ -70,6 +70,9 @@ var BinaryHeap = (function () {
         this._array.push(obj);
         this.trickleUp(this._array.length - 1);
     };
+    /**
+     *
+     */
     BinaryHeap.prototype.remove = function (obj) {
         if (isNaN(this._evalPriority(obj))) {
             throw new Error('Object invalid.');
