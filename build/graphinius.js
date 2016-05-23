@@ -387,9 +387,16 @@
 	        }
 	        return conns;
 	    };
-	    BaseNode.prototype.adjNodes = function () {
+	    /**
+	     *
+	     * @param identityFunc
+	     * @returns {Array}
+	     *
+	     * TODO: Reverse callback logic to NOT merge anything by default!!!
+	   */
+	    BaseNode.prototype.adjNodes = function (identityFunc) {
 	        // console.log(this.nextNodes());
-	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], function (ne) {
+	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) {
 	            return ne.node.getID();
 	        });
 	    };

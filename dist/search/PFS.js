@@ -68,7 +68,7 @@ function PFS(graph, v, config) {
         edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
         best: 0
     };
-    console.log("Start NE: " + start_ne.node.getID());
+    // console.log("Start NE: " + start_ne.node.getID());
     scope.OPEN_HEAP.insert(start_ne);
     scope.OPEN[start_ne.node.getID()] = start_ne;
     /**
@@ -77,7 +77,7 @@ function PFS(graph, v, config) {
     while (scope.OPEN_HEAP.size()) {
         // get currently best node
         scope.current = scope.OPEN_HEAP.pop();
-        console.log('POPPED NODE: ' + scope.current.node.getID() + ' with best distance: ' + scope.current.best);
+        // console.log('POPPED NODE: ' + scope.current.node.getID() + ' with best distance: ' + scope.current.best);
         // remove from OPEN
         scope.OPEN[scope.current.node.getID()] = undefined;
         // add it to CLOSED
@@ -98,8 +98,9 @@ function PFS(graph, v, config) {
              * Do we move only in the directed subgraph,
              * undirected subgraph or complete (mixed) graph?
              */
+        // TODO: Reverse callback logic to NOT merge anything by default!!!
         if (dir_mode === $G.GraphMode.MIXED) {
-            scope.adj_nodes = scope.current.node.adjNodes();
+            scope.adj_nodes = scope.current.node.adjNodes(function (ne) { return Math.random() * +(new Date); });
         }
         else if (dir_mode === $G.GraphMode.UNDIRECTED) {
             scope.adj_nodes = scope.current.node.connNodes();
@@ -121,11 +122,12 @@ function PFS(graph, v, config) {
                 // Either our best value is already explicitly stored,
                 // or it's the current distance plus edge weight
                 ne.best = scope.OPEN[ne.node.getID()].best;
+                // console.log("Encountered node " + ne.node.getID() + " with distance: " + ne.best);
                 // reevaluate this neighborhood entry (& replace it in HEAP)
                 var new_best = scope.current.best + ne.edge.getWeight();
                 if (ne.best > new_best) {
-                    console.log("NE BEST: " + ne.best);
-                    console.log("NEW BEST: " + new_best);
+                    // console.log("NE BEST: " + ne.best + " to node " + ne.node.getID());
+                    // console.log("NEW BEST: " + new_best);
                     scope.OPEN_HEAP.remove(ne);
                     ne.best = new_best;
                     scope.OPEN_HEAP.insert(ne);
@@ -142,7 +144,7 @@ function PFS(graph, v, config) {
             // setting it's best score to actual distance + edge weight
             // and add it to OPEN
             ne.best = scope.current.best + ne.edge.getWeight();
-            console.log('PUSHING NODE: ' + ne.node.getID() + ' with best distance: ' + ne.best);
+            // console.log('PUSHING NODE: ' + ne.node.getID() + ' with best distance: ' + ne.best);
             scope.OPEN_HEAP.insert(ne);
             scope.OPEN[ne.node.getID()] = ne;
             config.result[ne.node.getID()] = {

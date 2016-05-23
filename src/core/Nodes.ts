@@ -54,7 +54,7 @@ export interface IBaseNode {
 	prevNodes() : Array<NeighborEntry>;
 	nextNodes() : Array<NeighborEntry>;
 	connNodes() : Array<NeighborEntry>;
-	adjNodes() 	: Array<NeighborEntry>;
+	adjNodes(identityFunc?: Function) 	: Array<NeighborEntry>;
 }
 
 
@@ -362,12 +362,19 @@ class BaseNode implements IBaseNode {
 	}
 
 
-	adjNodes() : Array<NeighborEntry> {
+	/**
+	 *
+	 * @param identityFunc
+	 * @returns {Array}
+	 *
+	 * TODO: Reverse callback logic to NOT merge anything by default!!!
+   */
+	adjNodes(identityFunc?: Function) : Array<NeighborEntry> {
 		// console.log(this.nextNodes());
     return $DS.mergeArrays([this.nextNodes(), this.connNodes()],
-											function(ne: NeighborEntry) {
-												return ne.node.getID()
-											});
+								identityFunc || function(ne: NeighborEntry) {
+									return ne.node.getID()
+								});
 	}
 	
 }

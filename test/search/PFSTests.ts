@@ -397,88 +397,88 @@ describe('PFS TESTS - ', () => {
       var config = $PFS.preparePFSStandardConfig();
       config.dir_mode = $G.GraphMode.MIXED;
 
-      // it('Should correctly compute best paths from Node A', () => {
-      //   var root = graph.getNodeById('A'),
-      //     result = $PFS.PFS(graph, root, config);
-      //
-      //   expect(Object.keys(result).length).to.equal(6);
-      //
-      //   expect(result['A'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['A'].distance).to.equal(0);
-      //   expect(result['B'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['B'].distance).to.equal(3);
-      //   expect(result['C'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['C'].distance).to.equal(4);
-      //   expect(result['D'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['D'].distance).to.equal(1);
-      //   expect(result['E'].parent).to.equal(graph.getNodeById('D'));
-      //   expect(result['E'].distance).to.equal(1);
-      //   expect(result['F'].parent).to.equal(graph.getNodeById('B'));
-      //   expect(result['F'].distance).to.equal(4);
-      // });
+      it('Should correctly compute best paths from Node A', () => {
+        var root = graph.getNodeById('A'),
+          result = $PFS.PFS(graph, root, config);
+
+        expect(Object.keys(result).length).to.equal(6);
+
+        expect(result['A'].parent).to.equal(graph.getNodeById('A'));
+        expect(result['A'].distance).to.equal(0);
+        expect(result['B'].parent).to.equal(graph.getNodeById('A'));
+        expect(result['B'].distance).to.equal(3);
+        expect(result['C'].parent).to.equal(graph.getNodeById('A'));
+        expect(result['C'].distance).to.equal(4);
+        expect(result['D'].parent).to.equal(graph.getNodeById('A'));
+        expect(result['D'].distance).to.equal(1);
+        expect(result['E'].parent).to.equal(graph.getNodeById('D'));
+        expect(result['E'].distance).to.equal(1);
+        expect(result['F'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['F'].distance).to.equal(4);
+      });
 
 
-      // it('Should correctly compute best paths from Node B', () => {
-      //   var root = graph.getNodeById('B'),
-      //     result = $PFS.PFS(graph, root, config);
-      //
-      //   expect(Object.keys(result).length).to.equal(6);
-      //
-      //   expect(result['A'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['A'].distance).to.equal(3);
-      //   expect(result['B'].parent).to.equal(graph.getNodeById('B'));
-      //   expect(result['B'].distance).to.equal(0);
-      //   expect(result['C'].parent).to.equal(graph.getNodeById('B'));
-      //   expect(result['C'].distance).to.equal(2);
-      //   expect(result['D'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['D'].distance).to.equal(4);
-      //   expect(result['E'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['E'].distance).to.equal(3);
-      //   expect(result['F'].parent).to.equal(graph.getNodeById('B'));
-      //   expect(result['F'].distance).to.equal(1);
-      // });
-      //
-      //
-      // it('Should correctly compute best paths from Node D', () => {
-      //   var root = graph.getNodeById('D'),
-      //     result = $PFS.PFS(graph, root, config);
-      //
-      //   expect(Object.keys(result).length).to.equal(6);
-      //
-      //   expect(result['A'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['A'].distance).to.equal(7);
-      //   expect(result['B'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['B'].distance).to.equal(10);
-      //   expect(result['C'].parent).to.equal(graph.getNodeById('D'));
-      //   expect(result['C'].distance).to.equal(6);
-      //   expect(result['D'].parent).to.equal(graph.getNodeById('D'));
-      //   expect(result['D'].distance).to.equal(0);
-      //   expect(result['E'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['E'].distance).to.equal(7);
-      //   expect(result['F'].parent).to.equal(graph.getNodeById('B'));
-      //   expect(result['F'].distance).to.equal(11);
-      // });
-      //
-      //
-      // it('Should correctly compute best paths from Node F', () => {
-      //   var root = graph.getNodeById('F'),
-      //     result = $PFS.PFS(graph, root, config);
-      //
-      //   expect(Object.keys(result).length).to.equal(6);
-      //
-      //   expect(result['A'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['A'].distance).to.equal(4);
-      //   expect(result['B'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['B'].distance).to.equal(7);
-      //   expect(result['C'].parent).to.equal(graph.getNodeById('F'));
-      //   expect(result['C'].distance).to.equal(3);
-      //   expect(result['D'].parent).to.equal(graph.getNodeById('A'));
-      //   expect(result['D'].distance).to.equal(5);
-      //   expect(result['E'].parent).to.equal(graph.getNodeById('C'));
-      //   expect(result['E'].distance).to.equal(4);
-      //   expect(result['F'].parent).to.equal(graph.getNodeById('F'));
-      //   expect(result['F'].distance).to.equal(0);
-      // });
+      it('Should correctly compute best paths from Node B', () => {
+        var root = graph.getNodeById('B'),
+          result = $PFS.PFS(graph, root, config);
+
+        expect(Object.keys(result).length).to.equal(6);
+
+        expect(result['A'].parent).to.equal(graph.getNodeById('C'));
+        expect(result['A'].distance).to.equal(3);
+        expect(result['B'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['B'].distance).to.equal(0);
+        expect(result['C'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['C'].distance).to.equal(2);
+        expect(result['D'].parent).to.equal(graph.getNodeById('E'));
+        expect(result['D'].distance).to.equal(3);
+        expect(result['E'].parent).to.equal(graph.getNodeById('C'));
+        expect(result['E'].distance).to.equal(3);
+        expect(result['F'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['F'].distance).to.equal(1);
+      });
+
+
+      it('Should correctly compute best paths from Node D', () => {
+        var root = graph.getNodeById('D'),
+          result = $PFS.PFS(graph, root, config);
+
+        expect(Object.keys(result).length).to.equal(6);
+
+        expect(result['A'].parent).to.equal(graph.getNodeById('C'));
+        expect(result['A'].distance).to.equal(7);
+        expect(result['B'].parent).to.equal(graph.getNodeById('E'));
+        expect(result['B'].distance).to.equal(5);
+        expect(result['C'].parent).to.equal(graph.getNodeById('D'));
+        expect(result['C'].distance).to.equal(6);
+        expect(result['D'].parent).to.equal(graph.getNodeById('D'));
+        expect(result['D'].distance).to.equal(0);
+        expect(result['E'].parent).to.equal(graph.getNodeById('D'));
+        expect(result['E'].distance).to.equal(0);
+        expect(result['F'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['F'].distance).to.equal(6);
+      });
+
+
+      it('Should correctly compute best paths from Node E', () => {
+        var root = graph.getNodeById('E'),
+          result = $PFS.PFS(graph, root, config);
+
+        expect(Object.keys(result).length).to.equal(6);
+
+        expect(result['A'].parent).to.equal(graph.getNodeById('C'));
+        expect(result['A'].distance).to.equal(7);
+        expect(result['B'].parent).to.equal(graph.getNodeById('E'));
+        expect(result['B'].distance).to.equal(5);
+        expect(result['C'].parent).to.equal(graph.getNodeById('D'));
+        expect(result['C'].distance).to.equal(6);
+        expect(result['D'].parent).to.equal(graph.getNodeById('E'));
+        expect(result['D'].distance).to.equal(0);
+        expect(result['E'].parent).to.equal(graph.getNodeById('E'));
+        expect(result['E'].distance).to.equal(0);
+        expect(result['F'].parent).to.equal(graph.getNodeById('B'));
+        expect(result['F'].distance).to.equal(6);
+      });
 
     });
     
