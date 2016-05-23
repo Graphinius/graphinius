@@ -250,16 +250,15 @@ var BaseNode = (function () {
     };
     /**
      *
-     * @param identityFunc
+     * @param identityFunc can be used to remove 'duplicates' from resulting array,
+     * if necessary
      * @returns {Array}
      *
-     * TODO: Reverse callback logic to NOT merge anything by default!!!
    */
-    BaseNode.prototype.adjNodes = function (identityFunc) {
+    BaseNode.prototype.reachNodes = function (identityFunc) {
+        var identity = 0;
         // console.log(this.nextNodes());
-        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) {
-            return ne.node.getID();
-        });
+        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
     };
     return BaseNode;
 }());

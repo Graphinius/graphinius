@@ -389,16 +389,15 @@
 	    };
 	    /**
 	     *
-	     * @param identityFunc
+	     * @param identityFunc can be used to remove 'duplicates' from resulting array,
+	     * if necessary
 	     * @returns {Array}
 	     *
-	     * TODO: Reverse callback logic to NOT merge anything by default!!!
 	   */
-	    BaseNode.prototype.adjNodes = function (identityFunc) {
+	    BaseNode.prototype.reachNodes = function (identityFunc) {
+	        var identity = 0;
 	        // console.log(this.nextNodes());
-	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) {
-	            return ne.node.getID();
-	        });
+	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
 	    };
 	    return BaseNode;
 	}());
@@ -1609,7 +1608,7 @@
 	         * undirected subgraph or complete (mixed) graph?
 	         */
 	        if (dir_mode === $G.GraphMode.MIXED) {
-	            bfsScope.adj_nodes = bfsScope.current.adjNodes();
+	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
 	        }
 	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
 	            bfsScope.adj_nodes = bfsScope.current.connNodes();
@@ -1798,7 +1797,7 @@
 	             * undirected subgraph or complete (mixed) graph?
 	             */
 	            if (dir_mode === $G.GraphMode.MIXED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.adjNodes();
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
 	            }
 	            else if (dir_mode === $G.GraphMode.UNDIRECTED) {
 	                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();

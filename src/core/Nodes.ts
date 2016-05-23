@@ -50,11 +50,13 @@ export interface IBaseNode {
 	clearUndEdges() : void;
 	clearEdges() : void;
 	
-	// connected NODES methods
+	// get Nodes connected by incoming / outgoing edges
 	prevNodes() : Array<NeighborEntry>;
 	nextNodes() : Array<NeighborEntry>;
+	// get Nodes connected by undirected edges
 	connNodes() : Array<NeighborEntry>;
-	adjNodes(identityFunc?: Function) 	: Array<NeighborEntry>;
+	// get Nodes connected by outgoing + undirected edges
+	reachNodes(identityFunc?: Function) : Array<NeighborEntry>;
 }
 
 
@@ -364,17 +366,16 @@ class BaseNode implements IBaseNode {
 
 	/**
 	 *
-	 * @param identityFunc
+	 * @param identityFunc can be used to remove 'duplicates' from resulting array,
+	 * if necessary
 	 * @returns {Array}
 	 *
-	 * TODO: Reverse callback logic to NOT merge anything by default!!!
    */
-	adjNodes(identityFunc?: Function) : Array<NeighborEntry> {
+	reachNodes(identityFunc?: Function) : Array<NeighborEntry> {
+		var identity = 0;
 		// console.log(this.nextNodes());
     return $DS.mergeArrays([this.nextNodes(), this.connNodes()],
-								identityFunc || function(ne: NeighborEntry) {
-									return ne.node.getID()
-								});
+			identityFunc || function(ne) {return identity++});
 	}
 	
 }

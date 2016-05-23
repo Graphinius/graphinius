@@ -70,7 +70,7 @@ function DFSVisit(graph, current_root, config) {
              * undirected subgraph or complete (mixed) graph?
              */
             if (dir_mode === $G.GraphMode.MIXED) {
-                dfsVisitScope.adj_nodes = dfsVisitScope.current.adjNodes();
+                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
             }
             else if (dir_mode === $G.GraphMode.UNDIRECTED) {
                 dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();

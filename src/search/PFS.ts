@@ -174,7 +174,7 @@ function PFS(graph 	 : $G.IGraph,
 
     // TODO: Reverse callback logic to NOT merge anything by default!!!
 		if ( dir_mode === $G.GraphMode.MIXED ) {
-			scope.adj_nodes = scope.current.node.adjNodes((ne) => { return Math.random() * +(new Date) });
+			scope.adj_nodes = scope.current.node.reachNodes();
 		}
 		else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
 			scope.adj_nodes = scope.current.node.connNodes();

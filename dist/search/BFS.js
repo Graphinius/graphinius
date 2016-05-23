@@ -55,7 +55,7 @@ function BFS(graph, v, config) {
          * undirected subgraph or complete (mixed) graph?
          */
         if (dir_mode === $G.GraphMode.MIXED) {
-            bfsScope.adj_nodes = bfsScope.current.adjNodes();
+            bfsScope.adj_nodes = bfsScope.current.reachNodes();
         }
         else if (dir_mode === $G.GraphMode.UNDIRECTED) {
             bfsScope.adj_nodes = bfsScope.current.connNodes();

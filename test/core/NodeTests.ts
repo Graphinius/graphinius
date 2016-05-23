@@ -399,7 +399,7 @@ describe('==== NODE TESTS ====', () => {
 				});
 				
 				it('should find nodes a, b, c and d as adjacent (reachable) nodes', () => {
-					var adjs = collectNodesFromNeighbors(n_a.adjNodes());
+					var adjs = collectNodesFromNeighbors(n_a.reachNodes((ne) => {return ne.node.getID()}));
 					expect(adjs).to.be.an.instanceof(Array);
 					expect(adjs.length).to.equal(4);
 					expect(adjs).to.contain(n_a);

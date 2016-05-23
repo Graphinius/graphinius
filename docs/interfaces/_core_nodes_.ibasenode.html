@@ -92,7 +92,6 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#addedge" class="tsd-kind-icon">add<wbr>Edge</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#adjnodes" class="tsd-kind-icon">adj<wbr>Nodes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#alledges" class="tsd-kind-icon">all<wbr>Edges</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#clearedges" class="tsd-kind-icon">clear<wbr>Edges</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#clearfeatures" class="tsd-kind-icon">clear<wbr>Features</a></li>
@@ -116,6 +115,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#outdegree" class="tsd-kind-icon">out<wbr>Degree</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#outedges" class="tsd-kind-icon">out<wbr>Edges</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#prevnodes" class="tsd-kind-icon">prev<wbr>Nodes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#reachnodes" class="tsd-kind-icon">reach<wbr>Nodes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#removeedge" class="tsd-kind-icon">remove<wbr>Edge</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#removeedgeid" class="tsd-kind-icon">remove<wbr>EdgeID</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_nodes_.ibasenode.html#setfeature" class="tsd-kind-icon">set<wbr>Feature</a></li>
@@ -149,29 +149,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="adjnodes" class="tsd-anchor"></a>
-					<h3>adj<wbr>Nodes</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">adj<wbr>Nodes<span class="tsd-signature-symbol">(</span>identityFunc<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Nodes.ts#L57">core/Nodes.ts:57</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> identityFunc: <span class="tsd-signature-type">Function</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -289,7 +266,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Nodes.ts#L56">core/Nodes.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Nodes.ts#L57">core/Nodes.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -616,6 +593,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="reachnodes" class="tsd-anchor"></a>
+					<h3>reach<wbr>Nodes</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">reach<wbr>Nodes<span class="tsd-signature-symbol">(</span>identityFunc<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Nodes.ts#L59">core/Nodes.ts:59</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> identityFunc: <span class="tsd-signature-type">Function</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_nodes_.neighborentry.html" class="tsd-signature-type">NeighborEntry</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="removeedge" class="tsd-anchor"></a>
 					<h3>remove<wbr>Edge</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -823,9 +823,6 @@
 								<a href="_core_nodes_.ibasenode.html#addedge" class="tsd-kind-icon">add<wbr>Edge</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_core_nodes_.ibasenode.html#adjnodes" class="tsd-kind-icon">adj<wbr>Nodes</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_nodes_.ibasenode.html#alledges" class="tsd-kind-icon">all<wbr>Edges</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -893,6 +890,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_nodes_.ibasenode.html#prevnodes" class="tsd-kind-icon">prev<wbr>Nodes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_core_nodes_.ibasenode.html#reachnodes" class="tsd-kind-icon">reach<wbr>Nodes</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_nodes_.ibasenode.html#removeedge" class="tsd-kind-icon">remove<wbr>Edge</a>
