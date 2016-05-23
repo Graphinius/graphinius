@@ -101,6 +101,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#_evalobjid" class="tsd-kind-icon">_eval<wbr>ObjID</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#_evalpriority" class="tsd-kind-icon">_eval<wbr>Priority</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#_mode" class="tsd-kind-icon">_mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#_positions" class="tsd-kind-icon">_positions</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -112,11 +113,13 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#getevalobjidfun" class="tsd-kind-icon">get<wbr>Eval<wbr>ObjIDFun</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#getevalpriorityfun" class="tsd-kind-icon">get<wbr>Eval<wbr>Priority<wbr>Fun</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#getmode" class="tsd-kind-icon">get<wbr>Mode</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#getnodeposition" class="tsd-kind-icon">get<wbr>Node<wbr>Position</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#insert" class="tsd-kind-icon">insert</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#ordercorrect" class="tsd-kind-icon">order<wbr>Correct</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#peek" class="tsd-kind-icon">peek</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#pop" class="tsd-kind-icon">pop</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#setnodeposition" class="tsd-kind-icon">set<wbr>Node<wbr>Position</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#size" class="tsd-kind-icon">size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#trickledown" class="tsd-kind-icon">trickle<wbr>Down</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_datastructs_binaryheap_.binaryheap.html#trickleup" class="tsd-kind-icon">trickle<wbr>Up</a></li>
@@ -137,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L29">datastructs/binaryHeap.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L30">datastructs/binaryHeap.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -198,7 +201,7 @@
 					<div class="tsd-signature tsd-kind-icon">_eval<wbr>ObjID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L47">datastructs/binaryHeap.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L48">datastructs/binaryHeap.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -214,7 +217,7 @@
 					<div class="tsd-signature tsd-kind-icon">_eval<wbr>Priority<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous function)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L41">datastructs/binaryHeap.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L42">datastructs/binaryHeap.ts:42</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -230,13 +233,31 @@
 					<div class="tsd-signature tsd-kind-icon">_mode<span class="tsd-signature-symbol">:</span> <a href="../enums/_datastructs_binaryheap_.binaryheapmode.html" class="tsd-signature-type">BinaryHeapMode</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L40">datastructs/binaryHeap.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L41">datastructs/binaryHeap.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>MIN or MAX heap</p>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="_positions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _positions</h3>
+					<div class="tsd-signature tsd-kind-icon">_positions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L30">datastructs/binaryHeap.ts:30</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -253,7 +274,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#evalinputobjid">evalInputObjID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L76">datastructs/binaryHeap.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L77">datastructs/binaryHeap.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -277,7 +298,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#evalinputpriority">evalInputPriority</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L68">datastructs/binaryHeap.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L69">datastructs/binaryHeap.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -301,7 +322,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#getarray">getArray</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L56">datastructs/binaryHeap.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L57">datastructs/binaryHeap.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -319,7 +340,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#getevalobjidfun">getEvalObjIDFun</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L72">datastructs/binaryHeap.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L73">datastructs/binaryHeap.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Function</span></h4>
@@ -337,7 +358,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#getevalpriorityfun">getEvalPriorityFun</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L64">datastructs/binaryHeap.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L65">datastructs/binaryHeap.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Function</span></h4>
@@ -355,10 +376,33 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#getmode">getMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L52">datastructs/binaryHeap.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L53">datastructs/binaryHeap.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../enums/_datastructs_binaryheap_.binaryheapmode.html" class="tsd-signature-type">BinaryHeapMode</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="getnodeposition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Node<wbr>Position</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Node<wbr>Position<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L237">datastructs/binaryHeap.ts:237</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -373,7 +417,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#insert">insert</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L93">datastructs/binaryHeap.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L94">datastructs/binaryHeap.ts:94</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -405,7 +449,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L181">datastructs/binaryHeap.ts:181</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L216">datastructs/binaryHeap.ts:216</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -432,7 +476,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#peek">peek</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L80">datastructs/binaryHeap.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L81">datastructs/binaryHeap.ts:81</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -450,7 +494,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#pop">pop</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L84">datastructs/binaryHeap.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L85">datastructs/binaryHeap.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -468,7 +512,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#remove">remove</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L106">datastructs/binaryHeap.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L108">datastructs/binaryHeap.ts:108</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -478,6 +522,39 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="setnodeposition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> set<wbr>Node<wbr>Position</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Node<wbr>Position<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, pos<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L232">datastructs/binaryHeap.ts:232</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Superstructure to enable search in BinHeap in O(1)</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>pos: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -492,7 +569,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html">IBinaryHeap</a>.<a href="../interfaces/_datastructs_binaryheap_.ibinaryheap.html#size">size</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L60">datastructs/binaryHeap.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L61">datastructs/binaryHeap.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -509,7 +586,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L131">datastructs/binaryHeap.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L155">datastructs/binaryHeap.ts:155</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -532,7 +609,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L163">datastructs/binaryHeap.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/datastructs/binaryHeap.ts#L192">datastructs/binaryHeap.ts:192</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -619,6 +696,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#_mode" class="tsd-kind-icon">_mode</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_datastructs_binaryheap_.binaryheap.html#_positions" class="tsd-kind-icon">_positions</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#evalinputobjid" class="tsd-kind-icon">eval<wbr>Input<wbr>ObjID</a>
 							</li>
@@ -637,6 +717,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#getmode" class="tsd-kind-icon">get<wbr>Mode</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_datastructs_binaryheap_.binaryheap.html#getnodeposition" class="tsd-kind-icon">get<wbr>Node<wbr>Position</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#insert" class="tsd-kind-icon">insert</a>
 							</li>
@@ -651,6 +734,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#remove" class="tsd-kind-icon">remove</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_datastructs_binaryheap_.binaryheap.html#setnodeposition" class="tsd-kind-icon">set<wbr>Node<wbr>Position</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_datastructs_binaryheap_.binaryheap.html#size" class="tsd-kind-icon">size</a>

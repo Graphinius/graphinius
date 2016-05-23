@@ -27,6 +27,7 @@ export interface IBinaryHeap {
 
 class BinaryHeap implements IBinaryHeap {
   private _array = [];
+  private _positions : {[id: string]: number} = {}; //  | number[]
 
   /**
    * Mode of a min heap should only be set upon
@@ -96,6 +97,7 @@ class BinaryHeap implements IBinaryHeap {
     }
 
     this._array.push(obj);
+    this.setNodePosition(obj, this.size()-1);
     this.trickleUp(this._array.length - 1);
   }
   
@@ -107,26 +109,48 @@ class BinaryHeap implements IBinaryHeap {
     if ( isNaN( this._evalPriority(obj) ) ) {
       throw new Error('Object invalid.');
     }
-    var objID = this._evalObjID(obj);
-    var found = undefined;
-    for (var i = 0; i < this._array.length; i++) {
-      if ( this._evalObjID(this._array[i]) === objID ) {
-        found = this._array[i];
+
+    // Search in O(1)
+    // var objID = this._evalObjID(obj),
+    //     pos = this._positions[objID],
+    //     found = this._array[pos],
+    //     valid = typeof found !== undefined && found !== null,
+    //     found = valid ? found : undefined;
+    //
+    // if ( valid ) {
+    //   var last = this._array.pop();
+    //   if ( this.size() ) {
+    //     this._array[pos] = last;
+    //     // update node position before trickling
+    //     this.setNodePosition(last, pos);
+    //     this.trickleUp(pos);
+    //     this.trickleDown(pos);
+    //   }
+    //   return found;
+    // }
+
+    var objID = this._evalObjID(obj),
+        found = undefined;
+    for (var pos = 0; pos < this._array.length; pos++) {
+      if ( this._evalObjID(this._array[pos]) === objID ) {
+        found = this._array[pos];
         // we pop the last element
         var last = this._array.pop();
         // we switch the last with the found element
         // and restore the heaps order, but only if the
         // heap size is not down to zero
         if ( this.size() ) {
-          this._array[i] = last;
-          this.trickleUp(i);
-          this.trickleDown(i);
+          this._array[pos] = last;
+          this.trickleUp(pos);
+          this.trickleDown(pos);
         }
         return found;
       }
     }
+
     return found;
   }
+
 
   private trickleDown(i: number) {
     var parent = this._array[i];
@@ -156,6 +180,11 @@ class BinaryHeap implements IBinaryHeap {
       // we only have to swap one child, doesn't matter which one
       this._array[i] = this._array[swap];
       this._array[swap] = parent;
+
+      // correct position for later lookup in O(1)
+      this.setNodePosition(this._array[i], i);
+      this.setNodePosition(parent, swap);
+
       i = swap;
     }
   }
@@ -173,6 +202,12 @@ class BinaryHeap implements IBinaryHeap {
       else {
         this._array[parent_idx] = child;
         this._array[i] = parent;
+
+        // correct position for later lookup in O(1)
+        this.setNodePosition(child, parent_idx);
+        this.setNodePosition(parent, i);
+
+        // next round...
         i = parent_idx;
       }
     }
@@ -187,6 +222,21 @@ class BinaryHeap implements IBinaryHeap {
     else {
       return obj_a_pr >= obj_b_pr;
     }
+  }
+
+  /**
+   * Superstructure to enable search in BinHeap in O(1)
+   * @param obj
+   * @param pos
+   */
+  private setNodePosition(obj: any, pos: number) : void {
+
+    this._positions[this.evalInputObjID(obj)] = pos;
+  }
+
+  private getNodePosition(obj: any) : number {
+
+    return 0;
   }
 }
 

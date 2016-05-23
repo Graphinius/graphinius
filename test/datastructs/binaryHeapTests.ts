@@ -373,10 +373,14 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(1);
       binHeap.insert(16);
       binHeap.insert(7);
+      binHeap.insert(7);
+      binHeap.insert(7);
       binHeap.insert(8);
     
       expect(binHeap.remove(16)).to.equal(16);
       expect(binHeap.pop()).to.equal(8);
+      expect(binHeap.pop()).to.equal(7);
+      expect(binHeap.pop()).to.equal(7);
       expect(binHeap.pop()).to.equal(7);
       expect(binHeap.pop()).to.equal(5);
       expect(binHeap.pop()).to.equal(1);
