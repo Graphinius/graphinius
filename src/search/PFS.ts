@@ -174,7 +174,7 @@ function PFS(graph 	 : $G.IGraph,
 			scope.adj_nodes = scope.current.node.nextNodes();
 		}
 		else {
-			scope.adj_nodes = [];
+      throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
 		}
 
     /**

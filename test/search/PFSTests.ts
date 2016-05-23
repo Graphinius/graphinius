@@ -220,6 +220,14 @@ describe('PFS TESTS - ', () => {
 			var result = $PFS.PFS(graph, root, config);
 			expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
     });
+
+
+    it('should only accept UN/DIRECTED or MIXED Mode as traversal modes', () => {
+      var root = graph.getNodeById('A'),
+        config = $PFS.preparePFSStandardConfig();
+      config.dir_mode = -77;
+      expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Unsupported traversal mode. Please use directed, undirected, or mixed');
+    })
     
   });
   
