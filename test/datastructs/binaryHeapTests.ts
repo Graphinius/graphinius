@@ -291,10 +291,9 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap = new $BH.BinaryHeap();
       binHeap.insert(155);
       binHeap.insert(0);
-      // console.log(binHeap.getArray());
       binHeap.insert(15);
       binHeap.insert(5);
-      binHeap.insert(1);
+      binHeap.insert(1);      
       
       expect(binHeap.pop()).to.equal(0);
       expect(binHeap.pop()).to.equal(1);
@@ -310,7 +309,8 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(5);
       binHeap.insert(55);
       binHeap.insert(75);
-      binHeap.insert(115);  
+      binHeap.insert(115);
+      
       expect(binHeap.peek()).to.equal(115);
     });
 
@@ -364,7 +364,7 @@ describe('BINARY HEAP TESTS - ', () => {
       
       expect(binHeap.pop()).to.equal(33);
       expect(binHeap.getArray()).to.deep.equal([]);
-    });   
+    });
     
     
     it('should trickle up correctly upon removing an object, MAX HEAP', () => {
@@ -373,14 +373,10 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(1);
       binHeap.insert(16);
       binHeap.insert(7);
-      binHeap.insert(7);
-      binHeap.insert(7);
       binHeap.insert(8);
     
       expect(binHeap.remove(16)).to.equal(16);
       expect(binHeap.pop()).to.equal(8);
-      expect(binHeap.pop()).to.equal(7);
-      expect(binHeap.pop()).to.equal(7);
       expect(binHeap.pop()).to.equal(7);
       expect(binHeap.pop()).to.equal(5);
       expect(binHeap.pop()).to.equal(1);

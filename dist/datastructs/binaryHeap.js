@@ -30,13 +30,16 @@ var BinaryHeap = (function () {
         this._evalPriority = _evalPriority;
         this._evalObjID = _evalObjID;
         this._array = [];
-        this._positions = {}; //  | number[]
+        this._positions = {};
     }
     BinaryHeap.prototype.getMode = function () {
         return this._mode;
     };
     BinaryHeap.prototype.getArray = function () {
         return this._array;
+    };
+    BinaryHeap.prototype.getPositions = function () {
+        return this._positions;
     };
     BinaryHeap.prototype.size = function () {
         return this._array.length;
@@ -69,8 +72,8 @@ var BinaryHeap = (function () {
             throw new Error("Cannot insert object without numeric priority.");
         }
         this._array.push(obj);
-        this.setNodePosition(obj, this.size() - 1);
-        this.trickleUp(this._array.length - 1);
+        this.setNodePosition(obj, this.size() - 1, false);
+        this.trickleUp(this.size() - 1);
     };
     /**
      *
@@ -80,14 +83,11 @@ var BinaryHeap = (function () {
             throw new Error('Object invalid.');
         }
         // Search in O(1)
-        // var objID = this._evalObjID(obj),
-        //     pos = this._positions[objID],
-        //     found = this._array[pos],
-        //     valid = typeof found !== undefined && found !== null,
-        //     found = valid ? found : undefined;
-        //
-        // if ( valid ) {
+        // var pos = this.getNodePosition(obj),
+        //     found = this._array[pos];
+        // if ( typeof found !== undefined && found !== null ) {
         //   var last = this._array.pop();
+        //   this.unsetNodePosition(obj);
         //   if ( this.size() ) {
         //     this._array[pos] = last;
         //     // update node position before trickling
@@ -175,11 +175,94 @@ var BinaryHeap = (function () {
      * @param obj
      * @param pos
      */
-    BinaryHeap.prototype.setNodePosition = function (obj, pos) {
-        this._positions[this.evalInputObjID(obj)] = pos;
+    BinaryHeap.prototype.setNodePosition = function (obj, pos, replace) {
+        if (replace === void 0) { replace = true; }
+        // First we create a new entry object
+        var pos_obj = {
+            priority: this.evalInputPriority(obj),
+            position: pos
+        };
+        var obj_key = this.evalInputObjID(obj);
+        var occurrence = this._positions[obj_key];
+        if (!occurrence) {
+            // we can simply add the object to the hash...
+            this._positions[obj_key] = pos_obj;
+        }
+        else if (Array.isArray(occurrence)) {
+            // we add the position object to the array
+            occurrence.push(pos_obj);
+        }
+        else {
+            // we have a single object at this place...
+            // either we replace the droid or we give it some company ;)
+            if (replace) {
+                this._positions[obj_key] = pos_obj;
+            }
+            else {
+                this._positions[obj_key] = [occurrence, pos_obj];
+            }
+        }
     };
+    /**
+     *
+     */
     BinaryHeap.prototype.getNodePosition = function (obj) {
-        return 0;
+        var obj_key = this.evalInputObjID(obj);
+        var occurrence = this._positions[obj_key];
+        if (!occurrence) {
+            return undefined;
+        }
+        else if (Array.isArray(occurrence)) {
+            // lets find the droid we are looking for...
+            // we are also satisfied with his first sibling ;)
+            var droid = null;
+            for (var i = 0; i < occurrence.length; i++) {
+                droid = occurrence[i];
+                if (droid.priority === this._evalPriority(obj)) {
+                    return droid.position;
+                }
+            }
+        }
+        else {
+            // we have a single object at this place
+            return occurrence.position;
+        }
+    };
+    /**
+     *
+     * @param obj
+     * @returns {number}
+     */
+    BinaryHeap.prototype.unsetNodePosition = function (obj) {
+        var obj_key = this.evalInputObjID(obj);
+        var occurrence = this._positions[obj_key];
+        if (!occurrence) {
+            return undefined;
+        }
+        else if (Array.isArray(occurrence)) {
+            // lets find the droid we are looking for...
+            // we are also satisfied with his first sibling ;)
+            var droid = null;
+            for (var i = 0; i < occurrence.length; i++) {
+                droid = occurrence[i];
+                if (droid.priority === this._evalPriority(obj)) {
+                    // is this line longer than 2 droids?
+                    if (occurrence.length > 2) {
+                        occurrence.splice(i, 1);
+                    }
+                    else {
+                        this._positions[obj_key] = occurrence.splice(i, 1)[0];
+                    }
+                    return droid.position;
+                }
+            }
+        }
+        else {
+            // we have a single object at this place
+            var pos = occurrence.position;
+            delete this._positions[obj_key];
+            return pos;
+        }
     };
     return BinaryHeap;
 }());
