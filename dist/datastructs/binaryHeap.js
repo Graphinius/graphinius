@@ -87,13 +87,14 @@ var BinaryHeap = (function () {
          */
         // var pos = this.getNodePosition(obj),
         //     found = this._array[pos];
+        // if (typeof (pos) === 'undefined') console.log("Position: " + pos);     
         // if ( typeof found !== 'undefined' && found !== null ) {
         //   var last = this._array.pop();
         //   this.unsetNodePosition(found);
         //   if ( this.size() ) {
         //     this._array[pos] = last;
         //     // update node position before trickling
-        //     this.setNodePosition(last, pos, true, this.size()-1);
+        //     this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
         //     this.trickleUp(pos);
         //     this.trickleDown(pos);
         //   }
@@ -143,7 +144,7 @@ var BinaryHeap = (function () {
             this._array[swap] = parent;
             // correct position for later lookup in O(1)
             this.setNodePosition(this._array[i], i, true, swap);
-            this.setNodePosition(parent, swap, true, i);
+            this.setNodePosition(this._array[swap], swap, true, i);
             i = swap;
         }
     };
@@ -199,7 +200,7 @@ var BinaryHeap = (function () {
             if (replace) {
                 for (var i = 0; i < occurrence.length; i++) {
                     if (occurrence[i].position === old_pos) {
-                        occurrence[i] = pos_obj;
+                        occurrence[i].position = new_pos;
                         return;
                     }
                 }
@@ -226,59 +227,22 @@ var BinaryHeap = (function () {
         var obj_key = this.evalInputObjID(obj);
         var occurrence = this._positions[obj_key];
         if (!occurrence) {
-            console.log("Occurrence is (null?): " + occurrence);
             return undefined;
         }
         else if (Array.isArray(occurrence)) {
             // lets find the droid we are looking for...
-            // we are also satisfied with his first sibling ;)
-            var droid = null;
+            // we are of course looking for the smallest one ;)
+            var droid = null, min = Number.POSITIVE_INFINITY;
             for (var i = 0; i < occurrence.length; i++) {
-                droid = occurrence[i];
-                if (droid.priority === this._evalPriority(obj)) {
-                    return droid.position;
+                if (occurrence[i].priority === this._evalPriority(obj) && occurrence[i].position < min) {
+                    droid = occurrence[i];
                 }
             }
+            return droid.position;
         }
         else {
             // we have a single object at this place
             return occurrence.position;
-        }
-    };
-    /**
-     *
-     * @param obj
-     * @returns {number}
-     */
-    BinaryHeap.prototype.unsetNodePosition = function (obj) {
-        var obj_key = this.evalInputObjID(obj);
-        var occurrence = this._positions[obj_key];
-        if (!occurrence) {
-            return undefined;
-        }
-        else if (Array.isArray(occurrence)) {
-            // lets find the droid we are looking for...
-            // we are also satisfied with his first sibling ;)
-            var droid = null;
-            for (var i = 0; i < occurrence.length; i++) {
-                droid = occurrence[i];
-                if (droid.priority === this._evalPriority(obj)) {
-                    // is this line longer than 2 droids?
-                    if (occurrence.length > 2) {
-                        occurrence.splice(i, 1);
-                    }
-                    else {
-                        this._positions[obj_key] = occurrence.splice(i, 1)[0];
-                    }
-                    return droid.position;
-                }
-            }
-        }
-        else {
-            // we have a single object at this place
-            var pos = occurrence.position;
-            delete this._positions[obj_key];
-            return pos;
         }
     };
     return BinaryHeap;

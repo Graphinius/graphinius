@@ -14,7 +14,7 @@ var expect = chai.expect,
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
 
 
-describe.skip('PFS TESTS - ', () => {
+describe('PFS TESTS - ', () => {
 
   beforeEach(() => {
     expect(graph).not.to.be.undefined;
