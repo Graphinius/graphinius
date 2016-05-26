@@ -100,7 +100,7 @@ gulp.task('bundle', ['pack'], function() {
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests_sync, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
-						 							timeout: 5000}));
+						 							timeout: 60000}));
 });
 
 

@@ -126,46 +126,44 @@ class BinaryHeap implements IBinaryHeap {
     /**
      * Search in O(1)
      */
-    // var pos = this.getNodePosition(obj),
-    //     found = this._array[pos];
+    var pos = this.getNodePosition(obj),
+        found = this._array[pos];
         
-    // if (typeof (pos) === 'undefined') console.log("Position: " + pos);     
-
-    // if ( typeof found !== 'undefined' && found !== null ) {
-    //   var last = this._array.pop();
-    //   this.unsetNodePosition(found);
+    if ( typeof found !== 'undefined' && found !== null ) {
+      var last = this._array.pop();
+      this.unsetNodePosition(found);
       
-    //   if ( this.size() ) {
-    //     this._array[pos] = last;
-    //     // update node position before trickling
-    //     this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
-    //     this.trickleUp(pos);
-    //     this.trickleDown(pos);
-    //   }
-    //   return found;
-    // }
+      if ( this.size() ) {
+        this._array[pos] = last;
+        // update node position before trickling
+        this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
+        this.trickleUp(pos);
+        this.trickleDown(pos);
+      }
+      return found;
+    }
 
     /**
      * OLD SEARCH in O(n) (but simpler)
      */
-    var objID = this._evalObjID(obj),
-        found = undefined;
-    for (var pos = 0; pos < this._array.length; pos++) {
-      if ( this._evalObjID(this._array[pos]) === objID ) {
-        found = this._array[pos];
-        // we pop the last element
-        var last = this._array.pop();
-        // we switch the last with the found element
-        // and restore the heaps order, but only if the
-        // heap size is not down to zero
-        if ( this.size() ) {
-          this._array[pos] = last;
-          this.trickleUp(pos);
-          this.trickleDown(pos);
-        }
-        return found;
-      }
-    }
+    // var objID = this._evalObjID(obj),
+    //     found = undefined;
+    // for (var pos = 0; pos < this._array.length; pos++) {
+    //   if ( this._evalObjID(this._array[pos]) === objID ) {
+    //     found = this._array[pos];
+    //     // we pop the last element
+    //     var last = this._array.pop();
+    //     // we switch the last with the found element
+    //     // and restore the heaps order, but only if the
+    //     // heap size is not down to zero
+    //     if ( this.size() ) {
+    //       this._array[pos] = last;
+    //       this.trickleUp(pos);
+    //       this.trickleDown(pos);
+    //     }
+    //     return found;
+    //   }
+    // }
     
     
     // console.log("Found undefined object at position: " + pos);
@@ -252,6 +250,14 @@ class BinaryHeap implements IBinaryHeap {
    * @param pos
    */
   private setNodePosition(obj: any, new_pos: number, replace = true, old_pos?: number) : void {
+    if ( typeof obj === 'undefined' || obj === null || typeof new_pos === 'undefined' || new_pos === null ) {
+      throw new Error('minium required arguments are ojb and new_pos');
+    }
+    if ( replace === true && ( typeof old_pos === 'undefined' || old_pos === null ) ) {
+      throw new Error('replacing a node position requires an old_pos');
+    }
+    
+    
     // First we create a new entry object
     var pos_obj : PositionHeapEntry = {
       priority: this.evalInputPriority(obj),
@@ -290,10 +296,11 @@ class BinaryHeap implements IBinaryHeap {
     }
   }
 
+
   /**
    *
    */
-  private getNodePosition(obj: any) {
+  private getNodePosition(obj: any) : number {
     var obj_key = this.evalInputObjID(obj);
     var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
 
@@ -303,15 +310,17 @@ class BinaryHeap implements IBinaryHeap {
     else if ( Array.isArray(occurrence) ) {
       // lets find the droid we are looking for...
       // we are of course looking for the smallest one ;)
-      var droid : PositionHeapEntry = null,
+      var node : PositionHeapEntry = null,
           min = Number.POSITIVE_INFINITY;
           
       for ( var i = 0; i < occurrence.length; i++ ) {
-        if ( occurrence[i].priority === this._evalPriority(obj) && occurrence[i].position < min ) {          
-          droid = occurrence[i];
+        if ( occurrence[i].position < min ) {          
+          node = occurrence[i];
         }
       }
-      return droid.position;
+      if ( node ) {
+        return node.position;
+      }
     }
     else {
       // we have a single object at this place
@@ -321,46 +330,45 @@ class BinaryHeap implements IBinaryHeap {
   
   
   /**
-   *
    * @param obj
    * @returns {number}
    */
-  // private unsetNodePosition(obj: any) : number {
-  //   var obj_key = this.evalInputObjID(obj);
-  //   var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
+  private unsetNodePosition(obj: any) {
+    var obj_key = this.evalInputObjID(obj);
+    var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
 
-  //   if ( !occurrence ) {
-  //     return undefined;
-  //   }
-  //   else if ( Array.isArray(occurrence) ) {
-  //     // lets find the droid we are looking for...
-  //     // we are of course looking for the smallest one ;)
-  //     var droid_idx : number = null,
-  //         droid : PositionHeapEntry = null,
-  //         min : number = Number.POSITIVE_INFINITY;
+    if ( !occurrence ) {
+      return undefined;
+    }
+    else if ( Array.isArray(occurrence) ) {
+      // lets find the droid we are looking for...
+      // we are of course looking for the smallest one ;)
+      var node_idx : number = null,
+          node : PositionHeapEntry = null,
+          min : number = Number.POSITIVE_INFINITY;
                               
-  //     for ( var i = 0; i < occurrence.length; i++ ) {
-  //       if ( occurrence[i].priority === this._evalPriority(obj) && occurrence[i].position < min ) {
-  //         droid_idx = i;
-  //         droid = occurrence[i];
-  //       }
-  //     }
+      for ( var i = 0; i < occurrence.length; i++ ) {
+        if ( occurrence[i].position < min ) {
+          node_idx = i;
+          node = occurrence[i];
+        }
+      }
       
-  //     // remove the wanted droid (it's become useless...)
-  //     occurrence.splice(droid_idx, 1);
-  //     // if only 1 droid remains, make him officially single!
-  //     if ( occurrence.length === 1 ) {
-  //       occurrence = occurrence[0];
-  //     }
-  //     return droid.position;        
-  //   }
-  //   else {
-  //     // we have a single object at this place
-  //     var pos = occurrence.position;
-  //     delete this._positions[obj_key];
-  //     return pos;
-  //   }
-  // }
+      if ( node ) { // necessary?
+        // remove the wanted droid (it's become useless...)
+        occurrence.splice(node_idx, 1);
+        // if only 1 droid remains, make him officially single!
+        if ( occurrence.length === 1 ) {
+          this._positions[obj_key] = occurrence[0];
+        }
+        return node.position;
+      }   
+    }
+    else {
+      // we have a single object at this place
+      delete this._positions[obj_key];
+    }
+  }
   
   
 }

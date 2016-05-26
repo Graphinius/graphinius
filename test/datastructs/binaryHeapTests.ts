@@ -506,6 +506,23 @@ describe('BINARY HEAP TESTS - ', () => {
         last = current;
       }
     });
+    
+    
+    /**
+     * TODO Outsource to performance testing...
+     */
+    it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MIN);
+      var i;
+      for ( i = 0; i < 30000; ) {
+        binHeap.insert( i++ );
+      }
+      
+      while ( i ) {
+        expect(binHeap.remove(--i)).to.equal(i);
+      }      
+      
+    });
 
   });
 
