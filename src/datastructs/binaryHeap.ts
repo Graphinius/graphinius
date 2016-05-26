@@ -113,7 +113,7 @@ class BinaryHeap implements IBinaryHeap {
     this.setNodePosition(obj, this.size()-1, false);
     this.trickleUp(this.size() - 1);
   }
-  
+   
   
   /**
    * 
@@ -123,23 +123,30 @@ class BinaryHeap implements IBinaryHeap {
       throw new Error('Object invalid.');
     }
 
-    // Search in O(1)
+    /**
+     * Search in O(1)
+     */
     // var pos = this.getNodePosition(obj),
     //     found = this._array[pos];
+        
 
-    // if ( typeof found !== undefined && found !== null ) {
+    // if ( typeof found !== 'undefined' && found !== null ) {
     //   var last = this._array.pop();
-    //   this.unsetNodePosition(obj);
+    //   this.unsetNodePosition(found);
+      
     //   if ( this.size() ) {
     //     this._array[pos] = last;
     //     // update node position before trickling
-    //     this.setNodePosition(last, pos);
+    //     this.setNodePosition(last, pos, true, this.size()-1);
     //     this.trickleUp(pos);
     //     this.trickleDown(pos);
     //   }
     //   return found;
     // }
 
+    /**
+     * OLD SEARCH in O(n) (but simpler)
+     */
     var objID = this._evalObjID(obj),
         found = undefined;
     for (var pos = 0; pos < this._array.length; pos++) {
@@ -158,6 +165,9 @@ class BinaryHeap implements IBinaryHeap {
         return found;
       }
     }
+    
+    
+    // console.log("Found undefined object at position: " + pos);
 
     return found;
   }
@@ -193,8 +203,8 @@ class BinaryHeap implements IBinaryHeap {
       this._array[swap] = parent;
 
       // correct position for later lookup in O(1)
-      this.setNodePosition(this._array[i], i);
-      this.setNodePosition(parent, swap);
+      this.setNodePosition(this._array[i], i, true, swap);
+      this.setNodePosition(parent, swap, true, i);
 
       i = swap;
     }
@@ -215,8 +225,8 @@ class BinaryHeap implements IBinaryHeap {
         this._array[i] = parent;
 
         // correct position for later lookup in O(1)
-        this.setNodePosition(child, parent_idx);
-        this.setNodePosition(parent, i);
+        this.setNodePosition(child, parent_idx, true, i);
+        this.setNodePosition(parent, i, true, parent_idx);
 
         // next round...
         i = parent_idx;
@@ -240,11 +250,11 @@ class BinaryHeap implements IBinaryHeap {
    * @param obj
    * @param pos
    */
-  private setNodePosition(obj: any, pos: number, replace = true) : void {
+  private setNodePosition(obj: any, new_pos: number, replace = true, old_pos?: number) : void {
     // First we create a new entry object
     var pos_obj : PositionHeapEntry = {
       priority: this.evalInputPriority(obj),
-      position: pos
+      position: new_pos
     };
     var obj_key = this.evalInputObjID(obj);
     var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
@@ -254,8 +264,18 @@ class BinaryHeap implements IBinaryHeap {
       this._positions[obj_key] = pos_obj;
     }
     else if ( Array.isArray(occurrence) ) {
-      // we add the position object to the array
-      occurrence.push(pos_obj);
+      // if we replace, we add the position object to the array
+      if ( replace ) {
+        for ( var i = 0; i < occurrence.length; i++ ) {
+          if ( occurrence[i].position === old_pos ) {
+            occurrence[i] = pos_obj;
+            return;
+          }
+        }
+      }
+      else {
+        occurrence.push(pos_obj);
+      }
     }
     else {
       // we have a single object at this place...
@@ -277,6 +297,7 @@ class BinaryHeap implements IBinaryHeap {
     var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
 
     if ( !occurrence ) {
+      console.log("Occurrence is (null?): " + occurrence);
       return undefined;
     }
     else if ( Array.isArray(occurrence) ) {
