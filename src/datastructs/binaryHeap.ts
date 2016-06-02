@@ -24,10 +24,12 @@ export interface IBinaryHeap {
   evalInputObjID(obj:any)       : any;
 
   // Actual heap operations
-  insert(obj: any)              : void;
-  remove(obj: any)              : any;
-  peek()                        : any;
-  pop()                         : any;
+  insert(obj: any)                  : void;
+  remove(obj: any)                  : any;
+  peek()                            : any;
+  pop()                             : any;
+  find(obj: any)                    : any;
+  // adjust(obj: any, new_val: number) : any;
   
   // Just temporarily, for debugging
   getPositions()                : any;
@@ -48,13 +50,13 @@ class BinaryHeap implements IBinaryHeap {
    * the object we are looking for at removal etc..
    */
   constructor( private _mode = BinaryHeapMode.MIN,
-               private _evalPriority = (obj:any) => {
+               private _evalPriority = (obj:any) : number => {
                  if ( typeof obj !== 'number' && typeof obj !== 'string') {
                    return NaN;
                  }
                  return parseInt(obj)
                },
-               private _evalObjID = (obj:any) => {
+               private _evalObjID = (obj:any) : any => {
                  return obj;
                }
              ) {}
@@ -96,7 +98,15 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   pop() {
-    return this.remove(this._array[0]);
+    // check for size
+    if ( this.size() ) {
+      return this.remove(this._array[0]);
+    }
+  }
+  
+  find(obj: any) : any {
+    var pos = this.getNodePosition(obj);
+    return this._array[pos];
   }
 
   /**
@@ -126,6 +136,7 @@ class BinaryHeap implements IBinaryHeap {
     /**
      * Search in O(1)
      */
+    // var found = this.find(obj);
     var pos = this.getNodePosition(obj),
         found = this._array[pos];
         
@@ -163,8 +174,7 @@ class BinaryHeap implements IBinaryHeap {
     //     }
     //     return found;
     //   }
-    // }
-    
+    // }    
     
     // console.log("Found undefined object at position: " + pos);
 
@@ -177,11 +187,11 @@ class BinaryHeap implements IBinaryHeap {
 
     // run until we manually break
     while (true) {
-          var right_child_idx = (i + 1) * 2,
-              left_child_idx = right_child_idx - 1,
-              right_child = this._array[right_child_idx],
-              left_child = this._array[left_child_idx],
-              swap = null;
+      var right_child_idx = (i + 1) * 2,
+          left_child_idx = right_child_idx - 1,
+          right_child = this._array[right_child_idx],
+          left_child = this._array[left_child_idx],
+          swap = null;
 
       // check if left child exists
       if ( left_child_idx < this.size() && !this.orderCorrect( parent, left_child ) ) {
@@ -257,7 +267,6 @@ class BinaryHeap implements IBinaryHeap {
       throw new Error('replacing a node position requires an old_pos');
     }
     
-    
     // First we create a new entry object
     var pos_obj : PositionHeapEntry = {
       priority: this.evalInputPriority(obj),
@@ -305,6 +314,9 @@ class BinaryHeap implements IBinaryHeap {
     var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
 
     if ( !occurrence ) {
+      // console.log("getNodePosition: no occurrence found");
+      // console.dir(this._positions);
+      // console.dir(this._array);
       return undefined;
     }
     else if ( Array.isArray(occurrence) ) {
@@ -319,11 +331,13 @@ class BinaryHeap implements IBinaryHeap {
         }
       }
       if ( node ) {
+        if ( typeof node.position === 'undefined' ) console.log('Node position: undefined!');
         return node.position;
       }
     }
     else {
       // we have a single object at this place
+      if ( typeof occurrence.position === 'undefined' ) console.log('Occurrence position: undefined!');
       return occurrence.position;
     }
   }
@@ -338,6 +352,9 @@ class BinaryHeap implements IBinaryHeap {
     var occurrence : PositionHeapEntry | Array<PositionHeapEntry> = this._positions[obj_key];
 
     if ( !occurrence ) {
+      // console.log("unsetNodePosition: no occurrence found");
+      // console.dir(this._positions);
+      // console.dir(this._array);
       return undefined;
     }
     else if ( Array.isArray(occurrence) ) {
@@ -361,6 +378,9 @@ class BinaryHeap implements IBinaryHeap {
         if ( occurrence.length === 1 ) {
           this._positions[obj_key] = occurrence[0];
         }
+        
+        
+        if ( typeof node.position === 'undefined' ) console.log('Node position: undefined!');
         return node.position;
       }   
     }
@@ -375,4 +395,3 @@ class BinaryHeap implements IBinaryHeap {
 
 
 export { BinaryHeap };
-

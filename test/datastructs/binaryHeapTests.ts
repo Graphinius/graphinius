@@ -429,9 +429,6 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(7);
       binHeap.insert(-8);
       binHeap.insert(0);
-            
-      // console.log(binHeap.getArray());
-      // console.log(binHeap.getPositions());
       
       expect(binHeap.pop()).to.equal(-16);
       expect(binHeap.pop()).to.equal(-8);
@@ -443,11 +440,40 @@ describe('BINARY HEAP TESTS - ', () => {
       expect(binHeap.pop()).to.equal(7);
     });
     
+    
+    it('should find a given element in the binary Heap', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MIN);
+      binHeap.insert(0);
+      binHeap.insert(-5);
+      binHeap.insert(1);
+      binHeap.insert(-16);
+      binHeap.insert(0);
+      binHeap.insert(7);
+      binHeap.insert(-8);
+      binHeap.insert(0);
+      
+      expect(binHeap.find(-16)).to.equal(-16);
+      expect(binHeap.find(-8)).to.equal(-8);
+      expect(binHeap.find(-5)).to.equal(-5);
+      expect(binHeap.find(0)).to.equal(0);
+      expect(binHeap.find(0)).to.equal(0);
+      expect(binHeap.find(0)).to.equal(0);
+      expect(binHeap.find(1)).to.equal(1);
+      expect(binHeap.find(7)).to.equal(7);
+    });
+    
 
-    it('tests MIN heap on a slightly larger example', () => {
-      binHeap = new $BH.BinaryHeap();
+    it('tests MIN heap on a slightly larger example and floats', () => {      
+      var evalPriority = (obj:any) => {
+        if ( typeof obj !== 'number' && typeof obj !== 'string') {
+          return NaN;
+        }
+        return parseFloat(obj)
+      };
+      binHeap = new $BH.BinaryHeap(Mode.MIN, evalPriority);
+      
       for ( var i = 0; i < 5000; i++ ) {
-        binHeap.insert((Math.random()*1000 - 500)|0);
+        binHeap.insert((Math.random()*1000 - 500));
       }
       
       var binArray = binHeap.getArray(),
@@ -467,12 +493,13 @@ describe('BINARY HEAP TESTS - ', () => {
       }
        
       var last = Number.NEGATIVE_INFINITY,
-          current = Number.NEGATIVE_INFINITY;
+          current;
       for ( var i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.least(last);
         last = current;
       }
+      
     });
 
 
@@ -499,7 +526,7 @@ describe('BINARY HEAP TESTS - ', () => {
       }
       
       var last = Number.POSITIVE_INFINITY,
-        current;
+          current;
       for ( var i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
         expect(current).to.be.at.most(last);
@@ -513,14 +540,13 @@ describe('BINARY HEAP TESTS - ', () => {
      */
     it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
-      var i;
-      for ( i = 0; i < 30000; ) {
+      var i = 0;
+      while ( i < 30000 ) {
         binHeap.insert( i++ );
-      }
-      
+      }      
       while ( i ) {
         expect(binHeap.remove(--i)).to.equal(i);
-      }      
+      }
       
     });
 

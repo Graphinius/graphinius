@@ -60,7 +60,14 @@ var BinaryHeap = (function () {
         return this._array[0];
     };
     BinaryHeap.prototype.pop = function () {
-        return this.remove(this._array[0]);
+        // check for size
+        if (this.size()) {
+            return this.remove(this._array[0]);
+        }
+    };
+    BinaryHeap.prototype.find = function (obj) {
+        var pos = this.getNodePosition(obj);
+        return this._array[pos];
     };
     /**
      * Insert - Adding an object to the heap
@@ -85,6 +92,7 @@ var BinaryHeap = (function () {
         /**
          * Search in O(1)
          */
+        // var found = this.find(obj);
         var pos = this.getNodePosition(obj), found = this._array[pos];
         if (typeof found !== 'undefined' && found !== null) {
             var last = this._array.pop();
@@ -118,7 +126,7 @@ var BinaryHeap = (function () {
         //     }
         //     return found;
         //   }
-        // }
+        // }    
         // console.log("Found undefined object at position: " + pos);
         return found;
     };
@@ -232,6 +240,9 @@ var BinaryHeap = (function () {
         var obj_key = this.evalInputObjID(obj);
         var occurrence = this._positions[obj_key];
         if (!occurrence) {
+            // console.log("getNodePosition: no occurrence found");
+            // console.dir(this._positions);
+            // console.dir(this._array);
             return undefined;
         }
         else if (Array.isArray(occurrence)) {
@@ -244,11 +255,15 @@ var BinaryHeap = (function () {
                 }
             }
             if (node) {
+                if (typeof node.position === 'undefined')
+                    console.log('Node position: undefined!');
                 return node.position;
             }
         }
         else {
             // we have a single object at this place
+            if (typeof occurrence.position === 'undefined')
+                console.log('Occurrence position: undefined!');
             return occurrence.position;
         }
     };
@@ -260,6 +275,9 @@ var BinaryHeap = (function () {
         var obj_key = this.evalInputObjID(obj);
         var occurrence = this._positions[obj_key];
         if (!occurrence) {
+            // console.log("unsetNodePosition: no occurrence found");
+            // console.dir(this._positions);
+            // console.dir(this._array);
             return undefined;
         }
         else if (Array.isArray(occurrence)) {
@@ -279,6 +297,8 @@ var BinaryHeap = (function () {
                 if (occurrence.length === 1) {
                     this._positions[obj_key] = occurrence[0];
                 }
+                if (typeof node.position === 'undefined')
+                    console.log('Node position: undefined!');
                 return node.position;
             }
         }

@@ -227,7 +227,7 @@ describe('PFS TESTS - ', () => {
         config = $PFS.preparePFSStandardConfig();
       config.dir_mode = -77;
       expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Unsupported traversal mode. Please use directed, undirected, or mixed');
-    })
+    });
     
   });
   
