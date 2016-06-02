@@ -493,11 +493,16 @@ describe('BINARY HEAP TESTS - ', () => {
       }
        
       var last = Number.NEGATIVE_INFINITY,
-          current;
+          current,
+          heap_size = binHeap.size();
       for ( var i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
-        expect(current).to.be.at.least(last);
-        last = current;
+        if ( typeof current !== 'undefined') {
+          expect(current).to.be.at.least(last);
+          expect(binHeap.size()).to.equal(heap_size - 1);
+          last = current;
+          --heap_size;
+        }
       }
       
     });
@@ -526,11 +531,15 @@ describe('BINARY HEAP TESTS - ', () => {
       }
       
       var last = Number.POSITIVE_INFINITY,
-          current;
+          current,
+          heap_size = binHeap.size();
       for ( var i = 0; i < 5000; i++ ) {
-        current = binHeap.pop();
-        expect(current).to.be.at.most(last);
-        last = current;
+        if ( typeof current !== 'undefined') {
+          current = binHeap.pop();
+          expect(current).to.be.at.most(last);
+          last = current;
+          --heap_size;
+        }
       }
     });
     
