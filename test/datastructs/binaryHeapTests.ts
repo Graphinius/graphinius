@@ -547,6 +547,18 @@ describe('BINARY HEAP TESTS - ', () => {
     /**
      * TODO Outsource to performance testing...
      */
+    it('should run 30000 finds in just a few milliseconds (if the O(1) algorithm works...)', () => {
+      binHeap = new $BH.BinaryHeap(Mode.MIN);
+      var i = 0;
+      while ( i < 30000 ) {
+        binHeap.insert( i++ );
+      }      
+      while ( i ) {
+        expect(binHeap.find(--i)).to.equal(i);
+      }      
+    });
+    
+    
     it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
@@ -555,8 +567,7 @@ describe('BINARY HEAP TESTS - ', () => {
       }      
       while ( i ) {
         expect(binHeap.remove(--i)).to.equal(i);
-      }
-      
+      }      
     });
 
   });
