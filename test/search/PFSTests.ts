@@ -6,6 +6,7 @@ import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
+import * as $BH from '../../src/datastructs/binaryHeap';
 
 
 var expect = chai.expect,
@@ -482,6 +483,31 @@ describe('PFS TESTS - ', () => {
 
     });
     
+  });
+  
+});
+
+
+describe.skip('PFS TESTS on REAL sized graph - ', () => {
+  
+  var real_graph = "./test/input/test_data/real_graph.json",
+      graph = json.readFromJSONFile(real_graph),
+      NR_NODES = 6204,
+      NR_UND_EDGES = 18550;
+      
+
+  beforeEach(() => {
+    expect(graph).not.to.be.undefined;
+    expect(graph.nrNodes()).to.equal(NR_NODES);
+    expect(graph.nrUndEdges()).to.equal(NR_UND_EDGES);
+  });
+      
+  
+  it('should perform standard PFS without config initialization on real graph', () => {
+    var root = graph.getRandomNode(),
+        result = $PFS.PFS(graph, root);
+        
+    expect(Object.keys(result).length).to.equal(NR_NODES);
   });
 
 });

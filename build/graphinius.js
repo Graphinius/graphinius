@@ -2074,6 +2074,9 @@
 	    while (scope.OPEN_HEAP.size()) {
 	        // get currently best node
 	        scope.current = scope.OPEN_HEAP.pop();
+	        if (scope.current == null) {
+	            console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
+	        }
 	        // remove from OPEN
 	        scope.OPEN[scope.current.node.getID()] = undefined;
 	        // add it to CLOSED
@@ -2284,7 +2287,6 @@
 	        return this._array[0];
 	    };
 	    BinaryHeap.prototype.pop = function () {
-	        // check for size
 	        if (this.size()) {
 	            return this.remove(this._array[0]);
 	        }
@@ -2316,7 +2318,6 @@
 	        /**
 	         * Search in O(1)
 	         */
-	        // var found = this.find(obj);
 	        var pos = this.getNodePosition(obj), found = this._array[pos];
 	        if (typeof found !== 'undefined' && found !== null) {
 	            var last = this._array.pop();
@@ -2529,6 +2530,7 @@
 	        else {
 	            // we have a single object at this place
 	            delete this._positions[obj_key];
+	            return occurrence.position;
 	        }
 	    };
 	    return BinaryHeap;

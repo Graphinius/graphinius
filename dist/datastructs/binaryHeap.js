@@ -60,7 +60,6 @@ var BinaryHeap = (function () {
         return this._array[0];
     };
     BinaryHeap.prototype.pop = function () {
-        // check for size
         if (this.size()) {
             return this.remove(this._array[0]);
         }
@@ -92,7 +91,6 @@ var BinaryHeap = (function () {
         /**
          * Search in O(1)
          */
-        // var found = this.find(obj);
         var pos = this.getNodePosition(obj), found = this._array[pos];
         if (typeof found !== 'undefined' && found !== null) {
             var last = this._array.pop();
@@ -305,6 +303,7 @@ var BinaryHeap = (function () {
         else {
             // we have a single object at this place
             delete this._positions[obj_key];
+            return occurrence.position;
         }
     };
     return BinaryHeap;

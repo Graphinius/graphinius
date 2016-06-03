@@ -76,6 +76,9 @@ function PFS(graph, v, config) {
     while (scope.OPEN_HEAP.size()) {
         // get currently best node
         scope.current = scope.OPEN_HEAP.pop();
+        if (scope.current == null) {
+            console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
+        }
         // remove from OPEN
         scope.OPEN[scope.current.node.getID()] = undefined;
         // add it to CLOSED

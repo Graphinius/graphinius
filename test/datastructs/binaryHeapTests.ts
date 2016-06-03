@@ -573,3 +573,41 @@ describe('BINARY HEAP TESTS - ', () => {
   });
 
 });
+
+
+describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
+  
+  it('Should correclty set some simple node positions', () => {
+    binHeap = new $BH.BinaryHeap();
+    
+    binHeap.insert(5);
+    binHeap.insert(4);
+    binHeap.insert(3);
+    binHeap.insert(2);
+    binHeap.insert(1);
+    binHeap.insert(0);
+    
+    // console.dir(binHeap.getPositions());
+    expect((<any>binHeap).getNodePosition(0)).to.equal(0);
+    expect((<any>binHeap).getNodePosition(1)).to.equal(2);
+    expect((<any>binHeap).getNodePosition(2)).to.equal(1);
+    expect((<any>binHeap).getNodePosition(3)).to.equal(4);
+    expect((<any>binHeap).getNodePosition(4)).to.equal(5);
+    expect((<any>binHeap).getNodePosition(5)).to.equal(3);
+  });
+  
+  
+  it('Should set a large number of nodes, all to at least position 0', () => {
+    binHeap = new $BH.BinaryHeap();
+    var i = 0;
+    
+    while ( i < 5000 ) {
+      binHeap.insert( i++ );
+    }
+    
+    while ( i ) {
+      expect((<any>binHeap).getNodePosition(--i)).to.be.at.least(0);
+    }
+  })
+  
+});

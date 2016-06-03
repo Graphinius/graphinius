@@ -139,6 +139,11 @@ function PFS(graph 	 : $G.IGraph,
   while ( scope.OPEN_HEAP.size() ) {
     // get currently best node
     scope.current = scope.OPEN_HEAP.pop();
+    
+    if (scope.current == null) {
+      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());      
+      // console.log("Scope.current: " + scope.current);  
+    }
 
     // remove from OPEN
     scope.OPEN[scope.current.node.getID()] = undefined;

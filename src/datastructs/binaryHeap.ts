@@ -98,7 +98,6 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   pop() {
-    // check for size
     if ( this.size() ) {
       return this.remove(this._array[0]);
     }
@@ -123,7 +122,7 @@ class BinaryHeap implements IBinaryHeap {
     this.setNodePosition(obj, this.size()-1, false);
     this.trickleUp(this.size() - 1);
   }
-   
+  
   
   /**
    * 
@@ -136,7 +135,6 @@ class BinaryHeap implements IBinaryHeap {
     /**
      * Search in O(1)
      */
-    // var found = this.find(obj);
     var pos = this.getNodePosition(obj),
         found = this._array[pos];
         
@@ -387,6 +385,7 @@ class BinaryHeap implements IBinaryHeap {
     else {
       // we have a single object at this place
       delete this._positions[obj_key];
+      return occurrence.position;
     }
   }
   
