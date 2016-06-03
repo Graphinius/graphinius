@@ -51,6 +51,7 @@
 	var JsonInput = __webpack_require__(10);
 	var BFS				= __webpack_require__(11);
 	var DFS				= __webpack_require__(13);
+	var PFS       = __webpack_require__(14);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -58,6 +59,9 @@
 
 	var out = typeof window !== 'undefined' ? window : global;
 
+	/**
+	 * For Browser window object
+	 */
 	out.$G = {
 		core: {
 			Edge 				: Edges.BaseEdge,
@@ -71,13 +75,19 @@
 		},
 		search: {
 			BFS													   : BFS.BFS,
+	    prepareBFSStandardConfig       : BFS.prepareBFSStandardConfig,
 			DFS 												   : DFS.DFS,
 			DFSVisit										   : DFS.DFSVisit,
 			prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
-			prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig
+			prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
+	    PFS                            : PFS.PFS,
+	    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
 		}
 	};
 
+	/**
+	 * For NodeJS / CommonJS global object
+	 */
 	module.exports = {
 		$G : out.$G
 	};
@@ -1980,6 +1990,550 @@
 	}
 	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
 	;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
+	var $E = __webpack_require__(1);
+	var $G = __webpack_require__(4);
+	var $CB = __webpack_require__(12);
+	var $BH = __webpack_require__(15);
+	/**
+	 * Priority first search
+	 *
+	 * Like BFS, we are not necessarily visiting the
+	 * whole graph, but only what's reachable from
+	 * a given start node.
+	 *
+	 * @param graph the graph to perform PFS only
+	 * @param v the node from which to start PFS
+	 * @config a config object similar to that used
+	 * in BFS, automatically instantiated if not given..
+	 */
+	function PFS(graph, v, config) {
+	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    /**
+	       * We are not traversing an empty graph...
+	       */
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    /**
+	       * We are not traversing a graph taking NO edges into account
+	       */
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    /**
+	     * we take a standard eval function returning
+	     * the weight of a successor edge
+	     * This will later be replaced by a config option...
+	     */
+	    var evalPriority = function (ne) {
+	        return ne.best;
+	    };
+	    /**
+	     * we take a standard ID function returning
+	     * the ID of a NeighborEntry's node
+	     * This will later be replaced by a config option...
+	     */
+	    var evalObjID = function (ne) {
+	        return ne.node.getID();
+	    };
+	    var scope = {
+	        OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
+	        OPEN: {},
+	        CLOSED: {},
+	        nodes: graph.getNodes(),
+	        root_node: v,
+	        current: null,
+	        adj_nodes: [],
+	        next: null,
+	        better_dist: Number.POSITIVE_INFINITY,
+	    };
+	    /**
+	       * HOOK 1: PFS INIT
+	       */
+	    callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
+	    // We need to push NeighborEntries
+	    // TODO: Virtual edge addition OK?
+	    var start_ne = {
+	        node: v,
+	        edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
+	        best: 0
+	    };
+	    scope.OPEN_HEAP.insert(start_ne);
+	    scope.OPEN[start_ne.node.getID()] = start_ne;
+	    /**
+	     * Main loop
+	     */
+	    while (scope.OPEN_HEAP.size()) {
+	        // get currently best node
+	        scope.current = scope.OPEN_HEAP.pop();
+	        // remove from OPEN
+	        scope.OPEN[scope.current.node.getID()] = undefined;
+	        // add it to CLOSED
+	        scope.CLOSED[scope.current.node.getID()] = scope.current;
+	        // TODO what if we already reached the goal?
+	        if (scope.current.node === config.goal_node) {
+	            /**
+	             * HOOK 2: Goal node reached
+	             */
+	            config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
+	            // If a goal node is set from the outside & we reach it, we stop.
+	            return config.result;
+	        }
+	        /**
+	         * Extend the current node, also called
+	         * "create n's successors"...
+	             */
+	        // TODO: Reverse callback logic to NOT merge anything by default!!!
+	        if (dir_mode === $G.GraphMode.MIXED) {
+	            scope.adj_nodes = scope.current.node.reachNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	            scope.adj_nodes = scope.current.node.connNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.DIRECTED) {
+	            scope.adj_nodes = scope.current.node.nextNodes();
+	        }
+	        else {
+	            throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
+	        }
+	        /**
+	         * EXPAND AND EXAMINE NEIGHBORHOOD
+	         */
+	        for (var adj_idx in scope.adj_nodes) {
+	            scope.next = scope.adj_nodes[adj_idx];
+	            if (scope.CLOSED[scope.next.node.getID()]) {
+	                /**
+	                 * HOOK 3: Goal node already closed
+	                 */
+	                config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
+	                continue;
+	            }
+	            if (scope.OPEN[scope.next.node.getID()]) {
+	                // First let's recover the previous best solution from our OPEN structure,
+	                // as the node's neighborhood-retrieving function cannot know it...
+	                scope.next.best = scope.OPEN[scope.next.node.getID()].best;
+	                /**
+	                 * HOOK 4: Goal node already visited, but not yet closed
+	                 */
+	                config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
+	                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+	                if (scope.next.best > scope.better_dist) {
+	                    /**
+	                     * HOOK 5: Better path found
+	                     */
+	                    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
+	                    // HEAP operations are necessary for internal traversal,
+	                    // so we handle them here in the main loop
+	                    scope.OPEN_HEAP.remove(scope.next);
+	                    scope.next.best = scope.better_dist;
+	                    scope.OPEN_HEAP.insert(scope.next);
+	                    scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
+	                }
+	                continue;
+	            }
+	            // NODE NOT ENCOUNTERED
+	            config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
+	            // HEAP operations are necessary for internal traversal,
+	            // so we handle them here in the main loop
+	            scope.OPEN_HEAP.insert(scope.next);
+	            scope.OPEN[scope.next.node.getID()] = scope.next;
+	        }
+	    }
+	    return config.result;
+	}
+	exports.PFS = PFS;
+	function preparePFSStandardConfig() {
+	    var config = {
+	        result: {},
+	        callbacks: {
+	            init_pfs: [],
+	            not_encountered: [],
+	            node_open: [],
+	            node_closed: [],
+	            better_path: [],
+	            goal_reached: []
+	        },
+	        messages: {
+	            init_pfs_msgs: [],
+	            not_enc_msgs: [],
+	            node_open_msgs: [],
+	            node_closed_msgs: [],
+	            better_path_msgs: [],
+	            goal_reached_msgs: []
+	        },
+	        dir_mode: $G.GraphMode.MIXED,
+	        goal_node: null
+	    }, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    // Standard INIT callback
+	    var initPFS = function (context) {
+	        // initialize all nodes to infinite distance
+	        for (var key in context.nodes) {
+	            config.result[key] = {
+	                distance: Number.POSITIVE_INFINITY,
+	                parent: null,
+	                counter: -1
+	            };
+	        }
+	        // initialize root node entry
+	        // maybe take heuristic into account right here...??
+	        config.result[context.root_node.getID()] = {
+	            distance: 0,
+	            parent: context.root_node,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.init_pfs.push(initPFS);
+	    // Node not yet encountered callback
+	    var notEncountered = function (context) {
+	        // setting it's best score to actual distance + edge weight
+	        // and update result structure
+	        context.next.best = context.current.best + context.next.edge.getWeight();
+	        config.result[context.next.node.getID()] = {
+	            distance: context.next.best,
+	            parent: context.current.node,
+	            counter: undefined
+	        };
+	    };
+	    callbacks.not_encountered.push(notEncountered);
+	    // Callback for when we find a better solution
+	    var betterPathFound = function (context) {
+	        config.result[context.next.node.getID()].distance = context.better_dist;
+	        config.result[context.next.node.getID()].parent = context.current.node;
+	    };
+	    callbacks.better_path.push(betterPathFound);
+	    return config;
+	}
+	exports.preparePFSStandardConfig = preparePFSStandardConfig;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
+	(function (BinaryHeapMode) {
+	    BinaryHeapMode[BinaryHeapMode["MIN"] = 0] = "MIN";
+	    BinaryHeapMode[BinaryHeapMode["MAX"] = 1] = "MAX";
+	})(exports.BinaryHeapMode || (exports.BinaryHeapMode = {}));
+	var BinaryHeapMode = exports.BinaryHeapMode;
+	var BinaryHeap = (function () {
+	    /**
+	     * Mode of a min heap should only be set upon
+	     * instantiation and never again afterwards...
+	     * @param _mode MIN or MAX heap
+	     * @param _evalPriority the evaluation function applied to
+	     * all incoming objects to determine it's score
+	     * @param _evalObjID function to determine the identity of
+	     * the object we are looking for at removal etc..
+	     */
+	    function BinaryHeap(_mode, _evalPriority, _evalObjID) {
+	        if (_mode === void 0) { _mode = BinaryHeapMode.MIN; }
+	        if (_evalPriority === void 0) { _evalPriority = function (obj) {
+	            if (typeof obj !== 'number' && typeof obj !== 'string') {
+	                return NaN;
+	            }
+	            return parseInt(obj);
+	        }; }
+	        if (_evalObjID === void 0) { _evalObjID = function (obj) {
+	            return obj;
+	        }; }
+	        this._mode = _mode;
+	        this._evalPriority = _evalPriority;
+	        this._evalObjID = _evalObjID;
+	        this._array = [];
+	        this._positions = {};
+	    }
+	    BinaryHeap.prototype.getMode = function () {
+	        return this._mode;
+	    };
+	    BinaryHeap.prototype.getArray = function () {
+	        return this._array;
+	    };
+	    BinaryHeap.prototype.getPositions = function () {
+	        return this._positions;
+	    };
+	    BinaryHeap.prototype.size = function () {
+	        return this._array.length;
+	    };
+	    BinaryHeap.prototype.getEvalPriorityFun = function () {
+	        return this._evalPriority;
+	    };
+	    BinaryHeap.prototype.evalInputPriority = function (obj) {
+	        return this._evalPriority(obj);
+	    };
+	    BinaryHeap.prototype.getEvalObjIDFun = function () {
+	        return this._evalObjID;
+	    };
+	    BinaryHeap.prototype.evalInputObjID = function (obj) {
+	        return this._evalObjID(obj);
+	    };
+	    BinaryHeap.prototype.peek = function () {
+	        return this._array[0];
+	    };
+	    BinaryHeap.prototype.pop = function () {
+	        // check for size
+	        if (this.size()) {
+	            return this.remove(this._array[0]);
+	        }
+	    };
+	    BinaryHeap.prototype.find = function (obj) {
+	        var pos = this.getNodePosition(obj);
+	        return this._array[pos];
+	    };
+	    /**
+	     * Insert - Adding an object to the heap
+	     * @param obj the obj to add to the heap
+	     * @returns {number} the objects index in the internal array
+	     */
+	    BinaryHeap.prototype.insert = function (obj) {
+	        if (isNaN(this._evalPriority(obj))) {
+	            throw new Error("Cannot insert object without numeric priority.");
+	        }
+	        this._array.push(obj);
+	        this.setNodePosition(obj, this.size() - 1, false);
+	        this.trickleUp(this.size() - 1);
+	    };
+	    /**
+	     *
+	     */
+	    BinaryHeap.prototype.remove = function (obj) {
+	        if (isNaN(this._evalPriority(obj))) {
+	            throw new Error('Object invalid.');
+	        }
+	        /**
+	         * Search in O(1)
+	         */
+	        // var found = this.find(obj);
+	        var pos = this.getNodePosition(obj), found = this._array[pos];
+	        if (typeof found !== 'undefined' && found !== null) {
+	            var last = this._array.pop();
+	            this.unsetNodePosition(found);
+	            if (this.size()) {
+	                this._array[pos] = last;
+	                // update node position before trickling
+	                this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
+	                this.trickleUp(pos);
+	                this.trickleDown(pos);
+	            }
+	            return found;
+	        }
+	        /**
+	         * OLD SEARCH in O(n) (but simpler)
+	         */
+	        // var objID = this._evalObjID(obj),
+	        //     found = undefined;
+	        // for (var pos = 0; pos < this._array.length; pos++) {
+	        //   if ( this._evalObjID(this._array[pos]) === objID ) {
+	        //     found = this._array[pos];
+	        //     // we pop the last element
+	        //     var last = this._array.pop();
+	        //     // we switch the last with the found element
+	        //     // and restore the heaps order, but only if the
+	        //     // heap size is not down to zero
+	        //     if ( this.size() ) {
+	        //       this._array[pos] = last;
+	        //       this.trickleUp(pos);
+	        //       this.trickleDown(pos);
+	        //     }
+	        //     return found;
+	        //   }
+	        // }    
+	        // console.log("Found undefined object at position: " + pos);
+	        return found;
+	    };
+	    BinaryHeap.prototype.trickleDown = function (i) {
+	        var parent = this._array[i];
+	        // run until we manually break
+	        while (true) {
+	            var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
+	            // check if left child exists
+	            if (left_child_idx < this.size() && !this.orderCorrect(parent, left_child)) {
+	                swap = left_child_idx;
+	            }
+	            if (right_child_idx < this.size() && !this.orderCorrect(parent, right_child)
+	                && !this.orderCorrect(left_child, right_child)) {
+	                swap = right_child_idx;
+	            }
+	            if (swap === null) {
+	                break;
+	            }
+	            // we only have to swap one child, doesn't matter which one
+	            this._array[i] = this._array[swap];
+	            this._array[swap] = parent;
+	            // correct position for later lookup in O(1)
+	            this.setNodePosition(this._array[i], i, true, swap);
+	            this.setNodePosition(this._array[swap], swap, true, i);
+	            i = swap;
+	        }
+	    };
+	    BinaryHeap.prototype.trickleUp = function (i) {
+	        var child = this._array[i];
+	        // Can only trickle up from positive levels
+	        while (i) {
+	            var parent_idx = Math.floor((i + 1) / 2) - 1, parent = this._array[parent_idx];
+	            if (this.orderCorrect(parent, child)) {
+	                break;
+	            }
+	            else {
+	                this._array[parent_idx] = child;
+	                this._array[i] = parent;
+	                // correct position for later lookup in O(1)
+	                this.setNodePosition(child, parent_idx, true, i);
+	                this.setNodePosition(parent, i, true, parent_idx);
+	                // next round...
+	                i = parent_idx;
+	            }
+	        }
+	    };
+	    BinaryHeap.prototype.orderCorrect = function (obj_a, obj_b) {
+	        var obj_a_pr = this._evalPriority(obj_a);
+	        var obj_b_pr = this._evalPriority(obj_b);
+	        if (this._mode === BinaryHeapMode.MIN) {
+	            return obj_a_pr <= obj_b_pr;
+	        }
+	        else {
+	            return obj_a_pr >= obj_b_pr;
+	        }
+	    };
+	    /**
+	     * Superstructure to enable search in BinHeap in O(1)
+	     * @param obj
+	     * @param pos
+	     */
+	    BinaryHeap.prototype.setNodePosition = function (obj, new_pos, replace, old_pos) {
+	        if (replace === void 0) { replace = true; }
+	        if (typeof obj === 'undefined' || obj === null || typeof new_pos === 'undefined' || new_pos === null) {
+	            throw new Error('minium required arguments are ojb and new_pos');
+	        }
+	        if (replace === true && (typeof old_pos === 'undefined' || old_pos === null)) {
+	            throw new Error('replacing a node position requires an old_pos');
+	        }
+	        // First we create a new entry object
+	        var pos_obj = {
+	            priority: this.evalInputPriority(obj),
+	            position: new_pos
+	        };
+	        var obj_key = this.evalInputObjID(obj);
+	        var occurrence = this._positions[obj_key];
+	        if (!occurrence) {
+	            // we can simply add the object to the hash...
+	            this._positions[obj_key] = pos_obj;
+	        }
+	        else if (Array.isArray(occurrence)) {
+	            // if we replace, we add the position object to the array
+	            if (replace) {
+	                for (var i = 0; i < occurrence.length; i++) {
+	                    if (occurrence[i].position === old_pos) {
+	                        occurrence[i].position = new_pos;
+	                        return;
+	                    }
+	                }
+	            }
+	            else {
+	                occurrence.push(pos_obj);
+	            }
+	        }
+	        else {
+	            // we have a single object at this place...
+	            // either we replace the droid or we give it some company ;)
+	            if (replace) {
+	                this._positions[obj_key] = pos_obj;
+	            }
+	            else {
+	                this._positions[obj_key] = [occurrence, pos_obj];
+	            }
+	        }
+	    };
+	    /**
+	     *
+	     */
+	    BinaryHeap.prototype.getNodePosition = function (obj) {
+	        var obj_key = this.evalInputObjID(obj);
+	        var occurrence = this._positions[obj_key];
+	        if (!occurrence) {
+	            // console.log("getNodePosition: no occurrence found");
+	            // console.dir(this._positions);
+	            // console.dir(this._array);
+	            return undefined;
+	        }
+	        else if (Array.isArray(occurrence)) {
+	            // lets find the droid we are looking for...
+	            // we are of course looking for the smallest one ;)
+	            var node = null, min = Number.POSITIVE_INFINITY;
+	            for (var i = 0; i < occurrence.length; i++) {
+	                if (occurrence[i].position < min) {
+	                    node = occurrence[i];
+	                }
+	            }
+	            if (node) {
+	                if (typeof node.position === 'undefined')
+	                    console.log('Node position: undefined!');
+	                return node.position;
+	            }
+	        }
+	        else {
+	            // we have a single object at this place
+	            if (typeof occurrence.position === 'undefined')
+	                console.log('Occurrence position: undefined!');
+	            return occurrence.position;
+	        }
+	    };
+	    /**
+	     * @param obj
+	     * @returns {number}
+	     */
+	    BinaryHeap.prototype.unsetNodePosition = function (obj) {
+	        var obj_key = this.evalInputObjID(obj);
+	        var occurrence = this._positions[obj_key];
+	        if (!occurrence) {
+	            // console.log("unsetNodePosition: no occurrence found");
+	            // console.dir(this._positions);
+	            // console.dir(this._array);
+	            return undefined;
+	        }
+	        else if (Array.isArray(occurrence)) {
+	            // lets find the droid we are looking for...
+	            // we are of course looking for the smallest one ;)
+	            var node_idx = null, node = null, min = Number.POSITIVE_INFINITY;
+	            for (var i = 0; i < occurrence.length; i++) {
+	                if (occurrence[i].position < min) {
+	                    node_idx = i;
+	                    node = occurrence[i];
+	                }
+	            }
+	            if (node) {
+	                // remove the wanted droid (it's become useless...)
+	                occurrence.splice(node_idx, 1);
+	                // if only 1 droid remains, make him officially single!
+	                if (occurrence.length === 1) {
+	                    this._positions[obj_key] = occurrence[0];
+	                }
+	                if (typeof node.position === 'undefined')
+	                    console.log('Node position: undefined!');
+	                return node.position;
+	            }
+	        }
+	        else {
+	            // we have a single object at this place
+	            delete this._positions[obj_key];
+	        }
+	    };
+	    return BinaryHeap;
+	}());
+	exports.BinaryHeap = BinaryHeap;
 
 
 /***/ }

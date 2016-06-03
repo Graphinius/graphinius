@@ -3,7 +3,7 @@
 var $E = require('../core/Edges');
 var $G = require('../core/Graph');
 var $CB = require('../utils/callbackUtils');
-var $BH = require('../../src/datastructs/binaryHeap');
+var $BH = require('../datastructs/binaryHeap');
 /**
  * Priority first search
  *

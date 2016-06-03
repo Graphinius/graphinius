@@ -5,6 +5,7 @@ var CsvInput 	= require("./dist/input/CSVInput.js");
 var JsonInput = require("./dist/input/JSONInput.js");
 var BFS				= require("./dist/search/BFS.js");
 var DFS				= require("./dist/search/DFS.js");
+var PFS       = require("./dist/search/PFS.js");
 
 // TODO:
 // Encapsulate ALL functions within Graph for
@@ -12,6 +13,9 @@ var DFS				= require("./dist/search/DFS.js");
 
 var out = typeof window !== 'undefined' ? window : global;
 
+/**
+ * For Browser window object
+ */
 out.$G = {
 	core: {
 		Edge 				: Edges.BaseEdge,
@@ -25,13 +29,19 @@ out.$G = {
 	},
 	search: {
 		BFS													   : BFS.BFS,
+    prepareBFSStandardConfig       : BFS.prepareBFSStandardConfig,
 		DFS 												   : DFS.DFS,
 		DFSVisit										   : DFS.DFSVisit,
 		prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
-		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig
+		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
+    PFS                            : PFS.PFS,
+    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
 	}
 };
 
+/**
+ * For NodeJS / CommonJS global object
+ */
 module.exports = {
 	$G : out.$G
 };

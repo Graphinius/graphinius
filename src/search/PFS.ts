@@ -4,7 +4,7 @@ import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
-import * as $BH from '../../src/datastructs/binaryHeap';
+import * as $BH from '../datastructs/binaryHeap';
 
 
 export interface PFS_Config {
