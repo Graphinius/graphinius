@@ -67,7 +67,7 @@ export interface PFS_Scope {
  */
 function PFS(graph 	 : $G.IGraph, 
 						 v 			 : $N.IBaseNode,
-             config  : PFS_Config) : {[id: string] : PFS_ResultEntry} {
+             config? : PFS_Config) : {[id: string] : PFS_ResultEntry} {
 
   var config = config || preparePFSStandardConfig(),
       callbacks = config.callbacks,

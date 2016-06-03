@@ -397,12 +397,9 @@ describe('PFS TESTS - ', () => {
 
     describe('MIXED mode search', () => {
 
-      var config = $PFS.preparePFSStandardConfig();
-      config.dir_mode = $G.GraphMode.MIXED;
-
       it('Should correctly compute best paths from Node A', () => {
         var root = graph.getNodeById('A'),
-          result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).to.equal(6);
 
@@ -423,7 +420,7 @@ describe('PFS TESTS - ', () => {
 
       it('Should correctly compute best paths from Node B', () => {
         var root = graph.getNodeById('B'),
-          result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).to.equal(6);
 
@@ -444,7 +441,7 @@ describe('PFS TESTS - ', () => {
 
       it('Should correctly compute best paths from Node D', () => {
         var root = graph.getNodeById('D'),
-          result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).to.equal(6);
 
@@ -465,7 +462,7 @@ describe('PFS TESTS - ', () => {
 
       it('Should correctly compute best paths from Node E', () => {
         var root = graph.getNodeById('E'),
-          result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).to.equal(6);
 
