@@ -597,7 +597,7 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
   });
   
   
-  it('Should set a large number of nodes, all to at least position 0', () => {
+  it('Checks that every node has at least position 0', () => {
     binHeap = new $BH.BinaryHeap();
     var i = 0;
     
@@ -608,6 +608,17 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
     while ( i ) {
       expect((<any>binHeap).getNodePosition(--i)).to.be.at.least(0);
     }
-  })
+  });
+  
+  
+  it('it is used to manipulate current positions in the binHeap', () => {
+    binHeap = new $BH.BinaryHeap();
+    binHeap.insert(4);
+    binHeap.insert(4);
+    var exp_struct = {4: [{priority: 4, position: 0}, 
+                          {priority: 4, position: 1}]};
+    expect(binHeap.getPositions()).to.deep.equal(exp_struct);
+    
+  });
   
 });
