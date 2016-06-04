@@ -547,7 +547,7 @@ describe('BINARY HEAP TESTS - ', () => {
     /**
      * TODO Outsource to performance testing...
      */
-    it('should run 30000 finds in just a few milliseconds (if the O(1) algorithm works...)', () => {
+    it.skip('should run 30000 finds in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
       while ( i < 30000 ) {
@@ -559,7 +559,7 @@ describe('BINARY HEAP TESTS - ', () => {
     });
     
     
-    it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
+    it.skip('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
       while ( i < 30000 ) {
@@ -611,14 +611,29 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
   });
   
   
-  it('it is used to manipulate current positions in the binHeap', () => {
+  it('checks for very simple array & position datastructs in the binHeap', () => {
+    binHeap = new $BH.BinaryHeap();
+    binHeap.insert(4);
+    binHeap.insert(1);
+    var exp_arr = [1, 4];
+    var exp_struct = {1: {priority: 1, position: 0},
+                      4: {priority: 4, position: 1}};
+    expect(binHeap.getArray()).to.deep.equal(exp_arr);
+    expect(binHeap.getPositions()).to.deep.equal(exp_struct);
+  });
+    
+  
+  it('checks for simple array & position datastructs in the binHeap including an array', () => {
     binHeap = new $BH.BinaryHeap();
     binHeap.insert(4);
     binHeap.insert(4);
+    var exp_arr = [4, 4];
     var exp_struct = {4: [{priority: 4, position: 0}, 
                           {priority: 4, position: 1}]};
+    expect(binHeap.getArray()).to.deep.equal(exp_arr);
     expect(binHeap.getPositions()).to.deep.equal(exp_struct);
-    
   });
+  
+  
   
 });

@@ -46,13 +46,20 @@ function PFS(graph, v, config) {
     var evalObjID = function (ne) {
         return ne.node.getID();
     };
+    // We need to push NeighborEntries
+    // TODO: Virtual edge addition OK?
+    var start_ne = {
+        node: v,
+        edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
+        best: 0
+    };
     var scope = {
         OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
         OPEN: {},
         CLOSED: {},
         nodes: graph.getNodes(),
         root_node: v,
-        current: null,
+        current: start_ne,
         adj_nodes: [],
         next: null,
         better_dist: Number.POSITIVE_INFINITY,
@@ -61,13 +68,6 @@ function PFS(graph, v, config) {
        * HOOK 1: PFS INIT
        */
     callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
-    // We need to push NeighborEntries
-    // TODO: Virtual edge addition OK?
-    var start_ne = {
-        node: v,
-        edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
-        best: 0
-    };
     scope.OPEN_HEAP.insert(start_ne);
     scope.OPEN[start_ne.node.getID()] = start_ne;
     /**

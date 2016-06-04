@@ -91,40 +91,40 @@ var BinaryHeap = (function () {
         /**
          * Search in O(1)
          */
-        var pos = this.getNodePosition(obj), found = this._array[pos];
-        if (typeof found !== 'undefined' && found !== null) {
-            var last = this._array.pop();
-            this.unsetNodePosition(found);
-            if (this.size()) {
-                this._array[pos] = last;
-                // update node position before trickling
-                this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
-                this.trickleUp(pos);
-                this.trickleDown(pos);
-            }
-            return found;
-        }
+        // var pos = this.getNodePosition(obj),
+        //     found = this._array[pos];
+        // if ( typeof found !== 'undefined' && found !== null ) {
+        //   var last = this._array.pop();
+        //   this.unsetNodePosition(found);
+        //   if ( this.size() ) {
+        //     this._array[pos] = last;
+        //     // update node position before trickling
+        //     this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
+        //     this.trickleUp(pos);
+        //     this.trickleDown(pos);
+        //   }
+        //   return found;
+        // }
         /**
          * OLD SEARCH in O(n) (but simpler)
          */
-        // var objID = this._evalObjID(obj),
-        //     found = undefined;
-        // for (var pos = 0; pos < this._array.length; pos++) {
-        //   if ( this._evalObjID(this._array[pos]) === objID ) {
-        //     found = this._array[pos];
-        //     // we pop the last element
-        //     var last = this._array.pop();
-        //     // we switch the last with the found element
-        //     // and restore the heaps order, but only if the
-        //     // heap size is not down to zero
-        //     if ( this.size() ) {
-        //       this._array[pos] = last;
-        //       this.trickleUp(pos);
-        //       this.trickleDown(pos);
-        //     }
-        //     return found;
-        //   }
-        // }    
+        var objID = this._evalObjID(obj), found = undefined;
+        for (var pos = 0; pos < this._array.length; pos++) {
+            if (this._evalObjID(this._array[pos]) === objID) {
+                found = this._array[pos];
+                // we pop the last element
+                var last = this._array.pop();
+                // we switch the last with the found element
+                // and restore the heaps order, but only if the
+                // heap size is not down to zero
+                if (this.size()) {
+                    this._array[pos] = last;
+                    this.trickleUp(pos);
+                    this.trickleDown(pos);
+                }
+                return found;
+            }
+        }
         // console.log("Found undefined object at position: " + pos);
         return found;
     };
@@ -238,9 +238,10 @@ var BinaryHeap = (function () {
         var obj_key = this.evalInputObjID(obj);
         var occurrence = this._positions[obj_key];
         if (!occurrence) {
-            // console.log("getNodePosition: no occurrence found");
-            // console.dir(this._positions);
-            // console.dir(this._array);
+            console.log("getNodePosition: no occurrence found");
+            console.log("Neighborhood entry: ");
+            console.dir(obj);
+            console.log("Object KEY: " + obj_key);
             return undefined;
         }
         else if (Array.isArray(occurrence)) {
@@ -273,9 +274,10 @@ var BinaryHeap = (function () {
         var obj_key = this.evalInputObjID(obj);
         var occurrence = this._positions[obj_key];
         if (!occurrence) {
-            // console.log("unsetNodePosition: no occurrence found");
-            // console.dir(this._positions);
-            // console.dir(this._array);
+            console.log("Neighborhood entry: ");
+            console.log("Object: ");
+            console.dir(obj);
+            console.log("Object KEY: " + obj_key);
             return undefined;
         }
         else if (Array.isArray(occurrence)) {

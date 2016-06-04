@@ -488,7 +488,7 @@ describe('PFS TESTS - ', () => {
 });
 
 
-describe.skip('PFS TESTS on REAL sized graph - ', () => {
+describe('PFS TESTS on REAL sized graph - ', () => {
   
   var real_graph = "./test/input/test_data/real_graph.json",
       graph = json.readFromJSONFile(real_graph),

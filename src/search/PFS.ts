@@ -104,6 +104,13 @@ function PFS(graph 	 : $G.IGraph,
     return ne.node.getID();
   };
   
+  // We need to push NeighborEntries
+  // TODO: Virtual edge addition OK?
+  var start_ne : $N.NeighborEntry = {
+    node: v,
+    edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0}),
+    best: 0
+  };
   
   var scope : PFS_Scope = {
     OPEN_HEAP   : new $BH.BinaryHeap( $BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
@@ -111,7 +118,7 @@ function PFS(graph 	 : $G.IGraph,
     CLOSED      : {},
     nodes       : graph.getNodes(),
     root_node   : v,
-    current     : null,
+    current     : start_ne,
     adj_nodes   : [],
     next        : null,
     better_dist : Number.POSITIVE_INFINITY,
@@ -122,14 +129,6 @@ function PFS(graph 	 : $G.IGraph,
 	 */
   callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
   
-  // We need to push NeighborEntries
-  // TODO: Virtual edge addition OK?
-  var start_ne : $N.NeighborEntry = {
-    node: v,
-    edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0}),
-    best: 0
-  };
-
   scope.OPEN_HEAP.insert(start_ne);
   scope.OPEN[start_ne.node.getID()] = start_ne;
   
@@ -141,8 +140,7 @@ function PFS(graph 	 : $G.IGraph,
     scope.current = scope.OPEN_HEAP.pop();
     
     if (scope.current == null) {
-      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());      
-      // console.log("Scope.current: " + scope.current);  
+      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
     }
 
     // remove from OPEN
