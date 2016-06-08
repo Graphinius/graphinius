@@ -1,8 +1,8 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 "use strict";
 var fs = require('fs');
-var $G = require('../core/Graph');
-var $R = require('../utils/remoteUtils');
+var $G = require('../../core/Graph');
+var $R = require('../../utils/remoteUtils');
 var DEFAULT_WEIGHT = 1;
 var JSONInput = (function () {
     function JSONInput(_explicit_direction, _direction, _weighted_mode) {

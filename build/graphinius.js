@@ -932,7 +932,7 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
+	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
 	var path = __webpack_require__(6);
 	var fs = __webpack_require__(8);
@@ -1440,7 +1440,7 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
+	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);

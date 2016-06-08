@@ -5,14 +5,14 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/input/JSONInput';
+import * as $I from '../../src/io/input/JSONInput';
 import * as $DFS from '../../src/search/DFS';
 
 chai.use(sinonChai);
 
 var expect 	= chai.expect;
 var JSON_IN	= $I.JSONInput;
-var search_graph = "./test/input/test_data/search_graph.json";
+var search_graph = "./test/test_data/search_graph.json";
 
 
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
@@ -810,7 +810,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	 */
 	describe('PFS_DFS graph traversal tests with edge weight ascending sort - ', () => {
 
-		var search_graph_pfs = "./test/input/test_data/search_graph_pfs.json",
+		var search_graph_pfs = "./test/test_data/search_graph_pfs.json",
 			json = new $I.JSONInput(true, true, true),
 			graph = json.readFromJSONFile(search_graph_pfs);
 

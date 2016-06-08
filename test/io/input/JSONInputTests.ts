@@ -1,11 +1,11 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
-import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/input/JSONInput';
-import * as $C from '../../test/input/common';
+import * as $N from '../../../src/core/Nodes';
+import * as $E from '../../../src/core/Edges';
+import * as $G from '../../../src/core/Graph';
+import * as $I from '../../../src/io/input/JSONInput';
+import * as $C from '../../../test/io/input/common';
 
 var expect 	= chai.expect;
 var Node 		= $N.BaseNode;
@@ -15,10 +15,10 @@ var JSON_IN	= $I.JSONInput;
 
 var REAL_GRAPH_NR_NODES = 6204,
     REAL_GRAPH_NR_EDGES = 18550,
-    small_graph = "./test/input/test_data/small_graph.json",
-		small_graph_no_features = "./test/input/test_data/small_graph_no_features.json",
-    small_graph_weights_crap = "./test/input/test_data/small_graph_weights_crap.json",
-    real_graph = "./test/input/test_data/real_graph.json";
+    small_graph = "./test/test_data/small_graph.json",
+		small_graph_no_features = "./test/test_data/small_graph_no_features.json",
+    small_graph_weights_crap = "./test/test_data/small_graph_weights_crap.json",
+    real_graph = "./test/test_data/real_graph.json";
 
 
 describe('GRAPH JSON INPUT TESTS', () => {

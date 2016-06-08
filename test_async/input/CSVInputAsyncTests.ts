@@ -4,8 +4,8 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/input/CSVInput';
-import * as $C from '../../test/input/common';
+import * as $I from '../../src/io/input/CSVInput';
+import * as $C from '../../test/io/input/common';
 
 var expect = chai.expect,
 		Node = $N.BaseNode,

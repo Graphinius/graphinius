@@ -1,10 +1,10 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 
 import fs				= require('fs');
 import path 		= require('path');
 
-import * as $G from '../core/Graph';
-import * as $R from '../utils/remoteUtils';
+import * as $G from '../../core/Graph';
+import * as $R from '../../utils/remoteUtils';
 
 var DEFAULT_WEIGHT = 1;
 

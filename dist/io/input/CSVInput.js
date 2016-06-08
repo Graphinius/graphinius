@@ -1,9 +1,9 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 "use strict";
 var path = require('path');
 var fs = require('fs');
-var $G = require('../core/Graph');
-var $R = require('../utils/remoteUtils');
+var $G = require('../../core/Graph');
+var $R = require('../../utils/remoteUtils');
 var CSVInput = (function () {
     function CSVInput(_separator, _explicit_direction, _direction_mode) {
         if (_separator === void 0) { _separator = ','; }

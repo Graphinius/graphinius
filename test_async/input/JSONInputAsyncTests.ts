@@ -4,8 +4,8 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/input/JSONInput';
-import * as $C from '../../test/input/common';
+import * as $I from '../../src/io/input/JSONInput';
+import * as $C from '../../test/io/input/common';
 
 var expect 	= chai.expect;
 var Node 		= $N.BaseNode;
@@ -100,7 +100,7 @@ describe('ASYNC GRAPH JSON INPUT TESTS', () => {
 		
 		// URL to replace with path
 		var small_graph_url = REMOTE_HOST + "small_graph.json";
-		var small_graph_path = 'test/input/test_data/small_graph.json';
+		var small_graph_path = 'test/test_data/small_graph.json';
 		
 		beforeEach(() => {		
 			// Injecting browser globals into our Node environment

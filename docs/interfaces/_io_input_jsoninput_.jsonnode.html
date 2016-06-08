@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;search/PFS&quot; | Graphinius</title>
+	<title>JSONNode | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,112 +57,89 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_search_pfs_.html">&quot;search/PFS&quot;</a>
+					<a href="../modules/_io_input_jsoninput_.html">&quot;io/input/JSONInput&quot;</a>
+				</li>
+				<li>
+					<a href="_io_input_jsoninput_.jsonnode.html">JSONNode</a>
 				</li>
 			</ul>
-			<h1>External module &quot;search/PFS&quot;</h1>
+			<h1>Interface JSONNode</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">JSONNode</span>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Interfaces</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_callbacks.html" class="tsd-kind-icon">PFS_<wbr><wbr>Callbacks</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-kind-icon">PFS_<wbr><wbr>Config</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_messages.html" class="tsd-kind-icon">PFS_<wbr><wbr>Messages</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_resultentry.html" class="tsd-kind-icon">PFS_<wbr><wbr>Result<wbr>Entry</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/_search_pfs_.pfs_scope.html" class="tsd-kind-icon">PFS_<wbr><wbr>Scope</a></li>
-							</ul>
-						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Functions</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#pfs" class="tsd-kind-icon">PFS</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_pfs_.html#preparepfsstandardconfig" class="tsd-kind-icon">preparePFSStandard<wbr>Config</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_io_input_jsoninput_.jsonnode.html#coords" class="tsd-kind-icon">coords</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_io_input_jsoninput_.jsonnode.html#edges" class="tsd-kind-icon">edges</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_io_input_jsoninput_.jsonnode.html#features" class="tsd-kind-icon">features</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="pfs" class="tsd-anchor"></a>
-					<h3>PFS</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">PFS<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, v<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L68">search/PFS.ts:68</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Priority first search</p>
-								</div>
-								<p>Like BFS, we are not necessarily visiting the
-									whole graph, but only what&#39;s reachable from
-								a given start node.</p>
-								<dl class="tsd-comment-tags">
-									<dt>config</dt>
-									<dd><p>a config object similar to that used
-										in BFS, automatically instantiated if not given..</p>
-									</dd>
-								</dl>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the graph to perform PFS only</p>
-									</div>
-								</li>
-								<li>
-									<h5>v: <a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the node from which to start PFS</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
-							<ul class="tsd-parameters">
-								<li class="tsd-parameter-index-signature">
-									<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../interfaces/_search_pfs_.pfs_resultentry.html" class="tsd-signature-type">PFS_ResultEntry</a></h5>
-								</li>
-							</ul>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="coords" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> coords</h3>
+					<div class="tsd-signature tsd-kind-icon">coords<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in io/input/JSONInput.ts:20</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">Number</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="preparepfsstandardconfig" class="tsd-anchor"></a>
-					<h3>preparePFSStandard<wbr>Config</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">preparePFSStandard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/PFS.ts#L238">search/PFS.ts:238</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-signature-type">PFS_Config</a></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="edges" class="tsd-anchor"></a>
+					<h3>edges</h3>
+					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_io_input_jsoninput_.jsonedge.html" class="tsd-signature-type">JSONEdge</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in io/input/JSONInput.ts:19</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="features" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> features</h3>
+					<div class="tsd-signature tsd-kind-icon">features<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in io/input/JSONInput.ts:21</li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -173,71 +150,83 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_core_edges_.html">"core/<wbr>Edges"</a>
+						<a href="../modules/_core_edges_.html">"core/<wbr>Edges"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_core_graph_.html">"core/<wbr>Graph"</a>
+						<a href="../modules/_core_graph_.html">"core/<wbr>Graph"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_core_nodes_.html">"core/<wbr>Nodes"</a>
+						<a href="../modules/_core_nodes_.html">"core/<wbr>Nodes"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_datastructs_binaryheap_.html">"datastructs/binary<wbr>Heap"</a>
+						<a href="../modules/_datastructs_binaryheap_.html">"datastructs/binary<wbr>Heap"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_datastructs_fibonacciheap_.html">"datastructs/fibonacci<wbr>Heap"</a>
+						<a href="../modules/_datastructs_fibonacciheap_.html">"datastructs/fibonacci<wbr>Heap"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_io_input_csvinput_.html">"io/input/CSVInput"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_io_input_jsoninput_.html">"io/input/JSONInput"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_io_output_csvoutput_.html">"io/output/CSVOutput"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_search_bfs_.html">"search/BFS"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_search_dfs_.html">"search/DFS"</a>
+						<a href="../modules/_io_input_csvinput_.html">"io/input/CSVInput"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="_search_pfs_.html">"search/PFS"</a>
+						<a href="../modules/_io_input_jsoninput_.html">"io/input/JSONInput"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_utils_callbackutils_.html">"utils/callback<wbr>Utils"</a>
+						<a href="../modules/_io_output_csvoutput_.html">"io/output/CSVOutput"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_utils_remoteutils_.html">"utils/remote<wbr>Utils"</a>
+						<a href="../modules/_search_bfs_.html">"search/BFS"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_utils_structutils_.html">"utils/struct<wbr>Utils"</a>
+						<a href="../modules/_search_dfs_.html">"search/DFS"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_search_pfs_.html">"search/PFS"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_callbackutils_.html">"utils/callback<wbr>Utils"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_remoteutils_.html">"utils/remote<wbr>Utils"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utils_structutils_.html">"utils/struct<wbr>Utils"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_search_pfs_.pfs_callbacks.html" class="tsd-kind-icon">PFS_<wbr><wbr>Callbacks</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_io_input_jsoninput_.jsoninput.html" class="tsd-kind-icon">JSONInput</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_search_pfs_.pfs_config.html" class="tsd-kind-icon">PFS_<wbr><wbr>Config</a>
+						<a href="_io_input_jsoninput_.ijsoninput.html" class="tsd-kind-icon">IJSONInput</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_search_pfs_.pfs_messages.html" class="tsd-kind-icon">PFS_<wbr><wbr>Messages</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_io_input_jsoninput_.jsonedge.html" class="tsd-kind-icon">JSONEdge</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_search_pfs_.pfs_resultentry.html" class="tsd-kind-icon">PFS_<wbr><wbr>Result<wbr>Entry</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_io_input_jsoninput_.jsongraph.html" class="tsd-kind-icon">JSONGraph</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_search_pfs_.pfs_scope.html" class="tsd-kind-icon">PFS_<wbr><wbr>Scope</a>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_io_input_jsoninput_.jsonnode.html" class="tsd-kind-icon">JSONNode</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_io_input_jsoninput_.jsonnode.html#coords" class="tsd-kind-icon">coords</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_io_input_jsoninput_.jsonnode.html#edges" class="tsd-kind-icon">edges</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_io_input_jsoninput_.jsonnode.html#features" class="tsd-kind-icon">features</a>
+							</li>
+						</ul>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_pfs_.html#pfs" class="tsd-kind-icon">PFS</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_pfs_.html#preparepfsstandardconfig" class="tsd-kind-icon">preparePFSStandard<wbr>Config</a>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_io_input_jsoninput_.html#default_weight" class="tsd-kind-icon">DEFAULT_<wbr>WEIGHT</a>
 					</li>
 				</ul>
 			</nav>

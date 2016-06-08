@@ -1,7 +1,7 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../../src/core/Graph';
 
 var expect 	= chai.expect;
 		

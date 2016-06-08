@@ -4,14 +4,14 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/input/JSONInput';
+import * as $I from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
 import * as $BH from '../../src/datastructs/binaryHeap';
 
 
 var expect = chai.expect,
     json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
-    search_graph = "./test/input/test_data/search_graph_pfs_extended.json",
+    search_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
 
 
@@ -490,7 +490,7 @@ describe('PFS TESTS - ', () => {
 
 describe('PFS TESTS on REAL sized graph - ', () => {
   
-  var real_graph = "./test/input/test_data/real_graph.json",
+  var real_graph = "./test/test_data/real_graph.json",
       graph = json.readFromJSONFile(real_graph),
       NR_NODES = 6204,
       NR_UND_EDGES = 18550;

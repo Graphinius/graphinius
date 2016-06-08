@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $CSV from '../../src/input/CSVInput';
+import * as $CSV from '../../src/io/input/CSVInput';
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
@@ -713,7 +713,7 @@ describe('GRAPH TESTS: ', () => {
 	
 	
 	describe('Clearing ALL (un)directed edges from a graph', () => {
-		var test_graph_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv";
+		var test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv";
 			
 		it('should delete all directed edges from a graph', () => {
 			graph = csv.readFromAdjacencyListFile(test_graph_file);
@@ -754,7 +754,7 @@ describe('GRAPH TESTS: ', () => {
 	 * PLUS - how to test for runtime ???
 	 */
 	describe('Randomly generate edges in a graph (create a random graph)', () => {
-		var test_graph_file = "./test/input/test_data/small_graph_adj_list_def_sep.csv",
+		var test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv",
 				probability : number,
 				min	: number,
 				max : number,
