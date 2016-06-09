@@ -3,6 +3,7 @@ var Nodes 		= require("./dist/core/Nodes.js");
 var Graph 		= require("./dist/core/Graph.js");
 var CsvInput 	= require("./dist/io/input/CSVInput.js");
 var JsonInput = require("./dist/io/input/JSONInput.js");
+var CsvOutput = require("./dist/io/output/CSVOutput.js");
 var BFS				= require("./dist/search/BFS.js");
 var DFS				= require("./dist/search/DFS.js");
 var PFS       = require("./dist/search/PFS.js");
@@ -25,7 +26,8 @@ out.$G = {
 	},
 	input: {
 		CsvInput 		: CsvInput.CSVInput,
-		JsonInput 	: JsonInput.JSONInput
+		JsonInput 	: JsonInput.JSONInput,
+		CsvOutput		: CsvOutput.CsvOutput
 	},
 	search: {
 		BFS													   : BFS.BFS,

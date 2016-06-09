@@ -49,9 +49,10 @@
 	var Graph 		= __webpack_require__(4);
 	var CsvInput 	= __webpack_require__(5);
 	var JsonInput = __webpack_require__(10);
-	var BFS				= __webpack_require__(11);
-	var DFS				= __webpack_require__(13);
-	var PFS       = __webpack_require__(14);
+	var CsvOutput = __webpack_require__(11);
+	var BFS				= __webpack_require__(12);
+	var DFS				= __webpack_require__(14);
+	var PFS       = __webpack_require__(15);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -71,7 +72,8 @@
 		},
 		input: {
 			CsvInput 		: CsvInput.CSVInput,
-			JsonInput 	: JsonInput.JSONInput
+			JsonInput 	: JsonInput.JSONInput,
+			CsvOutput		: CsvOutput.CsvOutput
 		},
 		search: {
 			BFS													   : BFS.BFS,
@@ -1559,12 +1561,62 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../../typings/tsd.d.ts" />
+	"use strict";
+	var CSVOutput = (function () {
+	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
+	        if (_separator === void 0) { _separator = ','; }
+	        if (_explicit_direction === void 0) { _explicit_direction = true; }
+	        if (_direction_mode === void 0) { _direction_mode = false; }
+	        this._separator = _separator;
+	        this._explicit_direction = _explicit_direction;
+	        this._direction_mode = _direction_mode;
+	    }
+	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
+	    };
+	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
+	        var graphString = "";
+	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
+	        var mergeFunc = function (ne) {
+	            return ne.node.getID();
+	        };
+	        // TODO make generic for graph mode
+	        for (var node_key in nodes) {
+	            node = nodes[node_key];
+	            graphString += node.getID() + " ";
+	            adj_nodes = node.reachNodes(mergeFunc);
+	            // console.dir(adj_nodes);
+	            for (var adj_idx in adj_nodes) {
+	                adj_node = adj_nodes[adj_idx].node;
+	                graphString += adj_node.getID() + " ";
+	            }
+	            graphString += "\n";
+	        }
+	        return graphString;
+	    };
+	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
+	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
+	    };
+	    CSVOutput.prototype.writeToEdgeList = function (graph) {
+	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
+	        // var graphString = "";
+	        // return graphString;
+	    };
+	    return CSVOutput;
+	}());
+	exports.CSVOutput = CSVOutput;
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(12);
+	var $CB = __webpack_require__(13);
 	/**
 	 * Breadth first search - usually performed to see
 	 * reachability etc. Therefore we do not want 'segments'
@@ -1711,7 +1763,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1732,13 +1784,13 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(12);
+	var $CB = __webpack_require__(13);
 	/**
 	 * DFS Visit - one run to see what nodes are reachable
 	 * from a given "current" root node
@@ -1993,15 +2045,15 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(12);
-	var $BH = __webpack_require__(15);
+	var $CB = __webpack_require__(13);
+	var $BH = __webpack_require__(16);
 	/**
 	 * Priority first search
 	 *
@@ -2222,7 +2274,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/// <reference path="../../typings/tsd.d.ts" />

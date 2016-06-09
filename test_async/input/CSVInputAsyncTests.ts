@@ -82,7 +82,7 @@ describe("Async CSVInput Tests, fetching the files from a remote server", () => 
 		
 		// URL to replace with path
 		var small_graph_url = REMOTE_HOST + "small_graph_edge_list.csv";
-		var small_graph_path = 'test/input/test_data/small_graph_edge_list.csv';
+		var small_graph_path = 'test/test_data/small_graph_edge_list.csv';
 		
 		beforeEach(() => {		
 			// Injecting browser globals into our Node environment

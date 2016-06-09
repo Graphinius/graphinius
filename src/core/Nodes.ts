@@ -94,7 +94,7 @@ class BaseNode implements IBaseNode {
 		this._label = this._features["label"] || this._id;
 	}
 	
-	getID()	: string { 
+	getID()	: string {
 		return this._id;
 	}
 	
@@ -138,8 +138,7 @@ class BaseNode implements IBaseNode {
 	clearFeatures() : void {
 		this._features = {};
 	}
-	
-			
+				
 	inDegree() : number {
 		return this._in_degree;
 	}
@@ -201,7 +200,7 @@ class BaseNode implements IBaseNode {
 			this._und_edges[edge.getID()] = edge;
 			this._und_degree += 1;
 		}
-	}	
+	}
 	
 	hasEdge(edge: $E.IBaseEdge) : boolean {
 		return !!this._in_edges[ edge.getID() ] || !!this._out_edges[ edge.getID() ] || !!this._und_edges[ edge.getID() ];
@@ -245,17 +244,17 @@ class BaseNode implements IBaseNode {
 		}
 		var id = edge.getID();		
 		var e = this._und_edges[id];
-		if ( e ) { 
+		if ( e ) {
 			delete this._und_edges[id];
 			this._und_degree -= 1;
 		}
 		e = this._in_edges[id];
-		if ( e ) { 
+		if ( e ) {
 			delete this._in_edges[id];
 			this._in_degree -= 1;
 		}
 		e = this._out_edges[id];
-		if ( e ) { 
+		if ( e ) {
 			delete this._out_edges[id];
 			this._out_degree -= 1;
 		}
@@ -285,7 +284,7 @@ class BaseNode implements IBaseNode {
 	clearOutEdges() : void {
 		this._out_edges = {};
 		this._out_degree = 0;
-	}	
+	}
 	
 	clearInEdges() : void {
 		this._in_edges = {};		
