@@ -26,7 +26,9 @@ out.$G = {
 	},
 	input: {
 		CsvInput 		: CsvInput.CSVInput,
-		JsonInput 	: JsonInput.JSONInput,
+		JsonInput 	: JsonInput.JSONInput
+	},
+	output: {		
 		CsvOutput		: CsvOutput.CsvOutput
 	},
 	search: {
