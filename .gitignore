@@ -39,3 +39,7 @@ test_async/**/*.js
 
 # IDEA project directory
 .idea/**
+
+# Test outputs
+test/test_data/**/*.csv
+test/test_data/**/*.json

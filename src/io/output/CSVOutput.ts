@@ -30,7 +30,11 @@ class CSVOutput implements ICSVOutput {
 	}
   
   writeToAdjacencyListFile(filepath : string, graph : $G.IGraph) : void {
+    if ( typeof window !== 'undefined' && window !== null ) {
+      throw new Error('cannot write to File inside of Browser');
+    }
     
+    fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
   }
   
 	writeToAdjacencyList(graph : $G.IGraph) : string {
@@ -46,15 +50,13 @@ class CSVOutput implements ICSVOutput {
         
     // TODO make generic for graph mode
     for ( var node_key in nodes ) {
-      node = nodes[node_key];
-      graphString += node.getID() + " ";
-      
+      node = nodes[node_key];      
+      graphString += node.getID();      
       adj_nodes = node.reachNodes(mergeFunc);
-      // console.dir(adj_nodes);
       
       for ( var adj_idx in adj_nodes ) {
         adj_node = adj_nodes[adj_idx].node;
-        graphString += adj_node.getID() + " ";
+        graphString += this._separator + adj_node.getID();
       }
       graphString += "\n";
     }

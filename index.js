@@ -29,7 +29,7 @@ out.$G = {
 		JsonInput 	: JsonInput.JSONInput
 	},
 	output: {		
-		CsvOutput		: CsvOutput.CsvOutput
+		CsvOutput		: CsvOutput.CSVOutput
 	},
 	search: {
 		BFS													   : BFS.BFS,

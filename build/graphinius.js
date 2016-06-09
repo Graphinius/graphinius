@@ -75,7 +75,7 @@
 			JsonInput 	: JsonInput.JSONInput
 		},
 		output: {		
-			CsvOutput		: CsvOutput.CsvOutput
+			CsvOutput		: CsvOutput.CSVOutput
 		},
 		search: {
 			BFS													   : BFS.BFS,
@@ -1563,10 +1563,11 @@
 
 /***/ },
 /* 11 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
+	var fs = __webpack_require__(8);
 	var CSVOutput = (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1577,6 +1578,10 @@
 	        this._direction_mode = _direction_mode;
 	    }
 	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
+	        if (typeof window !== 'undefined' && window !== null) {
+	            throw new Error('cannot write to File inside of Browser');
+	        }
+	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
 	    };
 	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
 	        var graphString = "";
@@ -1587,12 +1592,11 @@
 	        // TODO make generic for graph mode
 	        for (var node_key in nodes) {
 	            node = nodes[node_key];
-	            graphString += node.getID() + " ";
+	            graphString += node.getID();
 	            adj_nodes = node.reachNodes(mergeFunc);
-	            // console.dir(adj_nodes);
 	            for (var adj_idx in adj_nodes) {
 	                adj_node = adj_nodes[adj_idx].node;
-	                graphString += adj_node.getID() + " ";
+	                graphString += this._separator + adj_node.getID();
 	            }
 	            graphString += "\n";
 	        }
