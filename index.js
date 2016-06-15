@@ -1,12 +1,15 @@
-var Edges			= require("./dist/core/Edges.js");
-var Nodes 		= require("./dist/core/Nodes.js");
-var Graph 		= require("./dist/core/Graph.js");
-var CsvInput 	= require("./dist/io/input/CSVInput.js");
-var JsonInput = require("./dist/io/input/JSONInput.js");
-var CsvOutput = require("./dist/io/output/CSVOutput.js");
-var BFS				= require("./dist/search/BFS.js");
-var DFS				= require("./dist/search/DFS.js");
-var PFS       = require("./dist/search/PFS.js");
+var Edges			      = require("./dist/core/Edges.js");
+var Nodes 		      = require("./dist/core/Nodes.js");
+var Graph 		      = require("./dist/core/Graph.js");
+var CsvInput 	      = require("./dist/io/input/CSVInput.js");
+var JsonInput       = require("./dist/io/input/JSONInput.js");
+var CsvOutput       = require("./dist/io/output/CSVOutput.js");
+var BFS				      = require("./dist/search/BFS.js");
+var DFS				      = require("./dist/search/DFS.js");
+var PFS             = require("./dist/search/PFS.js");
+var structUtils     = require("./dist/utils/structUtils.js");
+var remoteUtils     = require("./dist/utils/remoteUtils.js");
+var callbackUtils   = require("./dist/utils/callbackUtils.js");
 
 // TODO:
 // Encapsulate ALL functions within Graph for
@@ -40,7 +43,12 @@ out.$G = {
 		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
     PFS                            : PFS.PFS,
     preparePFSStandardConfig       : PFS.preparePFSStandardConfig
-	}
+	},
+  util: {
+    struct          : structUtils,
+    remote          : remoteUtils,
+    callbackUtils   : callbackUtils    
+  }
 };
 
 /**

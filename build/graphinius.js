@@ -44,15 +44,18 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var Edges			= __webpack_require__(1);
-	var Nodes 		= __webpack_require__(2);
-	var Graph 		= __webpack_require__(4);
-	var CsvInput 	= __webpack_require__(5);
-	var JsonInput = __webpack_require__(10);
-	var CsvOutput = __webpack_require__(11);
-	var BFS				= __webpack_require__(12);
-	var DFS				= __webpack_require__(14);
-	var PFS       = __webpack_require__(15);
+	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
+	var Nodes 		      = __webpack_require__(2);
+	var Graph 		      = __webpack_require__(4);
+	var CsvInput 	      = __webpack_require__(5);
+	var JsonInput       = __webpack_require__(10);
+	var CsvOutput       = __webpack_require__(11);
+	var BFS				      = __webpack_require__(12);
+	var DFS				      = __webpack_require__(14);
+	var PFS             = __webpack_require__(15);
+	var structUtils     = __webpack_require__(3);
+	var remoteUtils     = __webpack_require__(9);
+	var callbackUtils   = __webpack_require__(13);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -86,7 +89,12 @@
 			prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
 	    PFS                            : PFS.PFS,
 	    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
-		}
+		},
+	  util: {
+	    struct          : structUtils,
+	    remote          : remoteUtils,
+	    callbackUtils   : callbackUtils    
+	  }
 	};
 
 	/**
