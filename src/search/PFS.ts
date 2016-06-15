@@ -8,12 +8,14 @@ import * as $BH from '../datastructs/binaryHeap';
 
 
 export interface PFS_Config {
-	result			:	{[id: string]: PFS_ResultEntry};
-	callbacks		:	PFS_Callbacks;
-	dir_mode		:	$G.GraphMode;
-  goal_node   : $N.IBaseNode;
-	messages?		: PFS_Messages;
-	filters?		: any;
+	result			    :	{[id: string]: PFS_ResultEntry};
+	callbacks		    :	PFS_Callbacks;
+	dir_mode		    :	$G.GraphMode;
+  goal_node       : $N.IBaseNode;
+	messages?		    : PFS_Messages;
+	filters?		    : any;
+  evalPriority    : any;
+  evalObjID       : any;
 }
 
 export interface PFS_ResultEntry {
@@ -71,7 +73,10 @@ function PFS(graph 	 : $G.IGraph,
 
   var config = config || preparePFSStandardConfig(),
       callbacks = config.callbacks,
-      dir_mode = config.dir_mode;
+      dir_mode = config.dir_mode,
+      evalPriority = config.evalPriority,
+      evalObjID = config.evalObjID;
+
   
   /**
 	 * We are not traversing an empty graph...
@@ -86,23 +91,6 @@ function PFS(graph 	 : $G.IGraph,
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
   
-  /**
-   * we take a standard eval function returning
-   * the weight of a successor edge
-   * This will later be replaced by a config option...
-   */
-  var evalPriority = function(ne: $N.NeighborEntry) {
-    return ne.best;
-  };
-  
-  /**
-   * we take a standard ID function returning
-   * the ID of a NeighborEntry's node
-   * This will later be replaced by a config option...
-   */
-  var evalObjID = function(ne: $N.NeighborEntry) {
-    return ne.node.getID();
-  };
   
   // We need to push NeighborEntries
   // TODO: Virtual edge addition OK?
@@ -255,7 +243,13 @@ function preparePFSStandardConfig() : PFS_Config {
       goal_reached_msgs : []
     },
     dir_mode  : $G.GraphMode.MIXED,
-    goal_node : null
+    goal_node : null,
+    evalPriority : function(ne: $N.NeighborEntry) {
+      return ne.best;
+    },
+    evalObjID : function(ne: $N.NeighborEntry) {
+      return ne.node.getID();
+    }
   },
     callbacks = config.callbacks;
     

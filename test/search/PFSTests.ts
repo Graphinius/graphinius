@@ -46,7 +46,9 @@ describe('PFS TESTS - ', () => {
             result    : {},
             callbacks : {},
             dir_mode  : $G.GraphMode.INIT,
-            goal_node : null
+            goal_node : null,
+            evalPriority : function(ne: $N.NeighborEntry) { return ne.best; },
+            evalObjID : function(ne: $N.NeighborEntry) { return ne.node.getID(); }
           };
           
       expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');

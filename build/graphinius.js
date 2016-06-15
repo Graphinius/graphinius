@@ -2081,7 +2081,7 @@
 	 * in BFS, automatically instantiated if not given..
 	 */
 	function PFS(graph, v, config) {
-	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    /**
 	       * We are not traversing an empty graph...
 	       */
@@ -2094,22 +2094,6 @@
 	    if (dir_mode === $G.GraphMode.INIT) {
 	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	    }
-	    /**
-	     * we take a standard eval function returning
-	     * the weight of a successor edge
-	     * This will later be replaced by a config option...
-	     */
-	    var evalPriority = function (ne) {
-	        return ne.best;
-	    };
-	    /**
-	     * we take a standard ID function returning
-	     * the ID of a NeighborEntry's node
-	     * This will later be replaced by a config option...
-	     */
-	    var evalObjID = function (ne) {
-	        return ne.node.getID();
-	    };
 	    // We need to push NeighborEntries
 	    // TODO: Virtual edge addition OK?
 	    var start_ne = {
@@ -2239,7 +2223,13 @@
 	            goal_reached_msgs: []
 	        },
 	        dir_mode: $G.GraphMode.MIXED,
-	        goal_node: null
+	        goal_node: null,
+	        evalPriority: function (ne) {
+	            return ne.best;
+	        },
+	        evalObjID: function (ne) {
+	            return ne.node.getID();
+	        }
 	    }, callbacks = config.callbacks;
 	    var count = 0;
 	    var counter = function () {
