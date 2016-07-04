@@ -47,15 +47,16 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CsvInput 	      = __webpack_require__(5);
-	var JsonInput       = __webpack_require__(10);
-	var CsvOutput       = __webpack_require__(11);
+	var CSVInput 	      = __webpack_require__(5);
+	var JSONInput       = __webpack_require__(10);
+	var CSVOutput       = __webpack_require__(11);
 	var BFS				      = __webpack_require__(12);
 	var DFS				      = __webpack_require__(14);
 	var PFS             = __webpack_require__(15);
 	var structUtils     = __webpack_require__(3);
 	var remoteUtils     = __webpack_require__(9);
 	var callbackUtils   = __webpack_require__(13);
+	var binaryHeap      = __webpack_require__(16);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -74,11 +75,11 @@
 			GraphMode		: Graph.GraphMode
 		},
 		input: {
-			CsvInput 		: CsvInput.CSVInput,
-			JsonInput 	: JsonInput.JSONInput
+			CSVInput 		: CSVInput.CSVInput,
+			JSONInput 	: JSONInput.JSONInput
 		},
 		output: {		
-			CsvOutput		: CsvOutput.CSVOutput
+			CSVOutput		: CSVOutput.CSVOutput
 		},
 		search: {
 			BFS													   : BFS.BFS,
@@ -93,7 +94,10 @@
 	  util: {
 	    struct          : structUtils,
 	    remote          : remoteUtils,
-	    callbackUtils   : callbackUtils    
+	    callback        : callbackUtils
+	  },
+	  datastructs: {
+	    binaryHeap  : binaryHeap
 	  }
 	};
 
@@ -119,7 +123,6 @@
 	        options = options || {};
 	        this._directed = options.directed || false;
 	        this._weighted = options.weighted || false;
-	        // @NOTE isNaN and Number.isNaN confusion...
 	        this._weight = this._weighted ? (isNaN(options.weight) ? 1 : options.weight) : undefined;
 	        this._label = options.label || this._id;
 	    }
@@ -159,16 +162,11 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $DS = __webpack_require__(3);
 	var BaseNode = (function () {
 	    function BaseNode(_id, features) {
 	        this._id = _id;
-	        /**
-	         * degrees - let's hold them separate in order
-	         * to avoid Object.keys(...)
-	         */
 	        this._in_degree = 0;
 	        this._out_degree = 0;
 	        this._und_degree = 0;
@@ -192,10 +190,6 @@
 	    };
 	    BaseNode.prototype.getFeature = function (key) {
 	        return this._features[key];
-	        // if ( !feat ) {
-	        // 	throw new Error("Cannot retrieve non-existing feature.");
-	        // }
-	        // return feat;
 	    };
 	    BaseNode.prototype.setFeatures = function (features) {
 	        this._features = $DS.clone(features);
@@ -205,9 +199,6 @@
 	    };
 	    BaseNode.prototype.deleteFeature = function (key) {
 	        var feat = this._features[key];
-	        // if ( !feat ) {
-	        // 	throw new Error("Cannot delete non-existing feature.");
-	        // }
 	        delete this._features[key];
 	        return feat;
 	    };
@@ -223,36 +214,16 @@
 	    BaseNode.prototype.degree = function () {
 	        return this._und_degree;
 	    };
-	    /**
-	     * We have to:
-	     * 1. throw an error if the edge is already attached
-	     * 2. add it to the edge array
-	     * 3. check type of edge (directed / undirected)
-	     * 4. update our degrees accordingly
-	     * This is a design decision we can defend by pointing out
-	     * that querying degrees will occur much more often
-	     * than modifying the edge structure of a node (??)
-	     * One further point: do we also check for duplicate
-	     * edges not in the sense of duplicate ID's but duplicate
-	     * structure (nodes, direction) ?
-	     * => Not for now, as we would have to check every edge
-	     * instead of simply checking the hash id...
-	     * ALTHOUGH: adding edges will (presumably) not occur often...
-	     */
 	    BaseNode.prototype.addEdge = function (edge) {
-	        // is this edge connected to us at all?
 	        var nodes = edge.getNodes();
 	        if (nodes.a !== this && nodes.b !== this) {
 	            throw new Error("Cannot add edge that does not connect to this node");
 	        }
 	        var edge_id = edge.getID();
-	        // Is it an undirected or directed edge?
 	        if (edge.isDirected()) {
-	            // is it outgoing or incoming?
 	            if (nodes.a === this && !this._out_edges[edge_id]) {
 	                this._out_edges[edge_id] = edge;
 	                this._out_degree += 1;
-	                // Is the edge also connecting to ourselves -> loop ?
 	                if (nodes.b === this && !this._in_edges[edge_id]) {
 	                    this._in_edges[edge.getID()] = edge;
 	                    this._in_degree += 1;
@@ -264,7 +235,6 @@
 	            }
 	        }
 	        else {
-	            // Is the edge also connecting to ourselves -> loop
 	            if (this._und_edges[edge.getID()]) {
 	                throw new Error("Cannot add same undirected edge multiple times.");
 	            }
@@ -409,16 +379,8 @@
 	        }
 	        return conns;
 	    };
-	    /**
-	     *
-	     * @param identityFunc can be used to remove 'duplicates' from resulting array,
-	     * if necessary
-	     * @returns {Array}
-	     *
-	   */
 	    BaseNode.prototype.reachNodes = function (identityFunc) {
 	        var identity = 0;
-	        // console.log(this.nextNodes());
 	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
 	    };
 	    return BaseNode;
@@ -431,13 +393,6 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	/**
-	 * Method to deep clone an object
-	 *
-	 * @param obj
-	 * @returns {*}
-	 *
-	 */
 	function clone(obj) {
 	    if (obj === null || typeof obj !== 'object') {
 	        return obj;
@@ -454,12 +409,6 @@
 	    return cloneObj;
 	}
 	exports.clone = clone;
-	/**
-	 * @args an Array of any kind of objects
-	 * @cb callback to return a unique identifier;
-	 * if this is duplicate, the object will not be stored in result.
-	 * @returns {Array}
-	 */
 	function mergeArrays(args, cb) {
 	    if (cb === void 0) { cb = undefined; }
 	    for (var arg_idx in args) {
@@ -480,11 +429,6 @@
 	    return result;
 	}
 	exports.mergeArrays = mergeArrays;
-	/**
-	 * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
-	 * @param args Array of all the object to take keys from
-	 * @returns result object
-	 */
 	function mergeObjects(args) {
 	    for (var i = 0; i < args.length; i++) {
 	        if (Object.prototype.toString.call(args[i]) !== '[object Object]') {
@@ -502,12 +446,6 @@
 	    return result;
 	}
 	exports.mergeObjects = mergeObjects;
-	/**
-	 * @TODO Test !!!
-	 *
-	 * @param object
-	 * @param cb
-	 */
 	function findKey(obj, cb) {
 	    for (var key in obj) {
 	        if (obj.hasOwnProperty(key) && cb(obj[key])) {
@@ -523,7 +461,6 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
@@ -536,9 +473,6 @@
 	})(exports.GraphMode || (exports.GraphMode = {}));
 	var GraphMode = exports.GraphMode;
 	var BaseGraph = (function () {
-	    // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
-	    // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-	    // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
 	    function BaseGraph(_label) {
 	        this._label = _label;
 	        this._nr_nodes = 0;
@@ -560,9 +494,6 @@
 	            nr_dir_edges: this._nr_dir_edges
 	        };
 	    };
-	    /**
-	     * We assume graphs in which no node has higher total degree than 65536
-	     */
 	    BaseGraph.prototype.degreeDistribution = function () {
 	        var max_deg = 0, key, node, all_deg;
 	        for (key in this._nodes) {
@@ -585,7 +516,6 @@
 	            deg_dist.und[node.degree()]++;
 	            deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
 	        }
-	        // console.dir(deg_dist);
 	        return deg_dist;
 	    };
 	    BaseGraph.prototype.nrNodes = function () {
@@ -606,10 +536,6 @@
 	    BaseGraph.prototype.hasNodeID = function (id) {
 	        return !!this._nodes[id];
 	    };
-	    /**
-	     * Use hasNodeLabel with CAUTION ->
-	     * it has LINEAR runtime in the graph's #nodes
-	     */
 	    BaseGraph.prototype.hasNodeLabel = function (label) {
 	        return !!$DS.findKey(this._nodes, function (node) {
 	            return node.getLabel() === label;
@@ -618,10 +544,6 @@
 	    BaseGraph.prototype.getNodeById = function (id) {
 	        return this._nodes[id];
 	    };
-	    /**
-	     * Use getNodeByLabel with CAUTION ->
-	     * it has LINEAR runtime in the graph's #nodes
-	     */
 	    BaseGraph.prototype.getNodeByLabel = function (label) {
 	        var id = $DS.findKey(this._nodes, function (node) {
 	            return node.getLabel() === label;
@@ -631,9 +553,6 @@
 	    BaseGraph.prototype.getNodes = function () {
 	        return this._nodes;
 	    };
-	    /**
-	     * CAUTION - This function takes linear time in # nodes
-	     */
 	    BaseGraph.prototype.getRandomNode = function () {
 	        return this.pickRandomProperty(this._nodes);
 	    };
@@ -642,11 +561,9 @@
 	        if (!rem_node) {
 	            throw new Error('Cannot remove un-added node.');
 	        }
-	        // Edges?
 	        var in_deg = node.inDegree();
 	        var out_deg = node.outDegree();
 	        var deg = node.degree();
-	        // Delete all edges brutally...
 	        if (in_deg) {
 	            this.deleteInEdgesOf(node);
 	        }
@@ -662,10 +579,6 @@
 	    BaseGraph.prototype.hasEdgeID = function (id) {
 	        return !!this._dir_edges[id] || !!this._und_edges[id];
 	    };
-	    /**
-	     * Use hasEdgeLabel with CAUTION ->
-	     * it has LINEAR runtime in the graph's #edges
-	     */
 	    BaseGraph.prototype.hasEdgeLabel = function (label) {
 	        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
 	            return edge.getLabel() === label;
@@ -682,10 +595,6 @@
 	        }
 	        return edge;
 	    };
-	    /**
-	     * Use hasEdgeLabel with CAUTION ->
-	     * it has LINEAR runtime in the graph's #edges
-	     */
 	    BaseGraph.prototype.getEdgeByLabel = function (label) {
 	        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
 	            return edge.getLabel() === label;
@@ -719,17 +628,14 @@
 	    };
 	    BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
 	        var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
-	        // connect edge to first node anyways			
 	        node_a.addEdge(edge);
 	        if (edge.isDirected()) {
-	            // add edge to second node too
 	            node_b.addEdge(edge);
 	            this._dir_edges[edge.getID()] = edge;
 	            this._nr_dir_edges += 1;
 	            this.updateGraphMode();
 	        }
 	        else {
-	            // add edge to both nodes, except they are the same...
 	            if (node_a !== node_b) {
 	                node_b.addEdge(edge);
 	            }
@@ -760,7 +666,6 @@
 	        }
 	        this.updateGraphMode();
 	    };
-	    // Some atomicity / rollback feature would be nice here...
 	    BaseGraph.prototype.deleteInEdgesOf = function (node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var in_edges = node.inEdges();
@@ -774,7 +679,6 @@
 	        node.clearInEdges();
 	        this.updateGraphMode();
 	    };
-	    // Some atomicity / rollback feature would be nice here...
 	    BaseGraph.prototype.deleteOutEdgesOf = function (node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var out_edges = node.outEdges();
@@ -788,12 +692,10 @@
 	        node.clearOutEdges();
 	        this.updateGraphMode();
 	    };
-	    // Some atomicity / rollback feature would be nice here...
 	    BaseGraph.prototype.deleteDirEdgesOf = function (node) {
 	        this.deleteInEdgesOf(node);
 	        this.deleteOutEdgesOf(node);
 	    };
-	    // Some atomicity / rollback feature would be nice here...
 	    BaseGraph.prototype.deleteUndEdgesOf = function (node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var und_edges = node.undEdges();
@@ -811,14 +713,10 @@
 	        node.clearUndEdges();
 	        this.updateGraphMode();
 	    };
-	    // Some atomicity / rollback feature would be nice here...
 	    BaseGraph.prototype.deleteAllEdgesOf = function (node) {
 	        this.deleteDirEdgesOf(node);
 	        this.deleteUndEdgesOf(node);
 	    };
-	    /**
-	     * Remove all the (un)directed edges in the graph
-	     */
 	    BaseGraph.prototype.clearAllDirEdges = function () {
 	        for (var edge in this._dir_edges) {
 	            this.deleteEdge(this._dir_edges[edge]);
@@ -833,14 +731,6 @@
 	        this.clearAllDirEdges();
 	        this.clearAllUndEdges();
 	    };
-	    /**
-	     * Simple edge generator:
-	     * Go through all node combinations, and
-	     * add an (un)directed edge with
-	     * @param probability and
-	     * @direction true or false
-	     * CAUTION: this algorithm takes quadratic runtime in #nodes
-	     */
 	    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed) {
 	        if (0 > probability || 1 < probability) {
 	            throw new Error("Probability out of range.");
@@ -856,14 +746,6 @@
 	            }
 	        }
 	    };
-	    /**
-	     * Simple edge generator:
-	     * Go through all nodes, and
-	     * add [min, max] (un)directed edges to
-	     * a randomly chosen node
-	     * CAUTION: this algorithm could take quadratic runtime in #nodes
-	     * but should be much faster
-	     */
 	    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed) {
 	        if (min < 0) {
 	            throw new Error('Minimum degree cannot be negative.');
@@ -872,14 +754,13 @@
 	            throw new Error('Maximum degree exceeds number of reachable nodes.');
 	        }
 	        directed = directed || false;
-	        // Do we need to set them integers before the calculations?
 	        var min = min | 0, max = max | 0, nodes = this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
 	        for (idx_a in nodes) {
 	            node_a = nodes[idx_a];
 	            rand_idx = 0;
 	            rand_deg = (Math.random() * max + min) | 0;
 	            while (rand_deg) {
-	                rand_idx = (keys_len * Math.random()) | 0; // should never reach keys_len...
+	                rand_idx = (keys_len * Math.random()) | 0;
 	                node_b = nodes[node_keys[rand_idx]];
 	                if (node_a !== node_b) {
 	                    edge_id = node_a.getID() + "_" + node_b.getID() + dir;
@@ -892,15 +773,9 @@
 	            }
 	        }
 	    };
-	    /**
-	     * CAUTION - This function is linear in # directed edges
-	     */
 	    BaseGraph.prototype.getRandomDirEdge = function () {
 	        return this.pickRandomProperty(this._dir_edges);
 	    };
-	    /**
-	     * CAUTION - This function is linear in # undirected edges
-	     */
 	    BaseGraph.prototype.getRandomUndEdge = function () {
 	        return this.pickRandomProperty(this._und_edges);
 	    };
@@ -944,7 +819,6 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
 	var path = __webpack_require__(6);
 	var fs = __webpack_require__(8);
@@ -967,9 +841,7 @@
 	    };
 	    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
 	        var self = this, graph_name = path.basename(fileurl), graph, request;
-	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
-	            // Browser...
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
 	                if (request.readyState == 4 && request.status == 200) {
@@ -983,7 +855,6 @@
 	            request.send();
 	        }
 	        else {
-	            // Node.js
 	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
 	                var input = raw_graph.toString().split('\n');
 	                graph = localFun.apply(self, [input, graph_name]);
@@ -1008,7 +879,6 @@
 	        for (var idx in input) {
 	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
 	            if (!node_id) {
-	                // end of file or empty line, just treat like an empty line...
 	                continue;
 	            }
 	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
@@ -1018,12 +888,6 @@
 	                }
 	                target_node_id = edge_array[e++];
 	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
-	                /**
-	                 * The direction determines if we have to check for the existence
-	                 * of an edge in 'both' directions or only from one node to the other
-	                 * Within the CSV module this check is done simply via ID check,
-	                 * as we are following a rigorous naming scheme anyways...
-	                 */
 	                dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
 	                if (dir_char !== 'd' && dir_char !== 'u') {
 	                    throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -1032,7 +896,6 @@
 	                edge_id = node_id + "_" + target_node_id + "_" + dir_char;
 	                edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                    // The completely same edge should only be added once...
 	                    continue;
 	                }
 	                else {
@@ -1047,7 +910,6 @@
 	        for (var idx in input) {
 	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
 	            if (!elements) {
-	                // end of file or empty line, just treat like an empty line...
 	                continue;
 	            }
 	            if (elements.length < 2) {
@@ -1063,7 +925,6 @@
 	            edge_id = node_id + "_" + target_node_id + "_" + dir_char;
 	            edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 	            if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                // The completely same edge should only be added once...
 	                continue;
 	            }
 	            else {
@@ -1422,25 +1283,16 @@
 
 	"use strict";
 	var http = __webpack_require__(8);
-	/**
-	 * @TODO: Test it !!!
-	 *
-	 * @param url
-	 * @param cb
-	 * @returns {ClientRequest}
-	 */
 	function retrieveRemoteFile(url, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
 	    }
 	    return http.get(url, function (response) {
-	        // Continuously update stream with data
 	        var body = '';
 	        response.on('data', function (d) {
 	            body += d;
 	        });
 	        response.on('end', function () {
-	            // Received data in body...
 	            cb(body);
 	        });
 	    });
@@ -1452,7 +1304,6 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
 	var fs = __webpack_require__(8);
 	var $G = __webpack_require__(4);
@@ -1474,13 +1325,9 @@
 	    };
 	    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
 	        var self = this, graph, request, json;
-	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
-	            // Browser...			
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
-	                // console.log("Ready state: " + request.readyState);
-	                // console.log("Reqst status: " + request.status);
 	                if (request.readyState == 4 && request.status == 200) {
 	                    var json = JSON.parse(request.responseText);
 	                    graph = self.readFromJSON(json);
@@ -1495,39 +1342,19 @@
 	            request.send();
 	        }
 	        else {
-	            // Node.js
 	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
 	                graph = self.readFromJSON(JSON.parse(raw_graph));
 	                cb(graph, undefined);
 	            });
 	        }
 	    };
-	    /**
-	     * In this case, there is one great difference to the CSV edge list cases:
-	     * If you don't explicitly define a directed edge, it will simply
-	     * instantiate an undirected one
-	     * we'll leave that for now, as we will produce apt JSON sources later anyways...
-	     */
 	    JSONInput.prototype.readFromJSON = function (json) {
 	        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
 	        for (var node_id in json.data) {
 	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
-	            /**
-	             * Reading and instantiating features
-	             * We are using the shortcut setFeatures here,
-	             * so we have to read them before any special features
-	             */
 	            if (features = json.data[node_id].features) {
-	                // for ( feature in features ) {
-	                // 	node.setFeature(feature, features[feature]);
-	                // }
 	                node.setFeatures(features);
 	            }
-	            /**
-	             * Reading and instantiating coordinates
-	             * Coordinates are treated as special features,
-	             * and are therefore added after general features
-	             */
 	            if (coords_json = json.data[node_id].coords) {
 	                coords = {};
 	                for (coord_idx in coords_json) {
@@ -1535,17 +1362,11 @@
 	                }
 	                node.setFeature('coords', coords);
 	            }
-	            // Reading and instantiating edges
 	            var edges = json.data[node_id].edges;
 	            for (var e in edges) {
-	                var edge_input = edges[e], target_node_id = edge_input.to, 
-	                // Is there any direction information?
-	                directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', 
-	                // Is there any weight information?,
-	                weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
 	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                    // The completely same edge should only be added once...
 	                    continue;
 	                }
 	                else {
@@ -1573,7 +1394,6 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../../typings/tsd.d.ts" />
 	"use strict";
 	var fs = __webpack_require__(8);
 	var CSVOutput = (function () {
@@ -1597,7 +1417,6 @@
 	        var mergeFunc = function (ne) {
 	            return ne.node.getID();
 	        };
-	        // TODO make generic for graph mode
 	        for (var node_key in nodes) {
 	            node = nodes[node_key];
 	            graphString += node.getID();
@@ -1615,8 +1434,6 @@
 	    };
 	    CSVOutput.prototype.writeToEdgeList = function (graph) {
 	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
-	        // var graphString = "";
-	        // return graphString;
 	    };
 	    return CSVOutput;
 	}());
@@ -1627,38 +1444,17 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(13);
-	/**
-	 * Breadth first search - usually performed to see
-	 * reachability etc. Therefore we do not want 'segments'
-	 * or 'components' of our graph, but simply one well
-	 * defined result segment covering the whole graph.
-	 *
-	 * @param graph the graph to perform BFS on
-	 * @param v the vertex to use as a start vertex
-	 * @param config an optional config object, will be
-	 * automatically instantiated if not passed by caller
-	 * @returns {{}}
-	 * @constructor
-	 */
 	function BFS(graph, v, config) {
 	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    /**
-	     * We are not traversing an empty graph...
-	     */
 	    if (graph.getMode() === $G.GraphMode.INIT) {
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    /**
-	     * We are not traversing a graph taking NO edges into account
-	     */
 	    if (dir_mode === $G.GraphMode.INIT) {
 	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	    }
-	    // scope to pass to callbacks at different stages of execution
 	    var bfsScope = {
 	        marked: {},
 	        nodes: graph.getNodes(),
@@ -1669,9 +1465,6 @@
 	        root_node: v,
 	        adj_nodes: []
 	    };
-	    /**
-	       * HOOK 1: BFS INIT
-	       */
 	    if (callbacks.init_bfs) {
 	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
 	    }
@@ -1679,10 +1472,6 @@
 	    var i = 0;
 	    while (i < bfsScope.queue.length) {
 	        bfsScope.current = bfsScope.queue[i++];
-	        /**
-	         * Do we move only in the directed subgraph,
-	         * undirected subgraph or complete (mixed) graph?
-	         */
 	        if (dir_mode === $G.GraphMode.MIXED) {
 	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
 	        }
@@ -1695,27 +1484,18 @@
 	        else {
 	            bfsScope.adj_nodes = [];
 	        }
-	        /**
-	         * HOOK 2 - Sort adjacent nodes
-	         */
 	        if (typeof callbacks.sort_nodes === 'function') {
 	            callbacks.sort_nodes(bfsScope);
 	        }
 	        for (var adj_idx in bfsScope.adj_nodes) {
 	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
 	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
-	            /**
-	             * HOOK 3 - Node unmarked
-	             */
 	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
 	                if (callbacks.node_unmarked) {
 	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
 	                }
 	            }
 	            else {
-	                /**
-	                 * HOOK 4 - Node marked
-	                 */
 	                if (callbacks.node_marked) {
 	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
 	                }
@@ -1742,9 +1522,7 @@
 	    var counter = function () {
 	        return count++;
 	    };
-	    // Standard INIT callback
 	    var initBFS = function (context) {
-	        // initialize all nodes to infinite distance
 	        for (var key in context.nodes) {
 	            config.result[key] = {
 	                distance: Number.POSITIVE_INFINITY,
@@ -1752,7 +1530,6 @@
 	                counter: -1
 	            };
 	        }
-	        // initialize root node entry
 	        config.result[context.root_node.getID()] = {
 	            distance: 0,
 	            parent: context.root_node,
@@ -1760,8 +1537,6 @@
 	        };
 	    };
 	    callbacks.init_bfs.push(initBFS);
-	    // Standard Node unmarked callback
-	    // have to populate respective result entry
 	    var nodeUnmarked = function (context) {
 	        config.result[context.next_node.getID()] = {
 	            distance: result[context.current.getID()].distance + 1,
@@ -1781,9 +1556,6 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	/**
-	 * @param context this pointer to the DFS or DFSVisit function
-	 */
 	function execCallbacks(cbs, context) {
 	    cbs.forEach(function (cb) {
 	        if (typeof cb === 'function') {
@@ -1801,22 +1573,10 @@
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(13);
-	/**
-	 * DFS Visit - one run to see what nodes are reachable
-	 * from a given "current" root node
-	 *
-	 * @param graph
-	 * @param current_root
-	 * @param config
-	 * @returns {{}}
-	 * @constructor
-	 */
 	function DFSVisit(graph, current_root, config) {
-	    // scope to pass to callbacks at different stages of execution
 	    var dfsVisitScope = {
 	        stack: [],
 	        adj_nodes: [],
@@ -1825,53 +1585,31 @@
 	        current_root: current_root
 	    };
 	    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    /**
-	     * We are not traversing an empty graph...
-	     */
 	    if (graph.getMode() === $G.GraphMode.INIT) {
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    /**
-	       * We are not traversing a graph taking NO edges into account
-	       */
 	    if (dir_mode === $G.GraphMode.INIT) {
 	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	    }
-	    /**
-	     * HOOK 1 - INIT (INNER DFS VISIT):
-	     * Initializing a possible result object,
-	     * possibly with the current_root;
-	     */
 	    if (callbacks.init_dfs_visit) {
 	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
 	    }
-	    // Start by pushing current root to the stack
 	    dfsVisitScope.stack.push({
 	        node: current_root,
 	        parent: current_root,
-	        weight: 0 // initial weight cost from current_root
+	        weight: 0
 	    });
 	    while (dfsVisitScope.stack.length) {
 	        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
 	        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
-	        /**
-	         * HOOK 2 - AQUIRED CURRENT NODE / POPPED NODE
-	         */
 	        if (callbacks.node_popped) {
 	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
 	        }
 	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
 	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
-	            /**
-	             * HOOK 3 - CURRENT NODE UNMARKED
-	             */
 	            if (callbacks.node_unmarked) {
 	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
 	            }
-	            /**
-	             * Do we move only in the directed subgraph,
-	             * undirected subgraph or complete (mixed) graph?
-	             */
 	            if (dir_mode === $G.GraphMode.MIXED) {
 	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
 	            }
@@ -1881,17 +1619,10 @@
 	            else if (dir_mode === $G.GraphMode.DIRECTED) {
 	                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
 	            }
-	            /**
-	             * HOOK 4 - SORT ADJACENT NODES
-	             */
 	            if (typeof callbacks.sort_nodes === 'function') {
 	                callbacks.sort_nodes(dfsVisitScope);
 	            }
 	            for (var adj_idx in dfsVisitScope.adj_nodes) {
-	                /**
-	                 * HOOK 5 - NODE OR EDGE TYPE CHECK...
-	                 * LATER !!
-	                 */
 	                if (callbacks) {
 	                }
 	                dfsVisitScope.stack.push({
@@ -1900,17 +1631,11 @@
 	                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
 	                });
 	            }
-	            /**
-	             * HOOK 6 - ADJACENT NODES PUSHED - LEAVING CURRENT NODE
-	             */
 	            if (callbacks.adj_nodes_pushed) {
 	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
 	            }
 	        }
 	        else {
-	            /**
-	             * HOOK 7 - CURRENT NODE ALREADY MARKED
-	             */
 	            if (callbacks.node_marked) {
 	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
 	            }
@@ -1919,20 +1644,6 @@
 	    return config.visit_result;
 	}
 	exports.DFSVisit = DFSVisit;
-	/**
-	 * Depth first search - used for reachability / exploration
-	 * of graph structure and as a basis for topological sorting
-	 * and component / community analysis.
-	 * Because DFS can be used as a basis for many other algorithms,
-	 * we want to keep the result as generic as possible to be
-	 * populated by the caller rather than the core DFS algorithm.
-	 *
-	 * @param graph
-	 * @param root
-	 * @param config
-	 * @returns {{}[]}
-	 * @constructor
-	 */
 	function DFS(graph, root, config) {
 	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -1945,9 +1656,6 @@
 	        marked: {},
 	        nodes: graph.getNodes()
 	    };
-	    /**
-	     * HOOK 1 - INIT (OUTER DFS)
-	     */
 	    if (callbacks.init_dfs) {
 	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
 	    }
@@ -1956,52 +1664,32 @@
 	        dfsScope.marked[context.current.getID()] = true;
 	    };
 	    callbacks.adj_nodes_pushed.push(markNode);
-	    // We need to put our results into segments
-	    // for easy counting of 'components'
-	    // TODO refactor for count & counter...
 	    var dfs_result = [{}];
 	    var dfs_idx = 0;
 	    var count = 0;
 	    var counter = function () {
 	        return count++;
 	    };
-	    /**
-	     * We not only add new nodes to the result object
-	     * of DFSVisit, but also to it's appropriate
-	     * segment of the dfs_result object
-	     */
 	    var addToProperSegment = function (context) {
 	        dfs_result[dfs_idx][context.current.getID()] = {
 	            parent: context.stack_entry.parent,
 	            counter: counter()
 	        };
 	    };
-	    // check if a callbacks object has been instantiated
 	    if (callbacks && callbacks.node_unmarked) {
 	        callbacks.node_unmarked.push(addToProperSegment);
 	    }
-	    // Start with root node, no matter what
 	    DFSVisit(graph, root, config);
-	    // Now take the rest in 'normal' order
 	    for (var node_key in dfsScope.nodes) {
 	        if (!dfsScope.marked[node_key]) {
-	            // Next segment in dfs_results
 	            dfs_idx++;
 	            dfs_result.push({});
-	            // Explore and fill next subsegment
 	            DFSVisit(graph, dfsScope.nodes[node_key], config);
 	        }
 	    }
-	    // console.dir(config.visit_result);
 	    return dfs_result;
 	}
 	exports.DFS = DFS;
-	/**
-	 * This is the only place in which a config object
-	 * is instantiated (except manually, of course)
-	 *
-	 * Therefore, we do not take any arguments
-	 */
 	function prepareDFSVisitStandardConfig() {
 	    var config = {
 	        visit_result: {},
@@ -2010,8 +1698,6 @@
 	        dfs_visit_marked: {},
 	        dir_mode: $G.GraphMode.MIXED
 	    }, result = config.visit_result, callbacks = config.callbacks;
-	    // internal variable for order of visit
-	    // during DFS Visit                      
 	    var count = 0;
 	    var counter = function () {
 	        return count++;
@@ -2034,22 +1720,10 @@
 	    return config;
 	}
 	exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
-	/**
-	 * First instantiates config file for DFSVisit, then
-	 * enhances it with outer DFS init callback
-	 */
 	function prepareDFSStandardConfig() {
-	    // First prepare DFS Visit callbacks
 	    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
-	    // Now add outer DFS INIT callback
 	    callbacks.init_dfs = callbacks.init_dfs || [];
 	    var setInitialResultEntries = function (context) {
-	        // for ( var node_id in context.nodes ) {
-	        // 	result[node_id] = {
-	        // 		parent: null,
-	        // 		counter: -1
-	        // 	}
-	        // }
 	    };
 	    callbacks.init_dfs.push(setInitialResultEntries);
 	    return config;
@@ -2062,40 +1736,19 @@
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(13);
 	var $BH = __webpack_require__(16);
-	/**
-	 * Priority first search
-	 *
-	 * Like BFS, we are not necessarily visiting the
-	 * whole graph, but only what's reachable from
-	 * a given start node.
-	 *
-	 * @param graph the graph to perform PFS only
-	 * @param v the node from which to start PFS
-	 * @config a config object similar to that used
-	 * in BFS, automatically instantiated if not given..
-	 */
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
-	    /**
-	       * We are not traversing an empty graph...
-	       */
 	    if (graph.getMode() === $G.GraphMode.INIT) {
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    /**
-	       * We are not traversing a graph taking NO edges into account
-	       */
 	    if (dir_mode === $G.GraphMode.INIT) {
 	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	    }
-	    // We need to push NeighborEntries
-	    // TODO: Virtual edge addition OK?
 	    var start_ne = {
 	        node: v,
 	        edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
@@ -2112,39 +1765,20 @@
 	        next: null,
 	        better_dist: Number.POSITIVE_INFINITY,
 	    };
-	    /**
-	       * HOOK 1: PFS INIT
-	       */
 	    callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
 	    scope.OPEN_HEAP.insert(start_ne);
 	    scope.OPEN[start_ne.node.getID()] = start_ne;
-	    /**
-	     * Main loop
-	     */
 	    while (scope.OPEN_HEAP.size()) {
-	        // get currently best node
 	        scope.current = scope.OPEN_HEAP.pop();
 	        if (scope.current == null) {
 	            console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
 	        }
-	        // remove from OPEN
 	        scope.OPEN[scope.current.node.getID()] = undefined;
-	        // add it to CLOSED
 	        scope.CLOSED[scope.current.node.getID()] = scope.current;
-	        // TODO what if we already reached the goal?
 	        if (scope.current.node === config.goal_node) {
-	            /**
-	             * HOOK 2: Goal node reached
-	             */
 	            config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
-	            // If a goal node is set from the outside & we reach it, we stop.
 	            return config.result;
 	        }
-	        /**
-	         * Extend the current node, also called
-	         * "create n's successors"...
-	             */
-	        // TODO: Reverse callback logic to NOT merge anything by default!!!
 	        if (dir_mode === $G.GraphMode.MIXED) {
 	            scope.adj_nodes = scope.current.node.reachNodes();
 	        }
@@ -2157,34 +1791,18 @@
 	        else {
 	            throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
 	        }
-	        /**
-	         * EXPAND AND EXAMINE NEIGHBORHOOD
-	         */
 	        for (var adj_idx in scope.adj_nodes) {
 	            scope.next = scope.adj_nodes[adj_idx];
 	            if (scope.CLOSED[scope.next.node.getID()]) {
-	                /**
-	                 * HOOK 3: Goal node already closed
-	                 */
 	                config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
 	                continue;
 	            }
 	            if (scope.OPEN[scope.next.node.getID()]) {
-	                // First let's recover the previous best solution from our OPEN structure,
-	                // as the node's neighborhood-retrieving function cannot know it...
 	                scope.next.best = scope.OPEN[scope.next.node.getID()].best;
-	                /**
-	                 * HOOK 4: Goal node already visited, but not yet closed
-	                 */
 	                config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 	                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
 	                if (scope.next.best > scope.better_dist) {
-	                    /**
-	                     * HOOK 5: Better path found
-	                     */
 	                    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
-	                    // HEAP operations are necessary for internal traversal,
-	                    // so we handle them here in the main loop
 	                    scope.OPEN_HEAP.remove(scope.next);
 	                    scope.next.best = scope.better_dist;
 	                    scope.OPEN_HEAP.insert(scope.next);
@@ -2192,10 +1810,7 @@
 	                }
 	                continue;
 	            }
-	            // NODE NOT ENCOUNTERED
 	            config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
-	            // HEAP operations are necessary for internal traversal,
-	            // so we handle them here in the main loop
 	            scope.OPEN_HEAP.insert(scope.next);
 	            scope.OPEN[scope.next.node.getID()] = scope.next;
 	        }
@@ -2235,9 +1850,7 @@
 	    var counter = function () {
 	        return count++;
 	    };
-	    // Standard INIT callback
 	    var initPFS = function (context) {
-	        // initialize all nodes to infinite distance
 	        for (var key in context.nodes) {
 	            config.result[key] = {
 	                distance: Number.POSITIVE_INFINITY,
@@ -2245,8 +1858,6 @@
 	                counter: -1
 	            };
 	        }
-	        // initialize root node entry
-	        // maybe take heuristic into account right here...??
 	        config.result[context.root_node.getID()] = {
 	            distance: 0,
 	            parent: context.root_node,
@@ -2254,10 +1865,7 @@
 	        };
 	    };
 	    callbacks.init_pfs.push(initPFS);
-	    // Node not yet encountered callback
 	    var notEncountered = function (context) {
-	        // setting it's best score to actual distance + edge weight
-	        // and update result structure
 	        context.next.best = context.current.best + context.next.edge.getWeight();
 	        config.result[context.next.node.getID()] = {
 	            distance: context.next.best,
@@ -2266,7 +1874,6 @@
 	        };
 	    };
 	    callbacks.not_encountered.push(notEncountered);
-	    // Callback for when we find a better solution
 	    var betterPathFound = function (context) {
 	        config.result[context.next.node.getID()].distance = context.better_dist;
 	        config.result[context.next.node.getID()].parent = context.current.node;
@@ -2281,7 +1888,6 @@
 /* 16 */
 /***/ function(module, exports) {
 
-	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	(function (BinaryHeapMode) {
 	    BinaryHeapMode[BinaryHeapMode["MIN"] = 0] = "MIN";
@@ -2289,15 +1895,6 @@
 	})(exports.BinaryHeapMode || (exports.BinaryHeapMode = {}));
 	var BinaryHeapMode = exports.BinaryHeapMode;
 	var BinaryHeap = (function () {
-	    /**
-	     * Mode of a min heap should only be set upon
-	     * instantiation and never again afterwards...
-	     * @param _mode MIN or MAX heap
-	     * @param _evalPriority the evaluation function applied to
-	     * all incoming objects to determine it's score
-	     * @param _evalObjID function to determine the identity of
-	     * the object we are looking for at removal etc..
-	     */
 	    function BinaryHeap(_mode, _evalPriority, _evalObjID) {
 	        if (_mode === void 0) { _mode = BinaryHeapMode.MIN; }
 	        if (_evalPriority === void 0) { _evalPriority = function (obj) {
@@ -2351,11 +1948,6 @@
 	        var pos = this.getNodePosition(obj);
 	        return this._array[pos];
 	    };
-	    /**
-	     * Insert - Adding an object to the heap
-	     * @param obj the obj to add to the heap
-	     * @returns {number} the objects index in the internal array
-	     */
 	    BinaryHeap.prototype.insert = function (obj) {
 	        if (isNaN(this._evalPriority(obj))) {
 	            throw new Error("Cannot insert object without numeric priority.");
@@ -2364,42 +1956,15 @@
 	        this.setNodePosition(obj, this.size() - 1, false);
 	        this.trickleUp(this.size() - 1);
 	    };
-	    /**
-	     *
-	     */
 	    BinaryHeap.prototype.remove = function (obj) {
 	        if (isNaN(this._evalPriority(obj))) {
 	            throw new Error('Object invalid.');
 	        }
-	        /**
-	         * Search in O(1)
-	         */
-	        // var pos = this.getNodePosition(obj),
-	        //     found = this._array[pos];
-	        // if ( typeof found !== 'undefined' && found !== null ) {
-	        //   var last = this._array.pop();
-	        //   this.unsetNodePosition(found);
-	        //   if ( this.size() ) {
-	        //     this._array[pos] = last;
-	        //     // update node position before trickling
-	        //     this.setNodePosition(last, pos, true, this.size()); // old size after pop()..
-	        //     this.trickleUp(pos);
-	        //     this.trickleDown(pos);
-	        //   }
-	        //   return found;
-	        // }
-	        /**
-	         * OLD SEARCH in O(n) (but simpler)
-	         */
 	        var objID = this._evalObjID(obj), found = undefined;
 	        for (var pos = 0; pos < this._array.length; pos++) {
 	            if (this._evalObjID(this._array[pos]) === objID) {
 	                found = this._array[pos];
-	                // we pop the last element
 	                var last = this._array.pop();
-	                // we switch the last with the found element
-	                // and restore the heaps order, but only if the
-	                // heap size is not down to zero
 	                if (this.size()) {
 	                    this._array[pos] = last;
 	                    this.trickleUp(pos);
@@ -2408,15 +1973,12 @@
 	                return found;
 	            }
 	        }
-	        // console.log("Found undefined object at position: " + pos);
 	        return found;
 	    };
 	    BinaryHeap.prototype.trickleDown = function (i) {
 	        var parent = this._array[i];
-	        // run until we manually break
 	        while (true) {
 	            var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
-	            // check if left child exists
 	            if (left_child_idx < this.size() && !this.orderCorrect(parent, left_child)) {
 	                swap = left_child_idx;
 	            }
@@ -2427,10 +1989,8 @@
 	            if (swap === null) {
 	                break;
 	            }
-	            // we only have to swap one child, doesn't matter which one
 	            this._array[i] = this._array[swap];
 	            this._array[swap] = parent;
-	            // correct position for later lookup in O(1)
 	            this.setNodePosition(this._array[i], i, true, swap);
 	            this.setNodePosition(this._array[swap], swap, true, i);
 	            i = swap;
@@ -2438,7 +1998,6 @@
 	    };
 	    BinaryHeap.prototype.trickleUp = function (i) {
 	        var child = this._array[i];
-	        // Can only trickle up from positive levels
 	        while (i) {
 	            var parent_idx = Math.floor((i + 1) / 2) - 1, parent = this._array[parent_idx];
 	            if (this.orderCorrect(parent, child)) {
@@ -2447,10 +2006,8 @@
 	            else {
 	                this._array[parent_idx] = child;
 	                this._array[i] = parent;
-	                // correct position for later lookup in O(1)
 	                this.setNodePosition(child, parent_idx, true, i);
 	                this.setNodePosition(parent, i, true, parent_idx);
-	                // next round...
 	                i = parent_idx;
 	            }
 	        }
@@ -2465,11 +2022,6 @@
 	            return obj_a_pr >= obj_b_pr;
 	        }
 	    };
-	    /**
-	     * Superstructure to enable search in BinHeap in O(1)
-	     * @param obj
-	     * @param pos
-	     */
 	    BinaryHeap.prototype.setNodePosition = function (obj, new_pos, replace, old_pos) {
 	        if (replace === void 0) { replace = true; }
 	        if (typeof obj === 'undefined' || obj === null || typeof new_pos === 'undefined' || new_pos === null) {
@@ -2478,7 +2030,6 @@
 	        if (replace === true && (typeof old_pos === 'undefined' || old_pos === null)) {
 	            throw new Error('replacing a node position requires an old_pos');
 	        }
-	        // First we create a new entry object
 	        var pos_obj = {
 	            priority: this.evalInputPriority(obj),
 	            position: new_pos
@@ -2486,11 +2037,9 @@
 	        var obj_key = this.evalInputObjID(obj);
 	        var occurrence = this._positions[obj_key];
 	        if (!occurrence) {
-	            // we can simply add the object to the hash...
 	            this._positions[obj_key] = pos_obj;
 	        }
 	        else if (Array.isArray(occurrence)) {
-	            // if we replace, we add the position object to the array
 	            if (replace) {
 	                for (var i = 0; i < occurrence.length; i++) {
 	                    if (occurrence[i].position === old_pos) {
@@ -2504,8 +2053,6 @@
 	            }
 	        }
 	        else {
-	            // we have a single object at this place...
-	            // either we replace the droid or we give it some company ;)
 	            if (replace) {
 	                this._positions[obj_key] = pos_obj;
 	            }
@@ -2514,9 +2061,6 @@
 	            }
 	        }
 	    };
-	    /**
-	     *
-	     */
 	    BinaryHeap.prototype.getNodePosition = function (obj) {
 	        var obj_key = this.evalInputObjID(obj);
 	        var occurrence = this._positions[obj_key];
@@ -2528,8 +2072,6 @@
 	            return undefined;
 	        }
 	        else if (Array.isArray(occurrence)) {
-	            // lets find the droid we are looking for...
-	            // we are of course looking for the smallest one ;)
 	            var node = null, min = Number.POSITIVE_INFINITY;
 	            for (var i = 0; i < occurrence.length; i++) {
 	                if (occurrence[i].position < min) {
@@ -2543,16 +2085,11 @@
 	            }
 	        }
 	        else {
-	            // we have a single object at this place
 	            if (typeof occurrence.position === 'undefined')
 	                console.log('Occurrence position: undefined!');
 	            return occurrence.position;
 	        }
 	    };
-	    /**
-	     * @param obj
-	     * @returns {number}
-	     */
 	    BinaryHeap.prototype.unsetNodePosition = function (obj) {
 	        var obj_key = this.evalInputObjID(obj);
 	        var occurrence = this._positions[obj_key];
@@ -2564,8 +2101,6 @@
 	            return undefined;
 	        }
 	        else if (Array.isArray(occurrence)) {
-	            // lets find the droid we are looking for...
-	            // we are of course looking for the smallest one ;)
 	            var node_idx = null, node = null, min = Number.POSITIVE_INFINITY;
 	            for (var i = 0; i < occurrence.length; i++) {
 	                if (occurrence[i].position < min) {
@@ -2574,9 +2109,7 @@
 	                }
 	            }
 	            if (node) {
-	                // remove the wanted droid (it's become useless...)
 	                occurrence.splice(node_idx, 1);
-	                // if only 1 droid remains, make him officially single!
 	                if (occurrence.length === 1) {
 	                    this._positions[obj_key] = occurrence[0];
 	                }
@@ -2586,7 +2119,6 @@
 	            }
 	        }
 	        else {
-	            // we have a single object at this place
 	            delete this._positions[obj_key];
 	            return occurrence.position;
 	        }

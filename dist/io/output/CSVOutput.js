@@ -1,4 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
 "use strict";
 var fs = require('fs');
 var CSVOutput = (function () {
@@ -22,7 +21,6 @@ var CSVOutput = (function () {
         var mergeFunc = function (ne) {
             return ne.node.getID();
         };
-        // TODO make generic for graph mode
         for (var node_key in nodes) {
             node = nodes[node_key];
             graphString += node.getID();
@@ -40,8 +38,6 @@ var CSVOutput = (function () {
     };
     CSVOutput.prototype.writeToEdgeList = function (graph) {
         throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
-        // var graphString = "";
-        // return graphString;
     };
     return CSVOutput;
 }());

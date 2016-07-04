@@ -34,7 +34,8 @@ var tsProject = ts.createProject({
 	target: "ES5",
 	module: "commonjs",
 	declaration: false,
-	noExternalResolve: false
+	noExternalResolve: false,
+  removeComments: true
 });
 
 
