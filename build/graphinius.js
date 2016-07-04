@@ -69,10 +69,10 @@
 	 */
 	out.$G = {
 		core: {
-			Edge 				: Edges.BaseEdge,
-			Node 				: Nodes.BaseNode,
-			Graph 			: Graph.BaseGraph,
-			GraphMode		: Graph.GraphMode
+			BaseEdge 				: Edges.BaseEdge,
+			BaseNode 				: Nodes.BaseNode,
+			BaseGraph 			: Graph.BaseGraph,
+			GraphMode		    : Graph.GraphMode
 		},
 		input: {
 			CSVInput 		: CSVInput.CSVInput,

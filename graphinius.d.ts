@@ -3,15 +3,13 @@
 declare module GraphiniusJS {
 
   export namespace core {
-    
-    /**
-     * EDGES
-     */
-    export namespace Edges {
       
+      /**
+       * EDGES 
+       */  
       export interface IConnectedNodes {
-        a: Nodes.IBaseNode;
-        b: Nodes.IBaseNode;
+        a: IBaseNode;
+        b: IBaseNode;
       }
       
       export interface EdgeConstructorOptions {
@@ -38,7 +36,7 @@ declare module GraphiniusJS {
         protected _weight			: number;
         protected _label			: string;
 
-        constructor (_id: string, _node_a:Nodes.IBaseNode, _node_b:Nodes.IBaseNode,
+        constructor (_id: string, _node_a:IBaseNode, _node_b:IBaseNode,
                     options?: EdgeConstructorOptions);
 
         getID() : string;
@@ -51,16 +49,13 @@ declare module GraphiniusJS {
         getNodes() : IConnectedNodes;
       }
       
-    }
-
-    /**
-     * NODES
-     */
-    export namespace Nodes {
       
+      /**
+       * NODES 
+       */      
       export interface NeighborEntry {
         node: IBaseNode;
-        edge: Edges.IBaseEdge;
+        edge: IBaseEdge;
         best?: number;
       }
       
@@ -81,22 +76,22 @@ declare module GraphiniusJS {
         inDegree(): number;
         outDegree(): number;
         degree(): number;
-        addEdge(edge: Edges.IBaseEdge): void;
-        hasEdge(edge: Edges.IBaseEdge): boolean;
+        addEdge(edge: IBaseEdge): void;
+        hasEdge(edge: IBaseEdge): boolean;
         hasEdgeID(id: string): boolean;
-        getEdge(id: string): Edges.IBaseEdge;
+        getEdge(id: string): IBaseEdge;
         inEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         outEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         undEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         dirEdges(): {};
         allEdges(): {};
-        removeEdge(edge: Edges.IBaseEdge): void;
+        removeEdge(edge: IBaseEdge): void;
         removeEdgeID(id: string): void;
         clearOutEdges(): void;
         clearInEdges(): void;
@@ -117,13 +112,13 @@ declare module GraphiniusJS {
             [k: string]: any;
         };
         protected _in_edges: {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         protected _out_edges: {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         protected _und_edges: {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         protected _label: string;
         constructor(_id: any, features?: {
@@ -145,22 +140,22 @@ declare module GraphiniusJS {
         inDegree(): number;
         outDegree(): number;
         degree(): number;
-        addEdge(edge: Edges.IBaseEdge): void;
-        hasEdge(edge: Edges.IBaseEdge): boolean;
+        addEdge(edge: IBaseEdge): void;
+        hasEdge(edge: IBaseEdge): boolean;
         hasEdgeID(id: string): boolean;
-        getEdge(id: string): Edges.IBaseEdge;
+        getEdge(id: string): IBaseEdge;
         inEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         outEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         undEdges(): {
-            [k: string]: Edges.IBaseEdge;
+            [k: string]: IBaseEdge;
         };
         dirEdges(): {};
         allEdges(): {};
-        removeEdge(edge: Edges.IBaseEdge): void;
+        removeEdge(edge: IBaseEdge): void;
         removeEdgeID(id: string): void;
         clearOutEdges(): void;
         clearInEdges(): void;
@@ -171,13 +166,10 @@ declare module GraphiniusJS {
         connNodes(): Array<NeighborEntry>;
         reachNodes(identityFunc?: Function): Array<NeighborEntry>;
       }
-    }
-    
-    /**
-     * GRAPH
-     */
-    export namespace Graph {
       
+      /**
+       * GRAPH 
+       */      
       export enum GraphMode {
         INIT = 0,
         DIRECTED = 1,
@@ -202,39 +194,39 @@ declare module GraphiniusJS {
         getMode(): GraphMode;
         getStats(): GraphStats;
         degreeDistribution(): DegreeDistribution;
-        addNode(id: string, opts?: {}): Nodes.IBaseNode;
+        addNode(id: string, opts?: {}): IBaseNode;
         hasNodeID(id: string): boolean;
         hasNodeLabel(label: string): boolean;
-        getNodeById(id: string): Nodes.IBaseNode;
-        getNodeByLabel(label: string): Nodes.IBaseNode;
+        getNodeById(id: string): IBaseNode;
+        getNodeByLabel(label: string): IBaseNode;
         getNodes(): {
-            [key: string]: Nodes.IBaseNode;
+            [key: string]: IBaseNode;
         };
         nrNodes(): number;
-        getRandomNode(): Nodes.IBaseNode;
+        getRandomNode(): IBaseNode;
         deleteNode(node: any): void;
-        addEdge(label: string, node_a: Nodes.IBaseNode, node_b: Nodes.IBaseNode, opts?: {}): Edges.IBaseEdge;
-        addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): Edges.IBaseEdge;
+        addEdge(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
+        addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
         hasEdgeID(id: string): boolean;
         hasEdgeLabel(label: string): boolean;
-        getEdgeById(id: string): Edges.IBaseEdge;
-        getEdgeByLabel(label: string): Edges.IBaseEdge;
+        getEdgeById(id: string): IBaseEdge;
+        getEdgeByLabel(label: string): IBaseEdge;
         getDirEdges(): {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
         getUndEdges(): {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
         nrDirEdges(): number;
         nrUndEdges(): number;
-        deleteEdge(edge: Edges.IBaseEdge): void;
-        getRandomDirEdge(): Edges.IBaseEdge;
-        getRandomUndEdge(): Edges.IBaseEdge;
-        deleteInEdgesOf(node: Nodes.IBaseNode): void;
-        deleteOutEdgesOf(node: Nodes.IBaseNode): void;
-        deleteDirEdgesOf(node: Nodes.IBaseNode): void;
-        deleteUndEdgesOf(node: Nodes.IBaseNode): void;
-        deleteAllEdgesOf(node: Nodes.IBaseNode): void;
+        deleteEdge(edge: IBaseEdge): void;
+        getRandomDirEdge(): IBaseEdge;
+        getRandomUndEdge(): IBaseEdge;
+        deleteInEdgesOf(node: IBaseNode): void;
+        deleteOutEdgesOf(node: IBaseNode): void;
+        deleteDirEdgesOf(node: IBaseNode): void;
+        deleteUndEdgesOf(node: IBaseNode): void;
+        deleteAllEdgesOf(node: IBaseNode): void;
         clearAllDirEdges(): void;
         clearAllUndEdges(): void;
         clearAllEdges(): void;
@@ -249,13 +241,13 @@ declare module GraphiniusJS {
         private _nr_und_edges;
         protected _mode: GraphMode;
         protected _nodes: {
-            [key: string]: Nodes.IBaseNode;
+            [key: string]: IBaseNode;
         };
         protected _dir_edges: {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
         protected _und_edges: {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
         constructor(_label: any);
         getMode(): GraphMode;
@@ -264,47 +256,47 @@ declare module GraphiniusJS {
         nrNodes(): number;
         nrDirEdges(): number;
         nrUndEdges(): number;
-        addNode(id: string, opts?: {}): Nodes.IBaseNode;
+        addNode(id: string, opts?: {}): IBaseNode;
         hasNodeID(id: string): boolean;
         hasNodeLabel(label: string): boolean;
-        getNodeById(id: string): Nodes.IBaseNode;
-        getNodeByLabel(label: string): Nodes.IBaseNode;
+        getNodeById(id: string): IBaseNode;
+        getNodeByLabel(label: string): IBaseNode;
         getNodes(): {
-            [key: string]: Nodes.IBaseNode;
+            [key: string]: IBaseNode;
         };
-        getRandomNode(): Nodes.IBaseNode;
+        getRandomNode(): IBaseNode;
         deleteNode(node: any): void;
         hasEdgeID(id: string): boolean;
         hasEdgeLabel(label: string): boolean;
-        getEdgeById(id: string): Edges.IBaseEdge;
-        getEdgeByLabel(label: string): Edges.IBaseEdge;
+        getEdgeById(id: string): IBaseEdge;
+        getEdgeByLabel(label: string): IBaseEdge;
         getDirEdges(): {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
         getUndEdges(): {
-            [key: string]: Edges.IBaseEdge;
+            [key: string]: IBaseEdge;
         };
-        addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): Edges.IBaseEdge;
-        addEdge(id: string, node_a: Nodes.IBaseNode, node_b: Nodes.IBaseNode, opts?: Edges.EdgeConstructorOptions): Edges.IBaseEdge;
-        deleteEdge(edge: Edges.IBaseEdge): void;
-        deleteInEdgesOf(node: Nodes.IBaseNode): void;
-        deleteOutEdgesOf(node: Nodes.IBaseNode): void;
-        deleteDirEdgesOf(node: Nodes.IBaseNode): void;
-        deleteUndEdgesOf(node: Nodes.IBaseNode): void;
-        deleteAllEdgesOf(node: Nodes.IBaseNode): void;
+        addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+        addEdge(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
+        deleteEdge(edge: IBaseEdge): void;
+        deleteInEdgesOf(node: IBaseNode): void;
+        deleteOutEdgesOf(node: IBaseNode): void;
+        deleteDirEdgesOf(node: IBaseNode): void;
+        deleteUndEdgesOf(node: IBaseNode): void;
+        deleteAllEdgesOf(node: IBaseNode): void;
         clearAllDirEdges(): void;
         clearAllUndEdges(): void;
         clearAllEdges(): void;
         createRandomEdgesProb(probability: number, directed?: boolean): void;
         createRandomEdgesSpan(min: number, max: number, directed?: boolean): void;
-        getRandomDirEdge(): Edges.IBaseEdge;
-        getRandomUndEdge(): Edges.IBaseEdge;
-        protected checkConnectedNodeOrThrow(node: Nodes.IBaseNode): void;
+        getRandomDirEdge(): IBaseEdge;
+        getRandomUndEdge(): IBaseEdge;
+        protected checkConnectedNodeOrThrow(node: IBaseNode): void;
         protected updateGraphMode(): void;
-        private pickRandomProperty(obj);        
+        private pickRandomProperty(obj);
       }
-    }    
-  }
+   }
+  
   
   /**
    * SEARCH
@@ -319,13 +311,13 @@ declare module GraphiniusJS {
             [id: string]: BFS_ResultEntry;
         };
         callbacks: BFS_Callbacks;
-        dir_mode: core.Graph.GraphMode;
+        dir_mode: core.GraphMode;
         messages?: {};
         filters?: any;
     }
     export interface BFS_ResultEntry {
         distance: number;
-        parent: core.Nodes.IBaseNode;
+        parent: core.IBaseNode;
         counter: number;
     }
     export interface BFS_Callbacks {
@@ -339,16 +331,16 @@ declare module GraphiniusJS {
             [id: string]: boolean;
         };
         nodes: {
-            [id: string]: core.Nodes.IBaseNode;
+            [id: string]: core.IBaseNode;
         };
-        queue: Array<core.Nodes.IBaseNode>;
-        current: core.Nodes.IBaseNode;
-        next_node: core.Nodes.IBaseNode;
-        next_edge: core.Edges.IBaseEdge;
-        root_node: core.Nodes.IBaseNode;
-        adj_nodes: Array<core.Nodes.NeighborEntry>;
+        queue: Array<core.IBaseNode>;
+        current: core.IBaseNode;
+        next_node: core.IBaseNode;
+        next_edge: core.IBaseEdge;
+        root_node: core.IBaseNode;
+        adj_nodes: Array<core.NeighborEntry>;
     }
-    export function BFS(graph: core.Graph.IGraph, v: core.Nodes.IBaseNode, config?: BFS_Config): {
+    export function BFS(graph: core.IGraph, v: core.IBaseNode, config?: BFS_Config): {
         [id: string]: BFS_ResultEntry;
     };
     export function prepareBFSStandardConfig(): BFS_Config;
@@ -359,7 +351,7 @@ declare module GraphiniusJS {
     export interface DFS_Config {
         visit_result: {};
         callbacks: DFS_Callbacks;
-        dir_mode: core.Graph.GraphMode;
+        dir_mode: core.GraphMode;
         dfs_visit_marked: {
             [id: string]: boolean;
         };
@@ -376,27 +368,27 @@ declare module GraphiniusJS {
         sort_nodes?: Function;
     }
     export interface StackEntry {
-        node: core.Nodes.IBaseNode;
-        parent: core.Nodes.IBaseNode;
+        node: core.IBaseNode;
+        parent: core.IBaseNode;
         weight?: number;
     }
     export interface DFSVisit_Scope {
         stack: Array<StackEntry>;
-        adj_nodes: Array<core.Nodes.NeighborEntry>;
+        adj_nodes: Array<core.NeighborEntry>;
         stack_entry: StackEntry;
-        current: core.Nodes.IBaseNode;
-        current_root: core.Nodes.IBaseNode;
+        current: core.IBaseNode;
+        current_root: core.IBaseNode;
     }
     export interface DFS_Scope {
         marked: {
             [id: string]: boolean;
         };
         nodes: {
-            [id: string]: core.Nodes.IBaseNode;
+            [id: string]: core.IBaseNode;
         };
     }
-    export function DFSVisit(graph: core.Graph.IGraph, current_root: core.Nodes.IBaseNode, config?: DFS_Config): {};
-    export function DFS(graph: core.Graph.IGraph, root: core.Nodes.IBaseNode, config?: DFS_Config): {}[];
+    export function DFSVisit(graph: core.IGraph, current_root: core.IBaseNode, config?: DFS_Config): {};
+    export function DFS(graph: core.IGraph, root: core.IBaseNode, config?: DFS_Config): {}[];
     export function prepareDFSVisitStandardConfig(): DFS_Config;
     export function prepareDFSStandardConfig(): DFS_Config;
     
@@ -409,8 +401,8 @@ declare module GraphiniusJS {
             [id: string]: PFS_ResultEntry;
         };
         callbacks: PFS_Callbacks;
-        dir_mode: core.Graph.GraphMode;
-        goal_node: core.Nodes.IBaseNode;
+        dir_mode: core.GraphMode;
+        goal_node: core.IBaseNode;
         messages?: PFS_Messages;
         filters?: any;
         evalPriority: any;
@@ -418,7 +410,7 @@ declare module GraphiniusJS {
     }
     export interface PFS_ResultEntry {
         distance: number;
-        parent: core.Nodes.IBaseNode;
+        parent: core.IBaseNode;
         counter: number;
     }
     export interface PFS_Callbacks {
@@ -440,21 +432,21 @@ declare module GraphiniusJS {
     export interface PFS_Scope {
         OPEN_HEAP: datastructs.BinaryHeap;
         OPEN: {
-            [id: string]: core.Nodes.NeighborEntry;
+            [id: string]: core.NeighborEntry;
         };
         CLOSED: {
-            [id: string]: core.Nodes.NeighborEntry;
+            [id: string]: core.NeighborEntry;
         };
         nodes: {
-            [id: string]: core.Nodes.IBaseNode;
+            [id: string]: core.IBaseNode;
         };
-        root_node: core.Nodes.IBaseNode;
-        current: core.Nodes.NeighborEntry;
-        adj_nodes: Array<core.Nodes.NeighborEntry>;
-        next: core.Nodes.NeighborEntry;
+        root_node: core.IBaseNode;
+        current: core.NeighborEntry;
+        adj_nodes: Array<core.NeighborEntry>;
+        next: core.NeighborEntry;
         better_dist: number;
     }
-    export function PFS(graph: core.Graph.IGraph, v: core.Nodes.IBaseNode, config?: PFS_Config): {
+    export function PFS(graph: core.IGraph, v: core.IBaseNode, config?: PFS_Config): {
         [id: string]: PFS_ResultEntry;
     };
     export function preparePFSStandardConfig(): PFS_Config;
@@ -472,11 +464,11 @@ declare module GraphiniusJS {
         _separator: string;
         _explicit_direction: boolean;
         _direction_mode: boolean;
-        readFromAdjacencyListFile(filepath: string): core.Graph.IGraph;
-        readFromAdjacencyList(input: Array<string>, graph_name: string): core.Graph.IGraph;
+        readFromAdjacencyListFile(filepath: string): core.IGraph;
+        readFromAdjacencyList(input: Array<string>, graph_name: string): core.IGraph;
         readFromAdjacencyListURL(fileurl: string, cb: Function): any;
-        readFromEdgeListFile(filepath: string): core.Graph.IGraph;
-        readFromEdgeList(input: Array<string>, graph_name: string): core.Graph.IGraph;
+        readFromEdgeListFile(filepath: string): core.IGraph;
+        readFromEdgeList(input: Array<string>, graph_name: string): core.IGraph;
         readFromEdgeListURL(fileurl: string, cb: Function): any;
     }
     export class CSVInput implements ICSVInput {
@@ -487,11 +479,11 @@ declare module GraphiniusJS {
         readFromAdjacencyListURL(fileurl: string, cb: Function): void;
         readFromEdgeListURL(fileurl: string, cb: Function): void;
         private readGraphFromURL(fileurl, cb, localFun);
-        readFromAdjacencyListFile(filepath: string): core.Graph.IGraph;
-        readFromEdgeListFile(filepath: string): core.Graph.IGraph;
+        readFromAdjacencyListFile(filepath: string): core.IGraph;
+        readFromEdgeListFile(filepath: string): core.IGraph;
         private readFileAndReturn(filepath, func);
-        readFromAdjacencyList(input: Array<string>, graph_name: string): core.Graph.IGraph;
-        readFromEdgeList(input: Array<string>, graph_name: string): core.Graph.IGraph;
+        readFromAdjacencyList(input: Array<string>, graph_name: string): core.IGraph;
+        readFromEdgeList(input: Array<string>, graph_name: string): core.IGraph;
         private checkNodeEnvironment();
     }
     
@@ -526,8 +518,8 @@ declare module GraphiniusJS {
         _explicit_direction: boolean;
         _direction: boolean;
         _weighted_mode: boolean;
-        readFromJSONFile(file: string): core.Graph.IGraph;
-        readFromJSON(json: {}): core.Graph.IGraph;
+        readFromJSONFile(file: string): core.IGraph;
+        readFromJSON(json: {}): core.IGraph;
         readFromJSONURL(fileurl: string, cb: Function): void;
     }
     export class JSONInput implements IJSONInput {
@@ -535,9 +527,9 @@ declare module GraphiniusJS {
         _direction: boolean;
         _weighted_mode: boolean;
         constructor(_explicit_direction?: boolean, _direction?: boolean, _weighted_mode?: boolean);
-        readFromJSONFile(filepath: string): core.Graph.IGraph;
+        readFromJSONFile(filepath: string): core.IGraph;
         readFromJSONURL(fileurl: string, cb: Function): void;
-        readFromJSON(json: JSONGraph): core.Graph.IGraph;
+        readFromJSON(json: JSONGraph): core.IGraph;
         private checkNodeEnvironment();
     }
     
@@ -555,20 +547,20 @@ declare module GraphiniusJS {
         _separator: string;
         _explicit_direction: boolean;
         _direction_mode: boolean;
-        writeToAdjacencyListFile(filepath: string, graph: core.Graph.IGraph): void;
-        writeToAdjacencyList(graph: core.Graph.IGraph): string;
-        writeToEdgeListFile(filepath: string, graph: core.Graph.IGraph): void;
-        writeToEdgeList(graph: core.Graph.IGraph): string;
+        writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
+        writeToAdjacencyList(graph: core.IGraph): string;
+        writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
+        writeToEdgeList(graph: core.IGraph): string;
     }
     export class CSVOutput implements ICSVOutput {
         _separator: string;
         _explicit_direction: boolean;
         _direction_mode: boolean;
         constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
-        writeToAdjacencyListFile(filepath: string, graph: core.Graph.IGraph): void;
-        writeToAdjacencyList(graph: core.Graph.IGraph): string;
-        writeToEdgeListFile(filepath: string, graph: core.Graph.IGraph): void;
-        writeToEdgeList(graph: core.Graph.IGraph): string;
+        writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
+        writeToAdjacencyList(graph: core.IGraph): string;
+        writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
+        writeToEdgeList(graph: core.IGraph): string;
     }
     
   }
