@@ -33,7 +33,7 @@ var paths = {
 var tsProject = ts.createProject({
 	target: "ES5",
 	module: "commonjs",
-	declaration: true,
+	declaration: false,
 	noExternalResolve: false
 });
 
