@@ -104,9 +104,7 @@
 	/**
 	 * For NodeJS / CommonJS global object
 	 */
-	module.exports = {
-		$G : out.$G
-	};
+	module.exports = out.$G;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
