@@ -8,20 +8,20 @@ import * as $R from '../../utils/remoteUtils';
 
 var DEFAULT_WEIGHT = 1;
 
-interface JSONEdge {
+export interface JSONEdge {
   to          : string;
   directed?   : string;
   weight?     : string;
   type?       : string;
 }
 
-interface JSONNode {
+export interface JSONNode {
 	edges			: Array<JSONEdge>;
 	coords?		: {[key: string] : Number};
 	features?	: {[key: string] : any};
 }
 
-interface JSONGraph {
+export interface JSONGraph {
 	name			: string;
 	nodes			: number;
 	edges			: number;

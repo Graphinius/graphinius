@@ -7,7 +7,7 @@ export enum BinaryHeapMode {
 }
 
 
-interface PositionHeapEntry {
+export interface PositionHeapEntry {
   priority: number;
   position: number;
 }

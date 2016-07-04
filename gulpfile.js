@@ -33,7 +33,7 @@ var paths = {
 var tsProject = ts.createProject({
 	target: "ES5",
 	module: "commonjs",
-	declaration: false,
+	declaration: true,
 	noExternalResolve: false
 });
 
@@ -70,7 +70,7 @@ gulp.task('dist', ['tdoc'], function () {
 	// when the IO of both operations are done.
 	return merge([
 		tsResult.dts//.pipe(concat('graphinius.d.ts'))
-								.pipe(gulp.dest('.')),
+								.pipe(gulp.dest('./dist/')),
 		tsResult.js.pipe(gulp.dest('./dist/'))
 	]);
 });
