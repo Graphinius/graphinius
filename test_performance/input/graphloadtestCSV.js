@@ -1,5 +1,15 @@
+/**
+ * For graphs larger than ~375k nodes and ~1.5M edges,
+ * extend the NodeJS heap size manually by invoking
+ * --max_old_space_size=4096 (size in megabytes)
+ * (NodeJS standard heap size is limited to 1.7 GB)
+ */
+
 var $G = require('../../index.js');
 var yargs = require('yargs').argv;
+
+var Logger = require('../../dist/utils/logger.js').Logger,
+    logger = new Logger();
 
 
 var init = +new Date(),
@@ -10,8 +20,10 @@ var init = +new Date(),
 
 
 var TEST_DATA_PATH = "/home/bernd/Dropbox/datasets/graphs_scc/";
-yargs.graph = yargs.graph || "SCC200k";
+yargs.graph = yargs.graph || "SCC100k";
 
+logger.log("\nYargs: ");
+logger.dir(yargs);
 
 //----------------------------------------------------------------
 //                           LOAD TEST
@@ -45,20 +57,20 @@ console.log("Computed BFS of " + yargs.graph + " with " + graph.nrNodes() + " no
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
 
-// start = +new Date();
-// var max_distance = 0;
-// for (var node_idx in bfs) {
-//   if ( bfs.hasOwnProperty(node_idx) ) {
-//     if ( bfs[node_idx].distance > max_distance && bfs[node_idx].distance !== Number.POSITIVE_INFINITY ) {
-//       max_distance = bfs[node_idx].distance;
-//     }
-//   }
-// }
-// end = +new Date();
-// console.log("Computed max reachable distance in graph of " + graph.nrNodes() + " nodes and " + 
-//             graph.nrUndEdges() + " edges in " + (end-start)); // + " ms.\n Max distance is: " + max_distance
+start = +new Date();
+var max_distance = 0;
+for (var node_idx in bfs) {
+  if ( bfs.hasOwnProperty(node_idx) ) {
+    if ( bfs[node_idx].distance > max_distance && bfs[node_idx].distance !== Number.POSITIVE_INFINITY ) {
+      max_distance = bfs[node_idx].distance;
+    }
+  }
+}
+end = +new Date();
+console.log("Computed max reachable distance in graph of " + graph.nrNodes() + " nodes and " + 
+            graph.nrUndEdges() + " edges in " + (end-start) + " ms, MAX distance is: " + max_distance);
 
-// console.log("Whole run took: " + (end-init) + " ms.");
+console.log("Whole run took: " + (end-init) + " ms.");
 
 
 
@@ -73,8 +85,6 @@ end = +new Date();
 console.log("Computed DFS of " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
             graph.nrUndEdges() + " edges in " + (end-start) + " ms.");
 
-
-// console.log("Whole run took: " + (end-init) + " ms.");
 
 
 

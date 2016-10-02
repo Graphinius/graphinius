@@ -27,7 +27,6 @@ export interface GraphStats {
 	nr_nodes			: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
-	// degree_dist		: DegreeDistribution;
 }
 
 
@@ -100,7 +99,7 @@ class BaseGraph implements IGraph {
 	
 	getMode() : GraphMode {
 		return this._mode;
-	} 
+	}
 	
 	getStats() : GraphStats {
 		return {
@@ -108,7 +107,6 @@ class BaseGraph implements IGraph {
 			nr_nodes: this._nr_nodes,
 			nr_und_edges: this._nr_und_edges,
 			nr_dir_edges: this._nr_dir_edges
-			// degree_dist: this.degreeDistribution()
 		}
 	}
 
