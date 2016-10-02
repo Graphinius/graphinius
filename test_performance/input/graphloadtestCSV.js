@@ -1,5 +1,6 @@
-require('../../index.js');
+var $G = require('../../index.js');
 var yargs = require('yargs').argv;
+
 
 var init = +new Date(),
     start = +new Date(),
@@ -8,14 +9,15 @@ var init = +new Date(),
     graph_mode = 2;
 
 
-yargs.graph = yargs.graph || "SCC100k";
+var TEST_DATA_PATH = "/home/bernd/Dropbox/datasets/graphs_scc/";
+yargs.graph = yargs.graph || "SCC200k";
 
 
 //----------------------------------------------------------------
 //                           LOAD TEST
 //----------------------------------------------------------------
-var file = '/home/bernd/Dropbox/arbeit/Graphinius/test_data/CSV/' + yargs.graph + '.csv';
-var csv = new $G.input.CsvInput(' ', false, false);
+var file = TEST_DATA_PATH + yargs.graph + '.csv';
+var csv = new $G.input.CSVInput(' ', false, false);
 var graph = csv.readFromEdgeListFile(file);
 end = +new Date();
 console.log(" \nRead graph " + yargs.graph + " with " + graph.nrNodes() + " nodes and " + 
