@@ -70,7 +70,7 @@ gulp.task('dist', ['tdoc'], function () {
 	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
 	return merge([
-		tsResult.dts//.pipe(concat('graphinius.d.ts'))
+		tsResult.dts //.pipe(concat('graphinius.d.ts'))
 								.pipe(gulp.dest('./dist/')),
 		tsResult.js.pipe(gulp.dest('./dist/'))
 	]);

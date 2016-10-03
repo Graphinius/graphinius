@@ -10,6 +10,7 @@ var PFS             = require("./dist/search/PFS.js");
 var structUtils     = require("./dist/utils/structUtils.js");
 var remoteUtils     = require("./dist/utils/remoteUtils.js");
 var callbackUtils   = require("./dist/utils/callbackUtils.js");
+var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 
 // TODO:
@@ -19,7 +20,7 @@ var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var out = typeof window !== 'undefined' ? window : global;
 
 /**
- * For Browser window object
+ * Inside Global or Window object
  */
 out.$G = {
 	core: {
@@ -48,7 +49,8 @@ out.$G = {
   util: {
     struct          : structUtils,
     remote          : remoteUtils,
-    callback        : callbackUtils
+    callback        : callbackUtils,
+    randgen         : randGen
   },
   datastructs: {
     binaryHeap  : binaryHeap
