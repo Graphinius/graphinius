@@ -18,9 +18,9 @@ var search_graph = "./test/test_data/search_graph.json";
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	
 	var jsonReader 		: $I.IJSONInput = new JSON_IN(),
-	    graph					: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
-			stats					: $G.GraphStats = graph.getStats(),
-			callbacks			: $DFS.DFS_Callbacks;
+	    graph				: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
+		stats				: $G.GraphStats = graph.getStats(),
+		callbacks			: $DFS.DFS_Callbacks;
 	
   
   describe('testing config preparation functions - ', () => {

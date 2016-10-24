@@ -83,6 +83,9 @@ export interface IGraph {
 
 	// DELETE RANDOM NODES AND EDGES
 	randomlyDeleteNodes( percentage: number ) : void;
+	randomlyDeleteUndEdges( percentage: number ) : void;
+	randomlyDeleteDirEdges( percentage: number ) : void;
+	randomlyDeleteEdges( percentage: number ) : void;
 }
 
 
@@ -530,7 +533,7 @@ class BaseGraph implements IGraph {
 	getRandomUndEdge() : $E.IBaseEdge {
 		return this.pickRandomProperty(this._und_edges);
 	}
-	
+
 	
 	protected checkConnectedNodeOrThrow(node : $N.IBaseNode) {
 		var node = this._nodes[node.getID()];
@@ -538,6 +541,7 @@ class BaseGraph implements IGraph {
 			throw new Error('Cowardly refusing to delete edges of un-added node.');
 		}
 	}
+
 	
 	protected updateGraphMode() {
 		var nr_dir = this._nr_dir_edges,
@@ -557,15 +561,11 @@ class BaseGraph implements IGraph {
 		}
 	}
 	
-	private pickRandomProperty(obj) {
-    var key;
-    var count = 0;
-    for (var prop in obj) {
-        if (obj.hasOwnProperty(prop) && Math.random() < 1/++count) {
-           key = prop;
-		}
-	}
-    return obj[key];
+
+	private pickRandomProperty(propList) {
+		var tmpList = Object.keys(propList);
+		var randomPropertyName = tmpList[ Math.floor(Math.random()*tmpList.length) ];
+		return propList[randomPropertyName];
 	}
 
 
@@ -574,11 +574,31 @@ class BaseGraph implements IGraph {
 	 */
 	randomlyDeleteNodes( percentage: number ) : void {
 		var target_nr_nodes = this.nrNodes() - ( (this.nrNodes() * percentage/100)|0+1 );
-		logger.log("Target Number Nodes: " + target_nr_nodes);
+		logger.log("Target Number of Nodes: " + target_nr_nodes);
 
 		while ( this.nrNodes() > target_nr_nodes ) {
 			this.deleteNode( this.getRandomNode() );
 		}
+	}
+
+
+	randomlyDeleteUndEdges( percentage: number ) : void {
+		var target_nr_und_edges = this.nrUndEdges() - ( (this.nrUndEdges() * percentage/100)|0+1 );
+		logger.log("Target Number of undirected edges: " + target_nr_und_edges);
+
+		while ( this.nrUndEdges() > target_nr_und_edges ) {
+			this.deleteEdge( this.getRandomUndEdge() );
+		}
+	}
+
+
+	randomlyDeleteDirEdges( percentage: number ) : void {
+
+	}
+
+
+	randomlyDeleteEdges( percentage: number ) : void {
+
 	}
 	
 }

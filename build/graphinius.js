@@ -802,22 +802,28 @@
 	            this._mode = GraphMode.INIT;
 	        }
 	    };
-	    BaseGraph.prototype.pickRandomProperty = function (obj) {
-	        var key;
-	        var count = 0;
-	        for (var prop in obj) {
-	            if (obj.hasOwnProperty(prop) && Math.random() < 1 / ++count) {
-	                key = prop;
-	            }
-	        }
-	        return obj[key];
+	    BaseGraph.prototype.pickRandomProperty = function (propList) {
+	        var tmpList = Object.keys(propList);
+	        var randomPropertyName = tmpList[Math.floor(Math.random() * tmpList.length)];
+	        return propList[randomPropertyName];
 	    };
 	    BaseGraph.prototype.randomlyDeleteNodes = function (percentage) {
 	        var target_nr_nodes = this.nrNodes() - ((this.nrNodes() * percentage / 100) | 0 + 1);
-	        logger.log("Target Number Nodes: " + target_nr_nodes);
+	        logger.log("Target Number of Nodes: " + target_nr_nodes);
 	        while (this.nrNodes() > target_nr_nodes) {
 	            this.deleteNode(this.getRandomNode());
 	        }
+	    };
+	    BaseGraph.prototype.randomlyDeleteUndEdges = function (percentage) {
+	        var target_nr_und_edges = this.nrUndEdges() - ((this.nrUndEdges() * percentage / 100) | 0 + 1);
+	        logger.log("Target Number of undirected edges: " + target_nr_und_edges);
+	        while (this.nrUndEdges() > target_nr_und_edges) {
+	            this.deleteEdge(this.getRandomUndEdge());
+	        }
+	    };
+	    BaseGraph.prototype.randomlyDeleteDirEdges = function (percentage) {
+	    };
+	    BaseGraph.prototype.randomlyDeleteEdges = function (percentage) {
 	    };
 	    return BaseGraph;
 	}());

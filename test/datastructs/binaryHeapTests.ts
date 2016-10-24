@@ -468,7 +468,7 @@ describe('BINARY HEAP TESTS - ', () => {
         if ( typeof obj !== 'number' && typeof obj !== 'string') {
           return NaN;
         }
-        return parseFloat(obj)
+        return typeof obj === 'number' ? obj : parseFloat(obj);
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, evalPriority);
       

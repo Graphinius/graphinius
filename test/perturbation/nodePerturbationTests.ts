@@ -9,7 +9,7 @@ import { Logger } from '../../src/utils/logger';
 
 var expect = chai.expect;
 var REAL_GRAPH_NR_NODES = 6204,
-    REAL_GRAPH_NR_UND_EDGES = 18550,
+    REAL_GRAPH_NR_EDGES = 18550,
     graph : $G.IGraph,
     real_graph = "./test/test_data/real_graph.json",
     logger : Logger = new Logger();
@@ -22,10 +22,14 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     beforeEach( () => {
         graph = json.readFromJSONFile(real_graph);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
-        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_UND_EDGES);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
     });
 
-	describe('Deleting different percentages of nodes - ', () => {
+
+    /**
+     * TODO enhance by node types
+     */
+	describe('Deleting different percentages of NODES - ', () => {
 
         [20, 40, 60, 80].forEach( (p) => {
             it(`should delete ${p}% of all nodes`, () => {
@@ -33,6 +37,24 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
                 graph.randomlyDeleteNodes(p);
                 expect(graph.nrNodes()).to.equal( REAL_GRAPH_NR_NODES - ( (REAL_GRAPH_NR_NODES * p/100)|0+1 ) );
                 logger.log("Remaining number of egdes: " + graph.nrUndEdges());
+
+            });
+        });
+        
+    });
+
+
+    /**
+     * TODO: enhance by edge types
+     */
+    describe('Deleting different percentages of EDGES - ', () => {
+
+        [20, 40, 60, 80].forEach( (p) => {
+            it(`should delete ${p}% of all edges`, () => {
+
+                graph.randomlyDeleteUndEdges(p);
+                expect(graph.nrUndEdges()).to.equal( REAL_GRAPH_NR_EDGES - ( (REAL_GRAPH_NR_EDGES * p/100)|0+1 ) );
+                expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
 
             });
         });
