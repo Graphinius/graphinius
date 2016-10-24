@@ -3,7 +3,7 @@
 import * as $N from './Nodes';
 import * as $E from './Edges';
 import * as $DS from '../utils/structUtils';
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../utils/logger';
 
 var logger : Logger = new Logger();
 
@@ -25,8 +25,8 @@ export interface DegreeDistribution {
 
 
 export interface GraphStats {
-	mode					: GraphMode;
-	nr_nodes			: number;
+	mode			: GraphMode;
+	nr_nodes		: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
 }

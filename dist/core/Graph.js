@@ -2,7 +2,7 @@
 var $N = require('./Nodes');
 var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
-var logger_1 = require('../../src/utils/logger');
+var logger_1 = require('../utils/logger');
 var logger = new logger_1.Logger();
 (function (GraphMode) {
     GraphMode[GraphMode["INIT"] = 0] = "INIT";
