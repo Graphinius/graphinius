@@ -3,7 +3,9 @@
 import * as $N from './Nodes';
 import * as $E from './Edges';
 import * as $DS from '../utils/structUtils';
+import { Logger } from '../../src/utils/logger';
 
+var logger : Logger = new Logger();
 
 export enum GraphMode {
 	INIT, 
@@ -78,6 +80,9 @@ export interface IGraph {
 	// CREATE RANDOM EDGES
 	createRandomEdgesProb( probability: number, directed?: boolean ) : void;
 	createRandomEdgesSpan( min: number, max: number,  directed?: boolean ) : void;
+
+	// DELETE RANDOM NODES AND EDGES
+	randomlyDeleteNodes( percentage: number ) : void;
 }
 
 
@@ -558,9 +563,22 @@ class BaseGraph implements IGraph {
     for (var prop in obj) {
         if (obj.hasOwnProperty(prop) && Math.random() < 1/++count) {
            key = prop;
-				}
 		}
+	}
     return obj[key];
+	}
+
+
+	/**
+	 * 
+	 */
+	randomlyDeleteNodes( percentage: number ) : void {
+		var target_nr_nodes = this.nrNodes() - ( (this.nrNodes() * percentage/100)|0+1 );
+		logger.log("Target Number Nodes: " + target_nr_nodes);
+
+		while ( this.nrNodes() > target_nr_nodes ) {
+			this.deleteNode( this.getRandomNode() );
+		}
 	}
 	
 }

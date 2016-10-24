@@ -840,7 +840,7 @@ describe('GRAPH TESTS: ', () => {
 				deg_dist = graph.degreeDistribution();
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
-				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.nrUndEdges()).to.equal(0);
 				expect(graph.createRandomEdgesSpan.bind(graph, min, max)).to.throw('Minimum degree cannot be negative.');
 			});
 			
