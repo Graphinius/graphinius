@@ -807,18 +807,39 @@
 	        var randomPropertyName = tmpList[Math.floor(Math.random() * tmpList.length)];
 	        return propList[randomPropertyName];
 	    };
+	    BaseGraph.prototype.pickRandomProperties = function (propList, fraction) {
+	        var ids = [];
+	        var keys = Object.keys(propList);
+	        var keys_to_return = Math.ceil(keys.length * fraction);
+	        var used_keys = {};
+	        for (var i = 0; ids.length < keys_to_return && i < keys.length; i++) {
+	            if (Math.random() < fraction) {
+	                ids.push(keys[i]);
+	                used_keys[keys[i]] = i;
+	            }
+	        }
+	        var diff = keys_to_return - ids.length;
+	        for (var i = 0; i < keys.length && diff; i++) {
+	            if (used_keys[keys[i]] == null) {
+	                ids.push(keys[i]);
+	                diff--;
+	            }
+	        }
+	        logger.log("Selected: " + ids.length + " items...");
+	        return ids;
+	    };
 	    BaseGraph.prototype.randomlyDeleteNodes = function (percentage) {
-	        var target_nr_nodes = this.nrNodes() - ((this.nrNodes() * percentage / 100) | 0 + 1);
-	        logger.log("Target Number of Nodes: " + target_nr_nodes);
-	        while (this.nrNodes() > target_nr_nodes) {
-	            this.deleteNode(this.getRandomNode());
+	        var nodes_to_delete = Math.ceil(this.nrNodes() * percentage / 100);
+	        logger.log("Number of nodes to delete: " + nodes_to_delete);
+	        for (var nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, percentage / 100); nodeID < randomNodes.length; nodeID++) {
+	            this.deleteNode(this._nodes[randomNodes[nodeID]]);
 	        }
 	    };
 	    BaseGraph.prototype.randomlyDeleteUndEdges = function (percentage) {
-	        var target_nr_und_edges = this.nrUndEdges() - ((this.nrUndEdges() * percentage / 100) | 0 + 1);
-	        logger.log("Target Number of undirected edges: " + target_nr_und_edges);
-	        while (this.nrUndEdges() > target_nr_und_edges) {
-	            this.deleteEdge(this.getRandomUndEdge());
+	        var edges_to_delete = Math.ceil(this.nrUndEdges() * percentage / 100);
+	        logger.log("Number of undirected edges to delete: " + edges_to_delete);
+	        for (var edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, percentage / 100); edgeID < randomEdges.length; edgeID++) {
+	            this.deleteEdge(this._und_edges[randomEdges[edgeID]]);
 	        }
 	    };
 	    BaseGraph.prototype.randomlyDeleteDirEdges = function (percentage) {
@@ -898,7 +919,7 @@
 	module.exports = {
 	  LOG_LEVELS: LOG_LEVELS,
 	  RUN_CONFIG: RUN_CONFIG
-	}
+	};
 
 /***/ },
 /* 7 */

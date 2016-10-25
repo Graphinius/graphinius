@@ -5,7 +5,7 @@ import * as $E from './Edges';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 
-var logger : Logger = new Logger();
+let logger : Logger = new Logger();
 
 export enum GraphMode {
 	INIT, 
@@ -304,16 +304,14 @@ class BaseGraph implements IGraph {
 	}
 		
 	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
-		var edge = new $E.BaseEdge(id,
-															 node_a,
-															 node_b,
-															 opts || {});		
-		// connect edge to first node anyways			
+		let edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+
+		// connect edge to first node anyways
 		node_a.addEdge(edge);
 		
 		if ( edge.isDirected() ) {
 			// add edge to second node too
-			node_b.addEdge(edge);			
+			node_b.addEdge(edge);
 			this._dir_edges[edge.getID()] = edge;
 			this._nr_dir_edges += 1;
 			this.updateGraphMode();
@@ -334,7 +332,7 @@ class BaseGraph implements IGraph {
 		var dir_edge = this._dir_edges[edge.getID()];
 		var und_edge = this._und_edges[edge.getID()];
 
-		if ( !dir_edge && ! und_edge ) {
+		if ( !dir_edge && !und_edge ) {
 			throw new Error('cannot remove non-existing edge.');
 		}
 		
@@ -345,7 +343,7 @@ class BaseGraph implements IGraph {
 		}
 		
 		if ( dir_edge ) {
-			delete this._dir_edges[edge.getID()];			
+			delete this._dir_edges[edge.getID()];
 			this._nr_dir_edges -=1;
 		} 
 		else {
@@ -545,7 +543,7 @@ class BaseGraph implements IGraph {
 	
 	protected updateGraphMode() {
 		var nr_dir = this._nr_dir_edges,
-				nr_und = this._nr_und_edges;
+			nr_und = this._nr_und_edges;
 		
 		if ( nr_dir && nr_und  ) {
 			this._mode = GraphMode.MIXED;
@@ -555,48 +553,103 @@ class BaseGraph implements IGraph {
 		} 
 		else if ( nr_und ) {
 			this._mode = GraphMode.UNDIRECTED;
-		} 
+		}
 		else {
 			this._mode = GraphMode.INIT;
 		}
 	}
 	
 
-	private pickRandomProperty(propList) {
-		var tmpList = Object.keys(propList);
-		var randomPropertyName = tmpList[ Math.floor(Math.random()*tmpList.length) ];
+	private pickRandomProperty(propList) : any {
+		let tmpList = Object.keys(propList);
+		let randomPropertyName = tmpList[ Math.floor(Math.random()*tmpList.length) ];
 		return propList[randomPropertyName];
 	}
 
 
 	/**
-	 * 
+	 * In some cases we need to give back a large number of objects
+	 * in one swoop, as calls to Object.keys() are really slow
+	 * for large input objects.
+	 *
+	 * In order to do this, we
+	 *
+	 * @param propList
+	 * @param fraction
+	 * @returns {Array}
+	 */
+	private pickRandomProperties(propList, fraction) : Array<string> {
+		let ids = [];
+		let keys = Object.keys(propList);
+		let keys_to_return = Math.ceil(keys.length * fraction);
+		let used_keys = {};
+
+		for ( let i = 0; ids.length < keys_to_return && i < keys.length; i++ ) {
+			if ( Math.random() < fraction ) {
+				ids.push( keys[i] );
+				used_keys[keys[i]] = i;
+			}
+		}
+
+		// Simple hack - filling up remaining objects (if any)
+		// Could be replaced by a much better fraction-increasing function above
+		// But too tired now...
+		let diff = keys_to_return - ids.length;
+		for ( let i = 0; i < keys.length && diff; i++ ) {
+			if ( used_keys[keys[i]] == null) {
+				ids.push( keys[i] );
+				diff--;
+			}
+		}
+		logger.log(`Selected: ${ids.length} items...`);
+
+		return ids;
+	}
+
+
+	/**
+	 *
+	 * @param percentage
 	 */
 	randomlyDeleteNodes( percentage: number ) : void {
-		var target_nr_nodes = this.nrNodes() - ( (this.nrNodes() * percentage/100)|0+1 );
-		logger.log("Target Number of Nodes: " + target_nr_nodes);
+		let nodes_to_delete = Math.ceil(this.nrNodes() * percentage/100);
+		logger.log("Number of nodes to delete: " + nodes_to_delete);
 
-		while ( this.nrNodes() > target_nr_nodes ) {
-			this.deleteNode( this.getRandomNode() );
+		for ( let nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, percentage/100); nodeID < randomNodes.length; nodeID++ ) {
+			this.deleteNode( this._nodes[randomNodes[nodeID]] );
 		}
 	}
 
 
+	/**
+	 *
+	 * @param percentage
+	 */
 	randomlyDeleteUndEdges( percentage: number ) : void {
-		var target_nr_und_edges = this.nrUndEdges() - ( (this.nrUndEdges() * percentage/100)|0+1 );
-		logger.log("Target Number of undirected edges: " + target_nr_und_edges);
+		let edges_to_delete = Math.ceil(this.nrUndEdges() * percentage/100);
+		logger.log("Number of undirected edges to delete: " + edges_to_delete);
 
-		while ( this.nrUndEdges() > target_nr_und_edges ) {
-			this.deleteEdge( this.getRandomUndEdge() );
+		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, percentage/100); edgeID < randomEdges.length; edgeID++ ) {
+			this.deleteEdge( this._und_edges[randomEdges[edgeID]] );
 		}
 	}
 
 
+	/**
+	 *
+	 * @param percentage
+	 */
 	randomlyDeleteDirEdges( percentage: number ) : void {
 
 	}
 
 
+	/**
+	 * Just coordinates randomly deleting directed
+	 * as well as undirected edges.
+	 *
+	 * @param percentage
+	 */
 	randomlyDeleteEdges( percentage: number ) : void {
 
 	}

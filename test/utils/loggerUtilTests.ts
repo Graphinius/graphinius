@@ -1,5 +1,9 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
+/**
+ * TODO switching to production should not raise errors... !!!
+ */
+
 import * as chai from 'chai';
 import { Logger } from '../../src/utils/logger';
 
@@ -17,7 +21,7 @@ var obj_to_log = {
 describe('Basic logger tests - (standard) DEBUG config - ', () => {
   
   before(() => {
-    logger = new Logger();      
+    logger = new Logger();
   });
   
   after(() => {

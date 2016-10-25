@@ -10,4 +10,4 @@ var RUN_CONFIG = {
 module.exports = {
   LOG_LEVELS: LOG_LEVELS,
   RUN_CONFIG: RUN_CONFIG
-}
+};
