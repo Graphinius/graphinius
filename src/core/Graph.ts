@@ -93,14 +93,17 @@ export interface IGraph {
 	randomlyDeleteNodesPercentage( percentage: number ) : void;
 	randomlyDeleteUndEdgesPercentage( percentage: number ) : void;
 	randomlyDeleteDirEdgesPercentage( percentage: number ) : void;
-	randomlyDeleteNodesNumber( amount: number ) : void;
-	randomlyDeleteUndEdgesNumber( amount: number ) : void;
-	randomlyDeleteDirEdgesNumber( amount: number ) : void;
+	randomlyDeleteNodesAmount( amount: number ) : void;
+	randomlyDeleteUndEdgesAmount( amount: number ) : void;
+	randomlyDeleteDirEdgesAmount( amount: number ) : void;
 	
 	// RANDOMLY ADD NODES AND EDGES
-	randomlyAddNodes( percentage: number, config: NodeAdditionConfiguration ) : void;
-	randomlyAddUndEdges( percentage: number ) : void;
-	randomlyAddDirEdges( percentage: number ) : void;
+	randomlyAddNodesPercentage( percentage: number, config: NodeAdditionConfiguration ) : void;
+	randomlyAddUndEdgesPercentage( percentage: number ) : void;
+	randomlyAddDirEdgesPercentage( percentage: number ) : void;
+	randomlyAddNodesAmount( amount: number, config: NodeAdditionConfiguration ) : void;
+	randomlyAddUndEdgesAmount( amount: number ) : void;
+	randomlyAddDirEdgesAmount( amount: number ) : void;
 }
 
 
@@ -593,13 +596,13 @@ class BaseGraph implements IGraph {
 	 * @param fraction
 	 * @returns {Array}
 	 */
-	private pickRandomProperties(propList, fraction) : Array<string> {
+	private pickRandomProperties(propList, amount) : Array<string> {
 		let ids = [];
 		let keys = Object.keys(propList);
-		let keys_to_return = Math.ceil(keys.length * fraction);
+		let fraction = amount / keys.length;
 		let used_keys = {};
 
-		for ( let i = 0; ids.length < keys_to_return && i < keys.length; i++ ) {
+		for ( let i = 0; ids.length < amount && i < keys.length; i++ ) {
 			if ( Math.random() < fraction ) {
 				ids.push( keys[i] );
 				used_keys[keys[i]] = i;
@@ -609,7 +612,7 @@ class BaseGraph implements IGraph {
 		// Simple hack - filling up remaining objects (if any)
 		// Could be replaced by a much better fraction-increasing function above
 		// But too tired now...
-		let diff = keys_to_return - ids.length;
+		let diff = amount - ids.length;
 		for ( let i = 0; i < keys.length && diff; i++ ) {
 			if ( used_keys[keys[i]] == null) {
 				ids.push( keys[i] );
@@ -626,12 +629,11 @@ class BaseGraph implements IGraph {
 	 * @param percentage
 	 */
 	randomlyDeleteNodesPercentage( percentage: number ) : void {
-		let nodes_to_delete = Math.ceil(this.nrNodes() * percentage/100);
-		// logger.log("Number of nodes to delete: " + nodes_to_delete);
-
-		for ( let nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, percentage/100); nodeID < randomNodes.length; nodeID++ ) {
-			this.deleteNode( this._nodes[randomNodes[nodeID]] );
+		if ( percentage > 100 ) {
+			percentage = 100;
 		}
+		let nr_nodes_to_delete = Math.ceil(this.nrNodes() * percentage/100);
+		this.randomlyDeleteNodesAmount( nr_nodes_to_delete );
 	}
 
 
@@ -640,16 +642,11 @@ class BaseGraph implements IGraph {
 	 * @param percentage
 	 */
 	randomlyDeleteUndEdgesPercentage( percentage: number ) : void {
-		if ( this.nrUndEdges() === 0 ) {
-			return;
+		if ( percentage > 100 ) {
+			percentage = 100;
 		}
-		
-		let edges_to_delete = Math.ceil(this.nrUndEdges() * percentage/100);
-		// logger.log("Number of undirected edges to delete: " + edges_to_delete);
-
-		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, percentage/100); edgeID < randomEdges.length; edgeID++ ) {
-			this.deleteEdge( this._und_edges[randomEdges[edgeID]] );
-		}
+		let nr_edges_to_delete = Math.ceil(this.nrUndEdges() * percentage/100);
+		this.randomlyDeleteUndEdgesAmount( nr_edges_to_delete );
 	}
 
 
@@ -658,14 +655,60 @@ class BaseGraph implements IGraph {
 	 * @param percentage
 	 */
 	randomlyDeleteDirEdgesPercentage( percentage: number ) : void {
-		if ( this.nrDirEdges() === 0 ) {
+		if ( percentage > 100 ) {
+			percentage = 100;
+		}
+		let nr_edges_to_delete = Math.ceil(this.nrDirEdges() * percentage/100);
+		this.randomlyDeleteDirEdgesAmount( nr_edges_to_delete );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyDeleteNodesAmount( amount: number ) : void {
+		if ( amount < 0 ) {
+			throw 'Cowardly refusing to remove a negative amount of nodes';
+		}
+		if ( this.nrNodes() === 0 ) {
 			return;
 		}
 		
-		let edges_to_delete = Math.ceil(this.nrDirEdges() * percentage/100);
-		// logger.log("Number of undirected edges to delete: " + edges_to_delete);
+		for ( let nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, amount); nodeID < randomNodes.length; nodeID++ ) {
+			this.deleteNode( this._nodes[randomNodes[nodeID]] );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyDeleteUndEdgesAmount( amount: number ) : void {
+		if ( amount < 0 ) {
+			throw 'Cowardly refusing to remove a negative amount of edges';
+		}
+		if ( this.nrUndEdges() === 0 ) {
+			return;
+		}
 
-		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._dir_edges, percentage/100); edgeID < randomEdges.length; edgeID++ ) {
+		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, amount); edgeID < randomEdges.length; edgeID++ ) {
+			this.deleteEdge( this._und_edges[randomEdges[edgeID]] );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyDeleteDirEdgesAmount( amount: number ) : void {
+		if ( amount < 0 ) {
+			throw 'Cowardly refusing to remove a negative amount of edges';
+		}
+		if ( this.nrDirEdges() === 0 ) {
+			return;
+		}
+
+		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._dir_edges, amount); edgeID < randomEdges.length; edgeID++ ) {
 			this.deleteEdge( this._dir_edges[randomEdges[edgeID]] );
 		}
 	}
@@ -674,31 +717,7 @@ class BaseGraph implements IGraph {
 	/**
 	 * 
 	 */
-	randomlyDeleteNodesNumber( amount: number ) : void {
-		
-	}
-	
-	
-	/**
-	 * 
-	 */
-	randomlyDeleteUndEdgesNumber( amount: number ) : void {
-		
-	}
-	
-	
-	/**
-	 * 
-	 */
-	randomlyDeleteDirEdgesNumber( amount: number ) : void {
-		
-	}
-	
-	
-	/**
-	 * 
-	 */
-	randomlyAddNodes( percentage: number, config: NodeAdditionConfiguration ) : void {
+	randomlyAddNodesPercentage( percentage: number, config: NodeAdditionConfiguration ) : void {
 		
 	}
 	
@@ -706,7 +725,7 @@ class BaseGraph implements IGraph {
 	/**
 	 *  
 	 */
-	randomlyAddUndEdges( percentage: number ) : void {
+	randomlyAddUndEdgesPercentage( percentage: number ) : void {
 		
 	}
 	
@@ -714,7 +733,31 @@ class BaseGraph implements IGraph {
 	/**
 	 * 
 	 */
-	randomlyAddDirEdges( percentage: number ) : void {
+	randomlyAddDirEdgesPercentage( percentage: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyAddNodesAmount( amount: number, config: NodeAdditionConfiguration ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyAddUndEdgesAmount( amount: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyAddDirEdgesAmount( amount: number ) : void {
 		
 	}
 	
