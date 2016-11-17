@@ -32,6 +32,14 @@ export interface GraphStats {
 }
 
 
+export interface NodeAdditionConfiguration {
+	min_und_degree: number;
+	max_und_degree: number;
+	min_dir_degree: number;
+	max_dir_degree: number;
+}
+
+
 export interface IGraph {
 	_label : string;
 	
@@ -77,15 +85,22 @@ export interface IGraph {
 	clearAllUndEdges() : void;
 	clearAllEdges() : void;
 	
-	// CREATE RANDOM EDGES
+	// CREATE RANDOM EDGES PER NODE
 	createRandomEdgesProb( probability: number, directed?: boolean ) : void;
-	createRandomEdgesSpan( min: number, max: number,  directed?: boolean ) : void;
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean ) : void;
 
-	// DELETE RANDOM NODES AND EDGES
-	randomlyDeleteNodes( percentage: number ) : void;
-	randomlyDeleteUndEdges( percentage: number ) : void;
-	randomlyDeleteDirEdges( percentage: number ) : void;
-	randomlyDeleteEdges( percentage: number ) : void;
+	// RANDOMLY DELETE NODES AND EDGES
+	randomlyDeleteNodesPercentage( percentage: number ) : void;
+	randomlyDeleteUndEdgesPercentage( percentage: number ) : void;
+	randomlyDeleteDirEdgesPercentage( percentage: number ) : void;
+	randomlyDeleteNodesNumber( amount: number ) : void;
+	randomlyDeleteUndEdgesNumber( amount: number ) : void;
+	randomlyDeleteDirEdgesNumber( amount: number ) : void;
+	
+	// RANDOMLY ADD NODES AND EDGES
+	randomlyAddNodes( percentage: number, config: NodeAdditionConfiguration ) : void;
+	randomlyAddUndEdges( percentage: number ) : void;
+	randomlyAddDirEdges( percentage: number ) : void;
 }
 
 
@@ -601,7 +616,6 @@ class BaseGraph implements IGraph {
 				diff--;
 			}
 		}
-		logger.log(`Selected: ${ids.length} items...`);
 
 		return ids;
 	}
@@ -611,9 +625,9 @@ class BaseGraph implements IGraph {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteNodes( percentage: number ) : void {
+	randomlyDeleteNodesPercentage( percentage: number ) : void {
 		let nodes_to_delete = Math.ceil(this.nrNodes() * percentage/100);
-		logger.log("Number of nodes to delete: " + nodes_to_delete);
+		// logger.log("Number of nodes to delete: " + nodes_to_delete);
 
 		for ( let nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, percentage/100); nodeID < randomNodes.length; nodeID++ ) {
 			this.deleteNode( this._nodes[randomNodes[nodeID]] );
@@ -625,9 +639,13 @@ class BaseGraph implements IGraph {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteUndEdges( percentage: number ) : void {
+	randomlyDeleteUndEdgesPercentage( percentage: number ) : void {
+		if ( this.nrUndEdges() === 0 ) {
+			return;
+		}
+		
 		let edges_to_delete = Math.ceil(this.nrUndEdges() * percentage/100);
-		logger.log("Number of undirected edges to delete: " + edges_to_delete);
+		// logger.log("Number of undirected edges to delete: " + edges_to_delete);
 
 		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, percentage/100); edgeID < randomEdges.length; edgeID++ ) {
 			this.deleteEdge( this._und_edges[randomEdges[edgeID]] );
@@ -639,19 +657,65 @@ class BaseGraph implements IGraph {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteDirEdges( percentage: number ) : void {
+	randomlyDeleteDirEdgesPercentage( percentage: number ) : void {
+		if ( this.nrDirEdges() === 0 ) {
+			return;
+		}
+		
+		let edges_to_delete = Math.ceil(this.nrDirEdges() * percentage/100);
+		// logger.log("Number of undirected edges to delete: " + edges_to_delete);
 
+		for ( let edgeID = 0, randomEdges = this.pickRandomProperties(this._dir_edges, percentage/100); edgeID < randomEdges.length; edgeID++ ) {
+			this.deleteEdge( this._dir_edges[randomEdges[edgeID]] );
+		}
 	}
-
-
+	
+	
 	/**
-	 * Just coordinates randomly deleting directed
-	 * as well as undirected edges.
-	 *
-	 * @param percentage
+	 * 
 	 */
-	randomlyDeleteEdges( percentage: number ) : void {
-
+	randomlyDeleteNodesNumber( amount: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyDeleteUndEdgesNumber( amount: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyDeleteDirEdgesNumber( amount: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyAddNodes( percentage: number, config: NodeAdditionConfiguration ) : void {
+		
+	}
+	
+	
+	/**
+	 *  
+	 */
+	randomlyAddUndEdges( percentage: number ) : void {
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	randomlyAddDirEdges( percentage: number ) : void {
+		
 	}
 	
 }
