@@ -1,6 +1,7 @@
 "use strict";
 var $N = require('./Nodes');
 var $E = require('./Edges');
+var randgen = require('../utils/randGenUtils');
 var $DS = require('../utils/structUtils');
 var logger_1 = require('../utils/logger');
 var logger = new logger_1.Logger();
@@ -270,12 +271,12 @@ var BaseGraph = (function () {
         this.clearAllDirEdges();
         this.clearAllUndEdges();
     };
-    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed) {
+    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed, setOfNodes) {
         if (0 > probability || 1 < probability) {
             throw new Error("Probability out of range.");
         }
         directed = directed || false;
-        var nodes = this._nodes, node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
+        var nodes = setOfNodes || this._nodes, node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
         for (node_a in nodes) {
             for (node_b in nodes) {
                 if (node_a !== node_b && Math.random() < probability) {
@@ -285,7 +286,7 @@ var BaseGraph = (function () {
             }
         }
     };
-    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed) {
+    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed, setOfNodes) {
         if (min < 0) {
             throw new Error('Minimum degree cannot be negative.');
         }
@@ -293,11 +294,11 @@ var BaseGraph = (function () {
             throw new Error('Maximum degree exceeds number of reachable nodes.');
         }
         directed = directed || false;
-        var min = min | 0, max = max | 0, nodes = this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
+        var min = min | 0, max = max | 0, nodes = setOfNodes || this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
         for (idx_a in nodes) {
             node_a = nodes[idx_a];
             rand_idx = 0;
-            rand_deg = (Math.random() * max + min) | 0;
+            rand_deg = (Math.random() * (max - min) + min) | 0;
             while (rand_deg) {
                 rand_idx = (keys_len * Math.random()) | 0;
                 node_b = nodes[node_keys[rand_idx]];
@@ -419,12 +420,31 @@ var BaseGraph = (function () {
         }
     };
     BaseGraph.prototype.randomlyAddNodesPercentage = function (percentage, config) {
+        var nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage / 100);
+        this.randomlyAddNodesAmount(nr_nodes_to_add, config);
     };
     BaseGraph.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
     };
     BaseGraph.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
     };
     BaseGraph.prototype.randomlyAddNodesAmount = function (amount, config) {
+        if (amount < 0) {
+            throw 'Cowardly refusing to add a negative amount of nodes';
+        }
+        var new_nodes = {}, degree, min_degree, max_degree;
+        while (amount--) {
+            var new_node_id = randgen.randBase36String();
+            new_nodes[new_node_id] = this.addNode(new_node_id);
+        }
+        if (config == null) {
+            return;
+        }
+        if (degree = config.und_degree) {
+            this.createRandomEdgesSpan(degree, degree, false, new_nodes);
+        }
+        if (degree = config.dir_degree) {
+            this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+        }
     };
     BaseGraph.prototype.randomlyAddUndEdgesAmount = function (amount) {
     };

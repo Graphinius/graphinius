@@ -14,6 +14,21 @@ for (var i = 0; i < 50; i++){
 
 describe('Random Number Generator Utils Tests - ', () => {
   
+  it('should generate 100 different Base36 strings', () => {
+    let base36Array = [],
+        nr_strings = 100,
+        base36Hash = {};
+    while ( nr_strings-- ) {
+      base36Array.push( randgen.randBase36String() );
+    }
+    expect(base36Array.length).to.equal(100);
+    base36Array.forEach( (b36str) => {
+      expect(base36Array[b36str]).to.be.undefined;
+      base36Array[b36str] = true;
+    });
+  });
+  
+  
   it.skip('Should successfully output a log message', () => {
     expect(logger.log("This is a default log message")).to.be.true;
   });

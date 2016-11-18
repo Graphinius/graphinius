@@ -3,6 +3,14 @@
  * and slightly modified to give TS completion
  */
 
+
+/**
+ * Generate a random Base36  UID of length 24
+ */
+function randBase36String() {
+  return (Math.random()+1).toString(36).substr(2, 24);
+}
+
 /*jslint indent: 2, plusplus: true, sloppy: true */
 // Generate uniformly distributed random numbers
 // Gives a random number on the interval [min, max).
@@ -176,6 +184,7 @@ let rvbernoulli = vectorize(rbernoulli);
 let rvlist = vectorize(rlist);
 
 export {
+  randBase36String,
   runif, rnorm, rchisq, rpoisson, rcauchy, rbernoulli, rlist, histogram,
   rvunif, rvnorm, rvchisq, rvpoisson, rvcauchy, rvbernoulli, rvlist
 }

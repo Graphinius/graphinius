@@ -1,4 +1,8 @@
 "use strict";
+function randBase36String() {
+    return (Math.random() + 1).toString(36).substr(2, 24);
+}
+exports.randBase36String = randBase36String;
 function runif(min, max, discrete) {
     if (min === undefined) {
         min = 0;

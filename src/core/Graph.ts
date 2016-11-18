@@ -2,6 +2,7 @@
 
 import * as $N from './Nodes';
 import * as $E from './Edges';
+import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 
@@ -33,10 +34,12 @@ export interface GraphStats {
 
 
 export interface NodeAdditionConfiguration {
-	min_und_degree: number;
-	max_und_degree: number;
-	min_dir_degree: number;
-	max_dir_degree: number;
+	und_degree?: 		 number;
+	dir_degree?:		 number;
+	min_und_degree?: number;
+	max_und_degree?: number;
+	min_dir_degree?: number;
+	max_dir_degree?: number;
 }
 
 
@@ -62,11 +65,11 @@ export interface IGraph {
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: string) : boolean;
-	hasEdgeLabel(label: string) : boolean;	
+	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
-	getUndEdges() : {[key: string] : $E.IBaseEdge};	
+	getUndEdges() : {[key: string] : $E.IBaseEdge};
 	nrDirEdges() : number;
 	nrUndEdges() : number;
 	deleteEdge(edge: $E.IBaseEdge) : void;
@@ -85,9 +88,13 @@ export interface IGraph {
 	clearAllUndEdges() : void;
 	clearAllEdges() : void;
 	
+	/**
+	 * GRAPH PERTURBATION - FACTOR OUT INTO OWN CLASS
+	 */
+	
 	// CREATE RANDOM EDGES PER NODE
-	createRandomEdgesProb( probability: number, directed?: boolean ) : void;
-	createRandomEdgesSpan( min: number, max: number, directed?: boolean ) : void;
+	createRandomEdgesProb( probability: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
 
 	// RANDOMLY DELETE NODES AND EDGES
 	randomlyDeleteNodesPercentage( percentage: number ) : void;
@@ -98,10 +105,10 @@ export interface IGraph {
 	randomlyDeleteDirEdgesAmount( amount: number ) : void;
 	
 	// RANDOMLY ADD NODES AND EDGES
-	randomlyAddNodesPercentage( percentage: number, config: NodeAdditionConfiguration ) : void;
+	randomlyAddNodesPercentage( percentage: number, config?: NodeAdditionConfiguration ) : void;
 	randomlyAddUndEdgesPercentage( percentage: number ) : void;
 	randomlyAddDirEdgesPercentage( percentage: number ) : void;
-	randomlyAddNodesAmount( amount: number, config: NodeAdditionConfiguration ) : void;
+	randomlyAddNodesAmount( amount: number, config?: NodeAdditionConfiguration ) : void;
 	randomlyAddUndEdgesAmount( amount: number ) : void;
 	randomlyAddDirEdgesAmount( amount: number ) : void;
 }
@@ -467,12 +474,13 @@ class BaseGraph implements IGraph {
 	 * @direction true or false
 	 * CAUTION: this algorithm takes quadratic runtime in #nodes
 	 */
-	createRandomEdgesProb( probability: number, directed?: boolean) : void {
+	createRandomEdgesProb( probability: number, directed?: boolean,
+												 setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
 		if (0 > probability || 1 < probability) {
 			throw new Error("Probability out of range.");
 		}
 		directed = directed || false;
-		var nodes = this._nodes,
+		var nodes = setOfNodes || this._nodes,
 				node_a, 
 				node_b,
 				edge_id,
@@ -495,7 +503,8 @@ class BaseGraph implements IGraph {
 	 * CAUTION: this algorithm could take quadratic runtime in #nodes
 	 * but should be much faster
 	 */
-	createRandomEdgesSpan( min: number, max: number, directed?: boolean ) : void {
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean,
+												 setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
 		if (min < 0) {
 			throw new Error('Minimum degree cannot be negative.');
 		}
@@ -506,7 +515,7 @@ class BaseGraph implements IGraph {
 		// Do we need to set them integers before the calculations?
 		var min = min | 0,
 				max = max | 0,
-				nodes = this._nodes,
+				nodes = setOfNodes || this._nodes,
 				idx_a,
 				node_a,
 				node_b,
@@ -520,7 +529,7 @@ class BaseGraph implements IGraph {
 		for (idx_a in nodes) {
 			node_a = nodes[idx_a];
 			rand_idx = 0;
-			rand_deg = (Math.random()*max+min)|0;
+			rand_deg = (Math.random()*(max-min)+min)|0;
 			while (rand_deg) {
 				rand_idx = (keys_len*Math.random())|0; // should never reach keys_len...
 				node_b = nodes[node_keys[rand_idx]];
@@ -661,8 +670,8 @@ class BaseGraph implements IGraph {
 		let nr_edges_to_delete = Math.ceil(this.nrDirEdges() * percentage/100);
 		this.randomlyDeleteDirEdgesAmount( nr_edges_to_delete );
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
@@ -678,8 +687,8 @@ class BaseGraph implements IGraph {
 			this.deleteNode( this._nodes[randomNodes[nodeID]] );
 		}
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
@@ -695,8 +704,8 @@ class BaseGraph implements IGraph {
 			this.deleteEdge( this._und_edges[randomEdges[edgeID]] );
 		}
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
@@ -712,55 +721,79 @@ class BaseGraph implements IGraph {
 			this.deleteEdge( this._dir_edges[randomEdges[edgeID]] );
 		}
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
-	randomlyAddNodesPercentage( percentage: number, config: NodeAdditionConfiguration ) : void {
-		
+	randomlyAddNodesPercentage( percentage: number, config?: NodeAdditionConfiguration ) : void {
+		let nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage/100);
+		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
 	}
-	
-	
+
+
 	/**
 	 *  
 	 */
 	randomlyAddUndEdgesPercentage( percentage: number ) : void {
 		
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
 	randomlyAddDirEdgesPercentage( percentage: number ) : void {
 		
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
-	randomlyAddNodesAmount( amount: number, config: NodeAdditionConfiguration ) : void {
+	randomlyAddNodesAmount( amount: number, config?: NodeAdditionConfiguration ) : void {
+		if ( amount < 0 ) {
+			throw 'Cowardly refusing to add a negative amount of nodes';
+		}
+		let new_nodes : { [key: string] : $N.IBaseNode } = {},
+				degree,
+				min_degree,
+				max_degree;
 		
+		while ( amount-- ) {
+			let new_node_id = randgen.randBase36String();
+			new_nodes[new_node_id] = this.addNode( new_node_id );
+		}
+		
+		if ( config == null ) {
+			return;
+		}
+		
+		if ( degree = config.und_degree ) {			
+			this.createRandomEdgesSpan(degree, degree, false, new_nodes);
+		}
+		
+		if ( degree = config.dir_degree ) {			
+			this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+		}
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
 	randomlyAddUndEdgesAmount( amount: number ) : void {
 		
 	}
-	
-	
+
+
 	/**
 	 * 
 	 */
 	randomlyAddDirEdgesAmount( amount: number ) : void {
 		
 	}
-	
+
 }
 
 
