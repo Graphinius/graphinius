@@ -13,7 +13,8 @@ let REAL_GRAPH_NR_NODES = 6204,
     stats : $G.GraphStats,
     deg_config : $G.NodeDegreeConfiguration;
 
-const DEGREE_PROBABILITY = 0.002; 
+const DEGREE_PROBABILITY = 0.002;
+const MAX_EDGES_TO_CREATE = 500;
 
 /**
  * TODO introduce sinon & check for methods called
@@ -253,10 +254,51 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         // console.log( `Created ${graph.nrUndEdges() - REAL_GRAPH_NR_EDGES} UNDIRECTED edges.` );
         expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + (deg_config.probability_und/2) * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
         expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.probability_und*2 * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
+      });      
+      
+    });
+
+
+    describe('Randomly adding different amounts / percentages of UNDIRECTED edges', () => {
+
+      it('should refuse to add a negative amount of UNdirected edges', () => {
+         expect(graph.randomlyAddEdgesAmount.bind(graph, -1, {directed: false}))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
+      });
+
+
+      it('should refuse to add a negative percentage of UNdirected edges to an empty graph', () => {
+         graph = new $G.BaseGraph("empty graph");
+         expect(graph.randomlyAddUndEdgesPercentage.bind(graph, -1, {directed: false}))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
       
       
+      it('should refuse to add a negative percentage of UNdirected edges', () => {
+         expect(graph.randomlyAddUndEdgesPercentage.bind(graph, -1, {directed: false}))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
+      });
+
+
+      it('should add a specified amount of UNdirected edges', () => {
+        let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        graph.randomlyAddEdgesAmount(nr_und_edges_to_be_added, {directed: false});
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_und_edges_to_be_added);
+        expect(graph.nrDirEdges()).to.equal(0);
+      });
+
+
+      it('should add a specified percentage of UNdirected edges', () => {
+        let percentage_und_edges_to_be_added = Math.random() * 100;
+        graph.randomlyAddUndEdgesPercentage(percentage_und_edges_to_be_added);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + Math.ceil( REAL_GRAPH_NR_EDGES * percentage_und_edges_to_be_added / 100) );
+        expect(graph.nrDirEdges()).to.equal(0);
+      });
+
     });
+
 
     /**
      * TODO enhance by node types
@@ -373,7 +415,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     /**
      * TODO: enhance by edge types
      */
-    describe('Randomly deleting different amounts / percentages of DIRECTED EDGES - ', () => {
+    describe('Randomly deleting different amounts / percentages of DIRECTED edges - ', () => {
 
         it('should refuse to delete a negative amount of edges', () => {
             expect(graph.randomlyDeleteDirEdgesAmount.bind(graph, -1))
@@ -416,6 +458,47 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
         
+    });
+
+
+    describe('Randomly adding different amounts / percentages of DIRECTED edges', () => {
+
+      it('should refuse to add a negative amount of directed edges', () => {
+         expect(graph.randomlyAddEdgesAmount.bind(graph, -1, {directed: true}))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
+      });
+
+
+      it('should refuse to add a negative percentage of directed edges to an empty graph', () => {
+         graph = new $G.BaseGraph("empty graph");
+         expect(graph.randomlyAddDirEdgesPercentage.bind(graph, -1, {directed: true}))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
+      });
+      
+      
+      it('should refuse to add a negative percentage of directed edges', () => {
+         expect(graph.randomlyAddDirEdgesPercentage.bind(graph, -1))
+            .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
+      });
+
+
+      it('should add a specified amount of directed edges', () => {
+        let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        graph.randomlyAddEdgesAmount(nr_dir_edges_to_be_added, {directed: true});
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
+        expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_dir_edges_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(0);
+      });
+
+
+      it('should add a specified percentage of directed edges', () => {
+        let percentage_dir_edges_to_be_added = Math.random() * 100;
+        graph.randomlyAddDirEdgesPercentage(percentage_dir_edges_to_be_added);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
+        expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + Math.ceil( REAL_GRAPH_NR_EDGES * percentage_dir_edges_to_be_added / 100) );
+        expect(graph.nrUndEdges()).to.equal(0);
+      });
+
     });
     
   });

@@ -132,11 +132,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#nrdiredges" class="tsd-kind-icon">nr<wbr>Dir<wbr>Edges</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#nrnodes" class="tsd-kind-icon">nr<wbr>Nodes</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#nrundedges" class="tsd-kind-icon">nr<wbr>Und<wbr>Edges</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyadddiredgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyadddiredgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyaddedgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Edges<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyaddnodesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Nodes<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyaddnodespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Nodes<wbr>Percentage</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyaddundedgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlyaddundedgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Percentage</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlydeletediredgesamount" class="tsd-kind-icon">randomly<wbr>Delete<wbr>Dir<wbr>Edges<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_core_graph_.igraph.html#randomlydeletediredgespercentage" class="tsd-kind-icon">randomly<wbr>Delete<wbr>Dir<wbr>Edges<wbr>Percentage</a></li>
@@ -952,29 +951,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="randomlyadddiredgesamount" class="tsd-anchor"></a>
-					<h3>randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Amount</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Amount<span class="tsd-signature-symbol">(</span>amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L119">core/Graph.ts:119</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>amount: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="randomlyadddiredgespercentage" class="tsd-anchor"></a>
 					<h3>randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -991,6 +967,32 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>percentage: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="randomlyaddedgesamount" class="tsd-anchor"></a>
+					<h3>randomly<wbr>Add<wbr>Edges<wbr>Amount</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">randomly<wbr>Add<wbr>Edges<wbr>Amount<span class="tsd-signature-symbol">(</span>amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, config<span class="tsd-signature-symbol">?: </span><a href="_core_edges_.edgeconstructoroptions.html" class="tsd-signature-type">EdgeConstructorOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L118">core/Graph.ts:118</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>amount: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="_core_edges_.edgeconstructoroptions.html" class="tsd-signature-type">EdgeConstructorOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1043,29 +1045,6 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="_core_graph_.nodedegreeconfiguration.html" class="tsd-signature-type">NodeDegreeConfiguration</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="randomlyaddundedgesamount" class="tsd-anchor"></a>
-					<h3>randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Amount</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Amount<span class="tsd-signature-symbol">(</span>amount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L118">core/Graph.ts:118</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>amount: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1419,19 +1398,16 @@
 								<a href="_core_graph_.igraph.html#nrundedges" class="tsd-kind-icon">nr<wbr>Und<wbr>Edges</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_core_graph_.igraph.html#randomlyadddiredgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Amount</a>
+								<a href="_core_graph_.igraph.html#randomlyadddiredgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_core_graph_.igraph.html#randomlyadddiredgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</a>
+								<a href="_core_graph_.igraph.html#randomlyaddedgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Edges<wbr>Amount</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_graph_.igraph.html#randomlyaddnodesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Nodes<wbr>Amount</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_graph_.igraph.html#randomlyaddnodespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Nodes<wbr>Percentage</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_core_graph_.igraph.html#randomlyaddundedgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Amount</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_core_graph_.igraph.html#randomlyaddundedgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Und<wbr>Edges<wbr>Percentage</a>

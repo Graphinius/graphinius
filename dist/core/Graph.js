@@ -281,6 +281,9 @@ var BaseGraph = (function () {
             for (node_b in all_nodes) {
                 if (node_a !== node_b && Math.random() <= probability) {
                     edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
+                    if (this.getNodes()[node_a].hasEdgeID(edge_id)) {
+                        continue;
+                    }
                     this.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], { directed: directed });
                 }
             }
@@ -422,17 +425,38 @@ var BaseGraph = (function () {
             this.deleteEdge(this._dir_edges[randomEdges[edgeID]]);
         }
     };
+    BaseGraph.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
+        var nr_und_edges_to_add = Math.ceil(this.nrUndEdges() * percentage / 100);
+        this.randomlyAddEdgesAmount(nr_und_edges_to_add, { directed: false });
+    };
+    BaseGraph.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
+        var nr_dir_edges_to_add = Math.ceil(this.nrDirEdges() * percentage / 100);
+        this.randomlyAddEdgesAmount(nr_dir_edges_to_add, { directed: true });
+    };
+    BaseGraph.prototype.randomlyAddEdgesAmount = function (amount, config) {
+        if (amount <= 0) {
+            throw new Error('Cowardly refusing to add a non-positive amount of edges');
+        }
+        var node_a, node_b, nodes;
+        var direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
+        while (amount) {
+            node_a = this.getRandomNode();
+            while ((node_b = this.getRandomNode()) === node_a) { }
+            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+            if (node_a.hasEdgeID(edge_id)) {
+                logger.log("Duplicate edge creation, continuing...");
+                continue;
+            }
+            else {
+                this.addEdge(edge_id, node_a, node_b, { directed: direction });
+                --amount;
+            }
+        }
+        logger.log("Created " + amount + " " + (direction ? "directed" : "undirected") + " edges...");
+    };
     BaseGraph.prototype.randomlyAddNodesPercentage = function (percentage, config) {
         var nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage / 100);
         this.randomlyAddNodesAmount(nr_nodes_to_add, config);
-    };
-    BaseGraph.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
-    };
-    BaseGraph.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
-    };
-    BaseGraph.prototype.randomlyAddUndEdgesAmount = function (amount) {
-    };
-    BaseGraph.prototype.randomlyAddDirEdgesAmount = function (amount) {
     };
     BaseGraph.prototype.randomlyAddNodesAmount = function (amount, config) {
         if (amount < 0) {

@@ -9,9 +9,9 @@ import { Logger } from '../utils/logger';
 let logger : Logger = new Logger();
 
 export enum GraphMode {
-	INIT, 
-	DIRECTED, 
-	UNDIRECTED, 
+	INIT,
+	DIRECTED,
+	UNDIRECTED,
 	MIXED
 }
 
@@ -26,8 +26,8 @@ export interface DegreeDistribution {
 
 
 export interface GraphStats {
-	mode			: GraphMode;
-	nr_nodes		: number;
+	mode					: GraphMode;
+	nr_nodes			: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
 }
@@ -115,8 +115,7 @@ export interface IGraph {
 	randomlyAddUndEdgesPercentage( percentage: number ) : void;
 	randomlyAddDirEdgesPercentage( percentage: number ) : void;
 	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void;
-	randomlyAddUndEdgesAmount( amount: number ) : void;
-	randomlyAddDirEdgesAmount( amount: number ) : void;
+	randomlyAddEdgesAmount( amount: number, config?: $E.EdgeConstructorOptions ) : void;
 }
 
 
@@ -496,6 +495,10 @@ class BaseGraph implements IGraph {
 			for (node_b in all_nodes) {
 				if (node_a !== node_b && Math.random() <= probability) {
 					edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
+					// Check if edge already exists
+					if (this.getNodes()[node_a].hasEdgeID(edge_id)) {
+						continue;
+					}
 					this.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
 				}
 			}
@@ -548,6 +551,7 @@ class BaseGraph implements IGraph {
 				node_b = all_nodes[node_keys[rand_idx]];
 				if (node_a !== node_b) {
 					edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+					// Check if edge already exists
 					if (node_a.hasEdgeID(edge_id)) {
 						continue;
 					}
@@ -737,19 +741,11 @@ class BaseGraph implements IGraph {
 
 
 	/**
-	 * 
-	 */
-	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void {
-		let nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage/100);
-		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
-	}
-
-
-	/**
 	 *  
 	 */
 	randomlyAddUndEdgesPercentage( percentage: number ) : void {
-		
+		let nr_und_edges_to_add = Math.ceil(this.nrUndEdges() * percentage/100);		
+		this.randomlyAddEdgesAmount( nr_und_edges_to_add, {directed: false} );
 	}
 
 
@@ -757,23 +753,58 @@ class BaseGraph implements IGraph {
 	 * 
 	 */
 	randomlyAddDirEdgesPercentage( percentage: number ) : void {
-		
+		let nr_dir_edges_to_add = Math.ceil(this.nrDirEdges() * percentage/100);
+		this.randomlyAddEdgesAmount( nr_dir_edges_to_add, {directed: true} );
 	}
 	
 	
 	/**
 	 * 
+	 * DEFAULT edge direction: UNDIRECTED
 	 */
-	randomlyAddUndEdgesAmount( amount: number ) : void {
+	randomlyAddEdgesAmount( amount: number, config?: $E.EdgeConstructorOptions ) : void {
+		if ( amount <= 0 ) {
+			throw new Error('Cowardly refusing to add a non-positive amount of edges')
+		}
+
+		let node_a : $N.IBaseNode,
+				node_b : $N.IBaseNode,
+				nodes	 : {[key: string] : $N.IBaseNode};
 		
+		let direction = ( config && config.directed ) ? config.directed : false,
+				dir = direction ? "_d" : "_u";
+
+		// logger.log("DIRECTION of new edges to create: " + direction ? "directed" : "undirected");
+
+		while ( amount ) {
+			node_a = this.getRandomNode();
+			while ( ( node_b = this.getRandomNode() ) === node_a ) {}
+
+			let edge_id = `${node_a.getID()}_${node_b.getID()}${dir}`;
+			if ( node_a.hasEdgeID( edge_id ) ) {
+				// TODO: Check if the whole duplication prevention is really necessary!
+				logger.log("Duplicate edge creation, continuing...");
+				continue;
+			}
+			else {
+				/**
+				 * Enable random weights for edges ??
+				 */
+				this.addEdge(edge_id, node_a, node_b, {directed: direction});
+				--amount;
+			}
+		}
+
+		logger.log(`Created ${amount} ${direction ? "directed" : "undirected"} edges...`);
 	}
 
 
 	/**
 	 * 
 	 */
-	randomlyAddDirEdgesAmount( amount: number ) : void {
-		
+	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void {
+		let nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage/100);
+		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
 	}
 
 
