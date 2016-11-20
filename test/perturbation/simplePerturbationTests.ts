@@ -3,6 +3,7 @@
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $JI from '../../src/io/input/JSONInput';
+import * as $CSV from '../../src/io/input/CSVInput';
 import * as $P from '../../src/perturbation/SimplePerturbations';
 
 let expect = chai.expect;
@@ -506,5 +507,168 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     });
     
   });
+
+
+
+	/**
+	 * We don't know how to test RANDOM generation of something yet,
+	 * so we fall back to simply test differences in the degree distribution
+	 * This is a VERY WEAK test however, for even the addition or
+	 * deletion of a single edge would lead to the same result...
+	 * TODO figure out how to test this properly
+	 * PLUS - how to test for runtime ???
+	 */
+	describe('Randomly generate edges in an existing graph (create a random graph)', () => {
+		var test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv",
+				probability : number,
+				min	: number,
+				max : number,
+				deg_dist : $G.DegreeDistribution,
+        graph : $G.IGraph,
+        perturber: $P.ISimplePerturber,
+			  csv	: $CSV.CSVInput = new $CSV.CSVInput();
+
+
+    beforeEach(() => {
+				graph = csv.readFromAdjacencyListFile(test_graph_file),
+        perturber = new $P.SimplePerturber( graph );
+    });
+				
+		
+		describe('Random edge generation via probability', () => {
+				
+			it('should throw an error if probability is smaller 0', () => {
+				probability = -1;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(perturber.createRandomEdgesProb.bind(graph, probability, true)).to.throw('Probability out of range');
+			});
+
+			
+			it('should throw an error if probability is greater 1', () => {
+				probability = 2;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(perturber.createRandomEdgesProb.bind(graph, probability, true)).to.throw('Probability out of range');
+			});
+
+			
+			it('DIRECTED - should randomly generate directed edges', () => {
+				probability = 0.5;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				perturber.createRandomEdgesProb(probability, true);
+				expect(graph.nrDirEdges()).not.to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+
+			
+			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
+				probability = 0.5;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				perturber.createRandomEdgesProb(probability, false);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+
+			
+			it('UNDIRECTED - should default to UNdirected edges if no direction is provided', () => {
+				probability = 0.5;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				perturber.createRandomEdgesProb(probability);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+		
+		});
+				
+		
+		/**
+		 * Although we clearly specify min / max in this case,
+		 * we can still not test for specific node degree (ranges),
+		 * except for the general fact that a nodes degree
+		 * should be in the range [0, max+n-1], as
+		 * all n-1 other nodes might have an edge to that node
+		 */
+		describe('Random edge generation via min / max #edges per node', () => {
+				
+			it('should throw an error if min is smaller 0', () => {
+				min = -1;
+				max = 10;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);
+				expect(perturber.createRandomEdgesSpan.bind(perturber, min, max)).to.throw('Minimum degree cannot be negative.');
+			});
+			
+			
+			it('should throw an error if max is greater (n-1)', () => {
+				min = 0;
+				max = 4;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(perturber.createRandomEdgesSpan.bind(perturber, min, max)).to.throw('Maximum degree exceeds number of reachable nodes.');
+			});
+			
+			
+			it('should throw an error if max is greater (n-1)', () => {
+				min = 4;
+				max = 2;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(perturber.createRandomEdgesSpan.bind(perturber, min, max)).to.throw('Minimum degree cannot exceed maximum degree.');
+			});
+
+			
+			it('DIRECTED - should randomly generate directed edges', () => {
+				min = 1;
+				max = 3;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				perturber.createRandomEdgesSpan(min, max, true);
+				expect(graph.nrDirEdges()).not.to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+			
+			
+			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
+				min = 1;
+				max = 3;
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				perturber.createRandomEdgesSpan(min, max, false);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).not.to.equal(0);		
+				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+			});
+		
+		});
+		
+	});
 
 });

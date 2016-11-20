@@ -104,6 +104,8 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#createedgesbyconfig" class="tsd-kind-icon">create<wbr>Edges<wbr>ByConfig</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#createrandomedgesprob" class="tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Prob</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#createrandomedgesspan" class="tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Span</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#randomlyadddiredgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#randomlyaddedgesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Edges<wbr>Amount</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_perturbation_simpleperturbations_.simpleperturber.html#randomlyaddnodesamount" class="tsd-kind-icon">randomly<wbr>Add<wbr>Nodes<wbr>Amount</a></li>
@@ -132,7 +134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:51</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L51">perturbation/SimplePerturbations.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">_graph<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in perturbation/SimplePerturbations.ts:53</li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L53">perturbation/SimplePerturbations.ts:53</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +173,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:246</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L246">perturbation/SimplePerturbations.ts:246</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -199,6 +201,103 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="createrandomedgesprob" class="tsd-anchor"></a>
+					<h3>create<wbr>Random<wbr>Edges<wbr>Prob</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Prob<span class="tsd-signature-symbol">(</span>probability<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, directed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, new_nodes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L293">perturbation/SimplePerturbations.ts:293</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Simple edge generator:
+										Go through all node combinations, and
+									add an (un)directed edge with</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>direction</dt>
+									<dd><p>true or false
+										CAUTION: this algorithm takes quadratic runtime in #nodes</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>probability: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>and</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> directed: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> new_nodes: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="createrandomedgesspan" class="tsd-anchor"></a>
+					<h3>create<wbr>Random<wbr>Edges<wbr>Span</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Span<span class="tsd-signature-symbol">(</span>min<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, max<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, directed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, setOfNodes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L328">perturbation/SimplePerturbations.ts:328</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Simple edge generator:
+										Go through all nodes, and
+										add [min, max] (un)directed edges to
+										a randomly chosen node
+										CAUTION: this algorithm could take quadratic runtime in #nodes
+									but should be much faster</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>min: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>max: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> directed: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> setOfNodes: <span class="tsd-signature-type">object</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-index-signature">
+											<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 					<a name="randomlyadddiredgespercentage" class="tsd-anchor"></a>
 					<h3>randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
@@ -209,7 +308,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlyadddiredgespercentage">randomlyAddDirEdgesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:160</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L160">perturbation/SimplePerturbations.ts:160</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -233,7 +332,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlyaddedgesamount">randomlyAddEdgesAmount</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:170</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L170">perturbation/SimplePerturbations.ts:170</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -265,7 +364,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlyaddnodesamount">randomlyAddNodesAmount</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:222</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L222">perturbation/SimplePerturbations.ts:222</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -299,7 +398,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlyaddnodespercentage">randomlyAddNodesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:210</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L210">perturbation/SimplePerturbations.ts:210</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -326,7 +425,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlyaddundedgespercentage">randomlyAddUndEdgesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:151</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L151">perturbation/SimplePerturbations.ts:151</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -350,7 +449,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeletediredgesamount">randomlyDeleteDirEdgesAmount</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:134</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L134">perturbation/SimplePerturbations.ts:134</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -374,7 +473,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeletediredgespercentage">randomlyDeleteDirEdgesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:88</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L88">perturbation/SimplePerturbations.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -402,7 +501,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeletenodesamount">randomlyDeleteNodesAmount</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:100</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L100">perturbation/SimplePerturbations.ts:100</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -426,7 +525,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeletenodespercentage">randomlyDeleteNodesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:62</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L62">perturbation/SimplePerturbations.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -454,7 +553,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeleteundedgesamount">randomlyDeleteUndEdgesAmount</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:117</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L117">perturbation/SimplePerturbations.ts:117</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -478,7 +577,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html">ISimplePerturber</a>.<a href="../interfaces/_perturbation_simpleperturbations_.isimpleperturber.html#randomlydeleteundedgespercentage">randomlyDeleteUndEdgesPercentage</a></p>
 								<ul>
-									<li>Defined in perturbation/SimplePerturbations.ts:75</li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/perturbation/SimplePerturbations.ts#L75">perturbation/SimplePerturbations.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -571,6 +670,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="_perturbation_simpleperturbations_.simpleperturber.html#createedgesbyconfig" class="tsd-kind-icon">create<wbr>Edges<wbr>ByConfig</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_perturbation_simpleperturbations_.simpleperturber.html#createrandomedgesprob" class="tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Prob</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_perturbation_simpleperturbations_.simpleperturber.html#createrandomedgesspan" class="tsd-kind-icon">create<wbr>Random<wbr>Edges<wbr>Span</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_perturbation_simpleperturbations_.simpleperturber.html#randomlyadddiredgespercentage" class="tsd-kind-icon">randomly<wbr>Add<wbr>Dir<wbr>Edges<wbr>Percentage</a>

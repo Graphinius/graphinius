@@ -28,8 +28,8 @@ export interface NodeDegreeConfiguration {
 
 export interface ISimplePerturber {	
 	// CREATE RANDOM EDGES PER NODE
-	// createRandomEdgesProb( probability: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
-	// createRandomEdgesSpan( min: number, max: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
+	createRandomEdgesProb( probability: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
 
 	// RANDOMLY DELETE NODES AND EDGES
 	randomlyDeleteNodesPercentage( percentage: number ) : void;
@@ -256,27 +256,120 @@ class SimplePerturber implements ISimplePerturber {
 		{
 			// Ignore min / max undirected degree if specific amount is given
 			if ( ( degree = config.und_degree ) != null ) {			
-				this._graph.createRandomEdgesSpan(degree, degree, false, new_nodes);
+				this.createRandomEdgesSpan(degree, degree, false, new_nodes);
 			}
 			else if ( ( min_degree = config.min_und_degree) != null 
 						&& ( max_degree = config.max_und_degree ) != null ) {
-				this._graph.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
+				this.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
 			}
 			// Ignore min / max directed degree if specific amount is given
 			if ( degree = config.dir_degree ) {			
-				this._graph.createRandomEdgesSpan(degree, degree, true, new_nodes);
+				this.createRandomEdgesSpan(degree, degree, true, new_nodes);
 			}
 			else if ( ( min_degree = config.min_dir_degree) != null 
 						&& ( max_degree = config.max_dir_degree ) != null ) {
-				this._graph.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
+				this.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
 			}
 		}
 		else {
 			if ( config.probability_dir != null ) {
-				this._graph.createRandomEdgesProb( config.probability_dir, true, new_nodes );
+				this.createRandomEdgesProb( config.probability_dir, true, new_nodes );
 			}
 			if ( config.probability_und != null ) {
-				this._graph.createRandomEdgesProb( config.probability_und, false, new_nodes );
+				this.createRandomEdgesProb( config.probability_und, false, new_nodes );
+			}
+		}
+	}
+
+
+	/**
+	 * Simple edge generator:
+	 * Go through all node combinations, and
+	 * add an (un)directed edge with 
+	 * @param probability and
+	 * @direction true or false
+	 * CAUTION: this algorithm takes quadratic runtime in #nodes
+	 */
+	createRandomEdgesProb( probability: number, directed?: boolean,
+												 new_nodes?: { [key: string] : $N.IBaseNode} ) : void {
+		if (0 > probability || 1 < probability) {
+			throw new Error("Probability out of range.");
+		}
+		directed = directed || false;
+		new_nodes = new_nodes || this._graph.getNodes();
+		let all_nodes = this._graph.getNodes(),
+				node_a, 
+				node_b,
+				edge_id,
+				dir = directed ? '_d' : '_u';
+		for (node_a in new_nodes) {
+			for (node_b in all_nodes) {
+				if (node_a !== node_b && Math.random() <= probability) {
+					edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
+					// Check if edge already exists
+					if (this._graph.getNodes()[node_a].hasEdgeID(edge_id)) {
+						continue;
+					}
+					this._graph.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
+				}
+			}
+		}
+	}
+	
+
+	/**
+	 * Simple edge generator:
+	 * Go through all nodes, and
+	 * add [min, max] (un)directed edges to 
+	 * a randomly chosen node
+	 * CAUTION: this algorithm could take quadratic runtime in #nodes
+	 * but should be much faster
+	 */
+	createRandomEdgesSpan( min: number, max: number, directed?: boolean,
+												 setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
+		if (min < 0) {
+			throw new Error('Minimum degree cannot be negative.');
+		}
+		if (max >= this._graph.nrNodes()) {
+			throw new Error('Maximum degree exceeds number of reachable nodes.');
+		}
+		if (min > max) {
+			throw new Error('Minimum degree cannot exceed maximum degree.');
+		}
+		directed = directed || false;
+		// Do we need to set them integers before the calculations?
+		var min = min | 0,
+				max = max | 0,
+				new_nodes = setOfNodes || this._graph.getNodes(),
+				all_nodes = this._graph.getNodes(),
+				idx_a,
+				node_a,
+				node_b,
+				edge_id,
+				// we want edges to all possible nodes
+				// TODO: enhance with types / filters later on
+				node_keys = Object.keys(all_nodes),
+				keys_len = node_keys.length,
+				rand_idx,
+				rand_deg,
+				dir = directed ? '_d' : '_u';
+
+		for (idx_a in new_nodes) {
+			node_a = new_nodes[idx_a];
+			rand_idx = 0;
+			rand_deg = (Math.random()*(max-min)+min)|0;
+			while (rand_deg) {
+				rand_idx = (keys_len*Math.random())|0; // should never reach keys_len...
+				node_b = all_nodes[node_keys[rand_idx]];
+				if (node_a !== node_b) {
+					edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+					// Check if edge already exists
+					if (node_a.hasEdgeID(edge_id)) {
+						continue;
+					}
+					this._graph.addEdge(edge_id, node_a, node_b, {directed: directed});
+					--rand_deg;
+				}
 			}
 		}
 	}

@@ -270,54 +270,6 @@ var BaseGraph = (function () {
         this.clearAllDirEdges();
         this.clearAllUndEdges();
     };
-    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed, new_nodes) {
-        if (0 > probability || 1 < probability) {
-            throw new Error("Probability out of range.");
-        }
-        directed = directed || false;
-        var new_nodes = new_nodes || this.getNodes(), all_nodes = this.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
-        for (node_a in new_nodes) {
-            for (node_b in all_nodes) {
-                if (node_a !== node_b && Math.random() <= probability) {
-                    edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
-                    if (this.getNodes()[node_a].hasEdgeID(edge_id)) {
-                        continue;
-                    }
-                    this.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], { directed: directed });
-                }
-            }
-        }
-    };
-    BaseGraph.prototype.createRandomEdgesSpan = function (min, max, directed, setOfNodes) {
-        if (min < 0) {
-            throw new Error('Minimum degree cannot be negative.');
-        }
-        if (max >= this.nrNodes()) {
-            throw new Error('Maximum degree exceeds number of reachable nodes.');
-        }
-        if (min > max) {
-            throw new Error('Minimum degree cannot exceed maximum degree.');
-        }
-        directed = directed || false;
-        var min = min | 0, max = max | 0, new_nodes = setOfNodes || this.getNodes(), all_nodes = this.getNodes(), idx_a, node_a, node_b, edge_id, node_keys = Object.keys(all_nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
-        for (idx_a in new_nodes) {
-            node_a = new_nodes[idx_a];
-            rand_idx = 0;
-            rand_deg = (Math.random() * (max - min) + min) | 0;
-            while (rand_deg) {
-                rand_idx = (keys_len * Math.random()) | 0;
-                node_b = all_nodes[node_keys[rand_idx]];
-                if (node_a !== node_b) {
-                    edge_id = node_a.getID() + "_" + node_b.getID() + dir;
-                    if (node_a.hasEdgeID(edge_id)) {
-                        continue;
-                    }
-                    this.addEdge(edge_id, node_a, node_b, { directed: directed });
-                    --rand_deg;
-                }
-            }
-        }
-    };
     BaseGraph.prototype.getRandomDirEdge = function () {
         return this.pickRandomProperty(this._dir_edges);
     };
