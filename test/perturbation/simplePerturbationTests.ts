@@ -3,6 +3,7 @@
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $JI from '../../src/io/input/JSONInput';
+import * as $P from '../../src/perturbation/SimplePerturbations';
 
 let expect = chai.expect;
 let REAL_GRAPH_NR_NODES = 6204,
@@ -11,7 +12,8 @@ let REAL_GRAPH_NR_NODES = 6204,
     real_graph = "./test/test_data/real_graph.json",
     json : $JI.IJSONInput,
     stats : $G.GraphStats,
-    deg_config : $G.NodeDegreeConfiguration;
+    deg_config : $P.NodeDegreeConfiguration,
+    perturber : $P.ISimplePerturber;
 
 const DEGREE_PROBABILITY = 0.002;
 const MAX_EDGES_TO_CREATE = 500;
@@ -26,7 +28,8 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
     beforeEach( () => {
       json = new $JI.JSONInput();
-      graph = json.readFromJSONFile(real_graph);
+      graph = json.readFromJSONFile( real_graph );
+      perturber = new $P.SimplePerturber( graph );
       stats = graph.getStats();
       expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
       expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
@@ -37,20 +40,20 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly ADD different amounts / percentages of NODES - ', () => {
       
       it('should refuse to add a negative amount of nodes', () => {
-         expect(graph.randomlyAddNodesAmount.bind(graph, -1))
+         expect(perturber.randomlyAddNodesAmount.bind(perturber, -1))
             .to.throw('Cowardly refusing to add a negative amount of nodes'); 
       });
       
       
       it('should refuse to add a negative percentage of nodes', () => {
-         expect(graph.randomlyAddNodesPercentage.bind(graph, -1))
+         expect(perturber.randomlyAddNodesPercentage.bind(perturber, -1))
             .to.throw('Cowardly refusing to add a negative amount of nodes'); 
       });
       
       
       it('should add a specified amount of nodes', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
       });
@@ -58,7 +61,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
       it(`should add some random percentage of nodes`, () => {
         let p = Math.floor(Math.random()*100);              
-        graph.randomlyAddNodesPercentage(p);
+        perturber.randomlyAddNodesPercentage(p);
         expect(graph.nrNodes()).to.equal( REAL_GRAPH_NR_NODES + Math.ceil(REAL_GRAPH_NR_NODES * p/100) );
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
       });
@@ -68,7 +71,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: -3 };
         
-        expect(graph.randomlyAddNodesAmount.bind(graph, nr_nodes_to_be_added, deg_config)).to.throw("Minimum degree cannot be negative.");
+        expect(perturber.randomlyAddNodesAmount.bind(perturber, nr_nodes_to_be_added, deg_config)).to.throw("Minimum degree cannot be negative.");
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
       });
@@ -79,7 +82,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let one_too_many = REAL_GRAPH_NR_NODES + nr_nodes_to_be_added + 1
         deg_config = { und_degree: one_too_many };
         
-        expect(graph.randomlyAddNodesAmount.bind(graph, nr_nodes_to_be_added, deg_config)).to.throw("Maximum degree exceeds number of reachable nodes.");
+        expect(perturber.randomlyAddNodesAmount.bind(perturber, nr_nodes_to_be_added, deg_config)).to.throw("Maximum degree exceeds number of reachable nodes.");
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
       });
@@ -89,7 +92,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: 3 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);        
       });
@@ -99,7 +102,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: 3, min_und_degree: 2, max_und_degree: 5 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);        
       });
@@ -109,7 +112,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_und_degree: 3, max_und_degree: 5 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);        
@@ -120,7 +123,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { dir_degree: 3 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);        
       });
@@ -130,7 +133,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { dir_degree: 3, min_dir_degree: 2, max_dir_degree: 5 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);        
       });
@@ -140,7 +143,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_dir_degree: 2, max_dir_degree: 5 };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
@@ -151,7 +154,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { dir_degree: 3, probability_dir: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);  
       });
@@ -161,7 +164,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_dir_degree: 2, max_dir_degree: 5, probability_dir: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
@@ -172,7 +175,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: 3, probability_dir: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);  
       });
@@ -182,7 +185,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_und_degree: 2, max_und_degree: 5, probability_dir: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);
@@ -193,7 +196,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*200);
         deg_config = { probability_dir: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         // TODO - figure out way to test probabilities (distribution of values)
         // console.log( `Created ${graph.nrDirEdges()} DIRECTED edges.` );
@@ -206,7 +209,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { dir_degree: 3, probability_und: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);  
       });
@@ -216,7 +219,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_dir_degree: 2, max_dir_degree: 5, probability_und: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
         expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
@@ -227,7 +230,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: 3, probability_und: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);  
       });
@@ -237,7 +240,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { min_und_degree: 2, max_und_degree: 5, probability_und: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
         expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);
@@ -248,7 +251,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*200);
         deg_config = { probability_und: DEGREE_PROBABILITY };
         
-        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        perturber.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
         // TODO - figure out way to test probabilities (distribution of values)
         // console.log( `Created ${graph.nrUndEdges() - REAL_GRAPH_NR_EDGES} UNDIRECTED edges.` );
@@ -262,27 +265,27 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly adding different amounts / percentages of UNDIRECTED edges', () => {
 
       it('should refuse to add a negative amount of UNdirected edges', () => {
-         expect(graph.randomlyAddEdgesAmount.bind(graph, -1, {directed: false}))
+         expect(perturber.randomlyAddEdgesAmount.bind(perturber, -1, {directed: false}))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
 
 
       it('should refuse to add a negative percentage of UNdirected edges to an empty graph', () => {
          graph = new $G.BaseGraph("empty graph");
-         expect(graph.randomlyAddUndEdgesPercentage.bind(graph, -1, {directed: false}))
+         expect(perturber.randomlyAddUndEdgesPercentage.bind(perturber, -1, {directed: false}))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
       
       
       it('should refuse to add a negative percentage of UNdirected edges', () => {
-         expect(graph.randomlyAddUndEdgesPercentage.bind(graph, -1, {directed: false}))
+         expect(perturber.randomlyAddUndEdgesPercentage.bind(perturber, -1, {directed: false}))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
 
 
       it('should add a specified amount of UNdirected edges', () => {
         let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
-        graph.randomlyAddEdgesAmount(nr_und_edges_to_be_added, {directed: false});
+        perturber.randomlyAddEdgesAmount(nr_und_edges_to_be_added, {directed: false});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_und_edges_to_be_added);
         expect(graph.nrDirEdges()).to.equal(0);
@@ -291,7 +294,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
       it('should add a specified percentage of UNdirected edges', () => {
         let percentage_und_edges_to_be_added = Math.random() * 100;
-        graph.randomlyAddUndEdgesPercentage(percentage_und_edges_to_be_added);
+        perturber.randomlyAddUndEdgesPercentage(percentage_und_edges_to_be_added);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + Math.ceil( REAL_GRAPH_NR_EDGES * percentage_und_edges_to_be_added / 100) );
         expect(graph.nrDirEdges()).to.equal(0);
@@ -306,26 +309,26 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly DELETE different amounts / percentages of NODES - ', () => {
         
         it('should refuse to delete a negative amount of nodes', () => {
-            expect(graph.randomlyDeleteNodesAmount.bind(graph, -1))
+            expect(perturber.randomlyDeleteNodesAmount.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of nodes');
         });
         
         
         it('should refuse to delete a negative percentage of nodes', () => {
-            expect(graph.randomlyDeleteNodesPercentage.bind(graph, -1))
+            expect(perturber.randomlyDeleteNodesPercentage.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of nodes');
         });
         
         
         it('should simply delete all nodes when passing an amount greater than the number of existing nodes', () => {
-            graph.randomlyDeleteNodesAmount(10e6);            
+            perturber.randomlyDeleteNodesAmount(10e6);            
             expect(graph.nrUndEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(0);
         });
         
         
         it('should simply delete all nodes when passing a percentage greater than 100%', () => {
-            graph.randomlyDeleteNodesPercentage(101);            
+            perturber.randomlyDeleteNodesPercentage(101);            
             expect(graph.nrUndEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(0);
         });
@@ -333,14 +336,14 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         
         it('should delete a specified amount of nodes', () => {
             let nr_nodes_to_be_deleted = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
-            graph.randomlyDeleteNodesAmount(nr_nodes_to_be_deleted);
+            perturber.randomlyDeleteNodesAmount(nr_nodes_to_be_deleted);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES - nr_nodes_to_be_deleted);
         });
         
 
         it(`should delete some random percentage of all nodes`, () => {
             let p = Math.floor(Math.random()*100);                
-            graph.randomlyDeleteNodesPercentage(p);
+            perturber.randomlyDeleteNodesPercentage(p);
             expect(graph.nrNodes()).to.equal( REAL_GRAPH_NR_NODES - Math.ceil(REAL_GRAPH_NR_NODES * p/100) );
         });
         
@@ -353,26 +356,26 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly delete different amounts / percentages of UNDIRECTED Edges - ', () => {
         
         it('should refuse to delete a negative amount of edges', () => {
-            expect(graph.randomlyDeleteUndEdgesAmount.bind(graph, -1))
+            expect(perturber.randomlyDeleteUndEdgesAmount.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of edges');
         });
         
         
         it('should refuse to delete a negative percentage of edges', () => {
-            expect(graph.randomlyDeleteUndEdgesPercentage.bind(graph, -1))
+            expect(perturber.randomlyDeleteUndEdgesPercentage.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of edges');
         });
         
         
         it('should simply delete all edges when passing an amount greater than the number of existing edges', () => {
-            graph.randomlyDeleteUndEdgesAmount(10e6);            
+            perturber.randomlyDeleteUndEdgesAmount(10e6);            
             expect(graph.nrUndEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
         
         
         it('should simply delete all edges when passing a percentage greater than 100%', () => {
-            graph.randomlyDeleteUndEdgesPercentage(101);            
+            perturber.randomlyDeleteUndEdgesPercentage(101);            
             expect(graph.nrUndEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -380,7 +383,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         
         it('should delete a specified amount of edges', () => {
             let nr_edges_to_be_deleted = Math.floor(Math.random()*REAL_GRAPH_NR_EDGES);
-            graph.randomlyDeleteUndEdgesAmount(nr_edges_to_be_deleted);          
+            perturber.randomlyDeleteUndEdgesAmount(nr_edges_to_be_deleted);          
             expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES - nr_edges_to_be_deleted);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -388,7 +391,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
         it(`should delete a random percentage of all edges`, () => {
             let p = Math.floor(Math.random()*100);                
-            graph.randomlyDeleteUndEdgesPercentage(p);
+            perturber.randomlyDeleteUndEdgesPercentage(p);
             expect(graph.nrUndEdges()).to.equal( REAL_GRAPH_NR_EDGES - Math.ceil(REAL_GRAPH_NR_EDGES * p/100) );
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -407,6 +410,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     beforeEach( () => {
       json = new $JI.JSONInput(false, true, false);
       graph = json.readFromJSONFile(real_graph);
+      perturber = new $P.SimplePerturber( graph );
       stats = graph.getStats();
       expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
       expect(graph.nrUndEdges()).to.equal(0);
@@ -418,26 +422,26 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly deleting different amounts / percentages of DIRECTED edges - ', () => {
 
         it('should refuse to delete a negative amount of edges', () => {
-            expect(graph.randomlyDeleteDirEdgesAmount.bind(graph, -1))
+            expect(perturber.randomlyDeleteDirEdgesAmount.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of edges');
         });
         
         
         it('should refuse to delete a negative percentage of edges', () => {
-            expect(graph.randomlyDeleteDirEdgesPercentage.bind(graph, -1))
+            expect(perturber.randomlyDeleteDirEdgesPercentage.bind(perturber, -1))
                 .to.throw('Cowardly refusing to remove a negative amount of edges');
         });
         
         
         it('should simply delete all edges when passing an amount greater than the number of existing edges', () => {
-            graph.randomlyDeleteDirEdgesAmount(10e6);            
+            perturber.randomlyDeleteDirEdgesAmount(10e6);            
             expect(graph.nrDirEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
         
         
         it('should simply delete all edges when passing a percentage greater than 100%', () => {
-            graph.randomlyDeleteDirEdgesPercentage(101);            
+            perturber.randomlyDeleteDirEdgesPercentage(101);            
             expect(graph.nrDirEdges()).to.equal(0);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -445,7 +449,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
         
         it('should delete a specified amount of edges', () => {
             let nr_edges_to_be_deleted = Math.floor(Math.random()*REAL_GRAPH_NR_EDGES);
-            graph.randomlyDeleteDirEdgesAmount(nr_edges_to_be_deleted);          
+            perturber.randomlyDeleteDirEdgesAmount(nr_edges_to_be_deleted);          
             expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES - nr_edges_to_be_deleted);
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -453,7 +457,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
         it(`should delete a certain percentage of all edges`, () => {
             let p = Math.floor(Math.random()*100);                
-            graph.randomlyDeleteDirEdgesPercentage(p);
+            perturber.randomlyDeleteDirEdgesPercentage(p);
             expect(graph.nrDirEdges()).to.equal( REAL_GRAPH_NR_EDGES - Math.ceil(REAL_GRAPH_NR_EDGES * p/100) );
             expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         });
@@ -464,27 +468,27 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     describe('Randomly adding different amounts / percentages of DIRECTED edges', () => {
 
       it('should refuse to add a negative amount of directed edges', () => {
-         expect(graph.randomlyAddEdgesAmount.bind(graph, -1, {directed: true}))
+         expect(perturber.randomlyAddEdgesAmount.bind(perturber, -1, {directed: true}))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
 
 
       it('should refuse to add a negative percentage of directed edges to an empty graph', () => {
          graph = new $G.BaseGraph("empty graph");
-         expect(graph.randomlyAddDirEdgesPercentage.bind(graph, -1, {directed: true}))
+         expect(perturber.randomlyAddDirEdgesPercentage.bind(perturber, -1, {directed: true}))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
       
       
       it('should refuse to add a negative percentage of directed edges', () => {
-         expect(graph.randomlyAddDirEdgesPercentage.bind(graph, -1))
+         expect(perturber.randomlyAddDirEdgesPercentage.bind(perturber, -1))
             .to.throw('Cowardly refusing to add a non-positive amount of edges'); 
       });
 
 
       it('should add a specified amount of directed edges', () => {
         let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
-        graph.randomlyAddEdgesAmount(nr_dir_edges_to_be_added, {directed: true});
+        perturber.randomlyAddEdgesAmount(nr_dir_edges_to_be_added, {directed: true});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_dir_edges_to_be_added);
         expect(graph.nrUndEdges()).to.equal(0);
@@ -493,7 +497,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
       it('should add a specified percentage of directed edges', () => {
         let percentage_dir_edges_to_be_added = Math.random() * 100;
-        graph.randomlyAddDirEdgesPercentage(percentage_dir_edges_to_be_added);
+        perturber.randomlyAddDirEdgesPercentage(percentage_dir_edges_to_be_added);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + Math.ceil( REAL_GRAPH_NR_EDGES * percentage_dir_edges_to_be_added / 100) );
         expect(graph.nrUndEdges()).to.equal(0);

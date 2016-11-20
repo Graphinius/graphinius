@@ -47,17 +47,18 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(8);
-	var JSONInput       = __webpack_require__(13);
-	var CSVOutput       = __webpack_require__(14);
-	var BFS				      = __webpack_require__(15);
-	var DFS				      = __webpack_require__(17);
-	var PFS             = __webpack_require__(18);
+	var CSVInput 	      = __webpack_require__(7);
+	var JSONInput       = __webpack_require__(12);
+	var CSVOutput       = __webpack_require__(13);
+	var BFS				      = __webpack_require__(14);
+	var DFS				      = __webpack_require__(16);
+	var PFS             = __webpack_require__(17);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(12);
-	var callbackUtils   = __webpack_require__(16);
-	var randGen         = __webpack_require__(5);
-	var binaryHeap      = __webpack_require__(19);
+	var remoteUtils     = __webpack_require__(11);
+	var callbackUtils   = __webpack_require__(15);
+	var randGen         = __webpack_require__(19);
+	var binaryHeap      = __webpack_require__(18);
+	var simplePerturbation = __webpack_require__(20);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -100,7 +101,10 @@
 	  },
 	  datastructs: {
 	    binaryHeap  : binaryHeap
-	  }
+	  },
+		perturbation: {
+			simplePerturbation: simplePerturbation
+		}
 	};
 
 	/**
@@ -464,9 +468,8 @@
 	"use strict";
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
-	var randgen = __webpack_require__(5);
 	var $DS = __webpack_require__(3);
-	var logger_1 = __webpack_require__(6);
+	var logger_1 = __webpack_require__(5);
 	var logger = new logger_1.Logger();
 	(function (GraphMode) {
 	    GraphMode[GraphMode["INIT"] = 0] = "INIT";
@@ -834,139 +837,6 @@
 	        }
 	        return ids;
 	    };
-	    BaseGraph.prototype.randomlyDeleteNodesPercentage = function (percentage) {
-	        if (percentage > 100) {
-	            percentage = 100;
-	        }
-	        var nr_nodes_to_delete = Math.ceil(this.nrNodes() * percentage / 100);
-	        this.randomlyDeleteNodesAmount(nr_nodes_to_delete);
-	    };
-	    BaseGraph.prototype.randomlyDeleteUndEdgesPercentage = function (percentage) {
-	        if (percentage > 100) {
-	            percentage = 100;
-	        }
-	        var nr_edges_to_delete = Math.ceil(this.nrUndEdges() * percentage / 100);
-	        this.randomlyDeleteUndEdgesAmount(nr_edges_to_delete);
-	    };
-	    BaseGraph.prototype.randomlyDeleteDirEdgesPercentage = function (percentage) {
-	        if (percentage > 100) {
-	            percentage = 100;
-	        }
-	        var nr_edges_to_delete = Math.ceil(this.nrDirEdges() * percentage / 100);
-	        this.randomlyDeleteDirEdgesAmount(nr_edges_to_delete);
-	    };
-	    BaseGraph.prototype.randomlyDeleteNodesAmount = function (amount) {
-	        if (amount < 0) {
-	            throw 'Cowardly refusing to remove a negative amount of nodes';
-	        }
-	        if (this.nrNodes() === 0) {
-	            return;
-	        }
-	        for (var nodeID = 0, randomNodes = this.pickRandomProperties(this._nodes, amount); nodeID < randomNodes.length; nodeID++) {
-	            this.deleteNode(this._nodes[randomNodes[nodeID]]);
-	        }
-	    };
-	    BaseGraph.prototype.randomlyDeleteUndEdgesAmount = function (amount) {
-	        if (amount < 0) {
-	            throw 'Cowardly refusing to remove a negative amount of edges';
-	        }
-	        if (this.nrUndEdges() === 0) {
-	            return;
-	        }
-	        for (var edgeID = 0, randomEdges = this.pickRandomProperties(this._und_edges, amount); edgeID < randomEdges.length; edgeID++) {
-	            this.deleteEdge(this._und_edges[randomEdges[edgeID]]);
-	        }
-	    };
-	    BaseGraph.prototype.randomlyDeleteDirEdgesAmount = function (amount) {
-	        if (amount < 0) {
-	            throw 'Cowardly refusing to remove a negative amount of edges';
-	        }
-	        if (this.nrDirEdges() === 0) {
-	            return;
-	        }
-	        for (var edgeID = 0, randomEdges = this.pickRandomProperties(this._dir_edges, amount); edgeID < randomEdges.length; edgeID++) {
-	            this.deleteEdge(this._dir_edges[randomEdges[edgeID]]);
-	        }
-	    };
-	    BaseGraph.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
-	        var nr_und_edges_to_add = Math.ceil(this.nrUndEdges() * percentage / 100);
-	        this.randomlyAddEdgesAmount(nr_und_edges_to_add, { directed: false });
-	    };
-	    BaseGraph.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
-	        var nr_dir_edges_to_add = Math.ceil(this.nrDirEdges() * percentage / 100);
-	        this.randomlyAddEdgesAmount(nr_dir_edges_to_add, { directed: true });
-	    };
-	    BaseGraph.prototype.randomlyAddEdgesAmount = function (amount, config) {
-	        if (amount <= 0) {
-	            throw new Error('Cowardly refusing to add a non-positive amount of edges');
-	        }
-	        var node_a, node_b, nodes;
-	        var direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
-	        while (amount) {
-	            node_a = this.getRandomNode();
-	            while ((node_b = this.getRandomNode()) === node_a) { }
-	            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
-	            if (node_a.hasEdgeID(edge_id)) {
-	                logger.log("Duplicate edge creation, continuing...");
-	                continue;
-	            }
-	            else {
-	                this.addEdge(edge_id, node_a, node_b, { directed: direction });
-	                --amount;
-	            }
-	        }
-	        logger.log("Created " + amount + " " + (direction ? "directed" : "undirected") + " edges...");
-	    };
-	    BaseGraph.prototype.randomlyAddNodesPercentage = function (percentage, config) {
-	        var nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage / 100);
-	        this.randomlyAddNodesAmount(nr_nodes_to_add, config);
-	    };
-	    BaseGraph.prototype.randomlyAddNodesAmount = function (amount, config) {
-	        if (amount < 0) {
-	            throw 'Cowardly refusing to add a negative amount of nodes';
-	        }
-	        var new_nodes = {};
-	        while (amount--) {
-	            var new_node_id = randgen.randBase36String();
-	            new_nodes[new_node_id] = this.addNode(new_node_id);
-	        }
-	        if (config == null) {
-	            return;
-	        }
-	        else {
-	            this.createEdgesByConfig(config, new_nodes);
-	        }
-	    };
-	    BaseGraph.prototype.createEdgesByConfig = function (config, new_nodes) {
-	        var degree, min_degree, max_degree, deg_probability;
-	        if (config.und_degree != null ||
-	            config.dir_degree != null ||
-	            config.min_und_degree != null && config.max_und_degree != null ||
-	            config.min_dir_degree != null && config.max_dir_degree != null) {
-	            if ((degree = config.und_degree) != null) {
-	                this.createRandomEdgesSpan(degree, degree, false, new_nodes);
-	            }
-	            else if ((min_degree = config.min_und_degree) != null
-	                && (max_degree = config.max_und_degree) != null) {
-	                this.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
-	            }
-	            if (degree = config.dir_degree) {
-	                this.createRandomEdgesSpan(degree, degree, true, new_nodes);
-	            }
-	            else if ((min_degree = config.min_dir_degree) != null
-	                && (max_degree = config.max_dir_degree) != null) {
-	                this.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
-	            }
-	        }
-	        else {
-	            if (config.probability_dir != null) {
-	                this.createRandomEdgesProb(config.probability_dir, true, new_nodes);
-	            }
-	            if (config.probability_und != null) {
-	                this.createRandomEdgesProb(config.probability_und, false, new_nodes);
-	            }
-	        }
-	    };
 	    return BaseGraph;
 	}());
 	exports.BaseGraph = BaseGraph;
@@ -974,157 +844,11 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	function randBase36String() {
-	    return (Math.random() + 1).toString(36).substr(2, 24);
-	}
-	exports.randBase36String = randBase36String;
-	function runif(min, max, discrete) {
-	    if (min === undefined) {
-	        min = 0;
-	    }
-	    if (max === undefined) {
-	        max = 1;
-	    }
-	    if (discrete === undefined) {
-	        discrete = false;
-	    }
-	    if (discrete) {
-	        return Math.floor(runif(min, max, false));
-	    }
-	    return Math.random() * (max - min) + min;
-	}
-	exports.runif = runif;
-	function rnorm(mean, stdev) {
-	    this.v2 = null;
-	    var u1, u2, v1, v2, s;
-	    if (mean === undefined) {
-	        mean = 0.0;
-	    }
-	    if (stdev === undefined) {
-	        stdev = 1.0;
-	    }
-	    if (this.v2 === null) {
-	        do {
-	            u1 = Math.random();
-	            u2 = Math.random();
-	            v1 = 2 * u1 - 1;
-	            v2 = 2 * u2 - 1;
-	            s = v1 * v1 + v2 * v2;
-	        } while (s === 0 || s >= 1);
-	        this.v2 = v2 * Math.sqrt(-2 * Math.log(s) / s);
-	        return stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean;
-	    }
-	    v2 = this.v2;
-	    this.v2 = null;
-	    return stdev * v2 + mean;
-	}
-	exports.rnorm = rnorm;
-	function rchisq(degreesOfFreedom) {
-	    if (degreesOfFreedom === undefined) {
-	        degreesOfFreedom = 1;
-	    }
-	    var i, z, sum = 0.0;
-	    for (i = 0; i < degreesOfFreedom; i++) {
-	        z = rnorm();
-	        sum += z * z;
-	    }
-	    return sum;
-	}
-	exports.rchisq = rchisq;
-	function rpoisson(lambda) {
-	    if (lambda === undefined) {
-	        lambda = 1;
-	    }
-	    var l = Math.exp(-lambda), k = 0, p = 1.0;
-	    do {
-	        k++;
-	        p *= Math.random();
-	    } while (p > l);
-	    return k - 1;
-	}
-	exports.rpoisson = rpoisson;
-	function rcauchy(loc, scale) {
-	    if (loc === undefined) {
-	        loc = 0.0;
-	    }
-	    if (scale === undefined) {
-	        scale = 1.0;
-	    }
-	    var n2, n1 = rnorm();
-	    do {
-	        n2 = rnorm();
-	    } while (n2 === 0.0);
-	    return loc + scale * n1 / n2;
-	}
-	exports.rcauchy = rcauchy;
-	function rbernoulli(p) {
-	    return Math.random() < p ? 1 : 0;
-	}
-	exports.rbernoulli = rbernoulli;
-	function vectorize(generator) {
-	    return function () {
-	        var n, result, i, args;
-	        args = [].slice.call(arguments);
-	        n = args.shift();
-	        result = [];
-	        for (i = 0; i < n; i++) {
-	            result.push(generator.apply(this, args));
-	        }
-	        return result;
-	    };
-	}
-	function histogram(data, binCount) {
-	    binCount = binCount || 10;
-	    var bins, i, scaled, max = Math.max.apply(this, data), min = Math.min.apply(this, data);
-	    if (max === min) {
-	        return [data.length];
-	    }
-	    bins = [];
-	    for (i = 0; i < binCount; i++) {
-	        bins.push(0);
-	    }
-	    for (i = 0; i < data.length; i++) {
-	        scaled = (data[i] - min) / (max - min);
-	        scaled *= binCount;
-	        scaled = Math.floor(scaled);
-	        if (scaled === binCount) {
-	            scaled--;
-	        }
-	        bins[scaled]++;
-	    }
-	    return bins;
-	}
-	exports.histogram = histogram;
-	function rlist(list) {
-	    return list[runif(0, list.length, true)];
-	}
-	exports.rlist = rlist;
-	var rvunif = vectorize(runif);
-	exports.rvunif = rvunif;
-	var rvnorm = vectorize(rnorm);
-	exports.rvnorm = rvnorm;
-	var rvchisq = vectorize(rchisq);
-	exports.rvchisq = rvchisq;
-	var rvpoisson = vectorize(rpoisson);
-	exports.rvpoisson = rvpoisson;
-	var rvcauchy = vectorize(rcauchy);
-	exports.rvcauchy = rvcauchy;
-	var rvbernoulli = vectorize(rbernoulli);
-	exports.rvbernoulli = rvbernoulli;
-	var rvlist = vectorize(rlist);
-	exports.rvlist = rvlist;
-
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var LOG_LEVELS = __webpack_require__(7).LOG_LEVELS;
-	var RUN_CONFIG = __webpack_require__(7).RUN_CONFIG;
+	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
+	var RUN_CONFIG = __webpack_require__(6).RUN_CONFIG;
 	var Logger = (function () {
 	    function Logger(config) {
 	        this.config = null;
@@ -1171,7 +895,7 @@
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var LOG_LEVELS = {
@@ -1189,14 +913,14 @@
 	};
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var path = __webpack_require__(9);
-	var fs = __webpack_require__(11);
+	var path = __webpack_require__(8);
+	var fs = __webpack_require__(10);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(12);
+	var $R = __webpack_require__(11);
 	var CSVInput = (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1317,7 +1041,7 @@
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -1545,10 +1269,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -1734,17 +1458,17 @@
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports) {
 
 	
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http = __webpack_require__(11);
+	var http = __webpack_require__(10);
 	function retrieveRemoteFile(url, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
@@ -1763,13 +1487,13 @@
 
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(11);
+	var fs = __webpack_require__(10);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(12);
+	var $R = __webpack_require__(11);
 	var DEFAULT_WEIGHT = 1;
 	var JSONInput = (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
@@ -1853,11 +1577,11 @@
 
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(11);
+	var fs = __webpack_require__(10);
 	var CSVOutput = (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1903,12 +1627,12 @@
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(15);
 	function BFS(graph, v, config) {
 	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2014,7 +1738,7 @@
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2032,12 +1756,12 @@
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(15);
 	function DFSVisit(graph, current_root, config) {
 	    var dfsVisitScope = {
 	        stack: [],
@@ -2195,14 +1919,14 @@
 
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
-	var $BH = __webpack_require__(19);
+	var $CB = __webpack_require__(15);
+	var $BH = __webpack_require__(18);
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2347,7 +2071,7 @@
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2588,6 +2312,302 @@
 	    return BinaryHeap;
 	}());
 	exports.BinaryHeap = BinaryHeap;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function randBase36String() {
+	    return (Math.random() + 1).toString(36).substr(2, 24);
+	}
+	exports.randBase36String = randBase36String;
+	function runif(min, max, discrete) {
+	    if (min === undefined) {
+	        min = 0;
+	    }
+	    if (max === undefined) {
+	        max = 1;
+	    }
+	    if (discrete === undefined) {
+	        discrete = false;
+	    }
+	    if (discrete) {
+	        return Math.floor(runif(min, max, false));
+	    }
+	    return Math.random() * (max - min) + min;
+	}
+	exports.runif = runif;
+	function rnorm(mean, stdev) {
+	    this.v2 = null;
+	    var u1, u2, v1, v2, s;
+	    if (mean === undefined) {
+	        mean = 0.0;
+	    }
+	    if (stdev === undefined) {
+	        stdev = 1.0;
+	    }
+	    if (this.v2 === null) {
+	        do {
+	            u1 = Math.random();
+	            u2 = Math.random();
+	            v1 = 2 * u1 - 1;
+	            v2 = 2 * u2 - 1;
+	            s = v1 * v1 + v2 * v2;
+	        } while (s === 0 || s >= 1);
+	        this.v2 = v2 * Math.sqrt(-2 * Math.log(s) / s);
+	        return stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean;
+	    }
+	    v2 = this.v2;
+	    this.v2 = null;
+	    return stdev * v2 + mean;
+	}
+	exports.rnorm = rnorm;
+	function rchisq(degreesOfFreedom) {
+	    if (degreesOfFreedom === undefined) {
+	        degreesOfFreedom = 1;
+	    }
+	    var i, z, sum = 0.0;
+	    for (i = 0; i < degreesOfFreedom; i++) {
+	        z = rnorm();
+	        sum += z * z;
+	    }
+	    return sum;
+	}
+	exports.rchisq = rchisq;
+	function rpoisson(lambda) {
+	    if (lambda === undefined) {
+	        lambda = 1;
+	    }
+	    var l = Math.exp(-lambda), k = 0, p = 1.0;
+	    do {
+	        k++;
+	        p *= Math.random();
+	    } while (p > l);
+	    return k - 1;
+	}
+	exports.rpoisson = rpoisson;
+	function rcauchy(loc, scale) {
+	    if (loc === undefined) {
+	        loc = 0.0;
+	    }
+	    if (scale === undefined) {
+	        scale = 1.0;
+	    }
+	    var n2, n1 = rnorm();
+	    do {
+	        n2 = rnorm();
+	    } while (n2 === 0.0);
+	    return loc + scale * n1 / n2;
+	}
+	exports.rcauchy = rcauchy;
+	function rbernoulli(p) {
+	    return Math.random() < p ? 1 : 0;
+	}
+	exports.rbernoulli = rbernoulli;
+	function vectorize(generator) {
+	    return function () {
+	        var n, result, i, args;
+	        args = [].slice.call(arguments);
+	        n = args.shift();
+	        result = [];
+	        for (i = 0; i < n; i++) {
+	            result.push(generator.apply(this, args));
+	        }
+	        return result;
+	    };
+	}
+	function histogram(data, binCount) {
+	    binCount = binCount || 10;
+	    var bins, i, scaled, max = Math.max.apply(this, data), min = Math.min.apply(this, data);
+	    if (max === min) {
+	        return [data.length];
+	    }
+	    bins = [];
+	    for (i = 0; i < binCount; i++) {
+	        bins.push(0);
+	    }
+	    for (i = 0; i < data.length; i++) {
+	        scaled = (data[i] - min) / (max - min);
+	        scaled *= binCount;
+	        scaled = Math.floor(scaled);
+	        if (scaled === binCount) {
+	            scaled--;
+	        }
+	        bins[scaled]++;
+	    }
+	    return bins;
+	}
+	exports.histogram = histogram;
+	function rlist(list) {
+	    return list[runif(0, list.length, true)];
+	}
+	exports.rlist = rlist;
+	var rvunif = vectorize(runif);
+	exports.rvunif = rvunif;
+	var rvnorm = vectorize(rnorm);
+	exports.rvnorm = rvnorm;
+	var rvchisq = vectorize(rchisq);
+	exports.rvchisq = rvchisq;
+	var rvpoisson = vectorize(rpoisson);
+	exports.rvpoisson = rvpoisson;
+	var rvcauchy = vectorize(rcauchy);
+	exports.rvcauchy = rvcauchy;
+	var rvbernoulli = vectorize(rbernoulli);
+	exports.rvbernoulli = rvbernoulli;
+	var rvlist = vectorize(rlist);
+	exports.rvlist = rvlist;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var randgen = __webpack_require__(19);
+	var logger_1 = __webpack_require__(5);
+	var logger = new logger_1.Logger();
+	var SimplePerturber = (function () {
+	    function SimplePerturber(_graph) {
+	        this._graph = _graph;
+	    }
+	    SimplePerturber.prototype.randomlyDeleteNodesPercentage = function (percentage) {
+	        if (percentage > 100) {
+	            percentage = 100;
+	        }
+	        var nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage / 100);
+	        this.randomlyDeleteNodesAmount(nr_nodes_to_delete);
+	    };
+	    SimplePerturber.prototype.randomlyDeleteUndEdgesPercentage = function (percentage) {
+	        if (percentage > 100) {
+	            percentage = 100;
+	        }
+	        var nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+	        this.randomlyDeleteUndEdgesAmount(nr_edges_to_delete);
+	    };
+	    SimplePerturber.prototype.randomlyDeleteDirEdgesPercentage = function (percentage) {
+	        if (percentage > 100) {
+	            percentage = 100;
+	        }
+	        var nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+	        this.randomlyDeleteDirEdgesAmount(nr_edges_to_delete);
+	    };
+	    SimplePerturber.prototype.randomlyDeleteNodesAmount = function (amount) {
+	        if (amount < 0) {
+	            throw 'Cowardly refusing to remove a negative amount of nodes';
+	        }
+	        if (this._graph.nrNodes() === 0) {
+	            return;
+	        }
+	        for (var nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph._nodes, amount); nodeID < randomNodes.length; nodeID++) {
+	            this._graph.deleteNode(this._graph._nodes[randomNodes[nodeID]]);
+	        }
+	    };
+	    SimplePerturber.prototype.randomlyDeleteUndEdgesAmount = function (amount) {
+	        if (amount < 0) {
+	            throw 'Cowardly refusing to remove a negative amount of edges';
+	        }
+	        if (this._graph.nrUndEdges() === 0) {
+	            return;
+	        }
+	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._und_edges, amount); edgeID < randomEdges.length; edgeID++) {
+	            this._graph.deleteEdge(this._graph._und_edges[randomEdges[edgeID]]);
+	        }
+	    };
+	    SimplePerturber.prototype.randomlyDeleteDirEdgesAmount = function (amount) {
+	        if (amount < 0) {
+	            throw 'Cowardly refusing to remove a negative amount of edges';
+	        }
+	        if (this._graph.nrDirEdges() === 0) {
+	            return;
+	        }
+	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._dir_edges, amount); edgeID < randomEdges.length; edgeID++) {
+	            this._graph.deleteEdge(this._graph._dir_edges[randomEdges[edgeID]]);
+	        }
+	    };
+	    SimplePerturber.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
+	        var nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+	        this.randomlyAddEdgesAmount(nr_und_edges_to_add, { directed: false });
+	    };
+	    SimplePerturber.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
+	        var nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+	        this.randomlyAddEdgesAmount(nr_dir_edges_to_add, { directed: true });
+	    };
+	    SimplePerturber.prototype.randomlyAddEdgesAmount = function (amount, config) {
+	        if (amount <= 0) {
+	            throw new Error('Cowardly refusing to add a non-positive amount of edges');
+	        }
+	        var node_a, node_b, nodes;
+	        var direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
+	        while (amount) {
+	            node_a = this._graph.getRandomNode();
+	            while ((node_b = this._graph.getRandomNode()) === node_a) { }
+	            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+	            if (node_a.hasEdgeID(edge_id)) {
+	                logger.log("Duplicate edge creation, continuing...");
+	                continue;
+	            }
+	            else {
+	                this._graph.addEdge(edge_id, node_a, node_b, { directed: direction });
+	                --amount;
+	            }
+	        }
+	        logger.log("Created " + amount + " " + (direction ? "directed" : "undirected") + " edges...");
+	    };
+	    SimplePerturber.prototype.randomlyAddNodesPercentage = function (percentage, config) {
+	        var nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
+	        this.randomlyAddNodesAmount(nr_nodes_to_add, config);
+	    };
+	    SimplePerturber.prototype.randomlyAddNodesAmount = function (amount, config) {
+	        if (amount < 0) {
+	            throw 'Cowardly refusing to add a negative amount of nodes';
+	        }
+	        var new_nodes = {};
+	        while (amount--) {
+	            var new_node_id = randgen.randBase36String();
+	            new_nodes[new_node_id] = this._graph.addNode(new_node_id);
+	        }
+	        if (config == null) {
+	            return;
+	        }
+	        else {
+	            this.createEdgesByConfig(config, new_nodes);
+	        }
+	    };
+	    SimplePerturber.prototype.createEdgesByConfig = function (config, new_nodes) {
+	        var degree, min_degree, max_degree, deg_probability;
+	        if (config.und_degree != null ||
+	            config.dir_degree != null ||
+	            config.min_und_degree != null && config.max_und_degree != null ||
+	            config.min_dir_degree != null && config.max_dir_degree != null) {
+	            if ((degree = config.und_degree) != null) {
+	                this._graph.createRandomEdgesSpan(degree, degree, false, new_nodes);
+	            }
+	            else if ((min_degree = config.min_und_degree) != null
+	                && (max_degree = config.max_und_degree) != null) {
+	                this._graph.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
+	            }
+	            if (degree = config.dir_degree) {
+	                this._graph.createRandomEdgesSpan(degree, degree, true, new_nodes);
+	            }
+	            else if ((min_degree = config.min_dir_degree) != null
+	                && (max_degree = config.max_dir_degree) != null) {
+	                this._graph.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
+	            }
+	        }
+	        else {
+	            if (config.probability_dir != null) {
+	                this._graph.createRandomEdgesProb(config.probability_dir, true, new_nodes);
+	            }
+	            if (config.probability_und != null) {
+	                this._graph.createRandomEdgesProb(config.probability_und, false, new_nodes);
+	            }
+	        }
+	    };
+	    return SimplePerturber;
+	}());
+	exports.SimplePerturber = SimplePerturber;
 
 
 /***/ }
