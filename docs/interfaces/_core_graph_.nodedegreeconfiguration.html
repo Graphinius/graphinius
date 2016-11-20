@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NodeAdditionConfiguration | Graphinius</title>
+	<title>NodeDegreeConfiguration | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -60,21 +60,30 @@
 					<a href="../modules/_core_graph_.html">&quot;core/Graph&quot;</a>
 				</li>
 				<li>
-					<a href="_core_graph_.nodeadditionconfiguration.html">NodeAdditionConfiguration</a>
+					<a href="_core_graph_.nodedegreeconfiguration.html">NodeDegreeConfiguration</a>
 				</li>
 			</ul>
-			<h1>Interface NodeAdditionConfiguration</h1>
+			<h1>Interface NodeDegreeConfiguration</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>EITHER generate new edges via specified degree span
+							OR via probability of edge creation from a specified
+						set of nodes to all others</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">NodeAdditionConfiguration</span>
+						<span class="target">NodeDegreeConfiguration</span>
 					</li>
 				</ul>
 			</section>
@@ -85,12 +94,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#dir_degree" class="tsd-kind-icon">dir_<wbr>degree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#max_dir_degree" class="tsd-kind-icon">max_<wbr>dir_<wbr>degree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#max_und_degree" class="tsd-kind-icon">max_<wbr>und_<wbr>degree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#min_dir_degree" class="tsd-kind-icon">min_<wbr>dir_<wbr>degree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#min_und_degree" class="tsd-kind-icon">min_<wbr>und_<wbr>degree</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodeadditionconfiguration.html#und_degree" class="tsd-kind-icon">und_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#dir_degree" class="tsd-kind-icon">dir_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#max_dir_degree" class="tsd-kind-icon">max_<wbr>dir_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#max_und_degree" class="tsd-kind-icon">max_<wbr>und_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#min_dir_degree" class="tsd-kind-icon">min_<wbr>dir_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#min_und_degree" class="tsd-kind-icon">min_<wbr>und_<wbr>degree</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#probability_dir" class="tsd-kind-icon">probability_<wbr>dir</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#probability_und" class="tsd-kind-icon">probability_<wbr>und</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_core_graph_.nodedegreeconfiguration.html#und_degree" class="tsd-kind-icon">und_<wbr>degree</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,7 +115,7 @@
 					<div class="tsd-signature tsd-kind-icon">dir_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L38">core/Graph.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L42">core/Graph.ts:42</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -114,7 +125,7 @@
 					<div class="tsd-signature tsd-kind-icon">max_<wbr>dir_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L42">core/Graph.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L46">core/Graph.ts:46</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -124,7 +135,7 @@
 					<div class="tsd-signature tsd-kind-icon">max_<wbr>und_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L40">core/Graph.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L44">core/Graph.ts:44</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -134,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">min_<wbr>dir_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L41">core/Graph.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L45">core/Graph.ts:45</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -144,7 +155,27 @@
 					<div class="tsd-signature tsd-kind-icon">min_<wbr>und_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L39">core/Graph.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L43">core/Graph.ts:43</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="probability_dir" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> probability_<wbr>dir</h3>
+					<div class="tsd-signature tsd-kind-icon">probability_<wbr>dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L47">core/Graph.ts:47</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="probability_und" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> probability_<wbr>und</h3>
+					<div class="tsd-signature tsd-kind-icon">probability_<wbr>und<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L48">core/Graph.ts:48</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +185,7 @@
 					<div class="tsd-signature tsd-kind-icon">und_<wbr>degree<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L37">core/Graph.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/core/Graph.ts#L41">core/Graph.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -236,25 +267,31 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_core_graph_.nodeadditionconfiguration.html" class="tsd-kind-icon">Node<wbr>Addition<wbr>Configuration</a>
+						<a href="_core_graph_.nodedegreeconfiguration.html" class="tsd-kind-icon">Node<wbr>Degree<wbr>Configuration</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#dir_degree" class="tsd-kind-icon">dir_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#dir_degree" class="tsd-kind-icon">dir_<wbr>degree</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#max_dir_degree" class="tsd-kind-icon">max_<wbr>dir_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#max_dir_degree" class="tsd-kind-icon">max_<wbr>dir_<wbr>degree</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#max_und_degree" class="tsd-kind-icon">max_<wbr>und_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#max_und_degree" class="tsd-kind-icon">max_<wbr>und_<wbr>degree</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#min_dir_degree" class="tsd-kind-icon">min_<wbr>dir_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#min_dir_degree" class="tsd-kind-icon">min_<wbr>dir_<wbr>degree</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#min_und_degree" class="tsd-kind-icon">min_<wbr>und_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#min_und_degree" class="tsd-kind-icon">min_<wbr>und_<wbr>degree</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_core_graph_.nodeadditionconfiguration.html#und_degree" class="tsd-kind-icon">und_<wbr>degree</a>
+								<a href="_core_graph_.nodedegreeconfiguration.html#probability_dir" class="tsd-kind-icon">probability_<wbr>dir</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_core_graph_.nodedegreeconfiguration.html#probability_und" class="tsd-kind-icon">probability_<wbr>und</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_core_graph_.nodedegreeconfiguration.html#und_degree" class="tsd-kind-icon">und_<wbr>degree</a>
 							</li>
 						</ul>
 					</li>

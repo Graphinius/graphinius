@@ -11,9 +11,14 @@ let REAL_GRAPH_NR_NODES = 6204,
     real_graph = "./test/test_data/real_graph.json",
     json : $JI.IJSONInput,
     stats : $G.GraphStats,
-    deg_config : $G.NodeAdditionConfiguration;
-    
-    
+    deg_config : $G.NodeDegreeConfiguration;
+
+const DEGREE_PROBABILITY = 0.002; 
+
+/**
+ * TODO introduce sinon & check for methods called
+ * depending on the degree configuration obj's state
+ */ 
 describe('GRAPH PERTURBATION TESTS: - ', () => {
     
   describe('UNDIRECTED Graph - ', () => {
@@ -28,7 +33,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
     });
     
     
-    describe('Randomly add different amounts / percentages of NODES - ', () => {
+    describe('Randomly ADD different amounts / percentages of NODES - ', () => {
       
       it('should refuse to add a negative amount of nodes', () => {
          expect(graph.randomlyAddNodesAmount.bind(graph, -1))
@@ -50,7 +55,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
       });
     
 
-      it(`should add some random percentage of all nodes`, () => {
+      it(`should add some random percentage of nodes`, () => {
         let p = Math.floor(Math.random()*100);              
         graph.randomlyAddNodesPercentage(p);
         expect(graph.nrNodes()).to.equal( REAL_GRAPH_NR_NODES + Math.ceil(REAL_GRAPH_NR_NODES * p/100) );
@@ -58,31 +63,205 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
       });
       
       
-      it('should add a specified amount of nodes with a regular degree of undirected nodes', () => {
+      it('should reject a negative node degree as invalid', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { und_degree: -3 };
+        
+        expect(graph.randomlyAddNodesAmount.bind(graph, nr_nodes_to_be_added, deg_config)).to.throw("Minimum degree cannot be negative.");
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
+      });
+      
+      
+      it('should reject a node degree greater than the amount of nodes', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        let one_too_many = REAL_GRAPH_NR_NODES + nr_nodes_to_be_added + 1
+        deg_config = { und_degree: one_too_many };
+        
+        expect(graph.randomlyAddNodesAmount.bind(graph, nr_nodes_to_be_added, deg_config)).to.throw("Maximum degree exceeds number of reachable nodes.");
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
+      });
+      
+      
+      it('should add a specified amount of nodes with a regular degree of undirected edges', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { und_degree: 3 };
         
         graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
-        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + 3 * nr_nodes_to_be_added);        
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);        
       });
       
       
-      it('should add a specified amount of nodes with a regular degree of directed nodes', () => {
+      it('should ignore a span of UNdirected edges to add when a specific degree is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { und_degree: 3, min_und_degree: 2, max_und_degree: 5 };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);        
+      });
+      
+      
+      it('should add an amount of nodes within a specified degree span of UNdirected edges', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_und_degree: 3, max_und_degree: 5 };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);        
+      });
+      
+      
+      it('should add a specified amount of nodes with a regular degree of directed edges', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
         deg_config = { dir_degree: 3 };
         
         graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
-        expect(graph.nrDirEdges()).to.equal(3 * nr_nodes_to_be_added);        
+        expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);        
       });
+      
+      
+      it('should ignore a span of directed edges to add when a specific degree is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { dir_degree: 3, min_dir_degree: 2, max_dir_degree: 5 };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);        
+      });
+      
+      
+      it('should add an amount of nodes within a specified degree span of directed edges', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_dir_degree: 2, max_dir_degree: 5 };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
+      });
+      
+      
+      it('should ignore directed edge probabilities when a specific degree of directed edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { dir_degree: 3, probability_dir: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);  
+      });
+      
+      
+      it('should ignore directed edge probabilities when a degree span of directed edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_dir_degree: 2, max_dir_degree: 5, probability_dir: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
+      });
+      
+      
+      it('should ignore directed edge probabilities when a specific degree of UNdirected edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { und_degree: 3, probability_dir: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);  
+      });
+      
+      
+      it('should ignore directed edge probabilities when a degree span of UNdirected edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_und_degree: 2, max_und_degree: 5, probability_dir: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);
+      });
+      
+      
+      it('should create directed edges according to a given probability', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*200);
+        deg_config = { probability_dir: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        // TODO - figure out way to test probabilities (distribution of values)
+        // console.log( `Created ${graph.nrDirEdges()} DIRECTED edges.` );
+        expect(graph.nrDirEdges()).to.be.at.least(deg_config.probability_dir/2 * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
+        expect(graph.nrDirEdges()).to.be.at.most(deg_config.probability_dir*2 * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
+      });
+      
+      
+      it('should ignore UNdirected edge probabilities when a specific degree of directed edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { dir_degree: 3, probability_und: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.equal(deg_config.dir_degree * nr_nodes_to_be_added);  
+      });
+      
+      
+      it('should ignore UNdirected edge probabilities when a degree span of directed edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_dir_degree: 2, max_dir_degree: 5, probability_und: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.least(deg_config.min_dir_degree * nr_nodes_to_be_added);
+        expect(graph.nrDirEdges()).to.be.at.most(deg_config.max_dir_degree * nr_nodes_to_be_added);
+      });
+      
+      
+      it('should ignore UNdirected edge probabilities when a specific degree of UNdirected edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { und_degree: 3, probability_und: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + deg_config.und_degree * nr_nodes_to_be_added);  
+      });
+      
+      
+      it('should ignore UNdirected edge probabilities when a degree span of UNdirected edges is given', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
+        deg_config = { min_und_degree: 2, max_und_degree: 5, probability_und: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + deg_config.min_und_degree * nr_nodes_to_be_added);
+        expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.max_und_degree * nr_nodes_to_be_added);
+      });
+      
+      
+      it('should create UNdirected edges according to a given probability', () => {
+        let nr_nodes_to_be_added = Math.floor(Math.random()*200);
+        deg_config = { probability_und: DEGREE_PROBABILITY };
+        
+        graph.randomlyAddNodesAmount(nr_nodes_to_be_added, deg_config);
+        expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES + nr_nodes_to_be_added);
+        // TODO - figure out way to test probabilities (distribution of values)
+        // console.log( `Created ${graph.nrUndEdges() - REAL_GRAPH_NR_EDGES} UNDIRECTED edges.` );
+        expect(graph.nrUndEdges()).to.be.at.least(REAL_GRAPH_NR_EDGES + (deg_config.probability_und/2) * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
+        expect(graph.nrUndEdges()).to.be.at.most(REAL_GRAPH_NR_EDGES + deg_config.probability_und*2 * nr_nodes_to_be_added * REAL_GRAPH_NR_NODES);
+      });
+      
       
     });
 
     /**
      * TODO enhance by node types
      */
-    describe('Randomly delete different amounts / percentages of NODES - ', () => {
+    describe('Randomly DELETE different amounts / percentages of NODES - ', () => {
         
         it('should refuse to delete a negative amount of nodes', () => {
             expect(graph.randomlyDeleteNodesAmount.bind(graph, -1))

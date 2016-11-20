@@ -271,17 +271,17 @@ var BaseGraph = (function () {
         this.clearAllDirEdges();
         this.clearAllUndEdges();
     };
-    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed, setOfNodes) {
+    BaseGraph.prototype.createRandomEdgesProb = function (probability, directed, new_nodes) {
         if (0 > probability || 1 < probability) {
             throw new Error("Probability out of range.");
         }
         directed = directed || false;
-        var nodes = setOfNodes || this._nodes, node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
-        for (node_a in nodes) {
-            for (node_b in nodes) {
-                if (node_a !== node_b && Math.random() < probability) {
-                    edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + dir;
-                    this.addEdge(edge_id, nodes[node_a], nodes[node_b], { directed: directed });
+        var new_nodes = new_nodes || this.getNodes(), all_nodes = this.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
+        for (node_a in new_nodes) {
+            for (node_b in all_nodes) {
+                if (node_a !== node_b && Math.random() <= probability) {
+                    edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
+                    this.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], { directed: directed });
                 }
             }
         }
@@ -293,15 +293,18 @@ var BaseGraph = (function () {
         if (max >= this.nrNodes()) {
             throw new Error('Maximum degree exceeds number of reachable nodes.');
         }
+        if (min > max) {
+            throw new Error('Minimum degree cannot exceed maximum degree.');
+        }
         directed = directed || false;
-        var min = min | 0, max = max | 0, nodes = setOfNodes || this._nodes, idx_a, node_a, node_b, edge_id, node_keys = Object.keys(nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
-        for (idx_a in nodes) {
-            node_a = nodes[idx_a];
+        var min = min | 0, max = max | 0, new_nodes = setOfNodes || this.getNodes(), all_nodes = this.getNodes(), idx_a, node_a, node_b, edge_id, node_keys = Object.keys(all_nodes), keys_len = node_keys.length, rand_idx, rand_deg, dir = directed ? '_d' : '_u';
+        for (idx_a in new_nodes) {
+            node_a = new_nodes[idx_a];
             rand_idx = 0;
             rand_deg = (Math.random() * (max - min) + min) | 0;
             while (rand_deg) {
                 rand_idx = (keys_len * Math.random()) | 0;
-                node_b = nodes[node_keys[rand_idx]];
+                node_b = all_nodes[node_keys[rand_idx]];
                 if (node_a !== node_b) {
                     edge_id = node_a.getID() + "_" + node_b.getID() + dir;
                     if (node_a.hasEdgeID(edge_id)) {
@@ -427,11 +430,15 @@ var BaseGraph = (function () {
     };
     BaseGraph.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
     };
+    BaseGraph.prototype.randomlyAddUndEdgesAmount = function (amount) {
+    };
+    BaseGraph.prototype.randomlyAddDirEdgesAmount = function (amount) {
+    };
     BaseGraph.prototype.randomlyAddNodesAmount = function (amount, config) {
         if (amount < 0) {
             throw 'Cowardly refusing to add a negative amount of nodes';
         }
-        var new_nodes = {}, degree, min_degree, max_degree;
+        var new_nodes = {};
         while (amount--) {
             var new_node_id = randgen.randBase36String();
             new_nodes[new_node_id] = this.addNode(new_node_id);
@@ -439,16 +446,39 @@ var BaseGraph = (function () {
         if (config == null) {
             return;
         }
-        if (degree = config.und_degree) {
-            this.createRandomEdgesSpan(degree, degree, false, new_nodes);
-        }
-        if (degree = config.dir_degree) {
-            this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+        else {
+            this.createEdgesByConfig(config, new_nodes);
         }
     };
-    BaseGraph.prototype.randomlyAddUndEdgesAmount = function (amount) {
-    };
-    BaseGraph.prototype.randomlyAddDirEdgesAmount = function (amount) {
+    BaseGraph.prototype.createEdgesByConfig = function (config, new_nodes) {
+        var degree, min_degree, max_degree, deg_probability;
+        if (config.und_degree != null ||
+            config.dir_degree != null ||
+            config.min_und_degree != null && config.max_und_degree != null ||
+            config.min_dir_degree != null && config.max_dir_degree != null) {
+            if ((degree = config.und_degree) != null) {
+                this.createRandomEdgesSpan(degree, degree, false, new_nodes);
+            }
+            else if ((min_degree = config.min_und_degree) != null
+                && (max_degree = config.max_und_degree) != null) {
+                this.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
+            }
+            if (degree = config.dir_degree) {
+                this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+            }
+            else if ((min_degree = config.min_dir_degree) != null
+                && (max_degree = config.max_dir_degree) != null) {
+                this.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
+            }
+        }
+        else {
+            if (config.probability_dir != null) {
+                this.createRandomEdgesProb(config.probability_dir, true, new_nodes);
+            }
+            if (config.probability_und != null) {
+                this.createRandomEdgesProb(config.probability_und, false, new_nodes);
+            }
+        }
     };
     return BaseGraph;
 }());

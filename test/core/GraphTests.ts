@@ -855,6 +855,18 @@ describe('GRAPH TESTS: ', () => {
 				expect(graph.nrUndEdges()).to.equal(0);		
 				expect(graph.createRandomEdgesSpan.bind(graph, min, max)).to.throw('Maximum degree exceeds number of reachable nodes.');
 			});
+			
+			
+			it('should throw an error if max is greater (n-1)', () => {
+				min = 4;
+				max = 2;
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
+				deg_dist = graph.degreeDistribution();
+				graph.clearAllEdges();
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.createRandomEdgesSpan.bind(graph, min, max)).to.throw('Minimum degree cannot exceed maximum degree.');
+			});
 
 			
 			it('DIRECTED - should randomly generate directed edges', () => {

@@ -32,14 +32,20 @@ export interface GraphStats {
 	nr_dir_edges	: number;
 }
 
-
-export interface NodeAdditionConfiguration {
-	und_degree?: 		 number;
-	dir_degree?:		 number;
-	min_und_degree?: number;
-	max_und_degree?: number;
-	min_dir_degree?: number;
-	max_dir_degree?: number;
+/**
+ * EITHER generate new edges via specified degree span
+ * OR via probability of edge creation from a specified
+ * set of nodes to all others
+ */
+export interface NodeDegreeConfiguration {
+	und_degree?: 		 	number;
+	dir_degree?:		 	number;
+	min_und_degree?: 	number;
+	max_und_degree?: 	number;
+	min_dir_degree?: 	number;
+	max_dir_degree?: 	number;
+	probability_dir?: number;
+	probability_und?: number;
 }
 
 
@@ -105,10 +111,10 @@ export interface IGraph {
 	randomlyDeleteDirEdgesAmount( amount: number ) : void;
 	
 	// RANDOMLY ADD NODES AND EDGES
-	randomlyAddNodesPercentage( percentage: number, config?: NodeAdditionConfiguration ) : void;
+	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void;
 	randomlyAddUndEdgesPercentage( percentage: number ) : void;
 	randomlyAddDirEdgesPercentage( percentage: number ) : void;
-	randomlyAddNodesAmount( amount: number, config?: NodeAdditionConfiguration ) : void;
+	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void;
 	randomlyAddUndEdgesAmount( amount: number ) : void;
 	randomlyAddDirEdgesAmount( amount: number ) : void;
 }
@@ -475,21 +481,22 @@ class BaseGraph implements IGraph {
 	 * CAUTION: this algorithm takes quadratic runtime in #nodes
 	 */
 	createRandomEdgesProb( probability: number, directed?: boolean,
-												 setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
+												 new_nodes?: { [key: string] : $N.IBaseNode} ) : void {
 		if (0 > probability || 1 < probability) {
 			throw new Error("Probability out of range.");
 		}
 		directed = directed || false;
-		var nodes = setOfNodes || this._nodes,
+		var new_nodes = new_nodes || this.getNodes(),
+				all_nodes = this.getNodes(),
 				node_a, 
 				node_b,
 				edge_id,
 				dir = directed ? '_d' : '_u';
-		for (node_a in nodes) {
-			for (node_b in nodes) {
-				if (node_a !== node_b && Math.random() < probability) {
-					edge_id = nodes[node_a].getID() + "_" + nodes[node_b].getID() + dir;
-					this.addEdge(edge_id, nodes[node_a], nodes[node_b], {directed: directed});
+		for (node_a in new_nodes) {
+			for (node_b in all_nodes) {
+				if (node_a !== node_b && Math.random() <= probability) {
+					edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
+					this.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
 				}
 			}
 		}
@@ -511,28 +518,34 @@ class BaseGraph implements IGraph {
 		if (max >= this.nrNodes()) {
 			throw new Error('Maximum degree exceeds number of reachable nodes.');
 		}
+		if (min > max) {
+			throw new Error('Minimum degree cannot exceed maximum degree.');
+		}
 		directed = directed || false;
 		// Do we need to set them integers before the calculations?
 		var min = min | 0,
 				max = max | 0,
-				nodes = setOfNodes || this._nodes,
+				new_nodes = setOfNodes || this.getNodes(),
+				all_nodes = this.getNodes(),
 				idx_a,
 				node_a,
 				node_b,
 				edge_id,
-				node_keys = Object.keys(nodes),
+				// we want edges to all possible nodes
+				// TODO: enhance with types / filters later on
+				node_keys = Object.keys(all_nodes),
 				keys_len = node_keys.length,
 				rand_idx,
 				rand_deg,
 				dir = directed ? '_d' : '_u';
 
-		for (idx_a in nodes) {
-			node_a = nodes[idx_a];
+		for (idx_a in new_nodes) {
+			node_a = new_nodes[idx_a];
 			rand_idx = 0;
 			rand_deg = (Math.random()*(max-min)+min)|0;
 			while (rand_deg) {
 				rand_idx = (keys_len*Math.random())|0; // should never reach keys_len...
-				node_b = nodes[node_keys[rand_idx]];
+				node_b = all_nodes[node_keys[rand_idx]];
 				if (node_a !== node_b) {
 					edge_id = node_a.getID() + "_" + node_b.getID() + dir;
 					if (node_a.hasEdgeID(edge_id)) {
@@ -726,7 +739,7 @@ class BaseGraph implements IGraph {
 	/**
 	 * 
 	 */
-	randomlyAddNodesPercentage( percentage: number, config?: NodeAdditionConfiguration ) : void {
+	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void {
 		let nr_nodes_to_add = Math.ceil(this.nrNodes() * percentage/100);
 		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
 	}
@@ -746,39 +759,8 @@ class BaseGraph implements IGraph {
 	randomlyAddDirEdgesPercentage( percentage: number ) : void {
 		
 	}
-
-
-	/**
-	 * 
-	 */
-	randomlyAddNodesAmount( amount: number, config?: NodeAdditionConfiguration ) : void {
-		if ( amount < 0 ) {
-			throw 'Cowardly refusing to add a negative amount of nodes';
-		}
-		let new_nodes : { [key: string] : $N.IBaseNode } = {},
-				degree,
-				min_degree,
-				max_degree;
-		
-		while ( amount-- ) {
-			let new_node_id = randgen.randBase36String();
-			new_nodes[new_node_id] = this.addNode( new_node_id );
-		}
-		
-		if ( config == null ) {
-			return;
-		}
-		
-		if ( degree = config.und_degree ) {			
-			this.createRandomEdgesSpan(degree, degree, false, new_nodes);
-		}
-		
-		if ( degree = config.dir_degree ) {			
-			this.createRandomEdgesSpan(degree, degree, true, new_nodes);
-		}
-	}
-
-
+	
+	
 	/**
 	 * 
 	 */
@@ -794,7 +776,76 @@ class BaseGraph implements IGraph {
 		
 	}
 
-}
 
+	/**
+	 * 
+	 * If the degree configuration is invalid
+	 * (negative or infinite degree amount / percentage)
+	 * the nodes will have been created nevertheless
+	 */
+	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void {
+		if ( amount < 0 ) {
+			throw 'Cowardly refusing to add a negative amount of nodes';
+		}
+		let new_nodes : { [key: string] : $N.IBaseNode } = {};
+		
+		while ( amount-- ) {
+			let new_node_id = randgen.randBase36String();
+			new_nodes[new_node_id] = this.addNode( new_node_id );
+		}
+		
+		if ( config == null ) {
+			return;
+		}
+		else {
+			this.createEdgesByConfig( config, new_nodes );
+		}
+	}
+	
+	
+	/**
+	 * Go through the degree_configuration provided and create edges
+	 * as requested by config
+	 */
+	private createEdgesByConfig( config: NodeDegreeConfiguration, new_nodes: {[key: string] : $N.IBaseNode} ) {
+		let degree,
+				min_degree,
+				max_degree,
+				deg_probability;
+		
+		if ( config.und_degree != null || 
+				 config.dir_degree != null ||
+				 config.min_und_degree != null && config.max_und_degree != null ||
+				 config.min_dir_degree != null && config.max_dir_degree != null )		
+		{
+			// Ignore min / max undirected degree if specific amount is given
+			if ( ( degree = config.und_degree ) != null ) {			
+				this.createRandomEdgesSpan(degree, degree, false, new_nodes);
+			}
+			else if ( ( min_degree = config.min_und_degree) != null 
+						&& ( max_degree = config.max_und_degree ) != null ) {
+				this.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
+			}
+			// Ignore min / max directed degree if specific amount is given
+			if ( degree = config.dir_degree ) {			
+				this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+			}
+			else if ( ( min_degree = config.min_dir_degree) != null 
+						&& ( max_degree = config.max_dir_degree ) != null ) {
+				this.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
+			}
+		}
+		else {
+			if ( config.probability_dir != null ) {
+				this.createRandomEdgesProb( config.probability_dir, true, new_nodes );
+			}
+			if ( config.probability_und != null ) {
+				this.createRandomEdgesProb( config.probability_und, false, new_nodes );
+			}
+		}
+	}
+
+
+}
 
 export {BaseGraph};
