@@ -533,40 +533,47 @@ declare module GraphiniusJS {
 
 
     /**
-     * CSV Output
+     * OUTPUT
      */
-    export interface ICSVOutput {
-        _separator: string;
-        _explicit_direction: boolean;
-        _direction_mode: boolean;
-        writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
-        writeToAdjacencyList(graph: core.IGraph): string;
-        writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
-        writeToEdgeList(graph: core.IGraph): string;
-    }
+    export namespace output {
 
-    export class CSVOutput implements ICSVOutput {
-        _separator: string;
-        _explicit_direction: boolean;
-        _direction_mode: boolean;
-        constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
-        writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
-        writeToAdjacencyList(graph: core.IGraph): string;
-        writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
-        writeToEdgeList(graph: core.IGraph): string;
-    }
+        /**
+         * CSV Output
+         */
+        export interface ICSVOutput {
+            _separator: string;
+            _explicit_direction: boolean;
+            _direction_mode: boolean;
+            writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
+            writeToAdjacencyList(graph: core.IGraph): string;
+            writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
+            writeToEdgeList(graph: core.IGraph): string;
+        }
 
-    /**
-     * JSON Output
-     */
-    export interface IJSONOutput {
-        writeToJSONFile(filepath: string, graph: core.IGraph): void;
-        writeToJSONSString(graph: core.IGraph): string;
-    }
+        export class CSVOutput implements ICSVOutput {
+            _separator: string;
+            _explicit_direction: boolean;
+            _direction_mode: boolean;
+            constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
+            writeToAdjacencyListFile(filepath: string, graph: core.IGraph): void;
+            writeToAdjacencyList(graph: core.IGraph): string;
+            writeToEdgeListFile(filepath: string, graph: core.IGraph): void;
+            writeToEdgeList(graph: core.IGraph): string;
+        }
 
-    export class JSONOutput implements IJSONOutput {
-        writeToJSONFile(filepath: string, graph: core.IGraph): void;
-        writeToJSONSString(graph: core.IGraph): string;
+        /**
+         * JSON Output
+         */
+        export interface IJSONOutput {
+            writeToJSONFile(filepath: string, graph: core.IGraph): void;
+            writeToJSONSString(graph: core.IGraph): string;
+        }
+
+        export class JSONOutput implements IJSONOutput {
+            writeToJSONFile(filepath: string, graph: core.IGraph): void;
+            writeToJSONSString(graph: core.IGraph): string;
+        }
+        
     }
 
 
