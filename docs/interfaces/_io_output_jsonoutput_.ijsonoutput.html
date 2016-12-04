@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>DFS_Config | Graphinius</title>
+	<title>IJSONOutput | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_search_dfs_.html">&quot;search/DFS&quot;</a>
+					<a href="../modules/_io_output_jsonoutput_.html">&quot;io/output/JSONOutput&quot;</a>
 				</li>
 				<li>
-					<a href="_search_dfs_.dfs_config.html">DFS_Config</a>
+					<a href="_io_output_jsonoutput_.ijsonoutput.html">IJSONOutput</a>
 				</li>
 			</ul>
-			<h1>Interface DFS_Config</h1>
+			<h1>Interface IJSONOutput</h1>
 		</div>
 	</div>
 </header>
@@ -74,8 +74,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">DFS_Config</span>
+						<span class="target">IJSONOutput</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_io_output_jsonoutput_.jsonoutput.html" class="tsd-signature-type">JSONOutput</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -83,98 +89,65 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#callbacks" class="tsd-kind-icon">callbacks</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#dfs_visit_marked" class="tsd-kind-icon">dfs_<wbr>visit_<wbr>marked</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#filters" class="tsd-kind-icon">filters</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#messages" class="tsd-kind-icon">messages</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_search_dfs_.dfs_config.html#visit_result" class="tsd-kind-icon">visit_<wbr>result</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_io_output_jsonoutput_.ijsonoutput.html#writetojsonfile" class="tsd-kind-icon">write<wbr>ToJSONFile</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_io_output_jsonoutput_.ijsonoutput.html#writetojsonsstring" class="tsd-kind-icon">write<wbr>ToJSONSString</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="callbacks" class="tsd-anchor"></a>
-					<h3>callbacks</h3>
-					<div class="tsd-signature tsd-kind-icon">callbacks<span class="tsd-signature-symbol">:</span> <a href="_search_dfs_.dfs_callbacks.html" class="tsd-signature-type">DFS_Callbacks</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L10">search/DFS.ts:10</a></li>
-						</ul>
-					</aside>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="writetojsonfile" class="tsd-anchor"></a>
+					<h3>write<wbr>ToJSONFile</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>ToJSONFile<span class="tsd-signature-symbol">(</span>filepath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, graph<span class="tsd-signature-symbol">: </span><a href="_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in io/output/JSONOutput.ts:14</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>filepath: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>graph: <a href="_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="dfs_visit_marked" class="tsd-anchor"></a>
-					<h3>dfs_<wbr>visit_<wbr>marked</h3>
-					<div class="tsd-signature tsd-kind-icon">dfs_<wbr>visit_<wbr>marked<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L12">search/DFS.ts:12</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">boolean</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="dir_mode" class="tsd-anchor"></a>
-					<h3>dir_<wbr>mode</h3>
-					<div class="tsd-signature tsd-kind-icon">dir_<wbr>mode<span class="tsd-signature-symbol">:</span> <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L11">search/DFS.ts:11</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="filters" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> filters</h3>
-					<div class="tsd-signature tsd-kind-icon">filters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L14">search/DFS.ts:14</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="messages" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> messages</h3>
-					<div class="tsd-signature tsd-kind-icon">messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L13">search/DFS.ts:13</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="visit_result" class="tsd-anchor"></a>
-					<h3>visit_<wbr>result</h3>
-					<div class="tsd-signature tsd-kind-icon">visit_<wbr>result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/search/DFS.ts#L9">search/DFS.ts:9</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="writetojsonsstring" class="tsd-anchor"></a>
+					<h3>write<wbr>ToJSONSString</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">write<wbr>ToJSONSString<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in io/output/JSONOutput.ts:15</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>graph: <a href="_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -208,7 +181,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_io_output_csvoutput_.html">"io/output/CSVOutput"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_io_output_jsonoutput_.html">"io/output/JSONOutput"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -217,7 +190,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_search_bfs_.html">"search/BFS"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_search_dfs_.html">"search/DFS"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -242,57 +215,24 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfsvisit_scope.html" class="tsd-kind-icon">DFSVisit_<wbr><wbr>Scope</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_callbacks.html" class="tsd-kind-icon">DFS_<wbr><wbr>Callbacks</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_io_output_jsonoutput_.jsonoutput.html" class="tsd-kind-icon">JSONOutput</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_config.html" class="tsd-kind-icon">DFS_<wbr><wbr>Config</a>
+						<a href="_io_output_jsonoutput_.ijsonoutput.html" class="tsd-kind-icon">IJSONOutput</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#callbacks" class="tsd-kind-icon">callbacks</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_io_output_jsonoutput_.ijsonoutput.html#writetojsonfile" class="tsd-kind-icon">write<wbr>ToJSONFile</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#dfs_visit_marked" class="tsd-kind-icon">dfs_<wbr>visit_<wbr>marked</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#dir_mode" class="tsd-kind-icon">dir_<wbr>mode</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#filters" class="tsd-kind-icon">filters</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#messages" class="tsd-kind-icon">messages</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_search_dfs_.dfs_config.html#visit_result" class="tsd-kind-icon">visit_<wbr>result</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_io_output_jsonoutput_.ijsonoutput.html#writetojsonsstring" class="tsd-kind-icon">write<wbr>ToJSONSString</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.dfs_scope.html" class="tsd-kind-icon">DFS_<wbr><wbr>Scope</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_search_dfs_.stackentry.html" class="tsd-kind-icon">Stack<wbr>Entry</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfs" class="tsd-kind-icon">DFS</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#dfsvisit" class="tsd-kind-icon">DFSVisit</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsstandardconfig" class="tsd-kind-icon">prepareDFSStandard<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_search_dfs_.html#preparedfsvisitstandardconfig" class="tsd-kind-icon">prepareDFSVisit<wbr>Standard<wbr>Config</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

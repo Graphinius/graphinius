@@ -1,11 +1,16 @@
 {
-  "name": "SEARCH graph test scenario",
+  "name": "SEARCHgraphtestscenario",
   "nodes": 7,
   "dir_edges": 7,
 	"und_edges": 2,
 	"data": {
 		"A": {
 			"edges": [
+				{
+					"to": "D",
+					"directed": false,
+          "weight": 7
+				},
 				{
 					"to": "B",
 					"directed": true,
@@ -17,34 +22,12 @@
           "weight": 2
 				},
 				{
-					"to": "D",
-					"directed": false,
-          "weight": 7
-				},
-				{
 					"to": "F",
 					"directed": true,
           "weight": 8
 				}
-			]
-		},
-		"B": {
-			"edges": [
-			]
-		},
-		"C": {
-			"edges": [
-				{
-					"to": "C",
-					"directed": false,
-          "weight": 1
-				},
-				{
-					"to": "A",
-					"directed": true,
-          "weight": 3
-				}
-			]
+			],
+			"features": {}
 		},
 		"D": {
 			"edges": [
@@ -63,7 +46,33 @@
 					"directed": true,
           "weight": 5
 				}
-			]
+			],
+			"features": {}
+		},
+		"B": {
+			"edges": [
+			],
+			"features": {}
+		},
+		"C": {
+			"edges": [
+				{
+					"to": "C",
+					"directed": false,
+          "weight": 1
+				},
+				{
+					"to": "A",
+					"directed": true,
+          "weight": 3
+				}
+			],
+			"features": {}
+		},
+		"F": {
+			"edges": [
+			],
+			"features": {}
 		},
 		"E": {
 			"edges": [
@@ -72,15 +81,13 @@
 					"directed": true,
           "weight": 6
 				}
-			]
-		},
-		"F": {
-			"edges": [
-			]
+			],
+			"features": {}
 		},
 		"G": {
 			"edges": [
-			]
+			],
+			"features": {}
 		}
 	}
 }

@@ -49,6 +49,7 @@ class JSONInput implements IJSONInput {
 	readFromJSONFile(filepath : string) : $G.IGraph {
 		this.checkNodeEnvironment();
 
+		// TODO test for existing file...
 		var json = JSON.parse(fs.readFileSync(filepath).toString());
 		return this.readFromJSON(json);
 	}

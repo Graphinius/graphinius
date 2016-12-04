@@ -48,17 +48,18 @@
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
 	var CSVInput 	      = __webpack_require__(7);
-	var JSONInput       = __webpack_require__(12);
-	var CSVOutput       = __webpack_require__(13);
-	var BFS				      = __webpack_require__(14);
-	var DFS				      = __webpack_require__(16);
-	var PFS             = __webpack_require__(17);
+	var CSVOutput       = __webpack_require__(12);
+	var JSONInput       = __webpack_require__(13);
+	var JSONOutput      = __webpack_require__(14);
+	var BFS				      = __webpack_require__(15);
+	var DFS				      = __webpack_require__(17);
+	var PFS             = __webpack_require__(18);
 	var structUtils     = __webpack_require__(3);
 	var remoteUtils     = __webpack_require__(11);
-	var callbackUtils   = __webpack_require__(15);
-	var randGen         = __webpack_require__(19);
-	var binaryHeap      = __webpack_require__(18);
-	var simplePerturbation = __webpack_require__(20);
+	var callbackUtils   = __webpack_require__(16);
+	var randGen         = __webpack_require__(20);
+	var binaryHeap      = __webpack_require__(19);
+	var simplePerturbation = __webpack_require__(21);
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -81,7 +82,8 @@
 			JSONInput 	: JSONInput.JSONInput
 		},
 		output: {		
-			CSVOutput		: CSVOutput.CSVOutput
+			CSVOutput		: CSVOutput.CSVOutput,
+			JSONOutput	: JSONOutput.JSONOutput
 		},
 		search: {
 			BFS													   : BFS.BFS,
@@ -1444,6 +1446,56 @@
 
 	"use strict";
 	var fs = __webpack_require__(10);
+	var CSVOutput = (function () {
+	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
+	        if (_separator === void 0) { _separator = ','; }
+	        if (_explicit_direction === void 0) { _explicit_direction = true; }
+	        if (_direction_mode === void 0) { _direction_mode = false; }
+	        this._separator = _separator;
+	        this._explicit_direction = _explicit_direction;
+	        this._direction_mode = _direction_mode;
+	    }
+	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
+	        if (typeof window !== 'undefined' && window !== null) {
+	            throw new Error('cannot write to File inside of Browser');
+	        }
+	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
+	    };
+	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
+	        var graphString = "";
+	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
+	        var mergeFunc = function (ne) {
+	            return ne.node.getID();
+	        };
+	        for (var node_key in nodes) {
+	            node = nodes[node_key];
+	            graphString += node.getID();
+	            adj_nodes = node.reachNodes(mergeFunc);
+	            for (var adj_idx in adj_nodes) {
+	                adj_node = adj_nodes[adj_idx].node;
+	                graphString += this._separator + adj_node.getID();
+	            }
+	            graphString += "\n";
+	        }
+	        return graphString;
+	    };
+	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
+	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
+	    };
+	    CSVOutput.prototype.writeToEdgeList = function (graph) {
+	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
+	    };
+	    return CSVOutput;
+	}());
+	exports.CSVOutput = CSVOutput;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var fs = __webpack_require__(10);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(11);
 	var DEFAULT_WEIGHT = 1;
@@ -1529,62 +1581,74 @@
 
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var fs = __webpack_require__(10);
-	var CSVOutput = (function () {
-	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
-	        if (_separator === void 0) { _separator = ','; }
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction_mode === void 0) { _direction_mode = false; }
-	        this._separator = _separator;
-	        this._explicit_direction = _explicit_direction;
-	        this._direction_mode = _direction_mode;
-	    }
-	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
-	        if (typeof window !== 'undefined' && window !== null) {
-	            throw new Error('cannot write to File inside of Browser');
-	        }
-	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
-	    };
-	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
-	        var graphString = "";
-	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
-	        var mergeFunc = function (ne) {
-	            return ne.node.getID();
-	        };
-	        for (var node_key in nodes) {
-	            node = nodes[node_key];
-	            graphString += node.getID();
-	            adj_nodes = node.reachNodes(mergeFunc);
-	            for (var adj_idx in adj_nodes) {
-	                adj_node = adj_nodes[adj_idx].node;
-	                graphString += this._separator + adj_node.getID();
-	            }
-	            graphString += "\n";
-	        }
-	        return graphString;
-	    };
-	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
-	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
-	    };
-	    CSVOutput.prototype.writeToEdgeList = function (graph) {
-	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
-	    };
-	    return CSVOutput;
-	}());
-	exports.CSVOutput = CSVOutput;
-
-
-/***/ },
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var fs = __webpack_require__(10);
+	var JSONOutput = (function () {
+	    function JSONOutput() {
+	    }
+	    JSONOutput.prototype.writeToJSONFile = function (filepath, graph) {
+	        if (typeof window !== 'undefined' && window !== null) {
+	            throw new Error('cannot write to File inside of Browser');
+	        }
+	        fs.writeFileSync(filepath, this.writeToJSONSString(graph));
+	    };
+	    JSONOutput.prototype.writeToJSONSString = function (graph) {
+	        var nodes, node, node_struct, und_edges, dir_edges, edge, edge_struct, features, coords;
+	        var result = {
+	            name: graph._label,
+	            nodes: graph.nrNodes(),
+	            dir_edges: graph.nrDirEdges(),
+	            und_edges: graph.nrUndEdges(),
+	            data: {}
+	        };
+	        nodes = graph.getNodes();
+	        for (var node_key in nodes) {
+	            node = nodes[node_key];
+	            node_struct = result.data[node.getID()] = {
+	                edges: []
+	            };
+	            und_edges = node.undEdges();
+	            for (var edge_key in und_edges) {
+	                edge = und_edges[edge_key];
+	                var connected_nodes = edge.getNodes();
+	                node_struct.edges.push({
+	                    to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
+	                    directed: edge.isDirected(),
+	                    weight: edge.isWeighted() ? edge.getWeight() : undefined
+	                });
+	            }
+	            dir_edges = node.outEdges();
+	            for (var edge_key in dir_edges) {
+	                edge = dir_edges[edge_key];
+	                var connected_nodes = edge.getNodes();
+	                node_struct.edges.push({
+	                    to: connected_nodes.b.getID(),
+	                    directed: edge.isDirected(),
+	                    weight: edge.isWeighted() ? edge.getWeight() : undefined
+	                });
+	            }
+	            node_struct.features = node.getFeatures();
+	            if ((coords = node.getFeature('coords')) != null) {
+	                node_struct['coords'] = coords;
+	            }
+	        }
+	        return JSON.stringify(result);
+	    };
+	    return JSONOutput;
+	}());
+	exports.JSONOutput = JSONOutput;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(15);
+	var $CB = __webpack_require__(16);
 	function BFS(graph, v, config) {
 	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -1690,7 +1754,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1708,12 +1772,12 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(15);
+	var $CB = __webpack_require__(16);
 	function DFSVisit(graph, current_root, config) {
 	    var dfsVisitScope = {
 	        stack: [],
@@ -1871,14 +1935,14 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(15);
-	var $BH = __webpack_require__(18);
+	var $CB = __webpack_require__(16);
+	var $BH = __webpack_require__(19);
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2023,7 +2087,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2267,7 +2331,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2413,11 +2477,11 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var randgen = __webpack_require__(19);
+	var randgen = __webpack_require__(20);
 	var logger_1 = __webpack_require__(5);
 	var logger = new logger_1.Logger();
 	var SimplePerturber = (function () {

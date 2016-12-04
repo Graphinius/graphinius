@@ -2,8 +2,9 @@ var Edges			      = require("./dist/core/Edges.js");
 var Nodes 		      = require("./dist/core/Nodes.js");
 var Graph 		      = require("./dist/core/Graph.js");
 var CSVInput 	      = require("./dist/io/input/CSVInput.js");
-var JSONInput       = require("./dist/io/input/JSONInput.js");
 var CSVOutput       = require("./dist/io/output/CSVOutput.js");
+var JSONInput       = require("./dist/io/input/JSONInput.js");
+var JSONOutput      = require("./dist/io/output/JSONOutput.js");
 var BFS				      = require("./dist/search/BFS.js");
 var DFS				      = require("./dist/search/DFS.js");
 var PFS             = require("./dist/search/PFS.js");
@@ -35,7 +36,8 @@ out.$G = {
 		JSONInput 	: JSONInput.JSONInput
 	},
 	output: {		
-		CSVOutput		: CSVOutput.CSVOutput
+		CSVOutput		: CSVOutput.CSVOutput,
+		JSONOutput	: JSONOutput.JSONOutput
 	},
 	search: {
 		BFS													   : BFS.BFS,
