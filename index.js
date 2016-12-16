@@ -14,6 +14,8 @@ var callbackUtils   = require("./dist/utils/callbackUtils.js");
 var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
+var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+
 
 // TODO:
 // Encapsulate ALL functions within Graph for
@@ -48,6 +50,9 @@ out.$G = {
 		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
     PFS                            : PFS.PFS,
     preparePFSStandardConfig       : PFS.preparePFSStandardConfig
+	},
+	mincut: {
+		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
 	},
   util: {
     struct          : structUtils,

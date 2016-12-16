@@ -60,6 +60,8 @@
 	var randGen         = __webpack_require__(20);
 	var binaryHeap      = __webpack_require__(19);
 	var simplePerturbation = __webpack_require__(21);
+	var MCMFBoykov			= __webpack_require__(22);
+
 
 	// TODO:
 	// Encapsulate ALL functions within Graph for
@@ -94,6 +96,9 @@
 			prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
 	    PFS                            : PFS.PFS,
 	    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
+		},
+		mincut: {
+			MCMFBoykov										 : MCMFBoykov.MCMFBoykov
 		},
 	  util: {
 	    struct          : structUtils,
@@ -2673,6 +2678,42 @@
 	    return SimplePerturber;
 	}());
 	exports.SimplePerturber = SimplePerturber;
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var MCMFBoykov = (function () {
+	    function MCMFBoykov(_graph, _source, _sink, config) {
+	        this._graph = _graph;
+	        this._source = _source;
+	        this._sink = _sink;
+	        this._state = {
+	            activeNodes: {},
+	            orphans: {},
+	            treeS: {},
+	            treeT: {},
+	            path: []
+	        };
+	        this._config = config || this.prepareMCMFStandardConfig();
+	    }
+	    MCMFBoykov.prototype.calculateCycle = function () {
+	        var result = {
+	            edges: [],
+	            cost: 0
+	        };
+	        return result;
+	    };
+	    MCMFBoykov.prototype.prepareMCMFStandardConfig = function () {
+	        return {
+	            directed: true
+	        };
+	    };
+	    return MCMFBoykov;
+	}());
+	exports.MCMFBoykov = MCMFBoykov;
 
 
 /***/ }
