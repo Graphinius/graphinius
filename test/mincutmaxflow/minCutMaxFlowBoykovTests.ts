@@ -23,11 +23,11 @@ describe('MCMF Boykov Tests - ', () => {
   });
 
 
-  describe("Base Tests - ", () => {
+  describe.only("Base Tests - ", () => {
 
     it('should instantiate a standard config', () => {
       expect( mcmf.prepareMCMFStandardConfig() ).to.deep.equal( {directed: true} );
-    });    
+    });
 
   });
 
