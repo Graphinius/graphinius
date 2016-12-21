@@ -3,5 +3,11 @@
       "target": "ES5",
       "module": "commonjs",
       "sourceMap": true
-    }
+    },
+    "compileOnSave": false,
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!node_modules/**"
+    ]
 }
