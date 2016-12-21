@@ -58,6 +58,7 @@ export interface IGraph {
 	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
 	getEdgeByLabel(label: string) : $E.IBaseEdge;
+	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
 	getUndEdges() : {[key: string] : $E.IBaseEdge};
 	nrDirEdges() : number;
