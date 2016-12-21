@@ -621,6 +621,33 @@
 	        }
 	        return edge;
 	    };
+	    BaseGraph.prototype.getEdgeByNodeIDs = function (node_a_id, node_b_id) {
+	        var node_a = this.getNodeById(node_a_id);
+	        if (!node_a) {
+	            throw new Error("Cannot find edge. Node A does not exist");
+	        }
+	        var node_b = this.getNodeById(node_b_id);
+	        if (!node_b) {
+	            throw new Error("Cannot find edge. Node B does not exist");
+	        }
+	        var edges_dir = node_a.outEdges();
+	        for (var i = 0; i < Object.keys(edges_dir).length; i++) {
+	            var edge = edges_dir[Object.keys(edges_dir)[i]];
+	            if (edge.getNodes().b.getID() == node_b_id) {
+	                return edge;
+	            }
+	        }
+	        var edges_und = node_a.undEdges();
+	        for (var i = 0; i < Object.keys(edges_und).length; i++) {
+	            var edge = edges_und[Object.keys(edges_und)[i]];
+	            var b;
+	            (edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
+	            if (b == node_b_id) {
+	                return edge;
+	            }
+	        }
+	        throw new Error("Cannot find edge. There is no edge between Node " + node_a_id + " and " + node_b_id);
+	    };
 	    BaseGraph.prototype.getDirEdges = function () {
 	        return this._dir_edges;
 	    };

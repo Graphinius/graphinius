@@ -35,11 +35,11 @@ export interface GraphStats {
 
 export interface IGraph {
 	_label : string;
-	
+
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 	degreeDistribution() : DegreeDistribution;
-	
+
 	// NODE STUFF
 	addNode(id: string, opts? : {}) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
@@ -50,7 +50,7 @@ export interface IGraph {
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
 	deleteNode(node) : void;
-	
+
 	// EDGE STUFF
 	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
@@ -65,14 +65,14 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
-	
+
 	// HANDLE ALL EDGES OF NODES
 	deleteInEdgesOf(node: $N.IBaseNode) : void;
 	deleteOutEdgesOf(node: $N.IBaseNode) : void;
 	deleteDirEdgesOf(node: $N.IBaseNode) : void;
 	deleteUndEdgesOf(node: $N.IBaseNode) : void;
 	deleteAllEdgesOf(node: $N.IBaseNode) : void;
-	
+
 	// HANDLE ALL EDGES IN GRAPH
 	clearAllDirEdges() : void;
 	clearAllUndEdges() : void;
@@ -83,23 +83,23 @@ export interface IGraph {
 class BaseGraph implements IGraph {
 	private _nr_nodes = 0;
 	private _nr_dir_edges = 0;
-	private _nr_und_edges = 0;	
+	private _nr_und_edges = 0;
 	protected _mode : GraphMode = GraphMode.INIT;
 	protected _nodes : { [key: string] : $N.IBaseNode } = {};
-	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {}; 
+	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {};
 	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};
-	
+
   // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
   // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
   // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-  
-  
+
+
 	constructor (public _label) {	}
-	
+
 	getMode() : GraphMode {
 		return this._mode;
 	}
-	
+
 	getStats() : GraphStats {
 		return {
 			mode: this._mode,
@@ -117,13 +117,13 @@ class BaseGraph implements IGraph {
 				key			: string,
 				node 		: $N.IBaseNode,
 				all_deg : number;
-				
+
 		for ( key in this._nodes ) {
 			node = this._nodes[key];
 			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
 			max_deg =  all_deg > max_deg ? all_deg : max_deg;
 		}
-		
+
 		var deg_dist : DegreeDistribution = {
 			in:  new Uint16Array(max_deg),
 			out: new Uint16Array(max_deg),
@@ -143,30 +143,30 @@ class BaseGraph implements IGraph {
 		// console.dir(deg_dist);
 		return deg_dist;
 	}
-	
+
 	nrNodes() : number {
 		return this._nr_nodes;
 	}
-	
+
 	nrDirEdges() : number {
 		return this._nr_dir_edges;
 	}
-	
+
 	nrUndEdges() : number {
 		return this._nr_und_edges;
 	}
-	
+
 	addNode(id: string, opts? : {}) : $N.IBaseNode {
 		var node = new $N.BaseNode(id, opts);
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return node;
 	}
-	
+
 	hasNodeID(id: string) : boolean {
 		return !!this._nodes[id];
 	}
-	
+
 	/**
 	 * Use hasNodeLabel with CAUTION ->
 	 * it has LINEAR runtime in the graph's #nodes
@@ -176,13 +176,13 @@ class BaseGraph implements IGraph {
 			return node.getLabel() === label;
 		});
 	}
-	
+
 	getNodeById(id: string) : $N.IBaseNode {
 		return this._nodes[id];
 	}
-	
+
 	/**
-	 * Use getNodeByLabel with CAUTION -> 
+	 * Use getNodeByLabel with CAUTION ->
 	 * it has LINEAR runtime in the graph's #nodes
 	 */
 	getNodeByLabel(label: string) : $N.IBaseNode {
@@ -191,18 +191,18 @@ class BaseGraph implements IGraph {
 		});
 		return this._nodes[id];
 	}
-	
+
 	getNodes() : {[key: string] : $N.IBaseNode} {
 		return this._nodes;
 	}
-	
+
 	/**
 	 * CAUTION - This function takes linear time in # nodes
 	 */
 	getRandomNode() : $N.IBaseNode {
 		return this.pickRandomProperty(this._nodes);
 	}
-	
+
 	deleteNode(node) : void {
 		var rem_node = this._nodes[node.getID()];
 		if ( !rem_node ) {
@@ -212,7 +212,7 @@ class BaseGraph implements IGraph {
 		var in_deg = node.inDegree();
 		var out_deg = node.outDegree();
 		var deg = node.degree();
-		
+
 		// Delete all edges brutally...
 		if ( in_deg ) {
 			this.deleteInEdgesOf(node);
@@ -223,17 +223,17 @@ class BaseGraph implements IGraph {
 		if ( deg ) {
 			this.deleteUndEdgesOf(node);
 		}
-		
+
 		delete this._nodes[node.getID()];
 		this._nr_nodes -= 1;
 	}
-	
+
 	hasEdgeID(id: string) : boolean {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
 	}
-	
+
 	/**
-	 * Use hasEdgeLabel with CAUTION -> 
+	 * Use hasEdgeLabel with CAUTION ->
 	 * it has LINEAR runtime in the graph's #edges
 	 */
 	hasEdgeLabel(label: string) : boolean {
@@ -242,10 +242,10 @@ class BaseGraph implements IGraph {
 		});
 		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
 			return edge.getLabel() === label;
-		});		
+		});
 		return !!dir_id || !!und_id;
 	}
-	
+
 	getEdgeById(id: string) : $E.IBaseEdge {
 		var edge = this._dir_edges[id] || this._und_edges[id];
 		if ( !edge ) {
@@ -253,9 +253,9 @@ class BaseGraph implements IGraph {
 		}
 		return edge;
 	}
-	
+
 	/**
-	 * Use hasEdgeLabel with CAUTION -> 
+	 * Use hasEdgeLabel with CAUTION ->
 	 * it has LINEAR runtime in the graph's #edges
 	 */
 	getEdgeByLabel(label: string) : $E.IBaseEdge {
@@ -271,15 +271,47 @@ class BaseGraph implements IGraph {
 		}
 		return edge;
 	}
-	
+
+	// get the edge from node_a to node_b (or undirected)
+	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
+		var node_a = this.getNodeById(node_a_id);
+		if ( !node_a ) {
+			throw new Error("Cannot find edge. Node A does not exist");
+		}
+		var node_b = this.getNodeById(node_b_id);
+		if ( !node_b ) {
+			throw new Error("Cannot find edge. Node B does not exist");
+		}
+		// check for outgoing directed edges
+		var edges_dir = node_a.outEdges();
+		for (let i = 0; i < Object.keys(edges_dir).length; i++) {
+		    var edge = edges_dir[Object.keys(edges_dir)[i]];
+				if (edge.getNodes().b.getID() == node_b_id) {
+				    return edge;
+				}
+		}
+		// check for undirected edges
+		var edges_und = node_a.undEdges();
+		for (let i = 0; i < Object.keys(edges_und).length; i++) {
+		    var edge = edges_und[Object.keys(edges_und)[i]];
+				var b: string;
+				(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
+				if (b == node_b_id) {
+				    return edge;
+				}
+		}
+		// if we managed to go up to here, there is no edge!
+		throw new Error("Cannot find edge. There is no edge between Node " + node_a_id +  " and " + node_b_id);
+	}
+
 	getDirEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._dir_edges;
 	}
-	
+
 	getUndEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._und_edges;
 	}
-	
+
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge {
 		var node_a = this.getNodeById(node_a_id),
 				node_b = this.getNodeById(node_b_id);
@@ -293,13 +325,13 @@ class BaseGraph implements IGraph {
 			return this.addEdge(label, node_a, node_b, opts);
 		}
 	}
-		
+
 	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
 		let edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
 
 		// connect edge to first node anyways
 		node_a.addEdge(edge);
-		
+
 		if ( edge.isDirected() ) {
 			// add edge to second node too
 			node_b.addEdge(edge);
@@ -313,12 +345,12 @@ class BaseGraph implements IGraph {
 				node_b.addEdge(edge);
 			}
 			this._und_edges[edge.getID()] = edge;
-			this._nr_und_edges += 1;			
+			this._nr_und_edges += 1;
 			this.updateGraphMode();
 		}
 		return edge;
 	}
-	
+
 	deleteEdge(edge: $E.IBaseEdge) : void {
 		var dir_edge = this._dir_edges[edge.getID()];
 		var und_edge = this._und_edges[edge.getID()];
@@ -326,92 +358,92 @@ class BaseGraph implements IGraph {
 		if ( !dir_edge && !und_edge ) {
 			throw new Error('cannot remove non-existing edge.');
 		}
-		
+
 		var nodes = edge.getNodes();
 		nodes.a.removeEdge(edge);
 		if ( nodes.a !== nodes.b ) {
 				nodes.b.removeEdge(edge);
 		}
-		
+
 		if ( dir_edge ) {
 			delete this._dir_edges[edge.getID()];
 			this._nr_dir_edges -=1;
-		} 
+		}
 		else {
 			delete this._und_edges[edge.getID()];
 			this._nr_und_edges -=1;
 		}
-		
+
 		this.updateGraphMode();
 	}
-	
+
 	// Some atomicity / rollback feature would be nice here...
 	deleteInEdgesOf(node: $N.IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
 		var in_edges = node.inEdges();
-		var key 	: string, 
+		var key 	: string,
 				edge	: $E.IBaseEdge;
-		
+
 		for (key in in_edges) {
 			edge = in_edges[key];
 			edge.getNodes().a.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
-			this._nr_dir_edges -=1;		
+			this._nr_dir_edges -=1;
 		}
 		node.clearInEdges();
 		this.updateGraphMode();
 	}
-	
+
 	// Some atomicity / rollback feature would be nice here...
 	deleteOutEdgesOf(node: $N.IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
-		var out_edges = node.outEdges();		
-		var key 	: string, 
+		var out_edges = node.outEdges();
+		var key 	: string,
 				edge	: $E.IBaseEdge;
-		
+
 		for (key in out_edges) {
 			edge = out_edges[key];
 			edge.getNodes().b.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
-			this._nr_dir_edges -=1;		
-		}		
+			this._nr_dir_edges -=1;
+		}
 		node.clearOutEdges();
 		this.updateGraphMode();
 	}
-	
+
 	// Some atomicity / rollback feature would be nice here...
 	deleteDirEdgesOf(node: $N.IBaseNode) : void {
 		this.deleteInEdgesOf(node);
 		this.deleteOutEdgesOf(node);
 	}
-	
+
 	// Some atomicity / rollback feature would be nice here...
 	deleteUndEdgesOf(node: $N.IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
 		var und_edges = node.undEdges();
-		var key 	: string, 
+		var key 	: string,
 				edge	: $E.IBaseEdge;
-		
+
 		for (key in und_edges) {
 			edge = und_edges[key];
 			var conns = edge.getNodes();
 			conns.a.removeEdge(edge);
 			if ( conns.a !== conns.b ) {
 				conns.b.removeEdge(edge);
-			}			
+			}
 			delete this._und_edges[edge.getID()];
-			this._nr_und_edges -=1;		
-		}	
+			this._nr_und_edges -=1;
+		}
 		node.clearUndEdges();
 		this.updateGraphMode();
 	}
-	
+
 	// Some atomicity / rollback feature would be nice here...
 	deleteAllEdgesOf(node: $N.IBaseNode) : void {
 		this.deleteDirEdgesOf(node);
 		this.deleteUndEdgesOf(node);
 	}
-	
+
 	/**
 	 * Remove all the (un)directed edges in the graph
 	 */
@@ -420,26 +452,26 @@ class BaseGraph implements IGraph {
 			this.deleteEdge(this._dir_edges[edge]);
 		}
 	}
-	
+
 	clearAllUndEdges() : void {
 		for (var edge in this._und_edges) {
 			this.deleteEdge(this._und_edges[edge]);
 		}
 	}
-	
+
 	clearAllEdges() : void {
 		this.clearAllDirEdges();
 		this.clearAllUndEdges();
 	}
-	
-	
+
+
 	/**
 	 * CAUTION - This function is linear in # directed edges
 	 */
 	getRandomDirEdge() : $E.IBaseEdge {
 		return this.pickRandomProperty(this._dir_edges);
 	}
-	
+
 	/**
 	 * CAUTION - This function is linear in # undirected edges
 	 */
@@ -447,7 +479,7 @@ class BaseGraph implements IGraph {
 		return this.pickRandomProperty(this._und_edges);
 	}
 
-	
+
 	protected checkConnectedNodeOrThrow(node : $N.IBaseNode) {
 		var node = this._nodes[node.getID()];
 		if ( !node ) {
@@ -455,17 +487,17 @@ class BaseGraph implements IGraph {
 		}
 	}
 
-	
+
 	protected updateGraphMode() {
 		var nr_dir = this._nr_dir_edges,
 			nr_und = this._nr_und_edges;
-		
+
 		if ( nr_dir && nr_und  ) {
 			this._mode = GraphMode.MIXED;
-		} 
+		}
 		else if ( nr_dir ) {
 			this._mode = GraphMode.DIRECTED;
-		} 
+		}
 		else if ( nr_und ) {
 			this._mode = GraphMode.UNDIRECTED;
 		}
@@ -473,7 +505,7 @@ class BaseGraph implements IGraph {
 			this._mode = GraphMode.INIT;
 		}
 	}
-	
+
 
 	private pickRandomProperty(propList) : any {
 		let tmpList = Object.keys(propList);
