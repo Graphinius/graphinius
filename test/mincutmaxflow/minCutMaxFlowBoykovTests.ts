@@ -20,15 +20,27 @@ describe('MCMF Boykov Tests - ', () => {
   beforeEach(() => {
     graph = json.readFromJSONFile(mcmf_graph);
     mcmf = new $MC.MCMFBoykov(graph, graph.getNodeById("A"), graph.getNodeById("Z"));
+    // mcmf = new $MC.MCMFBoykov(graph, graph.getNodeById("80260"), graph.getNodeById("22457"));
+
   });
 
 
-  describe.only("Base Tests - ", () => {
+  describe("Base Tests - ", () => {
 
     it('should instantiate a standard config', () => {
       expect( mcmf.prepareMCMFStandardConfig() ).to.deep.equal( {directed: true} );
     });
 
+  });
+
+  describe.only("Min Cut Test - ", () => {
+
+    it('should separate the graph in two disjoint sets so that the cost is minimized', () => {
+      expect( mcmf.calculateCycle() ).to.deep.equal( {
+        edges: [],
+        cost: 0
+      } );
+    });
   });
 
 });

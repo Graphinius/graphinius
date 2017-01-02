@@ -31,7 +31,7 @@ export interface MCMFState {
   treeS       : {[key:string] : $N.IBaseNode};
   treeT       : {[key:string] : $N.IBaseNode};
 	parents			: {[key:string] : $N.IBaseNode};
-  path        : Array<$N.IBaseNode>
+  path        : Array<$N.IBaseNode>;
 }
 
 
@@ -68,9 +68,73 @@ class MCMFBoykov implements IMCMFBoykov {
       cost: 0
     }
 
+		// init
+		this._state.treeS[this._source.getID()] = this._source;
+		this._state.treeT[this._sink.getID()] = this._sink;
+		this._state.activeNodes[this._source.getID()] = this._source;
+		this._state.activeNodes[this._sink.getID()] = this._sink;
+
+var count = 0;
+		// start
+		while(true) {
+			var path = this.grow();
+
+			if (!path.length) {
+				console.log("DONE");
+			    break;
+			}
+			//this.printState();
+			this.augmentation();
+			this.adoption();
+			++count;
+		}
+
+		this.printState(1);
+		console.log("# cycles => " + count);
+		// this.grow();
 
     return result;
   }
+
+	printState(print_path: number) {
+		var treeS = [];
+		for (let i = 0; i < Object.keys(this._state.treeS).length; i++) {
+		    treeS.push(Object.keys(this._state.treeS)[i]);
+		}
+		var treeT = [];
+		for (let i = 0; i < Object.keys(this._state.treeT).length; i++) {
+		    treeT.push(Object.keys(this._state.treeT)[i]);
+		}
+		var activeNodes = [];
+		for (let i = 0; i < Object.keys(this._state.activeNodes).length; i++) {
+		    activeNodes.push(Object.keys(this._state.activeNodes)[i]);
+		}
+		var orphans = [];
+		for (let i = 0; i < Object.keys(this._state.orphans).length; i++) {
+		    orphans.push(Object.keys(this._state.orphans)[i]);
+		}
+		console.log("==========");
+		console.log("S => " + treeS);
+		console.log("T => " + treeT);
+		console.log("A => " + activeNodes);
+		console.log("O => " + orphans);
+		var p_b = (this._state.parents["B"] == null) ? "/" : this._state.parents["B"].getID();
+		var p_c = (this._state.parents["C"] == null) ? "/" : this._state.parents["C"].getID();
+		var p_d = (this._state.parents["D"] == null) ? "/" : this._state.parents["D"].getID();
+		var p_e = (this._state.parents["E"] == null) ? "/" : this._state.parents["E"].getID();
+		console.log("P_B => " + p_b);
+		console.log("P_C => " + p_c);
+		console.log("P_D => " + p_d);
+		console.log("P_E => " + p_e);
+		if (print_path) {
+			var path = [];
+			for (let i = 0; i < this._state.path.length; i++) {
+			    path.push(this._state.path[i].getID());
+			}
+		    console.log("Path => " + path);
+		}
+		console.log("==========");
+	}
 
 	tree(node: $N.IBaseNode) {
 		var tree: string = "";
@@ -86,12 +150,16 @@ class MCMFBoykov implements IMCMFBoykov {
 	}
 
 	getPathToRoot(node: $N.IBaseNode) {
-		var path: Array<$N.IBaseNode>;
-		path.push(node);
-		while (this._state.parents[node.getID()]) {
-			node = this._state.parents[node.getID()];
-			path.push(this._state.parents[node.getID()]);
+		var path: Array<$N.IBaseNode> = [];
+
+		var node_id = node.getID();
+		path.push(this._graph.getNodeById(node_id));
+
+		while ((node_id != this._sink.getID()) && (node_id != this._source.getID())) {
+			node_id = this._state.parents[node_id].getID();
+			path.push(this._graph.getNodeById(node_id));
 		}
+
 		return path;
 	}
 
@@ -99,8 +167,16 @@ class MCMFBoykov implements IMCMFBoykov {
 		var min_capacity: number = 0;
 
 		for (let i = 0; i < path.length - 1; i++) {
-			var node_a = path[i], node_b = path[i+1];
+			var node_a: $N.IBaseNode = path[i];
+			var node_b = path[i+1];
+
 		  var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+		console.log(edge.getWeight());
+			if (!i) {
+			    min_capacity = edge.getWeight();
+					continue;
+			}
+
 			if (edge.getWeight() < min_capacity) {
 			    min_capacity = edge.getWeight();
 			}
@@ -110,15 +186,22 @@ class MCMFBoykov implements IMCMFBoykov {
 
 	grow() {
 		// as long as there are active nodes
+		console.log("///// GROW /////");
 		while (Object.keys(this._state.activeNodes).length) {
+			this.printState(0);
 			// take an active node
 			var activeNode: $N.IBaseNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
+			console.log("processing => " + activeNode.getID());
 			// get all his neighbors
-			var neighbors: Array<$N.NeighborEntry> = activeNode.reachNodes();
+			var edges: {[k: string] : $E.IBaseEdge} = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
 			// for all neighbors
-			for (let i = 0; i < neighbors.length; i++) {
-			    var neighborNode: $N.IBaseNode = neighbors[i].node;
-					var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(activeNode.getID(), neighborNode.getID());
+			for (let i = 0; i < Object.keys(edges).length; i++) {
+			    // var neighborNode: $N.IBaseNode = neighbors[i].node;
+
+					var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
+					var neighborNode: $N.IBaseNode = (this.tree(activeNode) == "S") ? edge.getNodes().b : edge.getNodes().a;
+
+					// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(activeNode.getID(), neighborNode.getID());
 					if (edge.getWeight() <= 0) {
 						continue;
 					}
@@ -152,13 +235,16 @@ class MCMFBoykov implements IMCMFBoykov {
 					}
 			}
 			delete this._state.activeNodes[activeNode.getID()];
+		//	break;
 		}
 		return []; //empty path
 	}
 
 
 	augmentation() {
+		console.log("///// AUGMENT /////");
 		var min_capacity = this.getBottleneckCapacity(this._state.path);
+		console.log(min_capacity);
 		for (let i = 0; i < this._state.path.length - 1; i++) {
 		    var node_a = this._state.path[i], node_b = this._state.path[i+1];
 				var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
@@ -170,6 +256,7 @@ class MCMFBoykov implements IMCMFBoykov {
 				// for all saturated edges
 				edge = this._state.residGraph.getEdgeById(edge.getID());
 				if (!edge.getWeight()) {
+					console.log("found saturated edge");
 				    if (this.tree(node_a) == this.tree(node_b)) {
 				        if (this.tree(node_b) == "S") {
 				            delete this._state.parents[node_b.getID()];
@@ -182,18 +269,25 @@ class MCMFBoykov implements IMCMFBoykov {
 				    }
 				}
 		}
+		this.printState(1);
 	}
 
 	adoption() {
+		console.log("///// ADOPT /////");
 		while (Object.keys(this._state.orphans).length) {
+			this.printState(0);
 		    var orphan: $N.IBaseNode = this._state.orphans[Object.keys(this._state.orphans)[0]];
 				delete this._state.orphans[orphan.getID()];
 
 				// try to find a new valid parent for the orphan
-				var neighbors: Array<$N.NeighborEntry> = orphan.reachNodes();
-				for (let i = 0; i < neighbors.length; i++) {
-				    var neighbor: $N.IBaseNode = neighbors[i].node;
-						var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
+				var edges: {[k: string] : $E.IBaseEdge} = (this.tree(orphan) == "S") ? orphan.inEdges() : orphan.outEdges();
+				// var neighbors: Array<$N.NeighborEntry> = orphan.reachNodes();
+				console.log(Object.keys(edges).length);
+				for (let i = 0; i < Object.keys(edges).length; i++) {
+						var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+				    var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
+						console.log(neighbor.getID());
+						// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
 						if ((this.tree(orphan) == this.tree(neighbor)) && edge.getWeight()) {
 						    var neighbor_root_path: Array<$N.IBaseNode> = this.getPathToRoot(neighbor);
 								var neighbor_root: $N.IBaseNode = neighbor_root_path[neighbor_root_path.length -1];
@@ -206,12 +300,17 @@ class MCMFBoykov implements IMCMFBoykov {
 				}
 
 				// we could not find a valid parent
-				for (let i = 0; i < neighbors.length; i++) {
-					var neighbor: $N.IBaseNode = neighbors[i].node;
+				for (let i = 0; i < Object.keys(edges).length; i++) {
+					var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+					var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
 					if (this.tree(orphan) == this.tree(neighbor)) {
-						var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
+						// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
 						if (edge.getWeight()) {
 						    this._state.activeNodes[neighbor.getID()] = neighbor;
+						}
+						// var parent: $N.IBaseNode = this._state.parents[neighbor.getID()];
+						if (this._state.parents[neighbor.getID()] == null) {
+						    continue;
 						}
 						if (this._state.parents[neighbor.getID()].getID() == orphan.getID()) {
 								this._state.orphans[neighbor.getID()] = neighbor;

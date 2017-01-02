@@ -1,0 +1,112 @@
+{
+  "name": "MinCutMaxFlowGraph",
+  "nodes": 6,
+  "dir_edges": 8,
+	"und_edges": 0,
+	"data": {
+		"A": {
+			"edges": [
+				{
+					"to": "B",
+					"directed": true,
+          "weight": 5
+				},
+				{
+					"to": "C",
+					"directed": true,
+          "weight": 5
+				}
+			]
+		},
+    "B": {
+			"edges": [
+        {
+          "to": "A",
+          "directed": true,
+          "weight": 5
+        },
+				{
+					"to": "D",
+					"directed": true,
+          "weight": 3
+				},
+				{
+					"to": "E",
+					"directed": true,
+          "weight": 6
+				}
+			]
+		},
+    "C": {
+			"edges": [
+        {
+          "to": "A",
+          "directed": true,
+          "weight": 5
+        },
+				{
+					"to": "E",
+					"directed": true,
+          "weight": 3
+				},
+				{
+					"to": "D",
+					"directed": true,
+          "weight": 1
+				}
+			]
+		},
+    "E": {
+			"edges": [
+        {
+          "to": "B",
+          "directed": true,
+          "weight": 0
+        },
+        {
+          "to": "C",
+          "directed": true,
+          "weight": 0
+        },
+				{
+					"to": "Z",
+					"directed": true,
+          "weight": 6
+				}
+			]
+		},
+    "D": {
+			"edges": [
+        {
+          "to": "B",
+          "directed": true,
+          "weight": 0
+        },
+        {
+          "to": "C",
+          "directed": true,
+          "weight": 0
+        },
+				{
+					"to": "Z",
+					"directed": true,
+          "weight": 6
+				}
+			]
+		},
+    "Z": {
+			"edges": [
+        {
+          "to": "D",
+          "directed": true,
+          "weight": 6
+        },
+        {
+          "to": "E",
+          "directed": true,
+          "weight": 6
+        }
+			]
+		}
+  }
+}

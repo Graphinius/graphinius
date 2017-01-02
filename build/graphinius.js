@@ -2734,7 +2734,63 @@
 	            edges: [],
 	            cost: 0
 	        };
+	        this._state.treeS[this._source.getID()] = this._source;
+	        this._state.treeT[this._sink.getID()] = this._sink;
+	        this._state.activeNodes[this._source.getID()] = this._source;
+	        this._state.activeNodes[this._sink.getID()] = this._sink;
+	        var count = 0;
+	        while (true) {
+	            var path = this.grow();
+	            if (!path.length) {
+	                console.log("DONE");
+	                break;
+	            }
+	            this.augmentation();
+	            this.adoption();
+	            ++count;
+	        }
+	        this.printState(1);
+	        console.log("# cycles => " + count);
 	        return result;
+	    };
+	    MCMFBoykov.prototype.printState = function (print_path) {
+	        var treeS = [];
+	        for (var i = 0; i < Object.keys(this._state.treeS).length; i++) {
+	            treeS.push(Object.keys(this._state.treeS)[i]);
+	        }
+	        var treeT = [];
+	        for (var i = 0; i < Object.keys(this._state.treeT).length; i++) {
+	            treeT.push(Object.keys(this._state.treeT)[i]);
+	        }
+	        var activeNodes = [];
+	        for (var i = 0; i < Object.keys(this._state.activeNodes).length; i++) {
+	            activeNodes.push(Object.keys(this._state.activeNodes)[i]);
+	        }
+	        var orphans = [];
+	        for (var i = 0; i < Object.keys(this._state.orphans).length; i++) {
+	            orphans.push(Object.keys(this._state.orphans)[i]);
+	        }
+	        console.log("==========");
+	        console.log("S => " + treeS);
+	        console.log("T => " + treeT);
+	        console.log("A => " + activeNodes);
+	        console.log("O => " + orphans);
+	        var p_b = (this._state.parents["B"] == null) ? "/" : this._state.parents["B"].getID();
+	        var p_c = (this._state.parents["C"] == null) ? "/" : this._state.parents["C"].getID();
+	        var p_d = (this._state.parents["D"] == null) ? "/" : this._state.parents["D"].getID();
+	        var p_e = (this._state.parents["E"] == null) ? "/" : this._state.parents["E"].getID();
+	        console.log("P_B => " + p_b);
+	        console.log("P_C => " + p_c);
+	        console.log("P_D => " + p_d);
+	        console.log("P_E => " + p_e);
+	        if (print_path) {
+	            var path = [];
+	            for (var i = 0; i < this._state.path.length; i++) {
+	                path.push(this._state.path[i].getID());
+	            }
+	            console.log("Path => " + path);
+	        }
+	        console.log("==========");
 	    };
 	    MCMFBoykov.prototype.tree = function (node) {
 	        var tree = "";
@@ -2749,19 +2805,26 @@
 	        return tree;
 	    };
 	    MCMFBoykov.prototype.getPathToRoot = function (node) {
-	        var path;
-	        path.push(node);
-	        while (this._state.parents[node.getID()]) {
-	            node = this._state.parents[node.getID()];
-	            path.push(this._state.parents[node.getID()]);
+	        var path = [];
+	        var node_id = node.getID();
+	        path.push(this._graph.getNodeById(node_id));
+	        while ((node_id != this._sink.getID()) && (node_id != this._source.getID())) {
+	            node_id = this._state.parents[node_id].getID();
+	            path.push(this._graph.getNodeById(node_id));
 	        }
 	        return path;
 	    };
 	    MCMFBoykov.prototype.getBottleneckCapacity = function (path) {
 	        var min_capacity = 0;
 	        for (var i = 0; i < path.length - 1; i++) {
-	            var node_a = path[i], node_b = path[i + 1];
+	            var node_a = path[i];
+	            var node_b = path[i + 1];
 	            var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+	            console.log(edge.getWeight());
+	            if (!i) {
+	                min_capacity = edge.getWeight();
+	                continue;
+	            }
 	            if (edge.getWeight() < min_capacity) {
 	                min_capacity = edge.getWeight();
 	            }
@@ -2769,12 +2832,15 @@
 	        return min_capacity;
 	    };
 	    MCMFBoykov.prototype.grow = function () {
+	        console.log("///// GROW /////");
 	        while (Object.keys(this._state.activeNodes).length) {
+	            this.printState(0);
 	            var activeNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
-	            var neighbors = activeNode.reachNodes();
-	            for (var i = 0; i < neighbors.length; i++) {
-	                var neighborNode = neighbors[i].node;
-	                var edge = this._state.residGraph.getEdgeByNodeIDs(activeNode.getID(), neighborNode.getID());
+	            console.log("processing => " + activeNode.getID());
+	            var edges = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
+	            for (var i = 0; i < Object.keys(edges).length; i++) {
+	                var edge = edges[(Object.keys(edges)[i])];
+	                var neighborNode = (this.tree(activeNode) == "S") ? edge.getNodes().b : edge.getNodes().a;
 	                if (edge.getWeight() <= 0) {
 	                    continue;
 	                }
@@ -2805,7 +2871,9 @@
 	        return [];
 	    };
 	    MCMFBoykov.prototype.augmentation = function () {
+	        console.log("///// AUGMENT /////");
 	        var min_capacity = this.getBottleneckCapacity(this._state.path);
+	        console.log(min_capacity);
 	        for (var i = 0; i < this._state.path.length - 1; i++) {
 	            var node_a = this._state.path[i], node_b = this._state.path[i + 1];
 	            var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
@@ -2814,6 +2882,7 @@
 	            this._state.residGraph.getEdgeById(reverse_edge.getID()).setWeight(reverse_edge.getWeight() + min_capacity);
 	            edge = this._state.residGraph.getEdgeById(edge.getID());
 	            if (!edge.getWeight()) {
+	                console.log("found saturated edge");
 	                if (this.tree(node_a) == this.tree(node_b)) {
 	                    if (this.tree(node_b) == "S") {
 	                        delete this._state.parents[node_b.getID()];
@@ -2826,15 +2895,20 @@
 	                }
 	            }
 	        }
+	        this.printState(1);
 	    };
 	    MCMFBoykov.prototype.adoption = function () {
+	        console.log("///// ADOPT /////");
 	        while (Object.keys(this._state.orphans).length) {
+	            this.printState(0);
 	            var orphan = this._state.orphans[Object.keys(this._state.orphans)[0]];
 	            delete this._state.orphans[orphan.getID()];
-	            var neighbors = orphan.reachNodes();
-	            for (var i = 0; i < neighbors.length; i++) {
-	                var neighbor = neighbors[i].node;
-	                var edge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
+	            var edges = (this.tree(orphan) == "S") ? orphan.inEdges() : orphan.outEdges();
+	            console.log(Object.keys(edges).length);
+	            for (var i = 0; i < Object.keys(edges).length; i++) {
+	                var edge = edges[Object.keys(edges)[i]];
+	                var neighbor = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
+	                console.log(neighbor.getID());
 	                if ((this.tree(orphan) == this.tree(neighbor)) && edge.getWeight()) {
 	                    var neighbor_root_path = this.getPathToRoot(neighbor);
 	                    var neighbor_root = neighbor_root_path[neighbor_root_path.length - 1];
@@ -2844,12 +2918,15 @@
 	                    }
 	                }
 	            }
-	            for (var i = 0; i < neighbors.length; i++) {
-	                var neighbor = neighbors[i].node;
+	            for (var i = 0; i < Object.keys(edges).length; i++) {
+	                var edge = edges[Object.keys(edges)[i]];
+	                var neighbor = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
 	                if (this.tree(orphan) == this.tree(neighbor)) {
-	                    var edge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
 	                    if (edge.getWeight()) {
 	                        this._state.activeNodes[neighbor.getID()] = neighbor;
+	                    }
+	                    if (this._state.parents[neighbor.getID()] == null) {
+	                        continue;
 	                    }
 	                    if (this._state.parents[neighbor.getID()].getID() == orphan.getID()) {
 	                        this._state.orphans[neighbor.getID()] = neighbor;
