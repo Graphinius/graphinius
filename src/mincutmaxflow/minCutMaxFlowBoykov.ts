@@ -13,6 +13,7 @@ export interface MCMFConfig {
 
 export interface MCMFResult {
   edges : Array<$E.IBaseEdge>;
+	edgeIDs: Array<string>;
   cost  : number;
 }
 
@@ -65,6 +66,7 @@ class MCMFBoykov implements IMCMFBoykov {
   calculateCycle() {
     var result: MCMFResult = {
       edges: [],
+			edgeIDs: [],
       cost: 0
     }
 
@@ -74,24 +76,57 @@ class MCMFBoykov implements IMCMFBoykov {
 		this._state.activeNodes[this._source.getID()] = this._source;
 		this._state.activeNodes[this._sink.getID()] = this._sink;
 
-var count = 0;
+ 		var nrCycles= 0;
 		// start
 		while(true) {
+			// this.printState(1);
 			var path = this.grow();
 
 			if (!path.length) {
-				console.log("DONE");
 			    break;
 			}
 			//this.printState();
 			this.augmentation();
 			this.adoption();
-			++count;
+			++nrCycles;
 		}
 
-		this.printState(1);
-		console.log("# cycles => " + count);
-		// this.grow();
+		// this.printState(1);
+
+		// compute the cut edges and the total cost of the cut
+		var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
+		for (let i = 0; i < Object.keys(smallTree).length; i++) {
+		    var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
+				var node: $N.IBaseNode = this._graph.getNodeById(node_id);
+				var outEdges: {[k: string] : $E.IBaseEdge} = node.outEdges();
+				var inEdges: {[k: string] : $E.IBaseEdge} = node.inEdges();
+
+				// check outEdges
+				for (let i = 0; i < Object.keys(outEdges).length; i++) {
+				    var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
+						var neighbor: $N.IBaseNode = edge.getNodes().b;
+						if (this.tree(neighbor) != this.tree(node)) {
+						    // we found a an edge which is part of the Cut
+								result.edges.push(edge);
+								result.edgeIDs.push(edge.getID());
+								result.cost += edge.getWeight();
+						}
+				}
+				// check inEdges
+				for (let i = 0; i < Object.keys(inEdges).length; i++) {
+				    var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
+						var neighbor: $N.IBaseNode = edge.getNodes().a;
+						if (this.tree(neighbor) != this.tree(node)) {
+						    // we found a an edge which is part of the Cut
+								result.edges.push(edge);
+								result.edgeIDs.push(edge.getID());
+								result.cost += edge.getWeight();
+						}
+				}
+		}
+		//console.log(result.edges);
+		console.log("Cost => " +result.cost);
+		console.log("# cycles => " + nrCycles);
 
     return result;
   }
@@ -156,6 +191,9 @@ var count = 0;
 		path.push(this._graph.getNodeById(node_id));
 
 		while ((node_id != this._sink.getID()) && (node_id != this._source.getID())) {
+			if (this._state.parents[node_id] == null) { // this happens when the root of this path is a free node
+					return path;
+			}
 			node_id = this._state.parents[node_id].getID();
 			path.push(this._graph.getNodeById(node_id));
 		}
@@ -171,7 +209,6 @@ var count = 0;
 			var node_b = path[i+1];
 
 		  var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
-		console.log(edge.getWeight());
 			if (!i) {
 			    min_capacity = edge.getWeight();
 					continue;
@@ -188,20 +225,15 @@ var count = 0;
 		// as long as there are active nodes
 		console.log("///// GROW /////");
 		while (Object.keys(this._state.activeNodes).length) {
-			this.printState(0);
+			// this.printState(0);
 			// take an active node
 			var activeNode: $N.IBaseNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
-			console.log("processing => " + activeNode.getID());
-			// get all his neighbors
 			var edges: {[k: string] : $E.IBaseEdge} = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
 			// for all neighbors
 			for (let i = 0; i < Object.keys(edges).length; i++) {
-			    // var neighborNode: $N.IBaseNode = neighbors[i].node;
-
 					var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
 					var neighborNode: $N.IBaseNode = (this.tree(activeNode) == "S") ? edge.getNodes().b : edge.getNodes().a;
 
-					// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(activeNode.getID(), neighborNode.getID());
 					if (edge.getWeight() <= 0) {
 						continue;
 					}
@@ -235,7 +267,7 @@ var count = 0;
 					}
 			}
 			delete this._state.activeNodes[activeNode.getID()];
-		//	break;
+			// this.printState(0);
 		}
 		return []; //empty path
 	}
@@ -244,19 +276,16 @@ var count = 0;
 	augmentation() {
 		console.log("///// AUGMENT /////");
 		var min_capacity = this.getBottleneckCapacity(this._state.path);
-		console.log(min_capacity);
 		for (let i = 0; i < this._state.path.length - 1; i++) {
 		    var node_a = this._state.path[i], node_b = this._state.path[i+1];
 				var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
 				var reverse_edge = this._state.residGraph.getEdgeByNodeIDs(node_b.getID(), node_a.getID());
 				// update the residual capacity in the graph
-				// TODO: this shit aint workin on undirected graphs?? think about it..
 				this._state.residGraph.getEdgeById(edge.getID()).setWeight(edge.getWeight() - min_capacity);
 				this._state.residGraph.getEdgeById(reverse_edge.getID()).setWeight(reverse_edge.getWeight() + min_capacity);
 				// for all saturated edges
 				edge = this._state.residGraph.getEdgeById(edge.getID());
 				if (!edge.getWeight()) {
-					console.log("found saturated edge");
 				    if (this.tree(node_a) == this.tree(node_b)) {
 				        if (this.tree(node_b) == "S") {
 				            delete this._state.parents[node_b.getID()];
@@ -269,34 +298,38 @@ var count = 0;
 				    }
 				}
 		}
-		this.printState(1);
+		// this.printState(1);
 	}
 
 	adoption() {
 		console.log("///// ADOPT /////");
 		while (Object.keys(this._state.orphans).length) {
-			this.printState(0);
+			// this.printState(0);
 		    var orphan: $N.IBaseNode = this._state.orphans[Object.keys(this._state.orphans)[0]];
 				delete this._state.orphans[orphan.getID()];
-
 				// try to find a new valid parent for the orphan
 				var edges: {[k: string] : $E.IBaseEdge} = (this.tree(orphan) == "S") ? orphan.inEdges() : orphan.outEdges();
-				// var neighbors: Array<$N.NeighborEntry> = orphan.reachNodes();
-				console.log(Object.keys(edges).length);
+
+				var found = false;
 				for (let i = 0; i < Object.keys(edges).length; i++) {
 						var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 				    var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
-						console.log(neighbor.getID());
-						// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
+
+						// check for same tree and weight > 0
 						if ((this.tree(orphan) == this.tree(neighbor)) && edge.getWeight()) {
 						    var neighbor_root_path: Array<$N.IBaseNode> = this.getPathToRoot(neighbor);
 								var neighbor_root: $N.IBaseNode = neighbor_root_path[neighbor_root_path.length -1];
+								// check for root either source or sink
 								if ((neighbor_root.getID() == this._sink.getID()) || (neighbor_root.getID() == this._source.getID())) {
 									// we found a valid parent
-									this._state.parents[orphan.getID()] = orphan;
-									return;
+									this._state.parents[orphan.getID()] = neighbor;
+									found = true;
+									break;
 								}
 						}
+				}
+				if (found) {
+				    continue;
 				}
 
 				// we could not find a valid parent
@@ -304,14 +337,14 @@ var count = 0;
 					var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 					var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
 					if (this.tree(orphan) == this.tree(neighbor)) {
-						// var edge: $E.IBaseEdge = this._state.residGraph.getEdgeByNodeIDs(neighbor.getID(), orphan.getID());
+						// set neighbor active
 						if (edge.getWeight()) {
 						    this._state.activeNodes[neighbor.getID()] = neighbor;
 						}
-						// var parent: $N.IBaseNode = this._state.parents[neighbor.getID()];
 						if (this._state.parents[neighbor.getID()] == null) {
 						    continue;
 						}
+						// set neighbor to orphan if his parent is the current orphan
 						if (this._state.parents[neighbor.getID()].getID() == orphan.getID()) {
 								this._state.orphans[neighbor.getID()] = neighbor;
 								delete this._state.parents[neighbor.getID()];
