@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>JSONOutput | Graphinius</title>
+	<title>EMEBoykov | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_io_output_jsonoutput_.html">&quot;io/output/JSONOutput&quot;</a>
+					<a href="../modules/_energyminimization_expansionboykov_.html">&quot;energyminimization/expansionBoykov&quot;</a>
 				</li>
 				<li>
-					<a href="_io_output_jsonoutput_.jsonoutput.html">JSONOutput</a>
+					<a href="_energyminimization_expansionboykov_.emeboykov.html">EMEBoykov</a>
 				</li>
 			</ul>
-			<h1>Class JSONOutput</h1>
+			<h1>Class EMEBoykov</h1>
 		</div>
 	</div>
 </header>
@@ -74,14 +74,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">JSONOutput</span>
+						<span class="target">EMEBoykov</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html" class="tsd-signature-type">IJSONOutput</a></li>
+					<li><a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html" class="tsd-signature-type">IEMEBoykov</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -91,14 +91,28 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_io_output_jsonoutput_.jsonoutput.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#_config" class="tsd-kind-icon">_config</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#_graph" class="tsd-kind-icon">_graph</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#_labels" class="tsd-kind-icon">_labels</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_io_output_jsonoutput_.jsonoutput.html#writetojsonfile" class="tsd-kind-icon">write<wbr>ToJSONFile</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_io_output_jsonoutput_.jsonoutput.html#writetojsonsstring" class="tsd-kind-icon">write<wbr>ToJSONSString</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#calculatecycle" class="tsd-kind-icon">calculate<wbr>Cycle</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#prepareemestandardconfig" class="tsd-kind-icon">prepareEMEStandard<wbr>Config</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_energyminimization_expansionboykov_.emeboykov.html#_state" class="tsd-kind-icon">_state</a></li>
 							</ul>
 						</section>
 					</div>
@@ -110,72 +124,135 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new JSONOutput<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_io_output_jsonoutput_.jsonoutput.html" class="tsd-signature-type">JSONOutput</a></li>
+						<li class="tsd-signature tsd-kind-icon">new EMEBoykov<span class="tsd-signature-symbol">(</span>_graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, _labels<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-signature-type">EMEConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_energyminimization_expansionboykov_.emeboykov.html" class="tsd-signature-type">EMEBoykov</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/energy_min/src/io/output/JSONOutput.ts#L19">io/output/JSONOutput.ts:19</a></li>
+									<li>Defined in energyminimization/expansionBoykov.ts:44</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="_io_output_jsonoutput_.jsonoutput.html" class="tsd-signature-type">JSONOutput</a></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>_graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+								<li>
+									<h5>_labels: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-signature-type">EMEConfig</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_energyminimization_expansionboykov_.emeboykov.html" class="tsd-signature-type">EMEBoykov</a></h4>
 						</li>
 					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="_config" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _config</h3>
+					<div class="tsd-signature tsd-kind-icon">_config<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-signature-type">EMEConfig</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in energyminimization/expansionBoykov.ts:40</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="_graph" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _graph</h3>
+					<div class="tsd-signature tsd-kind-icon">_graph<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in energyminimization/expansionBoykov.ts:46</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="_labels" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _labels</h3>
+					<div class="tsd-signature tsd-kind-icon">_labels<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in energyminimization/expansionBoykov.ts:47</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="writetojsonfile" class="tsd-anchor"></a>
-					<h3>write<wbr>ToJSONFile</h3>
+					<a name="calculatecycle" class="tsd-anchor"></a>
+					<h3>calculate<wbr>Cycle</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>ToJSONFile<span class="tsd-signature-symbol">(</span>filepath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">calculate<wbr>Cycle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_energyminimization_expansionboykov_.emeresult.html" class="tsd-signature-type">EMEResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html">IJSONOutput</a>.<a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html#writetojsonfile">writeToJSONFile</a></p>
+								<p>Implementation of <a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html">IEMEBoykov</a>.<a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html#calculatecycle">calculateCycle</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/energy_min/src/io/output/JSONOutput.ts#L23">io/output/JSONOutput.ts:23</a></li>
+									<li>Defined in energyminimization/expansionBoykov.ts:55</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>filepath: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_energyminimization_expansionboykov_.emeresult.html" class="tsd-signature-type">EMEResult</a></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-					<a name="writetojsonsstring" class="tsd-anchor"></a>
-					<h3>write<wbr>ToJSONSString</h3>
+					<a name="prepareemestandardconfig" class="tsd-anchor"></a>
+					<h3>prepareEMEStandard<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">write<wbr>ToJSONSString<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">prepareEMEStandard<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-signature-type">EMEConfig</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html">IJSONOutput</a>.<a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html#writetojsonsstring">writeToJSONSString</a></p>
+								<p>Implementation of <a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html">IEMEBoykov</a>.<a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html#prepareemestandardconfig">prepareEMEStandardConfig</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/energy_min/src/io/output/JSONOutput.ts#L32">io/output/JSONOutput.ts:32</a></li>
+									<li>Defined in energyminimization/expansionBoykov.ts:72</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-signature-type">EMEConfig</a></h4>
 						</li>
 					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="_state" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _state</h3>
+					<div class="tsd-signature tsd-kind-icon">_state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in energyminimization/expansionBoykov.ts:41</li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
+						<a name="_state.activelabel" class="tsd-anchor"></a>
+						<h3>active<wbr>Label</h3>
+						<div class="tsd-signature tsd-kind-icon">active<wbr>Label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in energyminimization/expansionBoykov.ts:43</li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
+						<a name="_state.expansiongraph" class="tsd-anchor"></a>
+						<h3>expansion<wbr>Graph</h3>
+						<div class="tsd-signature tsd-kind-icon">expansion<wbr>Graph<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in energyminimization/expansionBoykov.ts:42</li>
+							</ul>
+						</aside>
+					</section>
 				</section>
 			</section>
 		</div>
@@ -200,7 +277,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_datastructs_fibonacciheap_.html">"datastructs/fibonacci<wbr>Heap"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_energyminimization_expansionboykov_.html">"energyminimization/expansion<wbr>Boykov"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -212,7 +289,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_io_output_csvoutput_.html">"io/output/CSVOutput"</a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_io_output_jsonoutput_.html">"io/output/JSONOutput"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -252,23 +329,44 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_io_output_jsonoutput_.jsonoutput.html" class="tsd-kind-icon">JSONOutput</a>
+						<a href="_energyminimization_expansionboykov_.emeboykov.html" class="tsd-kind-icon">EMEBoykov</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_io_output_jsonoutput_.jsonoutput.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#_config" class="tsd-kind-icon">_config</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#_graph" class="tsd-kind-icon">_graph</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#_labels" class="tsd-kind-icon">_labels</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_io_output_jsonoutput_.jsonoutput.html#writetojsonfile" class="tsd-kind-icon">write<wbr>ToJSONFile</a>
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#calculatecycle" class="tsd-kind-icon">calculate<wbr>Cycle</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_io_output_jsonoutput_.jsonoutput.html#writetojsonsstring" class="tsd-kind-icon">write<wbr>ToJSONSString</a>
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#prepareemestandardconfig" class="tsd-kind-icon">prepareEMEStandard<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-object-literal tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_energyminimization_expansionboykov_.emeboykov.html#_state" class="tsd-kind-icon">_state</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/_io_output_jsonoutput_.ijsonoutput.html" class="tsd-kind-icon">IJSONOutput</a>
+						<a href="../interfaces/_energyminimization_expansionboykov_.emeconfig.html" class="tsd-kind-icon">EMEConfig</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_energyminimization_expansionboykov_.emeresult.html" class="tsd-kind-icon">EMEResult</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_energyminimization_expansionboykov_.emestate.html" class="tsd-kind-icon">EMEState</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_energyminimization_expansionboykov_.iemeboykov.html" class="tsd-kind-icon">IEMEBoykov</a>
 					</li>
 				</ul>
 			</nav>
