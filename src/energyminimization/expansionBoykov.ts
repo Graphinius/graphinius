@@ -105,7 +105,7 @@ class EMEBoykov implements IEMEBoykov {
 
         TODO: wait for bernd to implement a deep copy ;-)
     */
-    var graph : $G.IGraph = this._state.labeledGraph; // THIS WONT WORK!!!!!
+    var graph : $G.IGraph = this.deepCopyGraph(this._state.labeledGraph); // HACK!
 
     // add source (alpha) and sink (not alpha) to graph
     var source: $N.IBaseNode = graph.addNode("SOURCE");
@@ -193,6 +193,31 @@ class EMEBoykov implements IEMEBoykov {
     }
 
     return graph;
+  }
+
+  // deep copy a graph => only needed until there is a 'real' implementation in graphinius core
+  // copy nodes and edges and the labels of the nodes
+  // hack!
+  deepCopyGraph(graph: $G.IGraph) {
+    var cGraph: $G.IGraph = new $G.BaseGraph(graph._label + "_copy");
+
+    // copy all nodes with their labels
+    var nodes: {[key: string] : $N.IBaseNode} = graph.getNodes();
+    for (let i = 0; i < Object.keys(nodes).length; i++) {
+        var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+        var cNode: $N.IBaseNode = cGraph.addNode(node.getID());
+        cNode.setLabel(node.getLabel());
+    }
+
+    // copy all edges with their weights
+    var edges: {[keys: string] : $E.IBaseEdge} = graph.getUndEdges();
+    for (let i = 0; i < Object.keys(edges).length; i++) {
+        var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+        var options: $E.EdgeConstructorOptions = { directed: false, weighted: true, weight: edge.getWeight()};
+        var cEdge: $E.IBaseEdge = cGraph.addEdge(edge.getID(), edge.getNodes().a, edge.getNodes().b, options);
+    }
+
+    return cGraph;
   }
 
 
