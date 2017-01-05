@@ -123,6 +123,7 @@ class MCMFBoykov implements IMCMFBoykov {
 		//console.log(result.edges);
 		console.log("Cost => " +result.cost);
 		console.log("# cycles => " + nrCycles);
+		console.log(result.edges);
 
     return result;
   }

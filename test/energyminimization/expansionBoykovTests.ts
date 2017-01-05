@@ -27,7 +27,12 @@ describe('EME Boykov Tests - ', () => {
   describe.only("Base Tests - ", () => {
 
     it('should instantiate a standard config', () => {
-      expect( eme.prepareEMEStandardConfig() ).to.deep.equal( {directed: true, labeled: false} );
+      expect( eme.prepareEMEStandardConfig() ).to.have.all.keys( 'directed', 'labeled', 'interactionTerm', 'dataTerm');
+      expect( eme.prepareEMEStandardConfig().directed ).to.be.false;
+      expect( eme.prepareEMEStandardConfig().labeled ).to.be.false;
+      expect( eme.prepareEMEStandardConfig().interactionTerm ).to.exist;
+      expect( eme.prepareEMEStandardConfig().dataTerm ).to.exist;
+      // expect( eme.prepareEMEStandardConfig() ).to.deep.equal( {directed: true, labeled: false } );
     });
 
   });

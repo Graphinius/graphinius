@@ -61,8 +61,8 @@ class EMEBoykov implements IEMEBoykov {
   {
      this._config = config || this.prepareEMEStandardConfig();
      this._labels = _labels;
-     this._interactionTerm = config.interactionTerm;
-     this._dataTerm = config.dataTerm;
+     this._interactionTerm = this._config.interactionTerm;
+     this._dataTerm = this._config.dataTerm;
   }
 
 
@@ -245,7 +245,7 @@ class EMEBoykov implements IEMEBoykov {
     };
 
     return {
-      directed: true,
+      directed: false,
       labeled: false,
       interactionTerm: interactionTerm,
       dataTerm: dataTerm

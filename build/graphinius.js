@@ -2776,6 +2776,7 @@
 	        }
 	        console.log("Cost => " + result.cost);
 	        console.log("# cycles => " + nrCycles);
+	        console.log(result.edges);
 	        return result;
 	    };
 	    MCMFBoykov.prototype.tree = function (node) {
