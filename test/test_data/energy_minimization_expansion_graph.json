@@ -1,0 +1,191 @@
+{
+  "name": "EnergyMinimizationExpansionGraph",
+  "nodes": 9,
+  "dir_edges": 0,
+	"und_edges": 24,
+	"data": {
+		"A": {
+      "features": {
+				"label": "1"
+			},
+			"edges": [
+				{
+					"to": "B",
+					"directed": false,
+          "weight": 1
+				},
+				{
+					"to": "D",
+					"directed": false,
+          "weight": 1
+				}
+			]
+		},
+    "B": {
+      "features": {
+				"label": "0"
+			},
+			"edges": [
+        {
+          "to": "A",
+          "directed": false,
+          "weight": 1
+        },
+				{
+					"to": "C",
+					"directed": false,
+          "weight": 1
+				},
+				{
+					"to": "E",
+					"directed": false,
+          "weight": 1
+				}
+			]
+		},
+    "C": {
+      "features": {
+				"label": "1"
+			},
+			"edges": [
+        {
+          "to": "B",
+          "directed": false,
+          "weight": 1
+        },
+				{
+					"to": "F",
+					"directed": false,
+          "weight": 1
+				}
+			]
+		},
+    "D": {
+      "features": {
+				"label": "1"
+			},
+			"edges": [
+        {
+          "to": "A",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "E",
+          "directed": false,
+          "weight": 1
+        },
+				{
+					"to": "G",
+					"directed": false,
+          "weight": 1
+				}
+			]
+		},
+    "E": {
+      "features": {
+				"label": "0"
+			},
+			"edges": [
+        {
+          "to": "B",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "D",
+          "directed": false,
+          "weight": 1
+        },
+				{
+					"to": "F",
+					"directed": false,
+          "weight": 1
+				},
+				{
+					"to": "H",
+					"directed": false,
+          "weight": 1
+				}
+			]
+		},
+    "F": {
+      "features": {
+				"label": "0"
+			},
+			"edges": [
+        {
+          "to": "C",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "E",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "I",
+          "directed": false,
+          "weight": 1
+        }
+			]
+		},
+    "G": {
+      "features": {
+				"label": "1"
+			},
+			"edges": [
+        {
+          "to": "D",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "H",
+          "directed": false,
+          "weight": 1
+        }
+			]
+		},
+    "H": {
+      "features": {
+				"label": "0"
+			},
+			"edges": [
+        {
+          "to": "G",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "E",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "I",
+          "directed": false,
+          "weight": 1
+        }
+			]
+		},
+    "I": {
+      "features": {
+				"label": "0"
+			},
+			"edges": [
+        {
+          "to": "F",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "H",
+          "directed": false,
+          "weight": 1
+        }
+			]
+		}
+  }
+}
