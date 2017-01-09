@@ -401,15 +401,19 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var $G = __webpack_require__(4);
 	function clone(obj) {
 	    if (obj === null || typeof obj !== 'object') {
 	        return obj;
 	    }
 	    var cloneObj = obj.constructor();
 	    for (var attribute in obj) {
+	        if (!obj.hasOwnProperty(attribute)) {
+	            continue;
+	        }
 	        if (typeof obj[attribute] === "object") {
 	            cloneObj[attribute] = clone(obj[attribute]);
 	        }
@@ -466,6 +470,10 @@
 	    return undefined;
 	}
 	exports.findKey = findKey;
+	function cloneGraph(graph) {
+	    var clone_graph = new $G.BaseGraph(graph._label);
+	    return clone_graph;
+	}
 
 
 /***/ },
@@ -668,6 +676,9 @@
 	    };
 	    BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
 	        var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+	        if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())) {
+	            throw new Error("can only add edge between two nodes existing in graph");
+	        }
 	        node_a.addEdge(edge);
 	        if (edge.isDirected()) {
 	            node_b.addEdge(edge);
@@ -2593,7 +2604,6 @@
 	            while ((node_b = this._graph.getRandomNode()) === node_a) { }
 	            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
 	            if (node_a.hasEdgeID(edge_id)) {
-	                logger.log("Duplicate edge creation, continuing...");
 	                continue;
 	            }
 	            else {
@@ -2601,7 +2611,6 @@
 	                --amount;
 	            }
 	        }
-	        logger.log("Created " + amount + " " + (direction ? "directed" : "undirected") + " edges...");
 	    };
 	    SimplePerturber.prototype.randomlyAddNodesPercentage = function (percentage, config) {
 	        var nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);

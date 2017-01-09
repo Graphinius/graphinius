@@ -21,9 +21,10 @@ var paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
-	tests_sync: ['test/**/*.js'],
-	tests_async: ['test_async/**/*Tests.js'],
-	tests_all: ['test/**/*.js', 'test_async/**/*Tests.js']
+	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js'],
+	tests_async: ['test/test_async/**/*.js'],
+	tests_perturb: ['test/perturbation/**/*.js'],
+	tests_all: ['test/**/*.js']
 };
 
 
@@ -98,9 +99,9 @@ gulp.task('bundle', ['pack'], function() {
 // TEST TASKS
 //----------------------------
 // 'Normal' synchronous tests
-gulp.task('test', ['build'], function () {
-	return gulp.src(paths.tests_sync, {read: false})
-						 .pipe(mocha({reporter: 'nyan',
+gulp.task('test-basic', ['build'], function () {
+	return gulp.src(paths.tests_basic, {read: false})
+						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
 
@@ -108,7 +109,23 @@ gulp.task('test', ['build'], function () {
 // 'Async tests - usually take a tad longer'
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
-						 .pipe(mocha({reporter: 'nyan',
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 60000}));
+});
+
+
+// 'Perturbation tests - usually take a tad longer'
+gulp.task('test-perturb', ['build'], function () {
+	return gulp.src(paths.tests_perturb, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 60000}));
+});
+
+
+// 'Perturbation tests - usually take a tad longer'
+gulp.task('test-all', ['build'], function () {
+	return gulp.src(paths.tests_all, {read: false})
+						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
 
@@ -125,7 +142,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 
 gulp.task('coverage', ['pre-cov-test'], function () {
 	return gulp.src(paths.tests_all, {read: false})
-		.pipe(mocha({reporter: 'nyan',
+		.pipe(mocha({reporter: 'spec',
 			timeout: 60000}))
 		// .pipe(istanbul.writeReports({
 		// 	dir: './coverage/node-tests',
@@ -143,8 +160,8 @@ gulp.task('clean', function () {
 });
 
 
-gulp.task('watch', function () {
-	gulp.watch(paths.typescripts, ['test']);
+gulp.task('watch-basic', function () {
+	gulp.watch(paths.typescripts, ['test-basic']);
 });
 
 
@@ -153,4 +170,14 @@ gulp.task('watch-async', function () {
 });
 
 
-gulp.task('default', ['watch']);
+gulp.task('watch-perturb', function () {
+	gulp.watch(paths.typescripts, ['test-perturb']);
+});
+
+
+gulp.task('watch-all', function () {
+	gulp.watch(paths.typescripts, ['test-all']);
+});
+
+
+gulp.task('default', ['watch-basic']);

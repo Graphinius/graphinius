@@ -188,7 +188,7 @@ class SimplePerturber implements ISimplePerturber {
 			let edge_id = `${node_a.getID()}_${node_b.getID()}${dir}`;
 			if ( node_a.hasEdgeID( edge_id ) ) {
 				// TODO: Check if the whole duplication prevention is really necessary!
-				logger.log("Duplicate edge creation, continuing...");
+				// logger.log("Duplicate edge creation, continuing...");
 				continue;
 			}
 			else {
@@ -200,7 +200,7 @@ class SimplePerturber implements ISimplePerturber {
 			}
 		}
 
-		logger.log(`Created ${amount} ${direction ? "directed" : "undirected"} edges...`);
+		// logger.log(`Created ${amount} ${direction ? "directed" : "undirected"} edges...`);
 	}
 
 

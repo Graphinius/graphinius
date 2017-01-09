@@ -1,9 +1,9 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as $RU from '../../src/utils/remoteUtils';
+import * as $RU from '../../../src/utils/remoteUtils';
 
 var expect = chai.expect;
 var REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/json/";

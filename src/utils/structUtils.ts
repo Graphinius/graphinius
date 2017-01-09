@@ -1,3 +1,10 @@
+/// <reference path="../../typings/tsd.d.ts" />
+
+import * as $G from '../core/Graph';
+import * as $N from '../core/Nodes';
+import * as $E from '../core/Edges';
+
+
 /**
  * Method to deep clone an object
  *
@@ -11,11 +18,15 @@ function clone(obj:any): any {
     }
     var cloneObj = obj.constructor();
     for (var attribute in obj) {
-        if (typeof obj[attribute] === "object") {
-            cloneObj[attribute] = clone(obj[attribute]);
-        } else {
-            cloneObj[attribute] = obj[attribute];
-        }
+      if ( !obj.hasOwnProperty( attribute ) ) {
+        continue;
+      }
+
+      if (typeof obj[attribute] === "object") {
+          cloneObj[attribute] = clone(obj[attribute]);
+      } else {
+          cloneObj[attribute] = obj[attribute];
+      }
     }
     return cloneObj;
 }
@@ -89,6 +100,16 @@ function findKey( obj: Object, cb: Function ) : string {
   }
   return undefined;
 }
+
+
+function cloneGraph( graph: $G.IGraph ) : $G.IGraph {
+  let clone_graph = new $G.BaseGraph( graph._label );
+
+  
+
+  return clone_graph;
+}
+
 
 
 export { clone, mergeArrays, mergeObjects, findKey };

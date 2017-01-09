@@ -16,7 +16,10 @@ describe('==== EDGE TESTS ====', () => {
 			node_b = new Node(2);
 					
 	
-	describe('A basic edge instantiation', () => {				
+	describe('A basic edge instantiation', () => {
+
+		// it('should refuse to ')
+
 		it('should correctly set _id', () => {					
 			var edge = new Edge(id, node_a, node_b);
 			expect(edge.getID()).to.equal(id);	
@@ -61,8 +64,7 @@ describe('==== EDGE TESTS ====', () => {
    * return undefined when queried for its weight, whereas
    * a weighted edge with unspecified weight defaults to w=1
    */
-	describe('Weight Edge Tests', () => {
-		
+	describe('Weight Edge Tests', () => {		
     
 		describe('Constructor + isWeighted', () => {
 			it('should correctly set default _directed to false', () => {
@@ -140,4 +142,27 @@ describe('==== EDGE TESTS ====', () => {
 		});
 				
 	});
+
+
+	describe.skip('Edge clone Tests - ', () => {
+
+		let edge : $E.IBaseEdge = null;
+		let clone_edge : $E.IBaseEdge = null;
+
+
+		beforeEach(() => {
+			edge = new $E.BaseEdge("test_edge", null, null);
+			expect(clone_edge).to.be.null;
+		});
+
+		afterEach(() => {
+			clone_edge = null;
+		});
+
+		it('should clone an edge with correct ID', () => {
+			
+		});
+
+	});
+
 });

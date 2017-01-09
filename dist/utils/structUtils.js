@@ -1,10 +1,14 @@
 "use strict";
+var $G = require('../core/Graph');
 function clone(obj) {
     if (obj === null || typeof obj !== 'object') {
         return obj;
     }
     var cloneObj = obj.constructor();
     for (var attribute in obj) {
+        if (!obj.hasOwnProperty(attribute)) {
+            continue;
+        }
         if (typeof obj[attribute] === "object") {
             cloneObj[attribute] = clone(obj[attribute]);
         }
@@ -61,3 +65,7 @@ function findKey(obj, cb) {
     return undefined;
 }
 exports.findKey = findKey;
+function cloneGraph(graph) {
+    var clone_graph = new $G.BaseGraph(graph._label);
+    return clone_graph;
+}

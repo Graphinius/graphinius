@@ -194,6 +194,9 @@ var BaseGraph = (function () {
     };
     BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
         var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+        if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())) {
+            throw new Error("can only add edge between two nodes existing in graph");
+        }
         node_a.addEdge(edge);
         if (edge.isDirected()) {
             node_b.addEdge(edge);

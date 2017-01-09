@@ -21,7 +21,13 @@ describe('GRAPH TESTS: ', () => {
 			stats		: $G.GraphStats,
 			csv			: $CSV.CSVInput = new $CSV.CSVInput();
 	
+
 	describe('Basic graph instantiation and _mode handling', () => {
+
+		beforeEach(() => {
+			graph = new Graph('Test graph');
+			expect(graph).to.be.instanceOf($G.BaseGraph);
+		});
 	
 		it('should correctly instantiate a graph with GraphMode INIT (no edges added)', () => {
 			graph = new Graph('Test graph');
@@ -36,7 +42,27 @@ describe('GRAPH TESTS: ', () => {
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(1);
 		});
-		
+
+		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+			node_a = new $N.BaseNode("floating_node_a");
+			node_b = graph.addNode("B_in_graph");
+			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
+				.to.throw("can only add edge between two nodes existing in graph");
+		});
+
+		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+			node_b = new $N.BaseNode("floating_node_b");
+			node_a = graph.addNode("A_in_graph");
+			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
+				.to.throw("can only add edge between two nodes existing in graph");
+		});
+
+		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+			node_a = new $N.BaseNode("floating_node_a");
+			node_b = new $N.BaseNode("floating_node_b");
+			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
+				.to.throw("can only add edge between two nodes existing in graph");
+		});		
 		
 		/**
 		 * edge has to be undirected
@@ -46,6 +72,7 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is in UNDIRECTED _mode
 		 */
 		it('should correctly add an undirected edge between two nodes', () => {
+			node_a = graph.addNode('A');
 			node_b = graph.addNode('B');
 			edge_1 = graph.addEdge('und_a_b', node_a, node_b); // undirected edge	
 			expect(edge_1.isDirected()).to.be.false;

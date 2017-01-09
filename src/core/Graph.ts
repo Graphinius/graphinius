@@ -330,6 +330,10 @@ class BaseGraph implements IGraph {
 	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
 		let edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
 
+		if ( !this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID()) ) {
+			throw new Error("can only add edge between two nodes existing in graph");
+		}
+
 		// connect edge to first node anyways
 		node_a.addEdge(edge);
 

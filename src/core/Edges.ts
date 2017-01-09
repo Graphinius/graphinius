@@ -51,8 +51,8 @@ class BaseEdge implements IBaseEdge {
 	protected _label			: string;
 
 	constructor (protected _id,
-							protected _node_a:$N.IBaseNode,
-							protected _node_b:$N.IBaseNode,
+							protected _node_a: $N.IBaseNode,
+							protected _node_b: $N.IBaseNode,
 							options?: EdgeConstructorOptions)
 	{
 		options = options || {};

@@ -79,7 +79,6 @@ var SimplePerturber = (function () {
             while ((node_b = this._graph.getRandomNode()) === node_a) { }
             var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
             if (node_a.hasEdgeID(edge_id)) {
-                logger.log("Duplicate edge creation, continuing...");
                 continue;
             }
             else {
@@ -87,7 +86,6 @@ var SimplePerturber = (function () {
                 --amount;
             }
         }
-        logger.log("Created " + amount + " " + (direction ? "directed" : "undirected") + " edges...");
     };
     SimplePerturber.prototype.randomlyAddNodesPercentage = function (percentage, config) {
         var nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
