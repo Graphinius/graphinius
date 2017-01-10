@@ -78,7 +78,7 @@ var CSVInput = (function () {
                     continue;
                 }
                 else {
-                    edge = graph.addEdge(edge_id, node, target_node, { directed: directed });
+                    edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
                 }
             }
         }
@@ -107,7 +107,7 @@ var CSVInput = (function () {
                 continue;
             }
             else {
-                edge = graph.addEdge(edge_id, node, target_node, { directed: directed });
+                edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
             }
         }
         return graph;

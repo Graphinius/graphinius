@@ -55,7 +55,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     it('Should correctly output a graph of two nodes and an UNdirected edge', () => {
       let n_a = graph.addNodeByID("A");
       let n_b = graph.addNodeByID("B");
-      graph.addEdge("Test edge", n_a, n_b);
+      graph.addEdgeByID("Test edge", n_a, n_b);
       jsonOut = new $JO.JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
 
@@ -95,7 +95,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     it('Should correctly output a graph of two nodes and a directed edge', () => {
       let n_a = graph.addNodeByID("A");
       let n_b = graph.addNodeByID("B");
-      graph.addEdge("Single directed edge", n_b, n_a, {directed: true});
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {directed: true});
       jsonOut = new $JO.JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
 
@@ -129,7 +129,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     it('Should correctly output a graph of two nodes and a directed edge with weight', () => {
       let n_a = graph.addNodeByID("A");
       let n_b = graph.addNodeByID("B");
-      graph.addEdge("Single directed edge", n_b, n_a, {
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {
         directed: true,
         weighted: true,
         weight: 5

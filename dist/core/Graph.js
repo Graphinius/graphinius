@@ -192,11 +192,15 @@ var BaseGraph = (function () {
             throw new Error("Cannot add edge. Node B does not exist");
         }
         else {
-            return this.addEdge(label, node_a, node_b, opts);
+            return this.addEdgeByID(label, node_a, node_b, opts);
         }
     };
-    BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
+    BaseGraph.prototype.addEdgeByID = function (id, node_a, node_b, opts) {
         var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+        return this.addEdge(edge);
+    };
+    BaseGraph.prototype.addEdge = function (edge) {
+        var node_a = edge.getNodes().a, node_b = edge.getNodes().b;
         if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())) {
             throw new Error("can only add edge between two nodes existing in graph");
         }

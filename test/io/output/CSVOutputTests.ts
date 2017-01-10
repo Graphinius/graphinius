@@ -56,13 +56,13 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 			n_b = graph.addNodeByID('B');
 			n_c = graph.addNodeByID('C');
 			n_d = graph.addNodeByID('D');
-			e_1 = graph.addEdge('1', n_a, n_b);
-			e_2 = graph.addEdge('2', n_a, n_c);
-			e_3 = graph.addEdge('3', n_a, n_a, {directed: true});
-			e_4 = graph.addEdge('4', n_a, n_b, {directed: true});
-			e_5 = graph.addEdge('5', n_a, n_d, {directed: true});
-			e_6 = graph.addEdge('6', n_c, n_a, {directed: true});
-			e_7 = graph.addEdge('7', n_d, n_a, {directed: true});
+			e_1 = graph.addEdgeByID('1', n_a, n_b);
+			e_2 = graph.addEdgeByID('2', n_a, n_c);
+			e_3 = graph.addEdgeByID('3', n_a, n_a, {directed: true});
+			e_4 = graph.addEdgeByID('4', n_a, n_b, {directed: true});
+			e_5 = graph.addEdgeByID('5', n_a, n_d, {directed: true});
+			e_6 = graph.addEdgeByID('6', n_c, n_a, {directed: true});
+			e_7 = graph.addEdgeByID('7', n_d, n_a, {directed: true});
     });
     
     

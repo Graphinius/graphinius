@@ -53,7 +53,9 @@ export interface IGraph {
 	deleteNode(node) : void;
 
 	// EDGE STUFF
-	addEdge(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
+	addEdgeByID(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
+	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
+
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: string) : boolean;
 	hasEdgeLabel(label: string) : boolean;
@@ -328,12 +330,24 @@ class BaseGraph implements IGraph {
 			throw new Error("Cannot add edge. Node B does not exist");
 		}
 		else {
-			return this.addEdge(label, node_a, node_b, opts);
+			return this.addEdgeByID(label, node_a, node_b, opts);
 		}
 	}
 
-	addEdge(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
+	/**
+	 * Now all test cases pertaining addEdge() call this one...
+	 */
+	addEdgeByID(id: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : $E.EdgeConstructorOptions) : $E.IBaseEdge {
 		let edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+		return this.addEdge(edge);
+	}
+
+	/**
+	 * Test cases should be reversed / completed
+	 */
+	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge {
+		let node_a = edge.getNodes().a,
+				node_b = edge.getNodes().b;
 
 		if ( !this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID()) ) {
 			throw new Error("can only add edge between two nodes existing in graph");

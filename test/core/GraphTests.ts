@@ -22,11 +22,14 @@ describe('GRAPH TESTS: ', () => {
 			csv			: $CSV.CSVInput = new $CSV.CSVInput();
 	
 
-	describe('Basic graph instantiation and _mode handling', () => {
+	describe('Basic graph operations - ', () => {
 
 		beforeEach(() => {
 			graph = new Graph('Test graph');
 			expect(graph).to.be.instanceOf($G.BaseGraph);
+			expect(graph.nrNodes()).to.equal(0);
+			expect(graph.nrDirEdges()).to.equal(0);
+			expect(graph.nrUndEdges()).to.equal(0);
 		});
 	
 		it('should correctly instantiate a graph with GraphMode INIT (no edges added)', () => {
@@ -34,208 +37,201 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.getMode()).to.equal($G.GraphMode.INIT);
 		});
 
-		it('should correctly add a node', () => {
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(0);
-			expect(graph.addNode(new $N.BaseNode('A'))).to.be.true;
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(1);
-		});
-		
-		it('should correctly add a node by ID', () => {
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(0);
-			node_a = graph.addNodeByID('A');
-			expect(node_a).to.be.an.instanceof(Node);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(1);
+
+		describe('adding nodes and edges', () => {
+
+			it('should correctly add a node', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				expect(graph.addNode(new $N.BaseNode('A'))).to.be.true;
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+			
+			it('should correctly add a node by ID', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				node_a = graph.addNodeByID('A');
+				expect(node_a).to.be.an.instanceof(Node);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+				node_a = new $N.BaseNode("floating_node_a");
+				node_b = graph.addNodeByID("B_in_graph");
+				expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b))
+					.to.throw("can only add edge between two nodes existing in graph");
+			});
+
+			it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+				node_b = new $N.BaseNode("floating_node_b");
+				node_a = graph.addNodeByID("A_in_graph");
+				expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b))
+					.to.throw("can only add edge between two nodes existing in graph");
+			});
+
+			it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
+				node_a = new $N.BaseNode("floating_node_a");
+				node_b = new $N.BaseNode("floating_node_b");
+				expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b))
+					.to.throw("can only add edge between two nodes existing in graph");
+			});		
+			
+			/**
+			 * edge has to be undirected
+			 * node_a has in_degree 0, out_degree 0, degree 1
+			 * node_b has in_degree 0, out_degree 0, degree 1
+			 * graph has 2 nodes, 1 undirected edge
+			 * graph is in UNDIRECTED _mode
+			 */
+			it('should correctly add an undirected edge between two nodes', () => {
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge	
+				expect(edge_1.isDirected()).to.be.false;
+				expect(node_a.inDegree()).to.equal(0);
+				expect(node_a.outDegree()).to.equal(0);
+				expect(node_a.degree()).to.equal(1);
+				expect(node_b.inDegree()).to.equal(0);
+				expect(node_b.outDegree()).to.equal(0);
+				expect(node_b.degree()).to.equal(1);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(2);
+				expect(stats.nr_dir_edges).to.equal(0);
+				expect(stats.nr_und_edges).to.equal(1);
+				expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
+			});
+			
+			
+			/**
+			 * edge has to be directed
+			 * node_a has in_degree 0, out_degree 1, degree 1
+			 * node_b has in_degree 1, out_degree 0, degree 1
+			 * graph has 2 nodes, 1 undirected edge, 1 directed edge
+			 * graph is in DIRECTED _mode
+			 */
+			it('should correctly add a directed edge between two nodes', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('dir_a_b', node_a, node_b, {directed: true});
+				expect(edge_1.isDirected()).to.be.true;
+				expect(node_a.inDegree()).to.equal(0);
+				expect(node_a.outDegree()).to.equal(1);
+				expect(node_a.degree()).to.equal(0);
+				expect(node_b.inDegree()).to.equal(1);
+				expect(node_b.outDegree()).to.equal(0);
+				expect(node_b.degree()).to.equal(0);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(2);
+				expect(stats.nr_dir_edges).to.equal(1);
+				expect(stats.nr_und_edges).to.equal(0);
+				expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+			});
+			
+			
+			/**
+			 * edge has to be undirected and a loop
+			 * node_a has in_degree 0, out_degree 0, degree 1
+			 * graph has 1 node, 1 undirected edge
+			 * graph is in UNDIRECTED _mode
+			 */
+			it('should correctly add an undirected loop', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				edge_1 = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: false});
+				expect(edge_1.isDirected()).to.be.false;
+				expect(node_a.inDegree()).to.equal(0);
+				expect(node_a.outDegree()).to.equal(0);
+				expect(node_a.degree()).to.equal(1);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+				expect(stats.nr_dir_edges).to.equal(0);
+				expect(stats.nr_und_edges).to.equal(1);
+				expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
+			});
+			
+			
+			/**
+			 * edge has to be directed and a loop
+			 * node_a has in_degree 1, out_degree 1, degree 0
+			 * graph has 1 node, 1 directed edge
+			 * graph is in DIRECTED _mode
+			 */
+			it('should correctly add a directed loop', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				edge_1 = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: true});
+				expect(edge_1.isDirected()).to.be.true;
+				expect(node_a.inDegree()).to.equal(1);
+				expect(node_a.outDegree()).to.equal(1);
+				expect(node_a.degree()).to.equal(0);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+				expect(stats.nr_dir_edges).to.equal(1);
+				expect(stats.nr_und_edges).to.equal(0);
+				expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+			});
+			
+
+			it('should refuse to add an edge if node A does not exist', () => {
+				graph = new Graph('Test graph');
+				expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node A does not exist');
+			});
+			
+			
+			it('should refuse to add an edge if node B does not exist', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node B does not exist');
+			});
+			
+			
+			it('should correctly add an edge to existing nodes specified by ID', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				var edge = graph.addEdgeByNodeIDs("Edgy", "A", "B");
+				expect(edge).not.to.be.undefined;
+				expect(edge).to.be.instanceof($E.BaseEdge);
+				expect(edge.getNodes().a).to.equal(node_a);
+				expect(edge.getNodes().b).to.equal(node_b);
+			});
+			
+			
+			/**
+			 * MIXED MODE GRAPH
+			 * edge_1 is undirected and goes from a to b
+			 * edge_2 is directed and a loop from b to b
+			 * node_a has in_degree 0, out_degree 0, degree 1
+			 * node_b has in_degree 1, out_degree 1, degree 1
+			 * graph has 2 node, 1 directed edge, 1 undirected edge
+			 * graph is in MIXED _mode
+			 */
+			it('should correctly instantiate a mixed graph', () => {
+				graph = new Graph('Test graph');
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('und_a_b', node_a, node_b, {directed: false});
+				expect(edge_1.isDirected()).to.be.false;
+				edge_2 = graph.addEdgeByID('dir_b_b', node_b, node_b, {directed: true});
+				expect(edge_2.isDirected()).to.be.true;
+				expect(node_a.inDegree()).to.equal(0);
+				expect(node_a.outDegree()).to.equal(0);
+				expect(node_a.degree()).to.equal(1);
+				expect(node_b.inDegree()).to.equal(1);
+				expect(node_b.outDegree()).to.equal(1);
+				expect(node_b.degree()).to.equal(1);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(2);
+				expect(stats.nr_dir_edges).to.equal(1);
+				expect(stats.nr_und_edges).to.equal(1);
+				expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+			});
+			
 		});
 
-		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
-			node_a = new $N.BaseNode("floating_node_a");
-			node_b = graph.addNodeByID("B_in_graph");
-			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
-				.to.throw("can only add edge between two nodes existing in graph");
-		});
-
-		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
-			node_b = new $N.BaseNode("floating_node_b");
-			node_a = graph.addNodeByID("A_in_graph");
-			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
-				.to.throw("can only add edge between two nodes existing in graph");
-		});
-
-		it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
-			node_a = new $N.BaseNode("floating_node_a");
-			node_b = new $N.BaseNode("floating_node_b");
-			expect(graph.addEdge.bind(graph, "edge_to_nirvana", node_a, node_b))
-				.to.throw("can only add edge between two nodes existing in graph");
-		});		
-		
-		/**
-		 * edge has to be undirected
-		 * node_a has in_degree 0, out_degree 0, degree 1
-		 * node_b has in_degree 0, out_degree 0, degree 1
-		 * graph has 2 nodes, 1 undirected edge
-		 * graph is in UNDIRECTED _mode
-		 */
-		it('should correctly add an undirected edge between two nodes', () => {
-			node_a = graph.addNodeByID('A');
-			node_b = graph.addNodeByID('B');
-			edge_1 = graph.addEdge('und_a_b', node_a, node_b); // undirected edge	
-			expect(edge_1.isDirected()).to.be.false;
-			expect(node_a.inDegree()).to.equal(0);
-			expect(node_a.outDegree()).to.equal(0);
-			expect(node_a.degree()).to.equal(1);
-			expect(node_b.inDegree()).to.equal(0);
-			expect(node_b.outDegree()).to.equal(0);
-			expect(node_b.degree()).to.equal(1);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(2);
-			expect(stats.nr_dir_edges).to.equal(0);
-			expect(stats.nr_und_edges).to.equal(1);
-			expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
-		});
-		
-		
-		/**
-		 * edge has to be directed
-		 * node_a has in_degree 0, out_degree 1, degree 1
-		 * node_b has in_degree 1, out_degree 0, degree 1
-		 * graph has 2 nodes, 1 undirected edge, 1 directed edge
-		 * graph is in DIRECTED _mode
-		 */
-		it('should correctly add a directed edge between two nodes', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			node_b = graph.addNodeByID('B');
-			edge_1 = graph.addEdge('dir_a_b', node_a, node_b, {directed: true});
-			expect(edge_1.isDirected()).to.be.true;
-			expect(node_a.inDegree()).to.equal(0);
-			expect(node_a.outDegree()).to.equal(1);
-			expect(node_a.degree()).to.equal(0);
-			expect(node_b.inDegree()).to.equal(1);
-			expect(node_b.outDegree()).to.equal(0);
-			expect(node_b.degree()).to.equal(0);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(2);
-			expect(stats.nr_dir_edges).to.equal(1);
-			expect(stats.nr_und_edges).to.equal(0);
-			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
-		});
-		
-		
-		/**
-		 * edge has to be undirected and a loop
-		 * node_a has in_degree 0, out_degree 0, degree 1
-		 * graph has 1 node, 1 undirected edge
-		 * graph is in UNDIRECTED _mode
-		 */
-		it('should correctly add an undirected loop', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			edge_1 = graph.addEdge('und_a_a', node_a, node_a, {directed: false});
-			expect(edge_1.isDirected()).to.be.false;
-			expect(node_a.inDegree()).to.equal(0);
-			expect(node_a.outDegree()).to.equal(0);
-			expect(node_a.degree()).to.equal(1);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(1);
-			expect(stats.nr_dir_edges).to.equal(0);
-			expect(stats.nr_und_edges).to.equal(1);
-			expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
-		});
-		
-		
-		/**
-		 * edge has to be directed and a loop
-		 * node_a has in_degree 1, out_degree 1, degree 0
-		 * graph has 1 node, 1 directed edge
-		 * graph is in DIRECTED _mode
-		 */
-		it('should correctly add a directed loop', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			edge_1 = graph.addEdge('und_a_a', node_a, node_a, {directed: true});
-			expect(edge_1.isDirected()).to.be.true;
-			expect(node_a.inDegree()).to.equal(1);
-			expect(node_a.outDegree()).to.equal(1);
-			expect(node_a.degree()).to.equal(0);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(1);
-			expect(stats.nr_dir_edges).to.equal(1);
-			expect(stats.nr_und_edges).to.equal(0);
-			expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
-		});
-		
-		
-		/**
-		 * Adding edge by Node IDs
-		 * Node A does not exist
-		 */
-		it('should refuse to add an edge if node A does not exist', () => {
-			graph = new Graph('Test graph');
-			expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node A does not exist');
-		});
-		
-		
-		/**
-		 * Adding edge by Node IDs
-		 * Node B does not exist
-		 */
-		it('should refuse to add an edge if node B does not exist', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			expect(graph.addEdgeByNodeIDs.bind(graph, 'dontaddme', 'A', 'B')).to.throw('Cannot add edge. Node B does not exist');
-		});
-		
-		
-		/**
-		 * Adding edge by Node IDs
-		 * Both nodes exist
-		 */
-		it('should correctly add an edge to existing nodes specified by ID', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			node_b = graph.addNodeByID('B');
-			var edge = graph.addEdgeByNodeIDs("Edgy", "A", "B");
-			expect(edge).not.to.be.undefined;
-			expect(edge).to.be.instanceof($E.BaseEdge);
-			expect(edge.getNodes().a).to.equal(node_a);
-			expect(edge.getNodes().b).to.equal(node_b);
-		});
-		
-		
-		/**
-		 * MIXED MODE GRAPH
-		 * edge_1 is undirected and goes from a to b
-		 * edge_2 is directed and a loop from b to b
-		 * node_a has in_degree 0, out_degree 0, degree 1
-		 * node_b has in_degree 1, out_degree 1, degree 1
-		 * graph has 2 node, 1 directed edge, 1 undirected edge
-		 * graph is in MIXED _mode
-		 */
-		it('should correctly instantiate a mixed graph', () => {
-			graph = new Graph('Test graph');
-			node_a = graph.addNodeByID('A');
-			node_b = graph.addNodeByID('B');
-			edge_1 = graph.addEdge('und_a_b', node_a, node_b, {directed: false});
-			expect(edge_1.isDirected()).to.be.false;
-			edge_2 = graph.addEdge('dir_b_b', node_b, node_b, {directed: true});
-			expect(edge_2.isDirected()).to.be.true;
-			expect(node_a.inDegree()).to.equal(0);
-			expect(node_a.outDegree()).to.equal(0);
-			expect(node_a.degree()).to.equal(1);
-			expect(node_b.inDegree()).to.equal(1);
-			expect(node_b.outDegree()).to.equal(1);
-			expect(node_b.degree()).to.equal(1);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(2);
-			expect(stats.nr_dir_edges).to.equal(1);
-			expect(stats.nr_und_edges).to.equal(1);
-			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
-		});
-		
 	});
 		
 	
@@ -372,13 +368,13 @@ describe('GRAPH TESTS: ', () => {
 			n_b = graph.addNodeByID('B');
 			n_c = graph.addNodeByID('C');
 			n_d = graph.addNodeByID('D');
-			e_1 = graph.addEdge('1', n_a, n_b);
-			e_2 = graph.addEdge('2', n_a, n_c);
-			e_3 = graph.addEdge('3', n_a, n_a, {directed: true});
-			e_4 = graph.addEdge('4', n_a, n_b, {directed: true});
-			e_5 = graph.addEdge('5', n_a, n_d, {directed: true});
-			e_6 = graph.addEdge('6', n_c, n_a, {directed: true});
-			e_7 = graph.addEdge('7', n_d, n_a, {directed: true});
+			e_1 = graph.addEdgeByID('1', n_a, n_b);
+			e_2 = graph.addEdgeByID('2', n_a, n_c);
+			e_3 = graph.addEdgeByID('3', n_a, n_a, {directed: true});
+			e_4 = graph.addEdgeByID('4', n_a, n_b, {directed: true});
+			e_5 = graph.addEdgeByID('5', n_a, n_d, {directed: true});
+			e_6 = graph.addEdgeByID('6', n_c, n_a, {directed: true});
+			e_7 = graph.addEdgeByID('7', n_d, n_a, {directed: true});
 			
 			node_vana = new Node(42, {label: 'IAmNotInGraph'});
 			

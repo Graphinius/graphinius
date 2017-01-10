@@ -145,7 +145,7 @@ class CSVInput implements ICSVInput {
 					continue;
 				}
 				else {
-					edge = graph.addEdge(edge_id, node, target_node, {directed: directed});
+					edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed});
 				}				
 			}			
 		}
@@ -196,7 +196,7 @@ class CSVInput implements ICSVInput {
 				continue;
 			}
 			else {
-				edge = graph.addEdge(edge_id, node, target_node, {directed: directed});
+				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed});
 			}
 		}
 		

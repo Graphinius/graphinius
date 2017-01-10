@@ -64,7 +64,7 @@ var JSONInput = (function () {
                     continue;
                 }
                 else {
-                    var edge = graph.addEdge(edge_id, node, target_node, {
+                    var edge = graph.addEdgeByID(edge_id, node, target_node, {
                         directed: directed,
                         weighted: this._weighted_mode,
                         weight: edge_weight

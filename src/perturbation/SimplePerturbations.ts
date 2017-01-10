@@ -195,7 +195,7 @@ class SimplePerturber implements ISimplePerturber {
 				/**
 				 * Enable random weights for edges ??
 				 */
-				this._graph.addEdge(edge_id, node_a, node_b, {directed: direction});
+				this._graph.addEdgeByID(edge_id, node_a, node_b, {directed: direction});
 				--amount;
 			}
 		}
@@ -310,7 +310,7 @@ class SimplePerturber implements ISimplePerturber {
 					if (this._graph.getNodes()[node_a].hasEdgeID(edge_id)) {
 						continue;
 					}
-					this._graph.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
+					this._graph.addEdgeByID(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
 				}
 			}
 		}
@@ -367,7 +367,7 @@ class SimplePerturber implements ISimplePerturber {
 					if (node_a.hasEdgeID(edge_id)) {
 						continue;
 					}
-					this._graph.addEdge(edge_id, node_a, node_b, {directed: directed});
+					this._graph.addEdgeByID(edge_id, node_a, node_b, {directed: directed});
 					--rand_deg;
 				}
 			}

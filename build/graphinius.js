@@ -694,11 +694,15 @@
 	            throw new Error("Cannot add edge. Node B does not exist");
 	        }
 	        else {
-	            return this.addEdge(label, node_a, node_b, opts);
+	            return this.addEdgeByID(label, node_a, node_b, opts);
 	        }
 	    };
-	    BaseGraph.prototype.addEdge = function (id, node_a, node_b, opts) {
+	    BaseGraph.prototype.addEdgeByID = function (id, node_a, node_b, opts) {
 	        var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+	        return this.addEdge(edge);
+	    };
+	    BaseGraph.prototype.addEdge = function (edge) {
+	        var node_a = edge.getNodes().a, node_b = edge.getNodes().b;
 	        if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())) {
 	            throw new Error("can only add edge between two nodes existing in graph");
 	        }
@@ -1016,7 +1020,7 @@
 	                    continue;
 	                }
 	                else {
-	                    edge = graph.addEdge(edge_id, node, target_node, { directed: directed });
+	                    edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
 	                }
 	            }
 	        }
@@ -1045,7 +1049,7 @@
 	                continue;
 	            }
 	            else {
-	                edge = graph.addEdge(edge_id, node, target_node, { directed: directed });
+	                edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
 	            }
 	        }
 	        return graph;
@@ -1626,7 +1630,7 @@
 	                    continue;
 	                }
 	                else {
-	                    var edge = graph.addEdge(edge_id, node, target_node, {
+	                    var edge = graph.addEdgeByID(edge_id, node, target_node, {
 	                        directed: directed,
 	                        weighted: this._weighted_mode,
 	                        weight: edge_weight
@@ -2630,7 +2634,7 @@
 	                continue;
 	            }
 	            else {
-	                this._graph.addEdge(edge_id, node_a, node_b, { directed: direction });
+	                this._graph.addEdgeByID(edge_id, node_a, node_b, { directed: direction });
 	                --amount;
 	            }
 	        }
@@ -2699,7 +2703,7 @@
 	                    if (this._graph.getNodes()[node_a].hasEdgeID(edge_id)) {
 	                        continue;
 	                    }
-	                    this._graph.addEdge(edge_id, all_nodes[node_a], all_nodes[node_b], { directed: directed });
+	                    this._graph.addEdgeByID(edge_id, all_nodes[node_a], all_nodes[node_b], { directed: directed });
 	                }
 	            }
 	        }
@@ -2728,7 +2732,7 @@
 	                    if (node_a.hasEdgeID(edge_id)) {
 	                        continue;
 	                    }
-	                    this._graph.addEdge(edge_id, node_a, node_b, { directed: directed });
+	                    this._graph.addEdgeByID(edge_id, node_a, node_b, { directed: directed });
 	                    --rand_deg;
 	                }
 	            }
