@@ -31,7 +31,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
      * empty edges array and an empty features object?
      */
     it('Should correctly output a graph of just one node', () => {
-      graph.addNode("A");
+      graph.addNodeByID("A");
       jsonOut = new $JO.JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
 
@@ -53,8 +53,8 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
 
     it('Should correctly output a graph of two nodes and an UNdirected edge', () => {
-      let n_a = graph.addNode("A");
-      let n_b = graph.addNode("B");
+      let n_a = graph.addNodeByID("A");
+      let n_b = graph.addNodeByID("B");
       graph.addEdge("Test edge", n_a, n_b);
       jsonOut = new $JO.JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
@@ -93,8 +93,8 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
 
     it('Should correctly output a graph of two nodes and a directed edge', () => {
-      let n_a = graph.addNode("A");
-      let n_b = graph.addNode("B");
+      let n_a = graph.addNodeByID("A");
+      let n_b = graph.addNodeByID("B");
       graph.addEdge("Single directed edge", n_b, n_a, {directed: true});
       jsonOut = new $JO.JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
@@ -127,8 +127,8 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
 
     it('Should correctly output a graph of two nodes and a directed edge with weight', () => {
-      let n_a = graph.addNode("A");
-      let n_b = graph.addNode("B");
+      let n_a = graph.addNodeByID("A");
+      let n_b = graph.addNodeByID("B");
       graph.addEdge("Single directed edge", n_b, n_a, {
         directed: true,
         weighted: true,
@@ -165,7 +165,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
 
     it('Should correctly output a graph of one node and its features', () => {
-      let n_a = graph.addNode("A");
+      let n_a = graph.addNodeByID("A");
       let features = {
         coords: {
           x: 1,
@@ -246,7 +246,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       let graph2 = jsonIn.readFromJSONFile( search_graph_out );
       expect( graph ).to.deep.equal( graph2 );
 
-      graph.addNode('superfluous');
+      graph.addNodeByID('superfluous');
       expect( graph ).to.not.deep.equal( graph2 );
     });
 

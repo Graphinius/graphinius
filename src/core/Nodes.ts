@@ -1,7 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $E from "./Edges";
-import * as $DS from "../utils/structUtils";
+import * as $SU from "../utils/structUtils";
 
 export interface NeighborEntry {
   node  : IBaseNode;
@@ -57,18 +57,17 @@ export interface IBaseNode {
 	connNodes() : Array<NeighborEntry>;
 	// get Nodes connected by outgoing + undirected edges
 	reachNodes(identityFunc?: Function) : Array<NeighborEntry>;
+
+	clone() : IBaseNode;
 }
 
 
 class BaseNode implements IBaseNode {
-	/**
-	 * degrees - let's hold them separate in order
-	 * to avoid Object.keys(...)
-	 */
+
+	protected _label : string;
 	private _in_degree = 0;
 	private _out_degree = 0;
-	private _und_degree = 0;
-	
+	private _und_degree = 0;	
 	protected _features	: { [k:string] : any };
 		
 	/**
@@ -82,7 +81,6 @@ class BaseNode implements IBaseNode {
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};
-	protected _label : string;
 	
 	constructor (protected _id,
 							features?: { [k:string] : any }) 
@@ -90,7 +88,7 @@ class BaseNode implements IBaseNode {
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
-		this._features = typeof features !== 'undefined' ? $DS.clone(features) : {};
+		this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
 		this._label = this._features["label"] || this._id;
 	}
 	
@@ -119,7 +117,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	setFeatures( features: { [k:string]: any } ) : void {
-		this._features = $DS.clone(features);
+		this._features = $SU.clone(features);
 	}
 	
 	setFeature(key: string, value: any) : void {
@@ -231,11 +229,11 @@ class BaseNode implements IBaseNode {
 	}
 
 	dirEdges() : {} {
-		return $DS.mergeObjects([this._in_edges, this._out_edges]);
+		return $SU.mergeObjects([this._in_edges, this._out_edges]);
 	}
 
 	allEdges() : {} {
-		return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+		return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
 	}
 	
 	removeEdge(edge: $E.IBaseEdge) : void {
@@ -373,8 +371,15 @@ class BaseNode implements IBaseNode {
 	reachNodes(identityFunc?: Function) : Array<NeighborEntry> {
 		var identity = 0;
 		// console.log(this.nextNodes());
-    return $DS.mergeArrays([this.nextNodes(), this.connNodes()],
+    return $SU.mergeArrays([this.nextNodes(), this.connNodes()],
 			identityFunc || function(ne) {return identity++});
+	}
+
+
+	clone() : IBaseNode {
+		let new_node = new BaseNode(this._id);
+		new_node.setFeatures( this.getFeatures() );
+		return new_node;
 	}
 	
 }

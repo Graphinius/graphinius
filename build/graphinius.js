@@ -123,14 +123,18 @@
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var $N = __webpack_require__(2);
 	var BaseEdge = (function () {
 	    function BaseEdge(_id, _node_a, _node_b, options) {
 	        this._id = _id;
 	        this._node_a = _node_a;
 	        this._node_b = _node_b;
+	        if (!(_node_a instanceof $N.BaseNode) || !(_node_b instanceof $N.BaseNode)) {
+	            throw new Error("cannot instantiate edge without two valid node objects");
+	        }
 	        options = options || {};
 	        this._directed = options.directed || false;
 	        this._weighted = options.weighted || false;
@@ -164,6 +168,17 @@
 	    BaseEdge.prototype.getNodes = function () {
 	        return { a: this._node_a, b: this._node_b };
 	    };
+	    BaseEdge.prototype.clone = function (new_node_a, new_node_b) {
+	        if (!(new_node_a instanceof $N.BaseNode) || !(new_node_b instanceof $N.BaseNode)) {
+	            throw new Error("refusing to clone edge if any new node is invalid");
+	        }
+	        return new BaseEdge(this._id, new_node_a, new_node_b, {
+	            directed: this._directed,
+	            weighted: this._weighted,
+	            weight: this._weight,
+	            label: this._label
+	        });
+	    };
 	    return BaseEdge;
 	}());
 	exports.BaseEdge = BaseEdge;
@@ -174,7 +189,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $DS = __webpack_require__(3);
+	var $SU = __webpack_require__(3);
 	var BaseNode = (function () {
 	    function BaseNode(_id, features) {
 	        this._id = _id;
@@ -184,7 +199,7 @@
 	        this._in_edges = {};
 	        this._out_edges = {};
 	        this._und_edges = {};
-	        this._features = typeof features !== 'undefined' ? $DS.clone(features) : {};
+	        this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
 	        this._label = this._features["label"] || this._id;
 	    }
 	    BaseNode.prototype.getID = function () {
@@ -203,7 +218,7 @@
 	        return this._features[key];
 	    };
 	    BaseNode.prototype.setFeatures = function (features) {
-	        this._features = $DS.clone(features);
+	        this._features = $SU.clone(features);
 	    };
 	    BaseNode.prototype.setFeature = function (key, value) {
 	        this._features[key] = value;
@@ -276,10 +291,10 @@
 	        return this._und_edges;
 	    };
 	    BaseNode.prototype.dirEdges = function () {
-	        return $DS.mergeObjects([this._in_edges, this._out_edges]);
+	        return $SU.mergeObjects([this._in_edges, this._out_edges]);
 	    };
 	    BaseNode.prototype.allEdges = function () {
-	        return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+	        return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
 	    };
 	    BaseNode.prototype.removeEdge = function (edge) {
 	        if (!this.hasEdge(edge)) {
@@ -392,7 +407,12 @@
 	    };
 	    BaseNode.prototype.reachNodes = function (identityFunc) {
 	        var identity = 0;
-	        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+	        return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+	    };
+	    BaseNode.prototype.clone = function () {
+	        var new_node = new BaseNode(this._id);
+	        new_node.setFeatures(this.getFeatures());
+	        return new_node;
 	    };
 	    return BaseNode;
 	}());
@@ -404,12 +424,16 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $G = __webpack_require__(4);
+	var $N = __webpack_require__(2);
+	var $E = __webpack_require__(1);
 	function clone(obj) {
 	    if (obj === null || typeof obj !== 'object') {
 	        return obj;
 	    }
-	    var cloneObj = obj.constructor();
+	    if (obj instanceof $N.BaseNode || obj instanceof $E.BaseEdge) {
+	        return;
+	    }
+	    var cloneObj = obj.constructor ? obj.constructor() : {};
 	    for (var attribute in obj) {
 	        if (!obj.hasOwnProperty(attribute)) {
 	            continue;
@@ -470,10 +494,6 @@
 	    return undefined;
 	}
 	exports.findKey = findKey;
-	function cloneGraph(graph) {
-	    var clone_graph = new $G.BaseGraph(graph._label);
-	    return clone_graph;
-	}
 
 
 /***/ },
@@ -548,11 +568,14 @@
 	    BaseGraph.prototype.nrUndEdges = function () {
 	        return this._nr_und_edges;
 	    };
-	    BaseGraph.prototype.addNode = function (id, opts) {
+	    BaseGraph.prototype.addNodeByID = function (id, opts) {
 	        var node = new $N.BaseNode(id, opts);
+	        return this.addNode(node) ? node : null;
+	    };
+	    BaseGraph.prototype.addNode = function (node) {
 	        this._nodes[node.getID()] = node;
 	        this._nr_nodes += 1;
-	        return node;
+	        return true;
 	    };
 	    BaseGraph.prototype.hasNodeID = function (id) {
 	        return !!this._nodes[id];
@@ -975,13 +998,13 @@
 	            if (!node_id) {
 	                continue;
 	            }
-	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 	            for (var e = 0; e < edge_array.length;) {
 	                if (this._explicit_direction && (!edge_array || edge_array.length % 2)) {
 	                    throw new Error('Every edge entry has to contain its direction info in explicit mode.');
 	                }
 	                target_node_id = edge_array[e++];
-	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 	                dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
 	                if (dir_char !== 'd' && dir_char !== 'u') {
 	                    throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -1010,8 +1033,8 @@
 	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 	            }
 	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
-	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
-	            target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+	            target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 	            if (dir_char !== 'd' && dir_char !== 'u') {
 	                throw new Error("Specification of edge direction invalid (d and u are valid).");
 	            }
@@ -1584,7 +1607,7 @@
 	    JSONInput.prototype.readFromJSON = function (json) {
 	        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
 	        for (var node_id in json.data) {
-	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 	            if (features = json.data[node_id].features) {
 	                node.setFeatures(features);
 	            }
@@ -1597,7 +1620,7 @@
 	            }
 	            var edges = json.data[node_id].edges;
 	            for (var e in edges) {
-	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
 	                    continue;
@@ -2623,7 +2646,7 @@
 	        var new_nodes = {};
 	        while (amount--) {
 	            var new_node_id = randgen.randBase36String();
-	            new_nodes[new_node_id] = this._graph.addNode(new_node_id);
+	            new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
 	        }
 	        if (config == null) {
 	            return;

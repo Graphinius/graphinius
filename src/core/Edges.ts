@@ -17,16 +17,15 @@ export interface IBaseEdge {
 	getLabel() : string;
 	setLabel(label : string) : void;
 
-	// DIRECTION Methods
 	isDirected()						: boolean;
 
-	// WEIGHT Methods
 	isWeighted()						: boolean;
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
 
-	// NODE Methods
 	getNodes()	: IConnectedNodes;
+
+	clone(node_a : $N.BaseNode, node_b : $N.BaseNode) : BaseEdge;
 
 	/**
 	 * An edge should either be directed or not, weighted or not.
@@ -55,6 +54,10 @@ class BaseEdge implements IBaseEdge {
 							protected _node_b: $N.IBaseNode,
 							options?: EdgeConstructorOptions)
 	{
+		if( !( _node_a instanceof $N.BaseNode ) || !( _node_b instanceof $N.BaseNode ) ) {
+			throw new Error("cannot instantiate edge without two valid node objects");
+		}
+
 		options = options || {};
 		this._directed = options.directed || false;
 		this._weighted = options.weighted || false;
@@ -98,6 +101,22 @@ class BaseEdge implements IBaseEdge {
 		return {a: this._node_a, b: this._node_b};
 	}
 
+	clone(new_node_a : $N.BaseNode, new_node_b : $N.BaseNode) : BaseEdge {
+		if( !( new_node_a instanceof $N.BaseNode ) || !( new_node_b instanceof $N.BaseNode ) ) {
+			throw new Error("refusing to clone edge if any new node is invalid");
+		}
+
+		return new BaseEdge( this._id,
+												 new_node_a,
+												 new_node_b,
+												 {
+													 directed		: this._directed,
+													 weighted		: this._weighted,
+													 weight			: this._weight,
+													 label			: this._label
+												 }													 
+		);
+	}
 }
 
 export { BaseEdge };

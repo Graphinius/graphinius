@@ -1,10 +1,14 @@
 "use strict";
-var $G = require('../core/Graph');
+var $N = require('../core/Nodes');
+var $E = require('../core/Edges');
 function clone(obj) {
     if (obj === null || typeof obj !== 'object') {
         return obj;
     }
-    var cloneObj = obj.constructor();
+    if (obj instanceof $N.BaseNode || obj instanceof $E.BaseEdge) {
+        return;
+    }
+    var cloneObj = obj.constructor ? obj.constructor() : {};
     for (var attribute in obj) {
         if (!obj.hasOwnProperty(attribute)) {
             continue;
@@ -65,7 +69,3 @@ function findKey(obj, cb) {
     return undefined;
 }
 exports.findKey = findKey;
-function cloneGraph(graph) {
-    var clone_graph = new $G.BaseGraph(graph._label);
-    return clone_graph;
-}

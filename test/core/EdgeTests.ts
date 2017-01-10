@@ -18,11 +18,29 @@ describe('==== EDGE TESTS ====', () => {
 	
 	describe('A basic edge instantiation', () => {
 
-		// it('should refuse to ')
+		/**
+		 * An edge without nodes does not make any sense, HOWEVER:
+		 * the edge itself does not check if any of the nodes it connects 
+		 * are part of a graph - this is the job of the BaseGraph class!
+		 */
+		it('should refuse to instantiate an edge without two existing nodes', () => {
+			var badConst = function() { return new Edge("free-float", null, null) };
+			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+		});
+
+		it('should refuse to instantiate an edge without two existing nodes', () => {
+			var badConst = function() { return new Edge("free-float", new Node("A"), null) };
+			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+		});
+
+		it('should refuse to instantiate an edge without two existing nodes', () => {
+			var badConst = function() { return new Edge("free-float", null, new Node("A") ) };
+			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+		});
 
 		it('should correctly set _id', () => {					
 			var edge = new Edge(id, node_a, node_b);
-			expect(edge.getID()).to.equal(id);	
+			expect(edge.getID()).to.equal(id);
 		});
 		
 		it('should correctly set _label upon instantiation', () => {
@@ -144,23 +162,77 @@ describe('==== EDGE TESTS ====', () => {
 	});
 
 
-	describe.skip('Edge clone Tests - ', () => {
+	/**
+	 * As far as all cloning tests are concerned,
+	 * the edge class is not responsible for connecting
+	 * to the "correct" nodes, so in itself it does NOT
+	 * check if the provided nodes
+	 */
+	describe('Edge CLONE Tests - ', () => {
 
+		let node_a = new $N.BaseNode("A");
+		let node_b = new $N.BaseNode("B");
 		let edge : $E.IBaseEdge = null;
 		let clone_edge : $E.IBaseEdge = null;
 
 
 		beforeEach(() => {
-			edge = new $E.BaseEdge("test_edge", null, null);
+			expect(edge).to.be.null;
 			expect(clone_edge).to.be.null;
 		});
 
+
 		afterEach(() => {
+			edge = null;
 			clone_edge = null;
 		});
 
-		it('should clone an edge with correct ID', () => {
-			
+
+		it('should refuse to clone if new node A is invalid', () => {
+			edge = new $E.BaseEdge("default", node_a, node_b);
+			expect(edge.clone.bind(edge, null, node_b))
+				.to.throw("refusing to clone edge if any new node is invalid");
+		});
+
+
+		it('should refuse to clone if new node B is invalid', () => {
+			edge = new $E.BaseEdge("default", node_a, node_b);
+			expect(edge.clone.bind(edge, node_a, null))
+				.to.throw("refusing to clone edge if any new node is invalid");
+		});
+
+
+		it('should refuse to clone if both nodes are invalid', () => {
+			edge = new $E.BaseEdge("default", node_a, node_b);
+			expect(edge.clone.bind(edge, null, null))
+				.to.throw("refusing to clone edge if any new node is invalid");
+		});
+
+
+		it('should clone a default edge with correct config options', () => {
+			edge = new $E.BaseEdge("default", node_a, node_b);
+			clone_edge = edge.clone(node_a, node_b);
+			expect(clone_edge.getID()).to.equal(edge.getID());
+			expect(clone_edge.getLabel()).to.equal(edge.getLabel());
+			expect(clone_edge.isDirected()).to.equal(edge.isDirected());
+			expect(clone_edge.isWeighted()).to.equal(edge.isWeighted());
+			expect(clone_edge.getWeight()).to.equal(edge.getWeight());
+		});
+
+
+		it('should clone a default edge with correct config options', () => {
+			edge = new $E.BaseEdge("default", node_a, node_b, {
+				directed: true,
+				weighted: true,
+				weight: -77,
+				label: "different_from_ID"
+			});
+			clone_edge = edge.clone(node_a, node_b);
+			expect(clone_edge.getID()).to.equal(edge.getID());
+			expect(clone_edge.getLabel()).to.equal(edge.getLabel());
+			expect(clone_edge.isDirected()).to.equal(edge.isDirected());
+			expect(clone_edge.isWeighted()).to.equal(edge.isWeighted());
+			expect(clone_edge.getWeight()).to.equal(edge.getWeight());
 		});
 
 	});

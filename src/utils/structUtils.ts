@@ -14,9 +14,15 @@ import * as $E from '../core/Edges';
  */
 function clone(obj:any): any {
     if (obj === null || typeof obj !== 'object') {
-        return obj;
+      return obj;
     }
-    var cloneObj = obj.constructor();
+
+    // check for nodes or edges and ignore them
+    if ( obj instanceof $N.BaseNode || obj instanceof $E.BaseEdge ) {
+      return;
+    }
+
+    var cloneObj = obj.constructor ? obj.constructor() : {};
     for (var attribute in obj) {
       if ( !obj.hasOwnProperty( attribute ) ) {
         continue;
@@ -100,16 +106,5 @@ function findKey( obj: Object, cb: Function ) : string {
   }
   return undefined;
 }
-
-
-function cloneGraph( graph: $G.IGraph ) : $G.IGraph {
-  let clone_graph = new $G.BaseGraph( graph._label );
-
-  
-
-  return clone_graph;
-}
-
-
 
 export { clone, mergeArrays, mergeObjects, findKey };

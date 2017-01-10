@@ -41,7 +41,8 @@ export interface IGraph {
 	degreeDistribution() : DegreeDistribution;
 
 	// NODE STUFF
-	addNode(id: string, opts? : {}) : $N.IBaseNode;
+	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
+	addNode(node: $N.IBaseNode) : boolean;
 	hasNodeID(id: string) : boolean;
 	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
@@ -157,11 +158,15 @@ class BaseGraph implements IGraph {
 		return this._nr_und_edges;
 	}
 
-	addNode(id: string, opts? : {}) : $N.IBaseNode {
+	addNodeByID(id: string, opts? : {}) : $N.IBaseNode {
 		var node = new $N.BaseNode(id, opts);
+		return this.addNode(node) ? node : null;
+	}
+
+	addNode(node: $N.IBaseNode) : boolean {
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
-		return node;
+		return true;
 	}
 
 	hasNodeID(id: string) : boolean {

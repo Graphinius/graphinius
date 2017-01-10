@@ -3,10 +3,15 @@
 import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
+import * as $I from '../../src/io/input/JSONInput';
+import * as $SU from '../../src/utils/structUtils';
 
-var expect = chai.expect;
-var Edge = $E.BaseEdge;
+let expect = chai.expect;
+let Edge = $E.BaseEdge;
 
+var small_graph_file = "./test/test_data/small_graph.json",
+		json_in = new $I.JSONInput(false, false, false), // edges don't matter
+		small_graph = json_in.readFromJSONFile(small_graph_file);
 
 /**
  * TODO Test
@@ -621,6 +626,103 @@ describe('==== NODE TESTS ====', () => {
 			
 		});
 		
+	});
+
+
+	/**
+	 * In cloning a node, we do not want to immediately clone it's edges
+	 * since those will need to be handed the new nodes's reference
+	 * later in it's cloning stage.. so we 
+	 * 	- ignore edges for now..?
+	 *  - put placeholders in their pace for now..?
+	 * 	- so the degree of a cloned node will all be zero?
+	 */
+	describe("Node CLONE tests", () => {
+
+		let node : $N.IBaseNode = null;
+		let clone_node : $N.IBaseNode = null;
+		
+
+		beforeEach(() => {
+			expect(node).to.be.null;
+			expect(clone_node).to.be.null;
+		});
+
+
+		afterEach(() => {
+			expect(clone_node.getID()).to.equal(node.getID());
+			expect(clone_node.getLabel()).to.equal(node.getLabel());
+			expect(clone_node.inDegree()).to.equal(0);
+			expect(clone_node.outDegree()).to.equal(0);
+			expect(clone_node.degree()).to.equal(0);
+			expect(clone_node.inEdges()).to.deep.equal({});
+			expect(clone_node.outEdges()).to.deep.equal({});
+			expect(clone_node.allEdges()).to.deep.equal({});
+
+			node = null;
+			clone_node = null;
+		});
+
+
+		it('should return a new node upon cloning', () => {
+			node = new $N.BaseNode("A");
+			clone_node = node.clone();
+			expect(clone_node).not.to.be.undefined;
+			expect(clone_node).not.to.be.null;
+			expect(clone_node).to.be.instanceOf($N.BaseNode);
+		});
+
+
+		it('should ignore undirected edges upon cloning', () => {
+			node = new $N.BaseNode("A");
+			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B")));
+			clone_node = node.clone();
+			expect(clone_node.degree()).to.equal(0);
+		});
+
+
+		it('should ignore undirected edges upon cloning', () => {
+			node = new $N.BaseNode("A");
+			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B"), {directed: true}));
+			clone_node = node.clone();
+			expect(clone_node.outDegree()).to.equal(0);
+		});
+
+
+		it('should ignore undirected edges upon cloning', () => {
+			node = new $N.BaseNode("A");
+			node.addEdge(new $E.BaseEdge("someEdge", new $N.BaseNode("B"), node, {directed: true}));
+			clone_node = node.clone();
+			expect(clone_node.inDegree()).to.equal(0);
+		});
+
+
+		it('should correctly clone features of a defined node', () => {
+			node = small_graph.getNodeById("A");
+			clone_node = node.clone();
+			expect(clone_node.getFeatures()).to.deep.equal(node.getFeatures());
+		});
+
+
+		it('should ignore references to edges in node features', () => {
+			node = small_graph.getNodeById("A");
+			let other_node = new $N.BaseNode("B");
+			let edge = new $E.BaseEdge("someEdge", node, other_node);
+			node.addEdge(edge);
+			node.setFeature('edge-case', edge);
+			clone_node = node.clone();
+			expect(clone_node.getFeatures()).not.to.deep.equal(node.getFeatures());
+		});
+
+
+		it('should ignore references to other nodes in node features', () => {
+			node = small_graph.getNodeById("A");
+			let other_node = new $N.BaseNode("B");
+			node.setFeature('nirvana-node', node);
+			clone_node = node.clone();
+			expect(clone_node.getFeatures()).not.to.deep.equal(node.getFeatures());
+		});
+
 	});
 
 });

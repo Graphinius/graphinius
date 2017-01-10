@@ -106,7 +106,7 @@ class JSONInput implements IJSONInput {
 				feature			: string;
 				
 		for ( var node_id in json.data ) {
-			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 			
 			/**
 			 * Reading and instantiating features
@@ -138,15 +138,16 @@ class JSONInput implements IJSONInput {
 			for ( var e in edges ) {
 				var edge_input = edges[e],
 						target_node_id = edge_input.to,
-            // Is there any direction information?
-            
+
+            // Is there any direction information?            
 						directed = this._explicit_direction ? edge_input.directed : this._direction,
             dir_char = directed ? 'd' : 'u',
+
             // Is there any weight information?,
             weight_float = parseFloat(edge_input.weight),
             weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
             edge_weight = this._weighted_mode ? weight_info : undefined, 
-						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);      
+						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);      
             
 				var edge_id = node_id + "_" + target_node_id + "_" + dir_char,
 						edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;

@@ -66,11 +66,14 @@ var BaseGraph = (function () {
     BaseGraph.prototype.nrUndEdges = function () {
         return this._nr_und_edges;
     };
-    BaseGraph.prototype.addNode = function (id, opts) {
+    BaseGraph.prototype.addNodeByID = function (id, opts) {
         var node = new $N.BaseNode(id, opts);
+        return this.addNode(node) ? node : null;
+    };
+    BaseGraph.prototype.addNode = function (node) {
         this._nodes[node.getID()] = node;
         this._nr_nodes += 1;
-        return node;
+        return true;
     };
     BaseGraph.prototype.hasNodeID = function (id) {
         return !!this._nodes[id];

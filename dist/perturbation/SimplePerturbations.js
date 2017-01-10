@@ -98,7 +98,7 @@ var SimplePerturber = (function () {
         var new_nodes = {};
         while (amount--) {
             var new_node_id = randgen.randBase36String();
-            new_nodes[new_node_id] = this._graph.addNode(new_node_id);
+            new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
         }
         if (config == null) {
             return;

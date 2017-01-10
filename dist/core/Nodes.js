@@ -1,5 +1,5 @@
 "use strict";
-var $DS = require("../utils/structUtils");
+var $SU = require("../utils/structUtils");
 var BaseNode = (function () {
     function BaseNode(_id, features) {
         this._id = _id;
@@ -9,7 +9,7 @@ var BaseNode = (function () {
         this._in_edges = {};
         this._out_edges = {};
         this._und_edges = {};
-        this._features = typeof features !== 'undefined' ? $DS.clone(features) : {};
+        this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
         this._label = this._features["label"] || this._id;
     }
     BaseNode.prototype.getID = function () {
@@ -28,7 +28,7 @@ var BaseNode = (function () {
         return this._features[key];
     };
     BaseNode.prototype.setFeatures = function (features) {
-        this._features = $DS.clone(features);
+        this._features = $SU.clone(features);
     };
     BaseNode.prototype.setFeature = function (key, value) {
         this._features[key] = value;
@@ -101,10 +101,10 @@ var BaseNode = (function () {
         return this._und_edges;
     };
     BaseNode.prototype.dirEdges = function () {
-        return $DS.mergeObjects([this._in_edges, this._out_edges]);
+        return $SU.mergeObjects([this._in_edges, this._out_edges]);
     };
     BaseNode.prototype.allEdges = function () {
-        return $DS.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
+        return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
     };
     BaseNode.prototype.removeEdge = function (edge) {
         if (!this.hasEdge(edge)) {
@@ -217,7 +217,12 @@ var BaseNode = (function () {
     };
     BaseNode.prototype.reachNodes = function (identityFunc) {
         var identity = 0;
-        return $DS.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+        return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+    };
+    BaseNode.prototype.clone = function () {
+        var new_node = new BaseNode(this._id);
+        new_node.setFeatures(this.getFeatures());
+        return new_node;
     };
     return BaseNode;
 }());

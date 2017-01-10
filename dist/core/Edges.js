@@ -1,9 +1,13 @@
 "use strict";
+var $N = require("./Nodes");
 var BaseEdge = (function () {
     function BaseEdge(_id, _node_a, _node_b, options) {
         this._id = _id;
         this._node_a = _node_a;
         this._node_b = _node_b;
+        if (!(_node_a instanceof $N.BaseNode) || !(_node_b instanceof $N.BaseNode)) {
+            throw new Error("cannot instantiate edge without two valid node objects");
+        }
         options = options || {};
         this._directed = options.directed || false;
         this._weighted = options.weighted || false;
@@ -36,6 +40,17 @@ var BaseEdge = (function () {
     };
     BaseEdge.prototype.getNodes = function () {
         return { a: this._node_a, b: this._node_b };
+    };
+    BaseEdge.prototype.clone = function (new_node_a, new_node_b) {
+        if (!(new_node_a instanceof $N.BaseNode) || !(new_node_b instanceof $N.BaseNode)) {
+            throw new Error("refusing to clone edge if any new node is invalid");
+        }
+        return new BaseEdge(this._id, new_node_a, new_node_b, {
+            directed: this._directed,
+            weighted: this._weighted,
+            weight: this._weight,
+            label: this._label
+        });
     };
     return BaseEdge;
 }());

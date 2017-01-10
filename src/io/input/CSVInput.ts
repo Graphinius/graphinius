@@ -113,7 +113,7 @@ class CSVInput implements ICSVInput {
 				// end of file or empty line, just treat like an empty line...
 				continue;
 			}
-			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
+			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 			
 			for ( var e = 0; e < edge_array.length; ) {
 				
@@ -122,7 +122,7 @@ class CSVInput implements ICSVInput {
 				}
 				target_node_id = edge_array[e++];
 				
-				target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+				target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 				
 				/**
 				 * The direction determines if we have to check for the existence
@@ -180,8 +180,8 @@ class CSVInput implements ICSVInput {
 					edge_id: string,
 					edge_id_u2: string;
 			
-			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNode(node_id);
-			target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNode(target_node_id);
+			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+			target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 						
 			if ( dir_char !== 'd' && dir_char !== 'u' ) {
 				throw new Error("Specification of edge direction invalid (d and u are valid).");
