@@ -313,6 +313,21 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getRandomUndEdge = function () {
         return this.pickRandomProperty(this._und_edges);
     };
+    BaseGraph.prototype.clone = function () {
+        var new_graph = new BaseGraph(this._label), old_nodes = this.getNodes(), old_edge, new_node_a = null, new_node_b = null;
+        for (var node_id in old_nodes) {
+            new_graph.addNode(old_nodes[node_id].clone());
+        }
+        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
+            for (var edge_id in old_edges) {
+                old_edge = old_edges[edge_id];
+                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+                new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
+            }
+        });
+        return new_graph;
+    };
     BaseGraph.prototype.checkConnectedNodeOrThrow = function (node) {
         var node = this._nodes[node.getID()];
         if (!node) {

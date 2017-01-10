@@ -5,11 +5,20 @@ import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
+import * as $JSON from '../../src/io/input/JSONInput';
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
 var Edge = $E.BaseEdge;
 var Graph = $G.BaseGraph;
+
+const small_graph_file = "./test/test_data/small_graph.json",
+      real_graph_file = "./test/test_data/real_graph.json",
+      SMALL_GRAPH_NR_NODES = 4,
+      SMALL_GRAPH_NR_UND_EDGES = 2,
+      SMALL_GRAPH_NR_DIR_EDGES = 5,
+      REAL_GRAPH_NR_NODES = 6204,
+      REAL_GRAPH_NR_EDGES = 18550;
 
 
 describe('GRAPH TESTS: ', () => {
@@ -773,6 +782,123 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrUndEdges()).to.equal(0);			
 		});
 		
+	});
+
+
+	describe('Graph cloning - ', () => {
+
+		let clone_graph : $G.IGraph = null;
+		let json_in : $JSON.IJSONInput;
+
+		beforeEach(() => {
+			expect(clone_graph).to.be.null;
+		});
+
+		afterEach(() => {
+			clone_graph = null;
+		});
+
+
+		it('should successfully clone an empty graph', () => {
+			graph = new $G.BaseGraph("empty graph");
+			clone_graph = graph.clone();
+			expect(clone_graph._label).to.equal(graph._label);
+			expect(clone_graph.nrNodes()).to.equal(0);
+			expect(clone_graph.nrUndEdges()).to.equal(0);
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+			expect(clone_graph.getMode()).to.equal($G.GraphMode.INIT);
+			expect(clone_graph.getNodes()).to.deep.equal({});
+			expect(clone_graph.getUndEdges()).to.deep.equal({});
+			expect(clone_graph.getDirEdges()).to.deep.equal({});
+		});
+
+
+		it('should successfully clone an graph with a node plus nested feature vector', () => {
+			graph = new $G.BaseGraph("two_node_graph");
+			let n_a = graph.addNodeByID("A");
+			n_a.setFeatures({
+				"bla": "hoo",
+				"number": 42,
+				"true": false,
+				"array": [1, 2, 3, [4, 5]],
+				"object": {
+					"nested": true
+				}
+			});
+			clone_graph = graph.clone();
+			expect(clone_graph._label).to.equal(graph._label);
+			expect(clone_graph.nrNodes()).to.equal(1);
+			expect(clone_graph.nrUndEdges()).to.equal(0);
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+			expect(clone_graph.getMode()).to.equal($G.GraphMode.INIT);
+			expect(clone_graph.getNodeById("A")).to.deep.equal(n_a);
+		});
+
+
+		it('should successfully clone an graph with two nodes and one undirected edge', () => {
+			graph = new $G.BaseGraph("two_node_graph");
+			let n_a = graph.addNodeByID("A");
+			let n_b = graph.addNodeByID("B");
+			let edgy = graph.addEdgeByID("edgy", n_a, n_b, {directed: false});
+
+			clone_graph = graph.clone();
+			expect(clone_graph._label).to.equal(graph._label);
+			expect(clone_graph.nrNodes()).to.equal(2);
+			expect(clone_graph.nrUndEdges()).to.equal(1);
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+			expect(clone_graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
+		});
+
+
+		it('should successfully clone an graph with two nodes and one directed edge', () => {
+			graph = new $G.BaseGraph("two_node_graph");
+			let n_a = graph.addNodeByID("A");
+			let n_b = graph.addNodeByID("B");
+			let edgy = graph.addEdgeByID("edgy", n_a, n_b, {directed: true});
+
+			clone_graph = graph.clone();
+			expect(clone_graph._label).to.equal(graph._label);
+			expect(clone_graph.nrNodes()).to.equal(2);
+			expect(clone_graph.nrUndEdges()).to.equal(0);
+			expect(clone_graph.nrDirEdges()).to.equal(1);
+			expect(clone_graph.getMode()).to.equal($G.GraphMode.DIRECTED);
+		});
+
+
+		/**
+		 * The toy graph example
+		 */
+		it('should successfully clone a toy graph in explicit mode including weights', () => {
+			json_in = new $JSON.JSONInput(true, false, true);
+			graph = json_in.readFromJSONFile(small_graph_file);
+			let deg_dist_all = graph.degreeDistribution().all;
+			clone_graph = graph.clone();
+			let clone_deg_dist_all = graph.degreeDistribution().all;
+			expect(clone_graph.nrNodes()).to.equal(SMALL_GRAPH_NR_NODES);
+			expect(clone_graph.nrUndEdges()).to.equal(SMALL_GRAPH_NR_UND_EDGES);
+			expect(clone_graph.nrDirEdges()).to.equal(SMALL_GRAPH_NR_DIR_EDGES);
+			expect(clone_deg_dist_all).to.deep.equal(deg_dist_all);
+			expect(clone_graph).to.deep.equal(graph);
+		});
+
+
+		/**
+		 * JUST FOR FUN - can also be removed - The REAL graph example
+		 */
+		it('should successfully clone a toy graph in explicit mode including weights', () => {
+			json_in = new $JSON.JSONInput(false, false, true);
+			graph = json_in.readFromJSONFile(real_graph_file);
+			let deg_dist_all = graph.degreeDistribution().all;
+			clone_graph = graph.clone();
+			let clone_deg_dist_all = graph.degreeDistribution().all;
+
+			expect(clone_graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
+			expect(clone_graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+			expect(clone_deg_dist_all).to.deep.equal(deg_dist_all);
+			// expect(clone_graph).to.deep.equal(graph);
+		});
+
 	});
 	
 });

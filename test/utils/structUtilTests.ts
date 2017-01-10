@@ -10,12 +10,6 @@ import * as $G from '../../src/core/Graph';
 
 var expect = chai.expect;
 chai.use(sinonChai);
-const toy_graph_file = "./test/test_data/small_graph.json",
-      real_graph_file = "./test/test_data/real_graph.json",
-      SMALL_GRAPH_NR_NODES = 4,
-      SMALL_GRAPH_NR_EDGES = 7,
-      REAL_GRAPH_NR_NODES = 6204,
-      REAL_GRAPH_NR_EDGES = 18550;
 
 
 describe('Datastructure Utils Tests - ', () => {

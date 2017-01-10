@@ -81,6 +81,8 @@ export interface IGraph {
 	clearAllDirEdges() : void;
 	clearAllUndEdges() : void;
 	clearAllEdges() : void;
+
+	clone() : IGraph;
 }
 
 
@@ -96,7 +98,6 @@ class BaseGraph implements IGraph {
   // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
   // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
   // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-
 
 	constructor (public _label) {	}
 
@@ -501,6 +502,30 @@ class BaseGraph implements IGraph {
 	 */
 	getRandomUndEdge() : $E.IBaseEdge {
 		return this.pickRandomProperty(this._und_edges);
+	}
+
+
+	clone() : IGraph {
+		let new_graph = new BaseGraph(this._label),
+				old_nodes = this.getNodes(),
+				old_edge : $E.IBaseEdge,
+				new_node_a  = null,
+				new_node_b  = null;
+
+		for ( let node_id in old_nodes ) {
+			new_graph.addNode( old_nodes[node_id].clone() );
+		}
+
+		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
+			for ( let edge_id in old_edges ) {
+				old_edge = old_edges[edge_id];
+				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
+				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
+				new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) )
+			}
+		});
+
+		return new_graph;
 	}
 
 
