@@ -40,5 +40,21 @@ describe('MCMF Boykov Tests - ', () => {
 
   });
 
+  describe("Convert to directed Graph Test - ", () => {
+
+    // it('should convert the undirected graph to a directed one', () => {
+    //   json = new $I.JSONInput(false, false, true);
+    //   graph = json.readFromJSONFile("/home/nico/cGraph.json");
+    //   var config = {directed: false};
+    //   mcmf = new $MC.MCMFBoykov(graph, graph.getNodeById("SOURCE"), graph.getNodeById("SINK"), config);
+    //   console.log(mcmf.calculateCycle().cost);
+    //   console.log(mcmf.calculateCycle().edgeIDs);
+    //   // expect( mcmf.calculateCycle().cost ).to.equal( 14);
+    //   // expect( mcmf.calculateCycle().edgeIDs ).to.include.members(["A_B_d", "B_A_d", "C_E_d", "E_C_d", "C_D_d", "D_C_d"] );
+    // });
+
+  });
+
+
 
 });

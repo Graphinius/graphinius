@@ -20,7 +20,7 @@ export interface MCMFResult {
 
 export interface IMCMFBoykov {
   calculateCycle() : MCMFResult;
-
+	convertToDirectedGraph(graph : $G.IGraph) : $G.IGraph;
   prepareMCMFStandardConfig() : MCMFConfig;
 }
 
@@ -33,6 +33,7 @@ export interface MCMFState {
   treeT       : {[key:string] : $N.IBaseNode};
 	parents			: {[key:string] : $N.IBaseNode};
   path        : Array<$N.IBaseNode>;
+	// undGraph		: $G.IGraph;
 }
 
 
@@ -50,7 +51,8 @@ class MCMFBoykov implements IMCMFBoykov {
     treeS       : {},
     treeT       : {},
 		parents			: {},
-    path        : []
+    path        : [],
+		// undGraph 		: null
   };
 
   constructor( private _graph 	 : $G.IGraph,
@@ -59,7 +61,16 @@ class MCMFBoykov implements IMCMFBoykov {
 						   config?           : MCMFConfig )
   {
      this._config = config || this.prepareMCMFStandardConfig();
-		 this._state.residGraph = _graph;
+
+		 this._state.residGraph = this._graph;
+		 if (!this._config.directed) {
+		    // convert the undirected graph to a directed one
+				this._state.residGraph = this.convertToDirectedGraph(this._state.residGraph);
+				// update source and sink
+				this._source = this._state.residGraph.getNodeById(this._source.getID());
+				this._sink = this._state.residGraph.getNodeById(this._sink.getID());
+
+		 }
   }
 
 
@@ -94,39 +105,88 @@ class MCMFBoykov implements IMCMFBoykov {
 		for (let i = 0; i < Object.keys(smallTree).length; i++) {
 		    var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
 				var node: $N.IBaseNode = this._graph.getNodeById(node_id);
-				var outEdges: {[k: string] : $E.IBaseEdge} = node.outEdges();
-				var inEdges: {[k: string] : $E.IBaseEdge} = node.inEdges();
 
-				// check outEdges
-				for (let i = 0; i < Object.keys(outEdges).length; i++) {
-				    var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
-						var neighbor: $N.IBaseNode = edge.getNodes().b;
-						if (this.tree(neighbor) != this.tree(node)) {
-						    // we found a an edge which is part of the Cut
-								result.edges.push(edge);
-								result.edgeIDs.push(edge.getID());
-								result.cost += edge.getWeight();
+				// if undirected
+				if (!this._config.directed) {
+				    var undEdges: {[keys: string] : $E.IBaseEdge} = node.undEdges();
+						for (let i = 0; i < Object.keys(undEdges).length; i++) {
+						    var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
+								var neighbor: $N.IBaseNode = (edge.getNodes().a.getID() == node.getID()) ? edge.getNodes().b : edge.getNodes().a;
+								if (this.tree(neighbor) != this.tree(node)) {
+								    // we found a an edge which is part of the Cut
+										result.edges.push(edge);
+										result.edgeIDs.push(edge.getID());
+										result.cost += edge.getWeight();
+								}
 						}
 				}
-				// check inEdges
-				for (let i = 0; i < Object.keys(inEdges).length; i++) {
-				    var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
-						var neighbor: $N.IBaseNode = edge.getNodes().a;
-						if (this.tree(neighbor) != this.tree(node)) {
-						    // we found a an edge which is part of the Cut
-								result.edges.push(edge);
-								result.edgeIDs.push(edge.getID());
-								result.cost += edge.getWeight();
-						}
+				else {
+					/* if directed
+						*/
+					var outEdges: {[k: string] : $E.IBaseEdge} = node.outEdges();
+					var inEdges: {[k: string] : $E.IBaseEdge} = node.inEdges();
+
+					// check outEdges
+					for (let i = 0; i < Object.keys(outEdges).length; i++) {
+					    var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
+							var neighbor: $N.IBaseNode = edge.getNodes().b;
+							if (this.tree(neighbor) != this.tree(node)) {
+							    // we found a an edge which is part of the Cut
+									result.edges.push(edge);
+									result.edgeIDs.push(edge.getID());
+									result.cost += edge.getWeight();
+							}
+					}
+					// check inEdges
+					for (let i = 0; i < Object.keys(inEdges).length; i++) {
+					    var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
+							var neighbor: $N.IBaseNode = edge.getNodes().a;
+							if (this.tree(neighbor) != this.tree(node)) {
+							    // we found a an edge which is part of the Cut
+									result.edges.push(edge);
+									result.edgeIDs.push(edge.getID());
+									result.cost += edge.getWeight();
+							}
+					}
 				}
+
 		}
 		//console.log(result.edges);
 		console.log("Cost => " +result.cost);
 		console.log("# cycles => " + nrCycles);
-		console.log(result.edges);
+		// console.log(result.edges);
 
     return result;
   }
+
+	convertToDirectedGraph(uGraph: $G.IGraph) : $G.IGraph {
+		var dGraph: $G.IGraph = new $G.BaseGraph(uGraph._label + "_directed");
+
+		// copy all nodes
+		var nodes: {[keys: string] : $N.IBaseNode} = uGraph.getNodes();
+		// console.log("#nodes: " + Object.keys(nodes).length);
+		for (let i = 0; i < Object.keys(nodes).length; i++) {
+		    var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+				dGraph.addNode(node.getID());
+		}
+
+		// create one in and one out edge for each undirected edge
+		var edges: {[keys: string] : $E.IBaseEdge} = uGraph.getUndEdges();
+		for (let i = 0; i < Object.keys(edges).length; i++) {
+		    var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+
+				var node_a_id: string = und_edge.getNodes().a.getID();
+				var node_b_id: string = und_edge.getNodes().b.getID();
+
+				var options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: und_edge.getWeight()};
+
+				dGraph.addEdge(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
+				dGraph.addEdge(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
+
+		}
+		// console.log(dGraph);
+		return dGraph;
+	}
 
 	tree(node: $N.IBaseNode) {
 		var tree: string = "";
