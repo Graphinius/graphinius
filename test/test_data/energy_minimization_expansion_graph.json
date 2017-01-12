@@ -6,7 +6,7 @@
 	"data": {
 		"A": {
       "features": {
-				"label": "1"
+				"label": "2"
 			},
 			"edges": [
 				{
@@ -23,14 +23,9 @@
 		},
     "B": {
       "features": {
-				"label": "0"
+				"label": "1"
 			},
 			"edges": [
-        {
-          "to": "A",
-          "directed": false,
-          "weight": 1
-        },
 				{
 					"to": "C",
 					"directed": false,
@@ -45,14 +40,9 @@
 		},
     "C": {
       "features": {
-				"label": "1"
+				"label": "2"
 			},
 			"edges": [
-        {
-          "to": "B",
-          "directed": false,
-          "weight": 1
-        },
 				{
 					"to": "F",
 					"directed": false,
@@ -62,14 +52,9 @@
 		},
     "D": {
       "features": {
-				"label": "1"
+				"label": "2"
 			},
 			"edges": [
-        {
-          "to": "A",
-          "directed": false,
-          "weight": 1
-        },
         {
           "to": "E",
           "directed": false,
@@ -84,19 +69,9 @@
 		},
     "E": {
       "features": {
-				"label": "0"
+				"label": "1"
 			},
 			"edges": [
-        {
-          "to": "B",
-          "directed": false,
-          "weight": 1
-        },
-        {
-          "to": "D",
-          "directed": false,
-          "weight": 1
-        },
 				{
 					"to": "F",
 					"directed": false,
@@ -111,19 +86,9 @@
 		},
     "F": {
       "features": {
-				"label": "0"
+				"label": "1"
 			},
 			"edges": [
-        {
-          "to": "C",
-          "directed": false,
-          "weight": 1
-        },
-        {
-          "to": "E",
-          "directed": false,
-          "weight": 1
-        },
         {
           "to": "I",
           "directed": false,
@@ -133,14 +98,9 @@
 		},
     "G": {
       "features": {
-				"label": "1"
+				"label": "2"
 			},
 			"edges": [
-        {
-          "to": "D",
-          "directed": false,
-          "weight": 1
-        },
         {
           "to": "H",
           "directed": false,
@@ -150,19 +110,9 @@
 		},
     "H": {
       "features": {
-				"label": "0"
+				"label": "1"
 			},
 			"edges": [
-        {
-          "to": "G",
-          "directed": false,
-          "weight": 1
-        },
-        {
-          "to": "E",
-          "directed": false,
-          "weight": 1
-        },
         {
           "to": "I",
           "directed": false,
@@ -172,19 +122,9 @@
 		},
     "I": {
       "features": {
-				"label": "0"
+				"label": "1"
 			},
 			"edges": [
-        {
-          "to": "F",
-          "directed": false,
-          "weight": 1
-        },
-        {
-          "to": "H",
-          "directed": false,
-          "weight": 1
-        }
 			]
 		}
   }
