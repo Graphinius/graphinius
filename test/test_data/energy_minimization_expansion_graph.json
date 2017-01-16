@@ -8,6 +8,11 @@
       "features": {
 				"label": "2"
 			},
+			"coords": {
+        "x": 0,
+        "y": 30,
+        "z": 0
+      },
 			"edges": [
 				{
 					"to": "B",
@@ -25,6 +30,11 @@
       "features": {
 				"label": "1"
 			},
+      "coords": {
+        "x": 10,
+        "y": 30,
+        "z": 0
+      },
 			"edges": [
 				{
 					"to": "C",
@@ -42,6 +52,11 @@
       "features": {
 				"label": "2"
 			},
+      "coords": {
+        "x": 20,
+        "y": 30,
+        "z": 0
+      },
 			"edges": [
 				{
 					"to": "F",
@@ -54,6 +69,11 @@
       "features": {
 				"label": "2"
 			},
+      "coords": {
+        "x": 0,
+        "y": 20,
+        "z": 0
+      },
 			"edges": [
         {
           "to": "E",
@@ -71,6 +91,11 @@
       "features": {
 				"label": "1"
 			},
+      "coords": {
+        "x": 10,
+        "y": 20,
+        "z": 0
+      },
 			"edges": [
 				{
 					"to": "F",
@@ -88,6 +113,11 @@
       "features": {
 				"label": "1"
 			},
+      "coords": {
+        "x": 20,
+        "y": 20,
+        "z": 0
+      },
 			"edges": [
         {
           "to": "I",
@@ -100,6 +130,11 @@
       "features": {
 				"label": "2"
 			},
+      "coords": {
+        "x": 0,
+        "y": 10,
+        "z": 0
+      },
 			"edges": [
         {
           "to": "H",
@@ -112,6 +147,11 @@
       "features": {
 				"label": "1"
 			},
+      "coords": {
+        "x": 10,
+        "y": 10,
+        "z": 0
+      },
 			"edges": [
         {
           "to": "I",
@@ -124,6 +164,11 @@
       "features": {
 				"label": "1"
 			},
+      "coords": {
+        "x": 20,
+        "y": 10,
+        "z": 0
+      },
 			"edges": [
 			]
 		}

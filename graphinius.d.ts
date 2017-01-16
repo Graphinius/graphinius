@@ -5,7 +5,7 @@ declare module GraphiniusJS {
     export namespace core {
 
         /**
-         * EDGES 
+         * EDGES
          */
         export interface IConnectedNodes {
             a: IBaseNode;
@@ -51,7 +51,7 @@ declare module GraphiniusJS {
 
 
         /**
-         * NODES 
+         * NODES
          */
         export interface NeighborEntry {
             node: IBaseNode;
@@ -168,7 +168,7 @@ declare module GraphiniusJS {
         }
 
         /**
-         * GRAPH 
+         * GRAPH
          */
         export enum GraphMode {
             INIT = 0,
@@ -573,7 +573,7 @@ declare module GraphiniusJS {
             writeToJSONFile(filepath: string, graph: core.IGraph): void;
             writeToJSONSString(graph: core.IGraph): string;
         }
-        
+
     }
 
 
@@ -634,6 +634,133 @@ declare module GraphiniusJS {
             randomlyAddEdgesAmount(amount: number, config?: core.EdgeConstructorOptions): void;
         }
     }
+
+    /**
+     * mincut
+     */
+    export namespace mincut {
+
+      export interface MCMFConfig {
+        directed: boolean; // do we
+      }
+
+
+      export interface MCMFResult {
+        edges : Array<core.IBaseEdge>;
+        edgeIDs: Array<string>;
+        cost  : number;
+      }
+
+
+      export interface IMCMFBoykov {
+        calculateCycle() : MCMFResult;
+        convertToDirectedGraph(graph : core.IGraph) : core.IGraph;
+        prepareMCMFStandardConfig() : MCMFConfig;
+      }
+
+
+      export interface MCMFState {
+        residGraph	: core.IGraph;
+        activeNodes : {[key:string] : core.IBaseNode};
+        orphans     : {[key:string] : core.IBaseNode};
+        treeS       : {[key:string] : core.IBaseNode};
+        treeT       : {[key:string] : core.IBaseNode};
+        parents			: {[key:string] : core.IBaseNode};
+        path        : Array<core.IBaseNode>;
+        // undGraph		: $G.IGraph;
+      }
+
+
+
+      /**
+       *
+       */
+      export class MCMFBoykov implements IMCMFBoykov {
+
+        calculateCycle() : MCMFResult;
+        convertToDirectedGraph(graph : core.IGraph) : core.IGraph;
+        prepareMCMFStandardConfig() : MCMFConfig;
+    }
+  }
+
+  /**
+   * energyminimization
+   */
+  export namespace energyminimization {
+
+    export interface EMEConfig {
+    	directed: boolean; // do we
+      labeled: boolean;
+      // interactionTerm : EnergyFunctionInteractionTerm;
+      // dataTerm : EnergyFunctionDataTerm;
+    }
+
+
+    export interface EMEResult {
+      graph : core.IGraph;
+    }
+
+
+    export interface IEMEBoykov {
+      calculateCycle() : EMEResult;
+    	constructGraph() : core.IGraph;
+    	deepCopyGraph(graph : core.IGraph) : core.IGraph;
+    	initGraph(graph: core.IGraph) : core.IGraph;
+      prepareEMEStandardConfig() : EMEConfig;
+    }
+
+
+    export interface EMEState {
+    	expansionGraph	: core.IGraph;
+      labeledGraph    : core.IGraph;
+      activeLabel     : string;
+      energy          : number;
+    }
+
+
+
+    /**
+     *
+     */
+    export class EMEBoykov implements IEMEBoykov {
+
+      private _config : EMEConfig;
+
+      calculateCycle() : EMEResult;
+    	constructGraph() : core.IGraph;
+    	deepCopyGraph(graph : core.IGraph) : core.IGraph;
+    	initGraph(graph: core.IGraph) : core.IGraph;
+      prepareEMEStandardConfig() : EMEConfig;
+      // private _state  : EMEState = {
+    	// 	expansionGraph 	: null,
+      //   labeledGraph    : null,
+      //   activeLabel     : '',
+      //   energy          : Infinity
+      // };
+      // private _interactionTerm : EnergyFunctionInteractionTerm;
+      // private _dataTerm : EnergyFunctionDataTerm;
+
+      // constructor( private _graph 	 : core.IGraph,
+      //              private _labels   : Array<string>,
+    	// 					   config?           : EMEConfig );
+      // {
+      //    this._config = config || this.prepareEMEStandardConfig();
+      //
+    	// 	 // set the energery functions
+      //    this._interactionTerm = this._config.interactionTerm;
+      //    this._dataTerm = this._config.dataTerm;
+      //
+    	// 	 // initialize graph => set labels
+    	// 	 this._graph = this.initGraph(_graph);
+      //
+    	// 	 // init state
+    	// 	 this._state.labeledGraph = this.deepCopyGraph(this._graph);
+    	// 	 this._state.activeLabel = this._labels[0];
+      // }
+    }
+
+}
+
 
 
     /**

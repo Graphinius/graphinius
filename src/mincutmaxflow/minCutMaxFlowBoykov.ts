@@ -33,6 +33,7 @@ export interface MCMFState {
   treeT       : {[key:string] : $N.IBaseNode};
 	parents			: {[key:string] : $N.IBaseNode};
   path        : Array<$N.IBaseNode>;
+	tree 				: {[key:string] : string};
 	// undGraph		: $G.IGraph;
 }
 
@@ -52,6 +53,7 @@ class MCMFBoykov implements IMCMFBoykov {
     treeT       : {},
 		parents			: {},
     path        : [],
+		tree 				: {}
 		// undGraph 		: null
   };
 
@@ -61,6 +63,10 @@ class MCMFBoykov implements IMCMFBoykov {
 						   config?           : MCMFConfig )
   {
      this._config = config || this.prepareMCMFStandardConfig();
+
+		 if (this._config.directed) {
+		     this.renameEdges(_graph);
+		 }
 
 		 this._state.residGraph = this._graph;
 		 if (!this._config.directed) {
@@ -83,36 +89,58 @@ class MCMFBoykov implements IMCMFBoykov {
 
 		// init
 		this._state.treeS[this._source.getID()] = this._source;
+		this._state.tree[this._source.getID()] = "S";
 		this._state.treeT[this._sink.getID()] = this._sink;
+		this._state.tree[this._sink.getID()] = "T";
 		this._state.activeNodes[this._source.getID()] = this._source;
 		this._state.activeNodes[this._sink.getID()] = this._sink;
 
  		var nrCycles= 0;
 		// start
 		while(true) {
-			var path = this.grow();
+			// console.log("grow");
+			this.grow();
 
-			if (!path.length) {
+			if (!this._state.path.length) {
 			    break;
 			}
+			// console.log("augment");
 			this.augmentation();
+			// console.log("adopt");
 			this.adoption();
 			++nrCycles;
+			// console.log(nrCycles);
 		}
 
 		// compute the cut edges and the total cost of the cut
+		// var tree_ids = Object.keys(this._state.tree);
+		// var tree_length = tree_ids.length;
+		// var size_S = 0;
+		// for (let i = 0; i < tree_length; i++) {
+		//     if (this._state.tree[tree_ids[i]] == "S") {
+		//         ++size_S;
+		//     }
+		// }
+		console.log("computing result");
 		var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
-		for (let i = 0; i < Object.keys(smallTree).length; i++) {
-		    var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
+		var smallTree_size:number = Object.keys(smallTree).length;
+		var smallTree_ids: Array<string> = Object.keys(smallTree);
+		for (let i = 0; i < smallTree_size; i++) {
+		    // var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
+				var node_id: string = smallTree_ids[i];
 				var node: $N.IBaseNode = this._graph.getNodeById(node_id);
 
 				// if undirected
 				if (!this._config.directed) {
 				    var undEdges: {[keys: string] : $E.IBaseEdge} = node.undEdges();
-						for (let i = 0; i < Object.keys(undEdges).length; i++) {
-						    var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
+						var undEdges_size: number = Object.keys(undEdges).length;
+						var undEdges_ids: Array<string> = Object.keys(undEdges);
+						for (let i = 0; i < undEdges_size; i++) {
+						    // var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
+								var edge: $E.IBaseEdge = undEdges[undEdges_ids[i]];
 								var neighbor: $N.IBaseNode = (edge.getNodes().a.getID() == node.getID()) ? edge.getNodes().b : edge.getNodes().a;
-								if (this.tree(neighbor) != this.tree(node)) {
+								// if (this.tree(neighbor) != this.tree(node)) {
+								if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
 								    // we found a an edge which is part of the Cut
 										result.edges.push(edge);
 										result.edgeIDs.push(edge.getID());
@@ -121,16 +149,22 @@ class MCMFBoykov implements IMCMFBoykov {
 						}
 				}
 				else {
+					/*TODO refactor! object.keys is fucking slow... see above!
+					*/
 					/* if directed
 						*/
-					var outEdges: {[k: string] : $E.IBaseEdge} = node.outEdges();
-					var inEdges: {[k: string] : $E.IBaseEdge} = node.inEdges();
+					var outEdges_ids: Array<string> = Object.keys(node.outEdges());
+					var outEdges_length: number = outEdges_ids.length;
+					var inEdges_ids: Array<string> = Object.keys(node.inEdges());
+					var inEdges_length: number = inEdges_ids.length;
 
 					// check outEdges
-					for (let i = 0; i < Object.keys(outEdges).length; i++) {
-					    var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
+					for (let i = 0; i < outEdges_length; i++) {
+					    // var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
+							var edge: $E.IBaseEdge = this._graph.getEdgeById(outEdges_ids[i]);
 							var neighbor: $N.IBaseNode = edge.getNodes().b;
-							if (this.tree(neighbor) != this.tree(node)) {
+							// if (this.tree(neighbor) != this.tree(node)) {
+							if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
 							    // we found a an edge which is part of the Cut
 									result.edges.push(edge);
 									result.edgeIDs.push(edge.getID());
@@ -138,8 +172,9 @@ class MCMFBoykov implements IMCMFBoykov {
 							}
 					}
 					// check inEdges
-					for (let i = 0; i < Object.keys(inEdges).length; i++) {
-					    var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
+					for (let i = 0; i < inEdges_length; i++) {
+					    // var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
+							var edge: $E.IBaseEdge = this._graph.getEdgeById(inEdges_ids[i]);
 							var neighbor: $N.IBaseNode = edge.getNodes().a;
 							if (this.tree(neighbor) != this.tree(node)) {
 							    // we found a an edge which is part of the Cut
@@ -159,21 +194,43 @@ class MCMFBoykov implements IMCMFBoykov {
     return result;
   }
 
+	renameEdges(graph: $G.IGraph) {
+		var edges = graph.getDirEdges();
+		var edges_ids: Array<string> = Object.keys(edges);
+		var edges_length = edges_ids.length;
+		for (let i = 0; i < edges_length; i++) {
+		    var edge: $E.IBaseEdge = edges[edges_ids[i]];
+				var weight: number = edge.getWeight();
+				graph.deleteEdge(edge);
+
+				var node_a: $N.IBaseNode = edge.getNodes().a;
+				var node_b: $N.IBaseNode = edge.getNodes().b;
+				var options = {directed:true, weighted:true, weight: weight};
+				var new_edge = graph.addEdge(node_a.getID() + "_" + node_b.getID(), node_a, node_b, options);
+		}
+	}
+
 	convertToDirectedGraph(uGraph: $G.IGraph) : $G.IGraph {
 		var dGraph: $G.IGraph = new $G.BaseGraph(uGraph._label + "_directed");
 
 		// copy all nodes
 		var nodes: {[keys: string] : $N.IBaseNode} = uGraph.getNodes();
+		var nodes_ids: Array<string> = Object.keys(nodes);
+		var nodes_length: number = nodes_ids.length;
 		// console.log("#nodes: " + Object.keys(nodes).length);
-		for (let i = 0; i < Object.keys(nodes).length; i++) {
-		    var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+		for (let i = 0; i < nodes_length; i++) {
+		    // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+				var node: $N.IBaseNode = nodes[nodes_ids[i]];
 				dGraph.addNode(node.getID());
 		}
 
 		// create one in and one out edge for each undirected edge
 		var edges: {[keys: string] : $E.IBaseEdge} = uGraph.getUndEdges();
-		for (let i = 0; i < Object.keys(edges).length; i++) {
-		    var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+		var edges_ids: Array<string> = Object.keys(edges);
+		var edges_length: number = edges_ids.length;
+		for (let i = 0; i < edges_length; i++) {
+		    // var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+				var und_edge: $E.IBaseEdge = edges[edges_ids[i]];
 
 				var node_a_id: string = und_edge.getNodes().a.getID();
 				var node_b_id: string = und_edge.getNodes().b.getID();
@@ -202,34 +259,36 @@ class MCMFBoykov implements IMCMFBoykov {
 	}
 
 	getPathToRoot(node: $N.IBaseNode) {
-		var path: Array<$N.IBaseNode> = [];
+		var path_root: Array<$N.IBaseNode> = [];
 
 		var node_id = node.getID();
-		path.push(this._graph.getNodeById(node_id));
+		path_root.push(this._graph.getNodeById(node_id));
 
-		while ((node_id != this._sink.getID()) && (node_id != this._source.getID())) {
+		var sink_id: string = this._sink.getID();
+		var source_id: string = this._source.getID();
+		while ((node_id != sink_id) && (node_id != source_id)) {
 			if (this._state.parents[node_id] == null) { // this happens when the root of this path is a free node
-					return path;
+					return path_root;
 			}
 			node_id = this._state.parents[node_id].getID();
-			path.push(this._graph.getNodeById(node_id));
+			path_root.push(this._graph.getNodeById(node_id));
 		}
 
-		return path;
+		return path_root;
 	}
 
-	getBottleneckCapacity(path: Array<$N.IBaseNode>) {
+	getBottleneckCapacity() {
 		var min_capacity: number = 0;
+		// set first edge weight
+		var min_capacity = this._state.residGraph.getEdgeById(this._state.path[0].getID() + "_" + this._state.path[1].getID()).getWeight();
 
-		for (let i = 0; i < path.length - 1; i++) {
-			var node_a: $N.IBaseNode = path[i];
-			var node_b = path[i+1];
+		var path_length = this._state.path.length -1;
+		for (let i = 0; i < path_length; i++) {
+			var node_a: $N.IBaseNode = this._state.path[i];
+			var node_b = this._state.path[i+1];
 
-		  var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
-			if (!i) {
-			    min_capacity = edge.getWeight();
-					continue;
-			}
+		  // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+			var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
 
 			if (edge.getWeight() < min_capacity) {
 			    min_capacity = edge.getWeight();
@@ -240,94 +299,125 @@ class MCMFBoykov implements IMCMFBoykov {
 
 	grow() {
 		// as long as there are active nodes
-		while (Object.keys(this._state.activeNodes).length) {
+		var nr_active_nodes: number = Object.keys(this._state.activeNodes).length;
+		var active_nodes_ids: Array<string> = Object.keys(this._state.activeNodes);
+
+		while (nr_active_nodes) {
 			// take an active node
-			var activeNode: $N.IBaseNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
-			var edges: {[k: string] : $E.IBaseEdge} = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
+			// var activeNode: $N.IBaseNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
+			var activeNode: $N.IBaseNode = this._state.activeNodes[active_nodes_ids[0]];
+			// var edges: {[k: string] : $E.IBaseEdge} = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
+			var edges: {[k: string] : $E.IBaseEdge} = (this._state.tree[activeNode.getID()] == "S") ? activeNode.outEdges() : activeNode.inEdges();
+			var edges_ids: Array<string> = Object.keys(edges);
+			var edges_length: number = edges_ids.length;
 			// for all neighbors
-			for (let i = 0; i < Object.keys(edges).length; i++) {
-					var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
-					var neighborNode: $N.IBaseNode = (this.tree(activeNode) == "S") ? edge.getNodes().b : edge.getNodes().a;
+			for (let i = 0; i < edges_length; i++) {
+					// var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
+					var edge: $E.IBaseEdge = edges[edges_ids[i]];
+					var neighborNode: $N.IBaseNode = (this._state.tree[activeNode.getID()] == "S") ? edge.getNodes().b : edge.getNodes().a;
 
 					if (edge.getWeight() <= 0) {
 						continue;
 					}
-					if (this.tree(neighborNode) == "") {
+					if (!(this._state.tree[neighborNode.getID()])) {
 						// add neighbor to corresponding tree
-						(this.tree(activeNode) == "S") ? this._state.treeS[neighborNode.getID()] = neighborNode : this._state.treeT[neighborNode.getID()] = neighborNode;
+						if (this._state.tree[activeNode.getID()] == "S") {
+						    this._state.treeS[neighborNode.getID()] = neighborNode;
+								this._state.tree[neighborNode.getID()] = "S";
+						}
+						else {
+							this._state.treeT[neighborNode.getID()] = neighborNode;
+							this._state.tree[neighborNode.getID()] = "T";
+						}
 						// set active node as parent to neighbor node
 						this._state.parents[neighborNode.getID()] = activeNode;
 						// add neighbor to active node set
 						this._state.activeNodes[neighborNode.getID()] = neighborNode;
+						active_nodes_ids.push(neighborNode.getID());
+						++nr_active_nodes;
 					}
-					else if(this.tree(neighborNode) != this.tree(activeNode)) {
+					else if(this._state.tree[neighborNode.getID()] != this._state.tree[activeNode.getID()]) {
 						// constructing path
-						var path: Array<$N.IBaseNode>;
+						var complete_path: Array<$N.IBaseNode>;
 
 						var nPath: Array<$N.IBaseNode> = this.getPathToRoot(neighborNode);
 						var aPath: Array<$N.IBaseNode> = this.getPathToRoot(activeNode);
 
 						var root_node_npath: $N.IBaseNode = nPath[nPath.length-1];
-						if (this.tree(root_node_npath) == "S") {
+						if (this._state.tree[root_node_npath.getID()] == "S") {
 						    nPath = nPath.reverse();
-								path = nPath.concat(aPath);
+								complete_path = nPath.concat(aPath);
 						}
 						else {
 							aPath = aPath.reverse();
-							path = aPath.concat(nPath);
+							complete_path = aPath.concat(nPath);
 						}
 
-						this._state.path = path;
-						return this._state.path;
+						this._state.path = complete_path;
+						// return; this._state.path;
+						return;
 					}
 			}
 			delete this._state.activeNodes[activeNode.getID()];
+			active_nodes_ids.shift();
+			--nr_active_nodes;
 		}
-		return []; //empty path
+		this._state.path = [];
+		return; //empty path
 	}
 
 
 	augmentation() {
-		var min_capacity = this.getBottleneckCapacity(this._state.path);
+		var min_capacity = this.getBottleneckCapacity();
 		for (let i = 0; i < this._state.path.length - 1; i++) {
 		    var node_a = this._state.path[i], node_b = this._state.path[i+1];
-				var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
-				var reverse_edge = this._state.residGraph.getEdgeByNodeIDs(node_b.getID(), node_a.getID());
+				// var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+				var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
+				// var reverse_edge = this._state.residGraph.getEdgeByNodeIDs(node_b.getID(), node_a.getID());
+				var reverse_edge = this._state.residGraph.getEdgeById(node_b.getID() + "_" + node_a.getID());
+
 				// update the residual capacity in the graph
 				this._state.residGraph.getEdgeById(edge.getID()).setWeight(edge.getWeight() - min_capacity);
 				this._state.residGraph.getEdgeById(reverse_edge.getID()).setWeight(reverse_edge.getWeight() + min_capacity);
 				// for all saturated edges
 				edge = this._state.residGraph.getEdgeById(edge.getID());
 				if (!edge.getWeight()) {
-				    if (this.tree(node_a) == this.tree(node_b)) {
-				        if (this.tree(node_b) == "S") {
+				    if (this._state.tree[node_a.getID()] == this._state.tree[node_b.getID()]) {
+				        if (this._state.tree[node_b.getID()] == "S") {
 				            delete this._state.parents[node_b.getID()];
 										this._state.orphans[node_b.getID()] = node_b;
 				        }
-								if (this.tree(node_a) == "T") {
+								if (this._state.tree[node_a.getID()] == "T") {
 				            delete this._state.parents[node_a.getID()];
 										this._state.orphans[node_a.getID()] = node_a;
 				        }
 				    }
 				}
 		}
-		// this.printState(1);
 	}
 
 	adoption() {
-		while (Object.keys(this._state.orphans).length) {
-		    var orphan: $N.IBaseNode = this._state.orphans[Object.keys(this._state.orphans)[0]];
+		var orphans_ids = Object.keys(this._state.orphans);
+		var orphans_size = orphans_ids.length;
+		while (orphans_size) {
+		    // var orphan: $N.IBaseNode = this._state.orphans[Object.keys(this._state.orphans)[0]];
+				var orphan: $N.IBaseNode = this._state.orphans[orphans_ids[0]];
 				delete this._state.orphans[orphan.getID()];
+				orphans_ids.shift();
+				--orphans_size;
 				// try to find a new valid parent for the orphan
-				var edges: {[k: string] : $E.IBaseEdge} = (this.tree(orphan) == "S") ? orphan.inEdges() : orphan.outEdges();
+				var edges: {[k: string] : $E.IBaseEdge} = (this._state.tree[orphan.getID()] == "S") ? orphan.inEdges() : orphan.outEdges();
+				var edge_ids: Array<string> = Object.keys(edges);
+				var edge_length: number = edge_ids.length;
 
 				var found = false;
-				for (let i = 0; i < Object.keys(edges).length; i++) {
-						var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
-				    var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
+				for (let i = 0; i < edge_length; i++) {
+						// var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+						var edge: $E.IBaseEdge = edges[edge_ids[i]];
+				    var neighbor: $N.IBaseNode = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
 
 						// check for same tree and weight > 0
-						if ((this.tree(orphan) == this.tree(neighbor)) && edge.getWeight()) {
+						if ((this._state.tree[orphan.getID()] == this._state.tree[neighbor.getID()]) && edge.getWeight()) {
 						    var neighbor_root_path: Array<$N.IBaseNode> = this.getPathToRoot(neighbor);
 								var neighbor_root: $N.IBaseNode = neighbor_root_path[neighbor_root_path.length -1];
 								// check for root either source or sink
@@ -343,11 +433,14 @@ class MCMFBoykov implements IMCMFBoykov {
 				    continue;
 				}
 
+				// var edge_ids: Array<string> = Object.keys(edges);
+				// var edge_length: number = edge_ids.length;
 				// we could not find a valid parent
-				for (let i = 0; i < Object.keys(edges).length; i++) {
-					var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
-					var neighbor: $N.IBaseNode = (this.tree(orphan) == "S") ? edge.getNodes().a : edge.getNodes().b;
-					if (this.tree(orphan) == this.tree(neighbor)) {
+				for (let i = 0; i < edge_length; i++) {
+					// var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+					var edge: $E.IBaseEdge = edges[edge_ids[i]];
+					var neighbor: $N.IBaseNode = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
+					if (this._state.tree[orphan.getID()] == this._state.tree[neighbor.getID()]) {
 						// set neighbor active
 						if (edge.getWeight()) {
 						    this._state.activeNodes[neighbor.getID()] = neighbor;
@@ -358,18 +451,22 @@ class MCMFBoykov implements IMCMFBoykov {
 						// set neighbor to orphan if his parent is the current orphan
 						if (this._state.parents[neighbor.getID()].getID() == orphan.getID()) {
 								this._state.orphans[neighbor.getID()] = neighbor;
+								orphans_ids.push(neighbor.getID());
+								++orphans_size;
 								delete this._state.parents[neighbor.getID()];
 						}
 					}
 				}
 
 				// remove from current tree and from activeNodes
-				var orphan_tree = this.tree(orphan);
+				var orphan_tree = this._state.tree[orphan.getID()];
 				if (orphan_tree == "S") {
 				    delete this._state.treeS[orphan.getID()];
+						delete this._state.tree[orphan.getID()];
 				}
 				else if(orphan_tree == "T") {
 					delete this._state.treeT[orphan.getID()];
+					delete this._state.tree[orphan.getID()];
 				}
 				delete this._state.activeNodes[orphan.getID()];
 

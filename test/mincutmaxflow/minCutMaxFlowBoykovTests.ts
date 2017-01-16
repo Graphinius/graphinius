@@ -35,7 +35,7 @@ describe('MCMF Boykov Tests - ', () => {
 
     it('should separate the graph in two disjoint sets so that the cost is minimized', () => {
       expect( mcmf.calculateCycle().cost ).to.equal( 14);
-      expect( mcmf.calculateCycle().edgeIDs ).to.include.members(["A_B_d", "B_A_d", "C_E_d", "E_C_d", "C_D_d", "D_C_d"] );
+      expect( mcmf.calculateCycle().edgeIDs ).to.include.members(["A_B", "B_A", "C_E", "E_C", "C_D", "D_C"] );
     });
 
   });

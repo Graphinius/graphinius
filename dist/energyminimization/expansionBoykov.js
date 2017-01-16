@@ -12,80 +12,99 @@ var EMEBoykov = (function () {
             energy: Infinity
         };
         this._config = config || this.prepareEMEStandardConfig();
-        this._labels = _labels;
         this._interactionTerm = this._config.interactionTerm;
         this._dataTerm = this._config.dataTerm;
+        this._graph = this.initGraph(_graph);
+        this._state.labeledGraph = this.deepCopyGraph(this._graph);
+        this._state.activeLabel = this._labels[0];
     }
     EMEBoykov.prototype.calculateCycle = function () {
-        var success = false;
-        for (var i = 0; i < this._labels.length; i++) {
-            this._state.activeLabel = this._labels[i];
-            this._state.expansionGraph = this.constructGraph();
-            var source = this._state.expansionGraph.getNodeById("SOURCE");
-            var sink = this._state.expansionGraph.getNodeById("SINK");
-            var MinCut;
-            MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink);
-            var mincut_result = MinCut.calculateCycle();
-            if (mincut_result.cost < this._state.energy) {
-                this._state.energy = mincut_result.cost;
-                this._state.labeledGraph = this.labelGraph(mincut_result, source);
-                success = true;
+        var success = true;
+        var mincut_options = { directed: true };
+        while (success) {
+            success = false;
+            for (var i = 0; i < this._labels.length; i++) {
+                this._state.activeLabel = this._labels[i];
+                this._state.expansionGraph = this.constructGraph();
+                var source = this._state.expansionGraph.getNodeById("SOURCE");
+                var sink = this._state.expansionGraph.getNodeById("SINK");
+                console.log("compute mincut");
+                var MinCut;
+                MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
+                var mincut_result = MinCut.calculateCycle();
+                console.log("done mincut");
+                if (mincut_result.cost < this._state.energy) {
+                    this._state.energy = mincut_result.cost;
+                    this._state.labeledGraph = this.labelGraph(mincut_result, source);
+                    success = true;
+                }
+            }
+            if (this._labels.length <= 2) {
+                break;
             }
         }
-        if (success) {
-            this.calculateCycle();
-        }
         var result = {
-            graph: null
+            graph: this._state.labeledGraph
         };
-        result.graph = this._state.labeledGraph;
         return result;
     };
     EMEBoykov.prototype.constructGraph = function () {
         var graph = this.deepCopyGraph(this._state.labeledGraph);
+        var nodes = graph.getNodes();
+        var node_ids = Object.keys(nodes);
         var source = graph.addNode("SOURCE");
         var sink = graph.addNode("SINK");
-        var edges = graph.getUndEdges();
-        for (var i = 0; i < Object.keys(edges).length; i++) {
-            var edge = edges[Object.keys(edges)[i]];
+        var edge_ids = Object.keys(graph.getUndEdges());
+        var edges_length = edge_ids.length;
+        for (var i = 0; i < node_ids.length; i++) {
+            var node = nodes[node_ids[i]];
+            var edge_options = { directed: true, weighted: true, weight: 0 };
+            edge_options.weight = this._dataTerm(this._state.activeLabel, node.getID());
+            var edge_source = graph.addEdge(node.getID() + "_" + source.getID(), node, source, edge_options);
+            var edge_source_reverse = graph.addEdge(source.getID() + "_" + node.getID(), source, node, edge_options);
+            edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), node.getID());
+            var edge_sink = graph.addEdge(node.getID() + "_" + sink.getID(), node, sink, edge_options);
+            var edge_sink_source = graph.addEdge(sink.getID() + "_" + node.getID(), sink, node, edge_options);
+        }
+        for (var i = 0; i < edges_length; i++) {
+            var edge = graph.getEdgeById(edge_ids[i]);
             var node_p = edge.getNodes().a;
             var node_q = edge.getNodes().b;
-            var edge_options = { directed: false, weighted: true, weight: 0 };
-            edge_options.weight = this._dataTerm(this._state.activeLabel, node_p.getID());
-            var edge_p_source = graph.addEdge(node_p.getID() + "_" + source.getID(), node_p, source, edge_options);
-            edge_options.weight = this._dataTerm(this._state.activeLabel, node_q.getID());
-            var edge_q_source = graph.addEdge(node_q.getID() + "_" + source.getID(), node_q, source, edge_options);
-            edge_options.weight = (node_p.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node_p.getLabel(), node_p.getID());
-            var edge_p_sink = graph.addEdge(node_p.getID() + "_" + sink.getID(), node_p, sink, edge_options);
-            edge_options.weight = (node_q.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node_q.getLabel(), node_q.getID());
-            var edge_q_sink = graph.addEdge(node_q.getID() + "_" + sink.getID(), node_q, sink, edge_options);
+            var edge_options = { directed: true, weighted: true, weight: 0 };
             if (node_p.getLabel() == node_q.getLabel()) {
-                edge.setWeight(this._interactionTerm(node_p.getLabel(), this._state.activeLabel));
+                edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
+                graph.deleteEdge(edge);
+                graph.addEdge(node_p.getID() + "_" + node_q.getID(), node_p, node_q, edge_options);
+                graph.addEdge(node_q.getID() + "_" + node_p.getID(), node_q, node_p, edge_options);
                 continue;
             }
             var node_aux = graph.addNode("aux_" + node_p.getID() + "_" + node_q.getID());
             edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
             var edge_p_aux = graph.addEdge(node_p.getID() + "_" + node_aux.getID(), node_p, node_aux, edge_options);
+            var edge_p_aux_reverse = graph.addEdge(node_aux.getID() + "_" + node_p.getID(), node_aux, node_p, edge_options);
             edge_options.weight = this._interactionTerm(this._state.activeLabel, node_q.getLabel());
             var edge_aux_q = graph.addEdge(node_aux.getID() + "_" + node_q.getID(), node_aux, node_q, edge_options);
+            var edge_aux_q_reverse = graph.addEdge(node_q.getID() + "_" + node_aux.getID(), node_q, node_aux, edge_options);
             edge_options.weight = this._interactionTerm(node_p.getLabel(), node_q.getLabel());
             var edge_aux_sink = graph.addEdge(node_aux.getID() + "_" + sink.getID(), node_aux, sink, edge_options);
+            var edge_aux_sink_reverse = graph.addEdge(sink.getID() + "_" + node_aux.getID(), sink, node_aux, edge_options);
             graph.deleteEdge(edge);
         }
         return graph;
     };
     EMEBoykov.prototype.labelGraph = function (mincut, source) {
         var graph = this._state.labeledGraph;
+        var source = this._state.expansionGraph.getNodeById("SOURCE");
         for (var i = 0; i < mincut.edges.length; i++) {
             var edge = mincut.edges[i];
             var node_a = edge.getNodes().a;
             var node_b = edge.getNodes().b;
             if (node_a.getID() == source.getID()) {
-                node_b.setLabel(this._state.activeLabel);
+                graph.getNodeById(node_b.getID()).setLabel(this._state.activeLabel);
                 continue;
             }
             if (node_b.getID() == source.getID()) {
-                node_a.setLabel(this._state.activeLabel);
+                graph.getNodeById(node_a.getID()).setLabel(this._state.activeLabel);
             }
         }
         return graph;
@@ -93,18 +112,34 @@ var EMEBoykov = (function () {
     EMEBoykov.prototype.deepCopyGraph = function (graph) {
         var cGraph = new $G.BaseGraph(graph._label + "_copy");
         var nodes = graph.getNodes();
-        for (var i = 0; i < Object.keys(nodes).length; i++) {
-            var node = nodes[Object.keys(nodes)[i]];
+        var node_ids = Object.keys(nodes);
+        var nodes_length = node_ids.length;
+        for (var i = 0; i < nodes_length; i++) {
+            var node = nodes[node_ids[i]];
             var cNode = cGraph.addNode(node.getID());
             cNode.setLabel(node.getLabel());
         }
         var edges = graph.getUndEdges();
-        for (var i = 0; i < Object.keys(edges).length; i++) {
-            var edge = edges[Object.keys(edges)[i]];
+        var edge_ids = Object.keys(edges);
+        var edge_length = edge_ids.length;
+        for (var i = 0; i < edge_length; i++) {
+            var edge = edges[edge_ids[i]];
             var options = { directed: false, weighted: true, weight: edge.getWeight() };
-            var cEdge = cGraph.addEdge(edge.getID(), edge.getNodes().a, edge.getNodes().b, options);
+            var node_a = cGraph.getNodeById(edge.getNodes().a.getID());
+            var node_b = cGraph.getNodeById(edge.getNodes().b.getID());
+            var cEdge = cGraph.addEdge(edge.getID(), node_a, node_b, options);
         }
         return cGraph;
+    };
+    EMEBoykov.prototype.initGraph = function (graph) {
+        var nodes = graph.getNodes();
+        var node_ids = Object.keys(nodes);
+        var nodes_length = node_ids.length;
+        for (var i = 0; i < nodes_length; i++) {
+            var node = nodes[node_ids[i]];
+            node.setLabel(node.getFeature('label'));
+        }
+        return graph;
     };
     EMEBoykov.prototype.prepareEMEStandardConfig = function () {
         var interactionTerm = function (label_a, label_b) {
@@ -117,7 +152,7 @@ var EMEBoykov = (function () {
             if (isNaN(label_number) || isNaN(observed_number)) {
                 throw new Error('Cannot convert labels to numbers!');
             }
-            return Math.pow(label_number - observed_number, 2);
+            return 1.5 * Math.pow(label_number - observed_number, 2);
         };
         return {
             directed: false,

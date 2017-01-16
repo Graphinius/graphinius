@@ -77,35 +77,44 @@ class EMEBoykov implements IEMEBoykov {
 
 
   calculateCycle() {
-    var success : boolean = false;
+    var success : boolean = true;
 
-		var mincut_options : $MC.MCMFConfig = {directed: this._config.directed};
+		var mincut_options : $MC.MCMFConfig = {directed: true};
 
-    // for each label
-    for (let i = 0; i < this._labels.length; i++) {
-        this._state.activeLabel = this._labels[i];
-        // find a new labeling f'=argminE(f') within one expansion move of f
-        this._state.expansionGraph = this.constructGraph(); // construct new expansion graph
+		while(success) {
+			success = false;
+    	// for each label
+	    for (let i = 0; i < this._labels.length; i++) {
+	        this._state.activeLabel = this._labels[i];
+	        // find a new labeling f'=argminE(f') within one expansion move of f
+	        this._state.expansionGraph = this.constructGraph(); // construct new expansion graph
 
-        var source : $N.IBaseNode = this._state.expansionGraph.getNodeById("SOURCE");
-        var sink   : $N.IBaseNode = this._state.expansionGraph.getNodeById("SINK");
+	        var source : $N.IBaseNode = this._state.expansionGraph.getNodeById("SOURCE");
+	        var sink   : $N.IBaseNode = this._state.expansionGraph.getNodeById("SINK");
 
-				// compute the min cut
-        var MinCut : $MC.IMCMFBoykov;
-        MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
-        var mincut_result: $MC.MCMFResult = MinCut.calculateCycle();
+	console.log("compute mincut");
+					// compute the min cut
+	        var MinCut : $MC.IMCMFBoykov;
+	        MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
+	        var mincut_result: $MC.MCMFResult = MinCut.calculateCycle();
+	console.log("done mincut");
+	        if (mincut_result.cost < this._state.energy) {
+	            this._state.energy = mincut_result.cost;
+	            this._state.labeledGraph = this.labelGraph(mincut_result, source);
+	            success = true;
+	        }
 
-        if (mincut_result.cost < this._state.energy) {
-            this._state.energy = mincut_result.cost;
-            this._state.labeledGraph = this.labelGraph(mincut_result, source);
-            success = true;
-        }
+	    }
+			// the minimum can be found in one cycle
+			if (this._labels.length <= 2) {
+			    break;
+			}
+	}
 
-    }
-
-    if (success) {
-      this.calculateCycle();
-    }
+    // if (success) {
+    //   this.calculateCycle();
+		// 	console.log("continue");
+    // }
 
     var result: EMEResult = {
 			graph : this._state.labeledGraph
@@ -130,23 +139,25 @@ class EMEBoykov implements IEMEBoykov {
     var sink: $N.IBaseNode = graph.addNode("SINK");
 
 		// copy edge information now -> will cause infinite loop otherwise
-		var edges: {[key: string] : $E.IBaseEdge} = graph.getUndEdges();
-		var edges_length: number = Object.keys(edges).length;
-		var edge_ids: Array<string> = Object.keys(edges);
+		// var edges: {[key: string] : $E.IBaseEdge} = graph.getUndEdges();
+		var edge_ids: Array<string> = Object.keys(graph.getUndEdges());
+		var edges_length: number = edge_ids.length;
 
 		// for all nodes add
 		// edge to source and edge to sink
 		for (let i = 0; i < node_ids.length; i++) {
 		    var node: $N.IBaseNode = nodes[node_ids[i]];
 
-				var edge_options: $E.EdgeConstructorOptions = { directed: false, weighted: true, weight: 0};
+				var edge_options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: 0};
 				// add edge to source
 				edge_options.weight = this._dataTerm(this._state.activeLabel, node.getID());
 				var edge_source: $E.IBaseEdge = graph.addEdge(node.getID() + "_" + source.getID(), node, source, edge_options);
+				var edge_source_reverse: $E.IBaseEdge = graph.addEdge(source.getID() + "_" + node.getID(), source, node, edge_options);
 
 				// add edge to sink
 				edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), node.getID());
 				var edge_sink: $E.IBaseEdge = graph.addEdge(node.getID() + "_" + sink.getID(), node, sink, edge_options);
+				var edge_sink_source: $E.IBaseEdge = graph.addEdge(sink.getID() + "_" + node.getID(), sink, node, edge_options);
 		}
 
     // for all neighboring pixels {p, q} where label(p) != label(q) :
@@ -156,14 +167,19 @@ class EMEBoykov implements IEMEBoykov {
     // remove edge between p and q
     for (let i = 0; i < edges_length; i++) {
         // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
-				var edge: $E.IBaseEdge = edges[edge_ids[i]];
+				var edge: $E.IBaseEdge = graph.getEdgeById(edge_ids[i]);
         var node_p: $N.IBaseNode = edge.getNodes().a;
         var node_q: $N.IBaseNode = edge.getNodes().b;
 
+				var edge_options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: 0};
+
         // we don't care further for nodes of same labels
         if (node_p.getLabel() == node_q.getLabel()) {
-          // just set the edge weight
-          edge.setWeight(this._interactionTerm(node_p.getLabel(), this._state.activeLabel));
+          // just set the edge weight and convert to directed
+					edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
+          graph.deleteEdge(edge);
+					graph.addEdge(node_p.getID() + "_" + node_q.getID(), node_p, node_q, edge_options);
+					graph.addEdge(node_q.getID() + "_" + node_p.getID(), node_q, node_p, edge_options);
           continue;
         }
 
@@ -171,18 +187,20 @@ class EMEBoykov implements IEMEBoykov {
         var node_aux: $N.IBaseNode = graph.addNode("aux_" + node_p.getID() + "_" + node_q.getID());
 
         // add 3 edges [{p, aux}, {aux, q}, {aux, sink}]
-				var edge_options: $E.EdgeConstructorOptions = { directed: false, weighted: true, weight: 0};
         // add edge {p, aux}
         edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
         var edge_p_aux: $E.IBaseEdge = graph.addEdge(node_p.getID() + "_" + node_aux.getID(), node_p, node_aux, edge_options);
+				var edge_p_aux_reverse: $E.IBaseEdge = graph.addEdge(node_aux.getID() + "_" + node_p.getID(), node_aux, node_p, edge_options);
 
         // add edge {aux, q}
         edge_options.weight = this._interactionTerm(this._state.activeLabel, node_q.getLabel());
         var edge_aux_q: $E.IBaseEdge = graph.addEdge(node_aux.getID() + "_" + node_q.getID(), node_aux, node_q, edge_options);
+				var edge_aux_q_reverse: $E.IBaseEdge = graph.addEdge(node_q.getID() + "_" + node_aux.getID(), node_q, node_aux, edge_options);
 
         // add edge {aux, sink}
         edge_options.weight = this._interactionTerm(node_p.getLabel(), node_q.getLabel());
         var edge_aux_sink: $E.IBaseEdge = graph.addEdge(node_aux.getID() + "_" + sink.getID(), node_aux, sink, edge_options);
+				var edge_aux_sink_reverse: $E.IBaseEdge = graph.addEdge(sink.getID() + "_" + node_aux.getID(), sink, node_aux, edge_options);
 
         // remove the edge between p and q
         graph.deleteEdge(edge);
@@ -221,16 +239,22 @@ class EMEBoykov implements IEMEBoykov {
 
     // copy all nodes with their labels
     var nodes: {[key: string] : $N.IBaseNode} = graph.getNodes();
-    for (let i = 0; i < Object.keys(nodes).length; i++) {
-        var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+		var node_ids: Array<string> = Object.keys(nodes);
+		var nodes_length: number = node_ids.length;
+    for (let i = 0; i < nodes_length; i++) {
+        // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+				var node: $N.IBaseNode = nodes[node_ids[i]];
         var cNode: $N.IBaseNode = cGraph.addNode(node.getID());
         cNode.setLabel(node.getLabel());
     }
 
     // copy all edges with their weights
     var edges: {[keys: string] : $E.IBaseEdge} = graph.getUndEdges();
-    for (let i = 0; i < Object.keys(edges).length; i++) {
-        var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+		var edge_ids: Array<string> = Object.keys(edges);
+		var edge_length: number = edge_ids.length;
+    for (let i = 0; i < edge_length; i++) {
+        // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
+				var edge: $E.IBaseEdge = edges[edge_ids[i]];
         var options: $E.EdgeConstructorOptions = { directed: false, weighted: true, weight: edge.getWeight()};
 				var node_a: $N.IBaseNode = cGraph.getNodeById(edge.getNodes().a.getID());
 				var node_b: $N.IBaseNode = cGraph.getNodeById(edge.getNodes().b.getID());
@@ -242,8 +266,11 @@ class EMEBoykov implements IEMEBoykov {
 
 	initGraph(graph: $G.IGraph) {
 		var nodes = graph.getNodes();
-		for (let i = 0; i < Object.keys(nodes).length; i++) {
-		    var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+		var node_ids: Array<string> = Object.keys(nodes);
+		var nodes_length: number = node_ids.length;
+		for (let i = 0; i < nodes_length; i++) {
+		    // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
+				var node: $N.IBaseNode = nodes[node_ids[i]];
 				node.setLabel(node.getFeature('label'));
 		}
 		return graph;
@@ -270,7 +297,7 @@ class EMEBoykov implements IEMEBoykov {
         throw new Error('Cannot convert labels to numbers!');
       }
 
-      return 1.5*Math.pow(label_number - observed_number, 2);
+			return 1.5*Math.pow(label_number - observed_number, 2);
     };
 
     return {
