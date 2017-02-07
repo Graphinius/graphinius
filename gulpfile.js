@@ -21,7 +21,7 @@ var paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js'],
+	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
 	tests_perturb: ['test/perturbation/**/*.js'],
 	tests_all: ['test/**/*.js']

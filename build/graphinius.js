@@ -61,6 +61,7 @@
 	var binaryHeap      = __webpack_require__(19);
 	var simplePerturbation = __webpack_require__(21);
 	var MCMFBoykov			= __webpack_require__(22);
+	var degCent				 	= __webpack_require__(23)
 
 
 	// TODO:
@@ -78,6 +79,9 @@
 			BaseNode 				: Nodes.BaseNode,
 			BaseGraph 			: Graph.BaseGraph,
 			GraphMode		    : Graph.GraphMode
+		},
+		centralities: {
+			degree: degCent
 		},
 		input: {
 			CSVInput 		: CSVInput.CSVInput,
@@ -2985,6 +2989,17 @@
 	    return MCMFBoykov;
 	}());
 	exports.MCMFBoykov = MCMFBoykov;
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function degreeCentrality(graph) {
+	    return graph.degreeDistribution();
+	}
+	exports.degreeCentrality = degreeCentrality;
 
 
 /***/ }

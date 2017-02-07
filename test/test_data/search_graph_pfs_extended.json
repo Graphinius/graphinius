@@ -1,8 +1,8 @@
 {
   "name": "SEARCH graph for Priority First Search / Toposort",
-  "nodes": 7,
-  "dir_edges": 9,
-	"und_edges": 0,
+  "nodes": 6,
+  "dir_edges": 12,
+	"und_edges": 4,
 	"data": {
 		"A": {
 			"edges": [

@@ -15,6 +15,7 @@ var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+var degCent				 	= require("./dist/centralities/DegreeCentrality.js")
 
 
 // TODO:
@@ -32,6 +33,9 @@ out.$G = {
 		BaseNode 				: Nodes.BaseNode,
 		BaseGraph 			: Graph.BaseGraph,
 		GraphMode		    : Graph.GraphMode
+	},
+	centralities: {
+		degree: degCent
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,
