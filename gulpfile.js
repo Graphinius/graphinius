@@ -122,7 +122,7 @@ gulp.task('test-perturb', ['build'], function () {
 });
 
 
-// 'Perturbation tests - usually take a tad longer'
+// 'ALL tests '
 gulp.task('test-all', ['build'], function () {
 	return gulp.src(paths.tests_all, {read: false})
 						 .pipe(mocha({reporter: 'spec',

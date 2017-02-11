@@ -17,11 +17,7 @@ var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
 var degCent				 	= require("./dist/centralities/DegreeCentrality.js")
 
-
-// TODO:
-// Encapsulate ALL functions within Graph for
-// easier access and less import / new ceremony ??
-
+// Define global object
 var out = typeof window !== 'undefined' ? window : global;
 
 /**
