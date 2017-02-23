@@ -57,7 +57,6 @@ gulp.task('git-add', ['bundle'], function () {
 
 // Run git commit
 // src are the files to commit (or ./*)
-
 gulp.task('git-commit', ['git-add'], function () {
 	gulp.src(paths.git_sources)
 		.pipe(prompt.prompt({
@@ -72,42 +71,23 @@ gulp.task('git-commit', ['git-add'], function () {
 });
 
 
-// gulp.task('git-commit', ['git-add'], function () {
-// 	var commit_msg = "";
-// 	return gulp.src(paths.git_sources)
-// 		.pipe(confirm({
-// 			question: "Commit message: \n",
-// 			proceed: function(answer) {
-// 				if (answer.length < 6) {
-// 					console.log('Commit message must at least contain 6 characters');
-// 					return false;
-// 				} else {
-// 					commit_msg = answer;
-// 					return true;
-// 				}
-// 			}
-// 		}))
-// 		.pipe(git.commit(commit_msg));
-// });
-
-
 // Run git push
 // remote is the remote repo
 // branch is the remote branch to push to
+gulp.task('git-submit', function () {
+	gulp.src(paths.git_sources)
+		.pipe(prompt.prompt({
+        type: 'input',
+        name: 'submit_branch',
+        message: 'Branch to submit to? \n'
+    }, function(res){
+        //value is in res.task (the name option gives the key)
+				git.push('origin', res.submit_branch, function (err) {
+					if (err) throw err;
+				})
+    }));
+});
 
-// gulp.task('git-submit', ['git-commit'], function(){
-// 	const rl = readline.createInterface({
-// 		input: process.stdin,
-// 		output: process.stdout
-// 	});
-
-// 	rl.question('\n\n?? BRANCH ?? : ', (branch) => {
-// 		rl.close();
-// 		git.push('origin', branch, function (err) {
-// 			if (err) throw err;
-// 		});
-// 	});
-// });
 
 
 //----------------------------
