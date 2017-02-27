@@ -64,7 +64,7 @@ out.$G = {
     binaryHeap  : binaryHeap
   },
 	perturbation: {
-		simplePerturbation: simplePerturbation
+		simplePerturber: simplePerturbation.SimplePerturber
 	}
 };
 
