@@ -110,7 +110,7 @@
 	    binaryHeap  : binaryHeap
 	  },
 		perturbation: {
-			simplePerturber: simplePerturbation.SimplePerturber
+			SimplePerturber: simplePerturbation.SimplePerturber
 		}
 	};
 
