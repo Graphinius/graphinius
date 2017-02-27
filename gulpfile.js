@@ -10,7 +10,6 @@ const uglify 					= require('gulp-uglify');
 const rename 					= require('gulp-rename');
 const istanbul 				= require('gulp-istanbul');
 const git 						= require('gulp-git');
-const confirm 				= require('gulp-confirm');
 const prompt	 				= require('gulp-prompt');
 
 

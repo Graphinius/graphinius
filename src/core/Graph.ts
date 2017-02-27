@@ -69,6 +69,9 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+	pickRandomProperty(propList) : any;
+	pickRandomProperties(propList, amount) : Array<string>;
+
 
 	// HANDLE ALL EDGES OF NODES
 	deleteInEdgesOf(node: $N.IBaseNode) : void;
@@ -556,7 +559,7 @@ class BaseGraph implements IGraph {
 	}
 
 
-	private pickRandomProperty(propList) : any {
+	pickRandomProperty(propList) : any {
 		let tmpList = Object.keys(propList);
 		let randomPropertyName = tmpList[ Math.floor(Math.random()*tmpList.length) ];
 		return propList[randomPropertyName];
@@ -574,7 +577,7 @@ class BaseGraph implements IGraph {
 	 * @param fraction
 	 * @returns {Array}
 	 */
-	private pickRandomProperties(propList, amount) : Array<string> {
+	pickRandomProperties(propList, amount) : Array<string> {
 		let ids = [];
 		let keys = Object.keys(propList);
 		let fraction = amount / keys.length;

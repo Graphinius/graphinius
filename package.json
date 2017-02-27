@@ -30,7 +30,6 @@
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.6.0",
-    "gulp-confirm": "^1.0.5",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
     "gulp-prompt": "^0.2.0",
