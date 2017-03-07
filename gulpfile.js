@@ -1,20 +1,22 @@
-var gulp 						= require('gulp');
-var clean 					= require('gulp-clean');
-var mocha 					= require('gulp-mocha');
-var ts 							= require('gulp-typescript');
-var tdoc 						= require("gulp-typedoc");
-var concat					= require('gulp-concat');
-var merge 					= require('merge2');
-var webpack 				= require('webpack-stream');
-var uglify 					= require('gulp-uglify');
-var rename 					= require('gulp-rename');
-var istanbul 				= require('gulp-istanbul');
+const gulp 						= require('gulp');
+const clean 					= require('gulp-clean');
+const mocha 					= require('gulp-mocha');
+const ts 							= require('gulp-typescript');
+const tdoc 						= require("gulp-typedoc");
+const concat					= require('gulp-concat');
+const merge 					= require('merge2');
+const webpack 				= require('webpack-stream');
+const uglify 					= require('gulp-uglify');
+const rename 					= require('gulp-rename');
+const istanbul 				= require('gulp-istanbul');
+const git 						= require('gulp-git');
+const prompt	 				= require('gulp-prompt');
 
 
 //----------------------------
 // PATHS
 //----------------------------
-var paths = {
+const paths = {
 	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async/**/*.ts'],
 	testsources: ['src/**/*.js'],
@@ -24,7 +26,8 @@ var paths = {
 	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
 	tests_perturb: ['test/perturbation/**/*.js'],
-	tests_all: ['test/**/*.js']
+	tests_all: ['test/**/*.js'],
+	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
 
 
@@ -38,6 +41,52 @@ var tsProject = ts.createProject({
 	noExternalResolve: false,
   removeComments: true
 });
+
+
+//----------------------------
+// GIT TASKS
+//----------------------------
+
+// Run git add
+// src is the file(s) to add (or ./*)
+gulp.task('git-add', ['bundle'], function () {
+  return gulp.src(paths.git_sources)
+    .pipe(git.add());
+});
+
+// Run git commit
+// src are the files to commit (or ./*)
+gulp.task('git-commit', ['git-add'], function () {
+	gulp.src(paths.git_sources)
+		.pipe(prompt.prompt({
+        type: 'input',
+        name: 'commit_msg',
+        message: 'Commit message? \n'
+    }, function(res){
+        //value is in res.task (the name option gives the key)
+				return gulp.src(paths.git_sources)
+				  .pipe(git.commit(res.commit_msg));
+    }));
+});
+
+
+// Run git push
+// remote is the remote repo
+// branch is the remote branch to push to
+gulp.task('git-submit', function () {
+	gulp.src(paths.git_sources)
+		.pipe(prompt.prompt({
+        type: 'input',
+        name: 'submit_branch',
+        message: 'Branch to submit to? \n'
+    }, function(res){
+        //value is in res.task (the name option gives the key)
+				git.push('origin', res.submit_branch, function (err) {
+					if (err) throw err;
+				})
+    }));
+});
+
 
 
 //----------------------------
@@ -101,7 +150,7 @@ gulp.task('bundle', ['pack'], function() {
 // 'Normal' synchronous tests
 gulp.task('test-basic', ['build'], function () {
 	return gulp.src(paths.tests_basic, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'dot',
 						 							timeout: 60000}));
 });
 
@@ -122,7 +171,7 @@ gulp.task('test-perturb', ['build'], function () {
 });
 
 
-// 'Perturbation tests - usually take a tad longer'
+// 'ALL tests '
 gulp.task('test-all', ['build'], function () {
 	return gulp.src(paths.tests_all, {read: false})
 						 .pipe(mocha({reporter: 'spec',
@@ -160,6 +209,9 @@ gulp.task('clean', function () {
 });
 
 
+//----------------------------
+// WATCH TASKS
+//----------------------------
 gulp.task('watch-basic', function () {
 	gulp.watch(paths.typescripts, ['test-basic']);
 });
