@@ -7,6 +7,8 @@ import * as $CB from '../utils/callbackUtils';
 import * as $BH from '../datastructs/binaryHeap';
 
 
+const DEFAULT_WEIGHT: number = 1;
+
 export interface PFS_Config {
 	result			    :	{[id: string]: PFS_ResultEntry};
 	callbacks		    :	PFS_Callbacks;
@@ -225,32 +227,32 @@ function PFS(graph 	 : $G.IGraph,
 
 function preparePFSStandardConfig() : PFS_Config {
   var config : PFS_Config = {
-    result    : {},
-    callbacks : {
-      init_pfs			  : [],
-      not_encountered : [],
-      node_open       : [],
-      node_closed 	  : [],
-      better_path     : [],
-      goal_reached    : []
+      result    : {},
+      callbacks : {
+        init_pfs			  : [],
+        not_encountered : [],
+        node_open       : [],
+        node_closed 	  : [],
+        better_path     : [],
+        goal_reached    : []
+      },
+      messages: {
+        init_pfs_msgs     : [],
+        not_enc_msgs      : [],
+        node_open_msgs    : [],
+        node_closed_msgs  : [],
+        better_path_msgs  : [],
+        goal_reached_msgs : []
+      },
+      dir_mode  : $G.GraphMode.MIXED,
+      goal_node : null,
+      evalPriority : function(ne: $N.NeighborEntry) {
+        return ne.best || DEFAULT_WEIGHT;
+      },
+      evalObjID : function(ne: $N.NeighborEntry) {
+        return ne.node.getID();
+      }
     },
-    messages: {
-      init_pfs_msgs     : [],
-      not_enc_msgs      : [],
-      node_open_msgs    : [],
-      node_closed_msgs  : [],
-      better_path_msgs  : [],
-      goal_reached_msgs : []
-    },
-    dir_mode  : $G.GraphMode.MIXED,
-    goal_node : null,
-    evalPriority : function(ne: $N.NeighborEntry) {
-      return ne.best;
-    },
-    evalObjID : function(ne: $N.NeighborEntry) {
-      return ne.node.getID();
-    }
-  },
     callbacks = config.callbacks;
     
   var count = 0;

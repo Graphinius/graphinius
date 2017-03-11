@@ -59,7 +59,9 @@ class BinaryHeap implements IBinaryHeap {
                private _evalObjID = (obj:any) : any => {
                  return obj;
                }
-             ) {}
+             ) {
+               
+             }
 
   getMode() : BinaryHeapMode {
     return this._mode;

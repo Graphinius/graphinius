@@ -2032,6 +2032,7 @@
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(16);
 	var $BH = __webpack_require__(19);
+	var DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2131,7 +2132,7 @@
 	        dir_mode: $G.GraphMode.MIXED,
 	        goal_node: null,
 	        evalPriority: function (ne) {
-	            return ne.best;
+	            return ne.best || DEFAULT_WEIGHT;
 	        },
 	        evalObjID: function (ne) {
 	            return ne.node.getID();

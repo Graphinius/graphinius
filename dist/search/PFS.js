@@ -3,6 +3,7 @@ var $E = require('../core/Edges');
 var $G = require('../core/Graph');
 var $CB = require('../utils/callbackUtils');
 var $BH = require('../datastructs/binaryHeap');
+var DEFAULT_WEIGHT = 1;
 function PFS(graph, v, config) {
     var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
     if (graph.getMode() === $G.GraphMode.INIT) {
@@ -102,7 +103,7 @@ function preparePFSStandardConfig() {
         dir_mode: $G.GraphMode.MIXED,
         goal_node: null,
         evalPriority: function (ne) {
-            return ne.best;
+            return ne.best || DEFAULT_WEIGHT;
         },
         evalObjID: function (ne) {
             return ne.node.getID();
