@@ -25,7 +25,8 @@ const paths = {
 	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
 	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
-	tests_perturb: ['test/perturbation/**/*.js'],
+    tests_perturb: ['test/perturbation/**/*.js'],
+    tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
 	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
@@ -170,6 +171,12 @@ gulp.task('test-perturb', ['build'], function () {
 						 							timeout: 60000}));
 });
 
+// 'Centrality tests'
+gulp.task('test-central', ['build'], function () {
+    return gulp.src(paths.tests_central, {read: false})
+        .pipe(mocha({reporter: 'spec',
+            timeout: 60000}));
+});
 
 // 'ALL tests '
 gulp.task('test-all', ['build'], function () {
