@@ -1,3 +1,12 @@
+/**
+ * This file was taken from https://github.com/itsravenous/gaussian-elimination
+ * Authors: itsravenous, seckwei
+ * Licence: GPL-3.0
+ *
+ * Small changes were made to comply to typescript
+ * TODO: Check licence compliance with authors
+ */
+
 var abs = Math.abs;
 
 function array_fill(i, n, v) {
@@ -18,10 +27,10 @@ function gauss(A:any[], x:any[]) {
 
     var i, k, j;
 
-    /* Just make a single matrix
+    // Just make a single matrix
     for (i=0; i < A.length; i++) {
         A[i].push(x[i]);
-    }*/
+    }
     var n = A.length;
 
     for (i=0; i < n; i++) {
@@ -55,7 +64,6 @@ function gauss(A:any[], x:any[]) {
             }
         }
     }
-
     // Solve equation Ax=b for an upper triangular matrix A
     x = array_fill(0, n, 0);
     for (i=n-1; i > -1; i--) {

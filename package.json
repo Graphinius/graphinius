@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "gulp-git": "^2.0.1",
-    "gulp-prompt": "^0.2.0"
+    "gulp-prompt": "^0.2.0",
+    "sylvester": "0.0.21"
   }
 }

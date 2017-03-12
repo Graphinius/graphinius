@@ -32,7 +32,7 @@ function pageRankDetCentrality(graph) {
     var mapCtr = {};
     var numMatr = [[]];
     for (var key in matr) {
-        numMatr[key] = Array.apply(null, Array(graph.nrNodes() + 1)).map(Number.prototype.valueOf, 0);
+        numMatr[key] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
         var p = matr[key].pop();
         if (mapCtr[p] == null)
             mapCtr[p] = ctr++;
@@ -44,13 +44,10 @@ function pageRankDetCentrality(graph) {
             numMatr[key][mapCtr[a]] += 1 / divideTable[a];
         }
     }
-    numMatr[numMatr.length] = Array.apply(null, Array(graph.nrNodes() + 1)).map(Number.prototype.valueOf, 1);
-    console.log("Matrix before Gauss:");
-    console.log(numMatr);
-    var x = [];
+    numMatr[numMatr.length - 1] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 1);
+    var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
+    x[x.length - 1] = 1;
     x = $GAUSS.gauss(numMatr, x);
-    console.log("Solved Gauss:");
-    console.log(numMatr);
-    return matr;
+    return x;
 }
 exports.pageRankDetCentrality = pageRankDetCentrality;

@@ -9,6 +9,9 @@ function array_fill(i, n, v) {
 }
 function gauss(A, x) {
     var i, k, j;
+    for (i = 0; i < A.length; i++) {
+        A[i].push(x[i]);
+    }
     var n = A.length;
     for (i = 0; i < n; i++) {
         var maxEl = abs(A[i][i]), maxRow = i;

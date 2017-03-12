@@ -5,9 +5,6 @@ import * as $SU from "../utils/structUtils";
 import {IBaseEdge} from "../core/Edges";
 import * as $GAUSS from "../centralities/gauss";
 
-//let rref = require('rref');
-//let math = require('mathjs');
-
 //Calculates the page rank for a given graph
 function pageRankDetCentrality( graph: $G.IGraph ) {
   //First initialize the values for all nodes
@@ -44,8 +41,8 @@ function pageRankDetCentrality( graph: $G.IGraph ) {
   let numMatr = [[]];
   //console.log(matr);
   //Bring matrix into correct form
-  for(let key in matr){
-    numMatr[key] = Array.apply(null, Array(graph.nrNodes()+1)).map(Number.prototype.valueOf,0); //Fill array with 0
+  for(let key in matr){                               //  |maybe add +1 here
+    numMatr[key] = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0); //Fill array with 0
     //set the slot of our variable to -1 (we switch it to the other side)
     let p = matr[key].pop();
     if(mapCtr[p] == null)
@@ -60,22 +57,25 @@ function pageRankDetCentrality( graph: $G.IGraph ) {
       numMatr[key][mapCtr[a]] += 1/divideTable[a];
     }
   }
-  //Now add last equation, everything added together should be 1!
-  numMatr[numMatr.length] = Array.apply(null, Array(graph.nrNodes()+1)).map(Number.prototype.valueOf,1);
-  console.log("Matrix before Gauss:")
-  console.log(numMatr);
-  //First use rref then
-  //math.usolve(U, b);
-  //rref(numMatr);
-  let x = [];
+  //Now add last equation, everything added together should be 1!  | maybe add +1 here
+  numMatr[numMatr.length-1] = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,1);
+  let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
+  x[x.length-1] = 1;
   x = $GAUSS.gauss(numMatr, x);
-  console.log("Solved Gauss:");
-  console.log(numMatr);
 
-
-  return matr;
+  return x;
 }
 
 export {
   pageRankDetCentrality
 };
+
+//NOTES:
+/*
+  Insert Interface for Centralities into ICentrality.ts (graphinius.d.ts)
+  Every Centrality file should be derifed from this interface
+
+  Change DegreeCentrality to 2 methods: 1 for histogram and 1 for map (map needs to be implemented)
+
+
+ */
