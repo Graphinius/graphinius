@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
-import * as $PRC from '../../src/centralities/PageRank';
+import * as $PRC from '../../src/centralities/PageRankDeterministic';
 
 
 var expect = chai.expect,
@@ -15,7 +15,7 @@ var expect = chai.expect,
 describe("PageRank Centrality Tests", () => {
 
     it('should print some output', () => {
-        let deg_dist = $PRC.pageRankCentrality( graph );
+        let deg_dist = $PRC.pageRankDetCentrality( graph );
         expect( deg_dist ).to.equal({});
     });
 

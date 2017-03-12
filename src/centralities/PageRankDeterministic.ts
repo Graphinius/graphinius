@@ -3,12 +3,13 @@
 import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
 import {IBaseEdge} from "../core/Edges";
+import * as $GAUSS from "../centralities/gauss";
 
-let rref = require('rref');
+//let rref = require('rref');
 //let math = require('mathjs');
 
 //Calculates the page rank for a given graph
-function pageRankCentrality( graph: $G.IGraph ) {
+function pageRankDetCentrality( graph: $G.IGraph ) {
   //First initialize the values for all nodes
   let startVal:number = 1 / graph.nrNodes();
   let pageScores:{[k:string]: number;} = {};
@@ -41,7 +42,7 @@ function pageRankCentrality( graph: $G.IGraph ) {
   ctr = 0;
   let mapCtr = {};
   let numMatr = [[]];
-  console.log(matr);
+  //console.log(matr);
   //Bring matrix into correct form
   for(let key in matr){
     numMatr[key] = Array.apply(null, Array(graph.nrNodes()+1)).map(Number.prototype.valueOf,0); //Fill array with 0
@@ -61,10 +62,14 @@ function pageRankCentrality( graph: $G.IGraph ) {
   }
   //Now add last equation, everything added together should be 1!
   numMatr[numMatr.length] = Array.apply(null, Array(graph.nrNodes()+1)).map(Number.prototype.valueOf,1);
+  console.log("Matrix before Gauss:")
   console.log(numMatr);
   //First use rref then
   //math.usolve(U, b);
-  rref(numMatr);
+  //rref(numMatr);
+  let x = [];
+  x = $GAUSS.gauss(numMatr, x);
+  console.log("Solved Gauss:");
   console.log(numMatr);
 
 
@@ -72,5 +77,5 @@ function pageRankCentrality( graph: $G.IGraph ) {
 }
 
 export {
-  pageRankCentrality
+  pageRankDetCentrality
 };

@@ -19,13 +19,13 @@ let expect = chai.expect,
 
 describe("InBetweenness Centrality Tests", () => {
 
-    it('should return a map of nodes of length 6', () => {
+    it.skip('should return a map of nodes of length 6', () => {
         let iBt_dist = $IB.inBetweennessCentrality( graph );
         expect( Object.keys( iBt_dist ).length ).to.equal(6);
     });
 
 
-    it('should return the correct betweenness map', () => {
+    it.skip('should return the correct betweenness map', () => {
         let expected_betweenness_map = {
             "A": 2.6,
             "B": 2.4,

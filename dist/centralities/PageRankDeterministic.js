@@ -1,7 +1,7 @@
 "use strict";
 var $SU = require("../utils/structUtils");
-var rref = require('rref');
-function pageRankCentrality(graph) {
+var $GAUSS = require("../centralities/gauss");
+function pageRankDetCentrality(graph) {
     var startVal = 1 / graph.nrNodes();
     var pageScores = {};
     var divideTable = {};
@@ -31,7 +31,6 @@ function pageRankCentrality(graph) {
     ctr = 0;
     var mapCtr = {};
     var numMatr = [[]];
-    console.log(matr);
     for (var key in matr) {
         numMatr[key] = Array.apply(null, Array(graph.nrNodes() + 1)).map(Number.prototype.valueOf, 0);
         var p = matr[key].pop();
@@ -46,9 +45,12 @@ function pageRankCentrality(graph) {
         }
     }
     numMatr[numMatr.length] = Array.apply(null, Array(graph.nrNodes() + 1)).map(Number.prototype.valueOf, 1);
+    console.log("Matrix before Gauss:");
     console.log(numMatr);
-    rref(numMatr);
+    var x = [];
+    x = $GAUSS.gauss(numMatr, x);
+    console.log("Solved Gauss:");
     console.log(numMatr);
     return matr;
 }
-exports.pageRankCentrality = pageRankCentrality;
+exports.pageRankDetCentrality = pageRankDetCentrality;
