@@ -20,7 +20,6 @@ var degreeCentrality = (function () {
                     var node = graph.getNodeById(key);
                     if (node != null)
                         ret[key] = node.inDegree();
-                    console.log("::" + key + " " + ret[key]);
                 }
                 break;
             case DegreeMode.out:

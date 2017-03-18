@@ -23,7 +23,7 @@ class degreeCentrality implements $ICentrality.ICentrality{
         for(let key in graph.getNodes()){
           let node = graph.getNodeById(key);
           if(node!=null)
-            ret[key] = node.inDegree(); console.log("::" + key + " " + ret[key]);
+            ret[key] = node.inDegree();
         }
         break;
       case DegreeMode.out:

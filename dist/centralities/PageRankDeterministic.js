@@ -51,6 +51,7 @@ var pageRankDetCentrality = (function () {
         var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
         x[x.length - 1] = 1;
         x = $GAUSS.gauss(numMatr, x);
+        console.log(x);
         return x;
     };
     return pageRankDetCentrality;

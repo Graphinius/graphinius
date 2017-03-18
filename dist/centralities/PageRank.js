@@ -1,57 +1,55 @@
 "use strict";
 var $SU = require("../utils/structUtils");
-var $GAUSS = require("../centralities/gauss");
 var pageRankCentrality = (function () {
     function pageRankCentrality() {
     }
-    pageRankCentrality.prototype.getCentralityMap = function (graph) {
-        var startVal = 1 / graph.nrNodes();
-        var pageScores = {};
-        var divideTable = {};
-        var matr = [];
-        var ctr = 0;
-        for (var key in graph.getNodes()) {
-            divideTable[key] = 0;
-        }
+    pageRankCentrality.prototype.getCentralityMap = function (graph, alpha, conv, iterations) {
+        if (alpha == null)
+            alpha = 0.10;
+        if (iterations == null)
+            iterations = 1000;
+        if (conv == null)
+            conv = 0.000125;
+        var curr = {};
+        var old = {};
+        var nrNodes = graph.nrNodes();
+        var structure = {};
         for (var key in graph.getNodes()) {
             var node = graph.getNodeById(key);
-            var node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
-            matr[ctr] = new Array();
-            for (var edgeKey in node_InEdges) {
-                var edge = node_InEdges[edgeKey];
-                if (edge.getNodes().a.getID() == node.getID()) {
-                    matr[ctr].push(edge.getNodes().b.getID());
-                    divideTable[edge.getNodes().b.getID()]++;
-                }
-                else {
-                    matr[ctr].push(edge.getNodes().a.getID());
-                    divideTable[edge.getNodes().a.getID()]++;
-                }
-            }
-            matr[ctr].push(node.getID());
-            ctr++;
-        }
-        ctr = 0;
-        var mapCtr = {};
-        var numMatr = [[]];
-        for (var key in matr) {
-            numMatr[key] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
-            var p = matr[key].pop();
-            if (mapCtr[p] == null)
-                mapCtr[p] = ctr++;
-            numMatr[key][mapCtr[p]] = -1;
-            for (var k in matr[key]) {
-                var a = matr[key][k];
-                if (mapCtr[a] == null)
-                    mapCtr[a] = ctr++;
-                numMatr[key][mapCtr[a]] += 1 / divideTable[a];
+            structure[key] = {};
+            structure[key]['deg'] = node.outDegree() + node.degree();
+            structure[key]['inc'] = [];
+            var incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+            for (var edge in incomingEdges) {
+                var edgeNode = incomingEdges[edge];
+                var parent_1 = edgeNode.getNodes().a;
+                if (edgeNode.getNodes().a.getID() == node.getID())
+                    parent_1 = edgeNode.getNodes().b;
+                structure[key]['inc'].push(parent_1.getID());
             }
         }
-        numMatr[numMatr.length - 1] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 1);
-        var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
-        x[x.length - 1] = 1;
-        x = $GAUSS.gauss(numMatr, x);
-        return x;
+        for (var key in graph.getNodes()) {
+            curr[key] = 1 / nrNodes;
+            old[key] = 1 / nrNodes;
+        }
+        for (var i = 0; i < iterations; i++) {
+            var me = 0.0;
+            for (var key in graph.getNodes()) {
+                var total = 0;
+                var parents = structure[key]['inc'];
+                for (var k in parents) {
+                    var p = parents[k];
+                    total += old[p] / structure[p]['deg'];
+                }
+                curr[key] = total * (1 - alpha) + alpha / nrNodes;
+                me += Math.abs(curr[key] - old[key]);
+            }
+            if (me <= conv) {
+                return curr;
+            }
+            old = $SU.clone(curr);
+        }
+        return curr;
     };
     return pageRankCentrality;
 }());

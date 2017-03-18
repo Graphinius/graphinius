@@ -100,9 +100,6 @@ describe("Degree Centrality Tests", () => {
   let DC_map_dir = DC.getCentralityMap(graph, $DC.DegreeMode.dir);
   let DC_map_und = DC.getCentralityMap(graph, $DC.DegreeMode.und);
 
-  console.log("A:" + DC_map_in["A"]);
-  console.log("B:" + DC_map_in["B"]);
-  console.log("C:" + DC_map_in["C"]);
   it('Single degree test on node A', () => {
     expect( DC_map_in["A"] ).to.equal( 2 );
     expect( DC_map_out["A"] ).to.equal( 3 );

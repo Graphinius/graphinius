@@ -66,7 +66,7 @@ class pageRankDetCentrality implements $ICentrality.ICentrality {
     let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
     x[x.length-1] = 1;
     x = $GAUSS.gauss(numMatr, x);
-
+    console.log(x);
     return x;
   }
 
@@ -75,13 +75,3 @@ class pageRankDetCentrality implements $ICentrality.ICentrality {
 export {
     pageRankDetCentrality
 };
-
-//NOTES:
-/*
- Insert Interface for Centralities into ICentrality.ts (graphinius.d.ts)
- Every Centrality file should be derifed from this interface
-
- Change DegreeCentrality to 2 methods: 1 for histogram and 1 for map (map needs to be implemented)
-
-
- */
