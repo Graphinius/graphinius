@@ -1,11 +1,11 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as chai from 'chai';
-import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
-import * as $DC from '../../src/centralities/Closeness';
+import * as $CC from '../../src/centralities/Closeness';
+import * as $IC from '../../src/centralities/ICentrality';
 
 const SN_GRAPH_NODES = 1034,
       SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
@@ -15,14 +15,15 @@ let expect = chai.expect,
     json   : $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
-    graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph);
+    graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
+    CC: $IC.ICentrality = new $CC.closenessCentrality();
 
 
 describe("Closeness Centrality Tests", () => {
 
     it('should return a map of nodes of length 6', () => {
-        let deg_dist = $DC.closenessCentrality( graph );
-        expect( Object.keys( deg_dist ).length ).to.equal(6);
+        let cc = CC.getCentralityMap(graph);
+        expect( Object.keys( cc ).length ).to.equal(6);
     });
 
 
@@ -35,7 +36,7 @@ describe("Closeness Centrality Tests", () => {
             "E": 4.8,
             "F": 4.4
         };
-        let closeness_map = $DC.closenessCentrality( graph );
+        let closeness_map = CC.getCentralityMap(graph);
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
     });
 
@@ -52,7 +53,7 @@ describe("Closeness Centrality Tests", () => {
 
         // console.log(sn_graph.getRandomUndEdge().isWeighted());
 
-        let deg_dist = $DC.closenessCentrality( sn_graph );
+        let cc = CC.getCentralityMap(graph);
     });
 
     /*
