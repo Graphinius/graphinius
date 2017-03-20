@@ -2032,7 +2032,7 @@
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(16);
 	var $BH = __webpack_require__(19);
-	var DEFAULT_WEIGHT = 1;
+	exports.DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2132,7 +2132,7 @@
 	        dir_mode: $G.GraphMode.MIXED,
 	        goal_node: null,
 	        evalPriority: function (ne) {
-	            return ne.best || DEFAULT_WEIGHT;
+	            return ne.best || exports.DEFAULT_WEIGHT;
 	        },
 	        evalObjID: function (ne) {
 	            return ne.node.getID();
@@ -2994,9 +2994,10 @@
 
 /***/ },
 /* 23 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var $SU = __webpack_require__(3);
 	(function (DegreeMode) {
 	    DegreeMode[DegreeMode["in"] = 0] = "in";
 	    DegreeMode[DegreeMode["out"] = 1] = "out";
@@ -3008,7 +3009,11 @@
 	var degreeCentrality = (function () {
 	    function degreeCentrality() {
 	    }
-	    degreeCentrality.prototype.getCentralityMap = function (graph, conf) {
+	    degreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
+	        if (weighted == null)
+	            weighted = true;
+	        if (!weighted && weighted != null)
+	            weighted = false;
 	        if (conf == null)
 	            conf = DegreeMode.all;
 	        var ret = {};
@@ -3017,35 +3022,69 @@
 	                for (var key in graph.getNodes()) {
 	                    var node = graph.getNodeById(key);
 	                    if (node != null)
-	                        ret[key] = node.inDegree();
+	                        if (!weighted)
+	                            ret[key] = node.inDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.inEdges()) {
+	                                ret[key] += node.inEdges()[k].getWeight();
+	                            }
+	                        }
 	                }
 	                break;
 	            case DegreeMode.out:
 	                for (var key in graph.getNodes()) {
 	                    var node = graph.getNodeById(key);
 	                    if (node != null)
-	                        ret[key] = node.outDegree();
+	                        if (!weighted)
+	                            ret[key] = node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.outEdges())
+	                                ret[key] += node.outEdges()[k].getWeight();
+	                        }
 	                }
 	                break;
 	            case DegreeMode.und:
 	                for (var key in graph.getNodes()) {
 	                    var node = graph.getNodeById(key);
 	                    if (node != null)
-	                        ret[key] = node.degree();
+	                        if (!weighted)
+	                            ret[key] = node.degree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.undEdges())
+	                                ret[key] += node.undEdges()[k].getWeight();
+	                        }
 	                }
 	                break;
 	            case DegreeMode.dir:
 	                for (var key in graph.getNodes()) {
 	                    var node = graph.getNodeById(key);
 	                    if (node != null)
-	                        ret[key] = node.inDegree() + node.outDegree();
+	                        if (!weighted)
+	                            ret[key] = node.inDegree() + node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges()]);
+	                            for (var k in comb)
+	                                ret[key] += comb[k].getWeight();
+	                        }
 	                }
 	                break;
 	            case DegreeMode.all:
 	                for (var key in graph.getNodes()) {
 	                    var node = graph.getNodeById(key);
 	                    if (node != null)
-	                        ret[key] = node.degree() + node.inDegree() + node.outDegree();
+	                        if (!weighted)
+	                            ret[key] = node.degree() + node.inDegree() + node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges(), node.undEdges()]);
+	                            for (var k in comb) {
+	                                ret[key] += comb[k].getWeight();
+	                            }
+	                        }
 	                }
 	                break;
 	        }

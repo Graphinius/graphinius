@@ -1,6 +1,6 @@
 "use strict";
 var $BFS = require('../search/BFS');
-function inBetweennessCentrality(graph) {
+function inBetweennessCentrality(graph, weighted) {
     var ret = {};
     for (var key in graph.getNodes()) {
         var node = graph.getNodeById(key);

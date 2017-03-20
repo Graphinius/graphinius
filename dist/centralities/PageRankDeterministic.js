@@ -4,7 +4,7 @@ var $GAUSS = require("../centralities/gauss");
 var pageRankDetCentrality = (function () {
     function pageRankDetCentrality() {
     }
-    pageRankDetCentrality.prototype.getCentralityMap = function (graph) {
+    pageRankDetCentrality.prototype.getCentralityMap = function (graph, weighted) {
         var startVal = 1 / graph.nrNodes();
         var pageScores = {};
         var divideTable = {};

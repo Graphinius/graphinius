@@ -94,11 +94,72 @@ describe("Degree Centrality Tests", () => {
     expect( all_deg_dist ).to.deep.equal( expected_all_dist );
   });
 
-  let DC_map_all = DC.getCentralityMap(graph);
-  let DC_map_in = DC.getCentralityMap(graph, $DC.DegreeMode.in);
-  let DC_map_out = DC.getCentralityMap(graph, $DC.DegreeMode.out);
-  let DC_map_dir = DC.getCentralityMap(graph, $DC.DegreeMode.dir);
-  let DC_map_und = DC.getCentralityMap(graph, $DC.DegreeMode.und);
+  let DC_map_allW = DC.getCentralityMap(graph, true);
+  let DC_map_inW = DC.getCentralityMap(graph, true, $DC.DegreeMode.in);
+  let DC_map_outW = DC.getCentralityMap(graph, true,$DC.DegreeMode.out);
+  let DC_map_dirW = DC.getCentralityMap(graph, true,$DC.DegreeMode.dir);
+  let DC_map_undW = DC.getCentralityMap(graph, true,$DC.DegreeMode.und);
+
+  it('Single degree test on node A, weighted', () => {
+    expect( DC_map_inW["A"] ).to.equal( 6 );
+    expect( DC_map_outW["A"] ).to.equal( 8 );
+    expect( DC_map_undW["A"] ).to.equal( 0 );
+    expect( DC_map_dirW["A"] ).to.equal( 14 );
+    expect( DC_map_allW["A"] ).to.equal( 14 );
+  });
+
+
+  it('Single degree test on node B, weighted', () => {
+    expect( DC_map_inW["B"]).to.equal( 3 );
+    expect( DC_map_outW["B"] ).to.equal( 8 );
+    expect( DC_map_undW["B"] ).to.equal( 5 );
+    expect( DC_map_dirW["B"] ).to.equal( 11 );
+    expect( DC_map_allW["B"] ).to.equal( 16 );
+  });
+
+
+  it('Single degree test on node C, weighted', () => {
+    expect( DC_map_inW["C"]).to.equal( 15 );
+    expect( DC_map_outW["C"] ).to.equal( 2 );
+    expect( DC_map_undW["C"] ).to.equal( 0 );
+    expect( DC_map_dirW["C"] ).to.equal( 17 );
+    expect( DC_map_allW["C"] ).to.equal( 17 );
+  });
+
+
+  it('Single degree test on node D, weighted', () => {
+    expect( DC_map_inW["D"]).to.equal( 1 );
+    expect( DC_map_outW["D"] ).to.equal( 23 );
+    expect( DC_map_undW["D"] ).to.equal( 0);
+    expect( DC_map_dirW["D"] ).to.equal( 24);
+    expect( DC_map_allW["D"] ).to.equal( 24);
+  });
+
+
+  it('Single degree test on node E, weighted', () => {
+    expect( DC_map_inW["E"]).to.equal( 23 );
+    expect( DC_map_outW["E"] ).to.equal( 0 );
+    expect( DC_map_undW["E"] ).to.equal( 5 );
+    expect( DC_map_dirW["E"] ).to.equal( 23 );
+    expect( DC_map_allW["E"] ).to.equal( 28 );
+  });
+
+
+  it('Single degree test on node F, weighted', () => {
+    expect( DC_map_inW["F"]).to.equal( 1 );
+    expect( DC_map_outW["F"] ).to.equal( 8 );
+    expect( DC_map_undW["F"] ).to.equal( 0 );
+    expect( DC_map_dirW["F"] ).to.equal( 9 );
+    expect( DC_map_allW["F"] ).to.equal( 9 );
+  });
+
+
+  //Now test all of them with weighted edges
+  let DC_map_all = DC.getCentralityMap(graph, false);
+  let DC_map_in = DC.getCentralityMap(graph, false, $DC.DegreeMode.in);
+  let DC_map_out = DC.getCentralityMap(graph, false,$DC.DegreeMode.out);
+  let DC_map_dir = DC.getCentralityMap(graph, false,$DC.DegreeMode.dir);
+  let DC_map_und = DC.getCentralityMap(graph, false,$DC.DegreeMode.und);
 
   it('Single degree test on node A', () => {
     expect( DC_map_in["A"] ).to.equal( 2 );
@@ -154,7 +215,7 @@ describe("Degree Centrality Tests", () => {
   });
 
   it('Test default configuration',()=>{
-    expect(DC_map_all).to.deep.equal(DC.getCentralityMap(graph,$DC.DegreeMode.all));
+    expect(DC_map_all).to.deep.equal(DC.getCentralityMap(graph,false,$DC.DegreeMode.all));
   });
 
 });

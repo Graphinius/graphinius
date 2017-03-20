@@ -4,7 +4,7 @@ import * as $G from '../core/Graph';
 import * as $BFS from '../search/BFS';
 
 //Just get all shortest path's from each node to each other node (this will take a while...)
-function inBetweennessCentrality( graph: $G.IGraph ) {
+function inBetweennessCentrality( graph: $G.IGraph, weighted?: boolean ) {
   let ret = {}; //Will be a map of [nodeID] = centrality
   for(let key in graph.getNodes())
   {

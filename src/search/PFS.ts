@@ -7,7 +7,7 @@ import * as $CB from '../utils/callbackUtils';
 import * as $BH from '../datastructs/binaryHeap';
 
 
-const DEFAULT_WEIGHT: number = 1;
+export const DEFAULT_WEIGHT: number = 1;
 
 export interface PFS_Config {
 	result			    :	{[id: string]: PFS_ResultEntry};

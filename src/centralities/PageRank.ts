@@ -8,7 +8,11 @@ import * as $SU from "../utils/structUtils";
 //Calculates the page rank for a given graph
 class pageRankCentrality implements $ICentrality.ICentrality {
 
-  getCentralityMap(graph: $G.IGraph, alpha?:number, conv?:number, iterations?:number):{[id:string]: number}{
+  getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?:number, conv?:number, iterations?:number):{[id:string]: number}{
+
+    if(!weighted && weighted != null){
+      let a = 0;
+    }
     if(alpha == null)
       alpha = 0.10;
     if(iterations == null)

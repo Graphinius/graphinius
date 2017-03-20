@@ -10,7 +10,8 @@ import * as $ICentrality from "../centralities/ICentrality";
 //Calculates the page rank for a given graph
 class pageRankDetCentrality implements $ICentrality.ICentrality {
 
-  getCentralityMap(graph: $G.IGraph):{[id:string]: number}{
+  getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number}{
+
     //First initialize the values for all nodes
     let startVal:number = 1 / graph.nrNodes();
     let pageScores:{[k:string]: number;} = {};
