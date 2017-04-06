@@ -900,5 +900,44 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 	});
+
+
+	describe("Minimum Adjacency List generation Tests", () => {
+
+		let graph: $G.IGraph,
+				adj_list: $G.MinAdjacencyList,
+				expected_result: $G.MinAdjacencyList,
+				jsonReader = new $JSON.JSONInput(true, false, true);
+
+
+		it('should output an empty adjacency list for an empty graph', () => {
+			graph = new $G.BaseGraph("emptinius");
+			expected_result = {};
+			expect(graph.adjList()).to.deep.equal(expected_result);
+		});
+
+
+		it('should produce a non-empty adj.list for the small example graph', () => {
+			graph = jsonReader.readFromJSONFile(small_graph_file);
+			adj_list = graph.adjList();
+			expect(adj_list).not.to.be.undefined;
+			expect(adj_list).not.to.deep.equal({});
+		});
+
+
+		it('should produce the correct adj.list for the small example graph', () => {
+			graph = jsonReader.readFromJSONFile(small_graph_file);
+			adj_list = graph.adjList();
+			// console.dir(adj_list);
+			expected_result = {
+				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+				'B': {'A': 3},
+				'C': {'A': 0},
+				'D': {'A': 6}
+			};
+			expect(adj_list).to.deep.equal(expected_result);
+		});
+
+	});
 	
 });

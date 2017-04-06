@@ -189,6 +189,10 @@ declare module GraphiniusJS {
             nr_und_edges: number;
             nr_dir_edges: number;
         }
+        export type MinAdjacencyList = {[id: string]: MinAdjacencyListEntry};
+
+        export type MinAdjacencyListEntry = {[id: string] : number}
+
         export interface IGraph {
             _label: string;
             getMode(): GraphMode;

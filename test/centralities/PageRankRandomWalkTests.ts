@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
-import * as $PDC from '../../src/centralities/PageRankDeterministic';
+import * as $PRC from '../../src/centralities/PageRankRandomWalk';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $IC from '../../src/centralities/ICentrality';
 
@@ -14,20 +14,20 @@ var expect = chai.expect,
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
-    PDC: $IC.ICentrality = new $PDC.pageRankDetCentrality();
+    PRC: $IC.ICentrality = new $PRC.pageRankCentrality();
 
 
-describe("PageRank Centrality Tests", () => {
+describe.skip("PageRank Centrality Tests o", () => {
 
-    it('should print some output1', () => {
-        let pdc = PDC.getCentralityMap(graph);
+    it('should print some output', () => {
+        let pdc = PRC.getCentralityMap(graph);
         expect( pdc ).to.equal({});
     });
 
-    it.skip('should calculate the PR for a large graph', () => {
+    it('should calculate the PR for a large graph', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
-        //let pdc = PDC.getCentralityMap( sn_graph );
-        //expect(pdc).to.equal({});
+        let prc = PRC.getCentralityMap( sn_graph );
+        //expect(prc).to.equal({});
     });
 
     /*

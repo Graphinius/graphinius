@@ -32,6 +32,13 @@ export interface GraphStats {
 	nr_dir_edges	: number;
 }
 
+/**
+ * Only gives the best distance to a node in case of multiple direct edges
+ */
+export type MinAdjacencyList = {[id: string]: MinAdjacencyListEntry};
+
+export type MinAdjacencyListEntry = {[id: string] : number}
+
 
 export interface IGraph {
 	_label : string;
@@ -83,6 +90,7 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
+	adjList() : MinAdjacencyList;
 }
 
 
@@ -101,9 +109,32 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
+
+	adjList() : MinAdjacencyList{
+		let adj_list: MinAdjacencyList = {},
+				nodes = this.getNodes(),
+				adj_list_entries: MinAdjacencyListEntry,
+				weight: number;
+
+		for ( let key in nodes ) {
+			adj_list_entries = {}; // clean up
+
+			nodes[key].reachNodes().forEach( (ne) => {
+				weight = adj_list_entries[ne.node.getID()] || Number.POSITIVE_INFINITY;
+				adj_list_entries[ne.node.getID()] = ne.edge.getWeight() < weight ? ne.edge.getWeight() : weight;
+			});
+
+			adj_list[key] = adj_list_entries;
+		}
+		
+		return adj_list;
+	}
+
+
 	getMode() : GraphMode {
 		return this._mode;
 	}
+
 
 	getStats() : GraphStats {
 		return {

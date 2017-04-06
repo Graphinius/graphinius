@@ -528,6 +528,18 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
+	    BaseGraph.prototype.adjList = function () {
+	        var adj_list = {}, nodes = this.getNodes(), adj_list_entries, weight;
+	        for (var key in nodes) {
+	            adj_list_entries = {};
+	            nodes[key].reachNodes().forEach(function (ne) {
+	                weight = adj_list_entries[ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                adj_list_entries[ne.node.getID()] = ne.edge.getWeight() < weight ? ne.edge.getWeight() : weight;
+	            });
+	            adj_list[key] = adj_list_entries;
+	        }
+	        return adj_list;
+	    };
 	    BaseGraph.prototype.getMode = function () {
 	        return this._mode;
 	    };
