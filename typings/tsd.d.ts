@@ -5,7 +5,6 @@
 /// <reference path="node/node.d.ts" />
 /// <reference path="orchestrator/orchestrator.d.ts" />
 /// <reference path="q/Q.d.ts" />
-/// <reference path="lodash/lodash.d.ts" />
 /// <reference path="sinon-chai/sinon-chai.d.ts" />
 /// <reference path="sinon/sinon.d.ts" />
 /// <reference path="globals/sylvester/index.d.ts" />
