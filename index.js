@@ -58,17 +58,17 @@ out.$G = {
 	mincut: {
 		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
 	},
-  util: {
+  utils: {
     struct          : structUtils,
     remote          : remoteUtils,
     callback        : callbackUtils,
     randgen         : randGen
   },
   datastructs: {
-    binaryHeap  : binaryHeap
+    BinaryHeap  : binaryHeap
   },
 	perturbation: {
-		simplePerturbation: simplePerturbation
+		SimplePerturber: simplePerturbation
 	}
 };
 

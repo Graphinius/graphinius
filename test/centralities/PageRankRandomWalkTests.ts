@@ -10,7 +10,7 @@ import * as $IC from '../../src/centralities/ICentrality';
 
 var expect = chai.expect,
     csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-    json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+    json : $I.IJSONInput = new $I.JSONInput(true, false, true),
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
