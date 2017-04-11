@@ -50,7 +50,7 @@ export interface ISimplePerturber {
 
 class SimplePerturber implements ISimplePerturber {
 
-  constructor(private _graph) {
+  constructor(private _graph: $G.IGraph) {
 
   }
 
@@ -105,8 +105,8 @@ class SimplePerturber implements ISimplePerturber {
 			return;
 		}
 		
-		for ( let nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph._nodes, amount); nodeID < randomNodes.length; nodeID++ ) {
-			this._graph.deleteNode( this._graph._nodes[randomNodes[nodeID]] );
+		for ( let nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++ ) {
+			this._graph.deleteNode( this._graph.getNodes()[randomNodes[nodeID]] );
 		}
 	}
 
@@ -122,8 +122,8 @@ class SimplePerturber implements ISimplePerturber {
 			return;
 		}
 
-		for ( let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._und_edges, amount); edgeID < randomEdges.length; edgeID++ ) {
-			this._graph.deleteEdge( this._graph._und_edges[randomEdges[edgeID]] );
+		for ( let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++ ) {
+			this._graph.deleteEdge( this._graph.getUndEdges()[randomEdges[edgeID]] );
 		}
 	}
 
@@ -139,8 +139,8 @@ class SimplePerturber implements ISimplePerturber {
 			return;
 		}
 
-		for ( let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._dir_edges, amount); edgeID < randomEdges.length; edgeID++ ) {
-			this._graph.deleteEdge( this._graph._dir_edges[randomEdges[edgeID]] );
+		for ( let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++ ) {
+			this._graph.deleteEdge( this._graph.getDirEdges()[randomEdges[edgeID]] );
 		}
 	}
 

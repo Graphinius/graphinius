@@ -2618,8 +2618,8 @@
 	        if (this._graph.nrNodes() === 0) {
 	            return;
 	        }
-	        for (var nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph._nodes, amount); nodeID < randomNodes.length; nodeID++) {
-	            this._graph.deleteNode(this._graph._nodes[randomNodes[nodeID]]);
+	        for (var nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++) {
+	            this._graph.deleteNode(this._graph.getNodes()[randomNodes[nodeID]]);
 	        }
 	    };
 	    SimplePerturber.prototype.randomlyDeleteUndEdgesAmount = function (amount) {
@@ -2629,8 +2629,8 @@
 	        if (this._graph.nrUndEdges() === 0) {
 	            return;
 	        }
-	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._und_edges, amount); edgeID < randomEdges.length; edgeID++) {
-	            this._graph.deleteEdge(this._graph._und_edges[randomEdges[edgeID]]);
+	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+	            this._graph.deleteEdge(this._graph.getUndEdges()[randomEdges[edgeID]]);
 	        }
 	    };
 	    SimplePerturber.prototype.randomlyDeleteDirEdgesAmount = function (amount) {
@@ -2640,8 +2640,8 @@
 	        if (this._graph.nrDirEdges() === 0) {
 	            return;
 	        }
-	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph._dir_edges, amount); edgeID < randomEdges.length; edgeID++) {
-	            this._graph.deleteEdge(this._graph._dir_edges[randomEdges[edgeID]]);
+	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+	            this._graph.deleteEdge(this._graph.getDirEdges()[randomEdges[edgeID]]);
 	        }
 	    };
 	    SimplePerturber.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
