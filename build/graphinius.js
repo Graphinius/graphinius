@@ -111,10 +111,10 @@
 	    randgen         : randGen
 	  },
 	  datastructs: {
-	    BinaryHeap  : binaryHeap
+	    BinaryHeap  : binaryHeap.BinaryHeap
 	  },
 		perturbation: {
-			SimplePerturber: simplePerturbation
+			SimplePerturber: simplePerturbation.SimplePerturber
 		}
 	};
 
