@@ -198,7 +198,8 @@ declare module GraphiniusJS {
             getMode(): GraphMode;
             getStats(): GraphStats;
             degreeDistribution(): DegreeDistribution;
-            addNode(id: string, opts?: {}): IBaseNode;
+            addNodeByID(id: string, opts? : {}) : core.IBaseNode;
+	        addNode(node: core.IBaseNode) : boolean;
             hasNodeID(id: string): boolean;
             hasNodeLabel(label: string): boolean;
             getNodeById(id: string): IBaseNode;
@@ -258,7 +259,8 @@ declare module GraphiniusJS {
             nrNodes(): number;
             nrDirEdges(): number;
             nrUndEdges(): number;
-            addNode(id: string, opts?: {}): IBaseNode;
+            addNodeByID(id: string, opts? : {}) : core.IBaseNode;
+	        addNode(node: core.IBaseNode) : boolean;
             hasNodeID(id: string): boolean;
             hasNodeLabel(label: string): boolean;
             getNodeById(id: string): IBaseNode;
@@ -619,6 +621,8 @@ declare module GraphiniusJS {
         }
 
         export class SimplePerturber implements ISimplePerturber {// CREATE RANDOM EDGES PER NODE
+            constructor(_graph: core.IGraph);
+            
             createRandomEdgesProb(probability: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
             createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
 
