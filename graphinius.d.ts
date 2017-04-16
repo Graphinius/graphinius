@@ -198,6 +198,8 @@ declare module GraphiniusJS {
             getMode(): GraphMode;
             getStats(): GraphStats;
             degreeDistribution(): DegreeDistribution;
+
+            // NODE STUFF
             addNodeByID(id: string, opts? : {}) : core.IBaseNode;
 	        addNode(node: core.IBaseNode) : boolean;
             hasNodeID(id: string): boolean;
@@ -210,6 +212,9 @@ declare module GraphiniusJS {
             nrNodes(): number;
             getRandomNode(): IBaseNode;
             deleteNode(node: any): void;
+
+            // EDGE STUFF
+	        addEdgeByID(label: string, node_a : core.IBaseNode, node_b : core.IBaseNode, opts? : {}) : core.IBaseEdge;
             addEdge(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
             addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
             hasEdgeID(id: string): boolean;
@@ -235,6 +240,8 @@ declare module GraphiniusJS {
             clearAllDirEdges(): void;
             clearAllUndEdges(): void;
             clearAllEdges(): void;
+            pickRandomProperty(propList) : any;
+            pickRandomProperties(propList, amount) : Array<string>;
         }
 
         export class BaseGraph implements IGraph {
@@ -259,6 +266,8 @@ declare module GraphiniusJS {
             nrNodes(): number;
             nrDirEdges(): number;
             nrUndEdges(): number;
+
+            // NODE STUFF
             addNodeByID(id: string, opts? : {}) : core.IBaseNode;
 	        addNode(node: core.IBaseNode) : boolean;
             hasNodeID(id: string): boolean;
@@ -281,6 +290,8 @@ declare module GraphiniusJS {
                 [key: string]: IBaseEdge;
             };
             addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+            // EDGE STUFF
+	        addEdgeByID(label: string, node_a : core.IBaseNode, node_b : core.IBaseNode, opts? : {}) : core.IBaseEdge;
             addEdge(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
             deleteEdge(edge: IBaseEdge): void;
             deleteInEdgesOf(node: IBaseNode): void;
@@ -295,7 +306,8 @@ declare module GraphiniusJS {
             getRandomUndEdge(): IBaseEdge;
             protected checkConnectedNodeOrThrow(node: IBaseNode): void;
             protected updateGraphMode(): void;
-            private pickRandomProperty(obj);
+            pickRandomProperty(propList) : any;
+            pickRandomProperties(propList, amount) : Array<string>;
         }
     }
 
@@ -600,6 +612,7 @@ declare module GraphiniusJS {
         }
 
         export interface ISimplePerturber {
+
             // CREATE RANDOM EDGES PER NODE
             createRandomEdgesProb(probability: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
             createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
@@ -620,9 +633,9 @@ declare module GraphiniusJS {
             randomlyAddEdgesAmount(amount: number, config?: core.EdgeConstructorOptions): void;
         }
 
-        export class SimplePerturber implements ISimplePerturber {// CREATE RANDOM EDGES PER NODE
+        export class SimplePerturber implements ISimplePerturber {
+
             constructor(_graph: core.IGraph);
-            
             createRandomEdgesProb(probability: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
             createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
 

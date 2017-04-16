@@ -63,11 +63,7 @@
 	var MCMFBoykov			= __webpack_require__(22);
 	var degCent				 	= __webpack_require__(23)
 
-
-	// TODO:
-	// Encapsulate ALL functions within Graph for
-	// easier access and less import / new ceremony ??
-
+	// Define global object
 	var out = typeof window !== 'undefined' ? window : global;
 
 	/**

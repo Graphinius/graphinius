@@ -76,6 +76,9 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+	pickRandomProperty(propList) : any;
+	pickRandomProperties(propList, amount) : Array<string>;
+
 
 	// HANDLE ALL EDGES OF NODES
 	deleteInEdgesOf(node: $N.IBaseNode) : void;

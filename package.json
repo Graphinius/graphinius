@@ -32,6 +32,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
+    "gulp-prompt": "^0.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-typedoc": "^1.2.1",
     "gulp-typescript": "^2.9.2",
@@ -48,7 +49,8 @@
     "typedoc": "^0.3.12",
     "typescript": "^2.0.3",
     "webpack-stream": "^3.1.0",
-    "xhr-mock": "^1.6.0"
+    "xhr-mock": "^1.6.0",
+    "gulp-git": "^2.0.0"
   },
   "dependencies": {
     "gulp-git": "^2.0.1",
