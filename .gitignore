@@ -43,3 +43,6 @@ test_async/**/*.js
 # Test outputs
 test/test_data/output/**/*.csv
 test/test_data/output/**/*.json
+
+# YARN
+yarn.lock
