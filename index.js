@@ -14,8 +14,9 @@ var callbackUtils   = require("./dist/utils/callbackUtils.js");
 var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
+var degCent				 	= require("./dist/centralities/DegreeCentrality.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var degCent				 	= require("./dist/centralities/DegreeCentrality.js")
+var EMEBoykov			= require("./dist/energyminimization/expansionBoykov.js");
 
 // Define global object
 var out = typeof window !== 'undefined' ? window : global;
@@ -37,7 +38,7 @@ out.$G = {
 		CSVInput 		: CSVInput.CSVInput,
 		JSONInput 	: JSONInput.JSONInput
 	},
-	output: {		
+	output: {
 		CSVOutput		: CSVOutput.CSVOutput,
 		JSONOutput	: JSONOutput.JSONOutput
 	},
@@ -53,6 +54,9 @@ out.$G = {
 	},
 	mincut: {
 		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
+	},
+	energyminimization: {
+		EMEBoykov										 	 : EMEBoykov.EMEBoykov
 	},
   util: {
     struct          : structUtils,
