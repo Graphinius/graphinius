@@ -23,8 +23,9 @@ const paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
+	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
+	tests_eme: ['test/mincutmaxflow/**/*.js', 'test/energyminimization/**/*.js'],
 	tests_perturb: ['test/perturbation/**/*.js'],
 	tests_all: ['test/**/*.js'],
 	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
@@ -150,7 +151,7 @@ gulp.task('bundle', ['pack'], function() {
 // 'Normal' synchronous tests
 gulp.task('test-basic', ['build'], function () {
 	return gulp.src(paths.tests_basic, {read: false})
-						 .pipe(mocha({reporter: 'dot',
+						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
 
@@ -166,6 +167,14 @@ gulp.task('test-async', ['build'], function () {
 // 'Perturbation tests - usually take a tad longer'
 gulp.task('test-perturb', ['build'], function () {
 	return gulp.src(paths.tests_perturb, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 60000}));
+});
+
+
+// 'Boykov Energyminimization tests - including mincutmaxflow'
+gulp.task('test-eme', ['build'], function () {
+	return gulp.src(paths.tests_eme, {read: false})
 						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
