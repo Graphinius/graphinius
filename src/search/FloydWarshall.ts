@@ -1,9 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
+import * as $SU from '../utils/structUtils'
 
 /**
  * Floyd-Warshall - we mostly use it to get In-betweenness
@@ -16,7 +14,6 @@ import * as $CB from '../utils/callbackUtils';
  */
 function FloydWarshall(graph 	 : $G.IGraph) : number[][] {
 
-	let ret:number[][] = [][];
 	/**
 	 * We are not traversing an empty graph...
 	 */
@@ -25,27 +22,46 @@ function FloydWarshall(graph 	 : $G.IGraph) : number[][] {
 	}
 	/**
 	 * We are not traversing a graph taking NO edges into account
-	 */
-	if ( dir_mode === $G.GraphMode.INIT ) {
+	 if ( dir_mode === $G.GraphMode.INIT ) {
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
+	 */
 
-  	/*
-	  let dist be a |V| × |V| array of minimum distances initialized to ∞ (infinity)
-	  for each vertex v
-	     dist[v][v] ← 0
-	  for each edge (u,v)
-	     dist[u][v] ← w(u,v)  // the weight of the edge (u,v)
-	  for k from 1 to |V|
-	     for i from 1 to |V|
-	        for j from 1 to |V|
-	           if dist[i][j] > dist[i][k] + dist[k][j]
-	               dist[i][j] ← dist[i][k] + dist[k][j]
-	           end if
-  	 */
+	let dist:number[][] = [];
+	let edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	let nodes = graph.getNodes();
+	for (let keyA in nodes) {
+		//This needs to be done in an extra step, because nodes
+		//are not necessarily in order
+		dist[keyA] = [];
+	}
+	for (let keyA in nodes) {
+		for (let keyB in nodes) {
+			if(keyA===keyB)
+				dist[keyA][keyB] = 0;
+			else
+				dist[keyA][keyB] = Number.MAX_VALUE;
+		}
+	}
 
+	for (let key in edges) {
+		let edge = graph.getEdgeById(key);
+		if(edge.getWeight()==null || edge.getNodes().a.getID() == edge.getNodes().b.getID())
+		{}
+		else{
+			if(!edge.isDirected())
+				dist[edge.getNodes().b.getID()][edge.getNodes().a.getID()] = edge.getWeight();
+			dist[edge.getNodes().a.getID()][edge.getNodes().b.getID()] = edge.getWeight();
+		}
+	}
 
-	return ret;
+	for (let k in nodes)
+		for (let i in nodes)
+			for (let j in nodes)
+				if(dist[i][j] > dist[i][k] + dist[k][j])
+					dist[i][j] = dist[i][k] + dist[k][j];
+
+	return dist;
 }
 
 export { FloydWarshall };
