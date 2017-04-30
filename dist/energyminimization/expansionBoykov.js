@@ -59,10 +59,10 @@ var EMEBoykov = (function () {
         for (var i = 0; i < node_ids.length; i++) {
             var node = nodes[node_ids[i]];
             var edge_options = { directed: true, weighted: true, weight: 0 };
-            edge_options.weight = this._dataTerm(this._state.activeLabel, node.getID());
+            edge_options.weight = this._dataTerm(this._state.activeLabel, this._graph.getNodeById(node.getID()).getLabel());
             var edge_source = graph.addEdgeByID(node.getID() + "_" + source.getID(), node, source, edge_options);
             var edge_source_reverse = graph.addEdgeByID(source.getID() + "_" + node.getID(), source, node, edge_options);
-            edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), node.getID());
+            edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), this._graph.getNodeById(node.getID()).getLabel());
             var edge_sink = graph.addEdgeByID(node.getID() + "_" + sink.getID(), node, sink, edge_options);
             var edge_sink_source = graph.addEdgeByID(sink.getID() + "_" + node.getID(), sink, node, edge_options);
         }
@@ -145,8 +145,7 @@ var EMEBoykov = (function () {
         var interactionTerm = function (label_a, label_b) {
             return (label_a == label_b) ? 0 : 1;
         };
-        var dataTerm = function (label, node_id) {
-            var observed = this._graph.getNodeById(node_id).getLabel();
+        var dataTerm = function (label, observed) {
             var label_number = Number(label);
             var observed_number = Number(observed);
             if (isNaN(label_number) || isNaN(observed_number)) {

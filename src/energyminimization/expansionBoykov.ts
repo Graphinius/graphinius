@@ -6,16 +6,16 @@ import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
 import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
 
-type EnergyFunctionInteractionTerm = (arg1: string, arg2: string) => number;
-type EnergyFunctionDataTerm = (arg1: string, ...args: any[]) => number;
-type EnergyFunction = (...args: any[]) => number;
+type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
+// type EnergyFunctionDataTerm = (arg1: string, ...args: any[]) => number;
+// type EnergyFunction = (...args: any[]) => number;
 
 
 export interface EMEConfig {
 	directed: boolean; // do we
   labeled: boolean;
-  interactionTerm : EnergyFunctionInteractionTerm;
-  dataTerm : EnergyFunctionDataTerm;
+  interactionTerm : EnergyFunctionTerm;
+  dataTerm : EnergyFunctionTerm;
 }
 
 
@@ -54,8 +54,8 @@ class EMEBoykov implements IEMEBoykov {
     activeLabel     : '',
     energy          : Infinity
   };
-  private _interactionTerm : EnergyFunctionInteractionTerm;
-  private _dataTerm : EnergyFunctionDataTerm;
+  private _interactionTerm : EnergyFunctionTerm;
+  private _dataTerm : EnergyFunctionTerm;
 
   constructor( private _graph 	 : $G.IGraph,
                private _labels   : Array<string>,
@@ -150,12 +150,12 @@ class EMEBoykov implements IEMEBoykov {
 
 				var edge_options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: 0};
 				// add edge to source
-				edge_options.weight = this._dataTerm(this._state.activeLabel, node.getID());
+				edge_options.weight = this._dataTerm(this._state.activeLabel, this._graph.getNodeById(node.getID()).getLabel());
 				var edge_source: $E.IBaseEdge = graph.addEdgeByID(node.getID() + "_" + source.getID(), node, source, edge_options);
 				var edge_source_reverse: $E.IBaseEdge = graph.addEdgeByID(source.getID() + "_" + node.getID(), source, node, edge_options);
 
 				// add edge to sink
-				edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), node.getID());
+				edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), this._graph.getNodeById(node.getID()).getLabel());
 				var edge_sink: $E.IBaseEdge = graph.addEdgeByID(node.getID() + "_" + sink.getID(), node, sink, edge_options);
 				var edge_sink_source: $E.IBaseEdge = graph.addEdgeByID(sink.getID() + "_" + node.getID(), sink, node, edge_options);
 		}
@@ -280,15 +280,15 @@ class EMEBoykov implements IEMEBoykov {
 
   prepareEMEStandardConfig() : EMEConfig {
     // we use the potts model as standard interaction term
-    var interactionTerm : EnergyFunctionInteractionTerm = function(label_a: string, label_b: string) {
+    var interactionTerm : EnergyFunctionTerm = function(label_a: string, label_b: string) {
       return (label_a == label_b) ? 0 : 1;
     };
 
     // squared difference of new label and observed label as standard data term
     // label: new label; node_id is needed to get the original(observed) label
-    var dataTerm : EnergyFunctionDataTerm = function(label: string, node_id: string) {
+    var dataTerm : EnergyFunctionTerm = function(label: string, observed: string) {
       // get the label of the same node in the original graph
-      var observed: string = this._graph.getNodeById(node_id).getLabel();
+      // var observed: string = this._graph.getNodeById(node_id).getLabel();
 
       var label_number: number = Number(label);
       var observed_number: number = Number(observed);
