@@ -18,7 +18,10 @@ var REAL_GRAPH_NR_NODES = 6204,
     small_graph = "./test/test_data/small_graph.json",
 		small_graph_no_features = "./test/test_data/small_graph_no_features.json",
     small_graph_weights_crap = "./test/test_data/small_graph_weights_crap.json",
-    real_graph = "./test/test_data/real_graph.json";
+    real_graph = "./test/test_data/real_graph.json",
+		extreme_weights_graph = "./test/test_data/extreme_weights_graph.json";
+
+const DEFAULT_WEIGHT : number = 1;
 
 
 describe('GRAPH JSON INPUT TESTS', () => {
@@ -204,11 +207,15 @@ describe('GRAPH JSON INPUT TESTS', () => {
    * which contains weights for each edge and check for their
    * exact (number) values upon instantiation
    */
-  describe('Edge weights - ', () => {  
+  describe('Edge weights - ', () => {
 
-		it('should correctly read the edge weights contained in a json file', () => {
+		beforeEach(() => {
 			json = new JSON_IN();
 			json._explicit_direction = true;
+		});
+
+
+		it('should correctly read the edge weights contained in a json file', () => {
       json._weighted_mode = true;
 			graph = json.readFromJSONFile(small_graph);			
       $C.checkSmallGraphEdgeWeights(graph);
@@ -216,8 +223,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
     
     
     it('should correctly set edge weights to undefined if in unweighted _mode', () => {
-			json = new JSON_IN();
-			json._explicit_direction = true;
       json._weighted_mode = false;
 			graph = json.readFromJSONFile(small_graph);
 			var und_edges = graph.getUndEdges();
@@ -231,11 +236,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
         expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
       }
 		});
-    
-    
+
+        
     it('should correctly set edge weights to default of 1 if info contained in json file is crappy', () => {
-			json = new JSON_IN();
-			json._explicit_direction = true;
       json._weighted_mode = true;
 			graph = json.readFromJSONFile(small_graph_weights_crap);			
       var und_edges = graph.getUndEdges();
@@ -248,6 +251,41 @@ describe('GRAPH JSON INPUT TESTS', () => {
         expect(graph.getEdgeById(edge).isWeighted()).to.be.true;
         expect(graph.getEdgeById(edge).getWeight()).to.equal(1);
       }
+		});
+
+
+		describe('should be able to handle extreme edge weight cases', () => {
+
+			beforeEach(() => {
+				json._weighted_mode = true;
+				graph = json.readFromJSONFile(extreme_weights_graph);
+			})
+
+
+			it('should correctly set edge weight of "undefined" to DEFAULT_WEIGHT of 1', () => {
+				expect(graph.getEdgeById("A_A_d").getWeight()).to.equal(DEFAULT_WEIGHT);
+			});
+
+
+			it('should correctly set edge weight of "Infinity" to Number.POSITIVE_INFINITY', () => {
+				expect(graph.getEdgeById("A_B_d").getWeight()).to.equal(Number.POSITIVE_INFINITY);
+			});
+
+
+			it('should correctly set edge weight of "-Infinity" to Number.NEGATIVE_INFINITY', () => {
+				expect(graph.getEdgeById("A_C_d").getWeight()).to.equal(Number.NEGATIVE_INFINITY);
+			});
+
+
+			it('should correctly set edge weight of "MAX" to Number.MAX_VALUE', () => {
+				expect(graph.getEdgeById("A_D_d").getWeight()).to.equal(Number.MAX_VALUE);
+			});
+
+
+			it('should correctly set edge weight of "MIN" to Number.MIN_VALUE', () => {
+				expect(graph.getEdgeById("A_E_d").getWeight()).to.equal(Number.MIN_VALUE);
+			});
+
 		});
     
   });

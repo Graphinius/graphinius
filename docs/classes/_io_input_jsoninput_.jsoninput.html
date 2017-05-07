@@ -106,6 +106,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_io_input_jsoninput_.jsoninput.html#checknodeenvironment" class="tsd-kind-icon">check<wbr>Node<wbr>Environment</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_io_input_jsoninput_.jsoninput.html#handleedgeweights" class="tsd-kind-icon">handle<wbr>Edge<wbr>Weights</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_io_input_jsoninput_.jsoninput.html#readfromjson" class="tsd-kind-icon">read<wbr>FromJSON</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_io_input_jsoninput_.jsoninput.html#readfromjsonfile" class="tsd-kind-icon">read<wbr>FromJSONFile</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_io_input_jsoninput_.jsoninput.html#readfromjsonurl" class="tsd-kind-icon">read<wbr>FromJSONURL</a></li>
@@ -194,10 +195,41 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/io/input/JSONInput.ts#L172">io/input/JSONInput.ts:172</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/io/input/JSONInput.ts#L196">io/input/JSONInput.ts:196</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+					<a name="handleedgeweights" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> handle<wbr>Edge<wbr>Weights</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Edge<wbr>Weights<span class="tsd-signature-symbol">(</span>edge_input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/master/src/io/input/JSONInput.ts#L178">io/input/JSONInput.ts:178</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Infinity &amp; -Infinity cases are redundant, as JavaScript
+									handles them correctly anyways (for now)</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>edge_input: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -377,6 +409,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
 								<a href="_io_input_jsoninput_.jsoninput.html#checknodeenvironment" class="tsd-kind-icon">check<wbr>Node<wbr>Environment</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
+								<a href="_io_input_jsoninput_.jsoninput.html#handleedgeweights" class="tsd-kind-icon">handle<wbr>Edge<wbr>Weights</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_io_input_jsoninput_.jsoninput.html#readfromjson" class="tsd-kind-icon">read<wbr>FromJSON</a>

@@ -1643,7 +1643,7 @@
 	            }
 	            var edges = json.data[node_id].edges;
 	            for (var e in edges) {
-	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = parseFloat(edge_input.weight), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
+	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
 	                    continue;
@@ -1658,6 +1658,22 @@
 	            }
 	        }
 	        return graph;
+	    };
+	    JSONInput.prototype.handleEdgeWeights = function (edge_input) {
+	        switch (edge_input.weight) {
+	            case "undefined":
+	                return DEFAULT_WEIGHT;
+	            case "Infinity":
+	                return Number.POSITIVE_INFINITY;
+	            case "-Infinity":
+	                return Number.NEGATIVE_INFINITY;
+	            case "MAX":
+	                return Number.MAX_VALUE;
+	            case "MIN":
+	                return Number.MIN_VALUE;
+	            default:
+	                return parseFloat(edge_input.weight);
+	        }
 	    };
 	    JSONInput.prototype.checkNodeEnvironment = function () {
 	        if (typeof window !== 'undefined') {
@@ -1716,7 +1732,7 @@
 	                node_struct.edges.push({
 	                    to: connected_nodes.b.getID(),
 	                    directed: edge.isDirected(),
-	                    weight: edge.isWeighted() ? edge.getWeight() : undefined
+	                    weight: this.handleEdgeWeight(edge)
 	                });
 	            }
 	            node_struct.features = node.getFeatures();
@@ -1725,6 +1741,23 @@
 	            }
 	        }
 	        return JSON.stringify(result);
+	    };
+	    JSONOutput.prototype.handleEdgeWeight = function (edge) {
+	        if (!edge.isWeighted()) {
+	            return undefined;
+	        }
+	        switch (edge.getWeight()) {
+	            case Number.POSITIVE_INFINITY:
+	                return 'Infinity';
+	            case Number.NEGATIVE_INFINITY:
+	                return '-Infinity';
+	            case Number.MAX_VALUE:
+	                return 'MAX';
+	            case Number.MIN_VALUE:
+	                return 'MIN';
+	            default:
+	                return edge.getWeight();
+	        }
 	    };
 	    return JSONOutput;
 	}());

@@ -41,7 +41,7 @@ var JSONOutput = (function () {
                 node_struct.edges.push({
                     to: connected_nodes.b.getID(),
                     directed: edge.isDirected(),
-                    weight: edge.isWeighted() ? edge.getWeight() : undefined
+                    weight: this.handleEdgeWeight(edge)
                 });
             }
             node_struct.features = node.getFeatures();
@@ -50,6 +50,23 @@ var JSONOutput = (function () {
             }
         }
         return JSON.stringify(result);
+    };
+    JSONOutput.prototype.handleEdgeWeight = function (edge) {
+        if (!edge.isWeighted()) {
+            return undefined;
+        }
+        switch (edge.getWeight()) {
+            case Number.POSITIVE_INFINITY:
+                return 'Infinity';
+            case Number.NEGATIVE_INFINITY:
+                return '-Infinity';
+            case Number.MAX_VALUE:
+                return 'MAX';
+            case Number.MIN_VALUE:
+                return 'MIN';
+            default:
+                return edge.getWeight();
+        }
     };
     return JSONOutput;
 }());

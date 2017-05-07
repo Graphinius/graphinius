@@ -79,7 +79,7 @@ class JSONOutput implements IJSONOutput {
         node_struct.edges.push({
           to: connected_nodes.b.getID(),
           directed: edge.isDirected(),
-          weight: edge.isWeighted() ? edge.getWeight() : undefined
+          weight: this.handleEdgeWeight(edge)
         });
       }
 
@@ -93,6 +93,27 @@ class JSONOutput implements IJSONOutput {
     }
 
     return JSON.stringify( result );
+  }
+
+
+  private handleEdgeWeight(edge: $E.IBaseEdge): string|number{
+    if ( !edge.isWeighted() ) {
+      return undefined;
+    }
+
+    switch( edge.getWeight() ) {
+      case Number.POSITIVE_INFINITY:
+        return 'Infinity';
+      case Number.NEGATIVE_INFINITY:
+        return '-Infinity';
+      case Number.MAX_VALUE:
+        return 'MAX';
+      case Number.MIN_VALUE:
+        return 'MIN';
+      default:
+        return edge.getWeight();
+    }
+
   }
 }
 

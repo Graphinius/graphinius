@@ -252,4 +252,97 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
   });
 
+
+  describe('correctly handle extreme edge weight cases', () => {
+    let JSONControlStruct = {},
+        n_a : $N.IBaseNode,
+        n_b : $N.IBaseNode;
+
+    beforeEach(() => {
+      graph = new $G.BaseGraph('Output Test graph');
+      n_a = graph.addNodeByID("A");
+      n_b = graph.addNodeByID("B");
+
+      JSONControlStruct = {
+        name: "Output Test graph",
+        nodes: 2,
+        dir_edges: 1,
+        und_edges: 0,
+        data: {
+          A: {
+            edges: [ ],
+            features: { }
+          },
+          B: {
+            edges: [
+              {
+                to: "A",
+                directed: true,
+                weight: undefined
+              }
+            ],
+            features: { }
+          }
+        }
+      };
+    });
+    
+
+    it('should encode Positive Infinity as string "infinity"', () => {
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {
+        directed: true,
+        weighted: true,
+        weight: Number.POSITIVE_INFINITY
+      });
+      jsonOut = new $JO.JSONOutput();
+      resultString = jsonOut.writeToJSONSString( graph );
+      JSONControlStruct['data']['B']['edges'][0]['weight'] = 'Infinity';
+      let JSONControlString = JSON.stringify( JSONControlStruct );
+      expect(resultString).to.equal(JSONControlString);      
+    });
+
+
+    it('should encode Negative Infinity as string "-infinity"', () => {  
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {
+        directed: true,
+        weighted: true,
+        weight: Number.NEGATIVE_INFINITY
+      });
+      jsonOut = new $JO.JSONOutput();
+      resultString = jsonOut.writeToJSONSString( graph );
+      JSONControlStruct['data']['B']['edges'][0]['weight'] = '-Infinity';
+      let JSONControlString = JSON.stringify( JSONControlStruct );
+      expect(resultString).to.equal(JSONControlString);      
+    });
+
+
+    it('should encode Max Value as string "max"', () => {
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {
+        directed: true,
+        weighted: true,
+        weight: Number.MAX_VALUE
+      });
+      jsonOut = new $JO.JSONOutput();
+      resultString = jsonOut.writeToJSONSString( graph );
+      JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MAX';
+      let JSONControlString = JSON.stringify( JSONControlStruct );
+      expect(resultString).to.equal(JSONControlString);      
+    });
+
+
+    it('should encode Min Value as string "min"', () => {
+      graph.addEdgeByID("Single directed edge", n_b, n_a, {
+        directed: true,
+        weighted: true,
+        weight: Number.MIN_VALUE
+      });
+      jsonOut = new $JO.JSONOutput();
+      resultString = jsonOut.writeToJSONSString( graph );
+      JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MIN';
+      let JSONControlString = JSON.stringify( JSONControlStruct );
+      expect(resultString).to.equal(JSONControlString);      
+    });
+
+  });
+
 });

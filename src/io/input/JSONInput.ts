@@ -6,7 +6,7 @@ import path 		= require('path');
 import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
 
-var DEFAULT_WEIGHT = 1;
+const DEFAULT_WEIGHT : number = 1;
 
 export interface JSONEdge {
   to          : string;
@@ -144,7 +144,7 @@ class JSONInput implements IJSONInput {
             dir_char = directed ? 'd' : 'u',
 
             // Is there any weight information?,
-            weight_float = parseFloat(edge_input.weight),
+            weight_float = this.handleEdgeWeights(edge_input),
             weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
             edge_weight = this._weighted_mode ? weight_info : undefined, 
 						target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);      
@@ -168,7 +168,31 @@ class JSONInput implements IJSONInput {
 		}		
 		return graph;
 	}
+
+
+	/**
+	 * Infinity & -Infinity cases are redundant, as JavaScript 
+	 * handles them correctly anyways (for now)
+	 * @param edge_input 
+	 */
+	private handleEdgeWeights(edge_input) : number {
+		switch(edge_input.weight) {
+			case "undefined":
+				return DEFAULT_WEIGHT;
+			case "Infinity":
+				return Number.POSITIVE_INFINITY;
+			case "-Infinity":
+				return Number.NEGATIVE_INFINITY;
+			case "MAX":
+				return Number.MAX_VALUE;
+			case "MIN":
+				return Number.MIN_VALUE;
+			default:
+				return parseFloat(edge_input.weight)
+		}
+	}
 	
+
 	private checkNodeEnvironment() : void {
 		if ( typeof window !== 'undefined' ) {
 			throw new Error('Cannot read file in browser environment.');

@@ -1,0 +1,40 @@
+{
+  "name": "Small graph test scenario",
+  "nodes": 4,
+  "edges": 7,
+	"data": {
+		"A": {
+			"edges": [
+        {
+          "to": "A",
+          "directed": true,
+          "weight": "undefined"
+        },
+        {
+          "to": "B",
+          "directed": true,
+          "weight": "Infinity"
+        },
+        {
+          "to": "C",
+          "directed": true,
+          "weight": "-Infinity"
+        },
+        {
+          "to": "D",
+          "directed": true,
+          "weight": "MAX"
+        },
+        {
+          "to": "E",
+          "directed": true,
+          "weight": "MIN"
+        }
+			]
+		},
+		"B": { },
+		"C": { },
+		"D": { },
+    "E": { }
+	}
+}
