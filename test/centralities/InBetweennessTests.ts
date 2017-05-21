@@ -5,6 +5,7 @@ import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 import * as $IB from '../../src/centralities/InBetweenness';
+import * as $FW from '../../src/search/FloydWarshall';
 
 const SN_GRAPH_NODES = 1034,
       SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
@@ -18,6 +19,7 @@ let expect = chai.expect,
 
 
 describe("InBetweenness Centrality Tests", () => {
+
 
     it.skip('should return a map of nodes of length 6', () => {
         let iBt_dist = $IB.inBetweennessCentrality( graph );

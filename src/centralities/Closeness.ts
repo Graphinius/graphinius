@@ -2,7 +2,7 @@
 
 /*
     This calculates the shortest path to all others, this is accomplished by using
-    the PFS of Graphinius JS
+    the PFS of Graphinius
  */
 import * as $G from '../core/Graph';
 import * as $PFS from '../search/PFS';

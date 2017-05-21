@@ -2,29 +2,36 @@
 
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import * as $J from '../../src/io/input/JSONInput';
+import * as $C from '../../src/io/input/CSVInput';
 import * as $FW from '../../src/search/FloydWarshall';
 
 import * as sinonChai from 'sinon-chai';
 
 chai.use(sinonChai);
 var expect 	= chai.expect;
-var JSON_IN	= $I.JSONInput;
+var JSON_IN	= $J.JSONInput;
+var CSV_IN	= $C.CSVInput;
 
 var search_graph = "./test/test_data/search_graph.json";
+var social_graph = "./test/test_data/social_network_edges.csv";
 
 
 describe.only('Basic GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	
-	var json 					: $I.IJSONInput,
+	var 	json 					: $J.IJSONInput,
+			csv						: $C.ICSVInput,
 			graph					: $G.IGraph,
+			graph_social			: $G.IGraph,
 			stats					: $G.GraphStats,
 			FW_res		: number[][];
 
 
 	it('should correctly instantiate the search graph', () => {
 		json = new JSON_IN(true,false,true);
+		csv = new CSV_IN(' ',false,false);
 		graph = json.readFromJSONFile(search_graph);
+		graph_social = csv.readFromEdgeListFile(social_graph);
 		stats = graph.getStats();
 		expect(stats.nr_nodes).to.equal(7);
 		expect(stats.nr_dir_edges).to.equal(7);
@@ -94,8 +101,25 @@ describe.only('Basic GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 				}
 			});
 
+			it.skip('should be equal Floyd-Warshalls (with and without adjency list)', () => {
+				let dis: number[][] = $FW.FloydWarshall(graph);
+				let adj: number[][] = $FW.FloydWarshall(graph);
+				console.log(graph.nrNodes());
+				console.log(dis);
+				console.log(adj);
+				expect(dis).to.equal(adj);
+			});
+
 		});
 
+		describe('Floyd-Warshall on social networtk graph - ', () => {
+			it.skip('should take a while to run this test...', () => {
+				let d = +new Date();
+				FW_res = $FW.FloydWarshall(graph_social);
+				let e = +new Date();
+				console.log("The test took " + (d-e) + "ms to finish");
+			});
+		});
 /*
 		describe('computing distances in DIRECTED _mode - ', () => {
 
