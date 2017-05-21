@@ -19,7 +19,7 @@ var intermediate = "./test/test_data/bernd_ares_intermediate.json";
 var social_graph = "./test/test_data/social_network_edges.csv";
 
 
-describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
+describe.only('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 	
 	var 	json 					: $J.IJSONInput,
 			csv						: $C.ICSVInput,
@@ -62,10 +62,12 @@ describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 
 			it('should correctly compute distances matrix for graph', () => {
 				FW_res = $FW.FloydWarshall(graph);
-
 				// just for comparison
 				// let FW_res_sparse =
+				//console.log(FW_res[1]);
+				//console.log($FW.getAllShortestPaths(graph,FW_res[1]));
 
+				FW_res = FW_res[0];
 				expect(Object.keys(FW_res).length).to.equal(graph.nrNodes());
 				let nodes = graph.getNodes();
 				for (let a in nodes) {
@@ -115,16 +117,16 @@ describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 			});
 
 			it('should correctly compute distances matrix for graph with sparse option', () => {
-				FW_res = $FW.FloydWarshall(graph);
+				FW_res = $FW.FloydWarshall(graph)[0];
 				// just for comparison
-				let FW_res_sparse = $FW.FloydWarshall(graph, true);
+				let FW_res_sparse = $FW.FloydWarshall(graph, true)[0];
 
 				expect(FW_res).to.deep.equal(FW_res_sparse);
 			});
 
 			it.skip('should be equal Floyd-Warshalls (with and without adjency list)', () => {
-				let dis: {} = $FW.FloydWarshall(graph);
-				let adj: {} = $FW.FloydWarshall(graph);
+				let dis: {} = $FW.FloydWarshall(graph)[0];
+				let adj: {} = $FW.FloydWarshall(graph)[0];
 				console.log(graph.nrNodes());
 				console.log(dis);
 				console.log(adj);
@@ -136,7 +138,7 @@ describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 			
 		it('trying Floyd Warshal on a ~75 node / ~200 edge graph', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshall(graph_bernd);
+			FW_res = $FW.FloydWarshall(graph_bernd)[0];
 			let e = +new Date();
 			console.log("Floyd on Bernd took " + (d-e) + "ms to finish");
 		});
@@ -144,20 +146,20 @@ describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 
 		it('trying Floyd Warshal on a ~75 node / ~200 edge graph, sparse implementation', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshall(graph_bernd, true);
+			FW_res = $FW.FloydWarshall(graph_bernd, true)[0];
 			let e = +new Date();
 			console.log("Floyd on Bernd took " + (d-e) + "ms to finish");
 		});
 
 
-		it.skip('comparing dense and sparse FW implementation on slightly larger graph (75 nodes)', () => {
+		it('comparing dense and sparse FW implementation on slightly larger graph (75 nodes)', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshall(graph_midsize);
+			FW_res = $FW.FloydWarshall(graph_midsize)[0];
 			let e = +new Date();
 			console.log("Dense Floyd on intermediate sized graph took " + (d-e) + "ms to finish");
 
 			d = +new Date();
-			let FW_res_sparse = $FW.FloydWarshall(graph_midsize, true);
+			let FW_res_sparse = $FW.FloydWarshall(graph_midsize, true)[0];
 			e = +new Date();
 			console.log("Sparse Floyd on intermediate sized graph took " + (d-e) + "ms to finish");
 			
@@ -167,12 +169,12 @@ describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 
 		it.skip('performance test on social graph with ~1k nodes and ~50k edges', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshall(graph_social, true);
+			FW_res = $FW.FloydWarshall(graph_social, true)[0];
 			let e = +new Date();
 			console.log("Sparse Floyd on social network ~1k took " + (d-e) + "ms to finish");
 
 			d = +new Date();
-			let FW_res_sparse = $FW.FloydWarshall(graph_social);
+			let FW_res_sparse = $FW.FloydWarshall(graph_social)[0];
 			e = +new Date();
 			console.log("Dense Floyd on social network ~1k took " + (d-e) + "ms to finish");
 

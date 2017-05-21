@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
@@ -121,9 +121,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ }),
+/***/ },
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -184,9 +184,9 @@
 	exports.BaseEdge = BaseEdge;
 
 
-/***/ }),
+/***/ },
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -419,9 +419,9 @@
 	exports.BaseNode = BaseNode;
 
 
-/***/ }),
+/***/ },
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -496,9 +496,9 @@
 	exports.findKey = findKey;
 
 
-/***/ }),
+/***/ },
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -907,9 +907,9 @@
 	exports.BaseGraph = BaseGraph;
 
 
-/***/ }),
+/***/ },
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
@@ -959,9 +959,9 @@
 	exports.Logger = Logger;
 
 
-/***/ }),
+/***/ },
 /* 6 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	var LOG_LEVELS = {
 	  debug: "DEBUG",
@@ -977,9 +977,9 @@
 	  RUN_CONFIG: RUN_CONFIG
 	};
 
-/***/ }),
+/***/ },
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var path = __webpack_require__(8);
@@ -1106,9 +1106,9 @@
 	exports.CSVInput = CSVInput;
 
 
-/***/ }),
+/***/ },
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
 	//
@@ -1337,9 +1337,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
-/***/ }),
+/***/ },
 /* 9 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -1523,15 +1523,15 @@
 	process.umask = function() { return 0; };
 
 
-/***/ }),
+/***/ },
 /* 10 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	
 
-/***/ }),
+/***/ },
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var http = __webpack_require__(10);
@@ -1552,9 +1552,9 @@
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
 
-/***/ }),
+/***/ },
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1602,9 +1602,9 @@
 	exports.CSVOutput = CSVOutput;
 
 
-/***/ }),
+/***/ },
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1692,9 +1692,9 @@
 	exports.JSONInput = JSONInput;
 
 
-/***/ }),
+/***/ },
 /* 14 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1754,9 +1754,9 @@
 	exports.JSONOutput = JSONOutput;
 
 
-/***/ }),
+/***/ },
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -1865,9 +1865,9 @@
 	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
 
 
-/***/ }),
+/***/ },
 /* 16 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	function execCallbacks(cbs, context) {
@@ -1883,9 +1883,9 @@
 	exports.execCallbacks = execCallbacks;
 
 
-/***/ }),
+/***/ },
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -2046,9 +2046,9 @@
 	;
 
 
-/***/ }),
+/***/ },
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
@@ -2199,9 +2199,9 @@
 	exports.preparePFSStandardConfig = preparePFSStandardConfig;
 
 
-/***/ }),
+/***/ },
 /* 19 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	(function (BinaryHeapMode) {
@@ -2443,9 +2443,9 @@
 	exports.BinaryHeap = BinaryHeap;
 
 
-/***/ }),
+/***/ },
 /* 20 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	function randBase36String() {
@@ -2589,9 +2589,9 @@
 	exports.rvlist = rvlist;
 
 
-/***/ }),
+/***/ },
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var randgen = __webpack_require__(20);
@@ -2786,9 +2786,9 @@
 	exports.SimplePerturber = SimplePerturber;
 
 
-/***/ }),
+/***/ },
 /* 22 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	var MCMFBoykov = (function () {
@@ -3015,9 +3015,9 @@
 	exports.MCMFBoykov = MCMFBoykov;
 
 
-/***/ }),
+/***/ },
 /* 23 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -3121,5 +3121,5 @@
 	exports.degreeCentrality = degreeCentrality;
 
 
-/***/ })
+/***/ }
 /******/ ]);
