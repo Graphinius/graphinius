@@ -93,7 +93,7 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
-	adjList() : MinAdjacencyList;
+	adjList(incoming?:boolean) : MinAdjacencyList;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -117,21 +117,37 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
-	adjList() : MinAdjacencyList{
+	adjList(incoming:boolean = false) : MinAdjacencyList{
 		let adj_list: MinAdjacencyList = {},
 				nodes = this.getNodes(),
-				adj_list_entries: MinAdjacencyListEntry,
 				weight: number;
+		for (let key in nodes) {
+			adj_list[key] = {};
+		}
+		// console.log(adj_list);
 
-		for ( let key in nodes ) {
-			adj_list_entries = {}; // clean up
+		for ( var key in nodes ) {
+			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
-			nodes[key].reachNodes().forEach( (ne) => {
-				weight = adj_list_entries[ne.node.getID()] || Number.POSITIVE_INFINITY;
-				adj_list_entries[ne.node.getID()] = ne.edge.getWeight() < weight ? ne.edge.getWeight() : weight;
+			neighbors.forEach( (ne) => {
+				weight = adj_list[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+
+				if ( ne.edge.getWeight() < weight ) {
+					adj_list[key][ne.node.getID()] = ne.edge.getWeight();
+
+					if (incoming) { // we need to update the 'inverse' entry as well
+						adj_list[ne.node.getID()][key] = ne.edge.getWeight();
+					}
+				}
+				else {
+					adj_list[key][ne.node.getID()] = weight;
+
+					if (incoming) { // we need to update the 'inverse' entry as well
+						adj_list[ne.node.getID()][key] = weight;
+					}
+				}
 			});
 
-			adj_list[key] = adj_list_entries;
 		}
 		
 		return adj_list;

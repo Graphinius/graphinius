@@ -22,15 +22,29 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
-    BaseGraph.prototype.adjList = function () {
-        var adj_list = {}, nodes = this.getNodes(), adj_list_entries, weight;
+    BaseGraph.prototype.adjList = function (incoming) {
+        if (incoming === void 0) { incoming = false; }
+        var adj_list = {}, nodes = this.getNodes(), weight;
+        for (var key_1 in nodes) {
+            adj_list[key_1] = {};
+        }
         for (var key in nodes) {
-            adj_list_entries = {};
-            nodes[key].reachNodes().forEach(function (ne) {
-                weight = adj_list_entries[ne.node.getID()] || Number.POSITIVE_INFINITY;
-                adj_list_entries[ne.node.getID()] = ne.edge.getWeight() < weight ? ne.edge.getWeight() : weight;
+            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+            neighbors.forEach(function (ne) {
+                weight = adj_list[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+                if (ne.edge.getWeight() < weight) {
+                    adj_list[key][ne.node.getID()] = ne.edge.getWeight();
+                    if (incoming) {
+                        adj_list[ne.node.getID()][key] = ne.edge.getWeight();
+                    }
+                }
+                else {
+                    adj_list[key][ne.node.getID()] = weight;
+                    if (incoming) {
+                        adj_list[ne.node.getID()][key] = weight;
+                    }
+                }
             });
-            adj_list[key] = adj_list_entries;
         }
         return adj_list;
     };

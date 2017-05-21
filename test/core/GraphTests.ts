@@ -925,7 +925,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		it('should produce the correct adj.list for the small example graph', () => {
+		it('should produce the correct adj.list without incoming edges', () => {
 			graph = jsonReader.readFromJSONFile(small_graph_file);
 			adj_list = graph.adjList();
 			// console.dir(adj_list);
@@ -934,6 +934,20 @@ describe('GRAPH TESTS: ', () => {
 				'B': {'A': 3},
 				'C': {'A': 0},
 				'D': {'A': 6}
+			};
+			expect(adj_list).to.deep.equal(expected_result);
+		});
+
+
+		it('should produce the correct adj.list including incoming edges', () => {
+			graph = jsonReader.readFromJSONFile(small_graph_file);
+			adj_list = graph.adjList(true);
+			// console.dir(adj_list);
+			expected_result = {
+				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+				'B': {'A': 1},
+				'C': {'A': 0},
+				'D': {'A': -33}
 			};
 			expect(adj_list).to.deep.equal(expected_result);
 		});

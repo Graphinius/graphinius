@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
@@ -121,9 +121,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -184,9 +184,9 @@
 	exports.BaseEdge = BaseEdge;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -419,9 +419,9 @@
 	exports.BaseNode = BaseNode;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -496,9 +496,9 @@
 	exports.findKey = findKey;
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -524,15 +524,29 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.adjList = function () {
-	        var adj_list = {}, nodes = this.getNodes(), adj_list_entries, weight;
+	    BaseGraph.prototype.adjList = function (incoming) {
+	        if (incoming === void 0) { incoming = false; }
+	        var adj_list = {}, nodes = this.getNodes(), weight;
+	        for (var key_1 in nodes) {
+	            adj_list[key_1] = {};
+	        }
 	        for (var key in nodes) {
-	            adj_list_entries = {};
-	            nodes[key].reachNodes().forEach(function (ne) {
-	                weight = adj_list_entries[ne.node.getID()] || Number.POSITIVE_INFINITY;
-	                adj_list_entries[ne.node.getID()] = ne.edge.getWeight() < weight ? ne.edge.getWeight() : weight;
+	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+	            neighbors.forEach(function (ne) {
+	                weight = adj_list[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                if (ne.edge.getWeight() < weight) {
+	                    adj_list[key][ne.node.getID()] = ne.edge.getWeight();
+	                    if (incoming) {
+	                        adj_list[ne.node.getID()][key] = ne.edge.getWeight();
+	                    }
+	                }
+	                else {
+	                    adj_list[key][ne.node.getID()] = weight;
+	                    if (incoming) {
+	                        adj_list[ne.node.getID()][key] = weight;
+	                    }
+	                }
 	            });
-	            adj_list[key] = adj_list_entries;
 	        }
 	        return adj_list;
 	    };
@@ -893,9 +907,9 @@
 	exports.BaseGraph = BaseGraph;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
@@ -945,9 +959,9 @@
 	exports.Logger = Logger;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	var LOG_LEVELS = {
 	  debug: "DEBUG",
@@ -963,9 +977,9 @@
 	  RUN_CONFIG: RUN_CONFIG
 	};
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var path = __webpack_require__(8);
@@ -1092,9 +1106,9 @@
 	exports.CSVInput = CSVInput;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
 	//
@@ -1323,9 +1337,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -1509,15 +1523,15 @@
 	process.umask = function() { return 0; };
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var http = __webpack_require__(10);
@@ -1538,9 +1552,9 @@
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1588,9 +1602,9 @@
 	exports.CSVOutput = CSVOutput;
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1678,9 +1692,9 @@
 	exports.JSONInput = JSONInput;
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1740,9 +1754,9 @@
 	exports.JSONOutput = JSONOutput;
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -1851,9 +1865,9 @@
 	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	function execCallbacks(cbs, context) {
@@ -1869,9 +1883,9 @@
 	exports.execCallbacks = execCallbacks;
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -2032,9 +2046,9 @@
 	;
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
@@ -2185,9 +2199,9 @@
 	exports.preparePFSStandardConfig = preparePFSStandardConfig;
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	(function (BinaryHeapMode) {
@@ -2429,9 +2443,9 @@
 	exports.BinaryHeap = BinaryHeap;
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	function randBase36String() {
@@ -2575,9 +2589,9 @@
 	exports.rvlist = rvlist;
 
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var randgen = __webpack_require__(20);
@@ -2772,9 +2786,9 @@
 	exports.SimplePerturber = SimplePerturber;
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var MCMFBoykov = (function () {
@@ -3001,9 +3015,9 @@
 	exports.MCMFBoykov = MCMFBoykov;
 
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -3107,5 +3121,5 @@
 	exports.degreeCentrality = degreeCentrality;
 
 
-/***/ }
+/***/ })
 /******/ ]);

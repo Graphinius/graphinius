@@ -152,7 +152,7 @@ gulp.task('bundle', ['pack'], function() {
 gulp.task('test-basic', ['build'], function () {
 	return gulp.src(paths.tests_basic, {read: false})
 						 .pipe(mocha({reporter: 'spec',
-						 							timeout: 60000}));
+						 							timeout: Number.POSITIVE_INFINITY}));
 });
 
 
@@ -231,6 +231,11 @@ gulp.task('watch-async', function () {
 
 gulp.task('watch-perturb', function () {
 	gulp.watch(paths.typescripts, ['test-perturb']);
+});
+
+
+gulp.task('watch-cenral', function () {
+	gulp.watch(paths.typescripts, ['test-central']);
 });
 
 

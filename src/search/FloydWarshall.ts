@@ -12,7 +12,7 @@ import * as $SU from '../utils/structUtils'
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshall(graph 	 : $G.IGraph) : number[][] {
+function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
 
 	/**
 	 * We are not traversing an empty graph...
@@ -27,13 +27,14 @@ function FloydWarshall(graph 	 : $G.IGraph) : number[][] {
 	}
 	 */
 
-	let dist:number[][] = [];
+	let dist:{} = {};
 	let edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	let nodes = graph.getNodes();
+	let adj_list = graph.adjList();
 	for (let keyA in nodes) {
 		//This needs to be done in an extra step, because nodes
 		//are not necessarily in order
-		dist[keyA] = [];
+		dist[keyA] = {};
 	}
 	for (let keyA in nodes) {
 		for (let keyB in nodes) {
@@ -55,13 +56,49 @@ function FloydWarshall(graph 	 : $G.IGraph) : number[][] {
 		}
 	}
 
-	for (let k in nodes)
-		for (let i in nodes)
-			for (let j in nodes)
-				if(dist[i][j] > dist[i][k] + dist[k][j])
-					dist[i][j] = dist[i][k] + dist[k][j];
 
+
+	if (sparse) {
+		return computeSparseFW();
+	}
+	else {
+		for (let k in nodes)
+			for (let i in nodes)
+				for (let j in nodes)
+					if(dist[i][j] > dist[i][k] + dist[k][j])
+						dist[i][j] = dist[i][k] + dist[k][j];
+	}
 	return dist;
+
+
+	function computeSparseFW() {
+		adj_list = graph.adjList(true); // include incoming edges
+		let keys = Object.keys(adj_list);
+		// console.log(keys);
+		let pair_count = 0;
+
+		for (let k in adj_list) {
+			for (let i in adj_list[k]) {
+				for (let j in adj_list[k]) {
+					pair_count++;
+                    // console.log(`${i},${j}`);
+
+					if ( dist[i][k] == null || dist[j][k] == null ) {
+						continue;
+					}
+
+					if(dist[i][j] > dist[i][k] + dist[k][j]){
+						dist[i][j] = dist[i][k] + dist[k][j];
+						adj_list[i][j] = dist[i][j];
+					}					
+				}
+			}
+		}
+		console.log(`Went over ${pair_count} pairs.`);
+
+		return dist;
+	}
 }
+
 
 export { FloydWarshall };
