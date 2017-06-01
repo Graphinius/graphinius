@@ -19,7 +19,7 @@ var intermediate = "./test/test_data/bernd_ares_intermediate.json";
 var social_graph = "./test/test_data/social_network_edges.csv";
 
 
-describe.only('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
+describe('Basic GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 	
 	var 	json 					: $J.IJSONInput,
 			csv						: $C.ICSVInput,
