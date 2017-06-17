@@ -1,8 +1,8 @@
 "use strict";
 var $G = require('../core/Graph');
 var $SU = require('../utils/structUtils');
-function FloydWarshall(graph, sparse) {
-    if (sparse === void 0) { sparse = false; }
+function FloydWarshall(graph, config) {
+    if (config === void 0) { config = { sparse: false }; }
     if (graph.getMode() === $G.GraphMode.INIT) {
         throw new Error('Cowardly refusing to traverse graph without edges.');
     }
@@ -44,7 +44,7 @@ function FloydWarshall(graph, sparse) {
             next[a][b].push(b);
         }
     }
-    if (sparse) {
+    if (config.sparse) {
         adj_list = graph.adjList(true);
         var keys = Object.keys(adj_list);
         var pair_count = 0;

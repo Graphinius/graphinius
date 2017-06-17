@@ -2456,8 +2456,8 @@
 	"use strict";
 	var $G = __webpack_require__(4);
 	var $SU = __webpack_require__(3);
-	function FloydWarshall(graph, sparse) {
-	    if (sparse === void 0) { sparse = false; }
+	function FloydWarshall(graph, config) {
+	    if (config === void 0) { config = { sparse: false }; }
 	    if (graph.getMode() === $G.GraphMode.INIT) {
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
@@ -2499,7 +2499,7 @@
 	            next[a][b].push(b);
 	        }
 	    }
-	    if (sparse) {
+	    if (config.sparse) {
 	        adj_list = graph.adjList(true);
 	        var keys = Object.keys(adj_list);
 	        var pair_count = 0;

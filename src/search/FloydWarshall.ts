@@ -3,6 +3,10 @@
 import * as $G from '../core/Graph';
 import * as $SU from '../utils/structUtils'
 
+interface FWConfig {
+	sparse: boolean;
+}
+
 /**
  * Floyd-Warshall - we mostly use it to get In-betweenness
  * of a graph. We use the standard algorithm and save all
@@ -13,7 +17,7 @@ import * as $SU from '../utils/structUtils'
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
+function FloydWarshall(graph: $G.IGraph, config = { sparse: false } ) : {} {
 
 	/**
 	 * We are not traversing an empty graph...
@@ -26,7 +30,7 @@ function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
 	 if ( dir_mode === $G.GraphMode.INIT ) {
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
-	 */
+	*/
 
 	let dist:{} = {};
 	let next:{} = {};
@@ -41,7 +45,7 @@ function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
 	}
 	for (let keyA in nodes) {
 		for (let keyB in nodes) {
-			if(keyA===keyB) {
+			if(keyA === keyB) {
 				dist[keyA][keyA] = 0;
 				next[keyA][keyA] = [];
 				next[keyA][keyA].push(-1);
@@ -71,7 +75,7 @@ function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
 		}
 	}
 
-	if (sparse) {
+	if (config.sparse) {
 		adj_list = graph.adjList(true); // include incoming edges
 		let keys = Object.keys(adj_list);
 		let pair_count = 0;
@@ -114,7 +118,9 @@ function FloydWarshall(graph: $G.IGraph, sparse: boolean = false) : {} {
 	ret["next"] = next;
 	return [dist,next];
 }
-function getShortestPath(next, i,j){
+
+
+function getShortestPath(next, i, j){
 	let allPaths = [];
 	let c = 0;
 	console.log(i+" j:"+j);
@@ -138,6 +144,8 @@ function getShortestPath(next, i,j){
 
 	return allPaths;
 }
+
+
 function getAllShortestPaths(graph : $G.IGraph, nextMatrix:{}):{}{
 	let ret = {};
 	for(let k in graph.getNodes()){
@@ -146,6 +154,7 @@ function getAllShortestPaths(graph : $G.IGraph, nextMatrix:{}):{}{
 	}
 	return ret;
 }
+
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 function isEmpty(obj) {
@@ -172,6 +181,5 @@ function isEmpty(obj) {
 
 	return true;
 }
-
 
 export { FloydWarshall, getAllShortestPaths };
