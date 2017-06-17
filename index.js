@@ -8,6 +8,7 @@ var JSONOutput      = require("./dist/io/output/JSONOutput.js");
 var BFS				      = require("./dist/search/BFS.js");
 var DFS				      = require("./dist/search/DFS.js");
 var PFS             = require("./dist/search/PFS.js");
+var FloydWarshall		= require("./dist/search/FloydWarshall.js");
 var structUtils     = require("./dist/utils/structUtils.js");
 var remoteUtils     = require("./dist/utils/remoteUtils.js");
 var callbackUtils   = require("./dist/utils/callbackUtils.js");
@@ -15,7 +16,7 @@ var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var degCent				 	= require("./dist/centralities/DegreeCentrality.js")
+var degCent				 	= require("./dist/centralities/DegreeCentrality.js");
 
 // Define global object
 var out = typeof window !== 'undefined' ? window : global;
@@ -49,7 +50,8 @@ out.$G = {
 		prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
 		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
     PFS                            : PFS.PFS,
-    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
+    preparePFSStandardConfig       : PFS.preparePFSStandardConfig,
+		FloydWarshall									 : FloydWarshall.FloydWarshall
 	},
 	mincut: {
 		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
