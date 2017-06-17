@@ -242,6 +242,8 @@ declare module GraphiniusJS {
             clearAllEdges(): void;
             pickRandomProperty(propList) : any;
             pickRandomProperties(propList, amount) : Array<string>;
+            clone() : IGraph;
+            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
         }
 
         export class BaseGraph implements IGraph {
@@ -308,6 +310,8 @@ declare module GraphiniusJS {
             protected updateGraphMode(): void;
             pickRandomProperty(propList) : any;
             pickRandomProperties(propList, amount) : Array<string>;
+            clone() : IGraph;
+            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
         }
     }
 

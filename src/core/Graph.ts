@@ -93,7 +93,7 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
-	adjList(incoming?:boolean) : MinAdjacencyList;
+	adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -117,7 +117,8 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
-	adjList(incoming:boolean = false) : MinAdjacencyList{
+	adjList(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyList{
+		self_dist = self_dist || 0;
 		let adj_list: MinAdjacencyList = {},
 				nodes = this.getNodes(),
 				weight: number;
@@ -148,6 +149,14 @@ class BaseGraph implements IGraph {
 				}
 			});
 
+		}
+
+		if ( include_self ) {
+			for ( var node in nodes ) {
+				if ( adj_list[node][node] == null ) {
+					adj_list[node][node] = self_dist;
+				}
+			}
 		}
 		
 		return adj_list;

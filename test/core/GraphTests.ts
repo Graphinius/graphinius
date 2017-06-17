@@ -952,6 +952,38 @@ describe('GRAPH TESTS: ', () => {
 			expect(adj_list).to.deep.equal(expected_result);
 		});
 
+
+		it('should produce the correct adj.list including incoming edges & implicit self connection', () => {
+			graph = jsonReader.readFromJSONFile(small_graph_file);
+			adj_list = graph.adjList(true, true);
+			// console.dir(adj_list);
+			expected_result = {
+				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+				'B': {'A': 1, 'B': 0},
+				'C': {'A': 0, 'C': 0},
+				'D': {'A': -33, 'D': 0}
+			};
+			expect(adj_list).to.deep.equal(expected_result);
+		});
+
+
+		/**
+		 * In a state machine, the distance of a node to itself could
+		 * be set to 1 because the state would have to transition to itself...
+		 */
+		it('should produce the correct adj.list with specific self-dist', () => {
+			graph = jsonReader.readFromJSONFile(small_graph_file);
+			adj_list = graph.adjList(true, true, 1);
+			// console.dir(adj_list);
+			expected_result = {
+				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+				'B': {'A': 1, 'B': 1},
+				'C': {'A': 0, 'C': 1},
+				'D': {'A': -33, 'D': 1}
+			};
+			expect(adj_list).to.deep.equal(expected_result);
+		});
+
 	});
 	
 });

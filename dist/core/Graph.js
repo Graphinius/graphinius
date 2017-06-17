@@ -22,8 +22,10 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
-    BaseGraph.prototype.adjList = function (incoming) {
+    BaseGraph.prototype.adjList = function (incoming, include_self, self_dist) {
         if (incoming === void 0) { incoming = false; }
+        if (include_self === void 0) { include_self = false; }
+        self_dist = self_dist || 0;
         var adj_list = {}, nodes = this.getNodes(), weight;
         for (var key_1 in nodes) {
             adj_list[key_1] = {};
@@ -45,6 +47,13 @@ var BaseGraph = (function () {
                     }
                 }
             });
+        }
+        if (include_self) {
+            for (var node in nodes) {
+                if (adj_list[node][node] == null) {
+                    adj_list[node][node] = self_dist;
+                }
+            }
         }
         return adj_list;
     };

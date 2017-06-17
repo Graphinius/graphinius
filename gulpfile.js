@@ -1,14 +1,14 @@
 const gulp 						= require('gulp');
 const clean 					= require('gulp-clean');
 const mocha 					= require('gulp-mocha');
-const ts 							= require('gulp-typescript');
+const ts 						= require('gulp-typescript');
 const tdoc 						= require("gulp-typedoc");
 const concat					= require('gulp-concat');
 const merge 					= require('merge2');
-const webpack 				= require('webpack-stream');
+const webpack 					= require('webpack-stream');
 const uglify 					= require('gulp-uglify');
 const rename 					= require('gulp-rename');
-const istanbul 				= require('gulp-istanbul');
+const istanbul 					= require('gulp-istanbul');
 const git 						= require('gulp-git');
 const prompt	 				= require('gulp-prompt');
 
@@ -23,10 +23,11 @@ const paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
+	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
+	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
-  tests_perturb: ['test/perturbation/**/*.js'],
-  tests_central: ['test/centralities/**/*.js'],
+  	tests_perturb: ['test/perturbation/**/*.js'],
+  	tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
 	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
@@ -164,6 +165,14 @@ gulp.task('test-async', ['build'], function () {
 });
 
 
+// 'Search tests - include Floyd Warshal and shortest paths'
+gulp.task('test-search', ['build'], function () {
+	return gulp.src(paths.tests_search, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 600000}));
+});
+
+
 // 'Perturbation tests - usually take a tad longer'
 gulp.task('test-perturb', ['build'], function () {
 	return gulp.src(paths.tests_perturb, {read: false})
@@ -226,6 +235,11 @@ gulp.task('watch-basic', function () {
 
 gulp.task('watch-async', function () {
 	gulp.watch(paths.typescripts, ['test-async']);
+});
+
+
+gulp.task('watch-search', function () {
+	gulp.watch(paths.typescripts, ['test-search']);
 });
 
 
