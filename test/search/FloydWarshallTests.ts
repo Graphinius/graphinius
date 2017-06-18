@@ -9,26 +9,26 @@ import * as $FW from '../../src/search/FloydWarshall';
 import * as sinonChai from 'sinon-chai';
 
 chai.use(sinonChai);
-var expect 	= chai.expect;
-var JSON_IN	= $J.JSONInput;
-var CSV_IN	= $C.CSVInput;
+let expect 	= chai.expect;
+let JSON_IN	= $J.JSONInput;
+let CSV_IN	= $C.CSVInput;
 
-var search_graph = "./test/test_data/search_graph.json";
-var bernd_graph = "./test/test_data/bernd_ares.json";
-var intermediate = "./test/test_data/bernd_ares_intermediate.json";
-var social_graph = "./test/test_data/social_network_edges.csv";
+let search_graph = "./test/test_data/search_graph.json";
+let bernd_graph = "./test/test_data/bernd_ares.json";
+let intermediate = "./test/test_data/bernd_ares_intermediate.json";
+let social_graph = "./test/test_data/social_network_edges.csv";
 
 
-describe.only('GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
+describe.only('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	
-	var 	json 					: $J.IJSONInput,
-			csv						: $C.ICSVInput,
-			graph_search					: $G.IGraph,
+	let json 							: $J.IJSONInput,
+			csv								: $C.ICSVInput,
+			graph_search			: $G.IGraph,
 			graph_bernd				: $G.IGraph,
 			graph_midsize			: $G.IGraph,
 			graph_social			: $G.IGraph,
-			stats					: $G.GraphStats,
-			FW_res					: {};
+			stats							: $G.GraphStats,
+			FW_res						: {};
 
 
 	before(() => {
@@ -49,14 +49,15 @@ describe.only('GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 	});
 
 
-	describe('Floyd-Warshall on small search graph - ', () => {
+	it('should refuse to traverse an empty graph', () => {
+		var empty_graph = new $G.BaseGraph("iamempty");
+		expect($FW.FloydWarshallSparse.bind($FW.FloydWarshallSparse, empty_graph)).to.throw(
+			"Cowardly refusing to traverse graph without edges.");
+	});
 
 
-		it('should refuse to traverse an empty graph', () => {
-			var empty_graph = new $G.BaseGraph("iamempty");
-			expect($FW.FloydWarshallSparse.bind($FW.FloydWarshallSparse, empty_graph)).to.throw("Cowardly refusing to traverse graph without edges.");
-		});
 
+	describe('FW on small search graph - ', () => {
 
 		describe('computing distances in UNDIRECTED _mode - ', () => {
 
@@ -66,6 +67,7 @@ describe.only('GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 				checkFWCentralitiesOnSmallGraph(graph_search, FW_res);				
 			});
 
+
 			it('should correctly compute distance matrix for graph by dense method', () => {
 				FW_res = $FW.FloydWarshallDense(graph_search);
 				// console.log(FW_res);
@@ -74,6 +76,10 @@ describe.only('GRAPH SEARCH Tests - Floyd-Warshall - UNDIRECTED ', () => {
 
 		});
 
+	});
+
+
+	describe('FW on several (slightly) larger graphs - ', () => {
 
 		it('performance test of DENSE Floyd Warshal on a ~75 node / ~200 edge graph', () => {
 			let d = +new Date();
