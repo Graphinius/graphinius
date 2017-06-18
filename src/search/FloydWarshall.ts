@@ -17,7 +17,7 @@ interface FWConfig {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshall(graph: $G.IGraph, config = { directed: false } ) : {} {
+function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: false }
 
 	/**
 	 * We are not traversing an empty graph...
@@ -26,23 +26,11 @@ function FloydWarshall(graph: $G.IGraph, config = { directed: false } ) : {} {
 		throw new Error('Cowardly refusing to traverse graph without edges.');
 	}
 	
-	let edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	let nodes = graph.getNodes();
 	let adj_list = graph.adjList(true, true); // include incoming edges and self
-
-	// console.log( adj_list );
-
-	// let dist = {};
-	// for (let keyA in nodes) {
-	// 	dist[keyA] = {};
-	// 	for (let keyB in nodes) {
-	// 		let num = adj_list[keyA][keyB];
-	// 		dist[keyA][keyB] = num === num ? num : Number.MAX_VALUE;
-	// 	}
-	// }
-
+	
 	let pairs_count = 0;
-
+	
 	for (let k in adj_list) {
 		for (let i in adj_list[k]) {
 			for (let j in adj_list[k]) {
@@ -51,7 +39,6 @@ function FloydWarshall(graph: $G.IGraph, config = { directed: false } ) : {} {
 				if ( i === j ) {
 					continue;
 				}
-
 				if ( !adj_list[i][j] || ( adj_list[i][j] > adj_list[i][k] + adj_list[k][j] ) ) {
 					adj_list[i][j] = adj_list[i][k] + adj_list[k][j];
 				}
@@ -59,11 +46,49 @@ function FloydWarshall(graph: $G.IGraph, config = { directed: false } ) : {} {
 		}
 	}
 
-	console.log(`Went through ${pairs_count} candidates for improval`);
+	// console.log(`Went through ${pairs_count} candidates for improval`);
 
 	return adj_list;
 }
-	
+
+function FloydWarshallDense(graph: $G.IGraph): {} {
+	let dists = {},
+			nodes = graph.getNodes(),
+			adj_list = graph.adjList(true, true); // include incoming edges and self
+
+	for (let keyA in nodes) {
+		dists[keyA] = {};
+		for (let keyB in nodes) {
+			let num = +adj_list[keyA][keyB];
+			if (num === num) {
+				dists[keyA][keyB] = num;
+			}
+		}
+	}
+
+	let pairs_count = 0;
+	for (let k in dists) {
+		for (let i in dists) {
+			for (let j in dists) {
+				++pairs_count;
+
+				if ( i === j ) {
+					continue;
+				}
+				if ( dists[i][k] == null || dists[k][j] == null ) {
+					continue;
+				}
+				if ( !dists[i][j] || ( dists[i][j] > dists[i][k] + dists[k][j] ) ) {
+					dists[i][j] = dists[i][k] + dists[k][j];
+				}
+			}
+		}
+	}
+
+	// console.log(`Went through ${pairs_count} candidates for improval`);
+
+	return dists;	
+}
 
 
 // function getShortestPath(next, i, j){
@@ -127,4 +152,5 @@ function FloydWarshall(graph: $G.IGraph, config = { directed: false } ) : {} {
 // 	return true;
 // }
 
-export { FloydWarshall }; // , getAllShortestPaths };
+export { FloydWarshallSparse,
+				 FloydWarshallDense }; // , getAllShortestPaths };

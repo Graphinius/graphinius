@@ -2464,13 +2464,10 @@
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $SU = __webpack_require__(3);
-	function FloydWarshall(graph, config) {
-	    if (config === void 0) { config = { directed: false }; }
+	function FloydWarshallSparse(graph) {
 	    if (graph.getMode() === $G.GraphMode.INIT) {
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    var edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    var nodes = graph.getNodes();
 	    var adj_list = graph.adjList(true, true);
 	    var pairs_count = 0;
@@ -2487,10 +2484,40 @@
 	            }
 	        }
 	    }
-	    console.log("Went through " + pairs_count + " candidates for improval");
 	    return adj_list;
 	}
-	exports.FloydWarshall = FloydWarshall;
+	exports.FloydWarshallSparse = FloydWarshallSparse;
+	function FloydWarshallDense(graph) {
+	    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjList(true, true);
+	    for (var keyA in nodes) {
+	        dists[keyA] = {};
+	        for (var keyB in nodes) {
+	            var num = +adj_list[keyA][keyB];
+	            if (num === num) {
+	                dists[keyA][keyB] = num;
+	            }
+	        }
+	    }
+	    var pairs_count = 0;
+	    for (var k in dists) {
+	        for (var i in dists) {
+	            for (var j in dists) {
+	                ++pairs_count;
+	                if (i === j) {
+	                    continue;
+	                }
+	                if (dists[i][k] == null || dists[k][j] == null) {
+	                    continue;
+	                }
+	                if (!dists[i][j] || (dists[i][j] > dists[i][k] + dists[k][j])) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
+	        }
+	    }
+	    return dists;
+	}
+	exports.FloydWarshallDense = FloydWarshallDense;
 
 
 /***/ }),
