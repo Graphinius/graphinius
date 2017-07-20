@@ -19,7 +19,7 @@ let intermediate = "./test/test_data/bernd_ares_intermediate.json";
 let social_graph = "./test/test_data/social_network_edges.csv";
 
 
-describe.only('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
+describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,

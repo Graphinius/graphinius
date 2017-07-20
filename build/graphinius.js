@@ -526,40 +526,52 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.adjList = function (incoming, include_self, self_dist) {
+	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+	        self_dist = self_dist || 0;
+	        var adj_list = [], nodes = this.getNodes(), keys = Object.keys(nodes), weight;
+	        for (var key in nodes) {
+	            adj_list.push([]);
+	        }
+	        return adj_list;
+	    };
+	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
 	        self_dist = self_dist || 0;
-	        var adj_list = {}, nodes = this.getNodes(), weight;
-	        for (var key_1 in nodes) {
-	            adj_list[key_1] = {};
+	        var adj_hash_map = {}, nodes = this.getNodes(), weight;
+	        for (var key in nodes) {
+	            adj_hash_map[key] = {};
 	        }
+	        this.buildAdjacencyStruct(adj_hash_map, incoming, include_self, self_dist);
+	        return adj_hash_map;
+	    };
+	    BaseGraph.prototype.buildAdjacencyStruct = function (adj_struct, incoming, include_self, self_dist) {
+	        var nodes = this.getNodes(), weight;
 	        for (var key in nodes) {
 	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 	            neighbors.forEach(function (ne) {
-	                weight = adj_list[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                weight = adj_struct[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 	                if (ne.edge.getWeight() < weight) {
-	                    adj_list[key][ne.node.getID()] = ne.edge.getWeight();
+	                    adj_struct[key][ne.node.getID()] = ne.edge.getWeight();
 	                    if (incoming) {
-	                        adj_list[ne.node.getID()][key] = ne.edge.getWeight();
+	                        adj_struct[ne.node.getID()][key] = ne.edge.getWeight();
 	                    }
 	                }
 	                else {
-	                    adj_list[key][ne.node.getID()] = weight;
+	                    adj_struct[key][ne.node.getID()] = weight;
 	                    if (incoming) {
-	                        adj_list[ne.node.getID()][key] = weight;
+	                        adj_struct[ne.node.getID()][key] = weight;
 	                    }
 	                }
 	            });
 	        }
 	        if (include_self) {
 	            for (var node in nodes) {
-	                if (adj_list[node][node] == null) {
-	                    adj_list[node][node] = self_dist;
+	                if (adj_struct[node][node] == null) {
+	                    adj_struct[node][node] = self_dist;
 	                }
 	            }
 	        }
-	        return adj_list;
 	    };
 	    BaseGraph.prototype.getMode = function () {
 	        return this._mode;
@@ -2469,12 +2481,10 @@
 	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
 	    var nodes = graph.getNodes();
-	    var adj_list = graph.adjList(true, true);
-	    var pairs_count = 0;
+	    var adj_list = graph.adjListDict(true, true);
 	    for (var k in adj_list) {
 	        for (var i in adj_list[k]) {
 	            for (var j in adj_list[k]) {
-	                ++pairs_count;
 	                if (i === j) {
 	                    continue;
 	                }
@@ -2488,7 +2498,7 @@
 	}
 	exports.FloydWarshallSparse = FloydWarshallSparse;
 	function FloydWarshallDense(graph) {
-	    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjList(true, true);
+	    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjListDict(true, true);
 	    for (var keyA in nodes) {
 	        dists[keyA] = {};
 	        for (var keyB in nodes) {
@@ -2498,11 +2508,9 @@
 	            }
 	        }
 	    }
-	    var pairs_count = 0;
 	    for (var k in dists) {
 	        for (var i in dists) {
 	            for (var j in dists) {
-	                ++pairs_count;
 	                if (i === j) {
 	                    continue;
 	                }

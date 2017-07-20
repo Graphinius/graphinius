@@ -27,14 +27,12 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 	}
 	
 	let nodes = graph.getNodes();
-	let adj_list = graph.adjList(true, true); // include incoming edges and self
+	let adj_list = graph.adjListDict(true, true); // include incoming edges and self
 	
-	let pairs_count = 0;
 	
 	for (let k in adj_list) {
 		for (let i in adj_list[k]) {
 			for (let j in adj_list[k]) {
-				++pairs_count;
 
 				if ( i === j ) {
 					continue;
@@ -51,10 +49,12 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 	return adj_list;
 }
 
+
+
 function FloydWarshallDense(graph: $G.IGraph): {} {
 	let dists = {},
 			nodes = graph.getNodes(),
-			adj_list = graph.adjList(true, true); // include incoming edges and self
+			adj_list = graph.adjListDict(true, true); // include incoming edges and self
 
 	for (let keyA in nodes) {
 		dists[keyA] = {};
@@ -66,11 +66,10 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 		}
 	}
 
-	let pairs_count = 0;
-	for (let k in dists) {
-		for (let i in dists) {
-			for (let j in dists) {
-				++pairs_count;
+
+	for (var k in dists) {
+		for (var i in dists) {
+			for (var j in dists) {
 
 				if ( i === j ) {
 					continue;

@@ -5,12 +5,10 @@ function FloydWarshallSparse(graph) {
         throw new Error('Cowardly refusing to traverse graph without edges.');
     }
     var nodes = graph.getNodes();
-    var adj_list = graph.adjList(true, true);
-    var pairs_count = 0;
+    var adj_list = graph.adjListDict(true, true);
     for (var k in adj_list) {
         for (var i in adj_list[k]) {
             for (var j in adj_list[k]) {
-                ++pairs_count;
                 if (i === j) {
                     continue;
                 }
@@ -24,7 +22,7 @@ function FloydWarshallSparse(graph) {
 }
 exports.FloydWarshallSparse = FloydWarshallSparse;
 function FloydWarshallDense(graph) {
-    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjList(true, true);
+    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjListDict(true, true);
     for (var keyA in nodes) {
         dists[keyA] = {};
         for (var keyB in nodes) {
@@ -34,11 +32,9 @@ function FloydWarshallDense(graph) {
             }
         }
     }
-    var pairs_count = 0;
     for (var k in dists) {
         for (var i in dists) {
             for (var j in dists) {
-                ++pairs_count;
                 if (i === j) {
                     continue;
                 }

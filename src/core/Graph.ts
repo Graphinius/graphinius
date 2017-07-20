@@ -8,6 +8,7 @@ import { Logger } from '../utils/logger';
 
 let logger : Logger = new Logger();
 
+
 export enum GraphMode {
 	INIT,
 	DIRECTED,
@@ -35,9 +36,11 @@ export interface GraphStats {
 /**
  * Only gives the best distance to a node in case of multiple direct edges
  */
-export type MinAdjacencyList = {[id: string]: MinAdjacencyListEntry};
+export type MinAdjacencyListDict = {[id: string]: MinAdjacencyListDictEntry};
 
-export type MinAdjacencyListEntry = {[id: string] : number}
+export type MinAdjacencyListDictEntry = {[id: string] : number};
+
+export type MinAdjacencyListArray = Array<Array<number>>;
 
 
 export interface IGraph {
@@ -93,7 +96,8 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
-	adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
+	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
+	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -117,34 +121,59 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
-	adjList(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyList{
+	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray {
 		self_dist = self_dist || 0;
-		let adj_list: MinAdjacencyList = {},
+		let adj_list: MinAdjacencyListArray = [],
+				nodes = this.getNodes(),
+				keys = Object.keys(nodes),
+				weight: number;
+		for (let key in nodes) {
+			adj_list.push([]);
+		}
+		
+		// this.buildAdjacencyStruct(adj_list, incoming, include_self, self_dist);
+
+		return adj_list;
+	}
+
+
+	adjListDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListDict{
+		self_dist = self_dist || 0;
+		let adj_hash_map: MinAdjacencyListDict = {},
 				nodes = this.getNodes(),
 				weight: number;
 		for (let key in nodes) {
-			adj_list[key] = {};
+			adj_hash_map[key] = {};
 		}
-		// console.log(adj_list);
+		
+		this.buildAdjacencyStruct(adj_hash_map, incoming, include_self, self_dist);
 
+		return adj_hash_map;
+	}
+
+
+	private buildAdjacencyStruct(adj_struct, incoming:boolean, include_self:boolean, self_dist:number) {
+		let nodes = this.getNodes(),
+				weight: number;
+		
 		for ( var key in nodes ) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
 			neighbors.forEach( (ne) => {
-				weight = adj_list[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+				weight = adj_struct[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 
 				if ( ne.edge.getWeight() < weight ) {
-					adj_list[key][ne.node.getID()] = ne.edge.getWeight();
+					adj_struct[key][ne.node.getID()] = ne.edge.getWeight();
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list[ne.node.getID()][key] = ne.edge.getWeight();
+						adj_struct[ne.node.getID()][key] = ne.edge.getWeight();
 					}
 				}
 				else {
-					adj_list[key][ne.node.getID()] = weight;
+					adj_struct[key][ne.node.getID()] = weight;
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list[ne.node.getID()][key] = weight;
+						adj_struct[ne.node.getID()][key] = weight;
 					}
 				}
 			});
@@ -153,13 +182,11 @@ class BaseGraph implements IGraph {
 
 		if ( include_self ) {
 			for ( var node in nodes ) {
-				if ( adj_list[node][node] == null ) {
-					adj_list[node][node] = self_dist;
+				if ( adj_struct[node][node] == null ) {
+					adj_struct[node][node] = self_dist;
 				}
 			}
 		}
-		
-		return adj_list;
 	}
 
 

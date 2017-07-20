@@ -902,88 +902,177 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe("Minimum Adjacency List generation Tests", () => {
+	describe.only('Adjacency List / Hash Tests - ', () => {
 
-		let graph: $G.IGraph,
-				adj_list: $G.MinAdjacencyList,
-				expected_result: $G.MinAdjacencyList,
-				jsonReader = new $JSON.JSONInput(true, false, true);
+		describe("Minimum Adjacency List generation Tests, DICT version", () => {
+
+			let graph: $G.IGraph,
+					adj_list: $G.MinAdjacencyListDict,
+					expected_result: $G.MinAdjacencyListDict,
+					jsonReader = new $JSON.JSONInput(true, false, true);
 
 
-		it('should output an empty adjacency list for an empty graph', () => {
-			graph = new $G.BaseGraph("emptinius");
-			expected_result = {};
-			expect(graph.adjList()).to.deep.equal(expected_result);
+			it('should output an empty adjacency list for an empty graph', () => {
+				graph = new $G.BaseGraph("emptinius");
+				expected_result = {};
+				expect(graph.adjListDict()).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce a non-empty adj.list for the small example graph', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict();
+				expect(adj_list).not.to.be.undefined;
+				expect(adj_list).not.to.deep.equal({});
+			});
+
+
+			it('should produce the correct adj.list without incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict();
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 3},
+					'C': {'A': 0},
+					'D': {'A': 6}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list including incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1},
+					'C': {'A': 0},
+					'D': {'A': -33}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list including incoming edges & implicit self connection', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true, true);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1, 'B': 0},
+					'C': {'A': 0, 'C': 0},
+					'D': {'A': -33, 'D': 0}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			/**
+			 * In a state machine, the distance of a node to itself could
+			 * be set to 1 because the state would have to transition to itself...
+			 */
+			it('should produce the correct adj.list with specific self-dist', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true, true, 1);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1, 'B': 1},
+					'C': {'A': 0, 'C': 1},
+					'D': {'A': -33, 'D': 1}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
 		});
 
 
-		it('should produce a non-empty adj.list for the small example graph', () => {
-			graph = jsonReader.readFromJSONFile(small_graph_file);
-			adj_list = graph.adjList();
-			expect(adj_list).not.to.be.undefined;
-			expect(adj_list).not.to.deep.equal({});
+		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
+
+			let graph: $G.IGraph,
+					adj_list: $G.MinAdjacencyListArray,
+					expected_result: $G.MinAdjacencyListArray,
+					jsonReader = new $JSON.JSONInput(true, false, true);
+
+
+			it('should output an empty adjacency list for an empty graph', () => {
+				graph = new $G.BaseGraph("emptinius");
+				expected_result = [];
+				expect(graph.adjListArray()).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce a non-empty adj.list for the small example graph', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray();
+				expect(adj_list).to.exist;
+				expect(adj_list).not.to.deep.equal([]);
+			});
+
+
+			// it.skip('should produce the correct adj.list without incoming edges', () => {
+			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
+			// 	adj_list = graph.adjListDict();
+			// 	// console.dir(adj_list);
+			// 	expected_result = {
+			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+			// 		'B': {'A': 3},
+			// 		'C': {'A': 0},
+			// 		'D': {'A': 6}
+			// 	};
+			// 	expect(adj_list).to.deep.equal(expected_result);
+			// });
+
+
+			// it.skip('should produce the correct adj.list including incoming edges', () => {
+			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
+			// 	adj_list = graph.adjListDict(true);
+			// 	// console.dir(adj_list);
+			// 	expected_result = {
+			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+			// 		'B': {'A': 1},
+			// 		'C': {'A': 0},
+			// 		'D': {'A': -33}
+			// 	};
+			// 	expect(adj_list).to.deep.equal(expected_result);
+			// });
+
+
+			// it.skip('should produce the correct adj.list including incoming edges & implicit self connection', () => {
+			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
+			// 	adj_list = graph.adjListDict(true, true);
+			// 	// console.dir(adj_list);
+			// 	expected_result = {
+			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+			// 		'B': {'A': 1, 'B': 0},
+			// 		'C': {'A': 0, 'C': 0},
+			// 		'D': {'A': -33, 'D': 0}
+			// 	};
+			// 	expect(adj_list).to.deep.equal(expected_result);
+			// });
+
+
+			// /**
+			//  * In a state machine, the distance of a node to itself could
+			//  * be set to 1 because the state would have to transition to itself...
+			//  */
+			// it.skip('should produce the correct adj.list with specific self-dist', () => {
+			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
+			// 	adj_list = graph.adjListDict(true, true, 1);
+			// 	// console.dir(adj_list);
+			// 	expected_result = {
+			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+			// 		'B': {'A': 1, 'B': 1},
+			// 		'C': {'A': 0, 'C': 1},
+			// 		'D': {'A': -33, 'D': 1}
+			// 	};
+			// 	expect(adj_list).to.deep.equal(expected_result);
+			// });
+
 		});
 
-
-		it('should produce the correct adj.list without incoming edges', () => {
-			graph = jsonReader.readFromJSONFile(small_graph_file);
-			adj_list = graph.adjList();
-			// console.dir(adj_list);
-			expected_result = {
-				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-				'B': {'A': 3},
-				'C': {'A': 0},
-				'D': {'A': 6}
-			};
-			expect(adj_list).to.deep.equal(expected_result);
-		});
-
-
-		it('should produce the correct adj.list including incoming edges', () => {
-			graph = jsonReader.readFromJSONFile(small_graph_file);
-			adj_list = graph.adjList(true);
-			// console.dir(adj_list);
-			expected_result = {
-				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-				'B': {'A': 1},
-				'C': {'A': 0},
-				'D': {'A': -33}
-			};
-			expect(adj_list).to.deep.equal(expected_result);
-		});
-
-
-		it('should produce the correct adj.list including incoming edges & implicit self connection', () => {
-			graph = jsonReader.readFromJSONFile(small_graph_file);
-			adj_list = graph.adjList(true, true);
-			// console.dir(adj_list);
-			expected_result = {
-				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-				'B': {'A': 1, 'B': 0},
-				'C': {'A': 0, 'C': 0},
-				'D': {'A': -33, 'D': 0}
-			};
-			expect(adj_list).to.deep.equal(expected_result);
-		});
-
-
-		/**
-		 * In a state machine, the distance of a node to itself could
-		 * be set to 1 because the state would have to transition to itself...
-		 */
-		it('should produce the correct adj.list with specific self-dist', () => {
-			graph = jsonReader.readFromJSONFile(small_graph_file);
-			adj_list = graph.adjList(true, true, 1);
-			// console.dir(adj_list);
-			expected_result = {
-				'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-				'B': {'A': 1, 'B': 1},
-				'C': {'A': 0, 'C': 1},
-				'D': {'A': -33, 'D': 1}
-			};
-			expect(adj_list).to.deep.equal(expected_result);
-		});
-
-	});
+	});	
 	
 });
