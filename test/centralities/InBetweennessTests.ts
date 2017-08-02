@@ -27,7 +27,7 @@ describe("InBetweenness Centrality Tests", () => {
     });
 
 
-    it.skip('should return the correct betweenness map', () => {
+    it('should return the correct betweenness map', () => {
         let expected_betweenness_map = {
             "A": 2.6,
             "B": 2.4,
@@ -36,7 +36,7 @@ describe("InBetweenness Centrality Tests", () => {
             "E": 4.8,
             "F": 4.4
         };
-        let closeness_map = $IB.inBetweennessCentrality( graph );
+        let closeness_map = $IB.inBetweennessCentrality( graph,false );
         expect( closeness_map ).to.deep.equal( expected_betweenness_map );
     });
 

@@ -1,6 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $G from '../core/Graph';
+import * as $E from '../core/Edges';
 import * as $SU from '../utils/structUtils'
 
 interface FWConfig {
@@ -28,7 +29,14 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 	
 	let nodes = graph.getNodes();
 	let adj_list = graph.adjListDict(true, true); // include incoming edges and self
-	
+	let next = {},
+		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+
+	for (let edge in edges){
+		if(next[edges[edge].getNodes().a.getID()] == null)
+			next[edges[edge].getNodes().a.getID()] = {};
+		next[edges[edge].getNodes().a.getID()][edges[edge].getNodes().b.getID()] = edges[edge].getNodes().a.getID();
+	}
 	
 	for (let k in adj_list) {
 		for (let i in adj_list[k]) {
@@ -39,6 +47,9 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 				}
 				if ( !adj_list[i][j] || ( adj_list[i][j] > adj_list[i][k] + adj_list[k][j] ) ) {
 					adj_list[i][j] = adj_list[i][k] + adj_list[k][j];
+					if(next[i]==null)
+						next[i] = {};
+					next[i][j] = next[i][k];
 				}
 			}
 		}
@@ -46,7 +57,7 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 
 	// console.log(`Went through ${pairs_count} candidates for improval`);
 
-	return adj_list;
+	return [adj_list,next];
 }
 
 
@@ -54,18 +65,47 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 function FloydWarshallDense(graph: $G.IGraph): {} {
 	let dists = {},
 			nodes = graph.getNodes(),
-			adj_list = graph.adjListDict(true, true); // include incoming edges and self
+			adj_list = graph.adjListDict(true, true), // include incoming edges and self
+			next = {},
+			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
-	for (let keyA in nodes) {
+	for (let edge in edges){
+		let a = edges[edge].getNodes().a.getID();
+		let b = edges[edge].getNodes().b.getID();
+		if(next[a] == null)
+			next[a] = {};
+		next[a][b] = b;
+		if(!edges[edge].isDirected()){
+			if(next[b]==null)
+				next[b] = {};
+			next[b][a] = a;
+		}
+
+		if(dists[a]==null)
+			dists[a] = {};
+		dists[a][b] = edges[edge].getWeight();
+		if(!edges[edge].isDirected()){
+			if(dists[b]==null)
+				dists[b] = {};
+			dists[b][a] = edges[edge].getWeight();
+		}
+	}
+
+	/*for (let keyA in nodes) {
 		dists[keyA] = {};
 		for (let keyB in nodes) {
 			let num = +adj_list[keyA][keyB];
 			if (num === num) {
 				dists[keyA][keyB] = num;
 			}
+			if (keyA==keyB) {
+				if (next[keyA] == null)
+					next[keyA] = {};
+				next[keyA][keyB] = keyA;
+				console.log("Adding:"+keyA);
+			}
 		}
-	}
-
+	}*/
 
 	for (var k in dists) {
 		for (var i in dists) {
@@ -77,7 +117,16 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 				if ( dists[i][k] == null || dists[k][j] == null ) {
 					continue;
 				}
-				if ( !dists[i][j] || ( dists[i][j] > dists[i][k] + dists[k][j] ) ) {
+				if ( (!dists[i][j] && dists[i][j]!=0) || ( dists[i][j] > dists[i][k] + dists[k][j] ) ) {
+					if(next[i]==null)
+						next[i] = {};
+					if(next[i][k]!=null)
+						next[i][j] = next[i][k];
+					/*console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" > "
+										+i+"->"+k+":"+dists[i][k]+" "
+										+k+"->"+j+":"+dists[k][j]);
+					console.log("K I J:"+k+" "+i+" "+j);
+					console.log("Add["+i+"]["+j+"]="+next[i][k]+" ik:"+i+k);*/
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
@@ -86,7 +135,7 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 
 	// console.log(`Went through ${pairs_count} candidates for improval`);
 
-	return dists;	
+	return [dists,next];
 }
 
 
