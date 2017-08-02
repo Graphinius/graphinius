@@ -38,11 +38,11 @@ function FloydWarshallDense(graph) {
         var b = edges[edge].getNodes().b.getID();
         if (next[a] == null)
             next[a] = {};
-        next[a][b] = b;
+        next[a][b] = [b];
         if (!edges[edge].isDirected()) {
             if (next[b] == null)
                 next[b] = {};
-            next[b][a] = a;
+            next[b][a] = [a];
         }
         if (dists[a] == null)
             dists[a] = {};
@@ -62,11 +62,19 @@ function FloydWarshallDense(graph) {
                 if (dists[i][k] == null || dists[k][j] == null) {
                     continue;
                 }
+                if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
+                    console.log("Push:");
+                    console.log("Dists:" + i + "->" + j + ":" + dists[i][j] + " == "
+                        + i + "->" + k + ":" + dists[i][k] + " "
+                        + k + "->" + j + ":" + dists[k][j]);
+                    console.log("K I J:" + k + " " + i + " " + j);
+                    if (insertPath(i, k, j, next))
+                        next[i][j].push(next[i][k]);
+                }
                 if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
                     if (next[i] == null)
                         next[i] = {};
-                    if (next[i][k] != null)
-                        next[i][j] = next[i][k];
+                    next[i][j] = next[i][k];
                     dists[i][j] = dists[i][k] + dists[k][j];
                 }
             }
@@ -75,3 +83,21 @@ function FloydWarshallDense(graph) {
     return [dists, next];
 }
 exports.FloydWarshallDense = FloydWarshallDense;
+function insertPath(i, k, j, next) {
+    console.log("i,k,j:" + i + k + j + " " + JSON.stringify(next[k][j]) + " " + next[k][j].indexOf(j));
+    if (next[k][j] == j)
+        return true;
+    k = next[k][j];
+    if (k.indexOf(j) < 0) {
+        var ret = false;
+        for (var _i = 0, k_1 = k; _i < k_1.length; _i++) {
+            var e = k_1[_i];
+            if (e != i)
+                if (insertPath(i, e, j, next))
+                    ret = true;
+        }
+        if (!ret)
+            return false;
+    }
+    return true;
+}

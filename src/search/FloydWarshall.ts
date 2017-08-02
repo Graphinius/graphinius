@@ -74,11 +74,11 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 		let b = edges[edge].getNodes().b.getID();
 		if(next[a] == null)
 			next[a] = {};
-		next[a][b] = b;
+		next[a][b] = [b];
 		if(!edges[edge].isDirected()){
 			if(next[b]==null)
 				next[b] = {};
-			next[b][a] = a;
+			next[b][a] = [a];
 		}
 
 		if(dists[a]==null)
@@ -111,22 +111,31 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 		for (var i in dists) {
 			for (var j in dists) {
 
-				if ( i === j ) {
+				if (i === j) {
 					continue;
 				}
-				if ( dists[i][k] == null || dists[k][j] == null ) {
+				if (dists[i][k] == null || dists[k][j] == null) {
 					continue;
 				}
-				if ( (!dists[i][j] && dists[i][j]!=0) || ( dists[i][j] > dists[i][k] + dists[k][j] ) ) {
-					if(next[i]==null)
-						next[i] = {};
-					if(next[i][k]!=null)
-						next[i][j] = next[i][k];
-					/*console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" > "
-										+i+"->"+k+":"+dists[i][k]+" "
-										+k+"->"+j+":"+dists[k][j]);
+				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
+					console.log("Push:");
+					console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" == "
+						+i+"->"+k+":"+dists[i][k]+" "
+						+k+"->"+j+":"+dists[k][j]);
 					console.log("K I J:"+k+" "+i+" "+j);
-					console.log("Add["+i+"]["+j+"]="+next[i][k]+" ik:"+i+k);*/
+					if(insertPath(i,k,j,next))
+						next[i][j].push(next[i][k]);
+				}
+				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+					if (next[i] == null)
+						next[i] = {};
+
+					next[i][j] = next[i][k];
+					/*console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" > "
+					 +i+"->"+k+":"+dists[i][k]+" "
+					 +k+"->"+j+":"+dists[k][j]);
+					 console.log("K I J:"+k+" "+i+" "+j);
+					 console.log("Add["+i+"]["+j+"]="+next[i][k]+" ik:"+i+k);*/
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
@@ -138,6 +147,22 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
+function insertPath(i,k,j,next)
+{
+	console.log("i,k,j:"+i+k+j + " " + JSON.stringify(next[k][j]) + " " + next[k][j].indexOf(j));
+	if(next[k][j]==j) return true;
+	k = next[k][j];
+	if(k.indexOf(j)<0){
+		let ret = false;
+		for(let e of k){
+			if(e!=i)
+				if(insertPath(i,e,j,next)) ret = true;
+		}
+		if(!ret) return false;
+	}
+
+	return true;
+}
 
 // function getShortestPath(next, i, j){
 // 	let allPaths = [];

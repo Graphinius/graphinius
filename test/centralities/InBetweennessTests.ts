@@ -14,7 +14,7 @@ let expect = chai.expect,
     csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json   : $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
     sn_graph_file = "./test/test_data/social_network_edges.csv",
-    iBt_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
+    iBt_cent_graph = "./test/test_data/search_graph_multiple_SPs.json",
     graph : $G.IGraph = json.readFromJSONFile(iBt_cent_graph);
 
 
