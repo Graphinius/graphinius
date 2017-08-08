@@ -2535,18 +2535,17 @@
 	                    continue;
 	                }
 	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
-	                    console.log("Push:");
-	                    console.log("Dists:" + i + "->" + j + ":" + dists[i][j] + " == "
-	                        + i + "->" + k + ":" + dists[i][k] + " "
-	                        + k + "->" + j + ":" + dists[k][j]);
-	                    console.log("K I J:" + k + " " + i + " " + j);
-	                    if (insertPath(i, k, j, next))
-	                        next[i][j].push(next[i][k]);
+	                    if (checkPathItoK(i, k, j, next) && checkPathKtoJ(i, k, j, next) && next[i][j].indexOf(next[i][k]) < 0) {
+	                        console.log("Make:" + i + "->" + j + " to " + i + "->" + k + "->" + j);
+	                        console.log("Add " + next[i][k] + " to " + next[i][j]);
+	                        next[i][j].push(next[i][k].slice(0));
+	                        next[i][j] = flatten(next[i][j]);
+	                    }
 	                }
 	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
 	                    if (next[i] == null)
 	                        next[i] = {};
-	                    next[i][j] = next[i][k];
+	                    next[i][j] = next[i][k].slice(0);
 	                    dists[i][j] = dists[i][k] + dists[k][j];
 	                }
 	            }
@@ -2555,23 +2554,48 @@
 	    return [dists, next];
 	}
 	exports.FloydWarshallDense = FloydWarshallDense;
-	function insertPath(i, k, j, next) {
-	    console.log("i,k,j:" + i + k + j + " " + JSON.stringify(next[k][j]) + " " + next[k][j].indexOf(j));
-	    if (next[k][j] == j)
+	function checkPathItoK(i, k, j, next) {
+	    if (next[i][k] == k || next[i][k].indexOf(k) >= 0)
 	        return true;
-	    k = next[k][j];
-	    if (k.indexOf(j) < 0) {
+	    i = next[i][k];
+	    if (i == j)
+	        return false;
+	    if (i.indexOf(k) < 0) {
 	        var ret = false;
 	        for (var _i = 0, k_1 = k; _i < k_1.length; _i++) {
 	            var e = k_1[_i];
-	            if (e != i)
-	                if (insertPath(i, e, j, next))
-	                    ret = true;
+	            if (e == k)
+	                return true;
+	            if (checkPathItoK(e, k, j, next))
+	                ret = true;
 	        }
 	        if (!ret)
 	            return false;
 	    }
 	    return true;
+	}
+	function checkPathKtoJ(i, k, j, next) {
+	    if (next[k][j] == j)
+	        return true;
+	    k = next[k][j];
+	    if (k.indexOf(j) < 0) {
+	        var ret = false;
+	        for (var _i = 0, k_2 = k; _i < k_2.length; _i++) {
+	            var e = k_2[_i];
+	            if (e != i) {
+	                if (checkPathKtoJ(i, e, j, next))
+	                    ret = true;
+	            }
+	        }
+	        if (!ret)
+	            return false;
+	    }
+	    return true;
+	}
+	function flatten(arr) {
+	    return arr.reduce(function (flat, toFlatten) {
+	        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+	    }, []);
 	}
 
 

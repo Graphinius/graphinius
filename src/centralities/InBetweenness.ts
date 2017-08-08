@@ -12,37 +12,52 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
     paths = $FW.FloydWarshallDense(graph)[1];
 
   console.log(paths);
-  console.log(JSON.stringify(paths,null,2));
+  //console.log(JSON.stringify(paths,null,2));
 
   let nodes = graph.getNodes();
   let map = {};
   for (let keyA in nodes) {
     map[keyA] = 0;
   }
+  let nop = 0; //number of paths - for normalization
   for (let keyA in nodes) {
     for (let keyB in nodes) {
-      addBetweeness(keyA,keyB,paths,map);
+      if(keyA!=keyB && paths[keyA][keyB]!=keyB){
+        nop += addBetweeness(keyA,keyB,paths,map,0,[],keyA) + 1;
+      }
     }
   }
-
+  for(let a in map){
+    map[a] /= nop; //Is this correct? A path has multiple nodes... so this is >= 1
+  }
   return map;
 }
 
-function addBetweeness(u,v,next, map, fact = 1,path=[]){
-  console.log("u,v:"+u+v + " " + JSON.stringify(next[u][v]) + " ");
-  if (next[u][v] == null || path.indexOf(u) >= 0)
-    return;
+function addBetweeness(u,v,next, map, fact = 0,path=[],ou){
+  if(u==v)
+    if(path.length<=1)
+      return -2;
+    else
+      return -1;
+  if(path.indexOf(u) >= 0)
+    return -1;
+  if (next[u][v] == null)
+    return -1;
   path.push(u);
-  //Don't increase the betweenness of the start and end node
-  fact = fact/next[u][v].length;
+  let ef = 1;
   for(let e of next[u][v]){
-    if(e!=v) {
-      addBetweeness(e, v, next, map, fact, path.slice(0));
-      map[e] += fact;
+    if(e!=v && e!=ou) {
+      fact += addBetweeness(e, v, next, map, -1, path.slice(0),ou);
+      fact += ef;
+      ef = 2;
+      map[e] += 1;
+    }
+    if(e==ou){
+      //Remove current branch, this probably needs to be done because we could already
+      // have added betweenness values to nodes on this cycle to ou TODO
     }
   }
-      //if(u=="E")
-      //  console.log("E from " + uo + " to " + v);
+  return fact;
 }
 
 export {

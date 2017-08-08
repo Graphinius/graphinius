@@ -29,13 +29,14 @@ describe("InBetweenness Centrality Tests", () => {
 
     it('should return the correct betweenness map', () => {
         let expected_betweenness_map = {
-            "A": 2.6,
-            "B": 2.4,
-            "C": 2.4,
-            "D": 4.8,
-            "E": 4.8,
-            "F": 4.4
-        };
+            "A": 0.13043478260869565,
+            "B": 0.391304347826087,
+            "C": 0.4782608695652174,
+            "D": 0.13043478260869565,
+            "E": 0.30434782608695654,
+            "F": 0
+
+    };
         let closeness_map = $IB.inBetweennessCentrality( graph,false );
         expect( closeness_map ).to.deep.equal( expected_betweenness_map );
     });

@@ -82,7 +82,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#floydwarshalldense" class="tsd-kind-icon">Floyd<wbr>Warshall<wbr>Dense</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#floydwarshallsparse" class="tsd-kind-icon">Floyd<wbr>Warshall<wbr>Sparse</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#insertpath" class="tsd-kind-icon">insert<wbr>Path</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#checkpathitok" class="tsd-kind-icon">check<wbr>Path<wbr>ItoK</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#checkpathktoj" class="tsd-kind-icon">check<wbr>Path<wbr>KtoJ</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_floydwarshall_.html#flatten" class="tsd-kind-icon">flatten</a></li>
 							</ul>
 						</section>
 					</div>
@@ -156,16 +158,16 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="insertpath" class="tsd-anchor"></a>
-					<h3>insert<wbr>Path</h3>
+					<a name="checkpathitok" class="tsd-anchor"></a>
+					<h3>check<wbr>Path<wbr>ItoK</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">insert<wbr>Path<span class="tsd-signature-symbol">(</span>i<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, k<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, j<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Path<wbr>ItoK<span class="tsd-signature-symbol">(</span>i<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, k<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, j<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/FloydWarshall.ts#L150">search/FloydWarshall.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/FloydWarshall.ts#L145">search/FloydWarshall.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -184,6 +186,61 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="checkpathktoj" class="tsd-anchor"></a>
+					<h3>check<wbr>Path<wbr>KtoJ</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Path<wbr>KtoJ<span class="tsd-signature-symbol">(</span>i<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, k<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, j<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/FloydWarshall.ts#L162">search/FloydWarshall.ts:162</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>i: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>k: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>j: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>next: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="flatten" class="tsd-anchor"></a>
+					<h3>flatten</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">flatten<span class="tsd-signature-symbol">(</span>arr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/FloydWarshall.ts#L181">search/FloydWarshall.ts:181</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arr: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -212,7 +269,13 @@
 						<a href="_search_floydwarshall_.html#floydwarshallsparse" class="tsd-kind-icon">Floyd<wbr>Warshall<wbr>Sparse</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_floydwarshall_.html#insertpath" class="tsd-kind-icon">insert<wbr>Path</a>
+						<a href="_search_floydwarshall_.html#checkpathitok" class="tsd-kind-icon">check<wbr>Path<wbr>ItoK</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_floydwarshall_.html#checkpathktoj" class="tsd-kind-icon">check<wbr>Path<wbr>KtoJ</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_floydwarshall_.html#flatten" class="tsd-kind-icon">flatten</a>
 					</li>
 				</ul>
 			</nav>

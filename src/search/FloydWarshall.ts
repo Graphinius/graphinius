@@ -118,24 +118,19 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 					continue;
 				}
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
-					console.log("Push:");
-					console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" == "
-						+i+"->"+k+":"+dists[i][k]+" "
-						+k+"->"+j+":"+dists[k][j]);
-					console.log("K I J:"+k+" "+i+" "+j);
-					if(insertPath(i,k,j,next))
-						next[i][j].push(next[i][k]);
+					//Why do we need this .indexOf? It should not be added two times... TODO
+					if(checkPathItoK(i,k,j,next) && checkPathKtoJ(i,k,j,next) && next[i][j].indexOf(next[i][k])<0){
+						console.log("Make:" + i + "->" + j + " to "+ i + "->" +k +"->"+j);
+						console.log("Add "+next[i][k]+" to " +next[i][j]);
+						next[i][j].push(next[i][k].slice(0));
+						next[i][j] = flatten(next[i][j]);
+					}
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
 					if (next[i] == null)
 						next[i] = {};
 
-					next[i][j] = next[i][k];
-					/*console.log("Dists:"+i+"->"+j+":"+dists[i][j]+" > "
-					 +i+"->"+k+":"+dists[i][k]+" "
-					 +k+"->"+j+":"+dists[k][j]);
-					 console.log("K I J:"+k+" "+i+" "+j);
-					 console.log("Add["+i+"]["+j+"]="+next[i][k]+" ik:"+i+k);*/
+					next[i][j] = next[i][k].slice(0);
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
@@ -147,21 +142,46 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
-function insertPath(i,k,j,next)
+function checkPathItoK(i,k,j,next){
+	if(next[i][k]==k || next[i][k].indexOf(k)>=0)
+		return true;
+	i = next[i][k];
+	if(i==j)
+		return false;
+	if(i.indexOf(k)<0){
+		let ret = false;
+		for(let e of k){
+			if(e==k)
+				return true;
+			if (checkPathItoK(e, k, j,  next)) ret = true;
+		}
+		if(!ret) return false;
+	}
+	return true;
+}
+function checkPathKtoJ(i,k,j,next)
 {
-	console.log("i,k,j:"+i+k+j + " " + JSON.stringify(next[k][j]) + " " + next[k][j].indexOf(j));
 	if(next[k][j]==j) return true;
 	k = next[k][j];
 	if(k.indexOf(j)<0){
 		let ret = false;
 		for(let e of k){
-			if(e!=i)
-				if(insertPath(i,e,j,next)) ret = true;
+			if(e!=i) {
+				if (checkPathKtoJ(i, e, j, next)) ret = true;
+			}
 		}
 		if(!ret) return false;
 	}
 
 	return true;
+}
+
+//Taken from Noah Freitas:
+//https://stackoverflow.com/questions/10865025/merge-flatten-an-array-of-arrays-in-javascript
+function flatten(arr) {
+	return arr.reduce(function (flat, toFlatten) {
+		return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+	}, []);
 }
 
 // function getShortestPath(next, i, j){
