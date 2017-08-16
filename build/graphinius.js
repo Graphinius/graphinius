@@ -527,51 +527,53 @@
 	        this._und_edges = {};
 	    }
 	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
-	        self_dist = self_dist || 0;
-	        var adj_list = [], nodes = this.getNodes(), keys = Object.keys(nodes), weight;
-	        for (var key in nodes) {
-	            adj_list.push([]);
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        var adjList = [], idx = 0;
+	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+	        for (var i in adjDict) {
+	            adjList.push([]);
+	            for (var j in adjDict) {
+	                adjList[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+	            }
+	            ++idx;
 	        }
-	        return adj_list;
+	        return adjList;
 	    };
 	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
 	        self_dist = self_dist || 0;
-	        var adj_hash_map = {}, nodes = this.getNodes(), weight;
-	        for (var key in nodes) {
-	            adj_hash_map[key] = {};
+	        var adj_list_dict = {}, nodes = this.getNodes(), weight;
+	        for (var key_1 in nodes) {
+	            adj_list_dict[key_1] = {};
 	        }
-	        this.buildAdjacencyStruct(adj_hash_map, incoming, include_self, self_dist);
-	        return adj_hash_map;
-	    };
-	    BaseGraph.prototype.buildAdjacencyStruct = function (adj_struct, incoming, include_self, self_dist) {
-	        var nodes = this.getNodes(), weight;
 	        for (var key in nodes) {
 	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 	            neighbors.forEach(function (ne) {
-	                weight = adj_struct[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                weight = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 	                if (ne.edge.getWeight() < weight) {
-	                    adj_struct[key][ne.node.getID()] = ne.edge.getWeight();
+	                    adj_list_dict[key][ne.node.getID()] = ne.edge.getWeight();
 	                    if (incoming) {
-	                        adj_struct[ne.node.getID()][key] = ne.edge.getWeight();
+	                        adj_list_dict[ne.node.getID()][key] = ne.edge.getWeight();
 	                    }
 	                }
 	                else {
-	                    adj_struct[key][ne.node.getID()] = weight;
+	                    adj_list_dict[key][ne.node.getID()] = weight;
 	                    if (incoming) {
-	                        adj_struct[ne.node.getID()][key] = weight;
+	                        adj_list_dict[ne.node.getID()][key] = weight;
 	                    }
 	                }
 	            });
 	        }
 	        if (include_self) {
-	            for (var node in nodes) {
-	                if (adj_struct[node][node] == null) {
-	                    adj_struct[node][node] = self_dist;
+	            for (var node_key in nodes) {
+	                if (adj_list_dict[node_key][node_key] == null) {
+	                    adj_list_dict[node_key][node_key] = self_dist;
 	                }
 	            }
 	        }
+	        return adj_list_dict;
 	    };
 	    BaseGraph.prototype.getMode = function () {
 	        return this._mode;

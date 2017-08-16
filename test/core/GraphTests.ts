@@ -994,7 +994,8 @@ describe('GRAPH TESTS: ', () => {
 			let graph: $G.IGraph,
 					adj_list: $G.MinAdjacencyListArray,
 					expected_result: $G.MinAdjacencyListArray,
-					jsonReader = new $JSON.JSONInput(true, false, true);
+					jsonReader = new $JSON.JSONInput(true, false, true),
+					inf = Number.POSITIVE_INFINITY;
 
 
 			it('should output an empty adjacency list for an empty graph', () => {
@@ -1012,64 +1013,65 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			// it.skip('should produce the correct adj.list without incoming edges', () => {
-			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
-			// 	adj_list = graph.adjListDict();
-			// 	// console.dir(adj_list);
-			// 	expected_result = {
-			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-			// 		'B': {'A': 3},
-			// 		'C': {'A': 0},
-			// 		'D': {'A': 6}
-			// 	};
-			// 	expect(adj_list).to.deep.equal(expected_result);
-			// });
+			it('should produce the correct adj.list without incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray();
+				
+				expected_result = [
+					[7, 1, 0, -33],
+					[3, inf, inf, inf],
+					[0, inf, inf, inf],
+					[6, inf, inf, inf]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
 
 
-			// it.skip('should produce the correct adj.list including incoming edges', () => {
-			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
-			// 	adj_list = graph.adjListDict(true);
-			// 	// console.dir(adj_list);
-			// 	expected_result = {
-			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-			// 		'B': {'A': 1},
-			// 		'C': {'A': 0},
-			// 		'D': {'A': -33}
-			// 	};
-			// 	expect(adj_list).to.deep.equal(expected_result);
-			// });
+			it('should produce the correct adj.list including incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray(true);
+				
+				expected_result = [
+					[7, 1, 0, -33],
+					[1, inf, inf, inf],
+					[0, inf, inf, inf],
+					[-33, inf, inf, inf]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
 
 
-			// it.skip('should produce the correct adj.list including incoming edges & implicit self connection', () => {
-			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
-			// 	adj_list = graph.adjListDict(true, true);
-			// 	// console.dir(adj_list);
-			// 	expected_result = {
-			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-			// 		'B': {'A': 1, 'B': 0},
-			// 		'C': {'A': 0, 'C': 0},
-			// 		'D': {'A': -33, 'D': 0}
-			// 	};
-			// 	expect(adj_list).to.deep.equal(expected_result);
-			// });
+			it('should produce the correct adj.list including incoming edges & implicit self connection', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray(true, true);
+				
+				expected_result = [
+					[7, 1, 0, -33],
+					[1, 0, inf, inf],
+					[0, inf, 0, inf],
+					[-33, inf, inf, 0]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
 
 
-			// /**
-			//  * In a state machine, the distance of a node to itself could
-			//  * be set to 1 because the state would have to transition to itself...
-			//  */
-			// it.skip('should produce the correct adj.list with specific self-dist', () => {
-			// 	graph = jsonReader.readFromJSONFile(small_graph_file);
-			// 	adj_list = graph.adjListDict(true, true, 1);
-			// 	// console.dir(adj_list);
-			// 	expected_result = {
-			// 		'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
-			// 		'B': {'A': 1, 'B': 1},
-			// 		'C': {'A': 0, 'C': 1},
-			// 		'D': {'A': -33, 'D': 1}
-			// 	};
-			// 	expect(adj_list).to.deep.equal(expected_result);
-			// });
+			/**
+			 * In a state machine, the distance of a node to itself could
+			 * be set to 1 because the state would have to transition to itself...
+			 */
+			it('should produce the correct adj.list with specific self-dist', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray(true, true, 1);
+				
+				expected_result = [
+					[7, 1, 0, -33],
+					[1, 1, inf, inf],
+					[0, inf, 1, inf],
+					[-33, inf, inf, 1]
+				];
+
+				expect(adj_list).to.deep.equal(expected_result);
+			});
 
 		});
 

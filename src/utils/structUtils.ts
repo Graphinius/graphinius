@@ -52,8 +52,8 @@ function mergeArrays(args: Array<Array<any>>, cb: Function = undefined ) {
   }
   
   var seen = {},
-    result = [],
-    identity;
+      result = [],
+      identity;
 
   for (var i = 0; i < args.length; i++) {
     for (var j = 0; j < args[i].length; j++) {

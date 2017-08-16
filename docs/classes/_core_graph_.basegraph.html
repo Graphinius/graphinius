@@ -117,7 +117,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_core_graph_.basegraph.html#addnodebyid" class="tsd-kind-icon">add<wbr>Node<wbr>ByID</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_core_graph_.basegraph.html#adjlistarray" class="tsd-kind-icon">adj<wbr>List<wbr>Array</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_core_graph_.basegraph.html#adjlistdict" class="tsd-kind-icon">adj<wbr>List<wbr>Dict</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_core_graph_.basegraph.html#buildadjacencystruct" class="tsd-kind-icon">build<wbr>Adjacency<wbr>Struct</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected tsd-is-not-exported"><a href="_core_graph_.basegraph.html#checkconnectednodeorthrow" class="tsd-kind-icon">check<wbr>Connected<wbr>Node<wbr>OrThrow</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_core_graph_.basegraph.html#clearalldiredges" class="tsd-kind-icon">clear<wbr>All<wbr>Dir<wbr>Edges</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_core_graph_.basegraph.html#clearalledges" class="tsd-kind-icon">clear<wbr>All<wbr>Edges</a></li>
@@ -306,7 +305,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#addedge">addEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L439">core/Graph.ts:439</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L446">core/Graph.ts:446</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -334,7 +333,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L431">core/Graph.ts:431</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L438">core/Graph.ts:438</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -371,7 +370,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L414">core/Graph.ts:414</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L421">core/Graph.ts:421</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -406,7 +405,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#addnode">addNode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L259">core/Graph.ts:259</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L266">core/Graph.ts:266</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -429,7 +428,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L254">core/Graph.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L261">core/Graph.ts:261</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,19 +457,37 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#adjlistarray">adjListArray</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L124">core/Graph.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L137">core/Graph.ts:137</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This function iterates over the adjDict in order to use it&#39;s advantage
+									of being able to override edges if edges with smaller weight exist</p>
+								</div>
+								<p>However, the order of nodes in the array represents the order of nodes
+								at creation time, no other implicit alphabetical or collational sorting.</p>
+								<p>This has to be considered when further processing the result</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> incoming: <span class="tsd-signature-type">boolean</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> incoming: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>whether or not to consider incoming edges as well</p>
+									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> include_self: <span class="tsd-signature-type">boolean</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> include_self: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>contains a distance to itself apart?</p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> self_dist: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>default distance to self</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../modules/_core_graph_.html#minadjacencylistarray" class="tsd-signature-type">MinAdjacencyListArray</a></h4>
@@ -488,54 +505,33 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#adjlistdict">adjListDict</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L140">core/Graph.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L159">core/Graph.ts:159</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> incoming: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>whether or not to consider incoming edges as well</p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> include_self: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>contains a distance to itself apart?</p>
+									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> self_dist: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>default distance to self</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../modules/_core_graph_.html#minadjacencylistdict" class="tsd-signature-type">MinAdjacencyListDict</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="buildadjacencystruct" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> build<wbr>Adjacency<wbr>Struct</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">build<wbr>Adjacency<wbr>Struct<span class="tsd-signature-symbol">(</span>adj_struct<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, incoming<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, include_self<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, self_dist<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L155">core/Graph.ts:155</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>adj_struct: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>incoming: <span class="tsd-signature-type">boolean</span></h5>
-								</li>
-								<li>
-									<h5>include_self: <span class="tsd-signature-type">boolean</span></h5>
-								</li>
-								<li>
-									<h5>self_dist: <span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -549,7 +545,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L622">core/Graph.ts:622</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L629">core/Graph.ts:629</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -573,7 +569,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#clearalldiredges">clearAllDirEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L565">core/Graph.ts:565</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L572">core/Graph.ts:572</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -596,7 +592,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#clearalledges">clearAllEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L577">core/Graph.ts:577</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L584">core/Graph.ts:584</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -614,7 +610,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#clearallundedges">clearAllUndEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L571">core/Graph.ts:571</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L578">core/Graph.ts:578</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -632,7 +628,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#clone">clone</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L598">core/Graph.ts:598</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L605">core/Graph.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h4>
@@ -650,7 +646,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#degreedistribution">degreeDistribution</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L210">core/Graph.ts:210</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L217">core/Graph.ts:217</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -673,7 +669,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deletealledgesof">deleteAllEdgesOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L557">core/Graph.ts:557</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L564">core/Graph.ts:564</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -697,7 +693,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deletediredgesof">deleteDirEdgesOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L530">core/Graph.ts:530</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L537">core/Graph.ts:537</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -721,7 +717,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deleteedge">deleteEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L469">core/Graph.ts:469</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L476">core/Graph.ts:476</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -745,7 +741,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deleteinedgesof">deleteInEdgesOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L496">core/Graph.ts:496</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L503">core/Graph.ts:503</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -769,7 +765,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deletenode">deleteNode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L305">core/Graph.ts:305</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L312">core/Graph.ts:312</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -793,7 +789,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deleteoutedgesof">deleteOutEdgesOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L513">core/Graph.ts:513</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L520">core/Graph.ts:520</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -817,7 +813,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#deleteundedgesof">deleteUndEdgesOf</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L536">core/Graph.ts:536</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L543">core/Graph.ts:543</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -841,7 +837,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getdiredges">getDirEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L406">core/Graph.ts:406</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L413">core/Graph.ts:413</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -864,7 +860,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getedgebyid">getEdgeById</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L348">core/Graph.ts:348</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L355">core/Graph.ts:355</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -888,7 +884,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getedgebylabel">getEdgeByLabel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L360">core/Graph.ts:360</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L367">core/Graph.ts:367</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -918,7 +914,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getedgebynodeids">getEdgeByNodeIDs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L375">core/Graph.ts:375</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L382">core/Graph.ts:382</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -945,7 +941,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getmode">getMode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L193">core/Graph.ts:193</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L200">core/Graph.ts:200</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../enums/_core_graph_.graphmode.html" class="tsd-signature-type">GraphMode</a></h4>
@@ -963,7 +959,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getnodebyid">getNodeById</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L279">core/Graph.ts:279</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L286">core/Graph.ts:286</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -987,7 +983,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getnodebylabel">getNodeByLabel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L287">core/Graph.ts:287</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L294">core/Graph.ts:294</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1017,7 +1013,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getnodes">getNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L294">core/Graph.ts:294</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L301">core/Graph.ts:301</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -1040,7 +1036,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getrandomdiredge">getRandomDirEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L586">core/Graph.ts:586</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L593">core/Graph.ts:593</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1063,7 +1059,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getrandomnode">getRandomNode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L301">core/Graph.ts:301</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L308">core/Graph.ts:308</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1086,7 +1082,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getrandomundedge">getRandomUndEdge</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L593">core/Graph.ts:593</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L600">core/Graph.ts:600</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1109,7 +1105,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getstats">getStats</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L198">core/Graph.ts:198</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L205">core/Graph.ts:205</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_core_graph_.graphstats.html" class="tsd-signature-type">GraphStats</a></h4>
@@ -1127,7 +1123,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#getundedges">getUndEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L410">core/Graph.ts:410</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L417">core/Graph.ts:417</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -1150,7 +1146,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#hasedgeid">hasEdgeID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L330">core/Graph.ts:330</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L337">core/Graph.ts:337</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1174,7 +1170,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#hasedgelabel">hasEdgeLabel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L338">core/Graph.ts:338</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L345">core/Graph.ts:345</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1204,7 +1200,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#hasnodeid">hasNodeID</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L265">core/Graph.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L272">core/Graph.ts:272</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1228,7 +1224,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#hasnodelabel">hasNodeLabel</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L273">core/Graph.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L280">core/Graph.ts:280</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1258,7 +1254,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#nrdiredges">nrDirEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L246">core/Graph.ts:246</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L253">core/Graph.ts:253</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1276,7 +1272,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#nrnodes">nrNodes</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L242">core/Graph.ts:242</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L249">core/Graph.ts:249</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1294,7 +1290,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#nrundedges">nrUndEdges</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L250">core/Graph.ts:250</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L257">core/Graph.ts:257</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1312,7 +1308,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#pickrandomproperties">pickRandomProperties</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L667">core/Graph.ts:667</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L674">core/Graph.ts:674</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1347,7 +1343,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_core_graph_.igraph.html">IGraph</a>.<a href="../interfaces/_core_graph_.igraph.html#pickrandomproperty">pickRandomProperty</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L649">core/Graph.ts:649</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L656">core/Graph.ts:656</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1370,7 +1366,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L630">core/Graph.ts:630</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/core/Graph.ts#L637">core/Graph.ts:637</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -1447,9 +1443,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_core_graph_.basegraph.html#adjlistdict" class="tsd-kind-icon">adj<wbr>List<wbr>Dict</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="_core_graph_.basegraph.html#buildadjacencystruct" class="tsd-kind-icon">build<wbr>Adjacency<wbr>Struct</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected tsd-is-not-exported">
 								<a href="_core_graph_.basegraph.html#checkconnectednodeorthrow" class="tsd-kind-icon">check<wbr>Connected<wbr>Node<wbr>OrThrow</a>

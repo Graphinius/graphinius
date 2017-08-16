@@ -121,72 +121,79 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
-	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray {
-		self_dist = self_dist || 0;
-		let adj_list: MinAdjacencyListArray = [],
-				nodes = this.getNodes(),
-				keys = Object.keys(nodes),
-				weight: number;
-		for (let key in nodes) {
-			adj_list.push([]);
-		}
-		
-		// this.buildAdjacencyStruct(adj_list, incoming, include_self, self_dist);
+	/**
+	 * This function iterates over the adjDict in order to use it's advantage
+	 * of being able to override edges if edges with smaller weight exist
+	 * 
+	 * However, the order of nodes in the array represents the order of nodes
+	 * at creation time, no other implicit alphabetical or collational sorting.
+	 * 
+	 * This has to be considered when further processing the result
+	 * 
+	 * @param incoming whether or not to consider incoming edges as well
+	 * @param include_self contains a distance to itself apart?
+	 * @param self_dist default distance to self
+	 */
+	adjListArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListArray {
+		let adjList = [],
+				idx = 0;
+		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
 
-		return adj_list;
+		for ( let i in adjDict ) {
+			adjList.push([]);
+			for ( let j in adjDict ) {
+				adjList[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );	
+			}
+			++idx;
+		}
+		return adjList;
 	}
 
 
+	/**
+	 * 
+	 * @param incoming whether or not to consider incoming edges as well
+	 * @param include_self contains a distance to itself apart?
+	 * @param self_dist default distance to self
+	 */
 	adjListDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListDict{
 		self_dist = self_dist || 0;
-		let adj_hash_map: MinAdjacencyListDict = {},
+		let adj_list_dict: MinAdjacencyListDict = {},
 				nodes = this.getNodes(),
 				weight: number;
 		for (let key in nodes) {
-			adj_hash_map[key] = {};
-		}
-		
-		this.buildAdjacencyStruct(adj_hash_map, incoming, include_self, self_dist);
-
-		return adj_hash_map;
-	}
-
-
-	private buildAdjacencyStruct(adj_struct, incoming:boolean, include_self:boolean, self_dist:number) {
-		let nodes = this.getNodes(),
-				weight: number;
-		
+			adj_list_dict[key] = {};
+		}		
 		for ( var key in nodes ) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
 			neighbors.forEach( (ne) => {
-				weight = adj_struct[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+				weight = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 
 				if ( ne.edge.getWeight() < weight ) {
-					adj_struct[key][ne.node.getID()] = ne.edge.getWeight();
+					adj_list_dict[key][ne.node.getID()] = ne.edge.getWeight();
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_struct[ne.node.getID()][key] = ne.edge.getWeight();
+						adj_list_dict[ne.node.getID()][key] = ne.edge.getWeight();
 					}
 				}
 				else {
-					adj_struct[key][ne.node.getID()] = weight;
+					adj_list_dict[key][ne.node.getID()] = weight;
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_struct[ne.node.getID()][key] = weight;
+						adj_list_dict[ne.node.getID()][key] = weight;
 					}
 				}
 			});
-
 		}
-
 		if ( include_self ) {
-			for ( var node in nodes ) {
-				if ( adj_struct[node][node] == null ) {
-					adj_struct[node][node] = self_dist;
+			for ( var node_key in nodes ) {
+				if ( adj_list_dict[node_key][node_key] == null ) {
+					adj_list_dict[node_key][node_key] = self_dist;
 				}
 			}
 		}
+		return adj_list_dict;
 	}
 
 
