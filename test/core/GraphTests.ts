@@ -902,7 +902,7 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe.only('Adjacency List / Hash Tests - ', () => {
+	describe('Adjacency List / Hash Tests - ', () => {
 
 		describe("Minimum Adjacency List generation Tests, DICT version", () => {
 
