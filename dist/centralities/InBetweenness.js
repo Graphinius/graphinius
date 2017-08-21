@@ -6,7 +6,6 @@ function inBetweennessCentrality(graph, sparse) {
         paths = $FW.FloydWarshallSparse(graph)[1];
     else
         paths = $FW.FloydWarshallDense(graph)[1];
-    console.log(paths);
     var nodes = graph.getNodes();
     var map = {};
     for (var keyA in nodes) {

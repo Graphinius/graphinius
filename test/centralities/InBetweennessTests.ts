@@ -36,9 +36,15 @@ describe("InBetweenness Centrality Tests", () => {
             "E": 0.30434782608695654,
             "F": 0
 
-    };
+        };
         let closeness_map = $IB.inBetweennessCentrality( graph,false );
         expect( closeness_map ).to.deep.equal( expected_betweenness_map );
+    });
+
+    it.skip('should return the same dense and sparse betweenness map', () => {
+        let sparse_map = $IB.inBetweennessCentrality(graph,true);
+        let dense_map = $IB.inBetweennessCentrality( graph,false );
+        expect( sparse_map ).to.deep.equal( dense_map );
     });
 
 

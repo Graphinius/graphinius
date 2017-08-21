@@ -19,53 +19,69 @@ interface FWConfig {
  * @constructor
  */
 function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: false }
-
-	/**
-	 * We are not traversing an empty graph...
-	 */
-	if ( graph.getMode() === $G.GraphMode.INIT ) {
-		throw new Error('Cowardly refusing to traverse graph without edges.');
-	}
-	
-	let nodes = graph.getNodes();
-	let adj_list = graph.adjListDict(true, true); // include incoming edges and self
-	let next = {},
+	//return {};
+	let dists = {},
+		next = {},
+		adj_list = graph.adjListArray(true,true),
 		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges){
-		if(next[edges[edge].getNodes().a.getID()] == null)
-			next[edges[edge].getNodes().a.getID()] = {};
-		next[edges[edge].getNodes().a.getID()][edges[edge].getNodes().b.getID()] = edges[edge].getNodes().a.getID();
-	}
-	
-	for (let k in adj_list) {
-		for (let i in adj_list[k]) {
-			for (let j in adj_list[k]) {
+		let a = edges[edge].getNodes().a.getID();
+		let b = edges[edge].getNodes().b.getID();
+		if(next[a] == null)
+			next[a] = {};
+		next[a][b] = [b];
+		if(!edges[edge].isDirected()){
+			if(next[b]==null)
+				next[b] = {};
+			next[b][a] = [a];
+		}
 
-				if ( i === j ) {
+		if(dists[a]==null)
+			dists[a] = {};
+		dists[a][b] = edges[edge].getWeight();
+		if(!edges[edge].isDirected()){
+			if(dists[b]==null)
+				dists[b] = {};
+			dists[b][a] = edges[edge].getWeight();
+		}
+	}
+	console.log(adj_list);
+	for (var k in adj_list) {
+		for (var i in adj_list) {
+			for (var j in adj_list) {
+
+				if (i === j) {
 					continue;
 				}
-				if ( !adj_list[i][j] || ( adj_list[i][j] > adj_list[i][k] + adj_list[k][j] ) ) {
-					adj_list[i][j] = adj_list[i][k] + adj_list[k][j];
-					if(next[i]==null)
+				if (dists[i][k] == null || dists[k][j] == null) {
+					continue;
+				}
+				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
+					//Why do we need this .indexOf? It should not be added two times... TODO
+					if(checkPathItoK(i,k,j,next) && checkPathKtoJ(i,k,j,next) && next[i][j].indexOf(next[i][k])<0){
+						next[i][j].push(next[i][k].slice(0));
+						next[i][j] = flatten(next[i][j]);
+					}
+				}
+				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+					if (next[i] == null)
 						next[i] = {};
-					next[i][j] = next[i][k];
+
+					next[i][j] = next[i][k].slice(0);
+					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
 		}
 	}
 
-	// console.log(`Went through ${pairs_count} candidates for improval`);
-
-	return [adj_list,next];
+	return [dists,next];
 }
 
 
 
 function FloydWarshallDense(graph: $G.IGraph): {} {
 	let dists = {},
-			nodes = graph.getNodes(),
-			adj_list = graph.adjListDict(true, true), // include incoming edges and self
 			next = {},
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
@@ -91,22 +107,6 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 		}
 	}
 
-	/*for (let keyA in nodes) {
-		dists[keyA] = {};
-		for (let keyB in nodes) {
-			let num = +adj_list[keyA][keyB];
-			if (num === num) {
-				dists[keyA][keyB] = num;
-			}
-			if (keyA==keyB) {
-				if (next[keyA] == null)
-					next[keyA] = {};
-				next[keyA][keyB] = keyA;
-				console.log("Adding:"+keyA);
-			}
-		}
-	}*/
-
 	for (var k in dists) {
 		for (var i in dists) {
 			for (var j in dists) {
@@ -120,8 +120,6 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
 					//Why do we need this .indexOf? It should not be added two times... TODO
 					if(checkPathItoK(i,k,j,next) && checkPathKtoJ(i,k,j,next) && next[i][j].indexOf(next[i][k])<0){
-						console.log("Make:" + i + "->" + j + " to "+ i + "->" +k +"->"+j);
-						console.log("Add "+next[i][k]+" to " +next[i][j]);
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 					}
@@ -136,8 +134,6 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 			}
 		}
 	}
-
-	// console.log(`Went through ${pairs_count} candidates for improval`);
 
 	return [dists,next];
 }

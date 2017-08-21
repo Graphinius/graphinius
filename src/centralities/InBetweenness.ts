@@ -11,7 +11,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   else
     paths = $FW.FloydWarshallDense(graph)[1];
 
-  console.log(paths);
+  //console.log(paths);
   //console.log(JSON.stringify(paths,null,2));
 
   let nodes = graph.getNodes();

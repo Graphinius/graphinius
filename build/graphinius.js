@@ -2473,40 +2473,59 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $G = __webpack_require__(4);
 	var $SU = __webpack_require__(3);
 	function FloydWarshallSparse(graph) {
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    var nodes = graph.getNodes();
-	    var adj_list = graph.adjListDict(true, true);
-	    var next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
-	        if (next[edges[edge].getNodes().a.getID()] == null)
-	            next[edges[edge].getNodes().a.getID()] = {};
-	        next[edges[edge].getNodes().a.getID()][edges[edge].getNodes().b.getID()] = edges[edge].getNodes().a.getID();
+	        var a = edges[edge].getNodes().a.getID();
+	        var b = edges[edge].getNodes().b.getID();
+	        if (next[a] == null)
+	            next[a] = {};
+	        next[a][b] = [b];
+	        if (!edges[edge].isDirected()) {
+	            if (next[b] == null)
+	                next[b] = {};
+	            next[b][a] = [a];
+	        }
+	        if (dists[a] == null)
+	            dists[a] = {};
+	        dists[a][b] = edges[edge].getWeight();
+	        if (!edges[edge].isDirected()) {
+	            if (dists[b] == null)
+	                dists[b] = {};
+	            dists[b][a] = edges[edge].getWeight();
+	        }
 	    }
+	    console.log(adj_list);
 	    for (var k in adj_list) {
-	        for (var i in adj_list[k]) {
-	            for (var j in adj_list[k]) {
+	        for (var i in adj_list) {
+	            for (var j in adj_list) {
 	                if (i === j) {
 	                    continue;
 	                }
-	                if (!adj_list[i][j] || (adj_list[i][j] > adj_list[i][k] + adj_list[k][j])) {
-	                    adj_list[i][j] = adj_list[i][k] + adj_list[k][j];
+	                if (dists[i][k] == null || dists[k][j] == null) {
+	                    continue;
+	                }
+	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
+	                    if (checkPathItoK(i, k, j, next) && checkPathKtoJ(i, k, j, next) && next[i][j].indexOf(next[i][k]) < 0) {
+	                        next[i][j].push(next[i][k].slice(0));
+	                        next[i][j] = flatten(next[i][j]);
+	                    }
+	                }
+	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
 	                    if (next[i] == null)
 	                        next[i] = {};
-	                    next[i][j] = next[i][k];
+	                    next[i][j] = next[i][k].slice(0);
+	                    dists[i][j] = dists[i][k] + dists[k][j];
 	                }
 	            }
 	        }
 	    }
-	    return [adj_list, next];
+	    return [dists, next];
 	}
 	exports.FloydWarshallSparse = FloydWarshallSparse;
 	function FloydWarshallDense(graph) {
-	    var dists = {}, nodes = graph.getNodes(), adj_list = graph.adjListDict(true, true), next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
 	        var a = edges[edge].getNodes().a.getID();
 	        var b = edges[edge].getNodes().b.getID();
@@ -2538,8 +2557,6 @@
 	                }
 	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
 	                    if (checkPathItoK(i, k, j, next) && checkPathKtoJ(i, k, j, next) && next[i][j].indexOf(next[i][k]) < 0) {
-	                        console.log("Make:" + i + "->" + j + " to " + i + "->" + k + "->" + j);
-	                        console.log("Add " + next[i][k] + " to " + next[i][j]);
 	                        next[i][j].push(next[i][k].slice(0));
 	                        next[i][j] = flatten(next[i][j]);
 	                    }
