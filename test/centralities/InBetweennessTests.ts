@@ -36,7 +36,7 @@ describe("InBetweenness Centrality Tests", () => {
             "E": 0.30434782608695654,
             "F": 0
 
-        };
+        }; //TODO: check values by hand
         let closeness_map = $IB.inBetweennessCentrality( graph,false );
         expect( closeness_map ).to.deep.equal( expected_betweenness_map );
     });
