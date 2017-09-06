@@ -19,20 +19,42 @@ class closenessCentrality implements $ICentrality.ICentrality {
       pfs_config.evalPriority = function(ne: $N.NeighborEntry) {
         return $PFS.DEFAULT_WEIGHT;
       };
+    let accumulated_distance = 0;
+    //set the config (we want the sum of all edges to become a property of result)
+
+    //a node is encountered the first time
+    let not_encountered = function( context : $PFS.PFS_Scope ) {
+      // adding the distance to the accumulated distance
+
+      accumulated_distance += context.current.best + context.next.edge.getWeight();
+      //console.log("distance: "+context.current.node.getID()+"->"+context.next.node.getID()+" = " + context.current.best + context.next.edge.getWeight());
+    };
+    //We found a better path, we need to correct the accumulated distance
+    var betterPathFound = function( context: $PFS.PFS_Scope  ) {
+      //console.log("correcting distance "+context.current.node.getID()+"->"+context.next.node.getID()+" from " + pfs_config.result[context.next.node.getID()].distance + "to" + context.better_dist);
+      accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.better_dist;
+      };
+
+    let bp = pfs_config.callbacks.better_path.pop(); //change the order, otherwise our betterPathFound would not do anything
+    pfs_config.callbacks.better_path.push(betterPathFound);
+    pfs_config.callbacks.better_path.push(bp);
+    pfs_config.callbacks.not_encountered.push(not_encountered);
+
     let ret:{[id:string]: number} = {};
     for (let key in graph.getNodes()) {
-      let n = 1;
-      let currAvg = 0;
       let node = graph.getNodeById(key);
       if (node != null) {//TODO: maybe put inner of loop into own function (centrality for one single node)
+        accumulated_distance = 0;
         let allDistances = $PFS.PFS(graph, node, pfs_config);
-        for (let distanceKey in allDistances) {
-          if (distanceKey != key) {
-            currAvg = currAvg + (allDistances[distanceKey].distance - currAvg) / n;
-            n++;
-          }
-        }
-        ret[key] = currAvg;
+        //for (let distanceKey in allDistances) {
+        //  if (distanceKey != key) {
+        //    sum += allDistances[distanceKey].distance;
+        //    //console.log("distance:"+allDistances[distanceKey].distance);
+        //    n++;
+        //  }
+        //}
+        //console.log("sum: "+sum+" accumulated_distance: "+accumulated_distance);
+        ret[key] = 1/accumulated_distance;
       }
 
     }

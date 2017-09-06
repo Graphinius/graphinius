@@ -22,6 +22,7 @@ class APSP{
   graph:$G.IGraph;
 
   constructor(graph: $G.IGraph){
+
     this.graph = new $G.BaseGraph("2");
     /*$SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     this.graph = graph;
