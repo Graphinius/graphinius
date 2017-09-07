@@ -3,6 +3,7 @@
 import * as $G from '../core/Graph';
 import * as $E from '../core/Edges';
 import * as $SU from '../utils/structUtils'
+import {DEFAULT_WEIGHT} from "./PFS";
 
 interface FWConfig {
 	directed: boolean;
@@ -83,6 +84,7 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 function FloydWarshallDense(graph: $G.IGraph): {} {
 	let dists = {},
 			next = {},
+			adj_list = graph.adjListArray(true,true),
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges){
@@ -138,6 +140,45 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
+function FloydWarshall(graph: $G.IGraph): {} {
+	let dists = {},
+		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+
+
+	for (let edge in edges){
+		let a = edges[edge].getNodes().a.getID();
+		let b = edges[edge].getNodes().b.getID();
+
+		if(dists[a]==null)
+			dists[a] = {};
+
+		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		if(!edges[edge].isDirected()){
+			if(dists[b]==null)
+				dists[b] = {};
+			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		}
+	}
+
+	for (var k in dists) {
+		for (var i in dists) {
+			for (var j in dists) {
+
+				if (i === j) {
+					continue;
+				}
+				if (dists[i][k] == null || dists[k][j] == null) {
+					continue;
+				}
+				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+					dists[i][j] = dists[i][k] + dists[k][j];
+				}
+			}
+		}
+	}
+	return dists;
+}
+
 function checkPathItoK(i,k,j,next){
 	if(next[i][k]==k || next[i][k].indexOf(k)>=0)
 		return true;
@@ -180,66 +221,5 @@ function flatten(arr) {
 	}, []);
 }
 
-// function getShortestPath(next, i, j){
-// 	let allPaths = [];
-// 	let c = 0;
-// 	console.log(i+" j:"+j);
-// 	if (!isEmpty(next[i][j]))
-// 		for(let k in next[i][j])
-// 			if (next[i][j][k] == -1) { // add the path = [i, j]
-// 				allPaths.push([i, j]);
-// 				c++;
-// 			}
-// 			else{ // add the path = [i .. k .. j]
-// 				let nk = next[i][j][k];
-// 				let paths_I_K = getShortestPath(next,i,nk); // get all paths from i to k
-// 				let paths_K_J = getShortestPath(next,nk,j); // get all paths from k to j
-// 				for (let i_k in paths_I_K)
-// 					for (let k_j in paths_K_J) {
-// 						let i = paths_K_J[i_k].pop(); // remove the last element since that repeats in k_j
-// 						allPaths.push([i, paths_K_J[k_j]]);
-// 					}
-// 			}
-
-// 	return allPaths;
-// }
-
-
-// function getAllShortestPaths(graph : $G.IGraph, nextMatrix:{}):{}{
-// 	let ret = {};
-// 	for(let k in graph.getNodes()){
-// 		for(let i in graph.getNodes())
-// 			ret[k] = getShortestPath(nextMatrix,k,i);
-// 	}
-// 	return ret;
-// }
-
-// var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-// function isEmpty(obj) {
-
-// 	// null and undefined are "empty"
-// 	if (obj == null) return true;
-
-// 	// Assume if it has a length property with a non-zero value
-// 	// that that property is correct.
-// 	if (obj.length > 0)    return false;
-// 	if (obj.length === 0)  return true;
-
-// 	// If it isn't an object at this point
-// 	// it is empty, but it can't be anything *but* empty
-// 	// Is it empty?  Depends on your application.
-// 	if (typeof obj !== "object") return true;
-
-// 	// Otherwise, does it have any properties of its own?
-// 	// Note that this doesn't handle
-// 	// toString and valueOf enumeration bugs in IE < 9
-// 	for (var key in obj) {
-// 		if (hasOwnProperty.call(obj, key)) return false;
-// 	}
-
-// 	return true;
-// }
-
 export { FloydWarshallSparse,
-				 FloydWarshallDense }; // , getAllShortestPaths };
+				 FloydWarshallDense, FloydWarshall}; // , getAllShortestPaths };

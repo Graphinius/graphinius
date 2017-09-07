@@ -14,20 +14,22 @@ let expect = chai.expect,
     csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json   : $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
     sn_graph_file = "./test/test_data/social_network_edges.csv",
+    sn_graph_file_300 = "./test/test_data/social_network_edges_300.csv",
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
+    closeness_mapFW,
     CC: $IC.ICentrality = new $CC.closenessCentrality();
 
 
 describe("Closeness Centrality Tests", () => {
 
-    it.skip('should return a map of nodes of length 6', () => {
+    it('should return a map of nodes of length 6', () => {
         let cc = CC.getCentralityMap(graph);
         expect( Object.keys( cc ).length ).to.equal(6);
     });
 
 
-    it('should return the correct closeness map', () => {
+    it('should return the correct closeness map, PFS on weighted directed graph', () => {
         let expected_closeness_map = {
             "A": 0.07692307692307693,
             "B": 0.08333333333333333,
@@ -36,25 +38,73 @@ describe("Closeness Centrality Tests", () => {
             "E": 0.041666666666666664,
             "F": 0.045454545454545456
 
-    };
+        };
         let closeness_map = CC.getCentralityMap(graph);
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
     });
 
+    it('should return the correct closenesses, FW on weighted directed graph', () => {
+        let expected_closeness_map = {
+            "A": 0.07692307692307693,
+            "B": 0.08333333333333333,
+            "C": 0.08333333333333333,
+            "D": 0.041666666666666664,
+            "E": 0.041666666666666664,
+            "F": 0.045454545454545456
+
+        };
+        let CCFW = new $CC.closenessCentrality();
+        let closeness_map = CCFW.getCentralityMapFW(graph);
+        expect( closeness_map ).to.deep.equal( expected_closeness_map );
+    });
+
+    it('should return the correct closeness map, PFS on unweighted undirected graph', () => {
+        let expected_closeness_map = {
+            "A": 0.07692307692307693,
+            "B": 0.08333333333333333,
+            "C": 0.08333333333333333,
+            "D": 0.041666666666666664,
+            "E": 0.041666666666666664,
+            "F": 0.045454545454545456
+
+        };
+        let closeness_map = CC.getCentralityMap(graph);
+        expect( closeness_map ).to.deep.equal( expected_closeness_map );
+    });
+
+    it('should return the correct closeness map, FW on undirected unweighted graph', () => {
+        let expected_closeness_map = {
+            "A": 0.07692307692307693,
+            "B": 0.08333333333333333,
+            "C": 0.08333333333333333,
+            "D": 0.041666666666666664,
+            "E": 0.041666666666666664,
+            "F": 0.045454545454545456
+
+        };
+        let CCFW = new $CC.closenessCentrality();
+        let closeness_map = CCFW.getCentralityMapFW(graph);
+        expect( closeness_map ).to.deep.equal( expected_closeness_map );
+    });
 
     /**
      * Performance measurement
      * 
      * TODO: Outsource to it's own performance test suite
      */
-    it.skip('should run the closeness centrality on a real-sized social network', () => {
-        let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
-        expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
-        expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);
 
-        // console.log(sn_graph.getRandomUndEdge().isWeighted());
+    it('should run the closeness centrality on a 300 nodes social network, FW', () => {
+        let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
+
+        let CCFW = new $CC.closenessCentrality();
+        closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
+    });
+
+    it('should run the closeness centrality on a 300 nodes social network, should be same as FW', () => {
+        let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
 
         let cc = CC.getCentralityMap(sn_graph);
+        expect( closeness_mapFW ).to.deep.equal( cc );
     });
 
 });

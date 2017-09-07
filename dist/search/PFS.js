@@ -63,7 +63,7 @@ function PFS(graph, v, config) {
             if (scope.OPEN[scope.next.node.getID()]) {
                 scope.next.best = scope.OPEN[scope.next.node.getID()].best;
                 config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
-                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+                scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : scope.next.edge.getWeight());
                 if (scope.next.best > scope.better_dist) {
                     config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
                     scope.OPEN_HEAP.remove(scope.next);
@@ -129,7 +129,7 @@ function preparePFSStandardConfig() {
     };
     callbacks.init_pfs.push(initPFS);
     var notEncountered = function (context) {
-        context.next.best = context.current.best + context.next.edge.getWeight();
+        context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : context.next.edge.getWeight());
         config.result[context.next.node.getID()] = {
             distance: context.next.best,
             parent: context.current.node,

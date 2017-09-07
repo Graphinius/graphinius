@@ -194,7 +194,7 @@ function PFS(graph 	 : $G.IGraph,
          */
         config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 
-        scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+        scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
         if ( scope.next.best > scope.better_dist ) {
           /**
            * HOOK 5: Better path found
@@ -247,7 +247,7 @@ function preparePFSStandardConfig() : PFS_Config {
       dir_mode  : $G.GraphMode.MIXED,
       goal_node : null,
       evalPriority : function(ne: $N.NeighborEntry) {
-        return ne.best || DEFAULT_WEIGHT;
+            return ne.best || DEFAULT_WEIGHT;
       },
       evalObjID : function(ne: $N.NeighborEntry) {
         return ne.node.getID();
@@ -285,7 +285,7 @@ function preparePFSStandardConfig() : PFS_Config {
   var notEncountered = function( context : PFS_Scope ) {
     // setting it's best score to actual distance + edge weight
     // and update result structure
-    context.next.best = context.current.best + context.next.edge.getWeight();
+    context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? DEFAULT_WEIGHT : context.next.edge.getWeight());
 
     config.result[context.next.node.getID()] = {
       distance  : context.next.best,

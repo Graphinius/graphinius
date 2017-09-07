@@ -2140,7 +2140,7 @@
 	            if (scope.OPEN[scope.next.node.getID()]) {
 	                scope.next.best = scope.OPEN[scope.next.node.getID()].best;
 	                config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
-	                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+	                scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : scope.next.edge.getWeight());
 	                if (scope.next.best > scope.better_dist) {
 	                    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
 	                    scope.OPEN_HEAP.remove(scope.next);
@@ -2206,7 +2206,7 @@
 	    };
 	    callbacks.init_pfs.push(initPFS);
 	    var notEncountered = function (context) {
-	        context.next.best = context.current.best + context.next.edge.getWeight();
+	        context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : context.next.edge.getWeight());
 	        config.result[context.next.node.getID()] = {
 	            distance: context.next.best,
 	            parent: context.current.node,
@@ -2525,7 +2525,7 @@
 	}
 	exports.FloydWarshallSparse = FloydWarshallSparse;
 	function FloydWarshallDense(graph) {
-	    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
 	        var a = edges[edge].getNodes().a.getID();
 	        var b = edges[edge].getNodes().b.getID();
@@ -2573,6 +2573,38 @@
 	    return [dists, next];
 	}
 	exports.FloydWarshallDense = FloydWarshallDense;
+	function FloydWarshall(graph) {
+	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    for (var edge in edges) {
+	        var a = edges[edge].getNodes().a.getID();
+	        var b = edges[edge].getNodes().b.getID();
+	        if (dists[a] == null)
+	            dists[a] = {};
+	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        if (!edges[edge].isDirected()) {
+	            if (dists[b] == null)
+	                dists[b] = {};
+	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        }
+	    }
+	    for (var k in dists) {
+	        for (var i in dists) {
+	            for (var j in dists) {
+	                if (i === j) {
+	                    continue;
+	                }
+	                if (dists[i][k] == null || dists[k][j] == null) {
+	                    continue;
+	                }
+	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
+	        }
+	    }
+	    return dists;
+	}
+	exports.FloydWarshall = FloydWarshall;
 	function checkPathItoK(i, k, j, next) {
 	    if (next[i][k] == k || next[i][k].indexOf(k) >= 0)
 	        return true;

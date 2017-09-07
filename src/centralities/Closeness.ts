@@ -8,11 +8,26 @@ import * as $G from '../core/Graph';
 import * as $PFS from '../search/PFS';
 import * as $ICentrality from "../centralities/ICentrality";
 import * as $N from '../core/Nodes';
+import * as $FW from '../search/FloydWarshall';
 
 //Calculates all the shortest path's to all other nodes for all given nodes in the graph
 //Returns a map with every node as key and the average distance to all other nodes as value
 class closenessCentrality implements $ICentrality.ICentrality {
 
+
+  getCentralityMapFW(graph: $G.IGraph): {[id: string]: number} {
+    let dists = $FW.FloydWarshall(graph);
+
+    let ret:{[id:string]: number} = {};
+    for (let keyA in dists) {
+      let sum = 0;
+      for (let keyB in dists[keyA]) {
+        sum += dists[keyA][keyB];
+      }
+      ret[keyA] = 1/sum;
+    }
+    return ret;
+  }
   getCentralityMap(graph: $G.IGraph, weighted: boolean): {[id: string]: number} {
     let pfs_config:$PFS.PFS_Config = $PFS.preparePFSStandardConfig();
     if(!weighted && weighted != null) //If we want, we can ignore edgeWeights, then every edge has weight 1
@@ -26,7 +41,7 @@ class closenessCentrality implements $ICentrality.ICentrality {
     let not_encountered = function( context : $PFS.PFS_Scope ) {
       // adding the distance to the accumulated distance
 
-      accumulated_distance += context.current.best + context.next.edge.getWeight();
+      accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());
       //console.log("distance: "+context.current.node.getID()+"->"+context.next.node.getID()+" = " + context.current.best + context.next.edge.getWeight());
     };
     //We found a better path, we need to correct the accumulated distance
@@ -45,15 +60,7 @@ class closenessCentrality implements $ICentrality.ICentrality {
       let node = graph.getNodeById(key);
       if (node != null) {//TODO: maybe put inner of loop into own function (centrality for one single node)
         accumulated_distance = 0;
-        let allDistances = $PFS.PFS(graph, node, pfs_config);
-        //for (let distanceKey in allDistances) {
-        //  if (distanceKey != key) {
-        //    sum += allDistances[distanceKey].distance;
-        //    //console.log("distance:"+allDistances[distanceKey].distance);
-        //    n++;
-        //  }
-        //}
-        //console.log("sum: "+sum+" accumulated_distance: "+accumulated_distance);
+        $PFS.PFS(graph, node, pfs_config);
         ret[key] = 1/accumulated_distance;
       }
 
