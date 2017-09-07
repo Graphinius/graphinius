@@ -16,7 +16,9 @@ let expect = chai.expect,
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     sn_graph_file_300 = "./test/test_data/social_network_edges_300.csv",
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
+    und_unw_graph = "./test/test_data/undirected_unweighted_6nodes.csv",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
+    graph_und_unw : $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
     closeness_mapFW,
     CC: $IC.ICentrality = new $CC.closenessCentrality();
 
@@ -58,34 +60,26 @@ describe("Closeness Centrality Tests", () => {
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
     });
 
-    it('should return the correct closeness map, PFS on unweighted undirected graph', () => {
+    it('should return the correct closeness map, PFS/FW on unweighted undirected graph', () => {
         let expected_closeness_map = {
-            "A": 0.07692307692307693,
-            "B": 0.08333333333333333,
-            "C": 0.08333333333333333,
-            "D": 0.041666666666666664,
-            "E": 0.041666666666666664,
-            "F": 0.045454545454545456
-
-        };
-        let closeness_map = CC.getCentralityMap(graph);
-        expect( closeness_map ).to.deep.equal( expected_closeness_map );
-    });
-
-    it('should return the correct closeness map, FW on undirected unweighted graph', () => {
-        let expected_closeness_map = {
-            "A": 0.07692307692307693,
-            "B": 0.08333333333333333,
-            "C": 0.08333333333333333,
-            "D": 0.041666666666666664,
-            "E": 0.041666666666666664,
-            "F": 0.045454545454545456
+            "1": 0.14285714285714285,   //1/7
+            "2": 0.16666666666666666,   //1/6
+            "3": 0.2,                   //1/5
+            "4": 0.14285714285714285,
+            "5": 0.16666666666666666,
+            "6": 0.14285714285714285
 
         };
         let CCFW = new $CC.closenessCentrality();
-        let closeness_map = CCFW.getCentralityMapFW(graph);
+        let closeness_map_FW = CCFW.getCentralityMapFW(graph_und_unw);
+        let closeness_map = CC.getCentralityMap(graph_und_unw);
+
+        //console.log(graph_und_unw.getUndEdges());
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
+        expect( closeness_map_FW ).to.deep.equal( expected_closeness_map );
+        expect( closeness_map ).to.deep.equal( closeness_map_FW );
     });
+
 
     /**
      * Performance measurement
