@@ -60,7 +60,7 @@ function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: f
 				}
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
 					//Why do we need this .indexOf? It should not be added two times... TODO
-					if(checkPathItoK(i,k,j,next) && checkPathKtoJ(i,k,j,next) && next[i][j].indexOf(next[i][k])<0){
+					if(checkPathItoK(i,k,j,next,[],dists) && checkPathKtoJ(i,k,j,next,[],dists) && next[i][j].indexOf(next[i][k])<0){
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 					}
@@ -88,8 +88,8 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges){
-		let a = edges[edge].getNodes().a.getID();
-		let b = edges[edge].getNodes().b.getID();
+		let a = String(edges[edge].getNodes().a.getID());
+		let b = String(edges[edge].getNodes().b.getID());
 		if(next[a] == null)
 			next[a] = {};
 		next[a][b] = [b];
@@ -121,7 +121,7 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 				}
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
 					//Why do we need this .indexOf? It should not be added two times... TODO
-					if(checkPathItoK(i,k,j,next) && checkPathKtoJ(i,k,j,next) && next[i][j].indexOf(next[i][k])<0){
+					if(checkPathItoK(i,k,j,next,[],dists) && checkPathKtoJ(i,k,j,next,[],dists) && next[i][j].indexOf(next[i][k])<0){
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 					}
@@ -179,32 +179,39 @@ function FloydWarshall(graph: $G.IGraph): {} {
 	return dists;
 }
 
-function checkPathItoK(i,k,j,next){
+function checkPathItoK(i,k,j,next,nullNodes,dists){
 	if(next[i][k]==k || next[i][k].indexOf(k)>=0)
 		return true;
+	//if(dists[i][k]<=0)
+		nullNodes.push(i);
 	i = next[i][k];
 	if(i==j)
 		return false;
 	if(i.indexOf(k)<0){
 		let ret = false;
-		for(let e of k){
-			if(e==k)
+		for(let e of i){
+			if(e==k )
 				return true;
-			if (checkPathItoK(e, k, j,  next)) ret = true;
+			if(nullNodes.indexOf(e)<0){
+				if (checkPathItoK(e, k, j,  next,nullNodes.slice(0),dists)) ret = true;
+			}
 		}
 		if(!ret) return false;
 	}
 	return true;
 }
-function checkPathKtoJ(i,k,j,next)
+function checkPathKtoJ(i,k,j,next,nullNodes,dists)
 {
 	if(next[k][j]==j) return true;
+	//if(dists[k][j]<=0)
+		nullNodes.push(k);
 	k = next[k][j];
 	if(k.indexOf(j)<0){
 		let ret = false;
 		for(let e of k){
-			if(e!=i) {
-				if (checkPathKtoJ(i, e, j, next)) ret = true;
+			if(e!=i && nullNodes.indexOf(e)<0) {
+					//console.log("NN: "+JSON.stringify(nullNodes) + " E:"+JSON.stringify(e));
+					if (checkPathKtoJ(i, e, j, next,nullNodes.slice(0),dists)) ret = true;
 			}
 		}
 		if(!ret) return false;

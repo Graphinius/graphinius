@@ -15,6 +15,8 @@ let expect = chai.expect,
     json   : $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     iBt_cent_graph = "./test/test_data/search_graph_multiple_SPs.json",
+    graph_300_file = "./test/test_data/social_network_edges_300.csv",
+    graph_300 : $G.IGraph = csv.readFromEdgeListFile(graph_300_file),
     graph : $G.IGraph = json.readFromJSONFile(iBt_cent_graph);
     let sparseMap;
 
@@ -69,6 +71,10 @@ describe("InBetweenness Centrality Tests", () => {
 
         let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
         //expect( sparseMap ).to.deep.equal( denseMap );
+    });
+
+    it('Temp FW test',()=>{
+        $FW.FloydWarshallDense(graph_300);
     });
 
 });

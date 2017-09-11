@@ -49,7 +49,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	});
 
 
-	it('should refuse to traverse an empty graph', () => {
+	it.skip('should refuse to traverse an empty graph', () => {
 		var empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallSparse.bind($FW.FloydWarshallSparse, empty_graph)).to.throw(
 			"Cowardly refusing to traverse graph without edges.");
@@ -61,7 +61,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 		describe('computing distances in UNDIRECTED _mode - ', () => {
 
-			it('should correctly compute distance matrix for graph by sparse method', () => {
+			it.skip('should correctly compute distance matrix for graph by sparse method', () => {
 				FW_res = $FW.FloydWarshallSparse(graph_search);
 				// console.log(FW_res);
 				checkFWCentralitiesOnSmallGraph(graph_search, FW_res);				
@@ -89,7 +89,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		});
 
 			
-		it('performance test of SPARSE Floyd Warshal on a ~75 node / ~200 edge graph', () => {
+		it.skip('performance test of SPARSE Floyd Warshal on a ~75 node / ~200 edge graph', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallSparse(graph_bernd);
 			let e = +new Date();
@@ -97,7 +97,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		});
 
 
-		it('75 nodes - densely computed dists should equal sparsely computed ones', () => {
+		it.skip('75 nodes - densely computed dists should equal sparsely computed ones', () => {
 			let FW_res_dense = $FW.FloydWarshallDense(graph_bernd);
 			let FW_res_sparse = $FW.FloydWarshallSparse(graph_bernd);
 			expect(FW_res_dense).to.deep.equal(FW_res_sparse);
@@ -112,7 +112,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		});
 
 
-		it('performance test of SPARSE FW implementation on 246 nodes)', () => {
+		it.skip('performance test of SPARSE FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallSparse(graph_midsize);
 			let e = +new Date();

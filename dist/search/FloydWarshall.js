@@ -33,7 +33,7 @@ function FloydWarshallSparse(graph) {
                     continue;
                 }
                 if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
-                    if (checkPathItoK(i, k, j, next) && checkPathKtoJ(i, k, j, next) && next[i][j].indexOf(next[i][k]) < 0) {
+                    if (checkPathItoK(i, k, j, next, [], dists) && checkPathKtoJ(i, k, j, next, [], dists) && next[i][j].indexOf(next[i][k]) < 0) {
                         next[i][j].push(next[i][k].slice(0));
                         next[i][j] = flatten(next[i][j]);
                     }
@@ -53,8 +53,8 @@ exports.FloydWarshallSparse = FloydWarshallSparse;
 function FloydWarshallDense(graph) {
     var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
-        var a = edges[edge].getNodes().a.getID();
-        var b = edges[edge].getNodes().b.getID();
+        var a = String(edges[edge].getNodes().a.getID());
+        var b = String(edges[edge].getNodes().b.getID());
         if (next[a] == null)
             next[a] = {};
         next[a][b] = [b];
@@ -82,7 +82,7 @@ function FloydWarshallDense(graph) {
                     continue;
                 }
                 if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
-                    if (checkPathItoK(i, k, j, next) && checkPathKtoJ(i, k, j, next) && next[i][j].indexOf(next[i][k]) < 0) {
+                    if (checkPathItoK(i, k, j, next, [], dists) && checkPathKtoJ(i, k, j, next, [], dists) && next[i][j].indexOf(next[i][k]) < 0) {
                         next[i][j].push(next[i][k].slice(0));
                         next[i][j] = flatten(next[i][j]);
                     }
@@ -131,36 +131,40 @@ function FloydWarshall(graph) {
     return dists;
 }
 exports.FloydWarshall = FloydWarshall;
-function checkPathItoK(i, k, j, next) {
+function checkPathItoK(i, k, j, next, nullNodes, dists) {
     if (next[i][k] == k || next[i][k].indexOf(k) >= 0)
         return true;
+    nullNodes.push(i);
     i = next[i][k];
     if (i == j)
         return false;
     if (i.indexOf(k) < 0) {
         var ret = false;
-        for (var _i = 0, k_1 = k; _i < k_1.length; _i++) {
-            var e = k_1[_i];
+        for (var _i = 0, i_1 = i; _i < i_1.length; _i++) {
+            var e = i_1[_i];
             if (e == k)
                 return true;
-            if (checkPathItoK(e, k, j, next))
-                ret = true;
+            if (nullNodes.indexOf(e) < 0) {
+                if (checkPathItoK(e, k, j, next, nullNodes.slice(0), dists))
+                    ret = true;
+            }
         }
         if (!ret)
             return false;
     }
     return true;
 }
-function checkPathKtoJ(i, k, j, next) {
+function checkPathKtoJ(i, k, j, next, nullNodes, dists) {
     if (next[k][j] == j)
         return true;
+    nullNodes.push(k);
     k = next[k][j];
     if (k.indexOf(j) < 0) {
         var ret = false;
-        for (var _i = 0, k_2 = k; _i < k_2.length; _i++) {
-            var e = k_2[_i];
-            if (e != i) {
-                if (checkPathKtoJ(i, e, j, next))
+        for (var _i = 0, k_1 = k; _i < k_1.length; _i++) {
+            var e = k_1[_i];
+            if (e != i && nullNodes.indexOf(e) < 0) {
+                if (checkPathKtoJ(i, e, j, next, nullNodes.slice(0), dists))
                     ret = true;
             }
         }
