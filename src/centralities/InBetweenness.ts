@@ -67,7 +67,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   for (let keyA in nodes) {
     for (let keyB in nodes) {
       if(keyA!=keyB && paths[keyA][keyB]!=keyB){
-        nop += addBetweeness(keyA,keyB,paths,map,0,[],keyA) + 1;
+        nop += addBetweeness(keyA,keyB,paths,map);
       }
     }
   }
@@ -77,28 +77,14 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   return map;
 }
 
-function addBetweeness(u,v,next, map, fact = 0,path=[],ou){
+function addBetweeness(u,v,next, map, fact = 0){
   if(u==v)
-    if(path.length<=1)
-      return -2;
-    else
-      return -1;
-  if(path.indexOf(u) >= 0)
-    return -1;
-  if (next[u][v] == null)
-    return -1;
-  path.push(u);
-  let ef = 1;
+    return 0;
   for(let e of next[u][v]){
-    if(e!=v && e!=ou) {
-      fact += addBetweeness(e, v, next, map, -1, path.slice(0),ou);
-      fact += ef;
-      ef = 2;
+    if(e!=v) {
+      fact += addBetweeness(e, v, next, map, 0);
       map[e] += 1;
-    }
-    if(e==ou){
-      //Remove current branch, this probably needs to be done because we could already
-      // have added betweenness values to nodes on this cycle to ou TODO
+      fact++;
     }
   }
   return fact;

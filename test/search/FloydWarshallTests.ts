@@ -55,7 +55,12 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			"Cowardly refusing to traverse graph without edges.");
 	});
 
-
+	//TODO:::TODO
+	it.skip('should refuse to compute Graph with negative cylces', () => {
+		var empty_graph = new $G.BaseGraph("iamempty");
+		expect($FW.FloydWarshallSparse.bind($FW.FloydWarshallSparse, empty_graph)).to.throw(
+			"Cannot compute FW on negative cycles");
+	});
 
 	describe('FW on small search graph - ', () => {
 
@@ -88,7 +93,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("DENSE Floyd on Bernd (75 nodes) took " + (d-e) + "ms to finish");
 		});
 
-			
+
 		it.skip('performance test of SPARSE Floyd Warshal on a ~75 node / ~200 edge graph', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallSparse(graph_bernd);
