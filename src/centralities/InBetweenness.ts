@@ -63,31 +63,35 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   for (let keyA in nodes) {
     map[keyA] = 0;
   }
-  let nop = 0; //number of paths - for normalization
   for (let keyA in nodes) {
     for (let keyB in nodes) {
       if(keyA!=keyB && paths[keyA][keyB]!=keyB){
-        nop += addBetweeness(keyA,keyB,paths,map);
+        addBetweeness(keyA, keyB, paths, map, keyA);
       }
     }
   }
+  let dem = 0;
   for(let a in map){
-    map[a] /= nop; //Is this correct? A path has multiple nodes... so this is >= 1
+    dem +=map[a];
   }
+  for(let a in map){
+    map[a]/=dem;
+  }
+  console.log(paths);
   return map;
 }
 
-function addBetweeness(u,v,next, map, fact = 0){
+function addBetweeness(u, v, next, map, start){
   if(u==v)
-    return 0;
+    return 1;     //Terminal nodes return 1
+  let nodes = 0;  //count of terminal nodes (= number of path's to v)
   for(let e of next[u][v]){
-    if(e!=v) {
-      fact += addBetweeness(e, v, next, map, 0);
-      map[e] += 1;
-      fact++;
-    }
+      nodes += addBetweeness(e, v, next, map, start); //Add all child nodes reachable from this node
   }
-  return fact;
+  if(u!=start){
+    map[u] += nodes;
+  }
+  return nodes;
 }
 
 export {

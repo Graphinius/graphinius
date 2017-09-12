@@ -14,9 +14,10 @@ let JSON_IN	= $J.JSONInput;
 let CSV_IN	= $C.CSVInput;
 
 let search_graph = "./test/test_data/search_graph.json";
-let bernd_graph = "./test/test_data/bernd_ares.json";
-let intermediate = "./test/test_data/bernd_ares_intermediate.json";
+let bernd_graph = "./test/test_data/bernd_ares_pos.json";
+let intermediate = "./test/test_data/bernd_ares_intermediate_pos.json";
 let social_graph = "./test/test_data/social_network_edges.csv";
+let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
 
 describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
@@ -24,6 +25,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
 			graph_search			: $G.IGraph,
+			graph_nullcycle			: $G.IGraph,
 			graph_bernd				: $G.IGraph,
 			graph_midsize			: $G.IGraph,
 			graph_social			: $G.IGraph,
@@ -34,8 +36,9 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	before(() => {
 		json = new JSON_IN(true,false,true);
 		csv = new CSV_IN(' ',false,false);
-		graph_search = json.readFromJSONFile(search_graph);
+		graph_search = json.readFromJSONFile(search_graph_pos);
 		graph_bernd = json.readFromJSONFile(bernd_graph);
+		graph_nullcycle = json.readFromJSONFile(search_graph);
 		graph_midsize = json.readFromJSONFile(intermediate);
 		graph_social = csv.readFromEdgeListFile(social_graph);
 	});
@@ -43,8 +46,8 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 	it('should correctly instantiate the search graph', () => {
 		stats = graph_search.getStats();
-		expect(stats.nr_nodes).to.equal(7);
-		expect(stats.nr_dir_edges).to.equal(7);
+		expect(stats.nr_nodes).to.equal(6);
+		expect(stats.nr_dir_edges).to.equal(12);
 		expect(stats.nr_und_edges).to.equal(2);
 	});
 
@@ -69,14 +72,14 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			it.skip('should correctly compute distance matrix for graph by sparse method', () => {
 				FW_res = $FW.FloydWarshallSparse(graph_search);
 				// console.log(FW_res);
-				checkFWCentralitiesOnSmallGraph(graph_search, FW_res);				
+				checkFWCentralitiesOnSmallGraph(graph_search, FW_res);
 			});
 
 
 			it('should correctly compute distance matrix for graph by dense method', () => {
-				FW_res = $FW.FloydWarshallDense(graph_search);
+				FW_res = $FW.FloydWarshallDense(graph_nullcycle);
 				// console.log(FW_res);
-				checkFWCentralitiesOnSmallGraph(graph_search, FW_res);
+				checkFWCentralitiesOnSmallGraph(graph_nullcycle, FW_res);
 			});
 
 		});

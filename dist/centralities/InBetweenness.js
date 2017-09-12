@@ -40,31 +40,34 @@ function inBetweennessCentrality(graph, sparse) {
     for (var keyA in nodes) {
         map[keyA] = 0;
     }
-    var nop = 0;
     for (var keyA in nodes) {
         for (var keyB in nodes) {
             if (keyA != keyB && paths[keyA][keyB] != keyB) {
-                nop += addBetweeness(keyA, keyB, paths, map);
+                addBetweeness(keyA, keyB, paths, map, keyA);
             }
         }
     }
+    var dem = 0;
     for (var a in map) {
-        map[a] /= nop;
+        dem += map[a];
     }
+    for (var a in map) {
+        map[a] /= dem;
+    }
+    console.log(paths);
     return map;
 }
 exports.inBetweennessCentrality = inBetweennessCentrality;
-function addBetweeness(u, v, next, map, fact) {
-    if (fact === void 0) { fact = 0; }
+function addBetweeness(u, v, next, map, start) {
     if (u == v)
-        return 0;
+        return 1;
+    var nodes = 0;
     for (var _i = 0, _a = next[u][v]; _i < _a.length; _i++) {
         var e = _a[_i];
-        if (e != v) {
-            fact += addBetweeness(e, v, next, map, 0);
-            map[e] += 1;
-            fact++;
-        }
+        nodes += addBetweeness(e, v, next, map, start);
     }
-    return fact;
+    if (u != start) {
+        map[u] += nodes;
+    }
+    return nodes;
 }

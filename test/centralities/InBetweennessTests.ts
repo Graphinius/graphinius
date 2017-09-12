@@ -15,9 +15,11 @@ let expect = chai.expect,
     json   : $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
     sn_graph_file = "./test/test_data/social_network_edges.csv",
     iBt_cent_graph = "./test/test_data/search_graph_multiple_SPs.json",
+    iBt_cent_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     graph_300_file = "./test/test_data/social_network_edges_300.csv",
     graph_300 : $G.IGraph = csv.readFromEdgeListFile(graph_300_file),
-    graph : $G.IGraph = json.readFromJSONFile(iBt_cent_graph);
+    graph : $G.IGraph = json.readFromJSONFile(iBt_cent_graph_pos),
+    graph_zerocycle : $G.IGraph = json.readFromJSONFile(iBt_cent_graph);
     let sparseMap;
 
 
@@ -29,14 +31,19 @@ describe("InBetweenness Centrality Tests", () => {
         expect( Object.keys( iBt_dist ).length ).to.equal(6);
     });
 
+    it('should return an error message because of edges with zero weights', () => {
+        expect($IB.inBetweennessCentrality.bind($IB.inBetweennessCentrality, graph_zerocycle))
+            .to.throw("Cannot compute FW on negative edges");
+    });
 
     it('should return the correct betweenness map', () => {
+        console.log("STATS");
         let expected_betweenness_map = {
-            "A": 0.13043478260869565,
-            "B": 0.391304347826087,
-            "C": 0.4782608695652174,
-            "D": 0.13043478260869565,
-            "E": 0.30434782608695654,
+            "A": 6/30,
+            "B": 7/30,
+            "C": 11/30,
+            "D": 1/30,
+            "E": 5/30,
             "F": 0
 
         }; //TODO: check values by hand

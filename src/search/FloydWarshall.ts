@@ -73,9 +73,7 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 					continue;
 				}
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
-					// &&
-					//console.log("Checkpath..."+i+" "+k+" "+j);
-					if(next[i][j].indexOf(next[i][k])<0 && next[k][j].indexOf(i)<0){
+					if(next[i][j].indexOf(next[i][k])<0){
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 						//only unique entries in next
