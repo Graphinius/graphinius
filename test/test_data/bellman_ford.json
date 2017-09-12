@@ -16,7 +16,10 @@
 					"directed": true,
           "weight": 8
 				}
-			]
+			],
+			"features": {
+				"distance_s": 0
+			}
     },
     "A": {
 			"edges": [
@@ -25,7 +28,10 @@
 					"directed": true,
           "weight": 2
 				}
-			]
+			],
+			"features": {
+				"distance_s": 5
+			}
     },
     "B": {
 			"edges": [
@@ -34,7 +40,10 @@
 					"directed": true,
           "weight": 1
 				}
-			]
+			],
+			"features": {
+				"distance_s": 5
+			}
     },
     "C": {
 			"edges": [
@@ -43,7 +52,10 @@
 					"directed": true,
           "weight": -2
 				}
-			]
+			],
+			"features": {
+				"distance_s": 7
+			}
     },
     "D": {
 			"edges": [
@@ -57,7 +69,10 @@
 					"directed": true,
           "weight": -1
 				}
-			]
+			],
+			"features": {
+				"distance_s": 9
+			}
     },
     "E": {
 			"edges": [
@@ -66,7 +81,10 @@
 					"directed": true,
           "weight": 1
 				}
-			]
+			],
+			"features": {
+				"distance_s": 8
+			}
     }
 	}
 }
