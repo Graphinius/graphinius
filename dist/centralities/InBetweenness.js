@@ -43,7 +43,7 @@ function inBetweennessCentrality(graph, sparse) {
     }
     for (var keyA in nodes) {
         for (var keyB in nodes) {
-            if (keyA != keyB && paths[keyA][keyB] != keyB) {
+            if (keyA != keyB && paths[keyA] != null && paths[keyA][keyB] != null && paths[keyA][keyB] != keyB) {
                 addBetweeness(keyA, keyB, paths, map, keyA);
             }
         }

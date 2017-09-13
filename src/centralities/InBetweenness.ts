@@ -64,7 +64,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   }
   for (let keyA in nodes) {
     for (let keyB in nodes) {
-      if(keyA!=keyB && paths[keyA][keyB]!=keyB){
+      if(keyA!=keyB && paths[keyA] != null && paths[keyA][keyB] != null && paths[keyA][keyB]!=keyB){
         addBetweeness(keyA, keyB, paths, map, keyA);
       }
     }

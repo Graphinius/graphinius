@@ -6,7 +6,6 @@ import * as $I from '../../src/io/input/JSONInput';
 import * as $PRG from '../../src/centralities/PageRankGaussian';
 import * as $PRRW from '../../src/centralities/PageRankRandomWalk';
 import * as $CSV from '../../src/io/input/CSVInput';
-import * as $IC from '../../src/centralities/ICentrality';
 
 
 var expect = chai.expect,
@@ -17,8 +16,8 @@ var expect = chai.expect,
     graph_unweighted_undirected = "./test/test_data/network_undirected_unweighted.csv",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
     graph_und_unw = csv.readFromEdgeListFile(graph_unweighted_undirected),
-    PRCRW: $IC.ICentrality = new $PRRW.pageRankCentrality(),
-    PRCG: $IC.ICentrality = new $PRG.pageRankDetCentrality();
+    PRCRW = new $PRRW.pageRankCentrality(),
+    PRCG  = new $PRG.pageRankDetCentrality();
 
 
 describe("PageRank Centrality Tests", () => {

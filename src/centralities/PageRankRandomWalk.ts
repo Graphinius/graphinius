@@ -1,12 +1,11 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $G from '../core/Graph';
-import * as $ICentrality from "../centralities/ICentrality";
 import * as $SU from "../utils/structUtils";
 
 
 //Calculates the page rank for a given graph
-class pageRankCentrality implements $ICentrality.ICentrality {
+class pageRankCentrality{
 
   getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?:number, conv?:number, iterations?:number):{[id:string]: number}{
 

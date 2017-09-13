@@ -5,7 +5,6 @@ import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 import * as $CC from '../../src/centralities/Closeness';
-import * as $IC from '../../src/centralities/ICentrality';
 
 const SN_GRAPH_NODES = 1034,
       SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
@@ -20,13 +19,15 @@ let expect = chai.expect,
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
     graph_und_unw : $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
     closeness_mapFW,
-    CC: $IC.ICentrality = new $CC.closenessCentrality();
+    CC = new $CC.closenessCentrality();
 
 
 describe("Closeness Centrality Tests", () => {
 
     it('should return a map of nodes of length 6', () => {
-        let cc = CC.getCentralityMap(graph);
+        let cc = CC.getCentralityMapFW(graph);
+        expect( Object.keys( cc ).length ).to.equal(6);
+        cc = CC.getCentralityMap(graph);
         expect( Object.keys( cc ).length ).to.equal(6);
     });
 

@@ -1,7 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $G from '../core/Graph';
-import * as $ICentrality from "../centralities/ICentrality";
 import * as $SU from '../utils/structUtils'
 
 export enum DegreeMode{
@@ -12,7 +11,7 @@ export enum DegreeMode{
   all
 }
 
-class degreeCentrality implements $ICentrality.ICentrality{
+class degreeCentrality{
 
   getCentralityMap( graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode):{[id:string]: number}{
     if(weighted == null)

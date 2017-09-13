@@ -4,11 +4,10 @@ import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
 import {IBaseEdge} from "../core/Edges";
 import * as $GAUSS from "../centralities/gauss";
-import * as $ICentrality from "../centralities/ICentrality";
 
 
 //Calculates the page rank for a given graph
-class pageRankDetCentrality implements $ICentrality.ICentrality {
+class pageRankDetCentrality{
 
   getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number}{
 
