@@ -55,7 +55,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	//TODO:::TODO
 	it('should refuse to compute Graph with negative edges', () => {
 		var empty_graph = new $G.BaseGraph("iamempty");
-		expect($FW.FloydWarshallWithShortestPaths.bind($FW.FloydWarshallWithShortestPaths, graph_nullcycle)).to.throw(
+		expect($FW.FloydWarshallAPSP.bind($FW.FloydWarshallAPSP, graph_nullcycle)).to.throw(
 			"Cannot compute FW on negative edges");
 	});
 
@@ -64,7 +64,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		describe('computing distances in UNDIRECTED _mode - ', () => {
 
 			it('should correctly compute distance matrix for graph', () => {
-				FW_res = $FW.FloydWarshallWithShortestPaths(graph_search);
+				FW_res = $FW.FloydWarshallAPSP(graph_search);
 				checkFWCentralitiesOnSmallGraph(graph_search, FW_res[0]);
 			});
 
@@ -72,12 +72,12 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 				FW_res = $FW.FloydWarshallArray(graph_search);
 				// console.log( FW_res );
 				let expected_result = [
-					[0, 3, 4, 1, 4, 2],
-					[2, 0, 1, 3, 1, 2],
-					[1, 4, 0, 2, 5, 1],
-					[7, 6, 6, 0, 7, 1],
-					[4, 7, 3, 5, 0, 4],
-					[7, 5, 6, 1, 6, 0]
+					[0, 3, 4, 1, 2, 4],
+					[2, 0, 1, 3, 2, 1],
+					[1, 4, 0, 2, 1, 5],
+					[7, 6, 6, 0, 1, 7],
+					[7, 5, 6, 1, 0, 6],
+					[4, 7, 3, 5, 4, 0]
 				];
 				expect(FW_res).to.deep.equal(expected_result);
 			});
@@ -99,28 +99,29 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_bernd);			
 			// FW_res = $FW.FloydWarshallWithShortestPaths(graph_bernd);
+			FW_res = $FW.FloydWarshallAPSP(graph_bernd);
 			let e = +new Date();
 			console.log("Floyd on Bernd (75 nodes) took " + (d-e) + "ms to finish");
 		});
 
 		it('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshallWithShortestPaths(graph_midsize);
+			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();
 			console.log("Floyd on intermediate graph (246 nodes) with SPs took " + (d-e) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshall(graph_midsize);
 			e = +new Date();
-			console.log("Floyd on intermediate graph without SPs (246 nodes) took " + (d-e) + "ms to finish");
+			console.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (d-e) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_midsize);
 			// console.log(FW_res);
 			e = +new Date();
-			console.log("Floyd on intermediate graph without SPs (246 nodes) took " + (d-e) + "ms to finish");
+			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (d-e) + "ms to finish");
 		});
 
 		it('75 nodes - FW with and without next should return same distance matrix', () => {
-			let FW_with_next  = $FW.FloydWarshallWithShortestPaths(graph_bernd)[0];
+			let FW_with_next  = $FW.FloydWarshallAPSP(graph_bernd)[0];
 			let FW_normal     = $FW.FloydWarshall(graph_bernd);
 			expect(FW_with_next).to.deep.equal(FW_normal);
 		});
@@ -128,6 +129,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		it('performance test of ~1k nodes and ~50k edges', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_social);
+			// FW_res = $FW.FloydWarshallAPSP(graph_social);
 			let e = +new Date();
 			console.log("Floyd on social network ~1k (Array version) took " + (d-e) + "ms to finish");
 		});

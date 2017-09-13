@@ -43,7 +43,11 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallWithShortestPaths(graph: $G.IGraph): {} {
+function FloydWarshallAPSP(graph: $G.IGraph): {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
+
 	let dists = {},
 			next = {},
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
@@ -106,14 +110,11 @@ function FloydWarshallWithShortestPaths(graph: $G.IGraph): {} {
 }
 
 
-// function FloydWarshallSPArray(graph: $G.IGraph) : {} {
-
-
-
-// }
-
-
 function FloydWarshallArray(graph: $G.IGraph) : {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
+
 	let dists = graph.adjListArray();
 	let N = dists.length;
 
@@ -133,6 +134,9 @@ function FloydWarshallArray(graph: $G.IGraph) : {} {
 
 
 function FloydWarshall(graph: $G.IGraph) : {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
 	let dists = initializeDistsWithEdges(graph);
 
 	for (var k in dists) {
@@ -162,7 +166,7 @@ function flatten(arr) {
 	}, []);
 }
 
-export {FloydWarshallWithShortestPaths, 
+export {FloydWarshallAPSP, 
 				FloydWarshallArray,
 				FloydWarshall
 			};

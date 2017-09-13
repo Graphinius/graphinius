@@ -16,7 +16,10 @@ function initializeDistsWithEdges(graph) {
     }
     return dists;
 }
-function FloydWarshallWithShortestPaths(graph) {
+function FloydWarshallAPSP(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
     var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
         var a = String(edges[edge].getNodes().a.getID());
@@ -67,8 +70,11 @@ function FloydWarshallWithShortestPaths(graph) {
     }
     return [dists, next];
 }
-exports.FloydWarshallWithShortestPaths = FloydWarshallWithShortestPaths;
+exports.FloydWarshallAPSP = FloydWarshallAPSP;
 function FloydWarshallArray(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
     var dists = graph.adjListArray();
     var N = dists.length;
     for (var k = 0; k < N; ++k) {
@@ -84,6 +90,9 @@ function FloydWarshallArray(graph) {
 }
 exports.FloydWarshallArray = FloydWarshallArray;
 function FloydWarshall(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
     var dists = initializeDistsWithEdges(graph);
     for (var k in dists) {
         for (var i in dists) {

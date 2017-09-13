@@ -28,7 +28,8 @@ describe('GRAPH TESTS: ', () => {
 			edge_1	: $E.IBaseEdge,
 			edge_2	: $E.IBaseEdge,
 			stats		: $G.GraphStats,
-			csv			: $CSV.CSVInput = new $CSV.CSVInput();
+			csv			: $CSV.CSVInput = new $CSV.CSVInput(),
+			csv_sn		: $CSV.CSVInput = new $CSV.CSVInput(" ", false, false);
 	
 
 	describe('Basic graph operations - ', () => {
@@ -899,6 +900,19 @@ describe('GRAPH TESTS: ', () => {
 			// expect(clone_graph).to.deep.equal(graph);
 		});
 
+		/**
+		 * Cloning only a part of the graph
+		 */
+		it('should successfully clone a part of a social network', () => {
+			json_in = new $JSON.JSONInput(false, false, true);
+			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges.csv");
+
+			clone_graph = graph.cloneSubGraph(graph.getNodeById("1374"), 300);
+
+			expect(clone_graph.nrNodes()).to.equal(300);
+			expect(clone_graph.nrUndEdges()).to.equal(4635); //TODO:: check number?
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+		});
 	});
 
 
@@ -1078,7 +1092,7 @@ describe('GRAPH TESTS: ', () => {
 
 		});
 
-		describe.only('Next array generation for FW etc.', () => {
+		describe('Next array generation for FW etc.', () => {
 
 			let graph: $G.IGraph,
 			// TODO invent better name for next/adj_list

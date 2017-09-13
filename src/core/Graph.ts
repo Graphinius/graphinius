@@ -5,6 +5,7 @@ import * as $E from './Edges';
 import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
+import * as $BFS from '../search/BFS';
 
 let logger : Logger = new Logger();
 
@@ -96,6 +97,7 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
+	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
 	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
 	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
@@ -642,6 +644,37 @@ class BaseGraph implements IGraph {
 				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
 				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
 				new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) )
+			}
+		});
+
+		return new_graph;
+	}
+
+	cloneSubGraph(root:$N.IBaseNode, cutoff:Number) : IGraph{
+		let new_graph = new BaseGraph(this._label);
+
+		let config = $BFS.prepareBFSStandardConfig();
+
+		var bfsNodeUnmarkedTestCallback = function(context: $BFS.BFS_Scope) {
+			if(config.result[context.next_node.getID()].counter>cutoff){
+				context.queue = [];
+			}else{ //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
+				new_graph.addNode(context.next_node.clone());
+			}
+		};
+		config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+		$BFS.BFS(this, root, config);
+		let old_edge : $E.IBaseEdge,
+			new_node_a  = null,
+			new_node_b  = null;
+
+		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
+			for ( let edge_id in old_edges ) {
+				old_edge = old_edges[edge_id];
+				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
+				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
+				if(new_node_a != null && new_node_b != null)
+					new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) );
 			}
 		});
 
