@@ -67,10 +67,10 @@ class pageRankDetCentrality implements $ICentrality.ICentrality {
     let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
     x[x.length-1] = 1;
     x = $GAUSS.gauss(numMatr, x);
-    //let y:{[id: string]: number} = {};
-    //for(let key in map){
-    //  y[key] = x[ctr];
-    //}
+    let y:{[id: string]: number} = {};
+    for(let key in map){
+      y[key] = x[ctr];
+    }
     return x;
   }
 

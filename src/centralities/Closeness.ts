@@ -58,7 +58,7 @@ class closenessCentrality implements $ICentrality.ICentrality {
     let ret:{[id:string]: number} = {};
     for (let key in graph.getNodes()) {
       let node = graph.getNodeById(key);
-      if (node != null) {//TODO: maybe put inner of loop into own function (centrality for one single node)
+      if (node != null) {
         accumulated_distance = 0;
         $PFS.PFS(graph, node, pfs_config);
         ret[key] = 1/accumulated_distance;

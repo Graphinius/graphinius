@@ -30,6 +30,19 @@ describe("Closeness Centrality Tests", () => {
         expect( Object.keys( cc ).length ).to.equal(6);
     });
 
+    it('Testing on single node graph', () => {
+        let graph_1: $G.IGraph = json.readFromJSONFile("./test/test_data/centralities_equal_score_1.json");
+
+        expect(CC.getCentralityMap.bind(CC.getCentralityMap, graph_1)).to.throw(
+            "Cowardly refusing to traverse graph without edges.");
+
+        let CCFW = new $CC.closenessCentrality();
+        let closeness_map = CCFW.getCentralityMapFW(graph_1);
+
+        //This results in an empty map because there are no edges in the graph
+        expect( Object.keys( closeness_map ).length ).to.equal(0);
+    });
+
 
     it('should return the correct closeness map, PFS on weighted directed graph', () => {
         let expected_closeness_map = {
@@ -60,7 +73,7 @@ describe("Closeness Centrality Tests", () => {
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
     });
 
-    it('should return the correct closeness map, PFS/FW on unweighted undirected graph', () => {
+    it('should return the correct closeness map, PFS/FW on unweighted undirected graph, for normal and FW with next', () => {
         let expected_closeness_map = {
             "1": 0.14285714285714285,   //1/7
             "2": 0.16666666666666666,   //1/6
@@ -79,6 +92,20 @@ describe("Closeness Centrality Tests", () => {
         expect( closeness_map_FW ).to.deep.equal( expected_closeness_map );
         expect( closeness_map ).to.deep.equal( closeness_map_FW );
     });
+
+    it('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
+        let CCFW = new $CC.closenessCentrality();
+        let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
+        let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
+        let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
+        checkScoresEqual(graph_2,CC.getCentralityMap( graph_2 ));
+        checkScoresEqual(graph_3,CC.getCentralityMap( graph_3 ));
+        checkScoresEqual(graph_6,CC.getCentralityMap( graph_6 ));
+        checkScoresEqual(graph_2,CCFW.getCentralityMapFW( graph_2 ));
+        checkScoresEqual(graph_3,CCFW.getCentralityMapFW( graph_3 ));
+        checkScoresEqual(graph_6,CCFW.getCentralityMapFW( graph_6 ));
+    });
+
 
 
     /**
@@ -102,3 +129,12 @@ describe("Closeness Centrality Tests", () => {
     });
 
 });
+
+
+function checkScoresEqual(graph, closeness){
+    let last = closeness[graph.getRandomNode().getID()];
+    for(let key in graph.getNodes()) {
+        expect(closeness[key]).to.equal(last);
+        last = closeness[key];
+    }
+}

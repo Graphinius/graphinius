@@ -14,7 +14,9 @@ var expect = chai.expect,
     json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     sn_graph_file = "./test/test_data/social_network_edges.csv",
+    graph_unweighted_undirected = "./test/test_data/network_undirected_unweighted.csv",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
+    graph_und_unw = csv.readFromEdgeListFile(graph_unweighted_undirected),
     PRCRW: $IC.ICentrality = new $PRRW.pageRankCentrality(),
     PRCG: $IC.ICentrality = new $PRG.pageRankDetCentrality();
 
@@ -42,6 +44,23 @@ describe("PageRank Centrality Tests", () => {
         checkPageRanks(graph, prd, prrw, 0.5);
     });
 
+    it('should calculate similar values for random walk and gaussian on undirected unweighted graph', () => {
+        let prd  = PRCG.getCentralityMap(graph_und_unw);
+        //console.log("GAUSS:"+JSON.stringify(prd));
+        let prrw = PRCRW.getCentralityMap(graph_und_unw);
+        //console.log("RANDOM:"+JSON.stringify(prrw));
+        //checkPageRanks(graph, prd, prrw, 0.5); //TODO:: order matrix
+    });
+
+    it('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
+        let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
+        let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
+        let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
+        checkScoresEqual(graph_2,PRCG.getCentralityMap( graph_2 ));
+        checkScoresEqual(graph_3,PRCG.getCentralityMap( graph_3 ));
+        checkScoresEqual(graph_6,PRCG.getCentralityMap( graph_6 ));
+    });
+
     it.skip('should calculate the PR for a large graph', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         let pdc = PRCG.getCentralityMap( sn_graph );
@@ -50,6 +69,18 @@ describe("PageRank Centrality Tests", () => {
 
 
 });
+
+function checkScoresEqual(graph,gauss){
+    let threshold = 0.00000001;
+    let last = gauss[0];
+    let ctr = 0;
+    for(let key in graph.getNodes()) {
+        expect(gauss[ctr]).to.be.closeTo(1/graph.nrNodes(),threshold);
+        expect(gauss[ctr]).to.be.closeTo(last,threshold);
+        last = gauss[ctr];
+        ctr++;
+    }
+}
 
 function checkPageRanks(graph, gauss, rand_walk, threshold) {
     let ctr = 0;

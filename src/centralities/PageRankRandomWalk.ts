@@ -25,6 +25,7 @@ class pageRankCentrality implements $ICentrality.ICentrality {
     let nrNodes = graph.nrNodes();
     let structure = {};
     for(let key in graph.getNodes()){
+      key = String(key);
       let node = graph.getNodeById(key);
       structure[key] = {};
       structure[key]['deg'] = node.outDegree()+node.degree();
@@ -40,6 +41,7 @@ class pageRankCentrality implements $ICentrality.ICentrality {
     }
     //console.log(JSON.stringify(structure));
     for(let key in graph.getNodes()) {
+      key = String(key);
       curr[key] = 1/nrNodes;
       old[key] = 1/nrNodes;
     }
@@ -50,11 +52,12 @@ class pageRankCentrality implements $ICentrality.ICentrality {
       console.log("All:" + all);*/
       let me = 0.0;
       for(let key in graph.getNodes()) { //Run through all nodes in graph
+        key = String(key);
         //console.log(structure[key]);
         let total = 0;
         let parents = structure[key]['inc'];
         for(let k in parents){
-          let p = parents[k];
+          let p = String(parents[k]);
           total += old[p]/structure[p]['deg'];
         }
         //console.log("o:"+old[key] + " n:"+curr[key]);
