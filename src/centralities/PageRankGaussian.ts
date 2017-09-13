@@ -13,16 +13,16 @@ class pageRankDetCentrality implements $ICentrality.ICentrality {
   getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number}{
 
     //First initialize the values for all nodes
-    let startVal:number = 1 / graph.nrNodes();
-    let pageScores:{[k:string]: number;} = {};
     let divideTable = {}; //Tells us how many outgoing edges each node has
     let matr = [];
     let ctr = 0;
+    let map = {};
     for(let key in graph.getNodes()) {
       divideTable[key] = 0;
     }
     for(let key in graph.getNodes()) { //Run through all nodes in graph
       //pageScores[key] = startVal;
+      map[key] = ctr;
       let node = graph.getNodeById(key);
       let node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
       matr[ctr] = new Array();
@@ -67,7 +67,10 @@ class pageRankDetCentrality implements $ICentrality.ICentrality {
     let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
     x[x.length-1] = 1;
     x = $GAUSS.gauss(numMatr, x);
-    console.log(x);
+    //let y:{[id: string]: number} = {};
+    //for(let key in map){
+    //  y[key] = x[ctr];
+    //}
     return x;
   }
 

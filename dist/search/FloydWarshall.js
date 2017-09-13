@@ -1,12 +1,7 @@
 "use strict";
 var $SU = require('../utils/structUtils');
-function FloydWarshallSparse(graph) {
-    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-    return [dists, next];
-}
-exports.FloydWarshallSparse = FloydWarshallSparse;
-function FloydWarshallDense(graph) {
-    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+function FloydWarshallWithShortestPaths(graph) {
+    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
         var a = String(edges[edge].getNodes().a.getID());
         var b = String(edges[edge].getNodes().b.getID());
@@ -22,10 +17,10 @@ function FloydWarshallDense(graph) {
         }
         if (dists[a] == null)
             dists[a] = {};
+        if (dists[b] == null)
+            dists[b] = {};
         dists[a][b] = edges[edge].getWeight();
         if (!edges[edge].isDirected()) {
-            if (dists[b] == null)
-                dists[b] = {};
             dists[b][a] = edges[edge].getWeight();
         }
     }
@@ -56,7 +51,7 @@ function FloydWarshallDense(graph) {
     }
     return [dists, next];
 }
-exports.FloydWarshallDense = FloydWarshallDense;
+exports.FloydWarshallWithShortestPaths = FloydWarshallWithShortestPaths;
 function FloydWarshall(graph) {
     var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {

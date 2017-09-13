@@ -50,13 +50,12 @@ function inBetweennessCentralityDijkstra(graph: $G.IGraph, weighted: boolean){
 //Just get all shortest path's from each node to each other node (this will take a while...)
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
-  if(sparse)
-    paths = $FW.FloydWarshallSparse(graph)[1];
+  if(sparse){
+    throw new Error("Not implemented yet")
+    //paths = Bellman Ford
+  }
   else
-    paths = $FW.FloydWarshallDense(graph)[1];
-
-  //console.log(paths);
-  //console.log(JSON.stringify(paths,null,2));
+    paths = $FW.FloydWarshallWithShortestPaths(graph)[1];
 
   let nodes = graph.getNodes();
   let map = {};
@@ -77,7 +76,6 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   for(let a in map){
     map[a]/=dem;
   }
-  console.log(paths);
   return map;
 }
 

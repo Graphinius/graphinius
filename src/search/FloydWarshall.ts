@@ -19,22 +19,9 @@ interface FWConfig {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: false }
-	//return {};
-	let dists = {},
-		next = {},
-		adj_list = graph.adjListArray(true,true),
-		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-
-	return [dists,next];
-}
-
-
-
-function FloydWarshallDense(graph: $G.IGraph): {} {
+function FloydWarshallWithShortestPaths(graph: $G.IGraph): {} {
 	let dists = {},
 			next = {},
-			adj_list = graph.adjListArray(true,true),
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges){
@@ -54,10 +41,10 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 
 		if(dists[a]==null)
 			dists[a] = {};
+		if(dists[b]==null)
+			dists[b] = {};
 		dists[a][b] = edges[edge].getWeight();
 		if(!edges[edge].isDirected()){
-			if(dists[b]==null)
-				dists[b] = {};
 			dists[b][a] = edges[edge].getWeight();
 		}
 	}
@@ -141,5 +128,4 @@ function flatten(arr) {
 	}, []);
 }
 
-export { FloydWarshallSparse,
-				 FloydWarshallDense, FloydWarshall}; // , getAllShortestPaths };
+export {FloydWarshallWithShortestPaths, FloydWarshall};
