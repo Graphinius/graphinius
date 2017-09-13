@@ -98,6 +98,7 @@ export interface IGraph {
 	clone() : IGraph;
 	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
+	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -121,6 +122,39 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
+	private arrayFromAdjDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number, next_node?:boolean) : MinAdjacencyListArray {
+		next_node = next_node || false;
+		let array = [],
+		idx = 0,
+		j_idx = -1;
+		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+
+		for ( let i in adjDict ) {
+			array.push([]);
+			j_idx = -1;
+			for ( let j in adjDict ) {
+				++j_idx;
+				if ( next_node ) {
+					array[idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+					continue;
+				}
+				if ( i == j ) {
+					array[idx].push( 0 );
+					continue;
+				}
+				array[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
+			}
+			++idx;
+		}				
+		
+		return array;	
+	}
+
+
+	nextArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) {
+		return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+	}
+
 	/**
 	 * This function iterates over the adjDict in order to use it's advantage
 	 * of being able to override edges if edges with smaller weight exist
@@ -135,18 +169,7 @@ class BaseGraph implements IGraph {
 	 * @param self_dist default distance to self
 	 */
 	adjListArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListArray {
-		let adjList = [],
-				idx = 0;
-		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
-
-		for ( let i in adjDict ) {
-			adjList.push([]);
-			for ( let j in adjDict ) {
-				adjList[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );	
-			}
-			++idx;
-		}
-		return adjList;
+		return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
 	}
 
 
@@ -163,7 +186,7 @@ class BaseGraph implements IGraph {
 				weight: number;
 		for (let key in nodes) {
 			adj_list_dict[key] = {};
-		}		
+		}
 		for ( var key in nodes ) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 

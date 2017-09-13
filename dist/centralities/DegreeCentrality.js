@@ -12,12 +12,8 @@ var degreeCentrality = (function () {
     function degreeCentrality() {
     }
     degreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
-        if (weighted == null)
-            weighted = true;
-        if (!weighted && weighted != null)
-            weighted = false;
-        if (conf == null)
-            conf = DegreeMode.all;
+        weighted = (weighted != null) ? !!weighted : true;
+        conf = (conf == null) ? DegreeMode.all : conf;
         var ret = {};
         switch (conf) {
             case DegreeMode.in:

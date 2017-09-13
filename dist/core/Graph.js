@@ -22,19 +22,40 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
-    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+    BaseGraph.prototype.arrayFromAdjDict = function (incoming, include_self, self_dist, next_node) {
         if (incoming === void 0) { incoming = false; }
         if (include_self === void 0) { include_self = false; }
-        var adjList = [], idx = 0;
+        next_node = next_node || false;
+        var array = [], idx = 0, j_idx = -1;
         var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
         for (var i in adjDict) {
-            adjList.push([]);
+            array.push([]);
+            j_idx = -1;
             for (var j in adjDict) {
-                adjList[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+                ++j_idx;
+                if (next_node) {
+                    array[idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+                    continue;
+                }
+                if (i == j) {
+                    array[idx].push(0);
+                    continue;
+                }
+                array[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
             }
             ++idx;
         }
-        return adjList;
+        return array;
+    };
+    BaseGraph.prototype.nextArray = function (incoming, include_self, self_dist) {
+        if (incoming === void 0) { incoming = false; }
+        if (include_self === void 0) { include_self = false; }
+        return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+    };
+    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+        if (incoming === void 0) { incoming = false; }
+        if (include_self === void 0) { include_self = false; }
+        return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
     };
     BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
         if (incoming === void 0) { incoming = false; }

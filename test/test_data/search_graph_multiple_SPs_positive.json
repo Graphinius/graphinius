@@ -25,6 +25,11 @@
 		},
 		"B": {
 			"edges": [
+        {
+					"to": "E",
+					"directed": false,
+					"weight": 5
+				},
 				{
 					"to": "F",
 					"directed": true,
@@ -38,11 +43,6 @@
 				{
 					"to": "A",
 					"directed": true,
-					"weight": 5
-				},
-        {
-					"to": "E",
-					"directed": false,
 					"weight": 5
 				}
 			]

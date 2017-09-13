@@ -14,12 +14,9 @@ export enum DegreeMode{
 class degreeCentrality{
 
   getCentralityMap( graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode):{[id:string]: number}{
-    if(weighted == null)
-      weighted = true;
-    if(!weighted && weighted != null)
-      weighted = false;
-    if(conf == null)
-      conf = DegreeMode.all;
+    weighted = ( weighted != null ) ? !!weighted : true;
+    conf = ( conf == null ) ? DegreeMode.all : conf;
+    
     let ret:{[id:string]: number} = {}; //Will be a map of [nodeID] = centrality
 
     switch(conf){ //Switch on the outside for faster loops

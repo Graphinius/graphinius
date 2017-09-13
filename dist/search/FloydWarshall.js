@@ -1,5 +1,21 @@
 "use strict";
 var $SU = require('../utils/structUtils');
+function initializeDistsWithEdges(graph) {
+    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+    for (var edge in edges) {
+        var a = edges[edge].getNodes().a.getID();
+        var b = edges[edge].getNodes().b.getID();
+        if (dists[a] == null)
+            dists[a] = {};
+        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+        if (!edges[edge].isDirected()) {
+            if (dists[b] == null)
+                dists[b] = {};
+            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+        }
+    }
+    return dists;
+}
 function FloydWarshallWithShortestPaths(graph) {
     var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
@@ -52,20 +68,23 @@ function FloydWarshallWithShortestPaths(graph) {
     return [dists, next];
 }
 exports.FloydWarshallWithShortestPaths = FloydWarshallWithShortestPaths;
-function FloydWarshall(graph) {
-    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-    for (var edge in edges) {
-        var a = edges[edge].getNodes().a.getID();
-        var b = edges[edge].getNodes().b.getID();
-        if (dists[a] == null)
-            dists[a] = {};
-        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-        if (!edges[edge].isDirected()) {
-            if (dists[b] == null)
-                dists[b] = {};
-            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+function FloydWarshallArray(graph) {
+    var dists = graph.adjListArray();
+    var N = dists.length;
+    for (var k = 0; k < N; ++k) {
+        for (var i = 0; i < N; ++i) {
+            for (var j = 0; j < N; ++j) {
+                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+                    dists[i][j] = dists[i][k] + dists[k][j];
+                }
+            }
         }
     }
+    return dists;
+}
+exports.FloydWarshallArray = FloydWarshallArray;
+function FloydWarshall(graph) {
+    var dists = initializeDistsWithEdges(graph);
     for (var k in dists) {
         for (var i in dists) {
             for (var j in dists) {

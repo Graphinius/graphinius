@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
@@ -123,9 +123,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -186,9 +186,9 @@
 	exports.BaseEdge = BaseEdge;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -421,9 +421,9 @@
 	exports.BaseNode = BaseNode;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -498,9 +498,9 @@
 	exports.findKey = findKey;
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -526,19 +526,40 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+	    BaseGraph.prototype.arrayFromAdjDict = function (incoming, include_self, self_dist, next_node) {
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
-	        var adjList = [], idx = 0;
+	        next_node = next_node || false;
+	        var array = [], idx = 0, j_idx = -1;
 	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
 	        for (var i in adjDict) {
-	            adjList.push([]);
+	            array.push([]);
+	            j_idx = -1;
 	            for (var j in adjDict) {
-	                adjList[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+	                ++j_idx;
+	                if (next_node) {
+	                    array[idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+	                    continue;
+	                }
+	                if (i == j) {
+	                    array[idx].push(0);
+	                    continue;
+	                }
+	                array[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
 	            }
 	            ++idx;
 	        }
-	        return adjList;
+	        return array;
+	    };
+	    BaseGraph.prototype.nextArray = function (incoming, include_self, self_dist) {
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+	    };
+	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
 	    };
 	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
 	        if (incoming === void 0) { incoming = false; }
@@ -932,9 +953,9 @@
 	exports.BaseGraph = BaseGraph;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
@@ -984,9 +1005,9 @@
 	exports.Logger = Logger;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	var LOG_LEVELS = {
 	  debug: "DEBUG",
@@ -1002,9 +1023,9 @@
 	  RUN_CONFIG: RUN_CONFIG
 	};
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var path = __webpack_require__(8);
@@ -1131,9 +1152,9 @@
 	exports.CSVInput = CSVInput;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
 	//
@@ -1362,9 +1383,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -1536,6 +1557,10 @@
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -1548,15 +1573,15 @@
 	process.umask = function() { return 0; };
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var http = __webpack_require__(10);
@@ -1577,9 +1602,9 @@
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1627,9 +1652,9 @@
 	exports.CSVOutput = CSVOutput;
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1717,9 +1742,9 @@
 	exports.JSONInput = JSONInput;
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(10);
@@ -1779,9 +1804,9 @@
 	exports.JSONOutput = JSONOutput;
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -1890,9 +1915,9 @@
 	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	function execCallbacks(cbs, context) {
@@ -1908,9 +1933,9 @@
 	exports.execCallbacks = execCallbacks;
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -2071,9 +2096,9 @@
 	;
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
@@ -2224,9 +2249,9 @@
 	exports.preparePFSStandardConfig = preparePFSStandardConfig;
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	(function (BinaryHeapMode) {
@@ -2468,12 +2493,28 @@
 	exports.BinaryHeap = BinaryHeap;
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
+	function initializeDistsWithEdges(graph) {
+	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    for (var edge in edges) {
+	        var a = edges[edge].getNodes().a.getID();
+	        var b = edges[edge].getNodes().b.getID();
+	        if (dists[a] == null)
+	            dists[a] = {};
+	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        if (!edges[edge].isDirected()) {
+	            if (dists[b] == null)
+	                dists[b] = {};
+	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        }
+	    }
+	    return dists;
+	}
 	function FloydWarshallWithShortestPaths(graph) {
 	    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
@@ -2526,20 +2567,23 @@
 	    return [dists, next];
 	}
 	exports.FloydWarshallWithShortestPaths = FloydWarshallWithShortestPaths;
-	function FloydWarshall(graph) {
-	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-	    for (var edge in edges) {
-	        var a = edges[edge].getNodes().a.getID();
-	        var b = edges[edge].getNodes().b.getID();
-	        if (dists[a] == null)
-	            dists[a] = {};
-	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-	        if (!edges[edge].isDirected()) {
-	            if (dists[b] == null)
-	                dists[b] = {};
-	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	function FloydWarshallArray(graph) {
+	    var dists = graph.adjListArray();
+	    var N = dists.length;
+	    for (var k = 0; k < N; ++k) {
+	        for (var i = 0; i < N; ++i) {
+	            for (var j = 0; j < N; ++j) {
+	                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
 	        }
 	    }
+	    return dists;
+	}
+	exports.FloydWarshallArray = FloydWarshallArray;
+	function FloydWarshall(graph) {
+	    var dists = initializeDistsWithEdges(graph);
 	    for (var k in dists) {
 	        for (var i in dists) {
 	            for (var j in dists) {
@@ -2565,9 +2609,9 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	function randBase36String() {
@@ -2711,9 +2755,9 @@
 	exports.rvlist = rvlist;
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var randgen = __webpack_require__(21);
@@ -2908,9 +2952,9 @@
 	exports.SimplePerturber = SimplePerturber;
 
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var MCMFBoykov = (function () {
@@ -3137,9 +3181,9 @@
 	exports.MCMFBoykov = MCMFBoykov;
 
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -3155,12 +3199,8 @@
 	    function degreeCentrality() {
 	    }
 	    degreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
-	        if (weighted == null)
-	            weighted = true;
-	        if (!weighted && weighted != null)
-	            weighted = false;
-	        if (conf == null)
-	            conf = DegreeMode.all;
+	        weighted = (weighted != null) ? !!weighted : true;
+	        conf = (conf == null) ? DegreeMode.all : conf;
 	        var ret = {};
 	        switch (conf) {
 	            case DegreeMode.in:
@@ -3243,5 +3283,5 @@
 	exports.degreeCentrality = degreeCentrality;
 
 
-/***/ }
+/***/ })
 /******/ ]);

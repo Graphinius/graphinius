@@ -9,6 +9,30 @@ interface FWConfig {
 	directed: boolean;
 }
 
+
+function initializeDistsWithEdges(graph: $G.IGraph) {
+	let dists = {},
+	edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+
+
+	for (let edge in edges) {
+		let a = edges[edge].getNodes().a.getID();
+		let b = edges[edge].getNodes().b.getID();
+
+		if(dists[a]==null)
+			dists[a] = {};
+
+		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		if(!edges[edge].isDirected()){
+			if(dists[b]==null)
+				dists[b] = {};
+			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		}
+	}
+
+	return dists;
+}
+
 /**
  * Floyd-Warshall - we mostly use it to get In-betweenness
  * of a graph. We use the standard algorithm and save all
@@ -81,25 +105,35 @@ function FloydWarshallWithShortestPaths(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
-function FloydWarshall(graph: $G.IGraph): {} {
-	let dists = {},
-		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+
+// function FloydWarshallSPArray(graph: $G.IGraph) : {} {
 
 
-	for (let edge in edges){
-		let a = edges[edge].getNodes().a.getID();
-		let b = edges[edge].getNodes().b.getID();
 
-		if(dists[a]==null)
-			dists[a] = {};
+// }
 
-		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-		if(!edges[edge].isDirected()){
-			if(dists[b]==null)
-				dists[b] = {};
-			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+
+function FloydWarshallArray(graph: $G.IGraph) : {} {
+	let dists = graph.adjListArray();
+	let N = dists.length;
+
+	for (var k = 0; k < N; ++k) {
+		for (var i = 0; i < N; ++i) {
+			for (var j = 0; j < N; ++j) {
+				if ( dists[i][j] > dists[i][k] + dists[k][j] ) {
+					dists[i][j] = dists[i][k] + dists[k][j];
+				}
+			}
 		}
 	}
+
+	return dists;
+}
+
+
+
+function FloydWarshall(graph: $G.IGraph) : {} {
+	let dists = initializeDistsWithEdges(graph);
 
 	for (var k in dists) {
 		for (var i in dists) {
@@ -128,4 +162,7 @@ function flatten(arr) {
 	}, []);
 }
 
-export {FloydWarshallWithShortestPaths, FloydWarshall};
+export {FloydWarshallWithShortestPaths, 
+				FloydWarshallArray,
+				FloydWarshall
+			};
