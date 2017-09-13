@@ -31,10 +31,11 @@ function inBetweennessCentralityDijkstra(graph, weighted) {
 }
 function inBetweennessCentrality(graph, sparse) {
     var paths;
-    if (sparse)
-        paths = $FW.FloydWarshallSparse(graph)[1];
+    if (sparse) {
+        throw new Error("Not implemented yet");
+    }
     else
-        paths = $FW.FloydWarshallDense(graph)[1];
+        paths = $FW.FloydWarshallAPSP(graph)[1];
     var nodes = graph.getNodes();
     var map = {};
     for (var keyA in nodes) {
@@ -42,7 +43,7 @@ function inBetweennessCentrality(graph, sparse) {
     }
     for (var keyA in nodes) {
         for (var keyB in nodes) {
-            if (keyA != keyB && paths[keyA][keyB] != keyB) {
+            if (keyA != keyB && paths[keyA] != null && paths[keyA][keyB] != null && paths[keyA][keyB] != keyB) {
                 addBetweeness(keyA, keyB, paths, map, keyA);
             }
         }
@@ -54,7 +55,6 @@ function inBetweennessCentrality(graph, sparse) {
     for (var a in map) {
         map[a] /= dem;
     }
-    console.log(paths);
     return map;
 }
 exports.inBetweennessCentrality = inBetweennessCentrality;

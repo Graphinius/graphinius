@@ -37,7 +37,6 @@ describe("InBetweenness Centrality Tests", () => {
     });
 
     it('should return the correct betweenness map', () => {
-        console.log("STATS");
         let expected_betweenness_map = {
             "A": 6/30,
             "B": 7/30,
@@ -46,15 +45,9 @@ describe("InBetweenness Centrality Tests", () => {
             "E": 5/30,
             "F": 0
 
-        }; //TODO: check values by hand
+        };
         let closeness_map = $IB.inBetweennessCentrality( graph,false );
         expect( closeness_map ).to.deep.equal( expected_betweenness_map );
-    });
-
-    it('should return the same dense and sparse betweenness map', () => {
-        //let sparse_map = $IB.inBetweennessCentrality(graph,true);
-        let dense_map = $IB.inBetweennessCentrality( graph,false );
-        //expect( sparse_map ).to.deep.equal( dense_map );
     });
 
 
@@ -78,10 +71,6 @@ describe("InBetweenness Centrality Tests", () => {
 
         let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
         //expect( sparseMap ).to.deep.equal( denseMap );
-    });
-
-    it('Temp FW test',()=>{
-        $FW.FloydWarshallDense(graph_300);
     });
 
 });

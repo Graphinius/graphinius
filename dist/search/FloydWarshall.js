@@ -1,12 +1,26 @@
 "use strict";
 var $SU = require('../utils/structUtils');
-function FloydWarshallSparse(graph) {
-    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-    return [dists, next];
+function initializeDistsWithEdges(graph) {
+    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+    for (var edge in edges) {
+        var a = edges[edge].getNodes().a.getID();
+        var b = edges[edge].getNodes().b.getID();
+        if (dists[a] == null)
+            dists[a] = {};
+        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+        if (!edges[edge].isDirected()) {
+            if (dists[b] == null)
+                dists[b] = {};
+            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+        }
+    }
+    return dists;
 }
-exports.FloydWarshallSparse = FloydWarshallSparse;
-function FloydWarshallDense(graph) {
-    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+function FloydWarshallAPSP(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
+    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
         var a = String(edges[edge].getNodes().a.getID());
         var b = String(edges[edge].getNodes().b.getID());
@@ -22,10 +36,10 @@ function FloydWarshallDense(graph) {
         }
         if (dists[a] == null)
             dists[a] = {};
+        if (dists[b] == null)
+            dists[b] = {};
         dists[a][b] = edges[edge].getWeight();
         if (!edges[edge].isDirected()) {
-            if (dists[b] == null)
-                dists[b] = {};
             dists[b][a] = edges[edge].getWeight();
         }
     }
@@ -56,21 +70,30 @@ function FloydWarshallDense(graph) {
     }
     return [dists, next];
 }
-exports.FloydWarshallDense = FloydWarshallDense;
-function FloydWarshall(graph) {
-    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-    for (var edge in edges) {
-        var a = edges[edge].getNodes().a.getID();
-        var b = edges[edge].getNodes().b.getID();
-        if (dists[a] == null)
-            dists[a] = {};
-        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-        if (!edges[edge].isDirected()) {
-            if (dists[b] == null)
-                dists[b] = {};
-            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+exports.FloydWarshallAPSP = FloydWarshallAPSP;
+function FloydWarshallArray(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
+    var dists = graph.adjListArray();
+    var N = dists.length;
+    for (var k = 0; k < N; ++k) {
+        for (var i = 0; i < N; ++i) {
+            for (var j = 0; j < N; ++j) {
+                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+                    dists[i][j] = dists[i][k] + dists[k][j];
+                }
+            }
         }
     }
+    return dists;
+}
+exports.FloydWarshallArray = FloydWarshallArray;
+function FloydWarshall(graph) {
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
+    var dists = initializeDistsWithEdges(graph);
     for (var k in dists) {
         for (var i in dists) {
             for (var j in dists) {

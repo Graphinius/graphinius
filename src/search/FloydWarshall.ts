@@ -9,6 +9,30 @@ interface FWConfig {
 	directed: boolean;
 }
 
+
+function initializeDistsWithEdges(graph: $G.IGraph) {
+	let dists = {},
+	edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+
+
+	for (let edge in edges) {
+		let a = edges[edge].getNodes().a.getID();
+		let b = edges[edge].getNodes().b.getID();
+
+		if(dists[a]==null)
+			dists[a] = {};
+
+		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		if(!edges[edge].isDirected()){
+			if(dists[b]==null)
+				dists[b] = {};
+			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+		}
+	}
+
+	return dists;
+}
+
 /**
  * Floyd-Warshall - we mostly use it to get In-betweenness
  * of a graph. We use the standard algorithm and save all
@@ -19,22 +43,13 @@ interface FWConfig {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallSparse(graph: $G.IGraph) : {} { //  config = { directed: false }
-	//return {};
-	let dists = {},
-		next = {},
-		adj_list = graph.adjListArray(true,true),
-		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+function FloydWarshallAPSP(graph: $G.IGraph): {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
 
-	return [dists,next];
-}
-
-
-
-function FloydWarshallDense(graph: $G.IGraph): {} {
 	let dists = {},
 			next = {},
-			adj_list = graph.adjListArray(true,true),
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges){
@@ -54,10 +69,10 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 
 		if(dists[a]==null)
 			dists[a] = {};
+		if(dists[b]==null)
+			dists[b] = {};
 		dists[a][b] = edges[edge].getWeight();
 		if(!edges[edge].isDirected()){
-			if(dists[b]==null)
-				dists[b] = {};
 			dists[b][a] = edges[edge].getWeight();
 		}
 	}
@@ -94,25 +109,35 @@ function FloydWarshallDense(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
-function FloydWarshall(graph: $G.IGraph): {} {
-	let dists = {},
-		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
+function FloydWarshallArray(graph: $G.IGraph) : {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
 
-	for (let edge in edges){
-		let a = edges[edge].getNodes().a.getID();
-		let b = edges[edge].getNodes().b.getID();
+	let dists = graph.adjListArray();
+	let N = dists.length;
 
-		if(dists[a]==null)
-			dists[a] = {};
-
-		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-		if(!edges[edge].isDirected()){
-			if(dists[b]==null)
-				dists[b] = {};
-			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	for (var k = 0; k < N; ++k) {
+		for (var i = 0; i < N; ++i) {
+			for (var j = 0; j < N; ++j) {
+				if ( dists[i][j] > dists[i][k] + dists[k][j] ) {
+					dists[i][j] = dists[i][k] + dists[k][j];
+				}
+			}
 		}
 	}
+
+	return dists;
+}
+
+
+
+function FloydWarshall(graph: $G.IGraph) : {} {
+	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+		throw new Error("Cowardly refusing to traverse graph without edges.");
+	}
+	let dists = initializeDistsWithEdges(graph);
 
 	for (var k in dists) {
 		for (var i in dists) {
@@ -141,5 +166,7 @@ function flatten(arr) {
 	}, []);
 }
 
-export { FloydWarshallSparse,
-				 FloydWarshallDense, FloydWarshall}; // , getAllShortestPaths };
+export {FloydWarshallAPSP, 
+				FloydWarshallArray,
+				FloydWarshall
+			};

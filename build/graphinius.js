@@ -47,17 +47,17 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(7);
-	var CSVOutput       = __webpack_require__(12);
-	var JSONInput       = __webpack_require__(13);
-	var JSONOutput      = __webpack_require__(14);
-	var BFS				      = __webpack_require__(15);
+	var CSVInput 	      = __webpack_require__(9);
+	var CSVOutput       = __webpack_require__(14);
+	var JSONInput       = __webpack_require__(15);
+	var JSONOutput      = __webpack_require__(16);
+	var BFS				      = __webpack_require__(7);
 	var DFS				      = __webpack_require__(17);
 	var PFS             = __webpack_require__(18);
 	var FloydWarshall		= __webpack_require__(20);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(11);
-	var callbackUtils   = __webpack_require__(16);
+	var remoteUtils     = __webpack_require__(13);
+	var callbackUtils   = __webpack_require__(8);
 	var randGen         = __webpack_require__(21);
 	var binaryHeap      = __webpack_require__(19);
 	var simplePerturbation = __webpack_require__(22);
@@ -507,6 +507,7 @@
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
 	var logger_1 = __webpack_require__(5);
+	var $BFS = __webpack_require__(7);
 	var logger = new logger_1.Logger();
 	(function (GraphMode) {
 	    GraphMode[GraphMode["INIT"] = 0] = "INIT";
@@ -526,19 +527,40 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+	    BaseGraph.prototype.arrayFromAdjDict = function (incoming, include_self, self_dist, next_node) {
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
-	        var adjList = [], idx = 0;
+	        next_node = next_node || false;
+	        var array = [], idx = 0, j_idx = -1;
 	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
 	        for (var i in adjDict) {
-	            adjList.push([]);
+	            array.push([]);
+	            j_idx = -1;
 	            for (var j in adjDict) {
-	                adjList[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+	                ++j_idx;
+	                if (next_node) {
+	                    array[idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+	                    continue;
+	                }
+	                if (i == j) {
+	                    array[idx].push(0);
+	                    continue;
+	                }
+	                array[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
 	            }
 	            ++idx;
 	        }
-	        return adjList;
+	        return array;
+	    };
+	    BaseGraph.prototype.nextArray = function (incoming, include_self, self_dist) {
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+	    };
+	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
 	    };
 	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
 	        if (incoming === void 0) { incoming = false; }
@@ -881,6 +903,31 @@
 	        });
 	        return new_graph;
 	    };
+	    BaseGraph.prototype.cloneSubGraph = function (root, cutoff) {
+	        var new_graph = new BaseGraph(this._label);
+	        var config = $BFS.prepareBFSStandardConfig();
+	        var bfsNodeUnmarkedTestCallback = function (context) {
+	            if (config.result[context.next_node.getID()].counter > cutoff) {
+	                context.queue = [];
+	            }
+	            else {
+	                new_graph.addNode(context.next_node.clone());
+	            }
+	        };
+	        config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+	        $BFS.BFS(this, root, config);
+	        var old_edge, new_node_a = null, new_node_b = null;
+	        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
+	            for (var edge_id in old_edges) {
+	                old_edge = old_edges[edge_id];
+	                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+	                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+	                if (new_node_a != null && new_node_b != null)
+	                    new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
+	            }
+	        });
+	        return new_graph;
+	    };
 	    BaseGraph.prototype.checkConnectedNodeOrThrow = function (node) {
 	        var node = this._nodes[node.getID()];
 	        if (!node) {
@@ -1007,10 +1054,139 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var path = __webpack_require__(8);
-	var fs = __webpack_require__(10);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(11);
+	var $CB = __webpack_require__(8);
+	function BFS(graph, v, config) {
+	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    var bfsScope = {
+	        marked: {},
+	        nodes: graph.getNodes(),
+	        queue: [],
+	        current: null,
+	        next_node: null,
+	        next_edge: null,
+	        root_node: v,
+	        adj_nodes: []
+	    };
+	    if (callbacks.init_bfs) {
+	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
+	    }
+	    bfsScope.queue.push(v);
+	    var i = 0;
+	    while (i < bfsScope.queue.length) {
+	        bfsScope.current = bfsScope.queue[i++];
+	        if (dir_mode === $G.GraphMode.MIXED) {
+	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.connNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.DIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
+	        }
+	        else {
+	            bfsScope.adj_nodes = [];
+	        }
+	        if (typeof callbacks.sort_nodes === 'function') {
+	            callbacks.sort_nodes(bfsScope);
+	        }
+	        for (var adj_idx in bfsScope.adj_nodes) {
+	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
+	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
+	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
+	                if (callbacks.node_unmarked) {
+	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
+	                }
+	            }
+	            else {
+	                if (callbacks.node_marked) {
+	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
+	                }
+	            }
+	        }
+	    }
+	    return config.result;
+	}
+	exports.BFS = BFS;
+	function prepareBFSStandardConfig() {
+	    var config = {
+	        result: {},
+	        callbacks: {
+	            init_bfs: [],
+	            node_unmarked: [],
+	            node_marked: [],
+	            sort_nodes: undefined
+	        },
+	        dir_mode: $G.GraphMode.MIXED,
+	        messages: {},
+	        filters: {}
+	    }, result = config.result, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    var initBFS = function (context) {
+	        for (var key in context.nodes) {
+	            config.result[key] = {
+	                distance: Number.POSITIVE_INFINITY,
+	                parent: null,
+	                counter: -1
+	            };
+	        }
+	        config.result[context.root_node.getID()] = {
+	            distance: 0,
+	            parent: context.root_node,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.init_bfs.push(initBFS);
+	    var nodeUnmarked = function (context) {
+	        config.result[context.next_node.getID()] = {
+	            distance: result[context.current.getID()].distance + 1,
+	            parent: context.current,
+	            counter: counter()
+	        };
+	        context.queue.push(context.next_node);
+	    };
+	    callbacks.node_unmarked.push(nodeUnmarked);
+	    return config;
+	}
+	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	function execCallbacks(cbs, context) {
+	    cbs.forEach(function (cb) {
+	        if (typeof cb === 'function') {
+	            cb(context);
+	        }
+	        else {
+	            throw new Error('Provided callback is not a function.');
+	        }
+	    });
+	}
+	exports.execCallbacks = execCallbacks;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var path = __webpack_require__(10);
+	var fs = __webpack_require__(12);
+	var $G = __webpack_require__(4);
+	var $R = __webpack_require__(13);
 	var CSVInput = (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1132,7 +1308,7 @@
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -1360,10 +1536,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1553,17 +1729,17 @@
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http = __webpack_require__(10);
+	var http = __webpack_require__(12);
 	function retrieveRemoteFile(url, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
@@ -1582,11 +1758,11 @@
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var CSVOutput = (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1632,13 +1808,13 @@
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(11);
+	var $R = __webpack_require__(13);
 	var DEFAULT_WEIGHT = 1;
 	var JSONInput = (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
@@ -1722,11 +1898,11 @@
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var JSONOutput = (function () {
 	    function JSONOutput() {
 	    }
@@ -1784,141 +1960,12 @@
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
-	function BFS(graph, v, config) {
-	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    var bfsScope = {
-	        marked: {},
-	        nodes: graph.getNodes(),
-	        queue: [],
-	        current: null,
-	        next_node: null,
-	        next_edge: null,
-	        root_node: v,
-	        adj_nodes: []
-	    };
-	    if (callbacks.init_bfs) {
-	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
-	    }
-	    bfsScope.queue.push(v);
-	    var i = 0;
-	    while (i < bfsScope.queue.length) {
-	        bfsScope.current = bfsScope.queue[i++];
-	        if (dir_mode === $G.GraphMode.MIXED) {
-	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
-	        }
-	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-	            bfsScope.adj_nodes = bfsScope.current.connNodes();
-	        }
-	        else if (dir_mode === $G.GraphMode.DIRECTED) {
-	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
-	        }
-	        else {
-	            bfsScope.adj_nodes = [];
-	        }
-	        if (typeof callbacks.sort_nodes === 'function') {
-	            callbacks.sort_nodes(bfsScope);
-	        }
-	        for (var adj_idx in bfsScope.adj_nodes) {
-	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
-	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
-	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
-	                if (callbacks.node_unmarked) {
-	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
-	                }
-	            }
-	            else {
-	                if (callbacks.node_marked) {
-	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
-	                }
-	            }
-	        }
-	    }
-	    return config.result;
-	}
-	exports.BFS = BFS;
-	function prepareBFSStandardConfig() {
-	    var config = {
-	        result: {},
-	        callbacks: {
-	            init_bfs: [],
-	            node_unmarked: [],
-	            node_marked: [],
-	            sort_nodes: undefined
-	        },
-	        dir_mode: $G.GraphMode.MIXED,
-	        messages: {},
-	        filters: {}
-	    }, result = config.result, callbacks = config.callbacks;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    var initBFS = function (context) {
-	        for (var key in context.nodes) {
-	            config.result[key] = {
-	                distance: Number.POSITIVE_INFINITY,
-	                parent: null,
-	                counter: -1
-	            };
-	        }
-	        config.result[context.root_node.getID()] = {
-	            distance: 0,
-	            parent: context.root_node,
-	            counter: counter()
-	        };
-	    };
-	    callbacks.init_bfs.push(initBFS);
-	    var nodeUnmarked = function (context) {
-	        config.result[context.next_node.getID()] = {
-	            distance: result[context.current.getID()].distance + 1,
-	            parent: context.current,
-	            counter: counter()
-	        };
-	        context.queue.push(context.next_node);
-	    };
-	    callbacks.node_unmarked.push(nodeUnmarked);
-	    return config;
-	}
-	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	function execCallbacks(cbs, context) {
-	    cbs.forEach(function (cb) {
-	        if (typeof cb === 'function') {
-	            cb(context);
-	        }
-	        else {
-	            throw new Error('Provided callback is not a function.');
-	        }
-	    });
-	}
-	exports.execCallbacks = execCallbacks;
-
-
-/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(8);
 	function DFSVisit(graph, current_root, config) {
 	    var dfsVisitScope = {
 	        stack: [],
@@ -2082,7 +2129,7 @@
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(8);
 	var $BH = __webpack_require__(19);
 	exports.DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
@@ -2478,13 +2525,27 @@
 
 	"use strict";
 	var $SU = __webpack_require__(3);
-	function FloydWarshallSparse(graph) {
-	    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-	    return [dists, next];
+	function initializeDistsWithEdges(graph) {
+	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    for (var edge in edges) {
+	        var a = edges[edge].getNodes().a.getID();
+	        var b = edges[edge].getNodes().b.getID();
+	        if (dists[a] == null)
+	            dists[a] = {};
+	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        if (!edges[edge].isDirected()) {
+	            if (dists[b] == null)
+	                dists[b] = {};
+	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        }
+	    }
+	    return dists;
 	}
-	exports.FloydWarshallSparse = FloydWarshallSparse;
-	function FloydWarshallDense(graph) {
-	    var dists = {}, next = {}, adj_list = graph.adjListArray(true, true), edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	function FloydWarshallAPSP(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
 	        var a = String(edges[edge].getNodes().a.getID());
 	        var b = String(edges[edge].getNodes().b.getID());
@@ -2500,10 +2561,10 @@
 	        }
 	        if (dists[a] == null)
 	            dists[a] = {};
+	        if (dists[b] == null)
+	            dists[b] = {};
 	        dists[a][b] = edges[edge].getWeight();
 	        if (!edges[edge].isDirected()) {
-	            if (dists[b] == null)
-	                dists[b] = {};
 	            dists[b][a] = edges[edge].getWeight();
 	        }
 	    }
@@ -2534,21 +2595,30 @@
 	    }
 	    return [dists, next];
 	}
-	exports.FloydWarshallDense = FloydWarshallDense;
-	function FloydWarshall(graph) {
-	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-	    for (var edge in edges) {
-	        var a = edges[edge].getNodes().a.getID();
-	        var b = edges[edge].getNodes().b.getID();
-	        if (dists[a] == null)
-	            dists[a] = {};
-	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-	        if (!edges[edge].isDirected()) {
-	            if (dists[b] == null)
-	                dists[b] = {};
-	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	exports.FloydWarshallAPSP = FloydWarshallAPSP;
+	function FloydWarshallArray(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = graph.adjListArray();
+	    var N = dists.length;
+	    for (var k = 0; k < N; ++k) {
+	        for (var i = 0; i < N; ++i) {
+	            for (var j = 0; j < N; ++j) {
+	                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
 	        }
 	    }
+	    return dists;
+	}
+	exports.FloydWarshallArray = FloydWarshallArray;
+	function FloydWarshall(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = initializeDistsWithEdges(graph);
 	    for (var k in dists) {
 	        for (var i in dists) {
 	            for (var j in dists) {
@@ -3164,12 +3234,8 @@
 	    function degreeCentrality() {
 	    }
 	    degreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
-	        if (weighted == null)
-	            weighted = true;
-	        if (!weighted && weighted != null)
-	            weighted = false;
-	        if (conf == null)
-	            conf = DegreeMode.all;
+	        weighted = (weighted != null) ? !!weighted : true;
+	        conf = (conf == null) ? DegreeMode.all : conf;
 	        var ret = {};
 	        switch (conf) {
 	            case DegreeMode.in:

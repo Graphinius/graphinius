@@ -5,6 +5,7 @@ import * as $E from './Edges';
 import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
+import * as $BFS from '../search/BFS';
 
 let logger : Logger = new Logger();
 
@@ -96,8 +97,10 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
+	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
 	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
+	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -121,6 +124,39 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
+	private arrayFromAdjDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number, next_node?:boolean) : MinAdjacencyListArray {
+		next_node = next_node || false;
+		let array = [],
+		idx = 0,
+		j_idx = -1;
+		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+
+		for ( let i in adjDict ) {
+			array.push([]);
+			j_idx = -1;
+			for ( let j in adjDict ) {
+				++j_idx;
+				if ( next_node ) {
+					array[idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+					continue;
+				}
+				if ( i == j ) {
+					array[idx].push( 0 );
+					continue;
+				}
+				array[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
+			}
+			++idx;
+		}				
+		
+		return array;	
+	}
+
+
+	nextArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) {
+		return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+	}
+
 	/**
 	 * This function iterates over the adjDict in order to use it's advantage
 	 * of being able to override edges if edges with smaller weight exist
@@ -135,18 +171,7 @@ class BaseGraph implements IGraph {
 	 * @param self_dist default distance to self
 	 */
 	adjListArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListArray {
-		let adjList = [],
-				idx = 0;
-		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
-
-		for ( let i in adjDict ) {
-			adjList.push([]);
-			for ( let j in adjDict ) {
-				adjList[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );	
-			}
-			++idx;
-		}
-		return adjList;
+		return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
 	}
 
 
@@ -163,7 +188,7 @@ class BaseGraph implements IGraph {
 				weight: number;
 		for (let key in nodes) {
 			adj_list_dict[key] = {};
-		}		
+		}
 		for ( var key in nodes ) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
@@ -619,6 +644,37 @@ class BaseGraph implements IGraph {
 				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
 				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
 				new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) )
+			}
+		});
+
+		return new_graph;
+	}
+
+	cloneSubGraph(root:$N.IBaseNode, cutoff:Number) : IGraph{
+		let new_graph = new BaseGraph(this._label);
+
+		let config = $BFS.prepareBFSStandardConfig();
+
+		var bfsNodeUnmarkedTestCallback = function(context: $BFS.BFS_Scope) {
+			if(config.result[context.next_node.getID()].counter>cutoff){
+				context.queue = [];
+			}else{ //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
+				new_graph.addNode(context.next_node.clone());
+			}
+		};
+		config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+		$BFS.BFS(this, root, config);
+		let old_edge : $E.IBaseEdge,
+			new_node_a  = null,
+			new_node_b  = null;
+
+		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
+			for ( let edge_id in old_edges ) {
+				old_edge = old_edges[edge_id];
+				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
+				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
+				if(new_node_a != null && new_node_b != null)
+					new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) );
 			}
 		});
 

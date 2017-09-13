@@ -18,6 +18,7 @@ var pageRankCentrality = (function () {
         var nrNodes = graph.nrNodes();
         var structure = {};
         for (var key in graph.getNodes()) {
+            key = String(key);
             var node = graph.getNodeById(key);
             structure[key] = {};
             structure[key]['deg'] = node.outDegree() + node.degree();
@@ -32,16 +33,18 @@ var pageRankCentrality = (function () {
             }
         }
         for (var key in graph.getNodes()) {
+            key = String(key);
             curr[key] = 1 / nrNodes;
             old[key] = 1 / nrNodes;
         }
         for (var i = 0; i < iterations; i++) {
             var me = 0.0;
             for (var key in graph.getNodes()) {
+                key = String(key);
                 var total = 0;
                 var parents = structure[key]['inc'];
                 for (var k in parents) {
-                    var p = parents[k];
+                    var p = String(parents[k]);
                     total += old[p] / structure[p]['deg'];
                 }
                 curr[key] = total * (1 - alpha) + alpha / nrNodes;

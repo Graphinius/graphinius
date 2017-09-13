@@ -5,15 +5,15 @@ var pageRankDetCentrality = (function () {
     function pageRankDetCentrality() {
     }
     pageRankDetCentrality.prototype.getCentralityMap = function (graph, weighted) {
-        var startVal = 1 / graph.nrNodes();
-        var pageScores = {};
         var divideTable = {};
         var matr = [];
         var ctr = 0;
+        var map = {};
         for (var key in graph.getNodes()) {
             divideTable[key] = 0;
         }
         for (var key in graph.getNodes()) {
+            map[key] = ctr;
             var node = graph.getNodeById(key);
             var node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
             matr[ctr] = new Array();
@@ -51,7 +51,10 @@ var pageRankDetCentrality = (function () {
         var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
         x[x.length - 1] = 1;
         x = $GAUSS.gauss(numMatr, x);
-        console.log(x);
+        var y = {};
+        for (var key in map) {
+            y[key] = x[ctr];
+        }
         return x;
     };
     return pageRankDetCentrality;

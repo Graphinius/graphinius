@@ -184,7 +184,7 @@ gulp.task('test-perturb', ['build'], function () {
 gulp.task('test-central', ['build'], function () {
     return gulp.src(paths.tests_central, {read: false})
 						.pipe(mocha({reporter: 'spec',
-												 timeout: 60000}));
+												 timeout: 600000}));
 });
 
 // 'ALL tests '

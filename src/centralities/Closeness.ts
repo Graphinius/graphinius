@@ -6,13 +6,12 @@
  */
 import * as $G from '../core/Graph';
 import * as $PFS from '../search/PFS';
-import * as $ICentrality from "../centralities/ICentrality";
 import * as $N from '../core/Nodes';
 import * as $FW from '../search/FloydWarshall';
 
 //Calculates all the shortest path's to all other nodes for all given nodes in the graph
 //Returns a map with every node as key and the average distance to all other nodes as value
-class closenessCentrality implements $ICentrality.ICentrality {
+class closenessCentrality{
 
 
   getCentralityMapFW(graph: $G.IGraph): {[id: string]: number} {
@@ -28,7 +27,7 @@ class closenessCentrality implements $ICentrality.ICentrality {
     }
     return ret;
   }
-  getCentralityMap(graph: $G.IGraph, weighted: boolean): {[id: string]: number} {
+  getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id: string]: number} {
     let pfs_config:$PFS.PFS_Config = $PFS.preparePFSStandardConfig();
     if(!weighted && weighted != null) //If we want, we can ignore edgeWeights, then every edge has weight 1
       pfs_config.evalPriority = function(ne: $N.NeighborEntry) {
@@ -58,7 +57,7 @@ class closenessCentrality implements $ICentrality.ICentrality {
     let ret:{[id:string]: number} = {};
     for (let key in graph.getNodes()) {
       let node = graph.getNodeById(key);
-      if (node != null) {//TODO: maybe put inner of loop into own function (centrality for one single node)
+      if (node != null) {
         accumulated_distance = 0;
         $PFS.PFS(graph, node, pfs_config);
         ret[key] = 1/accumulated_distance;

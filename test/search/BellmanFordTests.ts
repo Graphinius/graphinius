@@ -18,7 +18,7 @@ let bf_graph_file = "./test/test_data/bellman_ford.json",
     social_1k_file = "./test/test_data/social_network_edges.csv";
 
 
-describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
+describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
