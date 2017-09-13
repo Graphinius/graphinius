@@ -38,10 +38,11 @@ describe("Closeness Centrality Tests", () => {
             "Cowardly refusing to traverse graph without edges.");
 
         let CCFW = new $CC.closenessCentrality();
-        let closeness_map = CCFW.getCentralityMapFW(graph_1);
+        expect(CCFW.getCentralityMapFW.bind(CC.getCentralityMapFW, graph_1)).to.throw(
+            "Cowardly refusing to traverse graph without edges.");
 
         //This results in an empty map because there are no edges in the graph
-        expect( Object.keys( closeness_map ).length ).to.equal(0);
+        //expect( Object.keys( closeness_map ).length ).to.equal(0);
     });
 
 

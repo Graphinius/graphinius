@@ -3,6 +3,7 @@ var $N = require('./Nodes');
 var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
 var logger_1 = require('../utils/logger');
+var $BFS = require('../search/BFS');
 var logger = new logger_1.Logger();
 (function (GraphMode) {
     GraphMode[GraphMode["INIT"] = 0] = "INIT";
@@ -373,6 +374,31 @@ var BaseGraph = (function () {
                 new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
                 new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
                 new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
+            }
+        });
+        return new_graph;
+    };
+    BaseGraph.prototype.cloneSubGraph = function (root, cutoff) {
+        var new_graph = new BaseGraph(this._label);
+        var config = $BFS.prepareBFSStandardConfig();
+        var bfsNodeUnmarkedTestCallback = function (context) {
+            if (config.result[context.next_node.getID()].counter > cutoff) {
+                context.queue = [];
+            }
+            else {
+                new_graph.addNode(context.next_node.clone());
+            }
+        };
+        config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+        $BFS.BFS(this, root, config);
+        var old_edge, new_node_a = null, new_node_b = null;
+        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
+            for (var edge_id in old_edges) {
+                old_edge = old_edges[edge_id];
+                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+                if (new_node_a != null && new_node_b != null)
+                    new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
             }
         });
         return new_graph;

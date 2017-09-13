@@ -19,7 +19,7 @@ interface FWConfig {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallWithShortestPaths(graph: $G.IGraph): {} {
+function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	let dists = {},
 			next = {},
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
@@ -85,6 +85,8 @@ function FloydWarshall(graph: $G.IGraph): {} {
 	let dists = {},
 		edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
+	if(Object.keys(edges).length == 0)
+		throw new Error("Cowardly refusing to traverse graph without edges.");
 
 	for (let edge in edges){
 		let a = edges[edge].getNodes().a.getID();
@@ -128,4 +130,4 @@ function flatten(arr) {
 	}, []);
 }
 
-export {FloydWarshallWithShortestPaths, FloydWarshall};
+export {FloydWarshallAPSP, FloydWarshall};

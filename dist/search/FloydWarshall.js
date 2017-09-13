@@ -1,6 +1,6 @@
 "use strict";
 var $SU = require('../utils/structUtils');
-function FloydWarshallWithShortestPaths(graph) {
+function FloydWarshallAPSP(graph) {
     var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
     for (var edge in edges) {
         var a = String(edges[edge].getNodes().a.getID());
@@ -51,9 +51,11 @@ function FloydWarshallWithShortestPaths(graph) {
     }
     return [dists, next];
 }
-exports.FloydWarshallWithShortestPaths = FloydWarshallWithShortestPaths;
+exports.FloydWarshallAPSP = FloydWarshallAPSP;
 function FloydWarshall(graph) {
     var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+    if (Object.keys(edges).length == 0)
+        throw new Error("Cowardly refusing to traverse graph without edges.");
     for (var edge in edges) {
         var a = edges[edge].getNodes().a.getID();
         var b = edges[edge].getNodes().b.getID();

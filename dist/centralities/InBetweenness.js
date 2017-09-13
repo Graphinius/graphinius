@@ -35,7 +35,7 @@ function inBetweennessCentrality(graph, sparse) {
         throw new Error("Not implemented yet");
     }
     else
-        paths = $FW.FloydWarshallWithShortestPaths(graph)[1];
+        paths = $FW.FloydWarshallAPSP(graph)[1];
     var nodes = graph.getNodes();
     var map = {};
     for (var keyA in nodes) {

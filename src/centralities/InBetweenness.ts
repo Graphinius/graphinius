@@ -55,7 +55,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
     //paths = Bellman Ford
   }
   else
-    paths = $FW.FloydWarshallWithShortestPaths(graph)[1];
+    paths = $FW.FloydWarshallAPSP(graph)[1];
 
   let nodes = graph.getNodes();
   let map = {};
