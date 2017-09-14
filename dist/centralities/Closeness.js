@@ -5,14 +5,16 @@ var closenessCentrality = (function () {
     function closenessCentrality() {
     }
     closenessCentrality.prototype.getCentralityMapFW = function (graph) {
-        var dists = $FW.FloydWarshall(graph);
-        var ret = {};
-        for (var keyA in dists) {
+        var dists = $FW.FloydWarshallArray(graph);
+        console.log("DISTS:" + JSON.stringify(dists));
+        var ret = [];
+        var N = dists.length;
+        for (var a = 0; a < N; ++a) {
             var sum = 0;
-            for (var keyB in dists[keyA]) {
-                sum += dists[keyA][keyB];
+            for (var b = 0; b < N; ++b) {
+                sum += dists[a][b];
             }
-            ret[keyA] = 1 / sum;
+            ret[a] = 1 / sum;
         }
         return ret;
     };

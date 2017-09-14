@@ -1,9 +1,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
 import * as $G from '../core/Graph';
-import * as $E from '../core/Edges';
 import * as $SU from '../utils/structUtils'
-import {DEFAULT_WEIGHT} from "./PFS";
 
 interface FWConfig {
 	directed: boolean;
@@ -38,7 +36,6 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
  * the shortest paths we find.
  *
  * @param graph the graph to perform Floyd-Warshall on
- * @param sparse option to speed up calculation on sparse graphs
  * @returns m*m matrix of values
  * @constructor
  */
@@ -71,44 +68,57 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
-
-function mergeArrays( a:Array<number>, b:Array<number> ):Array<number> {
-	console.log('merging arrays');
-	console.log(a);
-	console.log(b);
-	// TODO @Benedikt: Handle null entries...
-
-	let ret:Array<number>;
+function mergeArrays(a:Array<number>,b:Array<number>):Array<number>{
+	let ret:Array<number> = [];
 	let idx_a = 0;
 	let idx_b = 0;
+	if(a[0]!=null && b[0]!=null){
+		while(true){
+			if(idx_a >= a.length || idx_b >= b.length)
+				break;
 
-	while(idx_a < a.length || idx_b < b.length) {
-		if(a[idx_a] === b[idx_b]) {
-			ret.push(a[idx_a]);
-			idx_a++;
-			idx_b++;
-		}
-		if( a[idx_a] < b[idx_b] ) {
-			ret.push(a[idx_a]);
-			idx_a++;
+			if(a[idx_a] == b[idx_b]){
+				if(ret[ret.length-1]!=a[idx_a])
+					ret.push(a[idx_a]);
+				idx_a++;
+				idx_b++;
+				continue;
+			}
+			if(a[idx_a] < b[idx_b]){
+				ret.push(a[idx_a]);
+				idx_a++;
+				continue;
+			}
+			if(b[idx_b] < a[idx_a]){
+				ret.push(b[idx_b]);
+				idx_b++;
+			}
 		}
 		if( a[idx_a] > b[idx_b] ) {
 			ret.push(b[idx_b]);
 			idx_b++;
 		}
 	}
+	while(idx_a < a.length){
+		ret.push(a[idx_a]);
+		idx_a++;
+	}
+	while(idx_b < b.length){
+		ret.push(b[idx_b]);
+		idx_b++;
+	}
 	return ret;
 }
 
 
-function FloydWarshallArray(graph: $G.IGraph) : {} {
+function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
 	let dists = graph.adjListArray();
 	let N = dists.length;
-
+	console.log("dists before..."+JSON.stringify(dists));
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
