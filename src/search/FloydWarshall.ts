@@ -106,14 +106,14 @@ function mergeArrays(a:Array<Number>,b:Array<Number>):Array<Number>{
 }
 
 
-function FloydWarshallArray(graph: $G.IGraph) : {} {
+function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
 	let dists = graph.adjListArray();
 	let N = dists.length;
-
+	console.log("dists before..."+JSON.stringify(dists));
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {

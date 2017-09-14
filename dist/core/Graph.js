@@ -29,6 +29,7 @@ var BaseGraph = (function () {
         next_node = next_node || false;
         var array = [], idx = 0, j_idx;
         var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+        console.log(JSON.stringify(adjDict));
         for (var i in adjDict) {
             array.push([]);
             j_idx = -1;

@@ -533,6 +533,7 @@
 	        next_node = next_node || false;
 	        var array = [], idx = 0, j_idx;
 	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+	        console.log(JSON.stringify(adjDict));
 	        for (var i in adjDict) {
 	            array.push([]);
 	            j_idx = -1;
@@ -2617,6 +2618,7 @@
 	    }
 	    var dists = graph.adjListArray();
 	    var N = dists.length;
+	    console.log("dists before..." + JSON.stringify(dists));
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {

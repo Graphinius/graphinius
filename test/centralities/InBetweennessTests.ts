@@ -31,7 +31,7 @@ describe("InBetweenness Centrality Tests", () => {
         expect( Object.keys( iBt_dist ).length ).to.equal(6);
     });
 
-    it('should return an error message because of edges with zero weights', () => {
+    it.skip('should return an error message because of edges with zero weights', () => {
         expect($IB.inBetweennessCentrality.bind($IB.inBetweennessCentrality, graph_zerocycle))
             .to.throw("Cannot compute FW on negative edges");
     });
@@ -64,7 +64,7 @@ describe("InBetweenness Centrality Tests", () => {
         sparseMap = $IB.inBetweennessCentrality( sn_graph, true);
     });
 
-    it.only('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
+    it.skip('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
         expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);

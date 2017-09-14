@@ -132,7 +132,7 @@ class BaseGraph implements IGraph {
 		idx = 0,
 		j_idx;
 		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
-
+		console.log(JSON.stringify(adjDict));
 		for ( let i in adjDict ) {
 			array.push([]);
 			j_idx = -1;
