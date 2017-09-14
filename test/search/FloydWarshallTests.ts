@@ -53,7 +53,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 
 	//TODO:::TODO
-	it('should refuse to compute Graph with negative edges', () => {
+	it.skip('should refuse to compute APSP with negative edges', () => {
 		var empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallAPSP.bind($FW.FloydWarshallAPSP, graph_nullcycle)).to.throw(
 			"Cannot compute FW on negative edges");
@@ -65,7 +65,15 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 			it('should correctly compute distance matrix for graph', () => {
 				FW_res = $FW.FloydWarshallAPSP(graph_search);
-				checkFWCentralitiesOnSmallGraph(graph_search, FW_res[0]);
+				let expected_result = [
+					[0, 3, 4, 1, 2, 4],
+					[2, 0, 1, 3, 2, 1],
+					[1, 4, 0, 2, 1, 5],
+					[7, 6, 6, 0, 1, 7],
+					[7, 5, 6, 1, 0, 6],
+					[4, 7, 3, 5, 4, 0]
+				];
+				expect(FW_res[0]).to.deep.equal(expected_result);
 			});
 
 			it('should correctly compute distance matrix for graph, Array version', () => {
@@ -104,7 +112,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("Floyd on Bernd (75 nodes) took " + (d-e) + "ms to finish");
 		});
 
-		it.only('performance test of FW implementation on 246 nodes)', () => {
+		it.skip('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();
@@ -122,7 +130,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 		it('75 nodes - FW with and without next should return same distance matrix', () => {
 			let FW_with_next  = $FW.FloydWarshallAPSP(graph_bernd)[0];
-			let FW_normal     = $FW.FloydWarshall(graph_bernd);
+			let FW_normal     = $FW.FloydWarshallArray(graph_bernd);
 			expect(FW_with_next).to.deep.equal(FW_normal);
 		});
 

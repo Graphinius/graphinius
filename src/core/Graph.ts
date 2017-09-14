@@ -75,6 +75,8 @@ export interface IGraph {
 	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
 	getUndEdges() : {[key: string] : $E.IBaseEdge};
+	getDirEdgesArray(): Array<$E.IBaseEdge>;
+	getUndEdgesArray(): Array<$E.IBaseEdge>;
 	nrDirEdges() : number;
 	nrUndEdges() : number;
 	deleteEdge(edge: $E.IBaseEdge) : void;
@@ -442,6 +444,22 @@ class BaseGraph implements IGraph {
 
 	getUndEdges() : {[key: string] : $E.IBaseEdge} {
 		return this._und_edges;
+	}
+
+	getDirEdgesArray(): Array<$E.IBaseEdge> {
+		let edges = [];
+		for (let e_idx in this._dir_edges) {
+			edges.push(this._dir_edges[e_idx]);
+		}
+		return edges;
+	}
+
+	getUndEdgesArray(): Array<$E.IBaseEdge> {
+		let edges = [];
+		for (let e_idx in this._und_edges) {
+			edges.push(this._und_edges[e_idx]);
+		}
+		return edges;
 	}
 
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge {

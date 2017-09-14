@@ -80,7 +80,7 @@
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#edge" class="tsd-kind-icon">edge</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#edges" class="tsd-kind-icon">edges</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#new_weight" class="tsd-kind-icon">new_<wbr>weight</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#size" class="tsd-kind-icon">size</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#nodes_size" class="tsd-kind-icon">nodes_<wbr>size</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#weight" class="tsd-kind-icon">weight</a></li>
 							</ul>
 						</section>
@@ -89,6 +89,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#bfsanitychecks" class="tsd-kind-icon">BFSanity<wbr>Checks</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#bellmanford" class="tsd-kind-icon">Bellman<wbr>Ford</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#bellmanfordarray" class="tsd-kind-icon">Bellman<wbr>Ford<wbr>Array</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_search_bellmanford_.html#hasnegativecycle" class="tsd-kind-icon">has<wbr>Negative<wbr>Cycle</a></li>
 							</ul>
 						</section>
@@ -145,17 +146,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="edges" class="tsd-anchor"></a>
 					<h3>edges</h3>
-					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<div class="tsd-signature tsd-kind-icon">edges<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_edges_.ibaseedge.html" class="tsd-signature-type">IBaseEdge</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L10">search/BellmanFord.ts:10</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="new_weight" class="tsd-anchor"></a>
@@ -168,9 +164,9 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="size" class="tsd-anchor"></a>
-					<h3>size</h3>
-					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="nodes_size" class="tsd-anchor"></a>
+					<h3>nodes_<wbr>size</h3>
+					<div class="tsd-signature tsd-kind-icon">nodes_<wbr>size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L16">search/BellmanFord.ts:16</a></li>
@@ -230,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L42">search/BellmanFord.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L91">search/BellmanFord.ts:91</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -253,6 +249,32 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="bellmanfordarray" class="tsd-anchor"></a>
+					<h3>Bellman<wbr>Ford<wbr>Array</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">Bellman<wbr>Ford<wbr>Array<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, start<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L37">search/BellmanFord.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+								<li>
+									<h5>start: <a href="../interfaces/_core_nodes_.ibasenode.html" class="tsd-signature-type">IBaseNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="hasnegativecycle" class="tsd-anchor"></a>
 					<h3>has<wbr>Negative<wbr>Cycle</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -262,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L76">search/BellmanFord.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/search/BellmanFord.ts#L125">search/BellmanFord.ts:125</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -312,7 +334,7 @@
 						<a href="_search_bellmanford_.html#new_weight" class="tsd-kind-icon">new_<wbr>weight</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_search_bellmanford_.html#size" class="tsd-kind-icon">size</a>
+						<a href="_search_bellmanford_.html#nodes_size" class="tsd-kind-icon">nodes_<wbr>size</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_search_bellmanford_.html#weight" class="tsd-kind-icon">weight</a>
@@ -322,6 +344,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_search_bellmanford_.html#bellmanford" class="tsd-kind-icon">Bellman<wbr>Ford</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_search_bellmanford_.html#bellmanfordarray" class="tsd-kind-icon">Bellman<wbr>Ford<wbr>Array</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_search_bellmanford_.html#hasnegativecycle" class="tsd-kind-icon">has<wbr>Negative<wbr>Cycle</a>

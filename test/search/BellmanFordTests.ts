@@ -19,7 +19,7 @@ let bf_graph_file = "./test/test_data/bellman_ford.json",
     social_1k_file = "./test/test_data/social_network_edges.csv";
 
 
-describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
+describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
@@ -31,7 +31,9 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
       BF                : Function = $BF.BellmanFord,
 			BF_expect     		: {} = {},
 			BF_neg_expect			: {} = {},
-			BF_compute				: {} = {};
+			BF_compute				: {} = {},
+			BF_expect_array		: Array<number>,
+			BF_compute_array		: Array<number>;
 
 
 	before(() => {
@@ -42,6 +44,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
     sn_300_graph = csv.readFromEdgeListFile(social_300_file);
     sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
 		BF_expect = { S: 0, A: 5, E: 8, C: 7, B: 5, D: 9 };
+		BF_expect_array = [ 0, 5, 8, 7, 5, 9 ];
   });
 
 
@@ -53,118 +56,107 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	});
 
 
-	it('BF should reject an undefined or null graph', () => {
-		expect($BF.BellmanFord.bind($BF.BellmanFord, undefined)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
-		expect($BF.BellmanFord.bind($BF.BellmanFord, null)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
+	describe('Bellman Ford Sanity Checks Tests - ', () => {
+
+		it('should reject an undefined or null graph', () => {
+			expect($BF.BellmanFord.bind($BF.BellmanFord, undefined)).to.throw(
+				'Graph as well as start node have to be valid objects.'
+			);
+			expect($BF.BellmanFord.bind($BF.BellmanFord, null)).to.throw(
+				'Graph as well as start node have to be valid objects.'
+			);
+		});
+
+
+		it('should reject an undefined or null start node', () => {
+			let graph = new $G.BaseGraph('emptinius');
+			expect($BF.BellmanFord.bind($BF.BellmanFord, graph, undefined)).to.throw(
+				'Graph as well as start node have to be valid objects.'
+			);
+			expect($BF.BellmanFord.bind($BF.BellmanFord, graph, null)).to.throw(
+				'Graph as well as start node have to be valid objects.'
+			);
+		});
+
+
+		it('should refuse to search a graph without edges', () => {
+			let graph = new $G.BaseGraph('emptinius');
+			let node = graph.addNodeByID('firstus');
+			expect($BF.BellmanFord.bind($BF.BellmanFord, graph, node)).to.throw(
+				'Cowardly refusing to traverse a graph without edges.'
+			);
+		});
+
+
+		it('should reject an outside node', () => {
+			let node = new $N.BaseNode('firstus');
+			expect($BF.BellmanFord.bind($BF.BellmanFord, bf_graph, node)).to.throw(
+				'Cannot start from an outside node.'
+			);
+		});
+
 	});
 
 
-	it('hasNegativeCycle should reject an undefined or null graph', () => {
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, undefined)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, null)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
+	describe('BF computation Tests - ', () => {
+		
+		it('should correctly compute distances from S within BF test graph', () => {
+			BF_compute = $BF.BellmanFord(bf_graph, bf_graph.getNodeById("S"));
+			expect(BF_compute).to.deep.equal(BF_expect);
+		});
+
+		/**
+		 * Computing 'correct' distances with negative cycles makes no sense,
+		 * since they are not even defined in finite time.
+		 */
+
+		it('BF should not detect any negative cycle in the bf graph', () => {
+			expect($BF.hasNegativeCycle(bf_graph, bf_graph.getNodeById("S"))).to.be.false;
+		});
+
+
+		it('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
+			expect($BF.hasNegativeCycle(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S"))).to.be.true;
+		});
+
 	});
 
 
-	it('BF should reject an undefined or null start node', () => {
-		let graph = new $G.BaseGraph('emptinius');
-		expect($BF.BellmanFord.bind($BF.BellmanFord, graph, undefined)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
-		expect($BF.BellmanFord.bind($BF.BellmanFord, graph, null)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
+	describe('BF Array version tests', () => {
+
+		it('should correctly compute dists for BF test graph', () => {
+			BF_compute_array = $BF.BellmanFordArray(bf_graph, bf_graph.getNodeById("S"));
+			expect(BF_compute_array).to.deep.equal(BF_expect_array);
+		});
+
 	});
 
 
-	it('hasNegativeCycle should reject an undefined or null start node', () => {
-		let graph = new $G.BaseGraph('emptinius');
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, graph, undefined)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, graph, null)).to.throw(
-			'Graph as well as start node have to be valid objects.'
-		);
-	});
+	describe('Performance Tests - ', () => {
+
+		it('BF performance test on ~300 node social network graph', () => {
+			let d = +new Date();
+			BF_compute = $BF.BellmanFord(sn_300_graph, sn_300_graph.getRandomNode());
+			let e = +new Date();
+			console.log("BellmanFord on social network of ~300 nodes took " + (e-d) + " ms. to finish");
+			d = +new Date();
+			BF_compute = $BF.BellmanFordArray(sn_300_graph, sn_300_graph.getRandomNode());
+			e = +new Date();
+			console.log("BellmanFord (Array) on social network of ~300 nodes took " + (e-d) + " ms. to finish");
+		});
 
 
-	it('BF should refuse to search a graph without edges', () => {
-		let graph = new $G.BaseGraph('emptinius');
-		let node = graph.addNodeByID('firstus');
-		expect($BF.BellmanFord.bind($BF.BellmanFord, graph, node)).to.throw(
-			'Cowardly refusing to traverse a graph without edges.'
-		);
-	});
+		it('BF performance test on ~1k node social network graph', () => {
+			let d = +new Date();
+			BF_compute = $BF.BellmanFord(sn_1k_graph, sn_1k_graph.getRandomNode());
+			let e = +new Date();
+			console.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			d = +new Date();
+			BF_compute = $BF.BellmanFordArray(sn_1k_graph, sn_1k_graph.getRandomNode());
+			e = +new Date();
+			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+		});
 
-
-	it('shasNegativeCycle hould refuse to search a graph without edges', () => {
-		let graph = new $G.BaseGraph('emptinius');
-		let node = graph.addNodeByID('firstus');
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, graph, node)).to.throw(
-			'Cowardly refusing to traverse a graph without edges.'
-		);
-	});
-
-
-	it('BF should reject an outside node', () => {
-		let node = new $N.BaseNode('firstus');
-		expect($BF.BellmanFord.bind($BF.BellmanFord, bf_graph, node)).to.throw(
-			'Cannot start from an outside node.'
-		);
-	});
-
-
-	it('hasNegativeCycle should reject an outside node', () => {
-		let node = new $N.BaseNode('firstus');
-		expect($BF.hasNegativeCycle.bind($BF.hasNegativeCycle, bf_graph, node)).to.throw(
-			'Cannot start from an outside node.'
-		);
-	});
-
-
-	it('BF should correctly compute distances from S within BF test graph', () => {
-		BF_compute = $BF.BellmanFord(bf_graph, bf_graph.getNodeById("S"));
-		expect(BF_compute).to.deep.equal(BF_expect);
-	});
-
-
-	/**
-	 * Computing 'correct' distances with negative cycles makes no sense,
-	 * since they are not even defined in finite time.
-	 */
-
-
-	it('BF should not detect any negative cycle in the bf graph', () => {
-		expect($BF.hasNegativeCycle(bf_graph, bf_graph.getNodeById("S"))).to.be.false;
-	});
-
-
-	it('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
-		BF_compute = $BF.BellmanFord(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S"));
-		expect($BF.hasNegativeCycle(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S"))).to.be.true;
-	});
-
-
-	it('BF performance test on ~300 node social network graph', () => {
-		let d = +new Date();
-		BF_compute = $BF.BellmanFord(sn_300_graph, sn_300_graph.getRandomNode());
-		let e = +new Date();
-		console.log("BellmanFord on social network of ~300 nodes took " + (d-e) + " ms. to finish");
-	});
-
-
-	it.skip('BF performance test on ~1k node social network graph', () => {
-		let d = +new Date();
-		BF_compute = $BF.BellmanFord(sn_1k_graph, sn_1k_graph.getRandomNode());
-		let e = +new Date();
-		console.log("BellmanFord on social network of ~1k nodes took " + (d-e) + " ms. to finish");
 	});
   
 });

@@ -7,13 +7,13 @@ import * as $SU from '../utils/structUtils'
 import {DEFAULT_WEIGHT} from "./PFS";
 
 let dists = {},
-    edges: {},
+    edges: Array<$E.IBaseEdge>,
     edge: $E.IBaseEdge,
     a: string,
     b: string,
     weight: number,
     new_weight: number,
-    size: number;
+    nodes_size: number;
 
 
 /**
@@ -34,6 +34,55 @@ function BFSanityChecks(graph: $G.IGraph, start: $N.IBaseNode) {
 }
 
 
+function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode) : Array<number> {
+  BFSanityChecks(graph, start);
+  let distArray = [];
+
+  let nodes = graph.getNodes(),
+      node_keys = Object.keys(nodes),
+      node : $N.IBaseNode,
+      id_idx_map: {} = {},
+      bf_edge_entry
+
+  for ( let n_idx = 0; n_idx < node_keys.length; ++n_idx ) {
+    node = nodes[node_keys[n_idx]];
+    distArray[n_idx] = ( node === start ) ? 0 : Number.POSITIVE_INFINITY;
+    id_idx_map[node.getID()] = n_idx;
+  }
+
+  // Initialize an edge array just holding the node indices, weight and directed
+  let graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+  let bf_edges = [];  
+  for ( let e_idx = 0; e_idx < graph_edges.length; ++e_idx ) {    
+    edge = graph_edges[e_idx];
+    let bf_edge_entry = 
+    bf_edges.push( [
+      id_idx_map[edge.getNodes().a.getID()],
+      id_idx_map[edge.getNodes().b.getID()],
+      isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT,
+      edge.isDirected()
+    ] );
+  }
+
+  for ( let i = 0; i < node_keys.length-1; ++i ) {
+    for ( let e_idx = 0; e_idx < bf_edges.length; ++e_idx ) {
+      edge = bf_edges[e_idx];
+      updateDist(edge[0], edge[1], edge[2]);
+      !edge[3] && updateDist(edge[1], edge[0], edge[2]);
+    }
+  }
+
+  function updateDist(u, v, weight) {
+    new_weight = distArray[u] + weight;
+    if ( distArray[v] > new_weight ) {
+      distArray[v] = new_weight;
+    }
+  }
+  
+  return distArray;
+}
+
+
 /**
  * 
  * @param graph 
@@ -43,17 +92,17 @@ function BellmanFord(graph: $G.IGraph, start: $N.IBaseNode) : {} {
   BFSanityChecks(graph, start);
 
   dists = {}; // Reset dists, TODO refactor
-  edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-  size = graph.nrNodes();  
+  edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+  nodes_size = graph.nrNodes();
   
   for ( let node in graph.getNodes() ) {
     dists[node] = Number.POSITIVE_INFINITY;
   }
   dists[start.getID()] = 0;
 
-  for ( let i = 0; i < size-1; ++i ) {
-    for ( let edgeID in edges ) {
-      edge = edges[edgeID];
+  for ( let i = 0; i < nodes_size-1; ++i ) {
+    for ( let e_idx = 0; e_idx < edges.length; ++e_idx ) {
+      edge = edges[e_idx];
       a = edge.getNodes().a.getID();
       b = edge.getNodes().b.getID();
       weight = isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT;
@@ -95,5 +144,6 @@ function hasNegativeCycle(graph: $G.IGraph, start: $N.IBaseNode) : boolean {
 
 export {
   BellmanFord,
+  BellmanFordArray,
   hasNegativeCycle
 };

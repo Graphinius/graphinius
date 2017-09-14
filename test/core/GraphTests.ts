@@ -389,7 +389,6 @@ describe('GRAPH TESTS: ', () => {
 			node_vana = new Node(42, {label: 'IAmNotInGraph'});
 			
 			expect(graph.nrNodes()).to.equal(4);
-			// expect(graph.nrEdges()).to.equal(7);
 			expect(graph.nrDirEdges()).to.equal(5);
 			expect(graph.nrUndEdges()).to.equal(2);
 			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
@@ -406,7 +405,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should return the list of undirected edges', () => {
+		it('should return the Dict of undirected edges', () => {
 			var edges = graph.getUndEdges();
 			expect(Object.keys(edges).length).to.equal(2);
 			expect(edges[e_1.getID()]).to.equal(e_1);
@@ -414,7 +413,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should return the list of directed edges', () => {
+		it('should return the Dict of directed edges', () => {
 			var edges = graph.getDirEdges();
 			expect(Object.keys(edges).length).to.equal(5);
 			expect(edges[e_3.getID()]).to.equal(e_3);
@@ -422,6 +421,25 @@ describe('GRAPH TESTS: ', () => {
 			expect(edges[e_5.getID()]).to.equal(e_5);
 			expect(edges[e_6.getID()]).to.equal(e_6);
 			expect(edges[e_7.getID()]).to.equal(e_7);
+		});
+
+
+		it('should return the Array of undirected edges', () => {
+			var edges = graph.getUndEdgesArray();
+			expect(edges.length).to.equal(2);
+			expect(edges).to.contain(e_1);
+			expect(edges).to.contain(e_2);
+		});
+		
+		
+		it('should return the Array of directed edges', () => {
+			var edges = graph.getDirEdgesArray();
+			expect(edges.length).to.equal(5);
+			expect(edges).to.contain(e_3);
+			expect(edges).to.contain(e_4);
+			expect(edges).to.contain(e_5);
+			expect(edges).to.contain(e_6);
+			expect(edges).to.contain(e_7);
 		});
 		
 		

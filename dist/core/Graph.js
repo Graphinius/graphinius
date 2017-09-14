@@ -255,6 +255,20 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getUndEdges = function () {
         return this._und_edges;
     };
+    BaseGraph.prototype.getDirEdgesArray = function () {
+        var edges = [];
+        for (var e_idx in this._dir_edges) {
+            edges.push(this._dir_edges[e_idx]);
+        }
+        return edges;
+    };
+    BaseGraph.prototype.getUndEdgesArray = function () {
+        var edges = [];
+        for (var e_idx in this._und_edges) {
+            edges.push(this._und_edges[e_idx]);
+        }
+        return edges;
+    };
     BaseGraph.prototype.addEdgeByNodeIDs = function (label, node_a_id, node_b_id, opts) {
         var node_a = this.getNodeById(node_a_id), node_b = this.getNodeById(node_b_id);
         if (!node_a) {
