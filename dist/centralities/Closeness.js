@@ -5,7 +5,7 @@ var closenessCentrality = (function () {
     function closenessCentrality() {
     }
     closenessCentrality.prototype.getCentralityMapFW = function (graph) {
-        var dists = $FW.FloydWarshall(graph);
+        var dists = $FW.FloydWarshallArray(graph);
         var ret = {};
         for (var keyA in dists) {
             var sum = 0;

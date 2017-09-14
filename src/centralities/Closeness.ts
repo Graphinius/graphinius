@@ -15,7 +15,7 @@ class closenessCentrality{
 
 
   getCentralityMapFW(graph: $G.IGraph): {[id: string]: number} {
-    let dists = $FW.FloydWarshall(graph);
+    let dists = $FW.FloydWarshallArray(graph);
 
     let ret:{[id:string]: number} = {};
     for (let keyA in dists) {

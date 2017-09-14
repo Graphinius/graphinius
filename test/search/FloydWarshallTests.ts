@@ -104,7 +104,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("Floyd on Bernd (75 nodes) took " + (d-e) + "ms to finish");
 		});
 
-		it('performance test of FW implementation on 246 nodes)', () => {
+		it.only('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();
