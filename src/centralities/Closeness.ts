@@ -29,6 +29,8 @@ class closenessCentrality{
     }
     return ret;
   }
+
+
   getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id: string]: number} {
     let pfs_config:$PFS.PFS_Config = $PFS.preparePFSStandardConfig();
     if(!weighted && weighted != null) //If we want, we can ignore edgeWeights, then every edge has weight 1
@@ -69,6 +71,8 @@ class closenessCentrality{
     return ret;
   }
 }
+
+
 export {
   closenessCentrality
 };

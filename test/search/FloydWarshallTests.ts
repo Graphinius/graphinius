@@ -20,7 +20,7 @@ let social_graph = "./test/test_data/social_network_edges.csv";
 let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
 
-describe.skip('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
+describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
@@ -128,7 +128,7 @@ describe.skip('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e-d) + "ms to finish");
 		});
 
-		it('75 nodes - FW with and without next should return same distance matrix', () => {
+		it.skip('75 nodes - FW with and without next should return same distance matrix', () => {
 			let FW_with_next  = $FW.FloydWarshallAPSP(graph_bernd)[0];
 			let FW_normal     = $FW.FloydWarshallArray(graph_bernd);
 			expect(FW_with_next).to.deep.equal(FW_normal);
@@ -144,7 +144,6 @@ describe.skip('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	});
 	
 });
-
 
 
 function checkFWCentralitiesOnSmallGraph(graph_l, FW_res) {

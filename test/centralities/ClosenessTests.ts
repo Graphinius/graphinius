@@ -147,13 +147,35 @@ describe("Closeness Centrality Tests", () => {
             expect(cc[key]).equal(closeness_mapFW[ctr]);
             ctr++;
         }
+    });
 
+    it.skip('should run the closeness centrality on a ~1k nodes social network, should be same as FW', () => {
+        let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
+
+        let CCFW = new $CC.closenessCentrality();
+
+        let d = +new Date();
+        closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
+        let e = +new Date();
+        //console.log(closeness_mapFW);
+        console.log("Closeness with FW took " + (e-d) + "ms to finish");
+        d = +new Date();
+        let cc = CC.getCentralityMap(sn_graph);
+        e = +new Date();
+        //console.log(cc);
+        console.log("Closeness with PFS took " + (e-d) + "ms to finish");
+        let ctr = 0;
+        for(let key in cc){
+            //console.log("["+key+"]"+cc[key]+" " +closeness_mapFW[ctr]+"["+ctr+"]");
+            expect(cc[key]).equal(closeness_mapFW[ctr]);
+            ctr++;
+        }
     });
 
 });
 
 
-function checkScoresEqual(graph, closeness){
+function checkScoresEqual(graph, closeness) {
     let last = closeness[graph.getRandomNode().getID()];
     for(let key in graph.getNodes()) {
         expect(closeness[key]).to.equal(last);

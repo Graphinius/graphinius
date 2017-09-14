@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;centralities/DegreeCentrality&quot; | Graphinius</title>
+	<title>&quot;centralities/Betweenness&quot; | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_centralities_degreecentrality_.html">&quot;centralities/DegreeCentrality&quot;</a>
+					<a href="_centralities_betweenness_.html">&quot;centralities/Betweenness&quot;</a>
 				</li>
 			</ul>
-			<h1>External module &quot;centralities/DegreeCentrality&quot;</h1>
+			<h1>External module &quot;centralities/Betweenness&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -71,19 +71,112 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Enumerations</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum tsd-parent-kind-external-module"><a href="../enums/_centralities_degreecentrality_.degreemode.html" class="tsd-kind-icon">Degree<wbr>Mode</a></li>
-							</ul>
-						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Classes</h3>
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported"><a href="../classes/_centralities_degreecentrality_.degreecentrality.html" class="tsd-kind-icon">degree<wbr>Centrality</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_centralities_betweenness_.html#addbetweeness" class="tsd-kind-icon">add<wbr>Betweeness</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_centralities_betweenness_.html#inbetweennesscentrality" class="tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_centralities_betweenness_.html#inbetweennesscentralitydijkstra" class="tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality<wbr>Dijkstra</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="addbetweeness" class="tsd-anchor"></a>
+					<h3>add<wbr>Betweeness</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Betweeness<span class="tsd-signature-symbol">(</span>u<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, map<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/Graphinius/blob/centralities/src/centralities/Betweenness.ts#L83">centralities/Betweenness.ts:83</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>u: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>v: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>next: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>map: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>start: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="inbetweennesscentrality" class="tsd-anchor"></a>
+					<h3>in<wbr>Betweenness<wbr>Centrality</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, sparse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/Graphinius/blob/centralities/src/centralities/Betweenness.ts#L51">centralities/Betweenness.ts:51</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> sparse: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="inbetweennesscentralitydijkstra" class="tsd-anchor"></a>
+					<h3>in<wbr>Betweenness<wbr>Centrality<wbr>Dijkstra</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality<wbr>Dijkstra<span class="tsd-signature-symbol">(</span>graph<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a>, weighted<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/Graphinius/blob/centralities/src/centralities/Betweenness.ts#L10">centralities/Betweenness.ts:10</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+								</li>
+								<li>
+									<h5>weighted: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-index-signature">
+									<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -94,17 +187,20 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="_centralities_degreecentrality_.html">"centralities/<wbr>Degree<wbr>Centrality"</a>
+						<a href="_centralities_betweenness_.html">"centralities/<wbr>Betweenness"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_centralities_degreecentrality_.degreemode.html" class="tsd-kind-icon">Degree<wbr>Mode</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_centralities_betweenness_.html#addbetweeness" class="tsd-kind-icon">add<wbr>Betweeness</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../classes/_centralities_degreecentrality_.degreecentrality.html" class="tsd-kind-icon">degree<wbr>Centrality</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_centralities_betweenness_.html#inbetweennesscentrality" class="tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_centralities_betweenness_.html#inbetweennesscentralitydijkstra" class="tsd-kind-icon">in<wbr>Betweenness<wbr>Centrality<wbr>Dijkstra</a>
 					</li>
 				</ul>
 			</nav>

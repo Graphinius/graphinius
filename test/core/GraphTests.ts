@@ -1078,7 +1078,7 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+			it.skip('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
 				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
 				adj_list = sn_300_graph.adjListArray(true);
 				// console.log(adj_list);
@@ -1146,10 +1146,10 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+			it.skip('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
 				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
 				next = sn_300_graph.nextArray(true);
-				console.log(next);
+				// console.log(next);
 			});
 
 		});

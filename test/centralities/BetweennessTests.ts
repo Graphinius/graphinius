@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
-import * as $IB from '../../src/centralities/InBetweenness';
+import * as $IB from '../../src/centralities/Betweenness';
 import * as $FW from '../../src/search/FloydWarshall';
 
 const SN_GRAPH_NODES = 1034,
