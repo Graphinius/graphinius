@@ -14,15 +14,38 @@ function BFSanityChecks(graph, start) {
 }
 function BellmanFordArray(graph, start) {
     BFSanityChecks(graph, start);
-    var dists = [];
-    var adj_matrix = graph.adjListArray();
-    console.log(adj_matrix);
-    var nodes = graph.getNodes(), keys = Object.keys(nodes), node;
-    for (var n_idx = 0; n_idx < keys.length; ++n_idx) {
-        node = nodes[keys[n_idx]];
-        dists[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
+    var distArray = [];
+    var nodes = graph.getNodes(), node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry;
+    for (var n_idx = 0; n_idx < node_keys.length; ++n_idx) {
+        node = nodes[node_keys[n_idx]];
+        distArray[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
+        id_idx_map[node.getID()] = n_idx;
     }
-    return dists;
+    var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+    var bf_edges = [];
+    for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
+        edge = graph_edges[e_idx];
+        var bf_edge_entry_1 = bf_edges.push([
+            id_idx_map[edge.getNodes().a.getID()],
+            id_idx_map[edge.getNodes().b.getID()],
+            isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT,
+            edge.isDirected()
+        ]);
+    }
+    for (var i = 0; i < node_keys.length - 1; ++i) {
+        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+            edge = bf_edges[e_idx];
+            updateDist(edge[0], edge[1], edge[2]);
+            !edge[3] && updateDist(edge[1], edge[0], edge[2]);
+        }
+    }
+    function updateDist(u, v, weight) {
+        new_weight = distArray[u] + weight;
+        if (distArray[v] > new_weight) {
+            distArray[v] = new_weight;
+        }
+    }
+    return distArray;
 }
 exports.BellmanFordArray = BellmanFordArray;
 function BellmanFord(graph, start) {

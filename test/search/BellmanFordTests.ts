@@ -19,7 +19,7 @@ let bf_graph_file = "./test/test_data/bellman_ford.json",
     social_1k_file = "./test/test_data/social_network_edges.csv";
 
 
-describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
+describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
@@ -122,13 +122,27 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	});
 
 
+	describe('BF Array version tests', () => {
+
+		it('should correctly compute dists for BF test graph', () => {
+			BF_compute_array = $BF.BellmanFordArray(bf_graph, bf_graph.getNodeById("S"));
+			expect(BF_compute_array).to.deep.equal(BF_expect_array);
+		});
+
+	});
+
+
 	describe('Performance Tests - ', () => {
 
 		it('BF performance test on ~300 node social network graph', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFord(sn_300_graph, sn_300_graph.getRandomNode());
 			let e = +new Date();
-			console.log("BellmanFord on social network of ~300 nodes took " + (d-e) + " ms. to finish");
+			console.log("BellmanFord on social network of ~300 nodes took " + (e-d) + " ms. to finish");
+			d = +new Date();
+			BF_compute = $BF.BellmanFordArray(sn_300_graph, sn_300_graph.getRandomNode());
+			e = +new Date();
+			console.log("BellmanFord (Array) on social network of ~300 nodes took " + (e-d) + " ms. to finish");
 		});
 
 
@@ -136,7 +150,11 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFord(sn_1k_graph, sn_1k_graph.getRandomNode());
 			let e = +new Date();
-			console.log("BellmanFord on social network of ~1k nodes took " + (d-e) + " ms. to finish");
+			console.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			d = +new Date();
+			BF_compute = $BF.BellmanFordArray(sn_1k_graph, sn_1k_graph.getRandomNode());
+			e = +new Date();
+			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 		});
 
 	});
