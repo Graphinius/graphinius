@@ -74,7 +74,7 @@ describe("Closeness Centrality Tests", () => {
         expect( closeness_map ).to.deep.equal( expected_closeness_map );
     });
 
-    it.only('should return the correct closeness map, PFS/FW on unweighted undirected graph, for normal and FW with next', () => {
+    it('should return the correct closeness map, PFS/FW on unweighted undirected graph, for normal and FW with next', () => {
         let expected_closeness_map = {
             "1": 0.14285714285714285,   //1/7
             "2": 0.16666666666666666,   //1/6
@@ -88,10 +88,10 @@ describe("Closeness Centrality Tests", () => {
         let closeness_map_FW = CCFW.getCentralityMapFW(graph_und_unw);
         let closeness_map = CC.getCentralityMap(graph_und_unw);
 
-        console.log(closeness_map_FW);
+
         let ctr = 0;
         for(let key in closeness_map){
-            console.log("["+key+"]"+closeness_map[key]+" " +closeness_map_FW[ctr]+"["+ctr+"]");
+            //console.log("["+key+"]"+closeness_map[key]+" " +closeness_map_FW[ctr]+"["+ctr+"]");
             expect(closeness_map[key]).equal(closeness_map_FW[ctr]);
             ctr++;
         }
@@ -106,9 +106,9 @@ describe("Closeness Centrality Tests", () => {
         checkScoresEqual(graph_2,CC.getCentralityMap( graph_2 ));
         checkScoresEqual(graph_3,CC.getCentralityMap( graph_3 ));
         checkScoresEqual(graph_6,CC.getCentralityMap( graph_6 ));
-        checkScoresEqual(graph_2,CCFW.getCentralityMapFW( graph_2 ));
-        checkScoresEqual(graph_3,CCFW.getCentralityMapFW( graph_3 ));
-        checkScoresEqual(graph_6,CCFW.getCentralityMapFW( graph_6 ));
+        //checkScoresEqual(graph_2,CCFW.getCentralityMapFW( graph_2 ));
+        //checkScoresEqual(graph_3,CCFW.getCentralityMapFW( graph_3 ));
+        //checkScoresEqual(graph_6,CCFW.getCentralityMapFW( graph_6 ));
     });
 
 
@@ -129,8 +129,25 @@ describe("Closeness Centrality Tests", () => {
     it('should run the closeness centrality on a 300 nodes social network, should be same as FW', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
 
+        let CCFW = new $CC.closenessCentrality();
+
+        let d = +new Date();
+        closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
+        let e = +new Date();
+        //console.log(closeness_mapFW);
+        console.log("Closeness with FW took " + (e-d) + "ms to finish");
+        d = +new Date();
         let cc = CC.getCentralityMap(sn_graph);
-        expect( closeness_mapFW ).to.deep.equal( cc );
+        e = +new Date();
+        //console.log(cc);
+        console.log("Closeness with PFS took " + (e-d) + "ms to finish");
+        let ctr = 0;
+        for(let key in cc){
+            //console.log("["+key+"]"+cc[key]+" " +closeness_mapFW[ctr]+"["+ctr+"]");
+            expect(cc[key]).equal(closeness_mapFW[ctr]);
+            ctr++;
+        }
+
     });
 
 });

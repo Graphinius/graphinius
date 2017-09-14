@@ -26,16 +26,8 @@ var BaseGraph = (function () {
     }
     BaseGraph.prototype.nextArray = function (incoming) {
         if (incoming === void 0) { incoming = false; }
-<<<<<<< HEAD
         var next = [], idx = 0, j_idx;
         var adjDict = this.adjListDict(incoming, true, 0);
-=======
-        if (include_self === void 0) { include_self = false; }
-        next_node = next_node || false;
-        var array = [], idx = 0, j_idx;
-        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
-        console.log(JSON.stringify(adjDict));
->>>>>>> 974479a792934fbb2e382220748108ef1dee4a68
         for (var i in adjDict) {
             next.push([]);
             j_idx = -1;

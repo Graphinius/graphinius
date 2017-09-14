@@ -6,13 +6,13 @@ var closenessCentrality = (function () {
     }
     closenessCentrality.prototype.getCentralityMapFW = function (graph) {
         var dists = $FW.FloydWarshallArray(graph);
-        console.log("DISTS:" + JSON.stringify(dists));
         var ret = [];
         var N = dists.length;
         for (var a = 0; a < N; ++a) {
             var sum = 0;
             for (var b = 0; b < N; ++b) {
-                sum += dists[a][b];
+                if (dists[a][b] != Number.POSITIVE_INFINITY)
+                    sum += dists[a][b];
             }
             ret[a] = 1 / sum;
         }

@@ -28,10 +28,6 @@ function FloydWarshallAPSP(graph) {
             for (var j = 0; j < N; ++j) {
                 if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
                     next[i][j] = mergeArrays(next[i][j], next[i][k]);
-<<<<<<< HEAD
-                    (next[i][j]) = next[i][j].filter(function (elem, pos, arr) { return arr.indexOf(elem) == pos; });
-=======
->>>>>>> 974479a792934fbb2e382220748108ef1dee4a68
                 }
                 if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
                     next[i][j] = next[i][k].slice(0);
@@ -44,23 +40,6 @@ function FloydWarshallAPSP(graph) {
 }
 exports.FloydWarshallAPSP = FloydWarshallAPSP;
 function mergeArrays(a, b) {
-<<<<<<< HEAD
-    console.log('merging arrays');
-    console.log(a);
-    console.log(b);
-    var ret;
-    var idx_a = 0;
-    var idx_b = 0;
-    while (idx_a < a.length || idx_b < b.length) {
-        if (a[idx_a] === b[idx_b]) {
-            ret.push(a[idx_a]);
-            idx_a++;
-            idx_b++;
-        }
-        if (a[idx_a] < b[idx_b]) {
-            ret.push(a[idx_a]);
-            idx_a++;
-=======
     var ret = [];
     var idx_a = 0;
     var idx_b = 0;
@@ -84,7 +63,6 @@ function mergeArrays(a, b) {
                 ret.push(b[idx_b]);
                 idx_b++;
             }
->>>>>>> 974479a792934fbb2e382220748108ef1dee4a68
         }
         if (a[idx_a] > b[idx_b]) {
             ret.push(b[idx_b]);
@@ -107,7 +85,6 @@ function FloydWarshallArray(graph) {
     }
     var dists = graph.adjListArray();
     var N = dists.length;
-    console.log("dists before..." + JSON.stringify(dists));
     for (var k = 0; k < N; ++k) {
         for (var i = 0; i < N; ++i) {
             for (var j = 0; j < N; ++j) {

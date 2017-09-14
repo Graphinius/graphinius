@@ -53,9 +53,6 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 			for (var j = 0; j < N; ++j) {
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {					
 					next[i][j] = mergeArrays(next[i][j], next[i][k]);
-					// next[i][j] = flatten(next[i][j]);
-					//only unique entries in next
-					(next[i][j]) = next[i][j].filter((elem,pos,arr) => arr.indexOf(elem) == pos);
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
 					next[i][j] = next[i][k].slice(0);
@@ -118,7 +115,7 @@ function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 
 	let dists = graph.adjListArray();
 	let N = dists.length;
-	console.log("dists before..."+JSON.stringify(dists));
+
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {

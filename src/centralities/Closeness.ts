@@ -16,24 +16,17 @@ class closenessCentrality{
 
   getCentralityMapFW(graph: $G.IGraph): Array<Number> {
     let dists = $FW.FloydWarshallArray(graph);
-    console.log("DISTS:"+JSON.stringify(dists));
+
     let ret:Array<Number> = [];
     let N = dists.length;
     for (let a = 0; a < N; ++a) {
       let sum = 0;
       for (let b = 0; b < N; ++b) {
-        sum += dists[a][b];
+        if(dists[a][b]!=Number.POSITIVE_INFINITY)
+          sum += dists[a][b];
       }
       ret[a] = 1/sum;
     }
-    //let ret:{[id:string]: number} = {};
-    //for (let keyA in dists) {
-    //  let sum = 0;
-    //  for (let keyB in dists[keyA]) {
-    //    sum += dists[keyA][keyB];
-    //  }
-    //  ret[keyA] = 1/sum;
-    //}
     return ret;
   }
   getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id: string]: number} {
