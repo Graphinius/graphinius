@@ -6,14 +6,23 @@ import * as $N from '../core/Nodes';
 import * as $SU from '../utils/structUtils'
 import {DEFAULT_WEIGHT} from "./PFS";
 
+interface edge_entry_BF {
+  a_idx   : number;
+  b_idx   : number;
+  weight  : number;
+}
+
+export type edges_BF = Array<edge_entry_BF>;
+
+
 let dists = {},
-    edges: {},
+    edges: Array<$E.IBaseEdge>,
     edge: $E.IBaseEdge,
     a: string,
     b: string,
     weight: number,
     new_weight: number,
-    size: number;
+    nodes_size: number;
 
 
 /**
@@ -34,6 +43,27 @@ function BFSanityChecks(graph: $G.IGraph, start: $N.IBaseNode) {
 }
 
 
+function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode) : Array<number> {
+  BFSanityChecks(graph, start);
+  let dists = [];
+  let adj_matrix = graph.adjListArray();
+  console.log(adj_matrix);
+
+  let nodes = graph.getNodes(),
+      keys = Object.keys(nodes),
+      node : $N.IBaseNode;
+
+  for ( let n_idx = 0; n_idx < keys.length; ++n_idx ) {
+    node = nodes[keys[n_idx]];
+    dists[n_idx] = ( node === start ) ? 0 : Number.POSITIVE_INFINITY;
+  }
+
+
+  
+  return dists;
+}
+
+
 /**
  * 
  * @param graph 
@@ -43,17 +73,17 @@ function BellmanFord(graph: $G.IGraph, start: $N.IBaseNode) : {} {
   BFSanityChecks(graph, start);
 
   dists = {}; // Reset dists, TODO refactor
-  edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-  size = graph.nrNodes();  
+  edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+  nodes_size = graph.nrNodes();
   
   for ( let node in graph.getNodes() ) {
     dists[node] = Number.POSITIVE_INFINITY;
   }
   dists[start.getID()] = 0;
 
-  for ( let i = 0; i < size-1; ++i ) {
-    for ( let edgeID in edges ) {
-      edge = edges[edgeID];
+  for ( let i = 0; i < nodes_size-1; ++i ) {
+    for ( let e_idx = 0; e_idx < edges.length; ++e_idx ) {
+      edge = edges[e_idx];
       a = edge.getNodes().a.getID();
       b = edge.getNodes().b.getID();
       weight = isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT;
@@ -95,5 +125,6 @@ function hasNegativeCycle(graph: $G.IGraph, start: $N.IBaseNode) : boolean {
 
 export {
   BellmanFord,
+  BellmanFordArray,
   hasNegativeCycle
 };
