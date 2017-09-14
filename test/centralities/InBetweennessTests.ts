@@ -36,7 +36,7 @@ describe("InBetweenness Centrality Tests", () => {
             .to.throw("Cannot compute FW on negative edges");
     });
 
-    it('should return the correct betweenness map', () => {
+    it.only('should return the correct betweenness map', () => {
         let expected_betweenness_map = {
             "A": 6/30,
             "B": 7/30,

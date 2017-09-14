@@ -27,7 +27,7 @@ var BaseGraph = (function () {
         if (incoming === void 0) { incoming = false; }
         if (include_self === void 0) { include_self = false; }
         next_node = next_node || false;
-        var array = [], idx = 0, j_idx = -1;
+        var array = [], idx = 0, j_idx;
         var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
         for (var i in adjDict) {
             array.push([]);
@@ -35,7 +35,8 @@ var BaseGraph = (function () {
             for (var j in adjDict) {
                 ++j_idx;
                 if (next_node) {
-                    array[idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+                    array[idx].push([]);
+                    array[idx][j_idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
                     continue;
                 }
                 if (i == j) {

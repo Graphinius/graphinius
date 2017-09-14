@@ -48,7 +48,7 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists = {},
+	/*let dists = {},
 			next = {},
 			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
@@ -75,37 +75,37 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		if(!edges[edge].isDirected()){
 			dists[b][a] = edges[edge].getWeight();
 		}
-	}
-
-	for (var k in dists) {
-		for (var i in dists) {
-			for (var j in dists) {
-
-				if (i === j) {
-					continue;
-				}
-				if (dists[i][k] == null || dists[k][j] == null) {
-					continue;
-				}
-				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j]!=next[i][k]) {
-					if(next[i][j].indexOf(next[i][k])<0){
+	}*/
+	let dists = graph.adjListArray();
+	let next  = graph.nextArray();
+	//console.log("NEXT:"+JSON.stringify(next));
+	console.log("STARTING");
+	let N = dists.length;
+	for (var k = 0; k < N; ++k) {
+		for (var i = 0; i < N; ++i) {
+			for (var j = 0; j < N; ++j) {
+				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j){
+					//!(next[i][j].length==next[i][k].length && next[i][j].every((v,s) => v === next[i][k][s]))) {
+					//if(next[i][j].indexOf(next[i][k])<0){
+						//console.log("Before Add:"+next[i][j] +" i: "+i+" j: "+j + " k: "+k);
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 						//only unique entries in next
 						(next[i][j]) = next[i][j].filter((elem,pos,arr) => arr.indexOf(elem) == pos);
-					}
+						//console.log("After Add:"+next[i][j] );
+					//}
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
-					if (next[i] == null)
-						next[i] = {};
-
+					//console.log("Before:"+next[i][j]  +" i: "+i+" j:"+j + " k: "+k);
 					next[i][j] = next[i][k].slice(0);
 					dists[i][j] = dists[i][k] + dists[k][j];
+					//console.log("After:"+next[i][j] );
 				}
 			}
 		}
 	}
-
+	console.log("NEXT:"+JSON.stringify(next));
+	console.log("Returning...");
 	return [dists,next];
 }
 

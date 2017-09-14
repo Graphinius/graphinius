@@ -57,15 +57,16 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   else
     paths = $FW.FloydWarshallAPSP(graph)[1];
 
-  let nodes = graph.getNodes();
+  let nodes = graph.adjListArray();
   let map = {};
   for (let keyA in nodes) {
     map[keyA] = 0;
   }
-  for (let keyA in nodes) {
-    for (let keyB in nodes) {
-      if(keyA!=keyB && paths[keyA] != null && paths[keyA][keyB] != null && paths[keyA][keyB]!=keyB){
-        addBetweeness(keyA, keyB, paths, map, keyA);
+  let N = paths.length;
+  for (var a = 0; a < N; ++a) {
+    for (var b = 0; b < N; ++b) {
+      if(a!=b && paths[a][b].indexOf(b)<0){
+        addBetweeness(a, b, paths, map, a);
       }
     }
   }
@@ -74,6 +75,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
     dem +=map[a];
   }
   for(let a in map){
+    console.log(a+" "+map[a]+"/"+dem);
     map[a]/=dem;
   }
   return map;
@@ -87,6 +89,8 @@ function addBetweeness(u, v, next, map, start){
       nodes += addBetweeness(e, v, next, map, start); //Add all child nodes reachable from this node
   }
   if(u!=start){
+    if(u == 1)
+      console.log("Adding from "+ start + " to " + v + " to:"+u+" "+nodes);
     map[u] += nodes;
   }
   return nodes;

@@ -100,7 +100,7 @@ export interface IGraph {
 	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
 	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
-	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
+	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : any;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -128,7 +128,7 @@ class BaseGraph implements IGraph {
 		next_node = next_node || false;
 		let array = [],
 		idx = 0,
-		j_idx = -1;
+		j_idx;
 		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
 
 		for ( let i in adjDict ) {
@@ -137,7 +137,8 @@ class BaseGraph implements IGraph {
 			for ( let j in adjDict ) {
 				++j_idx;
 				if ( next_node ) {
-					array[idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+					array[idx].push([]);
+					array[idx][j_idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
 					continue;
 				}
 				if ( i == j ) {

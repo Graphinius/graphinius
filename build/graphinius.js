@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
@@ -123,9 +123,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ }),
+/***/ },
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -186,9 +186,9 @@
 	exports.BaseEdge = BaseEdge;
 
 
-/***/ }),
+/***/ },
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -421,9 +421,9 @@
 	exports.BaseNode = BaseNode;
 
 
-/***/ }),
+/***/ },
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -498,9 +498,9 @@
 	exports.findKey = findKey;
 
 
-/***/ }),
+/***/ },
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $N = __webpack_require__(2);
@@ -531,7 +531,7 @@
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
 	        next_node = next_node || false;
-	        var array = [], idx = 0, j_idx = -1;
+	        var array = [], idx = 0, j_idx;
 	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
 	        for (var i in adjDict) {
 	            array.push([]);
@@ -539,7 +539,8 @@
 	            for (var j in adjDict) {
 	                ++j_idx;
 	                if (next_node) {
-	                    array[idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+	                    array[idx].push([]);
+	                    array[idx][j_idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
 	                    continue;
 	                }
 	                if (i == j) {
@@ -979,9 +980,9 @@
 	exports.BaseGraph = BaseGraph;
 
 
-/***/ }),
+/***/ },
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
@@ -1031,9 +1032,9 @@
 	exports.Logger = Logger;
 
 
-/***/ }),
+/***/ },
 /* 6 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	var LOG_LEVELS = {
 	  debug: "DEBUG",
@@ -1049,9 +1050,9 @@
 	  RUN_CONFIG: RUN_CONFIG
 	};
 
-/***/ }),
+/***/ },
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -1160,9 +1161,9 @@
 	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
 
 
-/***/ }),
+/***/ },
 /* 8 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	function execCallbacks(cbs, context) {
@@ -1178,9 +1179,9 @@
 	exports.execCallbacks = execCallbacks;
 
 
-/***/ }),
+/***/ },
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var path = __webpack_require__(10);
@@ -1307,9 +1308,9 @@
 	exports.CSVInput = CSVInput;
 
 
-/***/ }),
+/***/ },
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
 	//
@@ -1538,9 +1539,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
-/***/ }),
+/***/ },
 /* 11 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -1712,10 +1713,6 @@
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -1728,15 +1725,15 @@
 	process.umask = function() { return 0; };
 
 
-/***/ }),
+/***/ },
 /* 12 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	
 
-/***/ }),
+/***/ },
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var http = __webpack_require__(12);
@@ -1757,9 +1754,9 @@
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
 
-/***/ }),
+/***/ },
 /* 14 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(12);
@@ -1807,9 +1804,9 @@
 	exports.CSVOutput = CSVOutput;
 
 
-/***/ }),
+/***/ },
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(12);
@@ -1897,9 +1894,9 @@
 	exports.JSONInput = JSONInput;
 
 
-/***/ }),
+/***/ },
 /* 16 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(12);
@@ -1959,9 +1956,9 @@
 	exports.JSONOutput = JSONOutput;
 
 
-/***/ }),
+/***/ },
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
@@ -2122,9 +2119,9 @@
 	;
 
 
-/***/ }),
+/***/ },
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
@@ -2275,9 +2272,9 @@
 	exports.preparePFSStandardConfig = preparePFSStandardConfig;
 
 
-/***/ }),
+/***/ },
 /* 19 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	(function (BinaryHeapMode) {
@@ -2519,9 +2516,9 @@
 	exports.BinaryHeap = BinaryHeap;
 
 
-/***/ }),
+/***/ },
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -2545,54 +2542,27 @@
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
-	    var dists = {}, next = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-	    for (var edge in edges) {
-	        var a = String(edges[edge].getNodes().a.getID());
-	        var b = String(edges[edge].getNodes().b.getID());
-	        if (edges[edge].getWeight() <= 0)
-	            throw new Error('Cannot compute FW on negative edges');
-	        if (next[a] == null)
-	            next[a] = {};
-	        next[a][b] = [b];
-	        if (!edges[edge].isDirected()) {
-	            if (next[b] == null)
-	                next[b] = {};
-	            next[b][a] = [a];
-	        }
-	        if (dists[a] == null)
-	            dists[a] = {};
-	        if (dists[b] == null)
-	            dists[b] = {};
-	        dists[a][b] = edges[edge].getWeight();
-	        if (!edges[edge].isDirected()) {
-	            dists[b][a] = edges[edge].getWeight();
-	        }
-	    }
-	    for (var k in dists) {
-	        for (var i in dists) {
-	            for (var j in dists) {
-	                if (i === j) {
-	                    continue;
-	                }
-	                if (dists[i][k] == null || dists[k][j] == null) {
-	                    continue;
-	                }
-	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && next[i][j] != next[i][k]) {
-	                    if (next[i][j].indexOf(next[i][k]) < 0) {
-	                        next[i][j].push(next[i][k].slice(0));
-	                        next[i][j] = flatten(next[i][j]);
-	                        (next[i][j]) = next[i][j].filter(function (elem, pos, arr) { return arr.indexOf(elem) == pos; });
-	                    }
+	    var dists = graph.adjListArray();
+	    var next = graph.nextArray();
+	    console.log("STARTING");
+	    var N = dists.length;
+	    for (var k = 0; k < N; ++k) {
+	        for (var i = 0; i < N; ++i) {
+	            for (var j = 0; j < N; ++j) {
+	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
+	                    next[i][j].push(next[i][k].slice(0));
+	                    next[i][j] = flatten(next[i][j]);
+	                    (next[i][j]) = next[i][j].filter(function (elem, pos, arr) { return arr.indexOf(elem) == pos; });
 	                }
 	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
-	                    if (next[i] == null)
-	                        next[i] = {};
 	                    next[i][j] = next[i][k].slice(0);
 	                    dists[i][j] = dists[i][k] + dists[k][j];
 	                }
 	            }
 	        }
 	    }
+	    console.log("NEXT:" + JSON.stringify(next));
+	    console.log("Returning...");
 	    return [dists, next];
 	}
 	exports.FloydWarshallAPSP = FloydWarshallAPSP;
@@ -2644,9 +2614,9 @@
 	}
 
 
-/***/ }),
+/***/ },
 /* 21 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	function randBase36String() {
@@ -2790,9 +2760,9 @@
 	exports.rvlist = rvlist;
 
 
-/***/ }),
+/***/ },
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var randgen = __webpack_require__(21);
@@ -2987,9 +2957,9 @@
 	exports.SimplePerturber = SimplePerturber;
 
 
-/***/ }),
+/***/ },
 /* 23 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	"use strict";
 	var MCMFBoykov = (function () {
@@ -3216,9 +3186,9 @@
 	exports.MCMFBoykov = MCMFBoykov;
 
 
-/***/ }),
+/***/ },
 /* 24 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $SU = __webpack_require__(3);
@@ -3318,5 +3288,5 @@
 	exports.degreeCentrality = degreeCentrality;
 
 
-/***/ })
+/***/ }
 /******/ ]);

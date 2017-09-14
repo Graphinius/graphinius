@@ -36,24 +36,26 @@ function inBetweennessCentrality(graph, sparse) {
     }
     else
         paths = $FW.FloydWarshallAPSP(graph)[1];
-    var nodes = graph.getNodes();
+    var nodes = graph.adjListArray();
     var map = {};
     for (var keyA in nodes) {
         map[keyA] = 0;
     }
-    for (var keyA in nodes) {
-        for (var keyB in nodes) {
-            if (keyA != keyB && paths[keyA] != null && paths[keyA][keyB] != null && paths[keyA][keyB] != keyB) {
-                addBetweeness(keyA, keyB, paths, map, keyA);
+    var N = paths.length;
+    for (var a = 0; a < N; ++a) {
+        for (var b = 0; b < N; ++b) {
+            if (a != b && paths[a][b].indexOf(b) < 0) {
+                addBetweeness(a, b, paths, map, a);
             }
         }
     }
     var dem = 0;
-    for (var a in map) {
-        dem += map[a];
+    for (var a_1 in map) {
+        dem += map[a_1];
     }
-    for (var a in map) {
-        map[a] /= dem;
+    for (var a_2 in map) {
+        console.log(a_2 + " " + map[a_2] + "/" + dem);
+        map[a_2] /= dem;
     }
     return map;
 }
@@ -67,6 +69,8 @@ function addBetweeness(u, v, next, map, start) {
         nodes += addBetweeness(e, v, next, map, start);
     }
     if (u != start) {
+        if (u == 1)
+            console.log("Adding from " + start + " to " + v + " to:" + u + " " + nodes);
         map[u] += nodes;
     }
     return nodes;
