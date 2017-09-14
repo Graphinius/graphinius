@@ -65,7 +65,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
-      if(a!=b && paths[a][b].indexOf(b)<0){
+      if(a!=b && !(paths[a][b].length == 1 && paths[a][b][0] == b)){
         addBetweeness(a, b, paths, map, a);
       }
     }
@@ -75,7 +75,6 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
     dem +=map[a];
   }
   for(let a in map){
-    console.log(a+" "+map[a]+"/"+dem);
     map[a]/=dem;
   }
   return map;
@@ -85,12 +84,10 @@ function addBetweeness(u, v, next, map, start){
   if(u==v)
     return 1;     //Terminal nodes return 1
   let nodes = 0;  //count of terminal nodes (= number of path's to v)
-  for(let e of next[u][v]){
-      nodes += addBetweeness(e, v, next, map, start); //Add all child nodes reachable from this node
+  for(let e = 0; e < next[u][v].length; e ++){
+      nodes += addBetweeness(next[u][v][e], v, next, map, start); //Add all child nodes reachable from this node
   }
   if(u!=start){
-    if(u == 1)
-      console.log("Adding from "+ start + " to " + v + " to:"+u+" "+nodes);
     map[u] += nodes;
   }
   return nodes;

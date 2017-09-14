@@ -48,65 +48,47 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	/*let dists = {},
-			next = {},
-			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-
-	for (let edge in edges){
-		let a = String(edges[edge].getNodes().a.getID());
-		let b = String(edges[edge].getNodes().b.getID());
-
-		if(edges[edge].getWeight()<=0)
-			throw new Error('Cannot compute FW on negative edges');
-		if(next[a] == null)
-			next[a] = {};
-		next[a][b] = [b];
-		if(!edges[edge].isDirected()){
-			if(next[b]==null)
-				next[b] = {};
-			next[b][a] = [a];
-		}
-
-		if(dists[a]==null)
-			dists[a] = {};
-		if(dists[b]==null)
-			dists[b] = {};
-		dists[a][b] = edges[edge].getWeight();
-		if(!edges[edge].isDirected()){
-			dists[b][a] = edges[edge].getWeight();
-		}
-	}*/
 	let dists = graph.adjListArray();
 	let next  = graph.nextArray();
-	//console.log("NEXT:"+JSON.stringify(next));
-	console.log("STARTING");
+
 	let N = dists.length;
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j){
-					//!(next[i][j].length==next[i][k].length && next[i][j].every((v,s) => v === next[i][k][s]))) {
-					//if(next[i][j].indexOf(next[i][k])<0){
-						//console.log("Before Add:"+next[i][j] +" i: "+i+" j: "+j + " k: "+k);
 						next[i][j].push(next[i][k].slice(0));
 						next[i][j] = flatten(next[i][j]);
 						//only unique entries in next
 						(next[i][j]) = next[i][j].filter((elem,pos,arr) => arr.indexOf(elem) == pos);
-						//console.log("After Add:"+next[i][j] );
-					//}
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
-					//console.log("Before:"+next[i][j]  +" i: "+i+" j:"+j + " k: "+k);
 					next[i][j] = next[i][k].slice(0);
 					dists[i][j] = dists[i][k] + dists[k][j];
-					//console.log("After:"+next[i][j] );
 				}
 			}
 		}
 	}
-	console.log("NEXT:"+JSON.stringify(next));
-	console.log("Returning...");
+
 	return [dists,next];
+}
+
+function mergeArrays(a:Array<Number>,b:Array<Number>):Array<Number>{
+	let ret:Array<Number>;
+	let idx_a = 0;
+	let idx_b = 0;
+	while(idx_a < a.length || idx_b < b.length){
+		if(a[idx_a] == b[idx_b]){
+			ret.push(a[idx_a]);
+			idx_a++;
+			idx_b++;
+			continue;
+		}
+		if(a[idx_a]<b[idx_b]){
+			ret.push(a[idx_a]);
+			idx_a++;
+		}
+	}
+	return ret;
 }
 
 

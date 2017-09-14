@@ -44,7 +44,7 @@ function inBetweennessCentrality(graph, sparse) {
     var N = paths.length;
     for (var a = 0; a < N; ++a) {
         for (var b = 0; b < N; ++b) {
-            if (a != b && paths[a][b].indexOf(b) < 0) {
+            if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
                 addBetweeness(a, b, paths, map, a);
             }
         }
@@ -54,7 +54,6 @@ function inBetweennessCentrality(graph, sparse) {
         dem += map[a_1];
     }
     for (var a_2 in map) {
-        console.log(a_2 + " " + map[a_2] + "/" + dem);
         map[a_2] /= dem;
     }
     return map;
@@ -64,13 +63,10 @@ function addBetweeness(u, v, next, map, start) {
     if (u == v)
         return 1;
     var nodes = 0;
-    for (var _i = 0, _a = next[u][v]; _i < _a.length; _i++) {
-        var e = _a[_i];
-        nodes += addBetweeness(e, v, next, map, start);
+    for (var e = 0; e < next[u][v].length; e++) {
+        nodes += addBetweeness(next[u][v][e], v, next, map, start);
     }
     if (u != start) {
-        if (u == 1)
-            console.log("Adding from " + start + " to " + v + " to:" + u + " " + nodes);
         map[u] += nodes;
     }
     return nodes;

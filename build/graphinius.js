@@ -2544,7 +2544,6 @@
 	    }
 	    var dists = graph.adjListArray();
 	    var next = graph.nextArray();
-	    console.log("STARTING");
 	    var N = dists.length;
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
@@ -2561,11 +2560,27 @@
 	            }
 	        }
 	    }
-	    console.log("NEXT:" + JSON.stringify(next));
-	    console.log("Returning...");
 	    return [dists, next];
 	}
 	exports.FloydWarshallAPSP = FloydWarshallAPSP;
+	function mergeArrays(a, b) {
+	    var ret;
+	    var idx_a = 0;
+	    var idx_b = 0;
+	    while (idx_a < a.length || idx_b < b.length) {
+	        if (a[idx_a] == b[idx_b]) {
+	            ret.push(a[idx_a]);
+	            idx_a++;
+	            idx_b++;
+	            continue;
+	        }
+	        if (a[idx_a] < b[idx_b]) {
+	            ret.push(a[idx_a]);
+	            idx_a++;
+	        }
+	    }
+	    return ret;
+	}
 	function FloydWarshallArray(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");

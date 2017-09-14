@@ -1121,14 +1121,14 @@ describe('GRAPH TESTS: ', () => {
 			it('should produce the correct next array without incoming edges', () => {
 				graph = jsonReader.readFromJSONFile(search_graph_file);
 				next = graph.nextArray();
-				expected_result = [ 
-					[ 0, 1, 2, 3, null, null ],
-					[ 0, 1, 2, null, 4, 5 ],
-					[ 0, null, 2, null, 4, null ],
-					[ null, null, 2, 3, 4, null ],
-					[ null, 1, null, 3, 4, null ],
-					[ null, null, 2, null, 4, 5 ]
-				];
+				let expected_result = [
+					[[0],[1],[2],[3],[null],[null]],
+					[[0],[1],[2],[null],[4],[5]],
+					[[0],[null],[2],[null],[4],[null]],
+					[[null],[null],[2],[3],[4],[null]],
+					[[null],[1],[null],[3],[4],[null]],
+					[[null],[null],[2],[null],[4],[5]]]	;
+
 				expect(next).to.deep.equal(expected_result);
 			});
 
@@ -1136,14 +1136,14 @@ describe('GRAPH TESTS: ', () => {
 			it('should produce the correct next array including incoming edges', () => {
 				graph = jsonReader.readFromJSONFile(search_graph_file);
 				next = graph.nextArray(true);
-				expected_result = [ 
-					[ 0, 1, 2, 3, null, null ],
-					[ 0, 1, 2, null, 4, 5 ],
-					[ 0, 1, 2, 3, 4, 5 ],
-					[ 0, null, 2, 3, 4, null ],
-					[ null, 1, 2, 3, 4, 5 ],
-					[ null, 1, 2, null, 4, 5 ]
-				];
+				let expected_result = [
+					[[0],[1],[2],[3],[null],[null]],
+					[[0],[1],[2],[null],[4],[5]],
+					[[0],[1],[2],[3],[4],[5]],
+					[[0],[null],[2],[3],[4],[null]],
+					[[null],[1],[2],[3],[4],[5]],
+					[[null],[1],[2],[null],[4],[5]]];
+
 				expect(next).to.deep.equal(expected_result);
 			});
 

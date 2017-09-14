@@ -36,14 +36,14 @@ describe("InBetweenness Centrality Tests", () => {
             .to.throw("Cannot compute FW on negative edges");
     });
 
-    it.only('should return the correct betweenness map', () => {
+    it('should return the correct betweenness map', () => {
         let expected_betweenness_map = {
-            "A": 6/30,
-            "B": 7/30,
-            "C": 11/30,
-            "D": 1/30,
-            "E": 5/30,
-            "F": 0
+            "0": 6/30,
+            "1": 7/30,
+            "2": 11/30,
+            "3": 1/30,
+            "4": 5/30,
+            "5": 0
 
         };
         let closeness_map = $IB.inBetweennessCentrality( graph,false );
