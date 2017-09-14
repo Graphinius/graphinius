@@ -14,19 +14,15 @@ let JSON_IN	= $J.JSONInput;
 let CSV_IN	= $C.CSVInput;
 
 let bf_graph_file = "./test/test_data/bellman_ford.json",
-		bf_graph_neg_cycle_file = "./test/test_data/bellman_ford_negative_cycle.json",
-    social_300_file = "./test/test_data/social_network_edges_300.csv",
-    social_1k_file = "./test/test_data/social_network_edges.csv";
+		bf_graph_neg_cycle_file = "./test/test_data/bellman_ford_negative_cycle.json";
 
 
-describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
+describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
 			bf_graph    			: $G.IGraph,
 			bf_neg_cycle_graph: $G.IGraph,
-			sn_300_graph  		: $G.IGraph,
-			sn_1k_graph				: $G.IGraph,
       stats							: $G.GraphStats,
       BF                : Function = $BF.BellmanFord,
 			BF_expect     		: {} = {},
@@ -41,8 +37,6 @@ describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		csv = new CSV_IN(' ',false,false);
 		bf_graph = json.readFromJSONFile(bf_graph_file);
 		bf_neg_cycle_graph = json.readFromJSONFile(bf_graph_neg_cycle_file);
-    sn_300_graph = csv.readFromEdgeListFile(social_300_file);
-    sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
 		BF_expect = { S: 0, A: 5, E: 8, C: 7, B: 5, D: 9 };
 		BF_expect_array = [ 0, 5, 8, 7, 5, 9 ];
   });
@@ -134,6 +128,20 @@ describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 	describe('Performance Tests - ', () => {
 
+		let social_300_file = "./test/test_data/social_network_edges_300.csv",
+				social_1k_file = "./test/test_data/social_network_edges.csv",
+				graph_6k_file = "./test/test_data/real_graph.json",
+				sn_300_graph  		: $G.IGraph,
+				sn_1k_graph				: $G.IGraph,
+				graph_6k 					: $G.IGraph;
+
+		before(() => {
+			sn_300_graph = csv.readFromEdgeListFile(social_300_file);
+			sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
+			graph_6k = json.readFromJSONFile(graph_6k_file);
+		});
+
+
 		it('BF performance test on ~300 node social network graph', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFord(sn_300_graph, sn_300_graph.getRandomNode());
@@ -153,6 +161,21 @@ describe.only('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			console.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 			d = +new Date();
 			BF_compute = $BF.BellmanFordArray(sn_1k_graph, sn_1k_graph.getRandomNode());
+			e = +new Date();
+			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+		});
+
+
+		it.skip('BF performance test on ~6k graph', () => {
+			console.log(`Real sized graph has: ${graph_6k.nrNodes()} nodes.`);
+			console.log(`Real sized graph has ${graph_6k.nrDirEdges() + graph_6k.nrUndEdges()} edges.`);
+
+			let d = +new Date();
+			BF_compute = $BF.BellmanFord(graph_6k, graph_6k.getRandomNode());
+			let e = +new Date();
+			console.log("BellmanFord (Dict) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			d = +new Date();
+			BF_compute = $BF.BellmanFordArray(graph_6k, graph_6k.getRandomNode());
 			e = +new Date();
 			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 		});

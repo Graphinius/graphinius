@@ -9,6 +9,7 @@ import * as $BFS from '../search/BFS';
 
 let logger : Logger = new Logger();
 
+const DEFAULT_WEIGHT = 1;
 
 export enum GraphMode {
 	INIT,
@@ -43,6 +44,7 @@ export type MinAdjacencyListDictEntry = {[id: string] : number};
 
 export type MinAdjacencyListArray = Array<Array<number>>;
 
+export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
 	_label : string;
@@ -100,9 +102,9 @@ export interface IGraph {
 
 	clone() : IGraph;
 	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
-	adjListDict(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListDict;
-	adjListArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyListArray;
-	nextArray(incoming?:boolean, include_self?:boolean, self_dist?:number) : any;
+	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
+	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
+	nextArray(incoming?:boolean) : NextArray;
 
   // RANDOM STUFF
 	pickRandomProperty(propList) : any;
@@ -125,44 +127,28 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
-
-	private arrayFromAdjDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number, next_node?:boolean) : MinAdjacencyListArray {
-		next_node = next_node || false;
-		let array = [],
+	nextArray(incoming:boolean = false) : NextArray {
+		let next = [],
 		idx = 0,
 		j_idx;
-		const adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
-
+		const adjDict = this.adjListDict(incoming, true, 0);
+		
 		for ( let i in adjDict ) {
-			array.push([]);
+			next.push([]);
 			j_idx = -1;
 			for ( let j in adjDict ) {
 				++j_idx;
-				if ( next_node ) {
-					array[idx].push([]);
-					array[idx][j_idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
-					continue;
-				}
-				if ( i == j ) {
-					array[idx].push( 0 );
-					continue;
-				}
-				array[idx].push( isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
+				next[idx].push([]);
+				next[idx][j_idx].push( i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null );
 			}
 			++idx;
-		}				
-		
-		return array;	
-	}
-
-
-	nextArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) {
-		return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
+		}
+		return next;
 	}
 
 	/**
 	 * This function iterates over the adjDict in order to use it's advantage
-	 * of being able to override edges if edges with smaller weight exist
+	 * of being able to override edges if edges with smaller weights exist
 	 * 
 	 * However, the order of nodes in the array represents the order of nodes
 	 * at creation time, no other implicit alphabetical or collational sorting.
@@ -173,8 +159,22 @@ class BaseGraph implements IGraph {
 	 * @param include_self contains a distance to itself apart?
 	 * @param self_dist default distance to self
 	 */
-	adjListArray(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListArray {
-		return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
+	adjListArray(incoming:boolean = false) : MinAdjacencyListArray {
+		let adjList = [],
+		idx = 0,
+		j_idx;
+		const adjDict = this.adjListDict(incoming, true, 0);
+
+		for ( let i in adjDict ) {
+			adjList.push([]);
+			j_idx = -1;
+			for ( let j in adjDict ) {
+				++j_idx;
+				adjList[idx].push( i === j ? 0 : isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
+			}
+			++idx;
+		}		
+		return adjList;	
 	}
 
 
@@ -184,42 +184,41 @@ class BaseGraph implements IGraph {
 	 * @param include_self contains a distance to itself apart?
 	 * @param self_dist default distance to self
 	 */
-	adjListDict(incoming:boolean = false, include_self:boolean = false, self_dist?:number) : MinAdjacencyListDict{
-		self_dist = self_dist || 0;
+	adjListDict(incoming:boolean = false, include_self = false, self_dist = 0) : MinAdjacencyListDict {
 		let adj_list_dict: MinAdjacencyListDict = {},
 				nodes = this.getNodes(),
-				weight: number;
-		for (let key in nodes) {
+				cur_dist: number,
+				key: string,
+				cur_edge_weight: number;
+
+		for ( key in nodes ) {
 			adj_list_dict[key] = {};
+			if ( include_self ) {
+				adj_list_dict[key][key] = self_dist;
+			}
 		}
-		for ( var key in nodes ) {
+		for ( key in nodes ) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
 			neighbors.forEach( (ne) => {
-				weight = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+				cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+				cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
 
-				if ( ne.edge.getWeight() < weight ) {
-					adj_list_dict[key][ne.node.getID()] = ne.edge.getWeight();
+				if ( cur_edge_weight < cur_dist ) {
+					adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list_dict[ne.node.getID()][key] = ne.edge.getWeight();
+						adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
 					}
 				}
 				else {
-					adj_list_dict[key][ne.node.getID()] = weight;
+					adj_list_dict[key][ne.node.getID()] = cur_dist;
 
 					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list_dict[ne.node.getID()][key] = weight;
+						adj_list_dict[ne.node.getID()][key] = cur_dist;
 					}
 				}
 			});
-		}
-		if ( include_self ) {
-			for ( var node_key in nodes ) {
-				if ( adj_list_dict[node_key][node_key] == null ) {
-					adj_list_dict[node_key][node_key] = self_dist;
-				}
-			}
 		}
 		return adj_list_dict;
 	}

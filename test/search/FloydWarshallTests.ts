@@ -20,7 +20,7 @@ let social_graph = "./test/test_data/social_network_edges.csv";
 let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
 
-describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
+describe.skip('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	
 	let json 							: $J.IJSONInput,
 			csv								: $C.ICSVInput,
@@ -107,25 +107,25 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_bernd);			
 			// FW_res = $FW.FloydWarshallWithShortestPaths(graph_bernd);
-			FW_res = $FW.FloydWarshallAPSP(graph_bernd);
+			// FW_res = $FW.FloydWarshallAPSP(graph_bernd);
 			let e = +new Date();
-			console.log("Floyd on Bernd (75 nodes) took " + (d-e) + "ms to finish");
+			console.log("Floyd on Bernd (75 nodes) took " + (e-d) + "ms to finish");
 		});
 
 		it.skip('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();
-			console.log("Floyd on intermediate graph (246 nodes) with SPs took " + (d-e) + "ms to finish");
+			console.log("Floyd on intermediate graph (246 nodes) with SPs took " + (e-d) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshall(graph_midsize);
 			e = +new Date();
-			console.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (d-e) + "ms to finish");
+			console.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (e-d) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_midsize);
 			// console.log(FW_res);
 			e = +new Date();
-			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (d-e) + "ms to finish");
+			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e-d) + "ms to finish");
 		});
 
 		it('75 nodes - FW with and without next should return same distance matrix', () => {
@@ -139,7 +139,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			FW_res = $FW.FloydWarshallArray(graph_social);
 			// FW_res = $FW.FloydWarshallAPSP(graph_social);
 			let e = +new Date();
-			console.log("Floyd on social network ~1k (Array version) took " + (d-e) + "ms to finish");
+			console.log("Floyd on social network ~1k (Array version) took " + (e-d) + "ms to finish");
 		});
 	});
 	

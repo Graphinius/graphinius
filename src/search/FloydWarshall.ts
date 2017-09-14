@@ -14,7 +14,6 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 	let dists = {},
 	edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
-
 	for (let edge in edges) {
 		let a = edges[edge].getNodes().a.getID();
 		let b = edges[edge].getNodes().b.getID();
@@ -48,18 +47,18 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists = graph.adjListArray();
-	let next  = graph.nextArray();
+	let dists : $G.MinAdjacencyListArray = graph.adjListArray();
+	let next : $G.NextArray  = graph.nextArray();
 
 	let N = dists.length;
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
-				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j){
-						next[i][j].push(next[i][k].slice(0));
-						next[i][j] = flatten(next[i][j]);
-						//only unique entries in next
-						(next[i][j]) = next[i][j].filter((elem,pos,arr) => arr.indexOf(elem) == pos);
+				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {					
+					next[i][j] = mergeArrays(next[i][j], next[i][k]);
+					// next[i][j] = flatten(next[i][j]);
+					//only unique entries in next
+					(next[i][j]) = next[i][j].filter((elem,pos,arr) => arr.indexOf(elem) == pos);
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
 					next[i][j] = next[i][k].slice(0);
@@ -72,20 +71,30 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	return [dists,next];
 }
 
-function mergeArrays(a:Array<Number>,b:Array<Number>):Array<Number>{
-	let ret:Array<Number>;
+
+function mergeArrays( a:Array<number>, b:Array<number> ):Array<number> {
+	console.log('merging arrays');
+	console.log(a);
+	console.log(b);
+	// TODO @Benedikt: Handle null entries...
+
+	let ret:Array<number>;
 	let idx_a = 0;
 	let idx_b = 0;
-	while(idx_a < a.length || idx_b < b.length){
-		if(a[idx_a] == b[idx_b]){
+
+	while(idx_a < a.length || idx_b < b.length) {
+		if(a[idx_a] === b[idx_b]) {
 			ret.push(a[idx_a]);
 			idx_a++;
 			idx_b++;
-			continue;
 		}
-		if(a[idx_a]<b[idx_b]){
+		if( a[idx_a] < b[idx_b] ) {
 			ret.push(a[idx_a]);
 			idx_a++;
+		}
+		if( a[idx_a] > b[idx_b] ) {
+			ret.push(b[idx_b]);
+			idx_b++;
 		}
 	}
 	return ret;

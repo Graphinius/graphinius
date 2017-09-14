@@ -509,6 +509,7 @@
 	var logger_1 = __webpack_require__(5);
 	var $BFS = __webpack_require__(7);
 	var logger = new logger_1.Logger();
+	var DEFAULT_WEIGHT = 1;
 	(function (GraphMode) {
 	    GraphMode[GraphMode["INIT"] = 0] = "INIT";
 	    GraphMode[GraphMode["DIRECTED"] = 1] = "DIRECTED";
@@ -527,74 +528,66 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.arrayFromAdjDict = function (incoming, include_self, self_dist, next_node) {
+	    BaseGraph.prototype.nextArray = function (incoming) {
 	        if (incoming === void 0) { incoming = false; }
-	        if (include_self === void 0) { include_self = false; }
-	        next_node = next_node || false;
-	        var array = [], idx = 0, j_idx;
-	        var adjDict = this.adjListDict(incoming, include_self, self_dist || 0);
+	        var next = [], idx = 0, j_idx;
+	        var adjDict = this.adjListDict(incoming, true, 0);
 	        for (var i in adjDict) {
-	            array.push([]);
+	            next.push([]);
 	            j_idx = -1;
 	            for (var j in adjDict) {
 	                ++j_idx;
-	                if (next_node) {
-	                    array[idx].push([]);
-	                    array[idx][j_idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
-	                    continue;
-	                }
-	                if (i == j) {
-	                    array[idx].push(0);
-	                    continue;
-	                }
-	                array[idx].push(isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+	                next[idx].push([]);
+	                next[idx][j_idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
 	            }
 	            ++idx;
 	        }
-	        return array;
+	        return next;
 	    };
-	    BaseGraph.prototype.nextArray = function (incoming, include_self, self_dist) {
+	    BaseGraph.prototype.adjListArray = function (incoming) {
 	        if (incoming === void 0) { incoming = false; }
-	        if (include_self === void 0) { include_self = false; }
-	        return this.arrayFromAdjDict(incoming, include_self, self_dist, true);
-	    };
-	    BaseGraph.prototype.adjListArray = function (incoming, include_self, self_dist) {
-	        if (incoming === void 0) { incoming = false; }
-	        if (include_self === void 0) { include_self = false; }
-	        return this.arrayFromAdjDict(incoming, include_self, self_dist, false);
+	        var adjList = [], idx = 0, j_idx;
+	        var adjDict = this.adjListDict(incoming, true, 0);
+	        for (var i in adjDict) {
+	            adjList.push([]);
+	            j_idx = -1;
+	            for (var j in adjDict) {
+	                ++j_idx;
+	                adjList[idx].push(i === j ? 0 : isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+	            }
+	            ++idx;
+	        }
+	        return adjList;
 	    };
 	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
 	        if (incoming === void 0) { incoming = false; }
 	        if (include_self === void 0) { include_self = false; }
-	        self_dist = self_dist || 0;
-	        var adj_list_dict = {}, nodes = this.getNodes(), weight;
-	        for (var key_1 in nodes) {
-	            adj_list_dict[key_1] = {};
+	        if (self_dist === void 0) { self_dist = 0; }
+	        var adj_list_dict = {}, nodes = this.getNodes(), cur_dist, key, cur_edge_weight;
+	        for (key in nodes) {
+	            adj_list_dict[key] = {};
+	            if (include_self) {
+	                adj_list_dict[key][key] = self_dist;
+	            }
 	        }
-	        for (var key in nodes) {
+	        for (key in nodes) {
 	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 	            neighbors.forEach(function (ne) {
-	                weight = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
-	                if (ne.edge.getWeight() < weight) {
-	                    adj_list_dict[key][ne.node.getID()] = ne.edge.getWeight();
+	                cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
+	                if (cur_edge_weight < cur_dist) {
+	                    adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
 	                    if (incoming) {
-	                        adj_list_dict[ne.node.getID()][key] = ne.edge.getWeight();
+	                        adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
 	                    }
 	                }
 	                else {
-	                    adj_list_dict[key][ne.node.getID()] = weight;
+	                    adj_list_dict[key][ne.node.getID()] = cur_dist;
 	                    if (incoming) {
-	                        adj_list_dict[ne.node.getID()][key] = weight;
+	                        adj_list_dict[ne.node.getID()][key] = cur_dist;
 	                    }
 	                }
 	            });
-	        }
-	        if (include_self) {
-	            for (var node_key in nodes) {
-	                if (adj_list_dict[node_key][node_key] == null) {
-	                    adj_list_dict[node_key][node_key] = self_dist;
-	                }
-	            }
 	        }
 	        return adj_list_dict;
 	    };
@@ -2567,8 +2560,7 @@
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
 	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
-	                    next[i][j].push(next[i][k].slice(0));
-	                    next[i][j] = flatten(next[i][j]);
+	                    next[i][j] = mergeArrays(next[i][j], next[i][k]);
 	                    (next[i][j]) = next[i][j].filter(function (elem, pos, arr) { return arr.indexOf(elem) == pos; });
 	                }
 	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
@@ -2582,19 +2574,25 @@
 	}
 	exports.FloydWarshallAPSP = FloydWarshallAPSP;
 	function mergeArrays(a, b) {
+	    console.log('merging arrays');
+	    console.log(a);
+	    console.log(b);
 	    var ret;
 	    var idx_a = 0;
 	    var idx_b = 0;
 	    while (idx_a < a.length || idx_b < b.length) {
-	        if (a[idx_a] == b[idx_b]) {
+	        if (a[idx_a] === b[idx_b]) {
 	            ret.push(a[idx_a]);
 	            idx_a++;
 	            idx_b++;
-	            continue;
 	        }
 	        if (a[idx_a] < b[idx_b]) {
 	            ret.push(a[idx_a]);
 	            idx_a++;
+	        }
+	        if (a[idx_a] > b[idx_b]) {
+	            ret.push(b[idx_b]);
+	            idx_b++;
 	        }
 	    }
 	    return ret;

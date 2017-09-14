@@ -936,7 +936,7 @@ describe('GRAPH TESTS: ', () => {
 
 	describe('Adjacency List / Hash Tests - ', () => {
 
-		describe("Minimum Adjacency List generation Tests, DICT version", () => {
+		describe("Minimum Adjacency List generation Tests, DICT version - ", () => {
 
 			let graph: $G.IGraph,
 					adj_list: $G.MinAdjacencyListDict,
@@ -961,7 +961,7 @@ describe('GRAPH TESTS: ', () => {
 
 			it('should produce the correct adj.list without incoming edges', () => {
 				graph = jsonReader.readFromJSONFile(small_graph_file);
-				adj_list = graph.adjListDict();
+				adj_list = graph.adjListDict(false);
 				// console.dir(adj_list);
 				expected_result = {
 					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
@@ -1010,7 +1010,7 @@ describe('GRAPH TESTS: ', () => {
 				adj_list = graph.adjListDict(true, true, 1);
 				// console.dir(adj_list);
 				expected_result = {
-					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'A': {'A': 1, 'B': 1, 'C': 0, 'D': -33},
 					'B': {'A': 1, 'B': 1},
 					'C': {'A': 0, 'C': 1},
 					'D': {'A': -33, 'D': 1}
@@ -1026,10 +1026,12 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 
-			let graph: $G.IGraph,
+			let sn_300_graph_file = './test/test_data/social_network_edges_300.csv',graph: $G.IGraph,
 					adj_list: $G.MinAdjacencyListArray,
+					sn_300_graph: $G.IGraph,
 					expected_result: $G.MinAdjacencyListArray,
 					jsonReader = new $JSON.JSONInput(true, false, true),
+					csvReader = new $CSV.CSVInput(' ', false, false),
 					inf = Number.POSITIVE_INFINITY;
 
 
@@ -1076,49 +1078,27 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it.skip('should produce the correct adj.list including incoming edges & implicit self connection', () => {
-				graph = jsonReader.readFromJSONFile(small_graph_file);
-				adj_list = graph.adjListArray(true, true);
-				
-				expected_result = [
-					[7, 1, 0, -33],
-					[1, 0, inf, inf],
-					[0, inf, 0, inf],
-					[-33, inf, inf, 0]
-				];
-				expect(adj_list).to.deep.equal(expected_result);
-			});
-
-
-			/**
-			 * In a state machine, the distance of a node to itself could
-			 * be set to 1 because the state would have to transition to itself...
-			 */
-			it.skip('should produce the correct adj.list with specific self-dist', () => {
-				graph = jsonReader.readFromJSONFile(small_graph_file);
-				adj_list = graph.adjListArray(true, true, 1);
-				
-				expected_result = [
-					[7, 1, 0, -33],
-					[1, 1, inf, inf],
-					[0, inf, 1, inf],
-					[-33, inf, inf, 1]
-				];
-
-				expect(adj_list).to.deep.equal(expected_result);
+			it('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+				adj_list = sn_300_graph.adjListArray(true);
+				// console.log(adj_list);
 			});
 
 		});
 
+
 		describe('Next array generation for FW etc.', () => {
 
-			let graph: $G.IGraph,
-			// TODO invent better name for next/adj_list
-			next: $G.MinAdjacencyListArray,
-			search_graph_file = "./test/test_data/search_graph_multiple_SPs_positive.json",
-			expected_result: $G.MinAdjacencyListArray,
-			jsonReader = new $JSON.JSONInput(true, false, true),
-			inf = Number.POSITIVE_INFINITY;
+			let search_graph_file = "./test/test_data/search_graph_multiple_SPs_positive.json",
+					sn_300_graph_file = './test/test_data/social_network_edges_300.csv',
+					graph: $G.IGraph,
+					sn_300_graph: $G.IGraph,
+					// TODO invent better name for next/adj_list
+					next: $G.NextArray,
+					expected_result: $G.MinAdjacencyListArray,
+					csvReader = new $CSV.CSVInput(' ', false, false),
+					jsonReader = new $JSON.JSONInput(true, false, true),
+					inf = Number.POSITIVE_INFINITY;
 
 
 			it('should output an empty next array for an empty graph', () => {
@@ -1163,6 +1143,13 @@ describe('GRAPH TESTS: ', () => {
 					[[null],[1],[2],[null],[4],[5]]];
 
 				expect(next).to.deep.equal(expected_result);
+			});
+
+
+			it('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+				next = sn_300_graph.nextArray(true);
+				console.log(next);
 			});
 
 		});

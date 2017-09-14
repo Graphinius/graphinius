@@ -27,8 +27,7 @@ function FloydWarshallAPSP(graph) {
         for (var i = 0; i < N; ++i) {
             for (var j = 0; j < N; ++j) {
                 if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
-                    next[i][j].push(next[i][k].slice(0));
-                    next[i][j] = flatten(next[i][j]);
+                    next[i][j] = mergeArrays(next[i][j], next[i][k]);
                     (next[i][j]) = next[i][j].filter(function (elem, pos, arr) { return arr.indexOf(elem) == pos; });
                 }
                 if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
@@ -42,19 +41,25 @@ function FloydWarshallAPSP(graph) {
 }
 exports.FloydWarshallAPSP = FloydWarshallAPSP;
 function mergeArrays(a, b) {
+    console.log('merging arrays');
+    console.log(a);
+    console.log(b);
     var ret;
     var idx_a = 0;
     var idx_b = 0;
     while (idx_a < a.length || idx_b < b.length) {
-        if (a[idx_a] == b[idx_b]) {
+        if (a[idx_a] === b[idx_b]) {
             ret.push(a[idx_a]);
             idx_a++;
             idx_b++;
-            continue;
         }
         if (a[idx_a] < b[idx_b]) {
             ret.push(a[idx_a]);
             idx_a++;
+        }
+        if (a[idx_a] > b[idx_b]) {
+            ret.push(b[idx_b]);
+            idx_b++;
         }
     }
     return ret;
