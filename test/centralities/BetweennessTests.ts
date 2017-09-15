@@ -5,7 +5,7 @@ import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 import * as $IB from '../../src/centralities/Betweenness';
-import * as $FW from '../../src/search/FloydWarshall';
+import * as $B from '../../src/centralities/Brandes';
 
 const SN_GRAPH_NODES = 1034,
       SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
@@ -17,7 +17,9 @@ let expect = chai.expect,
     iBt_cent_graph = "./test/test_data/search_graph_multiple_SPs.json",
     iBt_cent_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     graph_300_file = "./test/test_data/social_network_edges_300.csv",
+    und_unw_graph = "./test/test_data/undirected_unweighted_6nodes.csv",
     graph_300 : $G.IGraph = csv.readFromEdgeListFile(graph_300_file),
+    graph_6 : $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
     graph : $G.IGraph = json.readFromJSONFile(iBt_cent_graph_pos),
     graph_zerocycle : $G.IGraph = json.readFromJSONFile(iBt_cent_graph);
     let sparseMap;
@@ -46,8 +48,15 @@ describe("InBetweenness Centrality Tests", () => {
             "5": 0
 
         };
-        let closeness_map = $IB.inBetweennessCentrality( graph,false );
-        expect( closeness_map ).to.deep.equal( expected_betweenness_map );
+        let betweenness_map = $IB.inBetweennessCentrality( graph,false );
+        expect( betweenness_map ).to.deep.equal( expected_betweenness_map );
+    });
+
+    it.only("should return the correct betweenness map for an undirected unweighted graph", () => {
+        console.log("Graph 6:"+graph_6.nrNodes()+" edges:"+graph_6.nrDirEdges()+" und:"+graph_6.nrUndEdges());
+        let brandes_map = $B.Brandes(graph_6);
+        let betweenness_map = $IB.inBetweennessCentrality( graph_6,false );
+        expect(brandes_map).to.equal(betweenness_map);
     });
 
 
@@ -69,7 +78,8 @@ describe("InBetweenness Centrality Tests", () => {
         expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
         expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);
 
-        let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
+        //let denseMap = $B.Brandes( sn_graph);
+        //let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
         //expect( sparseMap ).to.deep.equal( denseMap );
     });
 
