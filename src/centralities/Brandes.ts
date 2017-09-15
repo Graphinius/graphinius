@@ -6,7 +6,6 @@
 
 import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
-import * as $SU from '../utils/structUtils'
 
 function Brandes(graph: $G.IGraph): {} {
     //Information taken from graph
@@ -26,6 +25,10 @@ function Brandes(graph: $G.IGraph): {} {
 
     for(let n in nodes){
         CB[nodes[n].getID()] = 0;
+
+        dist[nodes[n].getID()]  = Number.POSITIVE_INFINITY;
+        sigma[nodes[n].getID()] = 0;
+        delta[nodes[n].getID()] = 0;
     }
     let sum = 0;    //The sum of betweennesses
     //let N = graph.nrNodes();
@@ -33,14 +36,6 @@ function Brandes(graph: $G.IGraph): {} {
         s = nodes[i];
 
         //Initialization
-        for(let n in nodes){
-            Pred[nodes[n].getID()] = [];
-        }
-        for(let n in nodes){
-            dist[nodes[n].getID()]  = Number.POSITIVE_INFINITY;
-            sigma[nodes[n].getID()] = 0;
-            delta[nodes[n].getID()] = 0;
-        }
         dist[s.getID()]  = 0;
         sigma[s.getID()] = 1;
         Q.push(s);
@@ -49,13 +44,14 @@ function Brandes(graph: $G.IGraph): {} {
             v = Q.shift();
             S.push(v);
             let neighbors = v.reachNodes();
-            //console.log("neighbors:"+JSON.stringify(neighbors));
+
             for(let ne in neighbors){
                 w = neighbors[ne].node;
                 //Path discovery: w found for the first time?
                 if(dist[w.getID()] == Number.POSITIVE_INFINITY){
                     Q.push(w);
                     dist[w.getID()] = dist[v.getID()] + 1;
+                    Pred[w.getID()] = [];
                 }
                 //Path counting: edge (v,w) on shortest path?
                 if(dist[w.getID()] == dist[v.getID()]+1){
@@ -70,16 +66,20 @@ function Brandes(graph: $G.IGraph): {} {
             for(let key in Pred[w.getID()]){
                 let lvKey = Pred[w.getID()][key];
                 delta[lvKey] = delta[lvKey] + (sigma[lvKey]*(1+delta[w.getID()]));
+                //Note: other than in original Brandes algorithm we do not divide
+                //sigma[v] by sigma[w] because we count all path's equally
             }
             if(w.getID()!=s.getID()){
                 CB[w.getID()] += delta[w.getID()];
                 sum += delta[w.getID()];
             }
+            //This spares us from having to loop over all nodes again for initialization
             sigma[w.getID()] = 0;
             delta[w.getID()] = 0;
             dist[w.getID()] = Number.POSITIVE_INFINITY;
         }
     }
+    //Normalize the values
     for(let n in nodes){
         CB[nodes[n].getID()] /= sum;
     }

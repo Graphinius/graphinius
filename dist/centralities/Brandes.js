@@ -4,18 +4,13 @@ function Brandes(graph) {
     var s, v, w, Pred = {}, sigma = {}, delta = {}, dist = {}, Q = [], S = [], CB = {};
     for (var n in nodes) {
         CB[nodes[n].getID()] = 0;
+        dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
+        sigma[nodes[n].getID()] = 0;
+        delta[nodes[n].getID()] = 0;
     }
     var sum = 0;
     for (var i in nodes) {
         s = nodes[i];
-        for (var n in nodes) {
-            Pred[nodes[n].getID()] = [];
-        }
-        for (var n in nodes) {
-            dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
-            sigma[nodes[n].getID()] = 0;
-            delta[nodes[n].getID()] = 0;
-        }
         dist[s.getID()] = 0;
         sigma[s.getID()] = 1;
         Q.push(s);
@@ -28,6 +23,7 @@ function Brandes(graph) {
                 if (dist[w.getID()] == Number.POSITIVE_INFINITY) {
                     Q.push(w);
                     dist[w.getID()] = dist[v.getID()] + 1;
+                    Pred[w.getID()] = [];
                 }
                 if (dist[w.getID()] == dist[v.getID()] + 1) {
                     sigma[w.getID()] += sigma[v.getID()];

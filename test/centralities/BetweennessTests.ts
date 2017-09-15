@@ -73,8 +73,7 @@ describe("InBetweenness Centrality Tests", () => {
         sparseMap = $IB.inBetweennessCentrality( sn_graph, true);
     });
 
-    
-    it.skip('performance test of Betweenness on social networks', () => {
+    it('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
         expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);

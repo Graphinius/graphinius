@@ -506,6 +506,49 @@
 	    return undefined;
 	}
 	exports.findKey = findKey;
+	function mergeOrderedArraysNoDups(a, b) {
+	    var ret = [];
+	    var idx_a = 0;
+	    var idx_b = 0;
+	    if (a[0] != null && b[0] != null) {
+	        while (true) {
+	            if (idx_a >= a.length || idx_b >= b.length)
+	                break;
+	            if (a[idx_a] == b[idx_b]) {
+	                if (ret[ret.length - 1] != a[idx_a])
+	                    ret.push(a[idx_a]);
+	                idx_a++;
+	                idx_b++;
+	                continue;
+	            }
+	            if (a[idx_a] < b[idx_b]) {
+	                ret.push(a[idx_a]);
+	                idx_a++;
+	                continue;
+	            }
+	            if (b[idx_b] < a[idx_a]) {
+	                ret.push(b[idx_b]);
+	                idx_b++;
+	            }
+	        }
+	        if (a[idx_a] > b[idx_b]) {
+	            ret.push(b[idx_b]);
+	            idx_b++;
+	        }
+	    }
+	    while (idx_a < a.length) {
+	        if (a[idx_a] != null)
+	            ret.push(a[idx_a]);
+	        idx_a++;
+	    }
+	    while (idx_b < b.length) {
+	        if (b[idx_b] != null)
+	            ret.push(b[idx_b]);
+	        idx_b++;
+	    }
+	    return ret;
+	}
+	exports.mergeOrderedArraysNoDups = mergeOrderedArraysNoDups;
 
 
 /***/ }),
@@ -2676,7 +2719,7 @@
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
 	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
-	                    next[i][j] = mergeArrays(next[i][j], next[i][k]);
+	                    next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
 	                }
 	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
 	                    next[i][j] = next[i][k].slice(0);
@@ -2688,46 +2731,6 @@
 	    return [dists, next];
 	}
 	exports.FloydWarshallAPSP = FloydWarshallAPSP;
-	function mergeArrays(a, b) {
-	    var ret = [];
-	    var idx_a = 0;
-	    var idx_b = 0;
-	    if (a[0] != null && b[0] != null) {
-	        while (true) {
-	            if (idx_a >= a.length || idx_b >= b.length)
-	                break;
-	            if (a[idx_a] == b[idx_b]) {
-	                if (ret[ret.length - 1] != a[idx_a])
-	                    ret.push(a[idx_a]);
-	                idx_a++;
-	                idx_b++;
-	                continue;
-	            }
-	            if (a[idx_a] < b[idx_b]) {
-	                ret.push(a[idx_a]);
-	                idx_a++;
-	                continue;
-	            }
-	            if (b[idx_b] < a[idx_a]) {
-	                ret.push(b[idx_b]);
-	                idx_b++;
-	            }
-	        }
-	        if (a[idx_a] > b[idx_b]) {
-	            ret.push(b[idx_b]);
-	            idx_b++;
-	        }
-	    }
-	    while (idx_a < a.length) {
-	        ret.push(a[idx_a]);
-	        idx_a++;
-	    }
-	    while (idx_b < b.length) {
-	        ret.push(b[idx_b]);
-	        idx_b++;
-	    }
-	    return ret;
-	}
 	function FloydWarshallArray(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -3513,35 +3516,6 @@
 
 	"use strict";
 	var $FW = __webpack_require__(21);
-	var $PFS = __webpack_require__(18);
-	function inBetweennessCentralityDijkstra(graph, weighted) {
-	    var pfs_config = $PFS.preparePFSStandardConfig();
-	    if (!weighted && weighted != null)
-	        pfs_config.evalPriority = function (ne) {
-	            return $PFS.DEFAULT_WEIGHT;
-	        };
-	    var accumulated_distance = 0;
-	    var not_encountered = function (context) {
-	        accumulated_distance += context.current.best + context.next.edge.getWeight();
-	    };
-	    var betterPathFound = function (context) {
-	        accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.better_dist;
-	    };
-	    var bp = pfs_config.callbacks.better_path.pop();
-	    pfs_config.callbacks.better_path.push(betterPathFound);
-	    pfs_config.callbacks.better_path.push(bp);
-	    pfs_config.callbacks.not_encountered.push(not_encountered);
-	    var ret = {};
-	    for (var key in graph.getNodes()) {
-	        var node = graph.getNodeById(key);
-	        if (node != null) {
-	            accumulated_distance = 0;
-	            var allDistances = $PFS.PFS(graph, node, pfs_config);
-	            ret[key] = 1 / accumulated_distance;
-	        }
-	    }
-	    return ret;
-	}
 	function inBetweennessCentrality(graph, sparse) {
 	    var paths;
 	    if (sparse) {
