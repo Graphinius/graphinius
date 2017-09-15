@@ -78,14 +78,21 @@ describe("InBetweenness Centrality Tests", () => {
         sparseMap = $IB.inBetweennessCentrality( sn_graph, true);
     });
 
-    it.skip('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
+    it('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
+        let start = +new Date;
+        let brandes_map = $B.Brandes(graph_300);
+        let end = +new Date;
+        console.log(`Brandes on ~300 nodes graph took ${end-start} millies.`);
+    });
+
+    it.skip('performance test of Betweenness on a ~1k social graph', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
         expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);
-
-        //let denseMap = $B.Brandes( sn_graph);
-        //let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
-        //expect( sparseMap ).to.deep.equal( denseMap );
+        let start = +new Date;
+        let brandes_map = $B.Brandes(sn_graph);
+        let end = +new Date;
+        console.log(`Brandes on ~1k nodes graph took ${end-start} millies.`);
     });
 
 });

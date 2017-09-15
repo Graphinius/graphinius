@@ -123,7 +123,7 @@ describe('Datastructure Utils Tests - ', () => {
 
   });
 
-  describe.only('Merge Array no duplicates tests', () => {
+  describe('Merge Array no duplicates tests', () => {
     it('should merge two arrays with only one or no elements', () => {
       var a = [0],
           b = [1],
