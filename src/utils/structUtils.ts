@@ -107,7 +107,8 @@ function findKey( obj: Object, cb: Function ) : string {
 }
 
 /**
- * @TODO Test !!!
+ * Takes two ordered number arrays and merges them. The returned array is
+ * also ordered and does not contain any duplicates.
  *
  * @param a: first array
  * @param b: second array

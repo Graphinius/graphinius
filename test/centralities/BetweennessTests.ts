@@ -46,17 +46,22 @@ describe("InBetweenness Centrality Tests", () => {
             "3": 1/30,
             "4": 5/30,
             "5": 0
-
         };
         let betweenness_map = $IB.inBetweennessCentrality( graph,false );
         expect( betweenness_map ).to.deep.equal( expected_betweenness_map );
     });
 
-    it.only("should return the correct betweenness map for an undirected unweighted graph", () => {
-        console.log("Graph 6:"+graph_6.nrNodes()+" edges:"+graph_6.nrDirEdges()+" und:"+graph_6.nrUndEdges());
+    it("should return the correct betweenness map for an undirected unweighted graph", () => {
+        let expected_betweenness_map = {
+            "1": 2/20,
+            "2": 4/20,
+            "3": 8/20,
+            "4": 2/20,
+            "5": 4/20,
+            "6": 0
+        };
         let brandes_map = $B.Brandes(graph_6);
-        let betweenness_map = $IB.inBetweennessCentrality( graph_6,false );
-        expect(brandes_map).to.equal(betweenness_map);
+        expect(brandes_map).to.equal(expected_betweenness_map);
     });
 
 

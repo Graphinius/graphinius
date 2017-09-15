@@ -92,16 +92,33 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/centralities/Brandes.ts#L10">centralities/Brandes.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/GraphiniusJS/blob/centralities/src/centralities/Brandes.ts#L21">centralities/Brandes.ts:21</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Brandes algorithm to calculate betweenness on an undirected unweighted graph.
+										Other than in original Brandes algorithm we normalize the values after
+										calculation. We also count each shortest path between (s,v) as 1 regular path,
+										so if there is more than one path between (s,v) we do not divide the betweenness
+									values for the nodes in between by the amount of paths.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>constructor</dt>
+									<dd></dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>graph: <a href="../interfaces/_core_graph_.igraph.html" class="tsd-signature-type">IGraph</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the graph to perform Floyd-Warshall on</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<p>m*m matrix of Betweenness value</p>
 							<ul class="tsd-parameters">
 							</ul>
 						</li>

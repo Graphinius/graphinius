@@ -5,8 +5,14 @@ import * as $FW from '../search/FloydWarshall';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
 
-
-//Just get all shortest path's from each node to each other node (this will take a while...)
+/**
+ * This is used to get the betweenness of a graph by either
+ * Bellman Ford or Floyd Warshall with APSP.
+ *
+ * @param graph the graph to perform Floyd-Warshall on
+ * @returns m*m matrix of values, m*m*m matrix of neighbors
+ * @constructor
+ */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
   if(sparse){
@@ -39,6 +45,15 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   return map;
 }
 
+/**
+ * This is used to run through all shortest paths and
+ * apply betweenness score to all nodes between start
+ * and endnode
+ *
+ * @param graph the graph to perform Floyd-Warshall on
+ * @returns m*m matrix of values, m*m*m matrix of neighbors
+ * @constructor
+ */
 function addBetweeness(u, v, next, map, start){
   if(u==v)
     return 1;     //Terminal nodes return 1

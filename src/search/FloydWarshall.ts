@@ -8,6 +8,14 @@ interface FWConfig {
 }
 
 
+/**
+ * Initializes the distance matrix from each node to all other node
+ * using the edges of the graph
+ *
+ * @param graph the graph for which to calculate the distances
+ * @returns m*m matrix of values
+ * @constructor
+ */
 function initializeDistsWithEdges(graph: $G.IGraph) {
 	let dists = {},
 	edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
@@ -37,7 +45,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
  * the shortest paths we find.
  *
  * @param graph the graph to perform Floyd-Warshall on
- * @returns m*m matrix of values
+ * @returns m*m matrix of values, m*m*m matrix of neighbors
  * @constructor
  */
 function FloydWarshallAPSP(graph: $G.IGraph): {} {
@@ -66,6 +74,16 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	return [dists, next];
 }
 
+/**
+ * Floyd-Warshall - we mostly use it for Closeness centrality.
+ * This is the array version, which means the returned matrix
+ * is not accessible with node IDs but rather with their indices.
+ * It also is faster than the dict version.
+ *
+ * @param graph the graph to perform Floyd-Warshall on
+ * @returns m*m matrix of values
+ * @constructor
+ */
 function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -88,7 +106,15 @@ function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 }
 
 
-
+/**
+ * Floyd-Warshall - we mostly use it for Closeness centrality.
+ * This is the dict version, which means the returned matrix
+ * is accessible with node IDs
+ *
+ * @param graph the graph to perform Floyd-Warshall on
+ * @returns m*m matrix of values
+ * @constructor
+ */
 function FloydWarshall(graph: $G.IGraph) : {} {
 	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");

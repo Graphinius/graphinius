@@ -7,6 +7,17 @@
 import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
 
+/**
+ * Brandes algorithm to calculate betweenness on an undirected unweighted graph.
+ * Other than in original Brandes algorithm we normalize the values after
+ * calculation. We also count each shortest path between (s,v) as 1 regular path,
+ * so if there is more than one path between (s,v) we do not divide the betweenness
+ * values for the nodes in between by the amount of paths.
+ *
+ * @param graph the graph to perform Floyd-Warshall on
+ * @returns m*m matrix of Betweenness value
+ * @constructor
+ */
 function Brandes(graph: $G.IGraph): {} {
     //Information taken from graph
     let adj_array = graph.adjListArray(),
