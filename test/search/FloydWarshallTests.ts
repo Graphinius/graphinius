@@ -112,6 +112,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("Floyd on Bernd (75 nodes) took " + (e-d) + "ms to finish");
 		});
 
+
 		it.skip('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
@@ -128,11 +129,13 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e-d) + "ms to finish");
 		});
 
+
 		it.skip('75 nodes - FW with and without next should return same distance matrix', () => {
 			let FW_with_next  = $FW.FloydWarshallAPSP(graph_bernd)[0];
 			let FW_normal     = $FW.FloydWarshallArray(graph_bernd);
 			expect(FW_with_next).to.deep.equal(FW_normal);
 		});
+
 
 		it('performance test of ~1k nodes and ~50k edges', () => {
 			let d = +new Date();
