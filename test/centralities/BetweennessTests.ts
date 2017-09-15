@@ -52,7 +52,7 @@ describe("InBetweenness Centrality Tests", () => {
         expect( betweenness_map ).to.deep.equal( expected_betweenness_map );
     });
 
-    it.only("should return the correct betweenness map for an undirected unweighted graph", () => {
+    it("should return the correct betweenness map for an undirected unweighted graph", () => {
         console.log("Graph 6:"+graph_6.nrNodes()+" edges:"+graph_6.nrDirEdges()+" und:"+graph_6.nrUndEdges());
         let brandes_map = $B.Brandes(graph_6);
         let betweenness_map = $IB.inBetweennessCentrality( graph_6,false );
@@ -73,13 +73,14 @@ describe("InBetweenness Centrality Tests", () => {
         sparseMap = $IB.inBetweennessCentrality( sn_graph, true);
     });
 
-    it.skip('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
+    it.only('should run the In-Betweenness centrality on a real-sized social network, Dense FW', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         expect(sn_graph.nrNodes()).to.equal(SN_GRAPH_NODES);
         expect(sn_graph.nrUndEdges()).to.equal(SN_GRAPH_EDGES);
 
         //let denseMap = $B.Brandes( sn_graph);
         //let denseMap = $IB.inBetweennessCentrality( sn_graph, false);
+        let brandes_map = $B.Brandes(graph_300);
         //expect( sparseMap ).to.deep.equal( denseMap );
     });
 

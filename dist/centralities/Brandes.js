@@ -1,9 +1,11 @@
 "use strict";
-var $SU = require('../utils/structUtils');
 function Brandes(graph) {
     var adj_array = graph.adjListArray(), nodes = graph.getNodes();
     var s, v, w, Pred = {}, sigma = {}, delta = {}, dist = {}, Q = [], S = [], CB = {};
-    var N = graph.nrNodes();
+    for (var n in nodes) {
+        CB[nodes[n].getID()] = 0;
+    }
+    var sum = 0;
     for (var i in nodes) {
         s = nodes[i];
         for (var n in nodes) {
@@ -20,19 +22,9 @@ function Brandes(graph) {
         while (Q.length >= 1) {
             v = Q.shift();
             S.push(v);
-            var neighbors = [];
-            var edges = $SU.mergeObjects([v.undEdges(), v.outEdges()]);
-            for (var e in edges) {
-                var edge_nodes = edges[e].getNodes();
-                if (edge_nodes.a.getID() == v.getID()) {
-                    neighbors.push(edge_nodes.b);
-                }
-                else {
-                    neighbors.push(edge_nodes.a);
-                }
-            }
+            var neighbors = v.reachNodes();
             for (var ne in neighbors) {
-                w = neighbors[ne];
+                w = neighbors[ne].node;
                 if (dist[w.getID()] == Number.POSITIVE_INFINITY) {
                     Q.push(w);
                     dist[w.getID()] = dist[v.getID()] + 1;
@@ -40,26 +32,26 @@ function Brandes(graph) {
                 if (dist[w.getID()] == dist[v.getID()] + 1) {
                     sigma[w.getID()] += sigma[v.getID()];
                     Pred[w.getID()].push(v.getID());
-                    console.log("PUSHED V:" + v.getID() + " now is:" + JSON.stringify(Pred[w.getID()]));
                 }
             }
         }
-        console.log("Pred: " + JSON.stringify(Pred));
         while (S.length >= 1) {
             w = S.pop();
-            console.log("Popping: " + w.getID());
-            console.log("Pred on w:" + JSON.stringify(Pred[w.getID()]));
             for (var key in Pred[w.getID()]) {
                 var lvKey = Pred[w.getID()][key];
-                console.log("Values: sigma[v]:" + sigma[lvKey] + " sigma[w]:" + sigma[w.getID()] + " delta[w]:" + delta[w.getID()]);
-                delta[lvKey] = delta[lvKey] + (sigma[lvKey] / sigma[w.getID()] * (1 + delta[w.getID()]));
+                delta[lvKey] = delta[lvKey] + (sigma[lvKey] * (1 + delta[w.getID()]));
             }
             if (w.getID() != s.getID()) {
-                CB[w.getID()] = (CB[w.getID()] | 0) + delta[w.getID()];
-                CB[w.getID()] /= 2;
-                console.log("CB:" + CB[w.getID()]);
+                CB[w.getID()] += delta[w.getID()];
+                sum += delta[w.getID()];
             }
+            sigma[w.getID()] = 0;
+            delta[w.getID()] = 0;
+            dist[w.getID()] = Number.POSITIVE_INFINITY;
         }
+    }
+    for (var n in nodes) {
+        CB[nodes[n].getID()] /= sum;
     }
     return CB;
 }
