@@ -6,15 +6,6 @@ import * as $N from '../core/Nodes';
 import * as $SU from '../utils/structUtils'
 import {DEFAULT_WEIGHT} from "./PFS";
 
-let dists = {},
-    edges: Array<$E.IBaseEdge>,
-    edge: $E.IBaseEdge,
-    a: string,
-    b: string,
-    weight: number,
-    new_weight: number,
-    nodes_size: number;
-
 
 /**
  * 
@@ -34,15 +25,18 @@ function BFSanityChecks(graph: $G.IGraph, start: $N.IBaseNode) {
 }
 
 
-function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode) : Array<number> {
+function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode, cycle = false) : Array<number> | boolean {
   BFSanityChecks(graph, start);
-  let distArray = [];
 
-  let nodes = graph.getNodes(),
+  let distArray : Array<number> = [],
+      nodes = graph.getNodes(),
+      edge: $E.IBaseEdge,
       node_keys = Object.keys(nodes),
       node : $N.IBaseNode,
       id_idx_map: {} = {},
-      bf_edge_entry
+      bf_edge_entry,
+      new_weight: number;
+
 
   for ( let n_idx = 0; n_idx < node_keys.length; ++n_idx ) {
     node = nodes[node_keys[n_idx]];
@@ -72,11 +66,25 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode) : Array<number>
     }
   }
 
+  if ( cycle ) {
+    for ( let e_idx = 0; e_idx < bf_edges.length; ++e_idx ) {
+      edge = bf_edges[e_idx];
+      if ( betterDist( edge[0], edge[1], edge[2] ) || ( !edge[3] && betterDist( edge[1], edge[0], edge[2] ) ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function updateDist(u, v, weight) {
     new_weight = distArray[u] + weight;
     if ( distArray[v] > new_weight ) {
       distArray[v] = new_weight;
     }
+  }
+
+  function betterDist(u, v, weight) {
+    return ( distArray[v] > distArray[u] + weight );
   }
   
   return distArray;
@@ -88,17 +96,26 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode) : Array<number>
  * @param graph 
  * @param start 
  */
-function BellmanFord(graph: $G.IGraph, start: $N.IBaseNode) : {} {
+function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode, cycle = false) : {} | boolean {
   BFSanityChecks(graph, start);
 
-  dists = {}; // Reset dists, TODO refactor
+  let distDict = {},
+      edges: Array<$E.IBaseEdge>,
+      edge: $E.IBaseEdge,
+      a: string,
+      b: string,
+      weight: number,
+      new_weight: number,
+      nodes_size: number;
+
+  distDict = {}; // Reset dists, TODO refactor
   edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
   nodes_size = graph.nrNodes();
   
   for ( let node in graph.getNodes() ) {
-    dists[node] = Number.POSITIVE_INFINITY;
+    distDict[node] = Number.POSITIVE_INFINITY;
   }
-  dists[start.getID()] = 0;
+  distDict[start.getID()] = 0;
 
   for ( let i = 0; i < nodes_size-1; ++i ) {
     for ( let e_idx = 0; e_idx < edges.length; ++e_idx ) {
@@ -111,39 +128,36 @@ function BellmanFord(graph: $G.IGraph, start: $N.IBaseNode) : {} {
     }
   }
 
+  if ( cycle ) {
+    for ( let edgeID in edges ) {
+      edge = edges[edgeID];
+      a = edge.getNodes().a.getID();
+      b = edge.getNodes().b.getID();
+      weight = isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT;
+      if ( betterDist(a, b, weight) || ( !edge.isDirected() && betterDist(b, a, weight) ) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function updateDist(u, v, weight) {
-    new_weight = dists[u] + weight;
-    if ( dists[v] > new_weight ) {
-      dists[v] = new_weight;
+    new_weight = distDict[u] + weight;
+    if ( distDict[v] > new_weight ) {
+      distDict[v] = new_weight;
     }
   }
-  
-  return dists;
-}
 
-
-function hasNegativeCycle(graph: $G.IGraph, start: $N.IBaseNode) : boolean {
-  dists = BellmanFord(graph, start);
-  // let edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-  for ( let edgeID in edges ) {
-    edge = edges[edgeID];
-    a = edge.getNodes().a.getID();
-    b = edge.getNodes().b.getID();
-    weight = isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT;
-    if ( betterDist(a, b, weight) || ( !edge.isDirected() && betterDist(b, a, weight) ) ) {
-      return true;
-    }
-  }
-  return false;
-  
   function betterDist(u, v, weight) {
-    return ( dists[v] > dists[u] + weight );
+    return ( distDict[v] > distDict[u] + weight );
   }
+  
+  return distDict;
 }
+
 
 
 export {
-  BellmanFord,
-  BellmanFordArray,
-  hasNegativeCycle
+  BellmanFordDict,
+  BellmanFordArray
 };

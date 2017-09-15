@@ -30,6 +30,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 	return dists;
 }
 
+
 /**
  * Floyd-Warshall - we mostly use it to get In-betweenness
  * of a graph. We use the standard algorithm and save all
@@ -62,8 +63,9 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		}
 	}
 
-	return [dists,next];
+	return [dists, next];
 }
+
 
 function mergeArrays(a:Array<number>,b:Array<number>):Array<number>{
 	let ret:Array<number> = [];

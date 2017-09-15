@@ -26,32 +26,26 @@ var BaseGraph = (function () {
     }
     BaseGraph.prototype.nextArray = function (incoming) {
         if (incoming === void 0) { incoming = false; }
-        var next = [], idx = 0, j_idx;
+        var next = [], node_keys = Object.keys(this._nodes);
         var adjDict = this.adjListDict(incoming, true, 0);
-        for (var i in adjDict) {
+        for (var i = 0; i < this._nr_nodes; ++i) {
             next.push([]);
-            j_idx = -1;
-            for (var j in adjDict) {
-                ++j_idx;
-                next[idx].push([]);
-                next[idx][j_idx].push(i === j ? j_idx : isFinite(adjDict[i][j]) ? j_idx : null);
+            for (var j = 0; j < this._nr_nodes; ++j) {
+                next[i].push([]);
+                next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
             }
-            ++idx;
         }
         return next;
     };
     BaseGraph.prototype.adjListArray = function (incoming) {
         if (incoming === void 0) { incoming = false; }
-        var adjList = [], idx = 0, j_idx;
+        var adjList = [], node_keys = Object.keys(this._nodes);
         var adjDict = this.adjListDict(incoming, true, 0);
-        for (var i in adjDict) {
+        for (var i = 0; i < this._nr_nodes; ++i) {
             adjList.push([]);
-            j_idx = -1;
-            for (var j in adjDict) {
-                ++j_idx;
-                adjList[idx].push(i === j ? 0 : isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY);
+            for (var j = 0; j < this._nr_nodes; ++j) {
+                adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
             }
-            ++idx;
         }
         return adjList;
     };
