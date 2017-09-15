@@ -51,8 +51,8 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
-				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {					
-					next[i][j] = mergeArrays(next[i][j], next[i][k]);
+				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
+					next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
 				}
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
 					next[i][j] = next[i][k].slice(0);
@@ -63,48 +63,6 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	}
 
 	return [dists,next];
-}
-
-function mergeArrays(a:Array<number>,b:Array<number>):Array<number>{
-	let ret:Array<number> = [];
-	let idx_a = 0;
-	let idx_b = 0;
-	if(a[0]!=null && b[0]!=null){
-		while(true){
-			if(idx_a >= a.length || idx_b >= b.length)
-				break;
-
-			if(a[idx_a] == b[idx_b]){
-				if(ret[ret.length-1]!=a[idx_a])
-					ret.push(a[idx_a]);
-				idx_a++;
-				idx_b++;
-				continue;
-			}
-			if(a[idx_a] < b[idx_b]){
-				ret.push(a[idx_a]);
-				idx_a++;
-				continue;
-			}
-			if(b[idx_b] < a[idx_a]){
-				ret.push(b[idx_b]);
-				idx_b++;
-			}
-		}
-		if( a[idx_a] > b[idx_b] ) {
-			ret.push(b[idx_b]);
-			idx_b++;
-		}
-	}
-	while(idx_a < a.length){
-		ret.push(a[idx_a]);
-		idx_a++;
-	}
-	while(idx_b < b.length){
-		ret.push(b[idx_b]);
-		idx_b++;
-	}
-	return ret;
 }
 
 

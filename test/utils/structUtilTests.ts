@@ -123,6 +123,28 @@ describe('Datastructure Utils Tests - ', () => {
 
   });
 
+  describe.only('Merge Array no duplicates tests', () => {
+    it('should merge two arrays with only one or no elements', () => {
+      var a = [0],
+          b = [1],
+          c = [2],
+          d = [0],
+          e = [];
+
+      expect($SU.mergeOrderedArraysNoDups(a, b)).to.deep.equal([0, 1]);
+      expect($SU.mergeOrderedArraysNoDups(b, b)).to.deep.equal([1]);
+      expect($SU.mergeOrderedArraysNoDups(e, b)).to.deep.equal([1]);
+      expect($SU.mergeOrderedArraysNoDups(e, e)).to.deep.equal([]);
+      expect($SU.mergeOrderedArraysNoDups(d, e)).to.deep.equal([0]);
+    });
+    it('should merge two more complex arrays', () => {
+      var a = [0,1,2,4,5,6,10,11],
+          b = [0,2,4,5,7,9,10,11,12];
+
+      expect($SU.mergeOrderedArraysNoDups(a, b)).to.deep.equal([0,1,2,4,5,6,7,9,10,11,12]);
+      expect($SU.mergeOrderedArraysNoDups(b, b)).to.deep.equal(b);
+    });
+  });
 
   describe('Merge Object tests', () => {
 

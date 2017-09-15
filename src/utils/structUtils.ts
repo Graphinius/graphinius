@@ -1,6 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 
@@ -107,4 +106,65 @@ function findKey( obj: Object, cb: Function ) : string {
   return undefined;
 }
 
-export { clone, mergeArrays, mergeObjects, findKey };
+/**
+ * @TODO Test !!!
+ *
+ * @param a: first array
+ * @param b: second array
+ */
+function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>{
+  let ret:Array<number> = [];
+  let idx_a = 0;
+  let idx_b = 0;
+  if(a[0]!=null && b[0]!=null){
+    while(true){
+      if(idx_a >= a.length || idx_b >= b.length)
+        break;
+
+      if(a[idx_a] == b[idx_b]){
+        if(ret[ret.length-1]!=a[idx_a])
+          ret.push(a[idx_a]);
+        idx_a++;
+        idx_b++;
+        continue;
+      }
+      if(a[idx_a] < b[idx_b]){
+        ret.push(a[idx_a]);
+        idx_a++;
+        continue;
+      }
+      if(b[idx_b] < a[idx_a]){
+        ret.push(b[idx_b]);
+        idx_b++;
+      }
+    }
+    if( a[idx_a] > b[idx_b] ) {
+      ret.push(b[idx_b]);
+      idx_b++;
+    }
+  }
+  while(idx_a < a.length){
+    if(a[idx_a]!=null)
+      ret.push(a[idx_a]);
+    idx_a++;
+  }
+  while(idx_b < b.length){
+    if(b[idx_b]!=null)
+      ret.push(b[idx_b]);
+    idx_b++;
+  }
+  //let prev = -1;
+  //for(let k in ret ){
+  //  if(ret[k]<=prev){
+  //    console.log("a:"+  JSON.stringify(a));
+  //    console.log("b:"+  JSON.stringify(b));
+  //    console.log("ret:"+JSON.stringify(ret));
+  //    $Assert(false);
+  //  }
+  //  prev = ret[k];
+  //}
+  return ret;
+}
+
+
+export { clone, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };
