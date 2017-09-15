@@ -6,7 +6,6 @@
 
 import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
 import * as $SU from '../utils/structUtils'
 
 function Brandes(graph: $G.IGraph): {} {
@@ -25,8 +24,11 @@ function Brandes(graph: $G.IGraph): {} {
         S : $N.IBaseNode[] = [],     //stack of nodes
         CB: {[key:string] : number} = {};    //Betweenness values
 
-
-    let N = graph.nrNodes();
+    for(let n in nodes){
+        CB[nodes[n].getID()] = 0;
+    }
+    let sum = 0;    //The sum of betweennesses
+    //let N = graph.nrNodes();
     for(let i in nodes){
         s = nodes[i];
 
@@ -46,19 +48,10 @@ function Brandes(graph: $G.IGraph): {} {
         while(Q.length >= 1){ //Queue not empty
             v = Q.shift();
             S.push(v);
-            let neighbors = [];
-            let edges = $SU.mergeObjects([v.undEdges(),v.outEdges()]);
-            for(let e in edges){
-                let edge_nodes = edges[e].getNodes();
-                if(edge_nodes.a.getID() == v.getID()){
-                    neighbors.push(edge_nodes.b);
-                }else{
-                    neighbors.push(edge_nodes.a);
-                }
-            }
+            let neighbors = v.reachNodes();
             //console.log("neighbors:"+JSON.stringify(neighbors));
             for(let ne in neighbors){
-                w = neighbors[ne];
+                w = neighbors[ne].node;
                 //Path discovery: w found for the first time?
                 if(dist[w.getID()] == Number.POSITIVE_INFINITY){
                     Q.push(w);
@@ -68,29 +61,27 @@ function Brandes(graph: $G.IGraph): {} {
                 if(dist[w.getID()] == dist[v.getID()]+1){
                     sigma[w.getID()] += sigma[v.getID()];
                     Pred[w.getID()].push(v.getID());
-                    console.log("PUSHED V:" + v.getID() + " now is:"+JSON.stringify(Pred[w.getID()]));
                 }
             }
         }
         //Accumulation: back-propagation of dependencies
-        //delta = {};
-
-        console.log("Pred: " + JSON.stringify(Pred));
         while(S.length >= 1){
             w = S.pop();
-            console.log("Popping: "+w.getID());
-            console.log("Pred on w:"+JSON.stringify(Pred[w.getID()]));
             for(let key in Pred[w.getID()]){
                 let lvKey = Pred[w.getID()][key];
-                console.log("Values: sigma[v]:" + sigma[lvKey]+" sigma[w]:"+sigma[w.getID()] + " delta[w]:" + delta[w.getID()]);
-                delta[lvKey] = delta[lvKey] + (sigma[lvKey]/sigma[w.getID()]*(1+delta[w.getID()]));
+                delta[lvKey] = delta[lvKey] + (sigma[lvKey]*(1+delta[w.getID()]));
             }
             if(w.getID()!=s.getID()){
-                CB[w.getID()] = (CB[w.getID()] | 0 ) + delta[w.getID()];
-                CB[w.getID()] /= 2;
-                console.log("CB:"+CB[w.getID()]);
+                CB[w.getID()] += delta[w.getID()];
+                sum += delta[w.getID()];
             }
+            sigma[w.getID()] = 0;
+            delta[w.getID()] = 0;
+            dist[w.getID()] = Number.POSITIVE_INFINITY;
         }
+    }
+    for(let n in nodes){
+        CB[nodes[n].getID()] /= sum;
     }
     return CB;
 }
