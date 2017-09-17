@@ -1,14 +1,14 @@
 const gulp 						= require('gulp');
 const clean 					= require('gulp-clean');
 const mocha 					= require('gulp-mocha');
-const ts 						= require('gulp-typescript');
+const ts 							= require('gulp-typescript');
 const tdoc 						= require("gulp-typedoc");
 const concat					= require('gulp-concat');
 const merge 					= require('merge2');
-const webpack 					= require('webpack-stream');
+const webpack 				= require('webpack-stream');
 const uglify 					= require('gulp-uglify');
 const rename 					= require('gulp-rename');
-const istanbul 					= require('gulp-istanbul');
+const istanbul 				= require('gulp-istanbul');
 const git 						= require('gulp-git');
 const prompt	 				= require('gulp-prompt');
 

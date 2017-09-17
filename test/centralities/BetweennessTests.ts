@@ -61,7 +61,7 @@ describe("InBetweenness Centrality Tests", () => {
             "6": 0
         };
         let brandes_map = $B.Brandes(graph_6);
-        expect(brandes_map).to.equal(expected_betweenness_map);
+        expect(brandes_map).to.deep.equal(expected_betweenness_map);
     });
 
 
