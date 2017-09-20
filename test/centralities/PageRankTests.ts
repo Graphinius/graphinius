@@ -60,6 +60,23 @@ describe("PageRank Centrality Tests", () => {
         checkScoresEqual(graph_6,PRCG.getCentralityMap( graph_6 ));
     });
 
+
+    it('should stop random walk after short time', () => {
+        let prrw = PRCRW.getCentralityMap(graph_und_unw, true, 0.10, 0.8);
+
+        for(let key in prrw){
+            expect(prrw[key]).to.be.lessThan(0.3);
+        }
+    });
+
+    it('should not stop random walk with convergence criteria but with iterations', () => {
+        let prrw = PRCRW.getCentralityMap(graph_und_unw, true, 0.10, 0.0000000000001,2);
+
+        for(let key in prrw){
+            expect(prrw[key]).to.be.lessThan(0.2);
+        }
+    });
+
     it.skip('should calculate the PR for a large graph', () => {
         let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
         let pdc = PRCG.getCentralityMap( sn_graph );

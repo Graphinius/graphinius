@@ -8,10 +8,6 @@ import * as $SU from "../utils/structUtils";
 class pageRankCentrality{
 
   getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?:number, conv?:number, iterations?:number):{[id:string]: number}{
-
-    if(!weighted && weighted != null){
-      let a = 0;
-    }
     if(alpha == null)
       alpha = 0.10;
     if(iterations == null)
@@ -45,10 +41,6 @@ class pageRankCentrality{
       old[key] = 1/nrNodes;
     }
     for(let i = 0; i < iterations; i++) {
-      /*let all = 0; //Check sum of PageRanks
-      for(let k in curr)
-        all += curr[k];
-      console.log("All:" + all);*/
       let me = 0.0;
       for(let key in graph.getNodes()) { //Run through all nodes in graph
         key = String(key);
@@ -64,9 +56,7 @@ class pageRankCentrality{
         me += Math.abs(curr[key]-old[key]);
 
       }
-      //console.log("Error:"+me);
       if(me <= conv){
-        //console.log("Iterations:"+i);
         return curr;
       }
       //console.log("Error:"+me/nrNodes);

@@ -94,10 +94,6 @@ function mergeOrderedArraysNoDups(a, b) {
                 idx_b++;
             }
         }
-        if (a[idx_a] > b[idx_b]) {
-            ret.push(b[idx_b]);
-            idx_b++;
-        }
     }
     while (idx_a < a.length) {
         if (a[idx_a] != null)

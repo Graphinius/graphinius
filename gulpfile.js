@@ -208,7 +208,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 gulp.task('coverage', ['pre-cov-test'], function () {
 	return gulp.src(paths.tests_all, {read: false})
 		.pipe(mocha({reporter: 'spec',
-			timeout: 60000}))
+			timeout: 600000}))
 		// .pipe(istanbul.writeReports({
 		// 	dir: './coverage/node-tests',
 		// 	reporters: [ 'json' ],

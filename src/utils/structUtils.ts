@@ -139,10 +139,6 @@ function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>
         idx_b++;
       }
     }
-    if( a[idx_a] > b[idx_b] ) {
-      ret.push(b[idx_b]);
-      idx_b++;
-    }
   }
   while(idx_a < a.length){
     if(a[idx_a]!=null)
@@ -154,16 +150,6 @@ function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>
       ret.push(b[idx_b]);
     idx_b++;
   }
-  //let prev = -1;
-  //for(let k in ret ){
-  //  if(ret[k]<=prev){
-  //    console.log("a:"+  JSON.stringify(a));
-  //    console.log("b:"+  JSON.stringify(b));
-  //    console.log("ret:"+JSON.stringify(ret));
-  //    $Assert(false);
-  //  }
-  //  prev = ret[k];
-  //}
   return ret;
 }
 

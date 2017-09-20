@@ -15,11 +15,11 @@ import * as $N from '../core/Nodes';
  */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
-  if(sparse){
-    throw new Error("Not implemented yet")
-    //paths = Bellman Ford
-  }
-  else
+  //if(sparse){ //TODO: Add Bellman-Ford
+  //  throw new Error("Not implemented yet")
+  //  //paths = Bellman Ford
+  //}
+  //else
     paths = $FW.FloydWarshallAPSP(graph)[1];
 
   let nodes = graph.adjListArray();

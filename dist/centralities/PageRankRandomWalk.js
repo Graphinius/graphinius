@@ -4,9 +4,6 @@ var pageRankCentrality = (function () {
     function pageRankCentrality() {
     }
     pageRankCentrality.prototype.getCentralityMap = function (graph, weighted, alpha, conv, iterations) {
-        if (!weighted && weighted != null) {
-            var a = 0;
-        }
         if (alpha == null)
             alpha = 0.10;
         if (iterations == null)

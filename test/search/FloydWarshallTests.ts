@@ -52,11 +52,20 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	});
 
 
-	//TODO:::TODO
-	it.skip('should refuse to compute APSP with negative edges', () => {
+	it('should refuse to compute FW APSP on empty graph', () => {
 		var empty_graph = new $G.BaseGraph("iamempty");
-		expect($FW.FloydWarshallAPSP.bind($FW.FloydWarshallAPSP, graph_nullcycle)).to.throw(
-			"Cannot compute FW on negative edges");
+		expect($FW.FloydWarshallAPSP.bind($FW.FloydWarshallAPSP, empty_graph)).to.throw(
+			"Cowardly refusing to traverse graph without edges.");
+	});
+	it('should refuse to compute FW on empty graph', () => {
+		var empty_graph = new $G.BaseGraph("iamempty");
+		expect($FW.FloydWarshall.bind($FW.FloydWarshall, empty_graph)).to.throw(
+			"Cowardly refusing to traverse graph without edges.");
+	});
+	it('should refuse to compute FW array on empty graph', () => {
+		var empty_graph = new $G.BaseGraph("iamempty");
+		expect($FW.FloydWarshallArray.bind($FW.FloydWarshallArray, empty_graph)).to.throw(
+			"Cowardly refusing to traverse graph without edges.");
 	});
 
 	describe('FW on small search graph - ', () => {
@@ -74,6 +83,19 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 					[4, 7, 3, 5, 4, 0]
 				];
 				expect(FW_res[0]).to.deep.equal(expected_result);
+			});
+
+			it('should correctly compute distance matrix for graph with normal FW', () => {
+				FW_res = $FW.FloydWarshall(graph_search);
+				let expected_result =
+					{ A: { B: 3, C: 4, D: 1, F: 4, E: 2 },
+					B: { F: 1, C: 1, A: 2, E: 2, D: 3 },
+					C: { E: 1, A: 1, B: 4, D: 2, F: 5 },
+					D: { C: 6, E: 1, A: 7, B: 6, F: 7 },
+					F: { E: 4, C: 3, A: 4, B: 7, D: 5 },
+					E: { B: 5, D: 1, A: 7, C: 6, F: 6 } };
+
+				expect(FW_res).to.deep.equal(expected_result);
 			});
 
 			it('should correctly compute distance matrix for graph, Array version', () => {
@@ -113,7 +135,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		});
 
 
-		it.skip('performance test of FW implementation on 246 nodes)', () => {
+		it('performance test of FW implementation on 246 nodes)', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();

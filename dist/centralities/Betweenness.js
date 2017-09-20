@@ -2,11 +2,7 @@
 var $FW = require('../search/FloydWarshall');
 function inBetweennessCentrality(graph, sparse) {
     var paths;
-    if (sparse) {
-        throw new Error("Not implemented yet");
-    }
-    else
-        paths = $FW.FloydWarshallAPSP(graph)[1];
+    paths = $FW.FloydWarshallAPSP(graph)[1];
     var nodes = graph.adjListArray();
     var map = {};
     for (var keyA in nodes) {

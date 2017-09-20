@@ -18,12 +18,8 @@ var closenessCentrality = (function () {
         }
         return ret;
     };
-    closenessCentrality.prototype.getCentralityMap = function (graph, weighted) {
+    closenessCentrality.prototype.getCentralityMap = function (graph) {
         var pfs_config = $PFS.preparePFSStandardConfig();
-        if (!weighted && weighted != null)
-            pfs_config.evalPriority = function (ne) {
-                return $PFS.DEFAULT_WEIGHT;
-            };
         var accumulated_distance = 0;
         var not_encountered = function (context) {
             accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());

@@ -31,21 +31,16 @@ class closenessCentrality{
   }
 
 
-  getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id: string]: number} {
+  getCentralityMap(graph: $G.IGraph): {[id: string]: number} {
     let pfs_config:$PFS.PFS_Config = $PFS.preparePFSStandardConfig();
-    if(!weighted && weighted != null) //If we want, we can ignore edgeWeights, then every edge has weight 1
-      pfs_config.evalPriority = function(ne: $N.NeighborEntry) {
-        return $PFS.DEFAULT_WEIGHT;
-      };
+
     let accumulated_distance = 0;
     //set the config (we want the sum of all edges to become a property of result)
 
     //a node is encountered the first time
     let not_encountered = function( context : $PFS.PFS_Scope ) {
       // adding the distance to the accumulated distance
-
       accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());
-      //console.log("distance: "+context.current.node.getID()+"->"+context.next.node.getID()+" = " + context.current.best + context.next.edge.getWeight());
     };
     //We found a better path, we need to correct the accumulated distance
     var betterPathFound = function( context: $PFS.PFS_Scope  ) {
