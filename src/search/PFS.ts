@@ -7,6 +7,8 @@ import * as $CB from '../utils/callbackUtils';
 import * as $BH from '../datastructs/binaryHeap';
 
 
+export const DEFAULT_WEIGHT: number = 1;
+
 export interface PFS_Config {
 	result			    :	{[id: string]: PFS_ResultEntry};
 	callbacks		    :	PFS_Callbacks;
@@ -69,8 +71,8 @@ export interface PFS_Scope {
  */
 function PFS(graph 	 : $G.IGraph, 
 						 v 			 : $N.IBaseNode,
-             config? : PFS_Config) : {[id: string] : PFS_ResultEntry} {
-
+             config? : PFS_Config) : {[id: string] : PFS_ResultEntry} 
+{
   var config = config || preparePFSStandardConfig(),
       callbacks = config.callbacks,
       dir_mode = config.dir_mode,
@@ -192,7 +194,7 @@ function PFS(graph 	 : $G.IGraph,
          */
         config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 
-        scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+        scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
         if ( scope.next.best > scope.better_dist ) {
           /**
            * HOOK 5: Better path found
@@ -225,32 +227,32 @@ function PFS(graph 	 : $G.IGraph,
 
 function preparePFSStandardConfig() : PFS_Config {
   var config : PFS_Config = {
-    result    : {},
-    callbacks : {
-      init_pfs			  : [],
-      not_encountered : [],
-      node_open       : [],
-      node_closed 	  : [],
-      better_path     : [],
-      goal_reached    : []
+      result    : {},
+      callbacks : {
+        init_pfs			  : [],
+        not_encountered : [],
+        node_open       : [],
+        node_closed 	  : [],
+        better_path     : [],
+        goal_reached    : []
+      },
+      messages: {
+        init_pfs_msgs     : [],
+        not_enc_msgs      : [],
+        node_open_msgs    : [],
+        node_closed_msgs  : [],
+        better_path_msgs  : [],
+        goal_reached_msgs : []
+      },
+      dir_mode  : $G.GraphMode.MIXED,
+      goal_node : null,
+      evalPriority : function(ne: $N.NeighborEntry) {
+            return ne.best || DEFAULT_WEIGHT;
+      },
+      evalObjID : function(ne: $N.NeighborEntry) {
+        return ne.node.getID();
+      }
     },
-    messages: {
-      init_pfs_msgs     : [],
-      not_enc_msgs      : [],
-      node_open_msgs    : [],
-      node_closed_msgs  : [],
-      better_path_msgs  : [],
-      goal_reached_msgs : []
-    },
-    dir_mode  : $G.GraphMode.MIXED,
-    goal_node : null,
-    evalPriority : function(ne: $N.NeighborEntry) {
-      return ne.best;
-    },
-    evalObjID : function(ne: $N.NeighborEntry) {
-      return ne.node.getID();
-    }
-  },
     callbacks = config.callbacks;
     
   var count = 0;
@@ -283,7 +285,7 @@ function preparePFSStandardConfig() : PFS_Config {
   var notEncountered = function( context : PFS_Scope ) {
     // setting it's best score to actual distance + edge weight
     // and update result structure
-    context.next.best = context.current.best + context.next.edge.getWeight();
+    context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? DEFAULT_WEIGHT : context.next.edge.getWeight());
 
     config.result[context.next.node.getID()] = {
       distance  : context.next.best,

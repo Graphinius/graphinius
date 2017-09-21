@@ -47,22 +47,27 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(7);
-	var CSVOutput       = __webpack_require__(12);
-	var JSONInput       = __webpack_require__(13);
-	var JSONOutput      = __webpack_require__(14);
-	var BFS				      = __webpack_require__(15);
+	var CSVInput 	      = __webpack_require__(9);
+	var CSVOutput       = __webpack_require__(14);
+	var JSONInput       = __webpack_require__(15);
+	var JSONOutput      = __webpack_require__(16);
+	var BFS				      = __webpack_require__(7);
 	var DFS				      = __webpack_require__(17);
 	var PFS             = __webpack_require__(18);
+	var BellmanFord     = __webpack_require__(20);
+	var FloydWarshall		= __webpack_require__(21);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(11);
-	var callbackUtils   = __webpack_require__(16);
-	var randGen         = __webpack_require__(20);
+	var remoteUtils     = __webpack_require__(13);
+	var callbackUtils   = __webpack_require__(8);
+	var randGen         = __webpack_require__(22);
 	var binaryHeap      = __webpack_require__(19);
-	var simplePerturbation = __webpack_require__(21);
-	var degCent				 	= __webpack_require__(22);
-	var MCMFBoykov			= __webpack_require__(23);
-	var EMEBoykov			= __webpack_require__(24);
+	var simplePerturbation = __webpack_require__(23);
+	var MCMFBoykov			= __webpack_require__(24);
+	var DegreeCent		 	= __webpack_require__(25);
+	var ClosenessCent	 	= __webpack_require__(26);
+	var BetweennessCent	= __webpack_require__(27);
+	var PRGauss					= __webpack_require__(28);
+	var PRRandomWalk		= __webpack_require__(30);
 
 	// Define global object
 	var out = typeof window !== 'undefined' ? window : global;
@@ -78,7 +83,11 @@
 			GraphMode		    : Graph.GraphMode
 		},
 		centralities: {
-			degree: degCent
+			Degree: DegreeCent,
+			Closeness: ClosenessCent,
+			Betweenness: betweennessCent,
+			PageRankGauss: PRGauss,
+			PageRankRandWalk: PRRandomWalk
 		},
 		input: {
 			CSVInput 		: CSVInput.CSVInput,
@@ -96,22 +105,21 @@
 			prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
 			prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
 	    PFS                            : PFS.PFS,
-	    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
+			preparePFSStandardConfig       : PFS.preparePFSStandardConfig,
+			BellmanFord										 : BellmanFord,
+			FloydWarshall									 : FloydWarshall
 		},
 		mincut: {
 			MCMFBoykov										 : MCMFBoykov.MCMFBoykov
 		},
-		energyminimization: {
-			EMEBoykov										 	 : EMEBoykov.EMEBoykov
-		},
-	  util: {
+	  utils: {
 	    struct          : structUtils,
 	    remote          : remoteUtils,
 	    callback        : callbackUtils,
 	    randgen         : randGen
 	  },
 	  datastructs: {
-	    binaryHeap  : binaryHeap
+	    BinaryHeap  : binaryHeap.BinaryHeap
 	  },
 		perturbation: {
 			SimplePerturber: simplePerturbation.SimplePerturber
@@ -498,6 +506,45 @@
 	    return undefined;
 	}
 	exports.findKey = findKey;
+	function mergeOrderedArraysNoDups(a, b) {
+	    var ret = [];
+	    var idx_a = 0;
+	    var idx_b = 0;
+	    if (a[0] != null && b[0] != null) {
+	        while (true) {
+	            if (idx_a >= a.length || idx_b >= b.length)
+	                break;
+	            if (a[idx_a] == b[idx_b]) {
+	                if (ret[ret.length - 1] != a[idx_a])
+	                    ret.push(a[idx_a]);
+	                idx_a++;
+	                idx_b++;
+	                continue;
+	            }
+	            if (a[idx_a] < b[idx_b]) {
+	                ret.push(a[idx_a]);
+	                idx_a++;
+	                continue;
+	            }
+	            if (b[idx_b] < a[idx_a]) {
+	                ret.push(b[idx_b]);
+	                idx_b++;
+	            }
+	        }
+	    }
+	    while (idx_a < a.length) {
+	        if (a[idx_a] != null)
+	            ret.push(a[idx_a]);
+	        idx_a++;
+	    }
+	    while (idx_b < b.length) {
+	        if (b[idx_b] != null)
+	            ret.push(b[idx_b]);
+	        idx_b++;
+	    }
+	    return ret;
+	}
+	exports.mergeOrderedArraysNoDups = mergeOrderedArraysNoDups;
 
 
 /***/ }),
@@ -509,7 +556,9 @@
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
 	var logger_1 = __webpack_require__(5);
+	var $BFS = __webpack_require__(7);
 	var logger = new logger_1.Logger();
+	var DEFAULT_WEIGHT = 1;
 	(function (GraphMode) {
 	    GraphMode[GraphMode["INIT"] = 0] = "INIT";
 	    GraphMode[GraphMode["DIRECTED"] = 1] = "DIRECTED";
@@ -528,6 +577,63 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
+	    BaseGraph.prototype.nextArray = function (incoming) {
+	        if (incoming === void 0) { incoming = false; }
+	        var next = [], node_keys = Object.keys(this._nodes);
+	        var adjDict = this.adjListDict(incoming, true, 0);
+	        for (var i = 0; i < this._nr_nodes; ++i) {
+	            next.push([]);
+	            for (var j = 0; j < this._nr_nodes; ++j) {
+	                next[i].push([]);
+	                next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
+	            }
+	        }
+	        return next;
+	    };
+	    BaseGraph.prototype.adjListArray = function (incoming) {
+	        if (incoming === void 0) { incoming = false; }
+	        var adjList = [], node_keys = Object.keys(this._nodes);
+	        var adjDict = this.adjListDict(incoming, true, 0);
+	        for (var i = 0; i < this._nr_nodes; ++i) {
+	            adjList.push([]);
+	            for (var j = 0; j < this._nr_nodes; ++j) {
+	                adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
+	            }
+	        }
+	        return adjList;
+	    };
+	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
+	        if (incoming === void 0) { incoming = false; }
+	        if (include_self === void 0) { include_self = false; }
+	        if (self_dist === void 0) { self_dist = 0; }
+	        var adj_list_dict = {}, nodes = this.getNodes(), cur_dist, key, cur_edge_weight;
+	        for (key in nodes) {
+	            adj_list_dict[key] = {};
+	            if (include_self) {
+	                adj_list_dict[key][key] = self_dist;
+	            }
+	        }
+	        for (key in nodes) {
+	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+	            neighbors.forEach(function (ne) {
+	                cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+	                cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
+	                if (cur_edge_weight < cur_dist) {
+	                    adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
+	                    if (incoming) {
+	                        adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
+	                    }
+	                }
+	                else {
+	                    adj_list_dict[key][ne.node.getID()] = cur_dist;
+	                    if (incoming) {
+	                        adj_list_dict[ne.node.getID()][key] = cur_dist;
+	                    }
+	                }
+	            });
+	        }
+	        return adj_list_dict;
+	    };
 	    BaseGraph.prototype.getMode = function () {
 	        return this._mode;
 	    };
@@ -689,6 +795,20 @@
 	    BaseGraph.prototype.getUndEdges = function () {
 	        return this._und_edges;
 	    };
+	    BaseGraph.prototype.getDirEdgesArray = function () {
+	        var edges = [];
+	        for (var e_idx in this._dir_edges) {
+	            edges.push(this._dir_edges[e_idx]);
+	        }
+	        return edges;
+	    };
+	    BaseGraph.prototype.getUndEdgesArray = function () {
+	        var edges = [];
+	        for (var e_idx in this._und_edges) {
+	            edges.push(this._und_edges[e_idx]);
+	        }
+	        return edges;
+	    };
 	    BaseGraph.prototype.addEdgeByNodeIDs = function (label, node_a_id, node_b_id, opts) {
 	        var node_a = this.getNodeById(node_a_id), node_b = this.getNodeById(node_b_id);
 	        if (!node_a) {
@@ -834,6 +954,31 @@
 	        });
 	        return new_graph;
 	    };
+	    BaseGraph.prototype.cloneSubGraph = function (root, cutoff) {
+	        var new_graph = new BaseGraph(this._label);
+	        var config = $BFS.prepareBFSStandardConfig();
+	        var bfsNodeUnmarkedTestCallback = function (context) {
+	            if (config.result[context.next_node.getID()].counter > cutoff) {
+	                context.queue = [];
+	            }
+	            else {
+	                new_graph.addNode(context.next_node.clone());
+	            }
+	        };
+	        config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+	        $BFS.BFS(this, root, config);
+	        var old_edge, new_node_a = null, new_node_b = null;
+	        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
+	            for (var edge_id in old_edges) {
+	                old_edge = old_edges[edge_id];
+	                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+	                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+	                if (new_node_a != null && new_node_b != null)
+	                    new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
+	            }
+	        });
+	        return new_graph;
+	    };
 	    BaseGraph.prototype.checkConnectedNodeOrThrow = function (node) {
 	        var node = this._nodes[node.getID()];
 	        if (!node) {
@@ -960,10 +1105,139 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var path = __webpack_require__(8);
-	var fs = __webpack_require__(10);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(11);
+	var $CB = __webpack_require__(8);
+	function BFS(graph, v, config) {
+	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    var bfsScope = {
+	        marked: {},
+	        nodes: graph.getNodes(),
+	        queue: [],
+	        current: null,
+	        next_node: null,
+	        next_edge: null,
+	        root_node: v,
+	        adj_nodes: []
+	    };
+	    if (callbacks.init_bfs) {
+	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
+	    }
+	    bfsScope.queue.push(v);
+	    var i = 0;
+	    while (i < bfsScope.queue.length) {
+	        bfsScope.current = bfsScope.queue[i++];
+	        if (dir_mode === $G.GraphMode.MIXED) {
+	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.connNodes();
+	        }
+	        else if (dir_mode === $G.GraphMode.DIRECTED) {
+	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
+	        }
+	        else {
+	            bfsScope.adj_nodes = [];
+	        }
+	        if (typeof callbacks.sort_nodes === 'function') {
+	            callbacks.sort_nodes(bfsScope);
+	        }
+	        for (var adj_idx in bfsScope.adj_nodes) {
+	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
+	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
+	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
+	                if (callbacks.node_unmarked) {
+	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
+	                }
+	            }
+	            else {
+	                if (callbacks.node_marked) {
+	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
+	                }
+	            }
+	        }
+	    }
+	    return config.result;
+	}
+	exports.BFS = BFS;
+	function prepareBFSStandardConfig() {
+	    var config = {
+	        result: {},
+	        callbacks: {
+	            init_bfs: [],
+	            node_unmarked: [],
+	            node_marked: [],
+	            sort_nodes: undefined
+	        },
+	        dir_mode: $G.GraphMode.MIXED,
+	        messages: {},
+	        filters: {}
+	    }, result = config.result, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    var initBFS = function (context) {
+	        for (var key in context.nodes) {
+	            config.result[key] = {
+	                distance: Number.POSITIVE_INFINITY,
+	                parent: null,
+	                counter: -1
+	            };
+	        }
+	        config.result[context.root_node.getID()] = {
+	            distance: 0,
+	            parent: context.root_node,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.init_bfs.push(initBFS);
+	    var nodeUnmarked = function (context) {
+	        config.result[context.next_node.getID()] = {
+	            distance: result[context.current.getID()].distance + 1,
+	            parent: context.current,
+	            counter: counter()
+	        };
+	        context.queue.push(context.next_node);
+	    };
+	    callbacks.node_unmarked.push(nodeUnmarked);
+	    return config;
+	}
+	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	function execCallbacks(cbs, context) {
+	    cbs.forEach(function (cb) {
+	        if (typeof cb === 'function') {
+	            cb(context);
+	        }
+	        else {
+	            throw new Error('Provided callback is not a function.');
+	        }
+	    });
+	}
+	exports.execCallbacks = execCallbacks;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var path = __webpack_require__(10);
+	var fs = __webpack_require__(12);
+	var $G = __webpack_require__(4);
+	var $R = __webpack_require__(13);
 	var CSVInput = (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1053,6 +1327,7 @@
 	                continue;
 	            }
 	            if (elements.length < 2) {
+	                console.log(elements);
 	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 	            }
 	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
@@ -1084,7 +1359,7 @@
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -1312,10 +1587,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1505,17 +1780,17 @@
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http = __webpack_require__(10);
+	var http = __webpack_require__(12);
 	function retrieveRemoteFile(url, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
@@ -1534,11 +1809,11 @@
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var CSVOutput = (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1584,13 +1859,13 @@
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(11);
+	var $R = __webpack_require__(13);
 	var DEFAULT_WEIGHT = 1;
 	var JSONInput = (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
@@ -1690,11 +1965,11 @@
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(10);
+	var fs = __webpack_require__(12);
 	var JSONOutput = (function () {
 	    function JSONOutput() {
 	    }
@@ -1769,141 +2044,12 @@
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
-	function BFS(graph, v, config) {
-	    var config = config || prepareBFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    var bfsScope = {
-	        marked: {},
-	        nodes: graph.getNodes(),
-	        queue: [],
-	        current: null,
-	        next_node: null,
-	        next_edge: null,
-	        root_node: v,
-	        adj_nodes: []
-	    };
-	    if (callbacks.init_bfs) {
-	        $CB.execCallbacks(callbacks.init_bfs, bfsScope);
-	    }
-	    bfsScope.queue.push(v);
-	    var i = 0;
-	    while (i < bfsScope.queue.length) {
-	        bfsScope.current = bfsScope.queue[i++];
-	        if (dir_mode === $G.GraphMode.MIXED) {
-	            bfsScope.adj_nodes = bfsScope.current.reachNodes();
-	        }
-	        else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-	            bfsScope.adj_nodes = bfsScope.current.connNodes();
-	        }
-	        else if (dir_mode === $G.GraphMode.DIRECTED) {
-	            bfsScope.adj_nodes = bfsScope.current.nextNodes();
-	        }
-	        else {
-	            bfsScope.adj_nodes = [];
-	        }
-	        if (typeof callbacks.sort_nodes === 'function') {
-	            callbacks.sort_nodes(bfsScope);
-	        }
-	        for (var adj_idx in bfsScope.adj_nodes) {
-	            bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
-	            bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
-	            if (config.result[bfsScope.next_node.getID()].distance === Number.POSITIVE_INFINITY) {
-	                if (callbacks.node_unmarked) {
-	                    $CB.execCallbacks(callbacks.node_unmarked, bfsScope);
-	                }
-	            }
-	            else {
-	                if (callbacks.node_marked) {
-	                    $CB.execCallbacks(callbacks.node_marked, bfsScope);
-	                }
-	            }
-	        }
-	    }
-	    return config.result;
-	}
-	exports.BFS = BFS;
-	function prepareBFSStandardConfig() {
-	    var config = {
-	        result: {},
-	        callbacks: {
-	            init_bfs: [],
-	            node_unmarked: [],
-	            node_marked: [],
-	            sort_nodes: undefined
-	        },
-	        dir_mode: $G.GraphMode.MIXED,
-	        messages: {},
-	        filters: {}
-	    }, result = config.result, callbacks = config.callbacks;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    var initBFS = function (context) {
-	        for (var key in context.nodes) {
-	            config.result[key] = {
-	                distance: Number.POSITIVE_INFINITY,
-	                parent: null,
-	                counter: -1
-	            };
-	        }
-	        config.result[context.root_node.getID()] = {
-	            distance: 0,
-	            parent: context.root_node,
-	            counter: counter()
-	        };
-	    };
-	    callbacks.init_bfs.push(initBFS);
-	    var nodeUnmarked = function (context) {
-	        config.result[context.next_node.getID()] = {
-	            distance: result[context.current.getID()].distance + 1,
-	            parent: context.current,
-	            counter: counter()
-	        };
-	        context.queue.push(context.next_node);
-	    };
-	    callbacks.node_unmarked.push(nodeUnmarked);
-	    return config;
-	}
-	exports.prepareBFSStandardConfig = prepareBFSStandardConfig;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	function execCallbacks(cbs, context) {
-	    cbs.forEach(function (cb) {
-	        if (typeof cb === 'function') {
-	            cb(context);
-	        }
-	        else {
-	            throw new Error('Provided callback is not a function.');
-	        }
-	    });
-	}
-	exports.execCallbacks = execCallbacks;
-
-
-/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(8);
 	function DFSVisit(graph, current_root, config) {
 	    var dfsVisitScope = {
 	        stack: [],
@@ -2067,8 +2213,9 @@
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(16);
+	var $CB = __webpack_require__(8);
 	var $BH = __webpack_require__(19);
+	exports.DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
 	    if (graph.getMode() === $G.GraphMode.INIT) {
@@ -2128,7 +2275,7 @@
 	            if (scope.OPEN[scope.next.node.getID()]) {
 	                scope.next.best = scope.OPEN[scope.next.node.getID()].best;
 	                config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
-	                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+	                scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : scope.next.edge.getWeight());
 	                if (scope.next.best > scope.better_dist) {
 	                    config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
 	                    scope.OPEN_HEAP.remove(scope.next);
@@ -2168,7 +2315,7 @@
 	        dir_mode: $G.GraphMode.MIXED,
 	        goal_node: null,
 	        evalPriority: function (ne) {
-	            return ne.best;
+	            return ne.best || exports.DEFAULT_WEIGHT;
 	        },
 	        evalObjID: function (ne) {
 	            return ne.node.getID();
@@ -2194,7 +2341,7 @@
 	    };
 	    callbacks.init_pfs.push(initPFS);
 	    var notEncountered = function (context) {
-	        context.next.best = context.current.best + context.next.edge.getWeight();
+	        context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : context.next.edge.getWeight());
 	        config.result[context.next.node.getID()] = {
 	            distance: context.next.best,
 	            parent: context.current.node,
@@ -2458,6 +2605,206 @@
 
 /***/ }),
 /* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var PFS_1 = __webpack_require__(18);
+	function BFSanityChecks(graph, start) {
+	    if (graph == null || start == null) {
+	        throw new Error('Graph as well as start node have to be valid objects.');
+	    }
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error('Cowardly refusing to traverse a graph without edges.');
+	    }
+	    if (!graph.hasNodeID(start.getID())) {
+	        throw new Error('Cannot start from an outside node.');
+	    }
+	}
+	function BellmanFordArray(graph, start, cycle) {
+	    if (cycle === void 0) { cycle = false; }
+	    BFSanityChecks(graph, start);
+	    var distArray = [], nodes = graph.getNodes(), edge, node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry, new_weight;
+	    for (var n_idx = 0; n_idx < node_keys.length; ++n_idx) {
+	        node = nodes[node_keys[n_idx]];
+	        distArray[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
+	        id_idx_map[node.getID()] = n_idx;
+	    }
+	    var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+	    var bf_edges = [];
+	    for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
+	        edge = graph_edges[e_idx];
+	        var bf_edge_entry_1 = bf_edges.push([
+	            id_idx_map[edge.getNodes().a.getID()],
+	            id_idx_map[edge.getNodes().b.getID()],
+	            isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT,
+	            edge.isDirected()
+	        ]);
+	    }
+	    for (var i = 0; i < node_keys.length - 1; ++i) {
+	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	            edge = bf_edges[e_idx];
+	            updateDist(edge[0], edge[1], edge[2]);
+	            !edge[3] && updateDist(edge[1], edge[0], edge[2]);
+	        }
+	    }
+	    if (cycle) {
+	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	            edge = bf_edges[e_idx];
+	            if (betterDist(edge[0], edge[1], edge[2]) || (!edge[3] && betterDist(edge[1], edge[0], edge[2]))) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+	    function updateDist(u, v, weight) {
+	        new_weight = distArray[u] + weight;
+	        if (distArray[v] > new_weight) {
+	            distArray[v] = new_weight;
+	        }
+	    }
+	    function betterDist(u, v, weight) {
+	        return (distArray[v] > distArray[u] + weight);
+	    }
+	    return distArray;
+	}
+	exports.BellmanFordArray = BellmanFordArray;
+	function BellmanFordDict(graph, start, cycle) {
+	    if (cycle === void 0) { cycle = false; }
+	    BFSanityChecks(graph, start);
+	    var distDict = {}, edges, edge, a, b, weight, new_weight, nodes_size;
+	    distDict = {};
+	    edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+	    nodes_size = graph.nrNodes();
+	    for (var node in graph.getNodes()) {
+	        distDict[node] = Number.POSITIVE_INFINITY;
+	    }
+	    distDict[start.getID()] = 0;
+	    for (var i = 0; i < nodes_size - 1; ++i) {
+	        for (var e_idx = 0; e_idx < edges.length; ++e_idx) {
+	            edge = edges[e_idx];
+	            a = edge.getNodes().a.getID();
+	            b = edge.getNodes().b.getID();
+	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
+	            updateDist(a, b, weight);
+	            !edge.isDirected() && updateDist(b, a, weight);
+	        }
+	    }
+	    if (cycle) {
+	        for (var edgeID in edges) {
+	            edge = edges[edgeID];
+	            a = edge.getNodes().a.getID();
+	            b = edge.getNodes().b.getID();
+	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
+	            if (betterDist(a, b, weight) || (!edge.isDirected() && betterDist(b, a, weight))) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+	    function updateDist(u, v, weight) {
+	        new_weight = distDict[u] + weight;
+	        if (distDict[v] > new_weight) {
+	            distDict[v] = new_weight;
+	        }
+	    }
+	    function betterDist(u, v, weight) {
+	        return (distDict[v] > distDict[u] + weight);
+	    }
+	    return distDict;
+	}
+	exports.BellmanFordDict = BellmanFordDict;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $SU = __webpack_require__(3);
+	function initializeDistsWithEdges(graph) {
+	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    for (var edge in edges) {
+	        var a = edges[edge].getNodes().a.getID();
+	        var b = edges[edge].getNodes().b.getID();
+	        if (dists[a] == null)
+	            dists[a] = {};
+	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        if (!edges[edge].isDirected()) {
+	            if (dists[b] == null)
+	                dists[b] = {};
+	            dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
+	        }
+	    }
+	    return dists;
+	}
+	function FloydWarshallAPSP(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = graph.adjListArray();
+	    var next = graph.nextArray();
+	    var N = dists.length;
+	    for (var k = 0; k < N; ++k) {
+	        for (var i = 0; i < N; ++i) {
+	            for (var j = 0; j < N; ++j) {
+	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
+	                    next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+	                }
+	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
+	                    next[i][j] = next[i][k].slice(0);
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
+	        }
+	    }
+	    return [dists, next];
+	}
+	exports.FloydWarshallAPSP = FloydWarshallAPSP;
+	function FloydWarshallArray(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = graph.adjListArray();
+	    var N = dists.length;
+	    for (var k = 0; k < N; ++k) {
+	        for (var i = 0; i < N; ++i) {
+	            for (var j = 0; j < N; ++j) {
+	                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
+	        }
+	    }
+	    return dists;
+	}
+	exports.FloydWarshallArray = FloydWarshallArray;
+	function FloydWarshall(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var dists = initializeDistsWithEdges(graph);
+	    for (var k in dists) {
+	        for (var i in dists) {
+	            for (var j in dists) {
+	                if (i === j) {
+	                    continue;
+	                }
+	                if (dists[i][k] == null || dists[k][j] == null) {
+	                    continue;
+	                }
+	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
+	                    dists[i][j] = dists[i][k] + dists[k][j];
+	                }
+	            }
+	        }
+	    }
+	    return dists;
+	}
+	exports.FloydWarshall = FloydWarshall;
+
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2603,11 +2950,11 @@
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var randgen = __webpack_require__(20);
+	var randgen = __webpack_require__(22);
 	var logger_1 = __webpack_require__(5);
 	var logger = new logger_1.Logger();
 	var SimplePerturber = (function () {
@@ -2800,18 +3147,7 @@
 
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	function degreeCentrality(graph) {
-	    return graph.degreeDistribution();
-	}
-	exports.degreeCentrality = degreeCentrality;
-
-
-/***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3135,174 +3471,393 @@
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $G = __webpack_require__(4);
-	var $MC = __webpack_require__(23);
-	var EMEBoykov = (function () {
-	    function EMEBoykov(_graph, _labels, config) {
-	        this._graph = _graph;
-	        this._labels = _labels;
-	        this._state = {
-	            expansionGraph: null,
-	            labeledGraph: null,
-	            activeLabel: '',
-	            energy: Infinity
-	        };
-	        this._config = config || this.prepareEMEStandardConfig();
-	        this._interactionTerm = this._config.interactionTerm;
-	        this._dataTerm = this._config.dataTerm;
-	        this._graph = this.initGraph(_graph);
-	        this._state.labeledGraph = this.deepCopyGraph(this._graph);
-	        this._state.activeLabel = this._labels[0];
+	var $SU = __webpack_require__(3);
+	(function (DegreeMode) {
+	    DegreeMode[DegreeMode["in"] = 0] = "in";
+	    DegreeMode[DegreeMode["out"] = 1] = "out";
+	    DegreeMode[DegreeMode["und"] = 2] = "und";
+	    DegreeMode[DegreeMode["dir"] = 3] = "dir";
+	    DegreeMode[DegreeMode["all"] = 4] = "all";
+	})(exports.DegreeMode || (exports.DegreeMode = {}));
+	var DegreeMode = exports.DegreeMode;
+	var degreeCentrality = (function () {
+	    function degreeCentrality() {
 	    }
-	    EMEBoykov.prototype.calculateCycle = function () {
-	        var success = true;
-	        var mincut_options = { directed: true };
-	        while (success) {
-	            success = false;
-	            for (var i = 0; i < this._labels.length; i++) {
-	                this._state.activeLabel = this._labels[i];
-	                this._state.expansionGraph = this.constructGraph();
-	                var source = this._state.expansionGraph.getNodeById("SOURCE");
-	                var sink = this._state.expansionGraph.getNodeById("SINK");
-	                console.log("compute mincut");
-	                var MinCut;
-	                MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
-	                var mincut_result = MinCut.calculateCycle();
-	                console.log("done mincut");
-	                if (mincut_result.cost < this._state.energy) {
-	                    this._state.energy = mincut_result.cost;
-	                    this._state.labeledGraph = this.labelGraph(mincut_result, source);
-	                    success = true;
+	    degreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
+	        weighted = (weighted != null) ? !!weighted : true;
+	        conf = (conf == null) ? DegreeMode.all : conf;
+	        var ret = {};
+	        switch (conf) {
+	            case DegreeMode.in:
+	                for (var key in graph.getNodes()) {
+	                    var node = graph.getNodeById(key);
+	                    if (node != null)
+	                        if (!weighted)
+	                            ret[key] = node.inDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.inEdges()) {
+	                                ret[key] += node.inEdges()[k].getWeight();
+	                            }
+	                        }
+	                }
+	                break;
+	            case DegreeMode.out:
+	                for (var key in graph.getNodes()) {
+	                    var node = graph.getNodeById(key);
+	                    if (node != null)
+	                        if (!weighted)
+	                            ret[key] = node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.outEdges())
+	                                ret[key] += node.outEdges()[k].getWeight();
+	                        }
+	                }
+	                break;
+	            case DegreeMode.und:
+	                for (var key in graph.getNodes()) {
+	                    var node = graph.getNodeById(key);
+	                    if (node != null)
+	                        if (!weighted)
+	                            ret[key] = node.degree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            for (var k in node.undEdges())
+	                                ret[key] += node.undEdges()[k].getWeight();
+	                        }
+	                }
+	                break;
+	            case DegreeMode.dir:
+	                for (var key in graph.getNodes()) {
+	                    var node = graph.getNodeById(key);
+	                    if (node != null)
+	                        if (!weighted)
+	                            ret[key] = node.inDegree() + node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges()]);
+	                            for (var k in comb)
+	                                ret[key] += comb[k].getWeight();
+	                        }
+	                }
+	                break;
+	            case DegreeMode.all:
+	                for (var key in graph.getNodes()) {
+	                    var node = graph.getNodeById(key);
+	                    if (node != null)
+	                        if (!weighted)
+	                            ret[key] = node.degree() + node.inDegree() + node.outDegree();
+	                        else {
+	                            ret[key] = ret[key] || 0;
+	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges(), node.undEdges()]);
+	                            for (var k in comb) {
+	                                ret[key] += comb[k].getWeight();
+	                            }
+	                        }
+	                }
+	                break;
+	        }
+	        return ret;
+	    };
+	    degreeCentrality.prototype.getHistorgram = function (graph) {
+	        return graph.degreeDistribution();
+	    };
+	    return degreeCentrality;
+	}());
+	exports.degreeCentrality = degreeCentrality;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $PFS = __webpack_require__(18);
+	var $FW = __webpack_require__(21);
+	var closenessCentrality = (function () {
+	    function closenessCentrality() {
+	    }
+	    closenessCentrality.prototype.getCentralityMapFW = function (graph) {
+	        var dists = $FW.FloydWarshallArray(graph);
+	        var ret = [];
+	        var N = dists.length;
+	        for (var a = 0; a < N; ++a) {
+	            var sum = 0;
+	            for (var b = 0; b < N; ++b) {
+	                if (dists[a][b] != Number.POSITIVE_INFINITY)
+	                    sum += dists[a][b];
+	            }
+	            ret[a] = 1 / sum;
+	        }
+	        return ret;
+	    };
+	    closenessCentrality.prototype.getCentralityMap = function (graph) {
+	        var pfs_config = $PFS.preparePFSStandardConfig();
+	        var accumulated_distance = 0;
+	        var not_encountered = function (context) {
+	            accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());
+	        };
+	        var betterPathFound = function (context) {
+	            accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.better_dist;
+	        };
+	        var bp = pfs_config.callbacks.better_path.pop();
+	        pfs_config.callbacks.better_path.push(betterPathFound);
+	        pfs_config.callbacks.better_path.push(bp);
+	        pfs_config.callbacks.not_encountered.push(not_encountered);
+	        var ret = {};
+	        for (var key in graph.getNodes()) {
+	            var node = graph.getNodeById(key);
+	            if (node != null) {
+	                accumulated_distance = 0;
+	                $PFS.PFS(graph, node, pfs_config);
+	                ret[key] = 1 / accumulated_distance;
+	            }
+	        }
+	        return ret;
+	    };
+	    return closenessCentrality;
+	}());
+	exports.closenessCentrality = closenessCentrality;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $FW = __webpack_require__(21);
+	function inBetweennessCentrality(graph, sparse) {
+	    var paths;
+	    paths = $FW.FloydWarshallAPSP(graph)[1];
+	    var nodes = graph.adjListArray();
+	    var map = {};
+	    for (var keyA in nodes) {
+	        map[keyA] = 0;
+	    }
+	    var N = paths.length;
+	    for (var a = 0; a < N; ++a) {
+	        for (var b = 0; b < N; ++b) {
+	            if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
+	                addBetweeness(a, b, paths, map, a);
+	            }
+	        }
+	    }
+	    var dem = 0;
+	    for (var a_1 in map) {
+	        dem += map[a_1];
+	    }
+	    for (var a_2 in map) {
+	        map[a_2] /= dem;
+	    }
+	    return map;
+	}
+	exports.inBetweennessCentrality = inBetweennessCentrality;
+	function addBetweeness(u, v, next, map, start) {
+	    if (u == v)
+	        return 1;
+	    var nodes = 0;
+	    for (var e = 0; e < next[u][v].length; e++) {
+	        nodes += addBetweeness(next[u][v][e], v, next, map, start);
+	    }
+	    if (u != start) {
+	        map[u] += nodes;
+	    }
+	    return nodes;
+	}
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $SU = __webpack_require__(3);
+	var $GAUSS = __webpack_require__(29);
+	var pageRankDetCentrality = (function () {
+	    function pageRankDetCentrality() {
+	    }
+	    pageRankDetCentrality.prototype.getCentralityMap = function (graph, weighted) {
+	        var divideTable = {};
+	        var matr = [];
+	        var ctr = 0;
+	        var map = {};
+	        for (var key in graph.getNodes()) {
+	            divideTable[key] = 0;
+	        }
+	        for (var key in graph.getNodes()) {
+	            map[key] = ctr;
+	            var node = graph.getNodeById(key);
+	            var node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+	            matr[ctr] = new Array();
+	            for (var edgeKey in node_InEdges) {
+	                var edge = node_InEdges[edgeKey];
+	                if (edge.getNodes().a.getID() == node.getID()) {
+	                    matr[ctr].push(edge.getNodes().b.getID());
+	                    divideTable[edge.getNodes().b.getID()]++;
+	                }
+	                else {
+	                    matr[ctr].push(edge.getNodes().a.getID());
+	                    divideTable[edge.getNodes().a.getID()]++;
 	                }
 	            }
-	            if (this._labels.length <= 2) {
-	                break;
+	            matr[ctr].push(node.getID());
+	            ctr++;
+	        }
+	        ctr = 0;
+	        var mapCtr = {};
+	        var numMatr = [[]];
+	        for (var key in matr) {
+	            numMatr[key] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
+	            var p = matr[key].pop();
+	            if (mapCtr[p] == null)
+	                mapCtr[p] = ctr++;
+	            numMatr[key][mapCtr[p]] = -1;
+	            for (var k in matr[key]) {
+	                var a = matr[key][k];
+	                if (mapCtr[a] == null)
+	                    mapCtr[a] = ctr++;
+	                numMatr[key][mapCtr[a]] += 1 / divideTable[a];
 	            }
 	        }
-	        var result = {
-	            graph: this._state.labeledGraph
-	        };
-	        return result;
-	    };
-	    EMEBoykov.prototype.constructGraph = function () {
-	        var graph = this.deepCopyGraph(this._state.labeledGraph);
-	        var nodes = graph.getNodes();
-	        var node_ids = Object.keys(nodes);
-	        var source = graph.addNodeByID("SOURCE");
-	        var sink = graph.addNodeByID("SINK");
-	        var edge_ids = Object.keys(graph.getUndEdges());
-	        var edges_length = edge_ids.length;
-	        for (var i = 0; i < node_ids.length; i++) {
-	            var node = nodes[node_ids[i]];
-	            var edge_options = { directed: true, weighted: true, weight: 0 };
-	            edge_options.weight = this._dataTerm(this._state.activeLabel, this._graph.getNodeById(node.getID()).getLabel());
-	            var edge_source = graph.addEdgeByID(node.getID() + "_" + source.getID(), node, source, edge_options);
-	            var edge_source_reverse = graph.addEdgeByID(source.getID() + "_" + node.getID(), source, node, edge_options);
-	            edge_options.weight = (node.getLabel() == this._state.activeLabel) ? Infinity : this._dataTerm(node.getLabel(), this._graph.getNodeById(node.getID()).getLabel());
-	            var edge_sink = graph.addEdgeByID(node.getID() + "_" + sink.getID(), node, sink, edge_options);
-	            var edge_sink_source = graph.addEdgeByID(sink.getID() + "_" + node.getID(), sink, node, edge_options);
+	        numMatr[numMatr.length - 1] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 1);
+	        var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
+	        x[x.length - 1] = 1;
+	        x = $GAUSS.gauss(numMatr, x);
+	        var y = {};
+	        for (var key in map) {
+	            y[key] = x[ctr];
 	        }
-	        for (var i = 0; i < edges_length; i++) {
-	            var edge = graph.getEdgeById(edge_ids[i]);
-	            var node_p = edge.getNodes().a;
-	            var node_q = edge.getNodes().b;
-	            var edge_options = { directed: true, weighted: true, weight: 0 };
-	            if (node_p.getLabel() == node_q.getLabel()) {
-	                edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
-	                graph.deleteEdge(edge);
-	                graph.addEdgeByID(node_p.getID() + "_" + node_q.getID(), node_p, node_q, edge_options);
-	                graph.addEdgeByID(node_q.getID() + "_" + node_p.getID(), node_q, node_p, edge_options);
-	                continue;
-	            }
-	            var node_aux = graph.addNodeByID("aux_" + node_p.getID() + "_" + node_q.getID());
-	            edge_options.weight = this._interactionTerm(node_p.getLabel(), this._state.activeLabel);
-	            var edge_p_aux = graph.addEdgeByID(node_p.getID() + "_" + node_aux.getID(), node_p, node_aux, edge_options);
-	            var edge_p_aux_reverse = graph.addEdgeByID(node_aux.getID() + "_" + node_p.getID(), node_aux, node_p, edge_options);
-	            edge_options.weight = this._interactionTerm(this._state.activeLabel, node_q.getLabel());
-	            var edge_aux_q = graph.addEdgeByID(node_aux.getID() + "_" + node_q.getID(), node_aux, node_q, edge_options);
-	            var edge_aux_q_reverse = graph.addEdgeByID(node_q.getID() + "_" + node_aux.getID(), node_q, node_aux, edge_options);
-	            edge_options.weight = this._interactionTerm(node_p.getLabel(), node_q.getLabel());
-	            var edge_aux_sink = graph.addEdgeByID(node_aux.getID() + "_" + sink.getID(), node_aux, sink, edge_options);
-	            var edge_aux_sink_reverse = graph.addEdgeByID(sink.getID() + "_" + node_aux.getID(), sink, node_aux, edge_options);
-	            graph.deleteEdge(edge);
-	        }
-	        return graph;
+	        return x;
 	    };
-	    EMEBoykov.prototype.labelGraph = function (mincut, source) {
-	        var graph = this._state.labeledGraph;
-	        var source = this._state.expansionGraph.getNodeById("SOURCE");
-	        for (var i = 0; i < mincut.edges.length; i++) {
-	            var edge = mincut.edges[i];
-	            var node_a = edge.getNodes().a;
-	            var node_b = edge.getNodes().b;
-	            if (node_a.getID() == source.getID()) {
-	                graph.getNodeById(node_b.getID()).setLabel(this._state.activeLabel);
-	                continue;
-	            }
-	            if (node_b.getID() == source.getID()) {
-	                graph.getNodeById(node_a.getID()).setLabel(this._state.activeLabel);
-	            }
-	        }
-	        return graph;
-	    };
-	    EMEBoykov.prototype.deepCopyGraph = function (graph) {
-	        var cGraph = new $G.BaseGraph(graph._label + "_copy");
-	        var nodes = graph.getNodes();
-	        var node_ids = Object.keys(nodes);
-	        var nodes_length = node_ids.length;
-	        for (var i = 0; i < nodes_length; i++) {
-	            var node = nodes[node_ids[i]];
-	            var cNode = cGraph.addNodeByID(node.getID());
-	            cNode.setLabel(node.getLabel());
-	        }
-	        var edges = graph.getUndEdges();
-	        var edge_ids = Object.keys(edges);
-	        var edge_length = edge_ids.length;
-	        for (var i = 0; i < edge_length; i++) {
-	            var edge = edges[edge_ids[i]];
-	            var options = { directed: false, weighted: true, weight: edge.getWeight() };
-	            var node_a = cGraph.getNodeById(edge.getNodes().a.getID());
-	            var node_b = cGraph.getNodeById(edge.getNodes().b.getID());
-	            var cEdge = cGraph.addEdgeByID(edge.getID(), node_a, node_b, options);
-	        }
-	        return cGraph;
-	    };
-	    EMEBoykov.prototype.initGraph = function (graph) {
-	        var nodes = graph.getNodes();
-	        var node_ids = Object.keys(nodes);
-	        var nodes_length = node_ids.length;
-	        for (var i = 0; i < nodes_length; i++) {
-	            var node = nodes[node_ids[i]];
-	            node.setLabel(node.getFeature('label'));
-	        }
-	        return graph;
-	    };
-	    EMEBoykov.prototype.prepareEMEStandardConfig = function () {
-	        var interactionTerm = function (label_a, label_b) {
-	            return (label_a == label_b) ? 0 : 1;
-	        };
-	        var dataTerm = function (label, observed) {
-	            var label_number = Number(label);
-	            var observed_number = Number(observed);
-	            if (isNaN(label_number) || isNaN(observed_number)) {
-	                throw new Error('Cannot convert labels to numbers!');
-	            }
-	            return 1.5 * Math.pow(label_number - observed_number, 2);
-	        };
-	        return {
-	            directed: false,
-	            labeled: false,
-	            interactionTerm: interactionTerm,
-	            dataTerm: dataTerm
-	        };
-	    };
-	    return EMEBoykov;
+	    return pageRankDetCentrality;
 	}());
-	exports.EMEBoykov = EMEBoykov;
+	exports.pageRankDetCentrality = pageRankDetCentrality;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	var abs = Math.abs;
+	function array_fill(i, n, v) {
+	    var a = [];
+	    for (; i < n; i++) {
+	        a.push(v);
+	    }
+	    return a;
+	}
+	function gauss(A, x) {
+	    var i, k, j;
+	    for (i = 0; i < A.length; i++) {
+	        A[i].push(x[i]);
+	    }
+	    var n = A.length;
+	    for (i = 0; i < n; i++) {
+	        var maxEl = abs(A[i][i]), maxRow = i;
+	        for (k = i + 1; k < n; k++) {
+	            if (abs(A[k][i]) > maxEl) {
+	                maxEl = abs(A[k][i]);
+	                maxRow = k;
+	            }
+	        }
+	        for (k = i; k < n + 1; k++) {
+	            var tmp = A[maxRow][k];
+	            A[maxRow][k] = A[i][k];
+	            A[i][k] = tmp;
+	        }
+	        for (k = i + 1; k < n; k++) {
+	            var c = -A[k][i] / A[i][i];
+	            for (j = i; j < n + 1; j++) {
+	                if (i === j) {
+	                    A[k][j] = 0;
+	                }
+	                else {
+	                    A[k][j] += c * A[i][j];
+	                }
+	            }
+	        }
+	    }
+	    x = array_fill(0, n, 0);
+	    for (i = n - 1; i > -1; i--) {
+	        x[i] = A[i][n] / A[i][i];
+	        for (k = i - 1; k > -1; k--) {
+	            A[k][n] -= A[k][i] * x[i];
+	        }
+	    }
+	    return x;
+	}
+	exports.gauss = gauss;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $SU = __webpack_require__(3);
+	var pageRankCentrality = (function () {
+	    function pageRankCentrality() {
+	    }
+	    pageRankCentrality.prototype.getCentralityMap = function (graph, weighted, alpha, conv, iterations) {
+	        if (alpha == null)
+	            alpha = 0.10;
+	        if (iterations == null)
+	            iterations = 1000;
+	        if (conv == null)
+	            conv = 0.000125;
+	        var curr = {};
+	        var old = {};
+	        var nrNodes = graph.nrNodes();
+	        var structure = {};
+	        for (var key in graph.getNodes()) {
+	            key = String(key);
+	            var node = graph.getNodeById(key);
+	            structure[key] = {};
+	            structure[key]['deg'] = node.outDegree() + node.degree();
+	            structure[key]['inc'] = [];
+	            var incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+	            for (var edge in incomingEdges) {
+	                var edgeNode = incomingEdges[edge];
+	                var parent_1 = edgeNode.getNodes().a;
+	                if (edgeNode.getNodes().a.getID() == node.getID())
+	                    parent_1 = edgeNode.getNodes().b;
+	                structure[key]['inc'].push(parent_1.getID());
+	            }
+	        }
+	        for (var key in graph.getNodes()) {
+	            key = String(key);
+	            curr[key] = 1 / nrNodes;
+	            old[key] = 1 / nrNodes;
+	        }
+	        for (var i = 0; i < iterations; i++) {
+	            var me = 0.0;
+	            for (var key in graph.getNodes()) {
+	                key = String(key);
+	                var total = 0;
+	                var parents = structure[key]['inc'];
+	                for (var k in parents) {
+	                    var p = String(parents[k]);
+	                    total += old[p] / structure[p]['deg'];
+	                }
+	                curr[key] = total * (1 - alpha) + alpha / nrNodes;
+	                me += Math.abs(curr[key] - old[key]);
+	            }
+	            if (me <= conv) {
+	                return curr;
+	            }
+	            old = $SU.clone(curr);
+	        }
+	        return curr;
+	    };
+	    return pageRankCentrality;
+	}());
+	exports.pageRankCentrality = pageRankCentrality;
 
 
 /***/ })

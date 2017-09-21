@@ -8,15 +8,20 @@ var JSONOutput      = require("./dist/io/output/JSONOutput.js");
 var BFS				      = require("./dist/search/BFS.js");
 var DFS				      = require("./dist/search/DFS.js");
 var PFS             = require("./dist/search/PFS.js");
+var BellmanFord     = require("./dist/search/BellmanFord.js");
+var FloydWarshall		= require("./dist/search/FloydWarshall.js");
 var structUtils     = require("./dist/utils/structUtils.js");
 var remoteUtils     = require("./dist/utils/remoteUtils.js");
 var callbackUtils   = require("./dist/utils/callbackUtils.js");
 var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
-var degCent				 	= require("./dist/centralities/DegreeCentrality.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var EMEBoykov			= require("./dist/energyminimization/expansionBoykov.js");
+var DegreeCent		 	= require("./dist/centralities/Degree.js");
+var ClosenessCent	 	= require("./dist/centralities/Closeness.js");
+var BetweennessCent	= require("./dist/centralities/Betweenness.js");
+var PRGauss					= require("./dist/centralities/PageRankGaussian.js");
+var PRRandomWalk		= require("./dist/centralities/PageRankRandomWalk.js");
 
 // Define global object
 var out = typeof window !== 'undefined' ? window : global;
@@ -32,7 +37,11 @@ out.$G = {
 		GraphMode		    : Graph.GraphMode
 	},
 	centralities: {
-		degree: degCent
+		Degree: DegreeCent,
+		Closeness: ClosenessCent,
+		Betweenness: BetweennessCent,
+		PageRankGauss: PRGauss,
+		PageRankRandWalk: PRRandomWalk
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,
@@ -50,22 +59,21 @@ out.$G = {
 		prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
 		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
     PFS                            : PFS.PFS,
-    preparePFSStandardConfig       : PFS.preparePFSStandardConfig
+		preparePFSStandardConfig       : PFS.preparePFSStandardConfig,
+		BellmanFord										 : BellmanFord,
+		FloydWarshall									 : FloydWarshall
 	},
 	mincut: {
 		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
 	},
-	energyminimization: {
-		EMEBoykov										 	 : EMEBoykov.EMEBoykov
-	},
-  util: {
+  utils: {
     struct          : structUtils,
     remote          : remoteUtils,
     callback        : callbackUtils,
     randgen         : randGen
   },
   datastructs: {
-    binaryHeap  : binaryHeap
+    BinaryHeap  : binaryHeap.BinaryHeap
   },
 	perturbation: {
 		SimplePerturber: simplePerturbation.SimplePerturber

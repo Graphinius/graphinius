@@ -22,11 +22,12 @@ const paths = {
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/search/**/*.js', 'test/utils/**/*.js', 'test/centralities/**/*.js'],
+	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
+	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
+	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
-	tests_eme: ['test/mincutmaxflow/**/*.js', 'test/energyminimization/**/*.js'],
-	tests_perturb: ['test/perturbation/**/*.js'],
+  tests_perturb: ['test/perturbation/**/*.js'],
+  tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
 	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
@@ -164,6 +165,14 @@ gulp.task('test-async', ['build'], function () {
 });
 
 
+// 'Search tests - include Floyd Warshal and shortest paths'
+gulp.task('test-search', ['build'], function () {
+	return gulp.src(paths.tests_search, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 600000}));
+});
+
+
 // 'Perturbation tests - usually take a tad longer'
 gulp.task('test-perturb', ['build'], function () {
 	return gulp.src(paths.tests_perturb, {read: false})
@@ -171,6 +180,12 @@ gulp.task('test-perturb', ['build'], function () {
 						 							timeout: 60000}));
 });
 
+// 'Centrality tests'
+gulp.task('test-central', ['build'], function () {
+    return gulp.src(paths.tests_central, {read: false})
+						.pipe(mocha({reporter: 'spec',
+												 timeout: 600000}));
+});
 
 // 'Boykov Energyminimization tests - including mincutmaxflow'
 gulp.task('test-eme', ['build'], function () {
@@ -201,7 +216,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 gulp.task('coverage', ['pre-cov-test'], function () {
 	return gulp.src(paths.tests_all, {read: false})
 		.pipe(mocha({reporter: 'spec',
-			timeout: 60000}))
+			timeout: 600000}))
 		// .pipe(istanbul.writeReports({
 		// 	dir: './coverage/node-tests',
 		// 	reporters: [ 'json' ],
@@ -231,8 +246,18 @@ gulp.task('watch-async', function () {
 });
 
 
+gulp.task('watch-search', function () {
+	gulp.watch(paths.typescripts, ['test-search']);
+});
+
+
 gulp.task('watch-perturb', function () {
 	gulp.watch(paths.typescripts, ['test-perturb']);
+});
+
+
+gulp.task('watch-cenral', function () {
+	gulp.watch(paths.typescripts, ['test-central']);
 });
 
 

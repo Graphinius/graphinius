@@ -1,6 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 
@@ -52,8 +51,8 @@ function mergeArrays(args: Array<Array<any>>, cb: Function = undefined ) {
   }
   
   var seen = {},
-    result = [],
-    identity;
+      result = [],
+      identity;
 
   for (var i = 0; i < args.length; i++) {
     for (var j = 0; j < args[i].length; j++) {
@@ -107,4 +106,52 @@ function findKey( obj: Object, cb: Function ) : string {
   return undefined;
 }
 
-export { clone, mergeArrays, mergeObjects, findKey };
+/**
+ * Takes two ordered number arrays and merges them. The returned array is
+ * also ordered and does not contain any duplicates.
+ *
+ * @param a: first array
+ * @param b: second array
+ */
+function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>{
+  let ret:Array<number> = [];
+  let idx_a = 0;
+  let idx_b = 0;
+  if(a[0]!=null && b[0]!=null){
+    while(true){
+      if(idx_a >= a.length || idx_b >= b.length)
+        break;
+
+      if(a[idx_a] == b[idx_b]){
+        if(ret[ret.length-1]!=a[idx_a])
+          ret.push(a[idx_a]);
+        idx_a++;
+        idx_b++;
+        continue;
+      }
+      if(a[idx_a] < b[idx_b]){
+        ret.push(a[idx_a]);
+        idx_a++;
+        continue;
+      }
+      if(b[idx_b] < a[idx_a]){
+        ret.push(b[idx_b]);
+        idx_b++;
+      }
+    }
+  }
+  while(idx_a < a.length){
+    if(a[idx_a]!=null)
+      ret.push(a[idx_a]);
+    idx_a++;
+  }
+  while(idx_b < b.length){
+    if(b[idx_b]!=null)
+      ret.push(b[idx_b]);
+    idx_b++;
+  }
+  return ret;
+}
+
+
+export { clone, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };

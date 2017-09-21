@@ -3,7 +3,9 @@ var $N = require('./Nodes');
 var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
 var logger_1 = require('../utils/logger');
+var $BFS = require('../search/BFS');
 var logger = new logger_1.Logger();
+var DEFAULT_WEIGHT = 1;
 (function (GraphMode) {
     GraphMode[GraphMode["INIT"] = 0] = "INIT";
     GraphMode[GraphMode["DIRECTED"] = 1] = "DIRECTED";
@@ -22,6 +24,63 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
+    BaseGraph.prototype.nextArray = function (incoming) {
+        if (incoming === void 0) { incoming = false; }
+        var next = [], node_keys = Object.keys(this._nodes);
+        var adjDict = this.adjListDict(incoming, true, 0);
+        for (var i = 0; i < this._nr_nodes; ++i) {
+            next.push([]);
+            for (var j = 0; j < this._nr_nodes; ++j) {
+                next[i].push([]);
+                next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
+            }
+        }
+        return next;
+    };
+    BaseGraph.prototype.adjListArray = function (incoming) {
+        if (incoming === void 0) { incoming = false; }
+        var adjList = [], node_keys = Object.keys(this._nodes);
+        var adjDict = this.adjListDict(incoming, true, 0);
+        for (var i = 0; i < this._nr_nodes; ++i) {
+            adjList.push([]);
+            for (var j = 0; j < this._nr_nodes; ++j) {
+                adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
+            }
+        }
+        return adjList;
+    };
+    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
+        if (incoming === void 0) { incoming = false; }
+        if (include_self === void 0) { include_self = false; }
+        if (self_dist === void 0) { self_dist = 0; }
+        var adj_list_dict = {}, nodes = this.getNodes(), cur_dist, key, cur_edge_weight;
+        for (key in nodes) {
+            adj_list_dict[key] = {};
+            if (include_self) {
+                adj_list_dict[key][key] = self_dist;
+            }
+        }
+        for (key in nodes) {
+            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+            neighbors.forEach(function (ne) {
+                cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+                cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
+                if (cur_edge_weight < cur_dist) {
+                    adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
+                    if (incoming) {
+                        adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
+                    }
+                }
+                else {
+                    adj_list_dict[key][ne.node.getID()] = cur_dist;
+                    if (incoming) {
+                        adj_list_dict[ne.node.getID()][key] = cur_dist;
+                    }
+                }
+            });
+        }
+        return adj_list_dict;
+    };
     BaseGraph.prototype.getMode = function () {
         return this._mode;
     };
@@ -183,6 +242,20 @@ var BaseGraph = (function () {
     BaseGraph.prototype.getUndEdges = function () {
         return this._und_edges;
     };
+    BaseGraph.prototype.getDirEdgesArray = function () {
+        var edges = [];
+        for (var e_idx in this._dir_edges) {
+            edges.push(this._dir_edges[e_idx]);
+        }
+        return edges;
+    };
+    BaseGraph.prototype.getUndEdgesArray = function () {
+        var edges = [];
+        for (var e_idx in this._und_edges) {
+            edges.push(this._und_edges[e_idx]);
+        }
+        return edges;
+    };
     BaseGraph.prototype.addEdgeByNodeIDs = function (label, node_a_id, node_b_id, opts) {
         var node_a = this.getNodeById(node_a_id), node_b = this.getNodeById(node_b_id);
         if (!node_a) {
@@ -324,6 +397,31 @@ var BaseGraph = (function () {
                 new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
                 new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
                 new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
+            }
+        });
+        return new_graph;
+    };
+    BaseGraph.prototype.cloneSubGraph = function (root, cutoff) {
+        var new_graph = new BaseGraph(this._label);
+        var config = $BFS.prepareBFSStandardConfig();
+        var bfsNodeUnmarkedTestCallback = function (context) {
+            if (config.result[context.next_node.getID()].counter > cutoff) {
+                context.queue = [];
+            }
+            else {
+                new_graph.addNode(context.next_node.clone());
+            }
+        };
+        config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+        $BFS.BFS(this, root, config);
+        var old_edge, new_node_a = null, new_node_b = null;
+        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
+            for (var edge_id in old_edges) {
+                old_edge = old_edges[edge_id];
+                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+                if (new_node_a != null && new_node_b != null)
+                    new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
             }
         });
         return new_graph;

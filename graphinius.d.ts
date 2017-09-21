@@ -189,14 +189,18 @@ declare module GraphiniusJS {
             nr_und_edges: number;
             nr_dir_edges: number;
         }
+        export type MinAdjacencyList = {[id: string]: MinAdjacencyListEntry};
+
+        export type MinAdjacencyListEntry = {[id: string] : number}
+
         export interface IGraph {
             _label: string;
             getMode(): GraphMode;
             getStats(): GraphStats;
             degreeDistribution(): DegreeDistribution;
+
             // NODE STUFF
             addNodeByID(id: string, opts? : {}) : core.IBaseNode;
-            
 	        addNode(node: core.IBaseNode) : boolean;
             hasNodeID(id: string): boolean;
             hasNodeLabel(label: string): boolean;
@@ -238,6 +242,8 @@ declare module GraphiniusJS {
             clearAllEdges(): void;
             pickRandomProperty(propList) : any;
             pickRandomProperties(propList, amount) : Array<string>;
+            clone() : IGraph;
+            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
         }
 
         export class BaseGraph implements IGraph {
@@ -266,7 +272,6 @@ declare module GraphiniusJS {
             // NODE STUFF
             addNodeByID(id: string, opts? : {}) : core.IBaseNode;
 	        addNode(node: core.IBaseNode) : boolean;
-
             hasNodeID(id: string): boolean;
             hasNodeLabel(label: string): boolean;
             getNodeById(id: string): IBaseNode;
@@ -305,6 +310,8 @@ declare module GraphiniusJS {
             protected updateGraphMode(): void;
             pickRandomProperty(propList) : any;
             pickRandomProperties(propList, amount) : Array<string>;
+            clone() : IGraph;
+            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
         }
     }
 
@@ -630,9 +637,9 @@ declare module GraphiniusJS {
             randomlyAddEdgesAmount(amount: number, config?: core.EdgeConstructorOptions): void;
         }
 
-        export class SimplePerturber implements ISimplePerturber {// CREATE RANDOM EDGES PER NODE
+        export class SimplePerturber implements ISimplePerturber {
 
-            constructor(graph: core.IGraph);
+            constructor(_graph: core.IGraph);
             createRandomEdgesProb(probability: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
             createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: { [key: string]: core.IBaseNode }): void;
 

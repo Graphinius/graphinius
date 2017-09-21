@@ -1,0 +1,90 @@
+{
+  "name": "SEARCH graph for testing SSSP with Bellman-Ford",
+  "nodes": 6,
+  "dir_edges": 8,
+	"und_edges": 0,
+	"data": {
+		"S": {
+			"edges": [
+				{
+					"to": "A",
+					"directed": true,
+          "weight": 10
+				},
+				{
+					"to": "E",
+					"directed": true,
+          "weight": 8
+				}
+			],
+			"features": {
+				"distance_s": 0
+			}
+    },
+    "A": {
+			"edges": [
+				{
+					"to": "C",
+					"directed": true,
+          "weight": 2
+				}
+			],
+			"features": {
+				"distance_s": 5
+			}
+    },
+    "B": {
+			"edges": [
+				{
+					"to": "A",
+					"directed": true,
+          "weight": 1
+				}
+			],
+			"features": {
+				"distance_s": 5
+			}
+    },
+    "C": {
+			"edges": [
+				{
+					"to": "B",
+					"directed": true,
+          "weight": -2
+				}
+			],
+			"features": {
+				"distance_s": 7
+			}
+    },
+    "D": {
+			"edges": [
+				{
+					"to": "A",
+					"directed": true,
+          "weight": -4
+				},
+				{
+					"to": "C",
+					"directed": true,
+          "weight": -1
+				}
+			],
+			"features": {
+				"distance_s": 9
+			}
+    },
+    "E": {
+			"edges": [
+				{
+					"to": "D",
+					"directed": true,
+          "weight": 1
+				}
+			],
+			"features": {
+				"distance_s": 8
+			}
+    }
+	}
+}

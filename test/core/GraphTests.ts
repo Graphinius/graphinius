@@ -28,7 +28,8 @@ describe('GRAPH TESTS: ', () => {
 			edge_1	: $E.IBaseEdge,
 			edge_2	: $E.IBaseEdge,
 			stats		: $G.GraphStats,
-			csv			: $CSV.CSVInput = new $CSV.CSVInput();
+			csv			: $CSV.CSVInput = new $CSV.CSVInput(),
+			csv_sn		: $CSV.CSVInput = new $CSV.CSVInput(" ", false, false);
 	
 
 	describe('Basic graph operations - ', () => {
@@ -388,7 +389,6 @@ describe('GRAPH TESTS: ', () => {
 			node_vana = new Node(42, {label: 'IAmNotInGraph'});
 			
 			expect(graph.nrNodes()).to.equal(4);
-			// expect(graph.nrEdges()).to.equal(7);
 			expect(graph.nrDirEdges()).to.equal(5);
 			expect(graph.nrUndEdges()).to.equal(2);
 			expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
@@ -405,7 +405,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should return the list of undirected edges', () => {
+		it('should return the Dict of undirected edges', () => {
 			var edges = graph.getUndEdges();
 			expect(Object.keys(edges).length).to.equal(2);
 			expect(edges[e_1.getID()]).to.equal(e_1);
@@ -413,7 +413,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should return the list of directed edges', () => {
+		it('should return the Dict of directed edges', () => {
 			var edges = graph.getDirEdges();
 			expect(Object.keys(edges).length).to.equal(5);
 			expect(edges[e_3.getID()]).to.equal(e_3);
@@ -421,6 +421,25 @@ describe('GRAPH TESTS: ', () => {
 			expect(edges[e_5.getID()]).to.equal(e_5);
 			expect(edges[e_6.getID()]).to.equal(e_6);
 			expect(edges[e_7.getID()]).to.equal(e_7);
+		});
+
+
+		it('should return the Array of undirected edges', () => {
+			var edges = graph.getUndEdgesArray();
+			expect(edges.length).to.equal(2);
+			expect(edges).to.contain(e_1);
+			expect(edges).to.contain(e_2);
+		});
+		
+		
+		it('should return the Array of directed edges', () => {
+			var edges = graph.getDirEdgesArray();
+			expect(edges.length).to.equal(5);
+			expect(edges).to.contain(e_3);
+			expect(edges).to.contain(e_4);
+			expect(edges).to.contain(e_5);
+			expect(edges).to.contain(e_6);
+			expect(edges).to.contain(e_7);
 		});
 		
 		
@@ -897,6 +916,242 @@ describe('GRAPH TESTS: ', () => {
 			expect(clone_graph.nrDirEdges()).to.equal(0);
 			expect(clone_deg_dist_all).to.deep.equal(deg_dist_all);
 			// expect(clone_graph).to.deep.equal(graph);
+		});
+
+		/**
+		 * Cloning only a part of the graph
+		 */
+		it('should successfully clone a part of a social network', () => {
+			json_in = new $JSON.JSONInput(false, false, true);
+			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges.csv");
+
+			clone_graph = graph.cloneSubGraph(graph.getNodeById("1374"), 300);
+
+			expect(clone_graph.nrNodes()).to.equal(300);
+			expect(clone_graph.nrUndEdges()).to.equal(4635); //TODO:: check number?
+			expect(clone_graph.nrDirEdges()).to.equal(0);
+		});
+	});
+
+
+	describe('Adjacency List / Hash Tests - ', () => {
+
+		describe("Minimum Adjacency List generation Tests, DICT version - ", () => {
+
+			let graph: $G.IGraph,
+					adj_list: $G.MinAdjacencyListDict,
+					expected_result: $G.MinAdjacencyListDict,
+					jsonReader = new $JSON.JSONInput(true, false, true);
+
+
+			it('should output an empty adjacency list for an empty graph', () => {
+				graph = new $G.BaseGraph("emptinius");
+				expected_result = {};
+				expect(graph.adjListDict()).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce a non-empty adj.list for the small example graph', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict();
+				expect(adj_list).not.to.be.undefined;
+				expect(adj_list).not.to.deep.equal({});
+			});
+
+
+			it('should produce the correct adj.list without incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(false);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 3},
+					'C': {'A': 0},
+					'D': {'A': 6}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list including incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1},
+					'C': {'A': 0},
+					'D': {'A': -33}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list including incoming edges & implicit self connection', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true, true);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 7, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1, 'B': 0},
+					'C': {'A': 0, 'C': 0},
+					'D': {'A': -33, 'D': 0}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			/**
+			 * In a state machine, the distance of a node to itself could
+			 * be set to 1 because the state would have to transition to itself...
+			 */
+			it('should produce the correct adj.list with specific self-dist', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true, true, 1);
+				// console.dir(adj_list);
+				expected_result = {
+					'A': {'A': 1, 'B': 1, 'C': 0, 'D': -33},
+					'B': {'A': 1, 'B': 1},
+					'C': {'A': 0, 'C': 1},
+					'D': {'A': -33, 'D': 1}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+		});
+
+
+		/**
+		 * ?? Negative loops ??
+		 */
+		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
+
+			let sn_300_graph_file = './test/test_data/social_network_edges_300.csv',graph: $G.IGraph,
+					adj_list: $G.MinAdjacencyListArray,
+					sn_300_graph: $G.IGraph,
+					expected_result: $G.MinAdjacencyListArray,
+					jsonReader = new $JSON.JSONInput(true, false, true),
+					csvReader = new $CSV.CSVInput(' ', false, false),
+					inf = Number.POSITIVE_INFINITY;
+
+
+			it('should output an empty adjacency list for an empty graph', () => {
+				graph = new $G.BaseGraph("emptinius");
+				expected_result = [];
+				expect(graph.adjListArray()).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce a non-empty adj.list for the small example graph', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray();
+				expect(adj_list).to.exist;
+				expect(adj_list).not.to.deep.equal([]);
+			});
+
+
+			it('should produce the correct adj.list without incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray();
+				
+				expected_result = [
+					[0, 1, 0, -33],
+					[3, 0, inf, inf],
+					[0, inf, 0, inf],
+					[6, inf, inf, 0]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list including incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray(true);
+				
+				expected_result = [
+					[0, 1, 0, -33],
+					[1, 0, inf, inf],
+					[0, inf, 0, inf],
+					[-33, inf, inf, 0]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it.skip('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+				adj_list = sn_300_graph.adjListArray(true);
+				// console.log(adj_list);
+			});
+
+		});
+
+
+		describe('Next array generation for FW etc.', () => {
+
+			let search_graph_file = "./test/test_data/search_graph_multiple_SPs_positive.json",
+					sn_300_graph_file = './test/test_data/social_network_edges_300.csv',
+					graph: $G.IGraph,
+					sn_300_graph: $G.IGraph,
+					// TODO invent better name for next/adj_list
+					next: $G.NextArray,
+					expected_result: $G.MinAdjacencyListArray,
+					csvReader = new $CSV.CSVInput(' ', false, false),
+					jsonReader = new $JSON.JSONInput(true, false, true),
+					inf = Number.POSITIVE_INFINITY;
+
+
+			it('should output an empty next array for an empty graph', () => {
+				graph = new $G.BaseGraph("emptinius");
+				expected_result = [];
+				expect(graph.adjListArray()).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce a non-empty next array for the small example graph', () => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				next = graph.nextArray();
+				expect(next).to.exist;
+				expect(next).not.to.deep.equal([]);
+			});
+
+
+			it('should produce the correct next array without incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(search_graph_file);
+				next = graph.nextArray();
+				let expected_result = [
+					[[0],[1],[2],[3],[null],[null]],
+					[[0],[1],[2],[null],[4],[5]],
+					[[0],[null],[2],[null],[4],[null]],
+					[[null],[null],[2],[3],[4],[null]],
+					[[null],[1],[null],[3],[4],[null]],
+					[[null],[null],[2],[null],[4],[5]]]	;
+
+				expect(next).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct next array including incoming edges', () => {
+				graph = jsonReader.readFromJSONFile(search_graph_file);
+				next = graph.nextArray(true);
+				let expected_result = [
+					[[0],[1],[2],[3],[null],[null]],
+					[[0],[1],[2],[null],[4],[5]],
+					[[0],[1],[2],[3],[4],[5]],
+					[[0],[null],[2],[3],[4],[null]],
+					[[null],[1],[2],[3],[4],[5]],
+					[[null],[1],[2],[null],[4],[5]]];
+
+				expect(next).to.deep.equal(expected_result);
+			});
+
+
+			it.skip('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+				next = sn_300_graph.nextArray(true);
+				// console.log(next);
+			});
+
 		});
 
 	});

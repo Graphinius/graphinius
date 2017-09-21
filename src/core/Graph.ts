@@ -5,8 +5,11 @@ import * as $E from './Edges';
 import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
+import * as $BFS from '../search/BFS';
 
 let logger : Logger = new Logger();
+
+const DEFAULT_WEIGHT = 1;
 
 export enum GraphMode {
 	INIT,
@@ -32,6 +35,16 @@ export interface GraphStats {
 	nr_dir_edges	: number;
 }
 
+/**
+ * Only gives the best distance to a node in case of multiple direct edges
+ */
+export type MinAdjacencyListDict = {[id: string]: MinAdjacencyListDictEntry};
+
+export type MinAdjacencyListDictEntry = {[id: string] : number};
+
+export type MinAdjacencyListArray = Array<Array<number>>;
+
+export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
 	_label : string;
@@ -64,6 +77,8 @@ export interface IGraph {
 	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
 	getUndEdges() : {[key: string] : $E.IBaseEdge};
+	getDirEdgesArray(): Array<$E.IBaseEdge>;
+	getUndEdgesArray(): Array<$E.IBaseEdge>;
 	nrDirEdges() : number;
 	nrUndEdges() : number;
 	deleteEdge(edge: $E.IBaseEdge) : void;
@@ -86,6 +101,14 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	clone() : IGraph;
+	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
+	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
+	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
+	nextArray(incoming?:boolean) : NextArray;
+
+  // RANDOM STUFF
+	pickRandomProperty(propList) : any;
+	pickRandomProperties(propList, amount) : Array<string>;
 }
 
 
@@ -104,9 +127,117 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
+	nextArray(incoming:boolean = false) : NextArray {
+		let next = [],
+				node_keys = Object.keys(this._nodes);
+
+		const adjDict = this.adjListDict(incoming, true, 0);
+		
+		for ( let i = 0; i < this._nr_nodes; ++i ) {
+			next.push([]);
+			for ( let j = 0; j < this._nr_nodes; ++j ) {
+				next[i].push([]);
+				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
+			}
+		}
+		return next;
+	}
+
+	/**
+	 * This function iterates over the adjDict in order to use it's advantage
+	 * of being able to override edges if edges with smaller weights exist
+	 * 
+	 * However, the order of nodes in the array represents the order of nodes
+	 * at creation time, no other implicit alphabetical or collational sorting.
+	 * 
+	 * This has to be considered when further processing the result
+	 * 
+	 * @param incoming whether or not to consider incoming edges as well
+	 * @param include_self contains a distance to itself apart?
+	 * @param self_dist default distance to self
+	 */
+	adjListArray(incoming:boolean = false) : MinAdjacencyListArray {
+		let adjList = [],
+				node_keys = Object.keys(this._nodes);
+
+		const adjDict = this.adjListDict(incoming, true, 0);
+		
+		for ( let i = 0; i < this._nr_nodes; ++i ) {
+			adjList.push([]);
+			for ( let j = 0; j < this._nr_nodes; ++j ) {
+				adjList[i].push( i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY );
+			}
+		}
+		return adjList;
+		
+	// let adjList = [],
+	// 	idx = 0,
+	// 	j_idx;
+	// 	const adjDict = this.adjListDict(incoming, true, 0);
+
+	// 	for ( let i in adjDict ) {
+	// 		adjList.push([]);
+	// 		j_idx = -1;
+	// 		for ( let j in adjDict ) {
+	// 			++j_idx;
+	// 			adjList[idx].push( i === j ? 0 : isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
+	// 		}
+	// 		++idx;
+	// 	}		
+	// 	return adjList;	
+	}
+
+
+	/**
+	 * 
+	 * @param incoming whether or not to consider incoming edges as well
+	 * @param include_self contains a distance to itself apart?
+	 * @param self_dist default distance to self
+	 */
+	adjListDict(incoming:boolean = false, include_self = false, self_dist = 0) : MinAdjacencyListDict {
+		let adj_list_dict: MinAdjacencyListDict = {},
+				nodes = this.getNodes(),
+				cur_dist: number,
+				key: string,
+				cur_edge_weight: number;
+
+		for ( key in nodes ) {
+			adj_list_dict[key] = {};
+			if ( include_self ) {
+				adj_list_dict[key][key] = self_dist;
+			}
+		}
+		for ( key in nodes ) {
+			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+
+			neighbors.forEach( (ne) => {
+				cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
+				cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
+
+				if ( cur_edge_weight < cur_dist ) {
+					adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
+
+					if (incoming) { // we need to update the 'inverse' entry as well
+						adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
+					}
+				}
+				else {
+					adj_list_dict[key][ne.node.getID()] = cur_dist;
+
+					if (incoming) { // we need to update the 'inverse' entry as well
+						adj_list_dict[ne.node.getID()][key] = cur_dist;
+					}
+				}
+			});
+		}
+		return adj_list_dict;
+	}
+
+
 	getMode() : GraphMode {
 		return this._mode;
 	}
+
 
 	getStats() : GraphStats {
 		return {
@@ -324,6 +455,22 @@ class BaseGraph implements IGraph {
 		return this._und_edges;
 	}
 
+	getDirEdgesArray(): Array<$E.IBaseEdge> {
+		let edges = [];
+		for (let e_idx in this._dir_edges) {
+			edges.push(this._dir_edges[e_idx]);
+		}
+		return edges;
+	}
+
+	getUndEdgesArray(): Array<$E.IBaseEdge> {
+		let edges = [];
+		for (let e_idx in this._und_edges) {
+			edges.push(this._und_edges[e_idx]);
+		}
+		return edges;
+	}
+
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge {
 		var node_a = this.getNodeById(node_a_id),
 				node_b = this.getNodeById(node_b_id);
@@ -525,6 +672,37 @@ class BaseGraph implements IGraph {
 				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
 				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
 				new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) )
+			}
+		});
+
+		return new_graph;
+	}
+
+	cloneSubGraph(root:$N.IBaseNode, cutoff:Number) : IGraph{
+		let new_graph = new BaseGraph(this._label);
+
+		let config = $BFS.prepareBFSStandardConfig();
+
+		var bfsNodeUnmarkedTestCallback = function(context: $BFS.BFS_Scope) {
+			if(config.result[context.next_node.getID()].counter>cutoff){
+				context.queue = [];
+			}else{ //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
+				new_graph.addNode(context.next_node.clone());
+			}
+		};
+		config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
+		$BFS.BFS(this, root, config);
+		let old_edge : $E.IBaseEdge,
+			new_node_a  = null,
+			new_node_b  = null;
+
+		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
+			for ( let edge_id in old_edges ) {
+				old_edge = old_edges[edge_id];
+				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
+				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
+				if(new_node_a != null && new_node_b != null)
+					new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) );
 			}
 		});
 

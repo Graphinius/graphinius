@@ -3,6 +3,7 @@ var $E = require('../core/Edges');
 var $G = require('../core/Graph');
 var $CB = require('../utils/callbackUtils');
 var $BH = require('../datastructs/binaryHeap');
+exports.DEFAULT_WEIGHT = 1;
 function PFS(graph, v, config) {
     var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
     if (graph.getMode() === $G.GraphMode.INIT) {
@@ -62,7 +63,7 @@ function PFS(graph, v, config) {
             if (scope.OPEN[scope.next.node.getID()]) {
                 scope.next.best = scope.OPEN[scope.next.node.getID()].best;
                 config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
-                scope.better_dist = scope.current.best + scope.next.edge.getWeight();
+                scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : scope.next.edge.getWeight());
                 if (scope.next.best > scope.better_dist) {
                     config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
                     scope.OPEN_HEAP.remove(scope.next);
@@ -102,7 +103,7 @@ function preparePFSStandardConfig() {
         dir_mode: $G.GraphMode.MIXED,
         goal_node: null,
         evalPriority: function (ne) {
-            return ne.best;
+            return ne.best || exports.DEFAULT_WEIGHT;
         },
         evalObjID: function (ne) {
             return ne.node.getID();
@@ -128,7 +129,7 @@ function preparePFSStandardConfig() {
     };
     callbacks.init_pfs.push(initPFS);
     var notEncountered = function (context) {
-        context.next.best = context.current.best + context.next.edge.getWeight();
+        context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? exports.DEFAULT_WEIGHT : context.next.edge.getWeight());
         config.result[context.next.node.getID()] = {
             distance: context.next.best,
             parent: context.current.node,
