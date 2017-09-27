@@ -386,7 +386,7 @@ describe('GRAPH TESTS: ', () => {
 			e_6 = graph.addEdgeByID('6', n_c, n_a, {directed: true});
 			e_7 = graph.addEdgeByID('7', n_d, n_a, {directed: true});
 			
-			node_vana = new Node(42, {label: 'IAmNotInGraph'});
+			node_vana = new Node("42", {label: 'IAmNotInGraph'});
 			
 			expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(5);

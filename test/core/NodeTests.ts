@@ -137,7 +137,7 @@ describe('==== NODE TESTS ====', () => {
 		describe('Node edge addition tests', () => {
 		
 			it('should throw an error if we add an unrelated edge', () => {
-				var node_c = new $N.BaseNode(9999, {label: 'Not connected to node_a'});
+				var node_c = new $N.BaseNode('9999', {label: 'Not connected to node_a'});
 				var edge = new $E.BaseEdge(e_id, node_b, node_c);
 				
 				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add edge that does not connect to this node");
@@ -296,10 +296,10 @@ describe('==== NODE TESTS ====', () => {
 			*/
 		describe('a little more complex scenario - ', () => {
 			
-			var n_a = new $N.BaseNode(1, {label: "A"}),
-					n_b = new $N.BaseNode(2, {label: "B"}),
-					n_c = new $N.BaseNode(3, {label: "C"}),
-					n_d = new $N.BaseNode(4, {label: "D"}),
+			var n_a = new $N.BaseNode("A", {label: "A"}),
+					n_b = new $N.BaseNode("B", {label: "B"}),
+					n_c = new $N.BaseNode("C", {label: "C"}),
+					n_d = new $N.BaseNode("D", {label: "D"}),
 					e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
 					e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
 					e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
@@ -441,10 +441,10 @@ describe('==== NODE TESTS ====', () => {
 						e_1, e_2, e_3, e_4, e_5, e_6, e_7, e_8;
 				
 				beforeEach('reinstantiate the "more complex scenario" from above, plus one more loop', () => {
-					n_a = new $N.BaseNode(1, {label: "A"}),
-					n_b = new $N.BaseNode(2, {label: "B"}),
-					n_c = new $N.BaseNode(3, {label: "C"}),
-					n_d = new $N.BaseNode(4, {label: "D"}),
+					n_a = new $N.BaseNode("A", {label: "A"}),
+					n_b = new $N.BaseNode("B", {label: "B"}),
+					n_c = new $N.BaseNode("C", {label: "C"}),
+					n_d = new $N.BaseNode("D", {label: "D"}),
 					e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
 					e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
 					e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),

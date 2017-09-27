@@ -85,7 +85,7 @@
 		centralities: {
 			Degree: DegreeCent,
 			Closeness: ClosenessCent,
-			Betweenness: betweennessCent,
+			Betweenness: BetweennessCent,
 			PageRankGauss: PRGauss,
 			PageRankRandWalk: PRRandomWalk
 		},

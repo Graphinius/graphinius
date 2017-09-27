@@ -49,7 +49,7 @@ class BaseEdge implements IBaseEdge {
 	protected _weight			: number;
 	protected _label			: string;
 
-	constructor (protected _id,
+	constructor (protected _id: string,
 							protected _node_a: $N.IBaseNode,
 							protected _node_b: $N.IBaseNode,
 							options?: EdgeConstructorOptions)

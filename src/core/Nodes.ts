@@ -82,7 +82,7 @@ class BaseNode implements IBaseNode {
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};
 	
-	constructor (protected _id,
+	constructor (protected _id: string,
 							features?: { [k:string] : any }) 
 	{
 		this._in_edges = {};

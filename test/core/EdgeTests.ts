@@ -12,8 +12,8 @@ var Edge = $E.BaseEdge;
 describe('==== EDGE TESTS ====', () => {
 	var id = 'New Edge',
 			label = 'New Edge',
-			node_a = new Node(1),
-			node_b = new Node(2);
+			node_a = new Node("A"),
+			node_b = new Node("B");
 					
 	
 	describe('A basic edge instantiation', () => {
@@ -54,6 +54,7 @@ describe('==== EDGE TESTS ====', () => {
 			edge.setLabel('new Label');
 			expect(edge.getLabel()).to.equal('new Label');
 		});
+		
 	});
 	
 	
