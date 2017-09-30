@@ -1156,4 +1156,56 @@ describe('GRAPH TESTS: ', () => {
 
 	});
 	
+
+	describe.only('negative cycle checks - ', () => {
+
+		let graph : $G.IGraph,
+				n_a : $N.IBaseNode,
+				n_b : $N.IBaseNode,
+				n_c : $N.IBaseNode,
+				e_1 : $E.IBaseEdge,
+				e_2 : $E.IBaseEdge,
+				e_3 : $E.IBaseEdge;
+
+
+		before(() => {
+			graph = new $G.BaseGraph("positive weight graph");
+			n_a = graph.addNodeByID("A");
+			n_b = graph.addNodeByID("B");
+			n_c = graph.addNodeByID("C");
+			e_1 = graph.addEdgeByID("1", n_a, n_b, {directed: true, weighted: true, weight: 1});
+			e_2 = graph.addEdgeByID("2", n_b, n_c, {directed: true, weighted: true, weight: 2});
+			e_3 = graph.addEdgeByID("3", n_c, n_a, {directed: true, weighted: true, weight: 3});
+		});
+
+
+		it('should correclty detect a graph with solely positive edges', () => {
+			expect(graph.hasNegativeCycles()).to.be.false;
+		});
+
+
+		it('should correctly detect a graph with negative edges but no negative cycle', () => {
+			e_2.setWeight(-2);
+			expect(graph.hasNegativeCycles()).to.be.false;
+		});
+
+
+		it('should correctly detect a graph with negative edges but no negative cycle', () => {
+			e_2.setWeight(-5);
+			expect(graph.hasNegativeCycles()).to.be.true;
+		});
+
+
+		it('should correctly detect a negative undirected edge as negative cycle', () => {
+			e_2.setWeight(5);
+			graph.addEdgeByID("Negative Undie", n_a, n_b, {weighted: true, weight: -1});
+			expect(graph.hasNegativeCycles()).to.be.true;
+		});
+
+
+		/**
+		 * TODO graph with different components...
+		 */
+
+	});
 });

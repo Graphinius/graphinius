@@ -4,6 +4,7 @@ var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
 var logger_1 = require('../utils/logger');
 var $BFS = require('../search/BFS');
+var BellmanFord_1 = require('../search/BellmanFord');
 var logger = new logger_1.Logger();
 var DEFAULT_WEIGHT = 1;
 (function (GraphMode) {
@@ -24,6 +25,26 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
+    BaseGraph.prototype.hasNegativeCycles = function () {
+        var negative_edge = false, edge;
+        for (var edge_id in this._und_edges) {
+            edge = this._und_edges[edge_id];
+            if (edge.getWeight() < 0) {
+                return true;
+            }
+        }
+        for (var edge_id in this._dir_edges) {
+            edge = this._dir_edges[edge_id];
+            if (edge.getWeight() < 0) {
+                negative_edge = true;
+                break;
+            }
+        }
+        if (!negative_edge) {
+            return false;
+        }
+        return BellmanFord_1.BellmanFordArray(this, this.getRandomNode(), true);
+    };
     BaseGraph.prototype.nextArray = function (incoming) {
         if (incoming === void 0) { incoming = false; }
         var next = [], node_keys = Object.keys(this._nodes);

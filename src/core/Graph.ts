@@ -6,6 +6,7 @@ import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 import * as $BFS from '../search/BFS';
+import { BellmanFordArray } from '../search/BellmanFord';
 
 let logger : Logger = new Logger();
 
@@ -68,7 +69,6 @@ export interface IGraph {
 	// EDGE STUFF
 	addEdgeByID(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
-
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: string) : boolean;
 	hasEdgeLabel(label: string) : boolean;
@@ -84,6 +84,9 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+	hasNegativeCycles() : boolean;
+
+	// OTHER PROPERTIES
 	pickRandomProperty(propList) : any;
 	pickRandomProperties(propList, amount) : Array<string>;
 
@@ -126,6 +129,44 @@ class BaseGraph implements IGraph {
   // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
 
 	constructor (public _label) {	}
+
+
+	/**
+	 * Do we want to throw an error if an edge is unweighted?
+	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
+	 */
+	hasNegativeCycles() : boolean {
+		let negative_edge = false,
+				edge: $E.IBaseEdge;
+
+		// negative und_edges are always negative cycles
+		for ( let edge_id in this._und_edges ) {
+			edge = this._und_edges[edge_id];
+			if ( edge.getWeight() < 0 ) {
+				return true;
+			}
+		}
+
+		for ( let edge_id in this._dir_edges ) {
+			edge = this._dir_edges[edge_id];
+
+			if ( edge.getWeight() < 0 ) {
+				negative_edge = true;
+				break;
+			}
+		}
+
+		if ( !negative_edge ) {
+			return false;
+		}
+
+		/**
+		 * Invoke BellmanFord to check for negative cycles
+		 * TODO: do this for every component (run DFS in beforehand)
+		 */
+		return <boolean>BellmanFordArray(this, this.getRandomNode(), true);
+	}
+
 
 	nextArray(incoming:boolean = false) : NextArray {
 		let next = [],

@@ -47,20 +47,20 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(9);
-	var CSVOutput       = __webpack_require__(14);
-	var JSONInput       = __webpack_require__(15);
-	var JSONOutput      = __webpack_require__(16);
+	var CSVInput 	      = __webpack_require__(12);
+	var CSVOutput       = __webpack_require__(17);
+	var JSONInput       = __webpack_require__(18);
+	var JSONOutput      = __webpack_require__(19);
 	var BFS				      = __webpack_require__(7);
-	var DFS				      = __webpack_require__(17);
-	var PFS             = __webpack_require__(18);
-	var BellmanFord     = __webpack_require__(20);
+	var DFS				      = __webpack_require__(20);
+	var PFS             = __webpack_require__(10);
+	var BellmanFord     = __webpack_require__(9);
 	var FloydWarshall		= __webpack_require__(21);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(13);
+	var remoteUtils     = __webpack_require__(16);
 	var callbackUtils   = __webpack_require__(8);
 	var randGen         = __webpack_require__(22);
-	var binaryHeap      = __webpack_require__(19);
+	var binaryHeap      = __webpack_require__(11);
 	var simplePerturbation = __webpack_require__(23);
 	var MCMFBoykov			= __webpack_require__(24);
 	var DegreeCent		 	= __webpack_require__(25);
@@ -557,6 +557,7 @@
 	var $DS = __webpack_require__(3);
 	var logger_1 = __webpack_require__(5);
 	var $BFS = __webpack_require__(7);
+	var BellmanFord_1 = __webpack_require__(9);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	(function (GraphMode) {
@@ -577,6 +578,26 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
+	    BaseGraph.prototype.hasNegativeCycles = function () {
+	        var negative_edge = false, edge;
+	        for (var edge_id in this._und_edges) {
+	            edge = this._und_edges[edge_id];
+	            if (edge.getWeight() < 0) {
+	                return true;
+	            }
+	        }
+	        for (var edge_id in this._dir_edges) {
+	            edge = this._dir_edges[edge_id];
+	            if (edge.getWeight() < 0) {
+	                negative_edge = true;
+	                break;
+	            }
+	        }
+	        if (!negative_edge) {
+	            return false;
+	        }
+	        return BellmanFord_1.BellmanFordArray(this, this.getRandomNode(), true);
+	    };
 	    BaseGraph.prototype.nextArray = function (incoming) {
 	        if (incoming === void 0) { incoming = false; }
 	        var next = [], node_keys = Object.keys(this._nodes);
@@ -1234,987 +1255,122 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var path = __webpack_require__(10);
-	var fs = __webpack_require__(12);
-	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(13);
-	var CSVInput = (function () {
-	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
-	        if (_separator === void 0) { _separator = ','; }
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction_mode === void 0) { _direction_mode = false; }
-	        this._separator = _separator;
-	        this._explicit_direction = _explicit_direction;
-	        this._direction_mode = _direction_mode;
+	var PFS_1 = __webpack_require__(10);
+	function BFSanityChecks(graph, start) {
+	    if (graph == null || start == null) {
+	        throw new Error('Graph as well as start node have to be valid objects.');
 	    }
-	    CSVInput.prototype.readFromAdjacencyListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
-	    };
-	    CSVInput.prototype.readFromEdgeListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
-	    };
-	    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
-	        var self = this, graph_name = path.basename(fileurl), graph, request;
-	        if (typeof window !== 'undefined') {
-	            request = new XMLHttpRequest();
-	            request.onreadystatechange = function () {
-	                if (request.readyState == 4 && request.status == 200) {
-	                    var input = request.responseText.split('\n');
-	                    graph = localFun.apply(self, [input, graph_name]);
-	                    cb(graph, undefined);
-	                }
-	            };
-	            request.open("GET", fileurl, true);
-	            request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
-	            request.send();
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error('Cowardly refusing to traverse a graph without edges.');
+	    }
+	    if (!graph.hasNodeID(start.getID())) {
+	        throw new Error('Cannot start from an outside node.');
+	    }
+	}
+	function BellmanFordArray(graph, start, cycle) {
+	    if (cycle === void 0) { cycle = false; }
+	    BFSanityChecks(graph, start);
+	    var distArray = [], nodes = graph.getNodes(), edge, node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry, new_weight;
+	    for (var n_idx = 0; n_idx < node_keys.length; ++n_idx) {
+	        node = nodes[node_keys[n_idx]];
+	        distArray[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
+	        id_idx_map[node.getID()] = n_idx;
+	    }
+	    var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+	    var bf_edges = [];
+	    for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
+	        edge = graph_edges[e_idx];
+	        var bf_edge_entry_1 = bf_edges.push([
+	            id_idx_map[edge.getNodes().a.getID()],
+	            id_idx_map[edge.getNodes().b.getID()],
+	            isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT,
+	            edge.isDirected()
+	        ]);
+	    }
+	    for (var i = 0; i < node_keys.length - 1; ++i) {
+	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	            edge = bf_edges[e_idx];
+	            updateDist(edge[0], edge[1], edge[2]);
+	            !edge[3] && updateDist(edge[1], edge[0], edge[2]);
 	        }
-	        else {
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
-	                var input = raw_graph.toString().split('\n');
-	                graph = localFun.apply(self, [input, graph_name]);
-	                cb(graph, undefined);
-	            });
-	        }
-	    };
-	    CSVInput.prototype.readFromAdjacencyListFile = function (filepath) {
-	        return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
-	    };
-	    CSVInput.prototype.readFromEdgeListFile = function (filepath) {
-	        return this.readFileAndReturn(filepath, this.readFromEdgeList);
-	    };
-	    CSVInput.prototype.readFileAndReturn = function (filepath, func) {
-	        this.checkNodeEnvironment();
-	        var graph_name = path.basename(filepath);
-	        var input = fs.readFileSync(filepath).toString().split('\n');
-	        return func.apply(this, [input, graph_name]);
-	    };
-	    CSVInput.prototype.readFromAdjacencyList = function (input, graph_name) {
-	        var graph = new $G.BaseGraph(graph_name);
-	        for (var idx in input) {
-	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
-	            if (!node_id) {
-	                continue;
-	            }
-	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
-	            for (var e = 0; e < edge_array.length;) {
-	                if (this._explicit_direction && (!edge_array || edge_array.length % 2)) {
-	                    throw new Error('Every edge entry has to contain its direction info in explicit mode.');
-	                }
-	                target_node_id = edge_array[e++];
-	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
-	                dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
-	                if (dir_char !== 'd' && dir_char !== 'u') {
-	                    throw new Error("Specification of edge direction invalid (d and u are valid).");
-	                }
-	                directed = dir_char === 'd';
-	                edge_id = node_id + "_" + target_node_id + "_" + dir_char;
-	                edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
-	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                    continue;
-	                }
-	                else {
-	                    edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
-	                }
+	    }
+	    if (cycle) {
+	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	            edge = bf_edges[e_idx];
+	            if (betterDist(edge[0], edge[1], edge[2]) || (!edge[3] && betterDist(edge[1], edge[0], edge[2]))) {
+	                return true;
 	            }
 	        }
-	        return graph;
-	    };
-	    CSVInput.prototype.readFromEdgeList = function (input, graph_name) {
-	        var graph = new $G.BaseGraph(graph_name);
-	        for (var idx in input) {
-	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
-	            if (!elements) {
-	                continue;
-	            }
-	            if (elements.length < 2) {
-	                console.log(elements);
-	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
-	            }
-	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
-	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
-	            target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
-	            if (dir_char !== 'd' && dir_char !== 'u') {
-	                throw new Error("Specification of edge direction invalid (d and u are valid).");
-	            }
-	            directed = dir_char === 'd';
-	            edge_id = node_id + "_" + target_node_id + "_" + dir_char;
-	            edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
-	            if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                continue;
-	            }
-	            else {
-	                edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
+	        return false;
+	    }
+	    function updateDist(u, v, weight) {
+	        new_weight = distArray[u] + weight;
+	        if (distArray[v] > new_weight) {
+	            distArray[v] = new_weight;
+	        }
+	    }
+	    function betterDist(u, v, weight) {
+	        return (distArray[v] > distArray[u] + weight);
+	    }
+	    return distArray;
+	}
+	exports.BellmanFordArray = BellmanFordArray;
+	function BellmanFordDict(graph, start, cycle) {
+	    if (cycle === void 0) { cycle = false; }
+	    BFSanityChecks(graph, start);
+	    var distDict = {}, edges, edge, a, b, weight, new_weight, nodes_size;
+	    distDict = {};
+	    edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+	    nodes_size = graph.nrNodes();
+	    for (var node in graph.getNodes()) {
+	        distDict[node] = Number.POSITIVE_INFINITY;
+	    }
+	    distDict[start.getID()] = 0;
+	    for (var i = 0; i < nodes_size - 1; ++i) {
+	        for (var e_idx = 0; e_idx < edges.length; ++e_idx) {
+	            edge = edges[e_idx];
+	            a = edge.getNodes().a.getID();
+	            b = edge.getNodes().b.getID();
+	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
+	            updateDist(a, b, weight);
+	            !edge.isDirected() && updateDist(b, a, weight);
+	        }
+	    }
+	    if (cycle) {
+	        for (var edgeID in edges) {
+	            edge = edges[edgeID];
+	            a = edge.getNodes().a.getID();
+	            b = edge.getNodes().b.getID();
+	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
+	            if (betterDist(a, b, weight) || (!edge.isDirected() && betterDist(b, a, weight))) {
+	                return true;
 	            }
 	        }
-	        return graph;
-	    };
-	    CSVInput.prototype.checkNodeEnvironment = function () {
-	        if (typeof window !== 'undefined') {
-	            throw new Error('Cannot read file in browser environment.');
+	        return false;
+	    }
+	    function updateDist(u, v, weight) {
+	        new_weight = distDict[u] + weight;
+	        if (distDict[v] > new_weight) {
+	            distDict[v] = new_weight;
 	        }
-	    };
-	    return CSVInput;
-	}());
-	exports.CSVInput = CSVInput;
+	    }
+	    function betterDist(u, v, weight) {
+	        return (distDict[v] > distDict[u] + weight);
+	    }
+	    return distDict;
+	}
+	exports.BellmanFordDict = BellmanFordDict;
 
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	// resolves . and .. elements in a path array with directory names there
-	// must be no slashes, empty elements, or device names (c:\) in the array
-	// (so also no leading and trailing slashes - it does not distinguish
-	// relative and absolute paths)
-	function normalizeArray(parts, allowAboveRoot) {
-	  // if the path tries to go above the root, `up` ends up > 0
-	  var up = 0;
-	  for (var i = parts.length - 1; i >= 0; i--) {
-	    var last = parts[i];
-	    if (last === '.') {
-	      parts.splice(i, 1);
-	    } else if (last === '..') {
-	      parts.splice(i, 1);
-	      up++;
-	    } else if (up) {
-	      parts.splice(i, 1);
-	      up--;
-	    }
-	  }
-
-	  // if the path is allowed to go above the root, restore leading ..s
-	  if (allowAboveRoot) {
-	    for (; up--; up) {
-	      parts.unshift('..');
-	    }
-	  }
-
-	  return parts;
-	}
-
-	// Split a filename into [root, dir, basename, ext], unix version
-	// 'root' is just a slash, or nothing.
-	var splitPathRe =
-	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-	var splitPath = function(filename) {
-	  return splitPathRe.exec(filename).slice(1);
-	};
-
-	// path.resolve([from ...], to)
-	// posix version
-	exports.resolve = function() {
-	  var resolvedPath = '',
-	      resolvedAbsolute = false;
-
-	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-	    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-	    // Skip empty and invalid entries
-	    if (typeof path !== 'string') {
-	      throw new TypeError('Arguments to path.resolve must be strings');
-	    } else if (!path) {
-	      continue;
-	    }
-
-	    resolvedPath = path + '/' + resolvedPath;
-	    resolvedAbsolute = path.charAt(0) === '/';
-	  }
-
-	  // At this point the path should be resolved to a full absolute path, but
-	  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-	  // Normalize the path
-	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-	    return !!p;
-	  }), !resolvedAbsolute).join('/');
-
-	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-	};
-
-	// path.normalize(path)
-	// posix version
-	exports.normalize = function(path) {
-	  var isAbsolute = exports.isAbsolute(path),
-	      trailingSlash = substr(path, -1) === '/';
-
-	  // Normalize the path
-	  path = normalizeArray(filter(path.split('/'), function(p) {
-	    return !!p;
-	  }), !isAbsolute).join('/');
-
-	  if (!path && !isAbsolute) {
-	    path = '.';
-	  }
-	  if (path && trailingSlash) {
-	    path += '/';
-	  }
-
-	  return (isAbsolute ? '/' : '') + path;
-	};
-
-	// posix version
-	exports.isAbsolute = function(path) {
-	  return path.charAt(0) === '/';
-	};
-
-	// posix version
-	exports.join = function() {
-	  var paths = Array.prototype.slice.call(arguments, 0);
-	  return exports.normalize(filter(paths, function(p, index) {
-	    if (typeof p !== 'string') {
-	      throw new TypeError('Arguments to path.join must be strings');
-	    }
-	    return p;
-	  }).join('/'));
-	};
-
-
-	// path.relative(from, to)
-	// posix version
-	exports.relative = function(from, to) {
-	  from = exports.resolve(from).substr(1);
-	  to = exports.resolve(to).substr(1);
-
-	  function trim(arr) {
-	    var start = 0;
-	    for (; start < arr.length; start++) {
-	      if (arr[start] !== '') break;
-	    }
-
-	    var end = arr.length - 1;
-	    for (; end >= 0; end--) {
-	      if (arr[end] !== '') break;
-	    }
-
-	    if (start > end) return [];
-	    return arr.slice(start, end - start + 1);
-	  }
-
-	  var fromParts = trim(from.split('/'));
-	  var toParts = trim(to.split('/'));
-
-	  var length = Math.min(fromParts.length, toParts.length);
-	  var samePartsLength = length;
-	  for (var i = 0; i < length; i++) {
-	    if (fromParts[i] !== toParts[i]) {
-	      samePartsLength = i;
-	      break;
-	    }
-	  }
-
-	  var outputParts = [];
-	  for (var i = samePartsLength; i < fromParts.length; i++) {
-	    outputParts.push('..');
-	  }
-
-	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-	  return outputParts.join('/');
-	};
-
-	exports.sep = '/';
-	exports.delimiter = ':';
-
-	exports.dirname = function(path) {
-	  var result = splitPath(path),
-	      root = result[0],
-	      dir = result[1];
-
-	  if (!root && !dir) {
-	    // No dirname whatsoever
-	    return '.';
-	  }
-
-	  if (dir) {
-	    // It has a dirname, strip trailing slash
-	    dir = dir.substr(0, dir.length - 1);
-	  }
-
-	  return root + dir;
-	};
-
-
-	exports.basename = function(path, ext) {
-	  var f = splitPath(path)[2];
-	  // TODO: make this comparison case-insensitive on windows?
-	  if (ext && f.substr(-1 * ext.length) === ext) {
-	    f = f.substr(0, f.length - ext.length);
-	  }
-	  return f;
-	};
-
-
-	exports.extname = function(path) {
-	  return splitPath(path)[3];
-	};
-
-	function filter (xs, f) {
-	    if (xs.filter) return xs.filter(f);
-	    var res = [];
-	    for (var i = 0; i < xs.length; i++) {
-	        if (f(xs[i], i, xs)) res.push(xs[i]);
-	    }
-	    return res;
-	}
-
-	// String.prototype.substr - negative index don't work in IE8
-	var substr = 'ab'.substr(-1) === 'b'
-	    ? function (str, start, len) { return str.substr(start, len) }
-	    : function (str, start, len) {
-	        if (start < 0) start = str.length + start;
-	        return str.substr(start, len);
-	    }
-	;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-	// shim for using process in browser
-	var process = module.exports = {};
-
-	// cached from whatever global is present so that test runners that stub it
-	// don't break things.  But we need to wrap it in a try catch in case it is
-	// wrapped in strict mode code which doesn't define any globals.  It's inside a
-	// function because try/catches deoptimize in certain engines.
-
-	var cachedSetTimeout;
-	var cachedClearTimeout;
-
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
-	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
-	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
-	    }
-	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-
-
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-
-
-
-	}
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = runTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    runClearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-	
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var http = __webpack_require__(12);
-	function retrieveRemoteFile(url, cb) {
-	    if (typeof cb !== 'function') {
-	        throw new Error('Provided callback is not a function.');
-	    }
-	    return http.get(url, function (response) {
-	        var body = '';
-	        response.on('data', function (d) {
-	            body += d;
-	        });
-	        response.on('end', function () {
-	            cb(body);
-	        });
-	    });
-	}
-	exports.retrieveRemoteFile = retrieveRemoteFile;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var fs = __webpack_require__(12);
-	var CSVOutput = (function () {
-	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
-	        if (_separator === void 0) { _separator = ','; }
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction_mode === void 0) { _direction_mode = false; }
-	        this._separator = _separator;
-	        this._explicit_direction = _explicit_direction;
-	        this._direction_mode = _direction_mode;
-	    }
-	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
-	        if (typeof window !== 'undefined' && window !== null) {
-	            throw new Error('cannot write to File inside of Browser');
-	        }
-	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
-	    };
-	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
-	        var graphString = "";
-	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
-	        var mergeFunc = function (ne) {
-	            return ne.node.getID();
-	        };
-	        for (var node_key in nodes) {
-	            node = nodes[node_key];
-	            graphString += node.getID();
-	            adj_nodes = node.reachNodes(mergeFunc);
-	            for (var adj_idx in adj_nodes) {
-	                adj_node = adj_nodes[adj_idx].node;
-	                graphString += this._separator + adj_node.getID();
-	            }
-	            graphString += "\n";
-	        }
-	        return graphString;
-	    };
-	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
-	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
-	    };
-	    CSVOutput.prototype.writeToEdgeList = function (graph) {
-	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
-	    };
-	    return CSVOutput;
-	}());
-	exports.CSVOutput = CSVOutput;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var fs = __webpack_require__(12);
-	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(13);
-	var DEFAULT_WEIGHT = 1;
-	var JSONInput = (function () {
-	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction === void 0) { _direction = false; }
-	        if (_weighted_mode === void 0) { _weighted_mode = false; }
-	        this._explicit_direction = _explicit_direction;
-	        this._direction = _direction;
-	        this._weighted_mode = _weighted_mode;
-	    }
-	    JSONInput.prototype.readFromJSONFile = function (filepath) {
-	        this.checkNodeEnvironment();
-	        var json = JSON.parse(fs.readFileSync(filepath).toString());
-	        return this.readFromJSON(json);
-	    };
-	    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
-	        var self = this, graph, request, json;
-	        if (typeof window !== 'undefined') {
-	            request = new XMLHttpRequest();
-	            request.onreadystatechange = function () {
-	                if (request.readyState == 4 && request.status == 200) {
-	                    var json = JSON.parse(request.responseText);
-	                    graph = self.readFromJSON(json);
-	                    if (cb) {
-	                        cb(graph, undefined);
-	                    }
-	                }
-	            };
-	            request.open("GET", fileurl, true);
-	            request.timeout = 60000;
-	            request.setRequestHeader('Content-Type', 'application/json');
-	            request.send();
-	        }
-	        else {
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
-	                graph = self.readFromJSON(JSON.parse(raw_graph));
-	                cb(graph, undefined);
-	            });
-	        }
-	    };
-	    JSONInput.prototype.readFromJSON = function (json) {
-	        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
-	        for (var node_id in json.data) {
-	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
-	            if (features = json.data[node_id].features) {
-	                node.setFeatures(features);
-	            }
-	            if (coords_json = json.data[node_id].coords) {
-	                coords = {};
-	                for (coord_idx in coords_json) {
-	                    coords[coord_idx] = +coords_json[coord_idx];
-	                }
-	                node.setFeature('coords', coords);
-	            }
-	            var edges = json.data[node_id].edges;
-	            for (var e in edges) {
-	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
-	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
-	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
-	                    continue;
-	                }
-	                else {
-	                    var edge = graph.addEdgeByID(edge_id, node, target_node, {
-	                        directed: directed,
-	                        weighted: this._weighted_mode,
-	                        weight: edge_weight
-	                    });
-	                }
-	            }
-	        }
-	        return graph;
-	    };
-	    JSONInput.prototype.handleEdgeWeights = function (edge_input) {
-	        switch (edge_input.weight) {
-	            case "undefined":
-	                return DEFAULT_WEIGHT;
-	            case "Infinity":
-	                return Number.POSITIVE_INFINITY;
-	            case "-Infinity":
-	                return Number.NEGATIVE_INFINITY;
-	            case "MAX":
-	                return Number.MAX_VALUE;
-	            case "MIN":
-	                return Number.MIN_VALUE;
-	            default:
-	                return parseFloat(edge_input.weight);
-	        }
-	    };
-	    JSONInput.prototype.checkNodeEnvironment = function () {
-	        if (typeof window !== 'undefined') {
-	            throw new Error('Cannot read file in browser environment.');
-	        }
-	    };
-	    return JSONInput;
-	}());
-	exports.JSONInput = JSONInput;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var fs = __webpack_require__(12);
-	var JSONOutput = (function () {
-	    function JSONOutput() {
-	    }
-	    JSONOutput.prototype.writeToJSONFile = function (filepath, graph) {
-	        if (typeof window !== 'undefined' && window !== null) {
-	            throw new Error('cannot write to File inside of Browser');
-	        }
-	        fs.writeFileSync(filepath, this.writeToJSONSString(graph));
-	    };
-	    JSONOutput.prototype.writeToJSONSString = function (graph) {
-	        var nodes, node, node_struct, und_edges, dir_edges, edge, edge_struct, features, coords;
-	        var result = {
-	            name: graph._label,
-	            nodes: graph.nrNodes(),
-	            dir_edges: graph.nrDirEdges(),
-	            und_edges: graph.nrUndEdges(),
-	            data: {}
-	        };
-	        nodes = graph.getNodes();
-	        for (var node_key in nodes) {
-	            node = nodes[node_key];
-	            node_struct = result.data[node.getID()] = {
-	                edges: []
-	            };
-	            und_edges = node.undEdges();
-	            for (var edge_key in und_edges) {
-	                edge = und_edges[edge_key];
-	                var connected_nodes = edge.getNodes();
-	                node_struct.edges.push({
-	                    to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
-	                    directed: edge.isDirected(),
-	                    weight: edge.isWeighted() ? edge.getWeight() : undefined
-	                });
-	            }
-	            dir_edges = node.outEdges();
-	            for (var edge_key in dir_edges) {
-	                edge = dir_edges[edge_key];
-	                var connected_nodes = edge.getNodes();
-	                node_struct.edges.push({
-	                    to: connected_nodes.b.getID(),
-	                    directed: edge.isDirected(),
-	                    weight: this.handleEdgeWeight(edge)
-	                });
-	            }
-	            node_struct.features = node.getFeatures();
-	            if ((coords = node.getFeature('coords')) != null) {
-	                node_struct['coords'] = coords;
-	            }
-	        }
-	        return JSON.stringify(result);
-	    };
-	    JSONOutput.prototype.handleEdgeWeight = function (edge) {
-	        if (!edge.isWeighted()) {
-	            return undefined;
-	        }
-	        switch (edge.getWeight()) {
-	            case Number.POSITIVE_INFINITY:
-	                return 'Infinity';
-	            case Number.NEGATIVE_INFINITY:
-	                return '-Infinity';
-	            case Number.MAX_VALUE:
-	                return 'MAX';
-	            case Number.MIN_VALUE:
-	                return 'MIN';
-	            default:
-	                return edge.getWeight();
-	        }
-	    };
-	    return JSONOutput;
-	}());
-	exports.JSONOutput = JSONOutput;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(8);
-	function DFSVisit(graph, current_root, config) {
-	    var dfsVisitScope = {
-	        stack: [],
-	        adj_nodes: [],
-	        stack_entry: null,
-	        current: null,
-	        current_root: current_root
-	    };
-	    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    if (callbacks.init_dfs_visit) {
-	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
-	    }
-	    dfsVisitScope.stack.push({
-	        node: current_root,
-	        parent: current_root,
-	        weight: 0
-	    });
-	    while (dfsVisitScope.stack.length) {
-	        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
-	        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
-	        if (callbacks.node_popped) {
-	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
-	        }
-	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
-	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
-	            if (callbacks.node_unmarked) {
-	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
-	            }
-	            if (dir_mode === $G.GraphMode.MIXED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
-	            }
-	            else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
-	            }
-	            else if (dir_mode === $G.GraphMode.DIRECTED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
-	            }
-	            if (typeof callbacks.sort_nodes === 'function') {
-	                callbacks.sort_nodes(dfsVisitScope);
-	            }
-	            for (var adj_idx in dfsVisitScope.adj_nodes) {
-	                if (callbacks) {
-	                }
-	                dfsVisitScope.stack.push({
-	                    node: dfsVisitScope.adj_nodes[adj_idx].node,
-	                    parent: dfsVisitScope.current,
-	                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
-	                });
-	            }
-	            if (callbacks.adj_nodes_pushed) {
-	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
-	            }
-	        }
-	        else {
-	            if (callbacks.node_marked) {
-	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
-	            }
-	        }
-	    }
-	    return config.visit_result;
-	}
-	exports.DFSVisit = DFSVisit;
-	function DFS(graph, root, config) {
-	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    var dfsScope = {
-	        marked: {},
-	        nodes: graph.getNodes()
-	    };
-	    if (callbacks.init_dfs) {
-	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
-	    }
-	    callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
-	    var markNode = function (context) {
-	        dfsScope.marked[context.current.getID()] = true;
-	    };
-	    callbacks.adj_nodes_pushed.push(markNode);
-	    var dfs_result = [{}];
-	    var dfs_idx = 0;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    var addToProperSegment = function (context) {
-	        dfs_result[dfs_idx][context.current.getID()] = {
-	            parent: context.stack_entry.parent,
-	            counter: counter()
-	        };
-	    };
-	    if (callbacks && callbacks.node_unmarked) {
-	        callbacks.node_unmarked.push(addToProperSegment);
-	    }
-	    DFSVisit(graph, root, config);
-	    for (var node_key in dfsScope.nodes) {
-	        if (!dfsScope.marked[node_key]) {
-	            dfs_idx++;
-	            dfs_result.push({});
-	            DFSVisit(graph, dfsScope.nodes[node_key], config);
-	        }
-	    }
-	    return dfs_result;
-	}
-	exports.DFS = DFS;
-	function prepareDFSVisitStandardConfig() {
-	    var config = {
-	        visit_result: {},
-	        callbacks: {},
-	        messages: {},
-	        dfs_visit_marked: {},
-	        dir_mode: $G.GraphMode.MIXED
-	    }, result = config.visit_result, callbacks = config.callbacks;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-	    var initDFSVisit = function (context) {
-	        result[context.current_root.getID()] = {
-	            parent: context.current_root
-	        };
-	    };
-	    callbacks.init_dfs_visit.push(initDFSVisit);
-	    callbacks.node_unmarked = callbacks.node_unmarked || [];
-	    var setResultEntry = function (context) {
-	        result[context.current.getID()] = {
-	            parent: context.stack_entry.parent,
-	            counter: counter()
-	        };
-	    };
-	    callbacks.node_unmarked.push(setResultEntry);
-	    return config;
-	}
-	exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
-	function prepareDFSStandardConfig() {
-	    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
-	    callbacks.init_dfs = callbacks.init_dfs || [];
-	    var setInitialResultEntries = function (context) {
-	    };
-	    callbacks.init_dfs.push(setInitialResultEntries);
-	    return config;
-	}
-	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
-	;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(8);
-	var $BH = __webpack_require__(19);
+	var $BH = __webpack_require__(11);
 	exports.DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
@@ -2360,7 +1516,7 @@
 
 
 /***/ }),
-/* 19 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2604,115 +1760,980 @@
 
 
 /***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var path = __webpack_require__(13);
+	var fs = __webpack_require__(15);
+	var $G = __webpack_require__(4);
+	var $R = __webpack_require__(16);
+	var CSVInput = (function () {
+	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
+	        if (_separator === void 0) { _separator = ','; }
+	        if (_explicit_direction === void 0) { _explicit_direction = true; }
+	        if (_direction_mode === void 0) { _direction_mode = false; }
+	        this._separator = _separator;
+	        this._explicit_direction = _explicit_direction;
+	        this._direction_mode = _direction_mode;
+	    }
+	    CSVInput.prototype.readFromAdjacencyListURL = function (fileurl, cb) {
+	        this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	    };
+	    CSVInput.prototype.readFromEdgeListURL = function (fileurl, cb) {
+	        this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+	    };
+	    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
+	        var self = this, graph_name = path.basename(fileurl), graph, request;
+	        if (typeof window !== 'undefined') {
+	            request = new XMLHttpRequest();
+	            request.onreadystatechange = function () {
+	                if (request.readyState == 4 && request.status == 200) {
+	                    var input = request.responseText.split('\n');
+	                    graph = localFun.apply(self, [input, graph_name]);
+	                    cb(graph, undefined);
+	                }
+	            };
+	            request.open("GET", fileurl, true);
+	            request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+	            request.send();
+	        }
+	        else {
+	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	                var input = raw_graph.toString().split('\n');
+	                graph = localFun.apply(self, [input, graph_name]);
+	                cb(graph, undefined);
+	            });
+	        }
+	    };
+	    CSVInput.prototype.readFromAdjacencyListFile = function (filepath) {
+	        return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
+	    };
+	    CSVInput.prototype.readFromEdgeListFile = function (filepath) {
+	        return this.readFileAndReturn(filepath, this.readFromEdgeList);
+	    };
+	    CSVInput.prototype.readFileAndReturn = function (filepath, func) {
+	        this.checkNodeEnvironment();
+	        var graph_name = path.basename(filepath);
+	        var input = fs.readFileSync(filepath).toString().split('\n');
+	        return func.apply(this, [input, graph_name]);
+	    };
+	    CSVInput.prototype.readFromAdjacencyList = function (input, graph_name) {
+	        var graph = new $G.BaseGraph(graph_name);
+	        for (var idx in input) {
+	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
+	            if (!node_id) {
+	                continue;
+	            }
+	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+	            for (var e = 0; e < edge_array.length;) {
+	                if (this._explicit_direction && (!edge_array || edge_array.length % 2)) {
+	                    throw new Error('Every edge entry has to contain its direction info in explicit mode.');
+	                }
+	                target_node_id = edge_array[e++];
+	                target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
+	                dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
+	                if (dir_char !== 'd' && dir_char !== 'u') {
+	                    throw new Error("Specification of edge direction invalid (d and u are valid).");
+	                }
+	                directed = dir_char === 'd';
+	                edge_id = node_id + "_" + target_node_id + "_" + dir_char;
+	                edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+	                    continue;
+	                }
+	                else {
+	                    edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
+	                }
+	            }
+	        }
+	        return graph;
+	    };
+	    CSVInput.prototype.readFromEdgeList = function (input, graph_name) {
+	        var graph = new $G.BaseGraph(graph_name);
+	        for (var idx in input) {
+	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
+	            if (!elements) {
+	                continue;
+	            }
+	            if (elements.length < 2) {
+	                console.log(elements);
+	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
+	            }
+	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2;
+	            node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+	            target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
+	            if (dir_char !== 'd' && dir_char !== 'u') {
+	                throw new Error("Specification of edge direction invalid (d and u are valid).");
+	            }
+	            directed = dir_char === 'd';
+	            edge_id = node_id + "_" + target_node_id + "_" + dir_char;
+	            edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+	            if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+	                continue;
+	            }
+	            else {
+	                edge = graph.addEdgeByID(edge_id, node, target_node, { directed: directed });
+	            }
+	        }
+	        return graph;
+	    };
+	    CSVInput.prototype.checkNodeEnvironment = function () {
+	        if (typeof window !== 'undefined') {
+	            throw new Error('Cannot read file in browser environment.');
+	        }
+	    };
+	    return CSVInput;
+	}());
+	exports.CSVInput = CSVInput;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	// resolves . and .. elements in a path array with directory names there
+	// must be no slashes, empty elements, or device names (c:\) in the array
+	// (so also no leading and trailing slashes - it does not distinguish
+	// relative and absolute paths)
+	function normalizeArray(parts, allowAboveRoot) {
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = parts.length - 1; i >= 0; i--) {
+	    var last = parts[i];
+	    if (last === '.') {
+	      parts.splice(i, 1);
+	    } else if (last === '..') {
+	      parts.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      parts.splice(i, 1);
+	      up--;
+	    }
+	  }
+
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (allowAboveRoot) {
+	    for (; up--; up) {
+	      parts.unshift('..');
+	    }
+	  }
+
+	  return parts;
+	}
+
+	// Split a filename into [root, dir, basename, ext], unix version
+	// 'root' is just a slash, or nothing.
+	var splitPathRe =
+	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+	var splitPath = function(filename) {
+	  return splitPathRe.exec(filename).slice(1);
+	};
+
+	// path.resolve([from ...], to)
+	// posix version
+	exports.resolve = function() {
+	  var resolvedPath = '',
+	      resolvedAbsolute = false;
+
+	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+	    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+	    // Skip empty and invalid entries
+	    if (typeof path !== 'string') {
+	      throw new TypeError('Arguments to path.resolve must be strings');
+	    } else if (!path) {
+	      continue;
+	    }
+
+	    resolvedPath = path + '/' + resolvedPath;
+	    resolvedAbsolute = path.charAt(0) === '/';
+	  }
+
+	  // At this point the path should be resolved to a full absolute path, but
+	  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+	  // Normalize the path
+	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+	    return !!p;
+	  }), !resolvedAbsolute).join('/');
+
+	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+	};
+
+	// path.normalize(path)
+	// posix version
+	exports.normalize = function(path) {
+	  var isAbsolute = exports.isAbsolute(path),
+	      trailingSlash = substr(path, -1) === '/';
+
+	  // Normalize the path
+	  path = normalizeArray(filter(path.split('/'), function(p) {
+	    return !!p;
+	  }), !isAbsolute).join('/');
+
+	  if (!path && !isAbsolute) {
+	    path = '.';
+	  }
+	  if (path && trailingSlash) {
+	    path += '/';
+	  }
+
+	  return (isAbsolute ? '/' : '') + path;
+	};
+
+	// posix version
+	exports.isAbsolute = function(path) {
+	  return path.charAt(0) === '/';
+	};
+
+	// posix version
+	exports.join = function() {
+	  var paths = Array.prototype.slice.call(arguments, 0);
+	  return exports.normalize(filter(paths, function(p, index) {
+	    if (typeof p !== 'string') {
+	      throw new TypeError('Arguments to path.join must be strings');
+	    }
+	    return p;
+	  }).join('/'));
+	};
+
+
+	// path.relative(from, to)
+	// posix version
+	exports.relative = function(from, to) {
+	  from = exports.resolve(from).substr(1);
+	  to = exports.resolve(to).substr(1);
+
+	  function trim(arr) {
+	    var start = 0;
+	    for (; start < arr.length; start++) {
+	      if (arr[start] !== '') break;
+	    }
+
+	    var end = arr.length - 1;
+	    for (; end >= 0; end--) {
+	      if (arr[end] !== '') break;
+	    }
+
+	    if (start > end) return [];
+	    return arr.slice(start, end - start + 1);
+	  }
+
+	  var fromParts = trim(from.split('/'));
+	  var toParts = trim(to.split('/'));
+
+	  var length = Math.min(fromParts.length, toParts.length);
+	  var samePartsLength = length;
+	  for (var i = 0; i < length; i++) {
+	    if (fromParts[i] !== toParts[i]) {
+	      samePartsLength = i;
+	      break;
+	    }
+	  }
+
+	  var outputParts = [];
+	  for (var i = samePartsLength; i < fromParts.length; i++) {
+	    outputParts.push('..');
+	  }
+
+	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+	  return outputParts.join('/');
+	};
+
+	exports.sep = '/';
+	exports.delimiter = ':';
+
+	exports.dirname = function(path) {
+	  var result = splitPath(path),
+	      root = result[0],
+	      dir = result[1];
+
+	  if (!root && !dir) {
+	    // No dirname whatsoever
+	    return '.';
+	  }
+
+	  if (dir) {
+	    // It has a dirname, strip trailing slash
+	    dir = dir.substr(0, dir.length - 1);
+	  }
+
+	  return root + dir;
+	};
+
+
+	exports.basename = function(path, ext) {
+	  var f = splitPath(path)[2];
+	  // TODO: make this comparison case-insensitive on windows?
+	  if (ext && f.substr(-1 * ext.length) === ext) {
+	    f = f.substr(0, f.length - ext.length);
+	  }
+	  return f;
+	};
+
+
+	exports.extname = function(path) {
+	  return splitPath(path)[3];
+	};
+
+	function filter (xs, f) {
+	    if (xs.filter) return xs.filter(f);
+	    var res = [];
+	    for (var i = 0; i < xs.length; i++) {
+	        if (f(xs[i], i, xs)) res.push(xs[i]);
+	    }
+	    return res;
+	}
+
+	// String.prototype.substr - negative index don't work in IE8
+	var substr = 'ab'.substr(-1) === 'b'
+	    ? function (str, start, len) { return str.substr(start, len) }
+	    : function (str, start, len) {
+	        if (start < 0) start = str.length + start;
+	        return str.substr(start, len);
+	    }
+	;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+	// shim for using process in browser
+	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
+	(function () {
+	    try {
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
+	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
+	    }
+	    try {
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
+	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+
+
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+
+
+
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = runTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    runClearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        runTimeout(drainQueue);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+	
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var http = __webpack_require__(15);
+	function retrieveRemoteFile(url, cb) {
+	    if (typeof cb !== 'function') {
+	        throw new Error('Provided callback is not a function.');
+	    }
+	    return http.get(url, function (response) {
+	        var body = '';
+	        response.on('data', function (d) {
+	            body += d;
+	        });
+	        response.on('end', function () {
+	            cb(body);
+	        });
+	    });
+	}
+	exports.retrieveRemoteFile = retrieveRemoteFile;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var fs = __webpack_require__(15);
+	var CSVOutput = (function () {
+	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
+	        if (_separator === void 0) { _separator = ','; }
+	        if (_explicit_direction === void 0) { _explicit_direction = true; }
+	        if (_direction_mode === void 0) { _direction_mode = false; }
+	        this._separator = _separator;
+	        this._explicit_direction = _explicit_direction;
+	        this._direction_mode = _direction_mode;
+	    }
+	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
+	        if (typeof window !== 'undefined' && window !== null) {
+	            throw new Error('cannot write to File inside of Browser');
+	        }
+	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
+	    };
+	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
+	        var graphString = "";
+	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
+	        var mergeFunc = function (ne) {
+	            return ne.node.getID();
+	        };
+	        for (var node_key in nodes) {
+	            node = nodes[node_key];
+	            graphString += node.getID();
+	            adj_nodes = node.reachNodes(mergeFunc);
+	            for (var adj_idx in adj_nodes) {
+	                adj_node = adj_nodes[adj_idx].node;
+	                graphString += this._separator + adj_node.getID();
+	            }
+	            graphString += "\n";
+	        }
+	        return graphString;
+	    };
+	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
+	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
+	    };
+	    CSVOutput.prototype.writeToEdgeList = function (graph) {
+	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
+	    };
+	    return CSVOutput;
+	}());
+	exports.CSVOutput = CSVOutput;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var fs = __webpack_require__(15);
+	var $G = __webpack_require__(4);
+	var $R = __webpack_require__(16);
+	var DEFAULT_WEIGHT = 1;
+	var JSONInput = (function () {
+	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
+	        if (_explicit_direction === void 0) { _explicit_direction = true; }
+	        if (_direction === void 0) { _direction = false; }
+	        if (_weighted_mode === void 0) { _weighted_mode = false; }
+	        this._explicit_direction = _explicit_direction;
+	        this._direction = _direction;
+	        this._weighted_mode = _weighted_mode;
+	    }
+	    JSONInput.prototype.readFromJSONFile = function (filepath) {
+	        this.checkNodeEnvironment();
+	        var json = JSON.parse(fs.readFileSync(filepath).toString());
+	        return this.readFromJSON(json);
+	    };
+	    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
+	        var self = this, graph, request, json;
+	        if (typeof window !== 'undefined') {
+	            request = new XMLHttpRequest();
+	            request.onreadystatechange = function () {
+	                if (request.readyState == 4 && request.status == 200) {
+	                    var json = JSON.parse(request.responseText);
+	                    graph = self.readFromJSON(json);
+	                    if (cb) {
+	                        cb(graph, undefined);
+	                    }
+	                }
+	            };
+	            request.open("GET", fileurl, true);
+	            request.timeout = 60000;
+	            request.setRequestHeader('Content-Type', 'application/json');
+	            request.send();
+	        }
+	        else {
+	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	                graph = self.readFromJSON(JSON.parse(raw_graph));
+	                cb(graph, undefined);
+	            });
+	        }
+	    };
+	    JSONInput.prototype.readFromJSON = function (json) {
+	        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
+	        for (var node_id in json.data) {
+	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+	            if (features = json.data[node_id].features) {
+	                node.setFeatures(features);
+	            }
+	            if (coords_json = json.data[node_id].coords) {
+	                coords = {};
+	                for (coord_idx in coords_json) {
+	                    coords[coord_idx] = +coords_json[coord_idx];
+	                }
+	                node.setFeature('coords', coords);
+	            }
+	            var edges = json.data[node_id].edges;
+	            for (var e in edges) {
+	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
+	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+	                    continue;
+	                }
+	                else {
+	                    var edge = graph.addEdgeByID(edge_id, node, target_node, {
+	                        directed: directed,
+	                        weighted: this._weighted_mode,
+	                        weight: edge_weight
+	                    });
+	                }
+	            }
+	        }
+	        return graph;
+	    };
+	    JSONInput.prototype.handleEdgeWeights = function (edge_input) {
+	        switch (edge_input.weight) {
+	            case "undefined":
+	                return DEFAULT_WEIGHT;
+	            case "Infinity":
+	                return Number.POSITIVE_INFINITY;
+	            case "-Infinity":
+	                return Number.NEGATIVE_INFINITY;
+	            case "MAX":
+	                return Number.MAX_VALUE;
+	            case "MIN":
+	                return Number.MIN_VALUE;
+	            default:
+	                return parseFloat(edge_input.weight);
+	        }
+	    };
+	    JSONInput.prototype.checkNodeEnvironment = function () {
+	        if (typeof window !== 'undefined') {
+	            throw new Error('Cannot read file in browser environment.');
+	        }
+	    };
+	    return JSONInput;
+	}());
+	exports.JSONInput = JSONInput;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var fs = __webpack_require__(15);
+	var JSONOutput = (function () {
+	    function JSONOutput() {
+	    }
+	    JSONOutput.prototype.writeToJSONFile = function (filepath, graph) {
+	        if (typeof window !== 'undefined' && window !== null) {
+	            throw new Error('cannot write to File inside of Browser');
+	        }
+	        fs.writeFileSync(filepath, this.writeToJSONSString(graph));
+	    };
+	    JSONOutput.prototype.writeToJSONSString = function (graph) {
+	        var nodes, node, node_struct, und_edges, dir_edges, edge, edge_struct, features, coords;
+	        var result = {
+	            name: graph._label,
+	            nodes: graph.nrNodes(),
+	            dir_edges: graph.nrDirEdges(),
+	            und_edges: graph.nrUndEdges(),
+	            data: {}
+	        };
+	        nodes = graph.getNodes();
+	        for (var node_key in nodes) {
+	            node = nodes[node_key];
+	            node_struct = result.data[node.getID()] = {
+	                edges: []
+	            };
+	            und_edges = node.undEdges();
+	            for (var edge_key in und_edges) {
+	                edge = und_edges[edge_key];
+	                var connected_nodes = edge.getNodes();
+	                node_struct.edges.push({
+	                    to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
+	                    directed: edge.isDirected(),
+	                    weight: edge.isWeighted() ? edge.getWeight() : undefined
+	                });
+	            }
+	            dir_edges = node.outEdges();
+	            for (var edge_key in dir_edges) {
+	                edge = dir_edges[edge_key];
+	                var connected_nodes = edge.getNodes();
+	                node_struct.edges.push({
+	                    to: connected_nodes.b.getID(),
+	                    directed: edge.isDirected(),
+	                    weight: this.handleEdgeWeight(edge)
+	                });
+	            }
+	            node_struct.features = node.getFeatures();
+	            if ((coords = node.getFeature('coords')) != null) {
+	                node_struct['coords'] = coords;
+	            }
+	        }
+	        return JSON.stringify(result);
+	    };
+	    JSONOutput.prototype.handleEdgeWeight = function (edge) {
+	        if (!edge.isWeighted()) {
+	            return undefined;
+	        }
+	        switch (edge.getWeight()) {
+	            case Number.POSITIVE_INFINITY:
+	                return 'Infinity';
+	            case Number.NEGATIVE_INFINITY:
+	                return '-Infinity';
+	            case Number.MAX_VALUE:
+	                return 'MAX';
+	            case Number.MIN_VALUE:
+	                return 'MIN';
+	            default:
+	                return edge.getWeight();
+	        }
+	    };
+	    return JSONOutput;
+	}());
+	exports.JSONOutput = JSONOutput;
+
+
+/***/ }),
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var PFS_1 = __webpack_require__(18);
-	function BFSanityChecks(graph, start) {
-	    if (graph == null || start == null) {
-	        throw new Error('Graph as well as start node have to be valid objects.');
+	var $G = __webpack_require__(4);
+	var $CB = __webpack_require__(8);
+	function DFSVisit(graph, current_root, config) {
+	    var dfsVisitScope = {
+	        stack: [],
+	        adj_nodes: [],
+	        stack_entry: null,
+	        current: null,
+	        current_root: current_root
+	    };
+	    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
 	    }
-	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-	        throw new Error('Cowardly refusing to traverse a graph without edges.');
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	    }
-	    if (!graph.hasNodeID(start.getID())) {
-	        throw new Error('Cannot start from an outside node.');
+	    if (callbacks.init_dfs_visit) {
+	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
 	    }
-	}
-	function BellmanFordArray(graph, start, cycle) {
-	    if (cycle === void 0) { cycle = false; }
-	    BFSanityChecks(graph, start);
-	    var distArray = [], nodes = graph.getNodes(), edge, node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry, new_weight;
-	    for (var n_idx = 0; n_idx < node_keys.length; ++n_idx) {
-	        node = nodes[node_keys[n_idx]];
-	        distArray[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
-	        id_idx_map[node.getID()] = n_idx;
-	    }
-	    var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
-	    var bf_edges = [];
-	    for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
-	        edge = graph_edges[e_idx];
-	        var bf_edge_entry_1 = bf_edges.push([
-	            id_idx_map[edge.getNodes().a.getID()],
-	            id_idx_map[edge.getNodes().b.getID()],
-	            isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT,
-	            edge.isDirected()
-	        ]);
-	    }
-	    for (var i = 0; i < node_keys.length - 1; ++i) {
-	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
-	            edge = bf_edges[e_idx];
-	            updateDist(edge[0], edge[1], edge[2]);
-	            !edge[3] && updateDist(edge[1], edge[0], edge[2]);
+	    dfsVisitScope.stack.push({
+	        node: current_root,
+	        parent: current_root,
+	        weight: 0
+	    });
+	    while (dfsVisitScope.stack.length) {
+	        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
+	        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
+	        if (callbacks.node_popped) {
+	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
 	        }
-	    }
-	    if (cycle) {
-	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
-	            edge = bf_edges[e_idx];
-	            if (betterDist(edge[0], edge[1], edge[2]) || (!edge[3] && betterDist(edge[1], edge[0], edge[2]))) {
-	                return true;
+	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
+	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
+	            if (callbacks.node_unmarked) {
+	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
+	            }
+	            if (dir_mode === $G.GraphMode.MIXED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
+	            }
+	            else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
+	            }
+	            else if (dir_mode === $G.GraphMode.DIRECTED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
+	            }
+	            if (typeof callbacks.sort_nodes === 'function') {
+	                callbacks.sort_nodes(dfsVisitScope);
+	            }
+	            for (var adj_idx in dfsVisitScope.adj_nodes) {
+	                if (callbacks) {
+	                }
+	                dfsVisitScope.stack.push({
+	                    node: dfsVisitScope.adj_nodes[adj_idx].node,
+	                    parent: dfsVisitScope.current,
+	                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
+	                });
+	            }
+	            if (callbacks.adj_nodes_pushed) {
+	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
 	            }
 	        }
-	        return false;
-	    }
-	    function updateDist(u, v, weight) {
-	        new_weight = distArray[u] + weight;
-	        if (distArray[v] > new_weight) {
-	            distArray[v] = new_weight;
-	        }
-	    }
-	    function betterDist(u, v, weight) {
-	        return (distArray[v] > distArray[u] + weight);
-	    }
-	    return distArray;
-	}
-	exports.BellmanFordArray = BellmanFordArray;
-	function BellmanFordDict(graph, start, cycle) {
-	    if (cycle === void 0) { cycle = false; }
-	    BFSanityChecks(graph, start);
-	    var distDict = {}, edges, edge, a, b, weight, new_weight, nodes_size;
-	    distDict = {};
-	    edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
-	    nodes_size = graph.nrNodes();
-	    for (var node in graph.getNodes()) {
-	        distDict[node] = Number.POSITIVE_INFINITY;
-	    }
-	    distDict[start.getID()] = 0;
-	    for (var i = 0; i < nodes_size - 1; ++i) {
-	        for (var e_idx = 0; e_idx < edges.length; ++e_idx) {
-	            edge = edges[e_idx];
-	            a = edge.getNodes().a.getID();
-	            b = edge.getNodes().b.getID();
-	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
-	            updateDist(a, b, weight);
-	            !edge.isDirected() && updateDist(b, a, weight);
-	        }
-	    }
-	    if (cycle) {
-	        for (var edgeID in edges) {
-	            edge = edges[edgeID];
-	            a = edge.getNodes().a.getID();
-	            b = edge.getNodes().b.getID();
-	            weight = isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT;
-	            if (betterDist(a, b, weight) || (!edge.isDirected() && betterDist(b, a, weight))) {
-	                return true;
+	        else {
+	            if (callbacks.node_marked) {
+	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
 	            }
 	        }
-	        return false;
 	    }
-	    function updateDist(u, v, weight) {
-	        new_weight = distDict[u] + weight;
-	        if (distDict[v] > new_weight) {
-	            distDict[v] = new_weight;
+	    return config.visit_result;
+	}
+	exports.DFSVisit = DFSVisit;
+	function DFS(graph, root, config) {
+	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    var dfsScope = {
+	        marked: {},
+	        nodes: graph.getNodes()
+	    };
+	    if (callbacks.init_dfs) {
+	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
+	    }
+	    callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
+	    var markNode = function (context) {
+	        dfsScope.marked[context.current.getID()] = true;
+	    };
+	    callbacks.adj_nodes_pushed.push(markNode);
+	    var dfs_result = [{}];
+	    var dfs_idx = 0;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    var addToProperSegment = function (context) {
+	        dfs_result[dfs_idx][context.current.getID()] = {
+	            parent: context.stack_entry.parent,
+	            counter: counter()
+	        };
+	    };
+	    if (callbacks && callbacks.node_unmarked) {
+	        callbacks.node_unmarked.push(addToProperSegment);
+	    }
+	    DFSVisit(graph, root, config);
+	    for (var node_key in dfsScope.nodes) {
+	        if (!dfsScope.marked[node_key]) {
+	            dfs_idx++;
+	            dfs_result.push({});
+	            DFSVisit(graph, dfsScope.nodes[node_key], config);
 	        }
 	    }
-	    function betterDist(u, v, weight) {
-	        return (distDict[v] > distDict[u] + weight);
-	    }
-	    return distDict;
+	    return dfs_result;
 	}
-	exports.BellmanFordDict = BellmanFordDict;
+	exports.DFS = DFS;
+	function prepareDFSVisitStandardConfig() {
+	    var config = {
+	        visit_result: {},
+	        callbacks: {},
+	        messages: {},
+	        dfs_visit_marked: {},
+	        dir_mode: $G.GraphMode.MIXED
+	    }, result = config.visit_result, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
+	    var initDFSVisit = function (context) {
+	        result[context.current_root.getID()] = {
+	            parent: context.current_root
+	        };
+	    };
+	    callbacks.init_dfs_visit.push(initDFSVisit);
+	    callbacks.node_unmarked = callbacks.node_unmarked || [];
+	    var setResultEntry = function (context) {
+	        result[context.current.getID()] = {
+	            parent: context.stack_entry.parent,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.node_unmarked.push(setResultEntry);
+	    return config;
+	}
+	exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
+	function prepareDFSStandardConfig() {
+	    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
+	    callbacks.init_dfs = callbacks.init_dfs || [];
+	    var setInitialResultEntries = function (context) {
+	    };
+	    callbacks.init_dfs.push(setInitialResultEntries);
+	    return config;
+	}
+	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
+	;
 
 
 /***/ }),
@@ -3577,7 +3598,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $PFS = __webpack_require__(18);
+	var $PFS = __webpack_require__(10);
 	var $FW = __webpack_require__(21);
 	var closenessCentrality = (function () {
 	    function closenessCentrality() {
