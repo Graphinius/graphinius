@@ -1021,11 +1021,45 @@ describe('GRAPH TESTS: ', () => {
 				expect(adj_list).to.deep.equal(expected_result);
 			});
 
+
+			/**
+			 * TODO include edge to self when 'include_self' is not set?
+			 */
+
+			it('should produce the correct adj.list considering default weights', () => {
+				jsonReader = new $JSON.JSONInput(true, false, false);
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true);
+				
+				expected_result = {
+					'A': {'A': 1, 'B': 1, 'C': 1, 'D': 1},
+					'B': {'A': 1},
+					'C': {'A': 1},
+					'D': {'A': 1}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('should produce the correct adj.list considering default weights', () => {
+				jsonReader = new $JSON.JSONInput(true, false, false);
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListDict(true, true);
+				
+				expected_result = {
+					'A': {'A': 1, 'B': 1, 'C': 1, 'D': 1},
+					'B': {'A': 1, 'B': 0},
+					'C': {'A': 1, 'C': 0},
+					'D': {'A': 1, 'D': 0}
+				};
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
 		});
 
 
 		/**
-		 * ?? Negative loops ??
+		 * TODO how to deal with negative loops?
 		 */
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 
@@ -1081,10 +1115,26 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it.skip('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+			it('should produce the correct adj.list considering default weights', () => {
+				jsonReader = new $JSON.JSONInput(true, false, false);
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				adj_list = graph.adjListArray(true);
+				
+				expected_result = [
+					[0, 1, 1, 1],
+					[1, 0, inf, inf],
+					[1, inf, 0, inf],
+					[1, inf, inf, 0]
+				];
+				expect(adj_list).to.deep.equal(expected_result);
+			});
+
+
+			it('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
 				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
 				adj_list = sn_300_graph.adjListArray(true);
-				// console.log(adj_list);
+				expect(adj_list.length).to.equal(sn_300_graph.nrNodes());
+				adj_list.forEach( adj_entry => expect(adj_entry.length).to.equal(sn_300_graph.nrNodes()));
 			});
 
 		});
@@ -1149,7 +1199,7 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it.skip('practice test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
+			it('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph', () => {
 				sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
 				next = sn_300_graph.nextArray(true);
 				// console.log(next);

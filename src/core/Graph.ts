@@ -149,7 +149,6 @@ class BaseGraph implements IGraph {
 				return true;
 			}
 		}
-
 		for ( let edge_id in this._dir_edges ) {
 			edge = this._dir_edges[edge_id];
 			if ( edge.getWeight() < 0 ) {
@@ -157,7 +156,6 @@ class BaseGraph implements IGraph {
 				break;
 			}
 		}
-
 		if ( !negative_edge ) {
 			return false;
 		}
@@ -232,22 +230,6 @@ class BaseGraph implements IGraph {
 			}
 		}
 		return adjList;
-		
-	// let adjList = [],
-	// 	idx = 0,
-	// 	j_idx;
-	// 	const adjDict = this.adjListDict(incoming, true, 0);
-
-	// 	for ( let i in adjDict ) {
-	// 		adjList.push([]);
-	// 		j_idx = -1;
-	// 		for ( let j in adjDict ) {
-	// 			++j_idx;
-	// 			adjList[idx].push( i === j ? 0 : isFinite(adjDict[i][j]) ? adjDict[i][j] : Number.POSITIVE_INFINITY );
-	// 		}
-	// 		++idx;
-	// 	}		
-	// 	return adjList;	
 	}
 
 

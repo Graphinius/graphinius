@@ -169,7 +169,7 @@ gulp.task('test-async', ['build'], function () {
 gulp.task('test-search', ['build'], function () {
 	return gulp.src(paths.tests_search, {read: false})
 						 .pipe(mocha({reporter: 'spec',
-						 							timeout: 600000}));
+						 							timeout: 60000}));
 });
 
 
