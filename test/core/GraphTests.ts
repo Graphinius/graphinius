@@ -15,6 +15,7 @@ var Graph = $G.BaseGraph;
 
 const small_graph_file = "./test/test_data/small_graph.json",
 			real_graph_file = "./test/test_data/real_graph.json",
+			bernd_graph_file = "./test/test_data/BerndAres2016.json",
 			neg_cycle_multi_component_file = "./test/test_data/negative_cycle_multi_component.json",
       SMALL_GRAPH_NR_NODES = 4,
       SMALL_GRAPH_NR_UND_EDGES = 2,
@@ -1162,6 +1163,7 @@ describe('GRAPH TESTS: ', () => {
 	describe('negative cycle checks - ', () => {
 
 		let graph : $G.IGraph,
+				graph_bernd: $G.IGraph,
 				graph_negcycle_multicomp : $G.IGraph,
 				json : $JSON.IJSONInput,
 				n_a : $N.IBaseNode,
@@ -1219,9 +1221,26 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		// it('performance test on flower graph (5037 nodes)', () => {
+		it('performance test on bernd graph (1483 nodes), no negative cycles', () => {
+			json = new $JSON.JSONInput(false, true, false);
+			graph_bernd = json.readFromJSONFile(bernd_graph_file);
+			let start_node = "1040";
+			expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).to.equal(5);
+			expect(graph_bernd.hasNegativeCycles()).to.be.false;
+		});
 
-		// })
+
+		it('performance test on bernd graph (1483 nodes), WITH negative cycles', () => {
+			json = new $JSON.JSONInput(false, true, true);
+			graph_bernd = json.readFromJSONFile(bernd_graph_file);
+			let start_node = "1040";
+			let edges = graph_bernd.getDirEdges();
+			for (let edge_idx in edges) {
+				edges[edge_idx].setWeight(-1);
+			}
+			expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).to.equal(5);
+			expect(graph_bernd.hasNegativeCycles()).to.be.true;
+		});
 
 	});
 

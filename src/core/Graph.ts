@@ -152,7 +152,6 @@ class BaseGraph implements IGraph {
 
 		for ( let edge_id in this._dir_edges ) {
 			edge = this._dir_edges[edge_id];
-
 			if ( edge.getWeight() < 0 ) {
 				negative_edge = true;
 				break;
@@ -170,7 +169,7 @@ class BaseGraph implements IGraph {
 			let min_count = Number.POSITIVE_INFINITY,
 					comp_start_node : string;
 
-			Object.keys(comp).forEach( node_id => { 
+			Object.keys(comp).forEach( node_id => {
 				if ( min_count > comp[node_id].counter ) {
 					min_count = comp[node_id].counter;
 					comp_start_node = node_id;
@@ -521,16 +520,16 @@ class BaseGraph implements IGraph {
 
 	getDirEdgesArray(): Array<$E.IBaseEdge> {
 		let edges = [];
-		for (let e_idx in this._dir_edges) {
-			edges.push(this._dir_edges[e_idx]);
+		for (let e_id in this._dir_edges) {
+			edges.push(this._dir_edges[e_id]);
 		}
 		return edges;
 	}
 
 	getUndEdgesArray(): Array<$E.IBaseEdge> {
 		let edges = [];
-		for (let e_idx in this._und_edges) {
-			edges.push(this._und_edges[e_idx]);
+		for (let e_id in this._und_edges) {
+			edges.push(this._und_edges[e_id]);
 		}
 		return edges;
 	}

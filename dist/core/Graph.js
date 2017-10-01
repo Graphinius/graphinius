@@ -279,15 +279,15 @@ var BaseGraph = (function () {
     };
     BaseGraph.prototype.getDirEdgesArray = function () {
         var edges = [];
-        for (var e_idx in this._dir_edges) {
-            edges.push(this._dir_edges[e_idx]);
+        for (var e_id in this._dir_edges) {
+            edges.push(this._dir_edges[e_id]);
         }
         return edges;
     };
     BaseGraph.prototype.getUndEdgesArray = function () {
         var edges = [];
-        for (var e_idx in this._und_edges) {
-            edges.push(this._und_edges[e_idx]);
+        for (var e_id in this._und_edges) {
+            edges.push(this._und_edges[e_id]);
         }
         return edges;
     };
