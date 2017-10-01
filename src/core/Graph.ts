@@ -554,7 +554,9 @@ class BaseGraph implements IGraph {
 		let node_a = edge.getNodes().a,
 				node_b = edge.getNodes().b;
 
-		if ( !this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID()) ) {
+		if ( !this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID()) 
+					|| this._nodes[node_a.getID()] !== node_a || this._nodes[node_b.getID()] !== node_b
+			 ) {
 			throw new Error("can only add edge between two nodes existing in graph");
 		}
 

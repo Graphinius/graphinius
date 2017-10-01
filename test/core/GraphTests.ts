@@ -229,9 +229,34 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			// it('should check if given node IDs are just coincidentally present in the graph but point to different node objects', () => {
+			it('should check if given node IDs are just coincidentally present in the graph but point to invalid node objects', () => {
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				let new_node_a = clone_graph.addNodeByID('A');
+				let new_node_b = clone_graph.addNodeByID('B');
+				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+			});
 
-			// });
+
+			it('should check if just one (A) of the given node IDs is just coincidentally present in the graph but points to an invalid node object', () => {
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				clone_graph.cloneAndAddNode(node_a);
+				let new_node_b = clone_graph.addNodeByID('B');
+				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+			});
+
+
+			it('should check if just one (B) of the given node IDs is just coincidentally present in the graph but points to an invalid node object', () => {
+				node_a = graph.addNodeByID('A');
+				node_b = graph.addNodeByID('B');
+				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				let new_node_a = clone_graph.addNodeByID('A');
+				clone_graph.cloneAndAddNode(node_b);
+				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+			});
 			
 			
 			/**
