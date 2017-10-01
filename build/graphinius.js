@@ -47,20 +47,20 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(12);
-	var CSVOutput       = __webpack_require__(17);
-	var JSONInput       = __webpack_require__(18);
-	var JSONOutput      = __webpack_require__(19);
+	var CSVInput 	      = __webpack_require__(13);
+	var CSVOutput       = __webpack_require__(18);
+	var JSONInput       = __webpack_require__(19);
+	var JSONOutput      = __webpack_require__(20);
 	var BFS				      = __webpack_require__(7);
-	var DFS				      = __webpack_require__(20);
-	var PFS             = __webpack_require__(10);
-	var BellmanFord     = __webpack_require__(9);
+	var DFS				      = __webpack_require__(9);
+	var PFS             = __webpack_require__(11);
+	var BellmanFord     = __webpack_require__(10);
 	var FloydWarshall		= __webpack_require__(21);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(16);
+	var remoteUtils     = __webpack_require__(17);
 	var callbackUtils   = __webpack_require__(8);
 	var randGen         = __webpack_require__(22);
-	var binaryHeap      = __webpack_require__(11);
+	var binaryHeap      = __webpack_require__(12);
 	var simplePerturbation = __webpack_require__(23);
 	var MCMFBoykov			= __webpack_require__(24);
 	var DegreeCent		 	= __webpack_require__(25);
@@ -557,7 +557,8 @@
 	var $DS = __webpack_require__(3);
 	var logger_1 = __webpack_require__(5);
 	var $BFS = __webpack_require__(7);
-	var BellmanFord_1 = __webpack_require__(9);
+	var $DFS = __webpack_require__(9);
+	var BellmanFord_1 = __webpack_require__(10);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	(function (GraphMode) {
@@ -578,8 +579,9 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.hasNegativeCycles = function () {
-	        var negative_edge = false, edge;
+	    BaseGraph.prototype.hasNegativeCycles = function (node) {
+	        var _this = this;
+	        var negative_edge = false, negative_cycle = false, start = node ? node : this.getRandomNode(), edge;
 	        for (var edge_id in this._und_edges) {
 	            edge = this._und_edges[edge_id];
 	            if (edge.getWeight() < 0) {
@@ -596,7 +598,19 @@
 	        if (!negative_edge) {
 	            return false;
 	        }
-	        return BellmanFord_1.BellmanFordArray(this, this.getRandomNode(), true);
+	        $DFS.DFS(this, start).forEach(function (comp) {
+	            var min_count = Number.POSITIVE_INFINITY, comp_start_node;
+	            Object.keys(comp).forEach(function (node_id) {
+	                if (min_count > comp[node_id].counter) {
+	                    min_count = comp[node_id].counter;
+	                    comp_start_node = node_id;
+	                }
+	            });
+	            if (BellmanFord_1.BellmanFordArray(_this, _this._nodes[comp_start_node], true)) {
+	                negative_cycle = true;
+	            }
+	        });
+	        return negative_cycle;
 	    };
 	    BaseGraph.prototype.nextArray = function (incoming) {
 	        if (incoming === void 0) { incoming = false; }
@@ -1255,7 +1269,170 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var PFS_1 = __webpack_require__(10);
+	var $G = __webpack_require__(4);
+	var $CB = __webpack_require__(8);
+	function DFSVisit(graph, current_root, config) {
+	    var dfsVisitScope = {
+	        stack: [],
+	        adj_nodes: [],
+	        stack_entry: null,
+	        current: null,
+	        current_root: current_root
+	    };
+	    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    if (callbacks.init_dfs_visit) {
+	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
+	    }
+	    dfsVisitScope.stack.push({
+	        node: current_root,
+	        parent: current_root,
+	        weight: 0
+	    });
+	    while (dfsVisitScope.stack.length) {
+	        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
+	        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
+	        if (callbacks.node_popped) {
+	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
+	        }
+	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
+	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
+	            if (callbacks.node_unmarked) {
+	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
+	            }
+	            if (dir_mode === $G.GraphMode.MIXED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
+	            }
+	            else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
+	            }
+	            else if (dir_mode === $G.GraphMode.DIRECTED) {
+	                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
+	            }
+	            if (typeof callbacks.sort_nodes === 'function') {
+	                callbacks.sort_nodes(dfsVisitScope);
+	            }
+	            for (var adj_idx in dfsVisitScope.adj_nodes) {
+	                if (callbacks) {
+	                }
+	                dfsVisitScope.stack.push({
+	                    node: dfsVisitScope.adj_nodes[adj_idx].node,
+	                    parent: dfsVisitScope.current,
+	                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
+	                });
+	            }
+	            if (callbacks.adj_nodes_pushed) {
+	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
+	            }
+	        }
+	        else {
+	            if (callbacks.node_marked) {
+	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
+	            }
+	        }
+	    }
+	    return config.visit_result;
+	}
+	exports.DFSVisit = DFSVisit;
+	function DFS(graph, root, config) {
+	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
+	    if (graph.getMode() === $G.GraphMode.INIT) {
+	        throw new Error('Cowardly refusing to traverse graph without edges.');
+	    }
+	    if (dir_mode === $G.GraphMode.INIT) {
+	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+	    }
+	    var dfsScope = {
+	        marked: {},
+	        nodes: graph.getNodes()
+	    };
+	    if (callbacks.init_dfs) {
+	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
+	    }
+	    callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
+	    var markNode = function (context) {
+	        dfsScope.marked[context.current.getID()] = true;
+	    };
+	    callbacks.adj_nodes_pushed.push(markNode);
+	    var dfs_result = [{}];
+	    var dfs_idx = 0;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    var addToProperSegment = function (context) {
+	        dfs_result[dfs_idx][context.current.getID()] = {
+	            parent: context.stack_entry.parent,
+	            counter: counter()
+	        };
+	    };
+	    if (callbacks && callbacks.node_unmarked) {
+	        callbacks.node_unmarked.push(addToProperSegment);
+	    }
+	    DFSVisit(graph, root, config);
+	    for (var node_key in dfsScope.nodes) {
+	        if (!dfsScope.marked[node_key]) {
+	            dfs_idx++;
+	            dfs_result.push({});
+	            DFSVisit(graph, dfsScope.nodes[node_key], config);
+	        }
+	    }
+	    return dfs_result;
+	}
+	exports.DFS = DFS;
+	function prepareDFSVisitStandardConfig() {
+	    var config = {
+	        visit_result: {},
+	        callbacks: {},
+	        messages: {},
+	        dfs_visit_marked: {},
+	        dir_mode: $G.GraphMode.MIXED
+	    }, result = config.visit_result, callbacks = config.callbacks;
+	    var count = 0;
+	    var counter = function () {
+	        return count++;
+	    };
+	    callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
+	    var initDFSVisit = function (context) {
+	        result[context.current_root.getID()] = {
+	            parent: context.current_root
+	        };
+	    };
+	    callbacks.init_dfs_visit.push(initDFSVisit);
+	    callbacks.node_unmarked = callbacks.node_unmarked || [];
+	    var setResultEntry = function (context) {
+	        result[context.current.getID()] = {
+	            parent: context.stack_entry.parent,
+	            counter: counter()
+	        };
+	    };
+	    callbacks.node_unmarked.push(setResultEntry);
+	    return config;
+	}
+	exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
+	function prepareDFSStandardConfig() {
+	    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
+	    callbacks.init_dfs = callbacks.init_dfs || [];
+	    var setInitialResultEntries = function (context) {
+	    };
+	    callbacks.init_dfs.push(setInitialResultEntries);
+	    return config;
+	}
+	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
+	;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var PFS_1 = __webpack_require__(11);
 	function BFSanityChecks(graph, start) {
 	    if (graph == null || start == null) {
 	        throw new Error('Graph as well as start node have to be valid objects.');
@@ -1363,14 +1540,14 @@
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
 	var $CB = __webpack_require__(8);
-	var $BH = __webpack_require__(11);
+	var $BH = __webpack_require__(12);
 	exports.DEFAULT_WEIGHT = 1;
 	function PFS(graph, v, config) {
 	    var config = config || preparePFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode, evalPriority = config.evalPriority, evalObjID = config.evalObjID;
@@ -1516,7 +1693,7 @@
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -1760,14 +1937,14 @@
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var path = __webpack_require__(13);
-	var fs = __webpack_require__(15);
+	var path = __webpack_require__(14);
+	var fs = __webpack_require__(16);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(16);
+	var $R = __webpack_require__(17);
 	var CSVInput = (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -1889,7 +2066,7 @@
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2117,10 +2294,10 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -2310,17 +2487,17 @@
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var http = __webpack_require__(15);
+	var http = __webpack_require__(16);
 	function retrieveRemoteFile(url, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
@@ -2339,11 +2516,11 @@
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(15);
+	var fs = __webpack_require__(16);
 	var CSVOutput = (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -2389,13 +2566,13 @@
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(15);
+	var fs = __webpack_require__(16);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(16);
+	var $R = __webpack_require__(17);
 	var DEFAULT_WEIGHT = 1;
 	var JSONInput = (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
@@ -2495,11 +2672,11 @@
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var fs = __webpack_require__(15);
+	var fs = __webpack_require__(16);
 	var JSONOutput = (function () {
 	    function JSONOutput() {
 	    }
@@ -2571,169 +2748,6 @@
 	    return JSONOutput;
 	}());
 	exports.JSONOutput = JSONOutput;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(8);
-	function DFSVisit(graph, current_root, config) {
-	    var dfsVisitScope = {
-	        stack: [],
-	        adj_nodes: [],
-	        stack_entry: null,
-	        current: null,
-	        current_root: current_root
-	    };
-	    var config = config || prepareDFSVisitStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    if (callbacks.init_dfs_visit) {
-	        $CB.execCallbacks(callbacks.init_dfs_visit, dfsVisitScope);
-	    }
-	    dfsVisitScope.stack.push({
-	        node: current_root,
-	        parent: current_root,
-	        weight: 0
-	    });
-	    while (dfsVisitScope.stack.length) {
-	        dfsVisitScope.stack_entry = dfsVisitScope.stack.pop();
-	        dfsVisitScope.current = dfsVisitScope.stack_entry.node;
-	        if (callbacks.node_popped) {
-	            $CB.execCallbacks(callbacks.node_popped, dfsVisitScope);
-	        }
-	        if (!config.dfs_visit_marked[dfsVisitScope.current.getID()]) {
-	            config.dfs_visit_marked[dfsVisitScope.current.getID()] = true;
-	            if (callbacks.node_unmarked) {
-	                $CB.execCallbacks(callbacks.node_unmarked, dfsVisitScope);
-	            }
-	            if (dir_mode === $G.GraphMode.MIXED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
-	            }
-	            else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
-	            }
-	            else if (dir_mode === $G.GraphMode.DIRECTED) {
-	                dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
-	            }
-	            if (typeof callbacks.sort_nodes === 'function') {
-	                callbacks.sort_nodes(dfsVisitScope);
-	            }
-	            for (var adj_idx in dfsVisitScope.adj_nodes) {
-	                if (callbacks) {
-	                }
-	                dfsVisitScope.stack.push({
-	                    node: dfsVisitScope.adj_nodes[adj_idx].node,
-	                    parent: dfsVisitScope.current,
-	                    weight: dfsVisitScope.adj_nodes[adj_idx].edge.getWeight()
-	                });
-	            }
-	            if (callbacks.adj_nodes_pushed) {
-	                $CB.execCallbacks(callbacks.adj_nodes_pushed, dfsVisitScope);
-	            }
-	        }
-	        else {
-	            if (callbacks.node_marked) {
-	                $CB.execCallbacks(callbacks.node_marked, dfsVisitScope);
-	            }
-	        }
-	    }
-	    return config.visit_result;
-	}
-	exports.DFSVisit = DFSVisit;
-	function DFS(graph, root, config) {
-	    var config = config || prepareDFSStandardConfig(), callbacks = config.callbacks, dir_mode = config.dir_mode;
-	    if (graph.getMode() === $G.GraphMode.INIT) {
-	        throw new Error('Cowardly refusing to traverse graph without edges.');
-	    }
-	    if (dir_mode === $G.GraphMode.INIT) {
-	        throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-	    }
-	    var dfsScope = {
-	        marked: {},
-	        nodes: graph.getNodes()
-	    };
-	    if (callbacks.init_dfs) {
-	        $CB.execCallbacks(callbacks.init_dfs, dfsScope);
-	    }
-	    callbacks.adj_nodes_pushed = callbacks.adj_nodes_pushed || [];
-	    var markNode = function (context) {
-	        dfsScope.marked[context.current.getID()] = true;
-	    };
-	    callbacks.adj_nodes_pushed.push(markNode);
-	    var dfs_result = [{}];
-	    var dfs_idx = 0;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    var addToProperSegment = function (context) {
-	        dfs_result[dfs_idx][context.current.getID()] = {
-	            parent: context.stack_entry.parent,
-	            counter: counter()
-	        };
-	    };
-	    if (callbacks && callbacks.node_unmarked) {
-	        callbacks.node_unmarked.push(addToProperSegment);
-	    }
-	    DFSVisit(graph, root, config);
-	    for (var node_key in dfsScope.nodes) {
-	        if (!dfsScope.marked[node_key]) {
-	            dfs_idx++;
-	            dfs_result.push({});
-	            DFSVisit(graph, dfsScope.nodes[node_key], config);
-	        }
-	    }
-	    return dfs_result;
-	}
-	exports.DFS = DFS;
-	function prepareDFSVisitStandardConfig() {
-	    var config = {
-	        visit_result: {},
-	        callbacks: {},
-	        messages: {},
-	        dfs_visit_marked: {},
-	        dir_mode: $G.GraphMode.MIXED
-	    }, result = config.visit_result, callbacks = config.callbacks;
-	    var count = 0;
-	    var counter = function () {
-	        return count++;
-	    };
-	    callbacks.init_dfs_visit = callbacks.init_dfs_visit || [];
-	    var initDFSVisit = function (context) {
-	        result[context.current_root.getID()] = {
-	            parent: context.current_root
-	        };
-	    };
-	    callbacks.init_dfs_visit.push(initDFSVisit);
-	    callbacks.node_unmarked = callbacks.node_unmarked || [];
-	    var setResultEntry = function (context) {
-	        result[context.current.getID()] = {
-	            parent: context.stack_entry.parent,
-	            counter: counter()
-	        };
-	    };
-	    callbacks.node_unmarked.push(setResultEntry);
-	    return config;
-	}
-	exports.prepareDFSVisitStandardConfig = prepareDFSVisitStandardConfig;
-	function prepareDFSStandardConfig() {
-	    var config = prepareDFSVisitStandardConfig(), callbacks = config.callbacks, result = config.visit_result;
-	    callbacks.init_dfs = callbacks.init_dfs || [];
-	    var setInitialResultEntries = function (context) {
-	    };
-	    callbacks.init_dfs.push(setInitialResultEntries);
-	    return config;
-	}
-	exports.prepareDFSStandardConfig = prepareDFSStandardConfig;
-	;
 
 
 /***/ }),
@@ -3598,7 +3612,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var $PFS = __webpack_require__(10);
+	var $PFS = __webpack_require__(11);
 	var $FW = __webpack_require__(21);
 	var closenessCentrality = (function () {
 	    function closenessCentrality() {

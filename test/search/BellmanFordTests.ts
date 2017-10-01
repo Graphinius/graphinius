@@ -14,7 +14,7 @@ let JSON_IN	= $J.JSONInput;
 let CSV_IN	= $C.CSVInput;
 
 let bf_graph_file = "./test/test_data/bellman_ford.json",
-		bf_graph_neg_cycle_file = "./test/test_data/bellman_ford_negative_cycle.json";
+		bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
 
 
 describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {

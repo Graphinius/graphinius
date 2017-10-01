@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
+import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 
@@ -13,7 +14,8 @@ var Edge = $E.BaseEdge;
 var Graph = $G.BaseGraph;
 
 const small_graph_file = "./test/test_data/small_graph.json",
-      real_graph_file = "./test/test_data/real_graph.json",
+			real_graph_file = "./test/test_data/real_graph.json",
+			neg_cycle_multi_component_file = "./test/test_data/negative_cycle_multi_component.json",
       SMALL_GRAPH_NR_NODES = 4,
       SMALL_GRAPH_NR_UND_EDGES = 2,
       SMALL_GRAPH_NR_DIR_EDGES = 5,
@@ -1157,9 +1159,11 @@ describe('GRAPH TESTS: ', () => {
 	});
 	
 
-	describe.only('negative cycle checks - ', () => {
+	describe('negative cycle checks - ', () => {
 
 		let graph : $G.IGraph,
+				graph_negcycle_multicomp : $G.IGraph,
+				json : $JSON.IJSONInput,
 				n_a : $N.IBaseNode,
 				n_b : $N.IBaseNode,
 				n_c : $N.IBaseNode,
@@ -1169,7 +1173,9 @@ describe('GRAPH TESTS: ', () => {
 
 
 		before(() => {
+			json = new $JSON.JSONInput(true, false, true);
 			graph = new $G.BaseGraph("positive weight graph");
+			graph_negcycle_multicomp = json.readFromJSONFile(neg_cycle_multi_component_file);
 			n_a = graph.addNodeByID("A");
 			n_b = graph.addNodeByID("B");
 			n_c = graph.addNodeByID("C");
@@ -1180,19 +1186,19 @@ describe('GRAPH TESTS: ', () => {
 
 
 		it('should correclty detect a graph with solely positive edges', () => {
-			expect(graph.hasNegativeCycles()).to.be.false;
+			expect(graph.hasNegativeCycles(n_a)).to.be.false;
 		});
 
 
 		it('should correctly detect a graph with negative edges but no negative cycle', () => {
 			e_2.setWeight(-2);
-			expect(graph.hasNegativeCycles()).to.be.false;
+			expect(graph.hasNegativeCycles(n_a)).to.be.false;
 		});
 
 
-		it('should correctly detect a graph with negative edges but no negative cycle', () => {
+		it('should correctly detect a graph with negative cycle', () => {
 			e_2.setWeight(-5);
-			expect(graph.hasNegativeCycles()).to.be.true;
+			expect(graph.hasNegativeCycles(n_a)).to.be.true;
 		});
 
 
@@ -1203,9 +1209,20 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		/**
-		 * TODO graph with different components...
-		 */
+		it('negative cycle multi-component graph should have 2 components', () => {
+			expect($DFS.DFS(graph_negcycle_multicomp, graph_negcycle_multicomp.getNodeById("S")).length).to.equal(2);
+		});
+
+
+		it('should correctly detect a negative cycle in a multi-component graph', () => {
+			expect(graph_negcycle_multicomp.hasNegativeCycles(graph_negcycle_multicomp.getNodeById("S"))).to.be.true;
+		});
+
+
+		// it('performance test on flower graph (5037 nodes)', () => {
+
+		// })
 
 	});
+
 });

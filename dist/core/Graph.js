@@ -4,6 +4,7 @@ var $E = require('./Edges');
 var $DS = require('../utils/structUtils');
 var logger_1 = require('../utils/logger');
 var $BFS = require('../search/BFS');
+var $DFS = require('../search/DFS');
 var BellmanFord_1 = require('../search/BellmanFord');
 var logger = new logger_1.Logger();
 var DEFAULT_WEIGHT = 1;
@@ -25,8 +26,9 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
-    BaseGraph.prototype.hasNegativeCycles = function () {
-        var negative_edge = false, edge;
+    BaseGraph.prototype.hasNegativeCycles = function (node) {
+        var _this = this;
+        var negative_edge = false, negative_cycle = false, start = node ? node : this.getRandomNode(), edge;
         for (var edge_id in this._und_edges) {
             edge = this._und_edges[edge_id];
             if (edge.getWeight() < 0) {
@@ -43,7 +45,19 @@ var BaseGraph = (function () {
         if (!negative_edge) {
             return false;
         }
-        return BellmanFord_1.BellmanFordArray(this, this.getRandomNode(), true);
+        $DFS.DFS(this, start).forEach(function (comp) {
+            var min_count = Number.POSITIVE_INFINITY, comp_start_node;
+            Object.keys(comp).forEach(function (node_id) {
+                if (min_count > comp[node_id].counter) {
+                    min_count = comp[node_id].counter;
+                    comp_start_node = node_id;
+                }
+            });
+            if (BellmanFord_1.BellmanFordArray(_this, _this._nodes[comp_start_node], true)) {
+                negative_cycle = true;
+            }
+        });
+        return negative_cycle;
     };
     BaseGraph.prototype.nextArray = function (incoming) {
         if (incoming === void 0) { incoming = false; }

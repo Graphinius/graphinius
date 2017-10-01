@@ -6,6 +6,7 @@ import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 import * as $BFS from '../search/BFS';
+import * as $DFS from '../search/DFS';
 import { BellmanFordArray } from '../search/BellmanFord';
 
 let logger : Logger = new Logger();
@@ -84,7 +85,7 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
-	hasNegativeCycles() : boolean;
+	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// OTHER PROPERTIES
 	pickRandomProperty(propList) : any;
@@ -135,8 +136,10 @@ class BaseGraph implements IGraph {
 	 * Do we want to throw an error if an edge is unweighted?
 	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
 	 */
-	hasNegativeCycles() : boolean {
+	hasNegativeCycles(node? : $N.IBaseNode) : boolean {
 		let negative_edge = false,
+				negative_cycle = false,
+				start = node ? node : this.getRandomNode(),
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
@@ -161,13 +164,32 @@ class BaseGraph implements IGraph {
 		}
 
 		/**
-		 * Invoke BellmanFord to check for negative cycles
-		 * TODO: do this for every component (run DFS in beforehand)
+		 * Now do Bellman Ford over all graph components
 		 */
-		return <boolean>BellmanFordArray(this, this.getRandomNode(), true);
+		$DFS.DFS(this, start).forEach( comp => {
+			let min_count = Number.POSITIVE_INFINITY,
+					comp_start_node : string;
+
+			Object.keys(comp).forEach( node_id => { 
+				if ( min_count > comp[node_id].counter ) {
+					min_count = comp[node_id].counter;
+					comp_start_node = node_id;
+				}
+			});
+
+			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node], true) ) {
+				negative_cycle = true;
+			}
+		});
+
+		return negative_cycle;
 	}
 
 
+	/**
+	 * 
+	 * @param incoming 
+	 */
 	nextArray(incoming:boolean = false) : NextArray {
 		let next = [],
 				node_keys = Object.keys(this._nodes);
@@ -184,6 +206,7 @@ class BaseGraph implements IGraph {
 		return next;
 	}
 
+	
 	/**
 	 * This function iterates over the adjDict in order to use it's advantage
 	 * of being able to override edges if edges with smaller weights exist
