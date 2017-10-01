@@ -25,20 +25,22 @@ const small_graph_file = "./test/test_data/small_graph.json",
 
 
 describe('GRAPH TESTS: ', () => {
-	var graph 	: $G.IGraph,
-			node_a 	: $N.IBaseNode,
-			node_b 	: $N.IBaseNode,
-			edge_1	: $E.IBaseEdge,
-			edge_2	: $E.IBaseEdge,
-			stats		: $G.GraphStats,
-			csv			: $CSV.CSVInput = new $CSV.CSVInput(),
-			csv_sn		: $CSV.CSVInput = new $CSV.CSVInput(" ", false, false);
+	var graph 			: $G.IGraph,
+			clone_graph : $G.IGraph,
+			node_a 			: $N.IBaseNode,
+			node_b 			: $N.IBaseNode,
+			edge_1			: $E.IBaseEdge,
+			edge_2			: $E.IBaseEdge,
+			stats				: $G.GraphStats,
+			csv					: $CSV.CSVInput = new $CSV.CSVInput(),
+			csv_sn			: $CSV.CSVInput = new $CSV.CSVInput(" ", false, false);
 	
 
 	describe('Basic graph operations - ', () => {
 
 		beforeEach(() => {
 			graph = new Graph('Test graph');
+			clone_graph = new Graph('Clone graph');
 			expect(graph).to.be.instanceOf($G.BaseGraph);
 			expect(graph.nrNodes()).to.equal(0);
 			expect(graph.nrDirEdges()).to.equal(0);
@@ -68,6 +70,20 @@ describe('GRAPH TESTS: ', () => {
 				expect(node_a).to.be.an.instanceof(Node);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should correctly clone and add a node from another graph without adding its edges', () => {
+				let n_a = graph.addNodeByID("A");
+				let n_b = graph.addNodeByID("B");
+				let e_1 = graph.addEdgeByID("1", n_a, n_b);
+				expect(graph.getEdgeById("1")).to.exist;
+				expect(n_a.getEdge("1")).to.exist;
+				expect(n_b.getEdge("1")).to.exist;
+				clone_graph.cloneAndAddNode(n_a);
+				clone_graph.cloneAndAddNode(n_b);
+				expect(clone_graph.getEdgeById.bind(clone_graph, "1")).to.throw("cannot retrieve edge with non-existing ID.");
+				expect(Object.keys(clone_graph.getNodeById("A").allEdges())).to.be.empty;
+				expect(Object.keys(clone_graph.getNodeById("B").allEdges())).to.be.empty;
 			});
 
 			it('should refuse to add an edge if one of the nodes does not exist in the graph', () => {
@@ -211,6 +227,11 @@ describe('GRAPH TESTS: ', () => {
 				expect(edge.getNodes().a).to.equal(node_a);
 				expect(edge.getNodes().b).to.equal(node_b);
 			});
+
+
+			// it('should check if given node IDs are just coincidentally present in the graph but point to different node objects', () => {
+
+			// });
 			
 			
 			/**

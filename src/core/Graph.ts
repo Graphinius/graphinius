@@ -58,6 +58,7 @@ export interface IGraph {
 	// NODE STUFF
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
 	addNode(node: $N.IBaseNode) : boolean;
+	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
 	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
@@ -349,6 +350,14 @@ class BaseGraph implements IGraph {
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return true;
+	}
+
+	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode {
+		let new_node = new $N.BaseNode(node.getID());
+		new_node.setFeatures($DS.clone(node.getFeatures()));
+		this._nodes[node.getID()] = new_node;
+		this._nr_nodes += 1;
+		return new_node;
 	}
 
 	hasNodeID(id: string) : boolean {

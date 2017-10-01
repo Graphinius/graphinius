@@ -722,6 +722,13 @@
 	        this._nr_nodes += 1;
 	        return true;
 	    };
+	    BaseGraph.prototype.cloneAndAddNode = function (node) {
+	        var new_node = new $N.BaseNode(node.getID());
+	        new_node.setFeatures($DS.clone(node.getFeatures()));
+	        this._nodes[node.getID()] = new_node;
+	        this._nr_nodes += 1;
+	        return new_node;
+	    };
 	    BaseGraph.prototype.hasNodeID = function (id) {
 	        return !!this._nodes[id];
 	    };
