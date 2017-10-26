@@ -8,6 +8,7 @@ import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 
+
 var expect = chai.expect;
 var Node = $N.BaseNode;
 var Edge = $E.BaseEdge;
@@ -25,7 +26,7 @@ const small_graph_file = "./test/test_data/small_graph.json",
 
 
 describe('GRAPH TESTS: ', () => {
-	var graph 			: $G.IGraph,
+	let graph 			: $G.IGraph,
 			clone_graph : $G.IGraph,
 			node_a 			: $N.IBaseNode,
 			node_b 			: $N.IBaseNode,
@@ -1336,6 +1337,76 @@ describe('GRAPH TESTS: ', () => {
 			}
 			expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).to.equal(5);
 			expect(graph_bernd.hasNegativeCycles()).to.be.true;
+		});
+
+	});
+
+
+	describe.skip("Edge re-interpretation - ", () => {
+
+		const jsonReader = new $JSON.JSONInput();
+
+		describe('empty and trivial graphs - ', () => {
+
+			beforeEach(() => {
+				graph = new $G.BaseGraph("emptinius");
+				expect(graph).to.exist;
+				expect(graph.getMode()).to.equal($G.GraphMode.INIT);
+				expect(graph.nrNodes()).to.equal(0);
+				expect(graph.nrDirEdges()).to.equal(0);
+				expect(graph.nrUndEdges()).to.equal(0);
+			});
+
+
+			it('should return the same empty graph if there were no edges before', () => {
+
+			});
+
+
+			it('should return the same directed graph if all edges were directed before', () => {
+
+			});
+
+
+			it('should return the same UNdirected graph if all edges were UNdirected before', () => {
+				
+			});
+
+
+			it('should return a directed graph when all edges were UNdirected before', () => {
+
+			});
+
+
+			it('should return an UNdirected graph when all edges were directed before', () => {
+				
+			});
+
+
+		});
+
+
+		describe('MIXED graph', () => {
+
+			beforeEach(() => {
+				graph = jsonReader.readFromJSONFile(small_graph_file);
+				expect(graph).to.exist;
+				expect(graph.getMode()).to.equal($G.GraphMode.MIXED);
+				expect(graph.nrNodes()).to.equal(4);
+				expect(graph.nrDirEdges()).to.equal(5);
+				expect(graph.nrUndEdges()).to.equal(2);
+			});
+
+
+			it("should correctly re-interpret all directed edges as UNdirected", () => {
+				
+			});
+
+
+			it("should correctly re-interpret all UNdirected edges as directed", () => {
+				
+			});
+
 		});
 
 	});

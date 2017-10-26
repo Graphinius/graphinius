@@ -20,7 +20,6 @@ export enum GraphMode {
 	MIXED
 }
 
-
 export interface DegreeDistribution {
 	in	: Uint16Array;
 	out	: Uint16Array;
@@ -28,7 +27,6 @@ export interface DegreeDistribution {
 	und	: Uint16Array;
 	all	: Uint16Array;
 }
-
 
 export interface GraphStats {
 	mode					: GraphMode;
@@ -88,10 +86,13 @@ export interface IGraph {
 	getRandomUndEdge() : $E.IBaseEdge;
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
-	// OTHER PROPERTIES
+	// REINTERPRETING EDGES
+	toDirectedGraph() : IGraph;
+	toUndirectedGraph() : IGraph;
+
+	// PROPERTIES
 	pickRandomProperty(propList) : any;
 	pickRandomProperties(propList, amount) : Array<string>;
-
 
 	// HANDLE ALL EDGES OF NODES
 	deleteInEdgesOf(node: $N.IBaseNode) : void;
@@ -105,15 +106,14 @@ export interface IGraph {
 	clearAllUndEdges() : void;
 	clearAllEdges() : void;
 
+	// CLONING
 	clone() : IGraph;
 	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
+
+	// REPRESENTATIONS
 	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
 	nextArray(incoming?:boolean) : NextArray;
-
-  // RANDOM STUFF
-	pickRandomProperty(propList) : any;
-	pickRandomProperties(propList, amount) : Array<string>;
 }
 
 
@@ -132,6 +132,17 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
+
+	toDirectedGraph() : IGraph {
+
+		return this;
+	}
+
+
+	toUndirectedGraph() : IGraph {
+
+		return this;
+	}
 
 	/**
 	 * Do we want to throw an error if an edge is unweighted?
@@ -352,6 +363,11 @@ class BaseGraph implements IGraph {
 		return true;
 	}
 
+	/**
+	 * Instantiates a new node object, copies the features and
+	 * adds the node to the graph, but does NOT clone it's edges
+	 * @param node the node object to clone
+	 */
 	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode {
 		let new_node = new $N.BaseNode(node.getID());
 		new_node.setFeatures($DS.clone(node.getFeatures()));

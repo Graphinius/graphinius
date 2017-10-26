@@ -26,6 +26,12 @@ var BaseGraph = (function () {
         this._dir_edges = {};
         this._und_edges = {};
     }
+    BaseGraph.prototype.toDirectedGraph = function () {
+        return this;
+    };
+    BaseGraph.prototype.toUndirectedGraph = function () {
+        return this;
+    };
     BaseGraph.prototype.hasNegativeCycles = function (node) {
         var _this = this;
         var negative_edge = false, negative_cycle = false, start = node ? node : this.getRandomNode(), edge;
