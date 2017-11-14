@@ -29,7 +29,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
+	git_sources: ['./*', '.circleci/*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
 
 
