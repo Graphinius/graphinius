@@ -87,7 +87,7 @@ export interface IGraph {
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// REINTERPRETING EDGES
-	toDirectedGraph() : IGraph;
+	toDirectedGraph(copy?) : IGraph;
 	toUndirectedGraph() : IGraph;
 
 	// PROPERTIES
@@ -132,10 +132,18 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
+	/**
+	 * Version 1: do it in-place (to the object you receive)
+	 * Version 2: clone the graph first, return the mutated clone
+	 */
+	toDirectedGraph(copy = false) : IGraph {
+		let result_graph = copy ? this.clone() : this;
+		// if graph has no edges, we want to throw an exception
+		if ( this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+			throw new Error("Cowardly refusing to re-interpret an empty graph.")
+		}
 
-	toDirectedGraph() : IGraph {
-
-		return this;
+		return result_graph;
 	}
 
 

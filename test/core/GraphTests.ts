@@ -1342,11 +1342,11 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe.skip("Edge re-interpretation - ", () => {
+	describe("Edge re-interpretation - ", () => {
 
 		const jsonReader = new $JSON.JSONInput();
 
-		describe('empty and trivial graphs - ', () => {
+		describe.only('empty and trivial graphs - ', () => {
 
 			beforeEach(() => {
 				graph = new $G.BaseGraph("emptinius");
@@ -1358,29 +1358,65 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('should return the same empty graph if there were no edges before', () => {
+			it('should show Rita some basic expectations and what can go right / wrong ;)', () => {
+				expect(false).to.be.true; // false
+				expect(5).to.equal(5); // true
+				expect({}).to.exist; //true
+				let a = {}; let b = a; expect(a).to.equal(b); // true because refs are the same
+				expect({}).to.equal({}) // false because objects have different addresses
+				expect({a: true, b: "bla"}).to.deep.equal({a: true, b: "blahoo"}); // false
+				expect({a: true, b: "bla"}).not.to.equal({a: true, b: "blahoo"}); // true because of different refs
+				expect({a: true, b: "bla"}).not.to.deep.equal({a: true, b: "blahoo"}); // true because of different content
+				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
+			});
 
+
+			it('should throw an error if we hand it an empty graph', () => {
+				// 'throws an error' behavior is not really a return value of the function
+				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
 			});
 
 
 			it('should return the same directed graph if all edges were directed before', () => {
-
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+				expect(digraph.toDirectedGraph()).to.equal(digraph);
 			});
 
 
-			it('should return the same UNdirected graph if all edges were UNdirected before', () => {
+			it('should return a copy of the same directed graph if all edges were directed before', () => {
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+
+				let res_graph = digraph.toDirectedGraph(true);
+				expect(res_graph).not.to.equal(digraph); // refs
+				expect(res_graph).to.deep.equal(digraph); // content
+			});
+
+
+			// it('should return the same UNdirected graph if all edges were UNdirected before', () => {
 				
-			});
+			// });
 
 
-			it('should return a directed graph when all edges were UNdirected before', () => {
+			// it('should return a directed graph when all edges were UNdirected before', () => {
 
-			});
+			// });
 
 
-			it('should return an UNdirected graph when all edges were directed before', () => {
+			// it('should return an UNdirected graph when all edges were directed before', () => {
 				
-			});
+			// });
 
 
 		});

@@ -579,8 +579,13 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.toDirectedGraph = function () {
-	        return this;
+	    BaseGraph.prototype.toDirectedGraph = function (copy) {
+	        if (copy === void 0) { copy = false; }
+	        var result_graph = copy ? this.clone() : this;
+	        if (this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+	            throw new Error("Cowardly refusing to re-interpret an empty graph.");
+	        }
+	        return result_graph;
 	    };
 	    BaseGraph.prototype.toUndirectedGraph = function () {
 	        return this;
