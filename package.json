@@ -48,10 +48,9 @@
     "sinon": "^1.17.3",
     "sinon-chai": "^2.8.0",
     "typedoc": "^0.3.12",
-    "typescript": "^2.3.2",
+    "typescript": "^2.6.1",
     "webpack-stream": "^3.1.0",
     "xhr-mock": "^1.6.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
