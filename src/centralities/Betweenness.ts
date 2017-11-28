@@ -7,14 +7,18 @@ import * as $N from '../core/Nodes';
 
 /**
  * This is used to get the betweenness of a graph by either
- * Bellman Ford or Floyd Warshall with APSP.
+ * Bellman Ford (Johnsons) or Floyd Warshall with APSP.
  *
  * @param graph the graph to perform Floyd-Warshall on
- * @returns m*m matrix of values, m*m*m matrix of neighbors
+ * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
  */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
+  //=====================!
+  //if I am right, this is where I need to continue once I am done with the Johnsons class
+  //do I have anything to do in the other classes of this order?
+  
   //if(sparse){ //TODO: Add Bellman-Ford
   //  throw new Error("Not implemented yet")
   //  //paths = Bellman Ford

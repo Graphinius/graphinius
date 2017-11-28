@@ -5,100 +5,122 @@ import * as $G from '../core/Graph';
 import * as $PFS from '../../src/search/PFS';
 import * as $BF from '../search/BellmanFord';
 import * as $D from '../search/Dijkstra';
-
-//the main function
-//first call addExtraNodeWithEdges
-//then call BellmanFord - also check for negative cycle
-//then call removeExtraNodeWithEdges
-//then call Dijkstra
-
-var extraNode : $N.IBaseNode = new $N.BaseNode ("extraNode");
-
-function Johnsons ( graph: $G.IGraph, start: $N.IBaseNode, cycle = false) : {[id: string] : $PFS.PFS_ResultEntry} 
-{
-addExtraNodeWithEdges(graph);
-//now the Bellman-Ford
-//instead, Bellman-Ford right away
-if (graph.hasNegativeCycles()){
-  throw new Error('Can not continue: the graph has negative cycle');
-}
-else {
-let resultBF:Array<number>=<Array<number>>$BF.BellmanFordArray(graph, extraNode, true);
-//now I need to put these data to the graph - ??
-//re-weigh edges. In the array: node distances are in. 
-//use BF-Dict!
-removeExtraNodeWithEdges(graph);
-
-//call Dijkstras for each nodes
-//PFS_ResultEntry as return type not clear for me, the [id:string]part of it
-
-let allNodes :{[key:string]:$N.IBaseNode} =graph.getNodes();
-let resultJohnson:{[id: string] : $PFS.PFS_ResultEntry};
-for (let count=0; count<graph.nrNodes(); count++) {
-  let source=allNodes[count];
-  let actualResult:{[id: string] : $PFS.PFS_ResultEntry}=$D.Dijkstra(graph, source);
-  //I need to add these, tried push, concat, simple +, but none of them worked
-  // resultJohnson.concat(actualResult);
-
-}
-//most probably this is not the nicest output
-//should work more on it later
-return resultJohnson;
-
-
-}
-
-
-//now somehow I need to update the graph edge weights 
-//how??
+import { BellmanFordDict } from '../search/BellmanFord';
+import { Dijkstra } from '../search/Dijkstra';
 
 
 
-
-
-
-
-}
-//adds an extra node to the graph
-//adds edges
-//are they need to be directed?
-//all weighted, weight =0
-//test: if this is a real graph: >1 nodes, >=1 edges
-//test if extraNode has been added
-//test if edges from extraNode are added, 
-//are directed? and weighted with a weight of 0
-//does not need to be a separate function, does not need to return
-function addExtraNodeWithEdges (graph: $G.IGraph) :  $G.IGraph {
-
+//return type will change! Most probably two 2d arrays may work - 1 for distances, 1 for parent nodes
+function Johnsons(graph: $G.IGraph, cycle = true): { [id: string]: $PFS.PFS_ResultEntry } {
   //getting all graph nodes
-  let allNodes :{[key:string]:$N.IBaseNode} =graph.getNodes();
+  let allNodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
 
-  graph.addNode(extraNode);
+  let nodeKeys = Object.keys(allNodes); 
+  
 
-  Object.keys(graph.getNodes()) // array o
-  //connecting the extraNode
-  //tried foreach but did not work, the normal for loop seems ok
-for (let count=0; count<graph.nrNodes(); count++) {
- let target=allNodes[count];
-  let tempEdge= new $E.BaseEdge("temp", extraNode, target, {directed:true, weighted:true, weight:0});
-  //do I need to make it directed? I tried but could not?
-  //tempEdge.setWeight(0);
-//add to graph
-}
-return graph;
-}
+  //the extra node we need to re-weigh the edges
+  var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
 
-//removes all edges starting from the extra point
-//removes the extra point
-//test: if extraNode was removed
-//test: if edges were removed
-function removeExtraNodeWithEdges (graph: $G.IGraph) :  $G.IGraph{
- //I may not need this
-  //extraNode.clearOutEdges();
-  graph.deleteNode(extraNode);
+  //to help testing, I will make two graph clones
+  //strategy: original graph -> graphForBF (contains extraNode and temporary edges) -> RWGraph (re-weighted, extraNode removed) 
+  //reWeightedGraph will be used for the Dijkstras
+  let graphForBF: $G.IGraph = graph.clone();
+  graphForBF.addNode(extraNode);
 
-return graph;
-}
+  //adding the temporary edges
+
+  //==================!
+  //I made 2 for loops, I suppose both are good, but now for safety I left both to show you
+  //please tell which is better (if any of them is good, but the compiler is not crying... so I hope they are OK)
+
+  //=================!
+  //here I added a counter to the edge ID, so that each added edge has a different label
+  //I think this is not important, because it is the ID which counts
+  //if this is really so, I can remove the counter
+  let count = 0;
+  for (let nodeId of nodeKeys) {
+    graphForBF.addEdgeByNodeIDs("temp" + count++, "extraNode", nodeId, { directed: true, weighted: true, weight: 0 });
+  }
+
+  //OR - alternative for loop, I suppose both are good, please correct if not
+    for (let i = 0; i < nodeKeys.length; i++) {
+    let actualNode = allNodes[nodeKeys[i]];
+    graphForBF.addEdgeByID("temp"+i, extraNode, actualNode, { directed: true, weighted: true, weight: 0 });
+  }
+
+  //now the Bellman-Ford, and re-weighting, if there are no negative edges
+  if (! <boolean>BellmanFordDict(graphForBF, extraNode, true)) {
+    throw new Error("The graph contains negative cycle(s), it makes no sense to continue");
+    //=================!
+    //do I need to put in some "break" command here?
+    //I mean, if there is negative cycle, there is no sense to continue
+    //or should I simply put the rest of the code into an "else" block, as I did now? (pls see where this coming "else" block ends)
+  }
+  else {
+    let newWeights: {} = <{}>BellmanFordDict(graphForBF, extraNode, true);
+
+    //deleting the distance 0 of the extraNode, it is no more needed
+    delete newWeights["extraNode"];
+
+    //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
+    //RWGraph will be a clone of the original graph, then no node deletion needed
+    var RWGraph :$G.IGraph = graph.clone();
+    let edges = RWGraph.getDirEdgesArray().concat(RWGraph.getUndEdgesArray());
+    for (let edgeID in edges){
+      let edge=edges[edgeID];
+      var a = edge.getNodes().a.getID();
+      var b = edge.getNodes().b.getID();
+      if (edge.isWeighted) {
+        let oldWeight=edge.getWeight();
+        let newWeight=oldWeight+newWeights[a]-newWeights[b];
+        edge.setWeight(newWeight);
+      }
+      else {
+        //========================!
+        //is this the right thing to do?
+        //in the class Bellman-Ford, if there is no weight, the default value 1 is used
+        //in the class Edge, it is told the weighted and directed parameters should not be changed on live edges,
+        //one should delete and re-create instead
+        //so if not weighted, I delete the edge, then create a new one
+        //with the same ID and directedness, but weighted. The old weight is set artificially to 1. 
+
+        //collecting edgeID and directedness for later re-use
+        let edgeID:string=edge.getID();
+        let dirNess: boolean= edge.isDirected();
+        RWGraph.deleteEdge(edge);
+        let oldWeight=$PFS.DEFAULT_WEIGHT;
+        let newWeight=oldWeight+newWeights[a]-newWeights[b];
+        RWGraph.addEdgeByNodeIDs(edgeID, a, b, {directed: dirNess, weighted: true, weight: newWeight});
+        }
+    }
+    
+    //=============! 
+    //pls go through this part too, if this is correct so far
+    //call Dijkstras for each nodes on RWGraph
+    //will need the distances and parents for each target node, starting from each graph node as a source
+    let RWAllNodes = RWGraph.getNodes();
+    let RWNodeKeys=Object.keys(RWAllNodes);
+     //reminder: return type of PFS (last step of Dijkstras) is a dict
+     //keys are IDs of the target nodes, values are PFS entries (distance, parent, count)
+
+    for (let nodeID of RWNodeKeys){
+      let resultD= Dijkstra(RWGraph, RWAllNodes[nodeID]);
+      let targetKeys=Object.keys(resultD);
+        for (let targetNode in targetKeys){
+          let entryForThisTarget = resultD[targetNode];
+          let distanceForThisTarget = entryForThisTarget.distance;
+          let parentForThisTarget = entryForThisTarget.parent;
+        //and here I should build the final return structure once I figure out how that should look   
+         
+          
+        }
+    }
+    //return return structure here
+
+  }
+  //this part is under construction
+  return {};
+  }
 
 
 export {

@@ -37,7 +37,7 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode, cycle = false) 
       bf_edge_entry,
       new_weight: number;
 
-
+  //setting the starting node distance to 0 and all other to positive infinity
   for ( let n_idx = 0; n_idx < node_keys.length; ++n_idx ) {
     node = nodes[node_keys[n_idx]];
     distArray[n_idx] = ( node === start ) ? 0 : Number.POSITIVE_INFINITY;
@@ -65,7 +65,7 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode, cycle = false) 
       !edge[3] && updateDist(edge[1], edge[0], edge[2]);
     }
   }
-
+  //n.iteration of BF to see if there is a negative cycle
   if ( cycle ) {
     for ( let e_idx = 0; e_idx < bf_edges.length; ++e_idx ) {
       edge = bf_edges[e_idx];
@@ -128,6 +128,7 @@ function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode, cycle = false) :
     }
   }
 
+    //the n.iteration of the BF, which shows us if there is a negative cycle
   if ( cycle ) {
     for ( let edgeID in edges ) {
       edge = edges[edgeID];
