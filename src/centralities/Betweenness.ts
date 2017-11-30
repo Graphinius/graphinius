@@ -4,6 +4,9 @@ import * as $G from '../core/Graph';
 import * as $FW from '../search/FloydWarshall';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
+//automatic import, seems to work below, without calling class with dollar sign - is that correct so?
+import { Johnsons } from '../search/Johnsons';
+
 
 /**
  * This is used to get the betweenness of a graph by either
@@ -15,15 +18,12 @@ import * as $N from '../core/Nodes';
  */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
-  //=====================!
-  //if I am right, this is where I need to continue once I am done with the Johnsons class
-  //do I have anything to do in the other classes of this order?
+  //Johnsons implemented here
   
-  //if(sparse){ //TODO: Add Bellman-Ford
-  //  throw new Error("Not implemented yet")
-  //  //paths = Bellman Ford
-  //}
-  //else
+  if(sparse){ 
+  paths=Johnsons(graph)[1];
+  }
+  else
     paths = $FW.FloydWarshallAPSP(graph)[1];
 
   let nodes = graph.adjListArray();
