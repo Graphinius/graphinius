@@ -26,7 +26,9 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 	for (let edge in edges) {
 		let a = edges[edge].getNodes().a.getID();
 		let b = edges[edge].getNodes().b.getID();
-
+		//===================
+		//can one build and fill an array without first initializing the arrays themselves?
+		//dists is initialized simply as an object, not as an array
 		if(dists[a]==null)
 			dists[a] = {};
 
@@ -51,7 +53,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
  * @returns m*m matrix of values, m*m*m matrix of neighbors
  * @constructor
  */
-//returns a 2d array dists and a 3d array next
+//returns a 2d array dists and a 3d array next (paths)
 function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -67,7 +69,10 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
 					next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
 				}
+				//======================
+				//first 2 condition of the if (stuff before the ||) is not clear for me, don't they rule out each other?
 				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+					//info: slice(0) means a duplication of the array
 					next[i][j] = next[i][k].slice(0);
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}

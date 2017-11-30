@@ -34,6 +34,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
+      //==================== third condition of the "if" is not clear for me
       if(a!=b && !(paths[a][b].length == 1 && paths[a][b][0] == b)){
         addBetweeness(a, b, paths, map, a);
       }
@@ -58,6 +59,9 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
  * @returns m*m matrix of values, m*m*m matrix of neighbors
  * @constructor
  */
+
+ //=================
+ //here this is not clear for me
 function addBetweeness(u, v, next, map, start){
   if(u==v)
     return 1;     //Terminal nodes return 1

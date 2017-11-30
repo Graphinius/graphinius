@@ -217,6 +217,9 @@ class BaseGraph implements IGraph {
 			next.push([]);
 			for ( let j = 0; j < this._nr_nodes; ++j ) {
 				next[i].push([]);
+				//=====================
+				//for me this is not clear, why is the next line different from the line of AdjListArray
+				//is it a mistake, or it is intentional because of later array (matrix) operations?
 				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
 			}
 		}
