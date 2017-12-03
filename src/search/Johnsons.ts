@@ -13,7 +13,7 @@ import { Dijkstra } from '../search/Dijkstra';
 //return types: similar to Floyd-Warshall, 
 //dist: a 2d array containing distances for each shortest paths
 //next: a 3d array containing the paths starting with the node right after the source
-function Johnsons(graph: $G.IGraph, cycle = true): { } {
+function Johnsons(graph: $G.IGraph, cycle = true): any {
 
   if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -38,23 +38,14 @@ function Johnsons(graph: $G.IGraph, cycle = true): { } {
   //adding the temporary edges
 
   //==================!
-  //I made 2 for loops, I suppose both are good, but now for safety I left both to show you
-  //please tell which is better (if any of them is good, but the compiler is not crying... so I hope they are OK)
-  
-  // @answer<Bernd>
-  // both will work, but it might be that the 2nd is faster than the first
-  // see this performance shootout:
-  // https://jsperf.com/performance-of-array-vs-object/3
-  // for now I would suggest leaving both in and commenting one out, so that we
-  // can performance test later...
-  // I am experimenting now with writing code in Rust and compiling it to WASM,
-  // if that works well we might re-implement compute-intensive methods in this way...
+  //2 for loops, 1 is commented out
+  //their speed can be compared later
   
   for (let nodeId of nodeKeys) {
     graphForBF.addEdgeByNodeIDs("temp", "extraNode", nodeId, { directed: true, weighted: true, weight: 0 });
   }
 
-  //OR - alternative for loop, I suppose both are good, please correct if not
+  //the alternative for loop, may be used later
   /*for (let i = 0; i < nodeKeys.length; i++) {
     let actualNode = allNodes[nodeKeys[i]];
     graphForBF.addEdgeByID("temp"+i, extraNode, actualNode, { directed: true, weighted: true, weight: 0 });
@@ -70,14 +61,6 @@ function Johnsons(graph: $G.IGraph, cycle = true): { } {
 
     //deleting the distance 0 of the extraNode, it is no more needed
     delete newWeights["extraNode"];
-
-    // @suggestion<Bernd>
-    // don't you wanna delete the extraNode here again?
-    // graph.deleteNode(extraNode);
-    //@Bernd: it is not necessary
-    //the graph that will be re-weighted and go for Dijkstras is a clone of the original graph
-    //which never had the extraNode
-
 
     //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
     //RWGraph will be a clone of the original graph, then no node deletion needed
@@ -119,7 +102,10 @@ function Johnsons(graph: $G.IGraph, cycle = true): { } {
       dist.push([]);
       next.push([]);
 
-      let resultD= Dijkstra(RWGraph, RWAllNodes[src_id]);
+      //and here I could collate the DijkstraAlt results, 
+      //according to the nodeKeys, into a 2D and 3D array
+
+      /*let resultD= Dijkstra(RWGraph, RWAllNodes[src_id]);
       //reminder: resultD is a dict, key(target node id):PFSEntry (distance, parent, count)
       let targetKeys=Object.keys(resultD);
       
@@ -137,23 +123,18 @@ function Johnsons(graph: $G.IGraph, cycle = true): { } {
 
         while (true){
           if (parentForTgt.getID()==RWNodeKeys[src_id]){
-            next[src_id][tgt_id].push(parentForTgt);
+            next[src_id][tgt_id].splice(0, 0, parentForTgt);
             break;
           }
           if (parentForTgt==null){
             next[src_id][tgt_id].push(null);
             break;
-          }
-          //follow back the path until the source node, and fill
-          //new element should always come to the start of the array
-          //info: splice parameters: append the array at index 0 (first), with removing 0 elements, append with parentForTgt
-          next[src_id][tgt_id].splice(0, 0, parentForTgt);
-          entryForTgt=targetKeys[parentForTgt.getID()];
-          parentForTgt=entryForTgt.parent;
+          }*/
+          
           }   
-      }
       
-    }
+      
+    
      
   return {dist, next};
   }

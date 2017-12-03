@@ -72,8 +72,9 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 		describe('computing distances in UNDIRECTED _mode - ', () => {
 
-			it('should correctly compute distance matrix for graph', () => {
+			it.only('should correctly compute distance matrix for graph', () => {
 				FW_res = $FW.FloydWarshallAPSP(graph_search);
+				console.log(FW_res[0]);
 				let expected_result = [
 					[0, 3, 4, 1, 2, 4],
 					[2, 0, 1, 3, 2, 1],
