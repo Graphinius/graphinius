@@ -19,7 +19,7 @@ describe('PFS TESTS - ', () => {
 
   beforeEach(() => {
     graph = json.readFromJSONFile(search_graph);
-    expect(graph).not.to.be.undefined;
+    expect(graph).to.exist;
     expect(graph.nrNodes()).to.equal(6);
     expect(graph.nrUndEdges()).to.equal(2);
     expect(graph.nrDirEdges()).to.equal(12);
@@ -62,82 +62,85 @@ describe('PFS TESTS - ', () => {
     
     it('should instantiate a default config object with correct result structure', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.result).not.to.be.undefined;
-      expect(config.result).to.be.an.instanceOf(Object);
+      expect(config).to.exist;
+      expect(config.result).to.exist;
     });
     
     
     it('should instantiate a default config object with correct DIR mode', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.dir_mode).not.to.be.undefined;
+      expect(config).to.exist;
+      expect(config.dir_mode).to.exist;
       expect(config.dir_mode).to.equal($G.GraphMode.MIXED);
     });
     
     
     it('should instantiate a default config object with callback object', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.callbacks).not.to.be.undefined;
+      expect(config).to.exist;
+      expect(config.callbacks).to.exist;
       expect(config.callbacks).to.be.an.instanceOf(Object);
     });
     
     
     it('should instantiate a default config object with correctly structured callback object', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.callbacks).not.to.be.undefined;
-      expect(config.callbacks.init_pfs).not.to.be.undefined;
+      expect(config).to.exist;
+      expect(config.callbacks).to.exist;
+      expect(config.callbacks.init_pfs).to.exist;
       expect(Array.isArray(config.callbacks.init_pfs)).to.be.true;
-      expect(config.callbacks.node_open).not.to.be.undefined;
+      expect(config.callbacks.node_open).to.exist;
       expect(Array.isArray(config.callbacks.node_open)).to.be.true;
-      expect(config.callbacks.node_closed).not.to.be.undefined;
+      expect(config.callbacks.node_closed).to.exist;
       expect(Array.isArray(config.callbacks.node_closed)).to.be.true;
-      expect(config.callbacks.better_path).not.to.be.undefined;
+      expect(config.callbacks.better_path).to.exist;
       expect(Array.isArray(config.callbacks.better_path)).to.be.true;
-      expect(config.callbacks.goal_reached).not.to.be.undefined;
+      expect(config.callbacks.equal_path).to.exist;
+      expect(Array.isArray(config.callbacks.equal_path)).to.be.true;
+      expect(config.callbacks.goal_reached).to.exist;
       expect(Array.isArray(config.callbacks.goal_reached)).to.be.true;      
     });
      
     
     it('should instantiate a default config object with messages object', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config.messages).not.to.be.undefined;
+      expect(config.messages).to.exist;
       expect(config.messages).to.be.an.instanceOf(Object);
     });
     
     
     it('should instantiate a default config object with correctly structured messages object', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.messages).not.to.be.undefined;
-      expect(config.messages.init_pfs_msgs).not.to.be.undefined;
+      expect(config).to.exist;
+      expect(config.messages).to.exist;
+      expect(config.messages.init_pfs_msgs).to.exist;
       expect(Array.isArray(config.messages.init_pfs_msgs)).to.be.true;
-      expect(config.messages.node_open_msgs).not.to.be.undefined;
+      expect(config.messages.node_open_msgs).to.exist;
       expect(Array.isArray(config.messages.node_open_msgs)).to.be.true;     
-      expect(config.messages.node_closed_msgs).not.to.be.undefined;
+      expect(config.messages.node_closed_msgs).to.exist;
       expect(Array.isArray(config.messages.node_closed_msgs)).to.be.true;
-      expect(config.messages.better_path_msgs).not.to.be.undefined;
-      expect(Array.isArray(config.messages.better_path_msgs)).to.be.true;     
-      expect(config.messages.goal_reached_msgs).not.to.be.undefined;
+      expect(config.messages.better_path_msgs).to.exist;
+      expect(Array.isArray(config.messages.better_path_msgs)).to.be.true;
+      expect(config.messages.equal_path_msgs).to.exist;
+      expect(Array.isArray(config.messages.equal_path_msgs)).to.be.true;   
+      expect(config.messages.goal_reached_msgs).to.exist;
       expect(Array.isArray(config.messages.goal_reached_msgs)).to.be.true;     
     });
     
     
     it('should instantiate a default config object with goal node set to null', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config).not.to.be.undefined;
-      expect(config.goal_node).not.to.be.undefined;
+      expect(config).to.exist;
+      expect(config.goal_node).to.be.null;
     });
         
     
     it('should instantiate a default config object with an existing init_pfs callback', () => {
       var config = $PFS.preparePFSStandardConfig();
-      expect(config.callbacks).not.to.be.undefined;
-      expect(config.callbacks.init_pfs).not.to.be.undefined;
+      expect(config.callbacks).to.exist;
+      expect(config.callbacks.init_pfs).to.exist;
       expect(config.callbacks.init_pfs).not.to.be.empty;
-      expect(config.callbacks.init_pfs[0]).not.to.be.undefined;
+      expect(config.callbacks.init_pfs[0]).to.exist;
       expect(config.callbacks.init_pfs[0]).to.be.instanceof(Function);
     });
     
@@ -223,6 +226,19 @@ describe('PFS TESTS - ', () => {
 			config.callbacks.better_path.push(pfsBetterPathFoundCallback);
 			var result = $PFS.PFS(graph, root, config);
 			expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
+    });
+
+
+    it('should execute the equal path (found) callbacks', () => {
+      var root = graph.getNodeById('A'),
+					config = $PFS.preparePFSStandardConfig();
+
+			var pfsEqualPathFoundCallback = function() {
+				config.messages.equal_path_msgs['equal_test_message'] = "EQUAL PATH FOUND callback executed.";
+			};
+			config.callbacks.equal_path.push(pfsEqualPathFoundCallback);
+			var result = $PFS.PFS(graph, root, config);
+			expect(config.messages.equal_path_msgs['equal_test_message']).to.equal("EQUAL PATH FOUND callback executed.");
     });
 
 
@@ -637,7 +653,7 @@ describe('PFS TESTS on REAL sized graph - ', () => {
       
 
   beforeEach(() => {
-    expect(graph).not.to.be.undefined;
+    expect(graph).to.exist;
     expect(graph.nrNodes()).to.equal(NR_NODES);
     expect(graph.nrUndEdges()).to.equal(NR_UND_EDGES);
   });

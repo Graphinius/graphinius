@@ -1630,6 +1630,9 @@
 	                    scope.OPEN_HEAP.insert(scope.next);
 	                    scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
 	                }
+	                if (scope.next.best === scope.better_dist) {
+	                    config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
+	                }
 	                continue;
 	            }
 	            config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
@@ -1649,6 +1652,7 @@
 	            node_open: [],
 	            node_closed: [],
 	            better_path: [],
+	            equal_path: [],
 	            goal_reached: []
 	        },
 	        messages: {
@@ -1657,6 +1661,7 @@
 	            node_open_msgs: [],
 	            node_closed_msgs: [],
 	            better_path_msgs: [],
+	            equal_path_msgs: [],
 	            goal_reached_msgs: []
 	        },
 	        dir_mode: $G.GraphMode.MIXED,

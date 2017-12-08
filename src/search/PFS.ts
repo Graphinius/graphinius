@@ -32,6 +32,7 @@ export interface PFS_Callbacks {
 	node_open?        : Array<Function>;
 	node_closed?	    : Array<Function>;
   better_path?      : Array<Function>;
+  equal_path?       : Array<Function>;
   goal_reached?     : Array<Function>;
 }
 
@@ -41,6 +42,7 @@ export interface PFS_Messages {
   node_open_msgs?    : Array<string>;
   node_closed_msgs?  : Array<string>;
   better_path_msgs?  : Array<string>;
+  equal_path_msgs?   : Array<string>;
   goal_reached_msgs? : Array<string>;
 }
 
@@ -195,10 +197,11 @@ function PFS(graph 	 : $G.IGraph,
         config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 
         scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
+
+        /**
+         * HOOK 5: Better path found
+         */
         if ( scope.next.best > scope.better_dist ) {
-          /**
-           * HOOK 5: Better path found
-           */
           config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
 
           // HEAP operations are necessary for internal traversal,
@@ -208,6 +211,14 @@ function PFS(graph 	 : $G.IGraph,
           scope.OPEN_HEAP.insert(scope.next);
           scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
         }
+
+        /**
+         * HOOK 6: Equal path found (same weight)
+         */
+        if ( scope.next.best === scope.better_dist ) {
+          config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
+        }
+
         continue;
       }
 
@@ -234,6 +245,7 @@ function preparePFSStandardConfig() : PFS_Config {
         node_open       : [],
         node_closed 	  : [],
         better_path     : [],
+        equal_path      : [],
         goal_reached    : []
       },
       messages: {
@@ -242,6 +254,7 @@ function preparePFSStandardConfig() : PFS_Config {
         node_open_msgs    : [],
         node_closed_msgs  : [],
         better_path_msgs  : [],
+        equal_path_msgs   : [],
         goal_reached_msgs : []
       },
       dir_mode  : $G.GraphMode.MIXED,
