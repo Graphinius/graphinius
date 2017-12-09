@@ -72,24 +72,6 @@ gulp.task('git-commit', ['git-add'], function () {
 });
 
 
-// Run git push
-// remote is the remote repo
-// branch is the remote branch to push to
-gulp.task('git-submit', function () {
-	gulp.src(paths.git_sources)
-		.pipe(prompt.prompt({
-        type: 'input',
-        name: 'submit_branch',
-        message: 'Branch to submit to? \n'
-    }, function(res){
-        //value is in res.task (the name option gives the key)
-				git.push('origin', res.submit_branch, function (err) {
-					if (err) throw err;
-				})
-    }));
-});
-
-
 
 //----------------------------
 // TASKS
