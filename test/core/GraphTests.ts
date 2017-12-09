@@ -491,6 +491,18 @@ describe('GRAPH TESTS: ', () => {
 			expect(edges).to.contain(e_6);
 			expect(edges).to.contain(e_7);
 		});
+
+
+		it('should return the correct graph density w.r.t. directed edges', () => {
+			const stats: $G.GraphStats = graph.getStats();
+			expect(stats.density_dir).to.equal(5/12);
+		});
+
+
+		it('should return the correct graph density w.r.t. UNdirected edges', () => {
+			const stats: $G.GraphStats = graph.getStats();
+			expect(stats.density_und).to.equal(4/12);
+		});
 		
 		
 		it('should output the correct degree distribution', () => {

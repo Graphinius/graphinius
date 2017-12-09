@@ -33,6 +33,8 @@ export interface GraphStats {
 	nr_nodes			: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
+	density_dir		: number;
+	density_und		: number;
 }
 
 /**
@@ -301,7 +303,9 @@ class BaseGraph implements IGraph {
 			mode: this._mode,
 			nr_nodes: this._nr_nodes,
 			nr_und_edges: this._nr_und_edges,
-			nr_dir_edges: this._nr_dir_edges
+			nr_dir_edges: this._nr_dir_edges,
+			density_dir: this._nr_dir_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) ),
+			density_und: 2* this._nr_und_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) )
 		}
 	}
 

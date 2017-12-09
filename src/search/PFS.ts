@@ -123,6 +123,7 @@ function PFS(graph 	 : $G.IGraph,
   
   scope.OPEN_HEAP.insert(start_ne);
   scope.OPEN[start_ne.node.getID()] = start_ne;
+
   
   /**
    * Main loop

@@ -130,7 +130,9 @@ var BaseGraph = (function () {
             mode: this._mode,
             nr_nodes: this._nr_nodes,
             nr_und_edges: this._nr_und_edges,
-            nr_dir_edges: this._nr_dir_edges
+            nr_dir_edges: this._nr_dir_edges,
+            density_dir: this._nr_dir_edges / (this._nr_nodes * (this._nr_nodes - 1)),
+            density_und: 2 * this._nr_und_edges / (this._nr_nodes * (this._nr_nodes - 1))
         };
     };
     BaseGraph.prototype.degreeDistribution = function () {
