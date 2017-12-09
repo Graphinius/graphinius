@@ -29,7 +29,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.circleci/*', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
+	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
 
 
@@ -72,24 +72,6 @@ gulp.task('git-commit', ['git-add'], function () {
 });
 
 
-// Run git push
-// remote is the remote repo
-// branch is the remote branch to push to
-gulp.task('git-submit', function () {
-	gulp.src(paths.git_sources)
-		.pipe(prompt.prompt({
-        type: 'input',
-        name: 'submit_branch',
-        message: 'Branch to submit to? \n'
-    }, function(res){
-        //value is in res.task (the name option gives the key)
-				git.push('origin', res.submit_branch, function (err) {
-					if (err) throw err;
-				})
-    }));
-});
-
-
 
 //----------------------------
 // TASKS
@@ -116,7 +98,7 @@ gulp.task("tdoc", ['clean'], function() {
 
 
 // Packaging - Node / Commonjs
-gulp.task('dist', ['tdoc'], function () {
+gulp.task('dist', function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject));
 	// Merge the two output streams, so this task is finished
