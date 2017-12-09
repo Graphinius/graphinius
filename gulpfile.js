@@ -29,7 +29,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.circleci/*', '!build', '!dist', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
+	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
 };
 
 
@@ -116,7 +116,7 @@ gulp.task("tdoc", ['clean'], function() {
 
 
 // Packaging - Node / Commonjs
-gulp.task('dist', ['tdoc'], function () {
+gulp.task('dist', function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject));
 	// Merge the two output streams, so this task is finished
