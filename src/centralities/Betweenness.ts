@@ -4,23 +4,28 @@ import * as $G from '../core/Graph';
 import * as $FW from '../search/FloydWarshall';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
+//automatic import, seems to work below, without calling class with dollar sign - is that correct so?
+import { Johnsons } from '../search/Johnsons';
+
 
 /**
  * This is used to get the betweenness of a graph by either
- * Bellman Ford or Floyd Warshall with APSP.
+ * Bellman Ford (Johnsons) or Floyd Warshall with APSP.
  *
  * @param graph the graph to perform Floyd-Warshall on
- * @returns m*m matrix of values, m*m*m matrix of neighbors
+ * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
  */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
-  //if(sparse){ //TODO: Add Bellman-Ford
-  //  throw new Error("Not implemented yet")
-  //  //paths = Bellman Ford
-  //}
-  //else
+  //Johnsons implemented here
+  
+  if(sparse){ 
+  paths=Johnsons(graph)[1];
+  }
+  else {
     paths = $FW.FloydWarshallAPSP(graph)[1];
+  }
 
   let nodes = graph.adjListArray();
   let map = {};
@@ -30,6 +35,7 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
+      //==================== third condition of the "if" is not clear for me
       if(a!=b && !(paths[a][b].length == 1 && paths[a][b][0] == b)){
         addBetweeness(a, b, paths, map, a);
       }
@@ -54,6 +60,9 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
  * @returns m*m matrix of values, m*m*m matrix of neighbors
  * @constructor
  */
+
+ //=================
+ //here this is not clear for me
 function addBetweeness(u, v, next, map, start){
   if(u==v)
     return 1;     //Terminal nodes return 1

@@ -1,8 +1,14 @@
 "use strict";
 var $FW = require('../search/FloydWarshall');
+var Johnsons_1 = require('../search/Johnsons');
 function inBetweennessCentrality(graph, sparse) {
     var paths;
-    paths = $FW.FloydWarshallAPSP(graph)[1];
+    if (sparse) {
+        paths = Johnsons_1.Johnsons(graph)[1];
+    }
+    else {
+        paths = $FW.FloydWarshallAPSP(graph)[1];
+    }
     var nodes = graph.adjListArray();
     var map = {};
     for (var keyA in nodes) {

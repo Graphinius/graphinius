@@ -1358,29 +1358,57 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('should return the same empty graph if there were no edges before', () => {
+			it('should show Rita some basic expectations and what can go right / wrong ;)', () => {
 
+			});
+
+
+			it('should throw an error if we hand it an empty graph', () => {
+				// 'throws an error' behavior is not really a return value of the function
+				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
 			});
 
 
 			it('should return the same directed graph if all edges were directed before', () => {
-
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+				expect(digraph.toDirectedGraph()).to.equal(digraph);
 			});
 
 
-			it('should return the same UNdirected graph if all edges were UNdirected before', () => {
+			it('should return a copy of the same directed graph if all edges were directed before', () => {
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+
+				let res_graph = digraph.toDirectedGraph(true);
+				expect(res_graph).not.to.equal(digraph); // refs
+				expect(res_graph).to.deep.equal(digraph); // content
+			});
+
+
+			// it('should return the same UNdirected graph if all edges were UNdirected before', () => {
 				
-			});
+			// });
 
 
-			it('should return a directed graph when all edges were UNdirected before', () => {
+			// it('should return a directed graph when all edges were UNdirected before', () => {
 
-			});
+			// });
 
 
-			it('should return an UNdirected graph when all edges were directed before', () => {
+			// it('should return an UNdirected graph when all edges were directed before', () => {
 				
-			});
+			// });
 
 
 		});

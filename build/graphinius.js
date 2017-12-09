@@ -66,8 +66,8 @@
 	var DegreeCent		 	= __webpack_require__(25);
 	var ClosenessCent	 	= __webpack_require__(26);
 	var BetweennessCent	= __webpack_require__(27);
-	var PRGauss					= __webpack_require__(28);
-	var PRRandomWalk		= __webpack_require__(30);
+	var PRGauss					= __webpack_require__(29);
+	var PRRandomWalk		= __webpack_require__(31);
 
 	// Define global object
 	var out = typeof window !== 'undefined' ? window : global;
@@ -579,8 +579,13 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.toDirectedGraph = function () {
-	        return this;
+	    BaseGraph.prototype.toDirectedGraph = function (copy) {
+	        if (copy === void 0) { copy = false; }
+	        var result_graph = copy ? this.clone() : this;
+	        if (this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+	            throw new Error("Cowardly refusing to re-interpret an empty graph.");
+	        }
+	        return result_graph;
 	    };
 	    BaseGraph.prototype.toUndirectedGraph = function () {
 	        return this;
@@ -3685,9 +3690,15 @@
 
 	"use strict";
 	var $FW = __webpack_require__(21);
+	var Johnsons_1 = __webpack_require__(28);
 	function inBetweennessCentrality(graph, sparse) {
 	    var paths;
-	    paths = $FW.FloydWarshallAPSP(graph)[1];
+	    if (sparse) {
+	        paths = Johnsons_1.Johnsons(graph)[1];
+	    }
+	    else {
+	        paths = $FW.FloydWarshallAPSP(graph)[1];
+	    }
 	    var nodes = graph.adjListArray();
 	    var map = {};
 	    for (var keyA in nodes) {
@@ -3730,8 +3741,96 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var $N = __webpack_require__(2);
+	var $PFS = __webpack_require__(11);
+	var BellmanFord_1 = __webpack_require__(10);
+	function Johnsons(graph, cycle) {
+	    if (cycle === void 0) { cycle = true; }
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    var allNodes = graph.getNodes();
+	    var nodeKeys = Object.keys(allNodes);
+	    var hasNWE = function (graph) {
+	        var allDir = graph.getDirEdges();
+	        var allUnd = graph.getUndEdges();
+	        var resultHasNWE = false;
+	        for (var diredge in allDir) {
+	            if (!allDir[diredge].isWeighted()) {
+	                continue;
+	            }
+	            if (allDir[diredge].getWeight() < 0) {
+	                resultHasNWE = true;
+	            }
+	        }
+	        for (var undEdge in allUnd) {
+	            if (!allUnd[undEdge].isWeighted()) {
+	                continue;
+	            }
+	            if (allUnd[undEdge].getWeight() < 0) {
+	                resultHasNWE = true;
+	            }
+	        }
+	        return resultHasNWE;
+	    };
+	    var RWGraph;
+	    if (hasNWE) {
+	        var extraNode = new $N.BaseNode("extraNode");
+	        var graphForBF = graph.clone();
+	        graphForBF.addNode(extraNode);
+	        for (var _i = 0, nodeKeys_1 = nodeKeys; _i < nodeKeys_1.length; _i++) {
+	            var nodeId = nodeKeys_1[_i];
+	            graphForBF.addEdgeByNodeIDs("temp", "extraNode", nodeId, { directed: true, weighted: true, weight: 0 });
+	        }
+	        if (BellmanFord_1.BellmanFordArray(graphForBF, extraNode, true)) {
+	            throw new Error("The graph contains negative cycle(s), it makes no sense to continue");
+	        }
+	        var newWeights = BellmanFord_1.BellmanFordDict(graphForBF, extraNode, false);
+	        delete newWeights["extraNode"];
+	        RWGraph = graph.clone();
+	        var edges = RWGraph.getDirEdgesArray().concat(RWGraph.getUndEdgesArray());
+	        for (var edgeID in edges) {
+	            var edge = edges[edgeID];
+	            var a = edge.getNodes().a.getID();
+	            var b = edge.getNodes().b.getID();
+	            if (edge.isWeighted) {
+	                var oldWeight = edge.getWeight();
+	                var newWeight = oldWeight + newWeights[a] - newWeights[b];
+	                edge.setWeight(newWeight);
+	            }
+	            else {
+	                var edgeID_1 = edge.getID();
+	                var dirNess = edge.isDirected();
+	                RWGraph.deleteEdge(edge);
+	                var oldWeight = $PFS.DEFAULT_WEIGHT;
+	                var newWeight = oldWeight + newWeights[a] - newWeights[b];
+	                RWGraph.addEdgeByNodeIDs(edgeID_1, a, b, { directed: dirNess, weighted: true, weight: newWeight });
+	            }
+	        }
+	    }
+	    else {
+	        RWGraph = graph.clone();
+	    }
+	    var RWAllNodes = RWGraph.getNodes();
+	    var RWNodeKeys = Object.keys(RWAllNodes);
+	    var dist;
+	    var next;
+	    for (var src_id = 0; src_id < RWNodeKeys.length; src_id++) {
+	        dist.push([]);
+	        next.push([]);
+	    }
+	    return { dist: dist, next: next };
+	}
+	exports.Johnsons = Johnsons;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var $SU = __webpack_require__(3);
-	var $GAUSS = __webpack_require__(29);
+	var $GAUSS = __webpack_require__(30);
 	var pageRankDetCentrality = (function () {
 	    function pageRankDetCentrality() {
 	    }
@@ -3794,7 +3893,7 @@
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -3850,7 +3949,7 @@
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
