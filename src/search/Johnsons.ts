@@ -2,12 +2,11 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $PFS from '../../src/search/PFS';
+import * as $PFS from '../search/PFS';
 import * as $BF from '../search/BellmanFord';
 import * as $D from '../search/Dijkstra';
 import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
 import { Dijkstra } from '../search/Dijkstra';
-
 
 
 //return types: similar to Floyd-Warshall, 
@@ -23,7 +22,7 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
   let nodeKeys = Object.keys(allNodes);
 
   //this is not yet correct, I will need to check these lambda expressions once more
-  let hasNWE: boolean = NWEchecker((graph): boolean => {
+  let hasNWE = graph => {
     let allDir = graph.getDirEdges();
     let allUnd = graph.getUndEdges();
     let resultHasNWE: boolean = false;
@@ -44,7 +43,7 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
       }
     }
     return resultHasNWE;
-  });
+  };
 
   //initialize the graph on which the Dijkstras will be made
   var RWGraph: $G.IGraph;
@@ -168,9 +167,6 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
         }*/
 
   }
-
-
-
 
   return { dist, next };
 }

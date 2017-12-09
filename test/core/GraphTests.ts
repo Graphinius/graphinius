@@ -1342,11 +1342,11 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe("Edge re-interpretation - ", () => {
+	describe.skip("Edge re-interpretation - ", () => {
 
 		const jsonReader = new $JSON.JSONInput();
 
-		describe.only('empty and trivial graphs - ', () => {
+		describe('empty and trivial graphs - ', () => {
 
 			beforeEach(() => {
 				graph = new $G.BaseGraph("emptinius");
@@ -1359,15 +1359,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 			it('should show Rita some basic expectations and what can go right / wrong ;)', () => {
-				expect(false).to.be.true; // false
-				expect(5).to.equal(5); // true
-				expect({}).to.exist; //true
-				let a = {}; let b = a; expect(a).to.equal(b); // true because refs are the same
-				expect({}).to.equal({}) // false because objects have different addresses
-				expect({a: true, b: "bla"}).to.deep.equal({a: true, b: "blahoo"}); // false
-				expect({a: true, b: "bla"}).not.to.equal({a: true, b: "blahoo"}); // true because of different refs
-				expect({a: true, b: "bla"}).not.to.deep.equal({a: true, b: "blahoo"}); // true because of different content
-				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
+
 			});
 
 

@@ -89,7 +89,7 @@ for (let key in neighbors){
       parentOutput[key]=[allNodes[nextNodeKey]];
     }
     if (distOutput[key]=distOutput[nextNodeKey]+neighbors[key]){
-      parentOutput[key].push(allNodes.nextNodeKey);
+      parentOutput[key].push(allNodes[nextNodeKey]);
     }
   }
 }
