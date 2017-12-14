@@ -44,8 +44,6 @@ test_async/**/*.js
 test/test_data/output/**/*.csv
 test/test_data/output/**/*.json
 
-# YARN
-yarn.lock
-
 # MISC
+yarn.lock
 package-lock.json

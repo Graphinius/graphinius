@@ -29,7 +29,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
+	git_sources: ['./*', '.gitignore', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
 };
 
 
@@ -76,6 +76,12 @@ gulp.task('git-commit', ['git-add'], function () {
 //----------------------------
 // TASKS
 //----------------------------
+gulp.task('clean', function () {
+	return gulp.src(paths.clean, {read: false})
+						 .pipe(clean());
+});
+
+
 gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts(tsProject))
@@ -98,7 +104,7 @@ gulp.task("tdoc", ['clean'], function() {
 
 
 // Packaging - Node / Commonjs
-gulp.task('dist', function () {
+gulp.task('dist', ['clean'], function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject));
 	// Merge the two output streams, so this task is finished
@@ -206,12 +212,6 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 		// }));
 		.pipe(istanbul.writeReports());
 		// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
-});
-
-
-gulp.task('clean', function () {
-	return gulp.src(paths.clean, {read: false})
-						 .pipe(clean());
 });
 
 
