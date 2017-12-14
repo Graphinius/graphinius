@@ -29,7 +29,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
+	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
 };
 
 
@@ -91,7 +91,7 @@ gulp.task("tdoc", ['clean'], function() {
 			module: "commonjs",
 			target: "es5",
 			out: "docs/",
-			name: "Graphinius"//,
+			name: "GraphiniusJS"//,
 			//theme: "minimal"
 		}));
 });

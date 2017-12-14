@@ -762,7 +762,7 @@ class BaseGraph implements IGraph {
 		var bfsNodeUnmarkedTestCallback = function(context: $BFS.BFS_Scope) {
 			if(config.result[context.next_node.getID()].counter>cutoff){
 				context.queue = [];
-			}else{ //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
+			} else { //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
 				new_graph.addNode(context.next_node.clone());
 			}
 		};
@@ -825,8 +825,21 @@ class BaseGraph implements IGraph {
 	 * in one swoop, as calls to Object.keys() are really slow
 	 * for large input objects.
 	 *
-	 * In order to do this, we
-	 *
+	 * In order to do this, we only extract the keys once and then
+	 * iterate over the key list and add them to a result array
+	 * with probability = amount / keys.length
+	 * 
+	 * We also mark all used keys in case we haven't picked up
+	 * enough entities for the result array after the first round.
+	 * We then just fill up the rest of the result array linearly
+	 * with as many unused keys as necessary
+	 * 
+	 * 
+	 * @TODO include general Test Cases
+	 * @TODO check if amount is larger than propList size
+	 * @TODO This seems like a simple hack - filling up remaining objects
+	 * Could be replaced by a better fraction-increasing function above...
+	 * 
 	 * @param propList
 	 * @param fraction
 	 * @returns {Array}
@@ -844,9 +857,6 @@ class BaseGraph implements IGraph {
 			}
 		}
 
-		// Simple hack - filling up remaining objects (if any)
-		// Could be replaced by a much better fraction-increasing function above
-		// But too tired now...
 		let diff = amount - ids.length;
 		for ( let i = 0; i < keys.length && diff; i++ ) {
 			if ( used_keys[keys[i]] == null) {
