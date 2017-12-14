@@ -6,7 +6,7 @@ import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
 import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
 
-type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
+export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
 // type EnergyFunctionDataTerm = (arg1: string, ...args: any[]) => number;
 // type EnergyFunction = (...args: any[]) => number;
 

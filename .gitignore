@@ -46,3 +46,6 @@ test/test_data/output/**/*.json
 
 # YARN
 yarn.lock
+
+# MISC
+package-lock.json

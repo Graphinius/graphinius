@@ -8,6 +8,6 @@
     },
     "compileOnSave": false,
     "include": [
-        "./src/**/*.ts"
+        "./**/*.ts"
     ]
 }

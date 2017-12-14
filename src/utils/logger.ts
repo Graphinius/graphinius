@@ -6,7 +6,7 @@
 let LOG_LEVELS = require('../../config/run_config.js').LOG_LEVELS;
 let RUN_CONFIG = require('../../config/run_config.js').RUN_CONFIG;
 
-interface CONFIG {
+export interface CONFIG {
   log_level : string;
 }
 

@@ -2,7 +2,7 @@
 
 import * as $N from '../core/Nodes';
 import * as $G from '../core/Graph';
-import * as $PFS from '../../src/search/PFS';
+import * as $PFS from '../search/PFS';
 
 
 /**
