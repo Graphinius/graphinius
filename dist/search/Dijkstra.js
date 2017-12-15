@@ -1,5 +1,5 @@
 "use strict";
-var $PFS = require('../../src/search/PFS');
+var $PFS = require('../search/PFS');
 function Dijkstra(graph, source, target) {
     var config = $PFS.preparePFSStandardConfig();
     if (target) {
