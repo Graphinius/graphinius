@@ -821,16 +821,16 @@
 	        if (!node_b) {
 	            throw new Error("Cannot find edge. Node B does not exist");
 	        }
-	        var edges_dir = node_a.outEdges();
-	        for (var i = 0; i < Object.keys(edges_dir).length; i++) {
-	            var edge = edges_dir[Object.keys(edges_dir)[i]];
+	        var edges_dir = node_a.outEdges(), edges_dir_keys = Object.keys(edges_dir);
+	        for (var i = 0; i < edges_dir_keys.length; i++) {
+	            var edge = edges_dir[edges_dir_keys[i]];
 	            if (edge.getNodes().b.getID() == node_b_id) {
 	                return edge;
 	            }
 	        }
-	        var edges_und = node_a.undEdges();
-	        for (var i = 0; i < Object.keys(edges_und).length; i++) {
-	            var edge = edges_und[Object.keys(edges_und)[i]];
+	        var edges_und = node_a.undEdges(), edges_und_keys = Object.keys(edges_und);
+	        for (var i = 0; i < edges_und_keys.length; i++) {
+	            var edge = edges_und[edges_und_keys[i]];
 	            var b;
 	            (edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
 	            if (b == node_b_id) {
