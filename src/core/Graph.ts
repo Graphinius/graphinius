@@ -60,9 +60,7 @@ export interface IGraph {
 	addNode(node: $N.IBaseNode) : boolean;
 	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
-	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
-	getNodeByLabel(label: string) : $N.IBaseNode;
 	getNodes() : {[key: string] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
@@ -75,8 +73,8 @@ export interface IGraph {
 	hasEdgeID(id: string) : boolean;
 	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
-	getEdgeByLabel(label: string) : $E.IBaseEdge;
-	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
+	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
+	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
 	getUndEdges() : {[key: string] : $E.IBaseEdge};
 	getDirEdgesArray(): Array<$E.IBaseEdge>;
@@ -384,28 +382,7 @@ class BaseGraph implements IGraph {
 		return !!this._nodes[id];
 	}
 
-	/**
-	 * Use hasNodeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #nodes
-	 */
-	hasNodeLabel(label: string) : boolean {
-		return !!$DS.findKey(this._nodes, function(node : $N.IBaseNode) {
-			return node.getLabel() === label;
-		});
-	}
-
 	getNodeById(id: string) : $N.IBaseNode {
-		return this._nodes[id];
-	}
-
-	/**
-	 * Use getNodeByLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #nodes
-	 */
-	getNodeByLabel(label: string) : $N.IBaseNode {
-		var id = $DS.findKey(this._nodes, function(node : $N.IBaseNode) {
-			return node.getLabel() === label;
-		});
 		return this._nodes[id];
 	}
 
@@ -471,35 +448,21 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 
-	/**
-	 * Use hasEdgeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #edges
-	 */
-	getEdgeByLabel(label: string) : $E.IBaseEdge {
-		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var edge = this._dir_edges[dir_id] || this._und_edges[und_id];
-		if ( !edge ) {
-			throw new Error("cannot retrieve edge with non-existing Label.");
-		}
-		return edge;
-	}
 
-	// get the edge from node_a to node_b (or undirected)
-	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
-		var node_a = this.getNodeById(node_a_id);
+	private checkExistanceOfEdgeNodes(node_a: $N.IBaseNode, node_b: $N.IBaseNode) : void {
 		if ( !node_a ) {
 			throw new Error("Cannot find edge. Node A does not exist (in graph).");
 		}
-		var node_b = this.getNodeById(node_b_id);
 		if ( !node_b ) {
 			throw new Error("Cannot find edge. Node B does not exist (in graph).");
 		}
+	}
 
+	// get the edge from node_a to node_b (or undirected)
+	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
+		const node_a = this.getNodeById(node_a_id);
+		const node_b = this.getNodeById(node_b_id);
+		this.checkExistanceOfEdgeNodes(node_a, node_b);
 
 		// check for outgoing directed edges
 		let edges_dir = node_a.outEdges(),
@@ -512,9 +475,19 @@ class BaseGraph implements IGraph {
 				}
 		}
 
+		// if we managed to arrive here, there is no edge!
+		throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
+	}
+
+
+	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
+		const node_a = this.getNodeById(node_a_id);
+		const node_b = this.getNodeById(node_b_id);
+		this.checkExistanceOfEdgeNodes(node_a, node_b);
+
 		// check for undirected edges
 		let edges_und = node_a.undEdges(),
-				edges_und_keys = Object.keys(edges_und);
+		edges_und_keys = Object.keys(edges_und);
 
 		for (let i = 0; i < edges_und_keys.length; i++) {
 		    var edge = edges_und[edges_und_keys[i]];
@@ -524,9 +497,6 @@ class BaseGraph implements IGraph {
 				    return edge;
 				}
 		}
-		
-		// if we managed to arrive here, there is no edge!
-		throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
 	}
 
 	getDirEdges() : {[key: string] : $E.IBaseEdge} {

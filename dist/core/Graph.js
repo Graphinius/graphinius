@@ -187,18 +187,7 @@ var BaseGraph = (function () {
     BaseGraph.prototype.hasNodeID = function (id) {
         return !!this._nodes[id];
     };
-    BaseGraph.prototype.hasNodeLabel = function (label) {
-        return !!$DS.findKey(this._nodes, function (node) {
-            return node.getLabel() === label;
-        });
-    };
     BaseGraph.prototype.getNodeById = function (id) {
-        return this._nodes[id];
-    };
-    BaseGraph.prototype.getNodeByLabel = function (label) {
-        var id = $DS.findKey(this._nodes, function (node) {
-            return node.getLabel() === label;
-        });
         return this._nodes[id];
     };
     BaseGraph.prototype.getNodes = function () {
@@ -246,28 +235,18 @@ var BaseGraph = (function () {
         }
         return edge;
     };
-    BaseGraph.prototype.getEdgeByLabel = function (label) {
-        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
-            return edge.getLabel() === label;
-        });
-        var und_id = $DS.findKey(this._und_edges, function (edge) {
-            return edge.getLabel() === label;
-        });
-        var edge = this._dir_edges[dir_id] || this._und_edges[und_id];
-        if (!edge) {
-            throw new Error("cannot retrieve edge with non-existing Label.");
-        }
-        return edge;
-    };
-    BaseGraph.prototype.getEdgeByNodeIDs = function (node_a_id, node_b_id) {
-        var node_a = this.getNodeById(node_a_id);
+    BaseGraph.prototype.checkExistanceOfEdgeNodes = function (node_a, node_b) {
         if (!node_a) {
             throw new Error("Cannot find edge. Node A does not exist (in graph).");
         }
-        var node_b = this.getNodeById(node_b_id);
         if (!node_b) {
             throw new Error("Cannot find edge. Node B does not exist (in graph).");
         }
+    };
+    BaseGraph.prototype.getDirEdgeByNodeIDs = function (node_a_id, node_b_id) {
+        var node_a = this.getNodeById(node_a_id);
+        var node_b = this.getNodeById(node_b_id);
+        this.checkExistanceOfEdgeNodes(node_a, node_b);
         var edges_dir = node_a.outEdges(), edges_dir_keys = Object.keys(edges_dir);
         for (var i = 0; i < edges_dir_keys.length; i++) {
             var edge = edges_dir[edges_dir_keys[i]];
@@ -275,6 +254,12 @@ var BaseGraph = (function () {
                 return edge;
             }
         }
+        throw new Error("Cannot find edge. There is no edge between Node " + node_a_id + " and " + node_b_id + ".");
+    };
+    BaseGraph.prototype.getUndEdgeByNodeIDs = function (node_a_id, node_b_id) {
+        var node_a = this.getNodeById(node_a_id);
+        var node_b = this.getNodeById(node_b_id);
+        this.checkExistanceOfEdgeNodes(node_a, node_b);
         var edges_und = node_a.undEdges(), edges_und_keys = Object.keys(edges_und);
         for (var i = 0; i < edges_und_keys.length; i++) {
             var edge = edges_und[edges_und_keys[i]];
@@ -284,7 +269,6 @@ var BaseGraph = (function () {
                 return edge;
             }
         }
-        throw new Error("Cannot find edge. There is no edge between Node " + node_a_id + " and " + node_b_id + ".");
     };
     BaseGraph.prototype.getDirEdges = function () {
         return this._dir_edges;

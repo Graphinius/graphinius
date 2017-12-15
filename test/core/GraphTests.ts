@@ -322,31 +322,14 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should report the existence of a node by Label', () => {
-			expect(graph.hasNodeLabel("donotexist")).to.be.false;
-			expect(graph.hasNodeLabel(node_a.getLabel())).to.be.true;
-		});
-		
-		
 		it('should return undefined when trying to retrieve a non-existing node by ID', () => {
 			expect(graph.getNodeById("idontexist")).to.be.undefined;
-		});
-		
-		
-		it('should return undefined when trying to retrieve a non-existing node by Label', () => {
-			expect(graph.getNodeByLabel("idontexist")).to.be.undefined;
 		});
 		
 		
 		it('should return a node by existing ID', () => {
 			expect(graph.getNodeById(node_a.getID())).to.equal(node_a);
 			expect(graph.getNodeById(node_b.getID())).to.equal(node_b);
-		});
-		
-		
-		it('should return a node by existing Label', () => {
-			expect(graph.getNodeByLabel(node_a.getLabel())).to.equal(node_a);
-			expect(graph.getNodeByLabel(node_b.getLabel())).to.equal(node_b);
 		});
 		
 		
@@ -378,22 +361,10 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.getEdgeById.bind(graph, loose_edge.getID())).to.throw("cannot retrieve edge with non-existing ID.");
 			expect(graph.getEdgeById.bind(graph, out_edge.getID())).to.throw("cannot retrieve edge with non-existing ID.");
 		});
-		
-		
-		it('should throw an error upon trying to retrieve a non-existing edge by Label', () => {
-			expect(graph.getEdgeByLabel.bind(graph, undefined)).to.throw("cannot retrieve edge with non-existing Label.");
-			expect(graph.getEdgeByLabel.bind(graph, loose_edge.getLabel())).to.throw("cannot retrieve edge with non-existing Label.");
-			expect(graph.getEdgeByLabel.bind(graph, out_edge.getLabel())).to.throw("cannot retrieve edge with non-existing Label.");
-		});
 			
 		
 		it('should return an edge by ID', () => {
 			expect(graph.getEdgeById(edge_abu.getID())).to.equal(edge_abu);
-		});
-		
-		
-		it('should return an edge by Label', () => {
-			expect(graph.getEdgeByLabel(edge_abu.getLabel())).to.equal(edge_abu);
 		});
 		
 		
@@ -430,19 +401,38 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
+		/**
+		 * @TODO We're just checking for 1st edge right now - what about multiple edges?
+		 * 
+		 */
 		it('should throw an error retrieving an edge by Node IDs if node_a does not exist', () => {
-			expect(graph.getEdgeByNodeIDs.bind(graph, undefined, node_b.getID())).to.throw("Cannot find edge. Node A does not exist (in graph).");
+			expect(graph.getDirEdgeByNodeIDs.bind(graph, undefined, node_b.getID())).to.throw("Cannot find edge. Node A does not exist (in graph).");
 		});
 
 
 		it('should throw an error retrieving an edge by Node IDs if node_b does not exist', () => {
-			expect(graph.getEdgeByNodeIDs.bind(graph, node_b.getID(), undefined)).to.throw("Cannot find edge. Node B does not exist (in graph).");
+			expect(graph.getDirEdgeByNodeIDs.bind(graph, node_b.getID(), undefined)).to.throw("Cannot find edge. Node B does not exist (in graph).");
 		});
 
 
 		it('should throw an error retrieving a non-existing edge between two valid graph nodes', () => {
 			const node_extra = graph.addNodeByID("extraaaaaa");
-			expect(graph.getEdgeByNodeIDs.bind(graph, node_a.getID(), node_extra.getID())).to.throw(`Cannot find edge. There is no edge between Node ${node_a.getID()} and ${node_extra.getID()}.`);
+			expect(graph.getDirEdgeByNodeIDs.bind(graph, node_a.getID(), node_extra.getID())).to.throw(`Cannot find edge. There is no edge between Node ${node_a.getID()} and ${node_extra.getID()}.`);
+		});
+
+
+		it('should correctly return the UNdirected A->B edge', () => {
+			expect(graph.getUndEdgeByNodeIDs(node_a.getID(), node_b.getID())).to.equal(edge_abu);
+		});
+
+
+		it('should correctly return the UNdirected B->A edge', () => {
+			expect(graph.getUndEdgeByNodeIDs(node_b.getID(), node_a.getID())).to.equal(edge_abu);
+		});
+
+
+		it('should correctly return the directed B->A edge', () => {
+			expect(graph.getDirEdgeByNodeIDs(node_b.getID(), node_a.getID())).to.equal(edge_bad);			
 		});
 		
 	});
