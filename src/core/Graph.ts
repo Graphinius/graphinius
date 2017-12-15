@@ -493,12 +493,13 @@ class BaseGraph implements IGraph {
 	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
 		var node_a = this.getNodeById(node_a_id);
 		if ( !node_a ) {
-			throw new Error("Cannot find edge. Node A does not exist");
+			throw new Error("Cannot find edge. Node A does not exist (in graph).");
 		}
 		var node_b = this.getNodeById(node_b_id);
 		if ( !node_b ) {
-			throw new Error("Cannot find edge. Node B does not exist");
+			throw new Error("Cannot find edge. Node B does not exist (in graph).");
 		}
+
 
 		// check for outgoing directed edges
 		let edges_dir = node_a.outEdges(),
@@ -525,7 +526,7 @@ class BaseGraph implements IGraph {
 		}
 		
 		// if we managed to arrive here, there is no edge!
-		throw new Error("Cannot find edge. There is no edge between Node " + node_a_id +  " and " + node_b_id);
+		throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
 	}
 
 	getDirEdges() : {[key: string] : $E.IBaseEdge} {

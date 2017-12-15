@@ -428,6 +428,22 @@ describe('GRAPH TESTS: ', () => {
 			expect(rand_und_edge).to.be.an.instanceof(Edge);
 			expect(graph.hasEdgeID(rand_und_edge.getID())).to.be.true;
 		});
+
+
+		it('should throw an error retrieving an edge by Node IDs if node_a does not exist', () => {
+			expect(graph.getEdgeByNodeIDs.bind(graph, undefined, node_b.getID())).to.throw("Cannot find edge. Node A does not exist (in graph).");
+		});
+
+
+		it('should throw an error retrieving an edge by Node IDs if node_b does not exist', () => {
+			expect(graph.getEdgeByNodeIDs.bind(graph, node_b.getID(), undefined)).to.throw("Cannot find edge. Node B does not exist (in graph).");
+		});
+
+
+		it('should throw an error retrieving a non-existing edge between two valid graph nodes', () => {
+			const node_extra = graph.addNodeByID("extraaaaaa");
+			expect(graph.getEdgeByNodeIDs.bind(graph, node_a.getID(), node_extra.getID())).to.throw(`Cannot find edge. There is no edge between Node ${node_a.getID()} and ${node_extra.getID()}.`);
+		});
 		
 	});
 		
