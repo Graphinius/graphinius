@@ -347,15 +347,6 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		it('should report the existence of an edge by Label', () => {
-			expect(graph.hasEdgeLabel("menonexistant")).to.be.false;
-			expect(graph.hasEdgeLabel(loose_edge.getLabel())).to.be.false;
-			expect(graph.hasEdgeLabel(out_edge.getLabel())).to.be.false;
-			expect(graph.hasEdgeLabel(edge_abu.getLabel())).to.be.true;
-			expect(graph.hasEdgeLabel(edge_bad.getLabel())).to.be.true;
-		});
-		
-		
 		it('should throw an error upon trying to retrieve a non-existing edge by ID', () => {
 			expect(graph.getEdgeById.bind(graph, undefined)).to.throw("cannot retrieve edge with non-existing ID.");
 			expect(graph.getEdgeById.bind(graph, loose_edge.getID())).to.throw("cannot retrieve edge with non-existing ID.");

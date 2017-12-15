@@ -189,9 +189,17 @@ declare module GraphiniusJS {
             nr_und_edges: number;
             nr_dir_edges: number;
         }
-        export type MinAdjacencyList = {[id: string]: MinAdjacencyListEntry};
 
-        export type MinAdjacencyListEntry = {[id: string] : number}
+        /**
+         * Only gives the best distance to a node in case of multiple direct edges
+         */
+        export type MinAdjacencyListDict = { [id: string]: MinAdjacencyListDictEntry };
+
+        export type MinAdjacencyListDictEntry = { [id: string]: number };
+
+        export type MinAdjacencyListArray = Array<Array<number>>;
+
+        export type NextArray = Array<Array<Array<number>>>;
 
         export interface IGraph {
             _label: string;
@@ -200,50 +208,63 @@ declare module GraphiniusJS {
             degreeDistribution(): DegreeDistribution;
 
             // NODE STUFF
-            addNodeByID(id: string, opts? : {}) : core.IBaseNode;
-	        addNode(node: core.IBaseNode) : boolean;
+            addNodeByID(id: string, opts?: {}): core.IBaseNode;
+            addNode(node: core.IBaseNode): boolean;
+            cloneAndAddNode(node: core.IBaseNode): core.IBaseNode;
             hasNodeID(id: string): boolean;
-            hasNodeLabel(label: string): boolean;
-            getNodeById(id: string): IBaseNode;
-            getNodeByLabel(label: string): IBaseNode;
-            getNodes(): {
-                [key: string]: IBaseNode;
-            };
+            getNodeById(id: string): core.IBaseNode;
+            getNodes(): { [key: string]: core.IBaseNode };
             nrNodes(): number;
-            getRandomNode(): IBaseNode;
-            deleteNode(node: any): void;
+            getRandomNode(): core.IBaseNode;
+            deleteNode(node): void;
 
             // EDGE STUFF
-	        addEdgeByID(label: string, node_a : core.IBaseNode, node_b : core.IBaseNode, opts? : {}) : core.IBaseEdge;
-            addEdge(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
-            addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+            addEdgeByID(label: string, node_a: core.IBaseNode, node_b: core.IBaseNode, opts?: {}): core.IBaseEdge;
+            addEdge(edge: core.IBaseEdge): core.IBaseEdge;
+            addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): core.IBaseEdge;
             hasEdgeID(id: string): boolean;
-            hasEdgeLabel(label: string): boolean;
-            getEdgeById(id: string): IBaseEdge;
-            getEdgeByLabel(label: string): IBaseEdge;
-            getDirEdges(): {
-                [key: string]: IBaseEdge;
-            };
-            getUndEdges(): {
-                [key: string]: IBaseEdge;
-            };
+            getEdgeById(id: string): core.IBaseEdge;
+            getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): core.IBaseEdge;
+            getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): core.IBaseEdge;
+            getDirEdges(): { [key: string]: core.IBaseEdge };
+            getUndEdges(): { [key: string]: core.IBaseEdge };
+            getDirEdgesArray(): Array<core.IBaseEdge>;
+            getUndEdgesArray(): Array<core.IBaseEdge>;
             nrDirEdges(): number;
             nrUndEdges(): number;
-            deleteEdge(edge: IBaseEdge): void;
-            getRandomDirEdge(): IBaseEdge;
-            getRandomUndEdge(): IBaseEdge;
-            deleteInEdgesOf(node: IBaseNode): void;
-            deleteOutEdgesOf(node: IBaseNode): void;
-            deleteDirEdgesOf(node: IBaseNode): void;
-            deleteUndEdgesOf(node: IBaseNode): void;
-            deleteAllEdgesOf(node: IBaseNode): void;
+            deleteEdge(edge: core.IBaseEdge): void;
+            getRandomDirEdge(): core.IBaseEdge;
+            getRandomUndEdge(): core.IBaseEdge;
+            hasNegativeCycles(node?: core.IBaseNode): boolean;
+
+            // REINTERPRETING EDGES
+            toDirectedGraph(): IGraph;
+            toUndirectedGraph(): IGraph;
+
+            // PROPERTIES
+            pickRandomProperty(propList): any;
+            pickRandomProperties(propList, amount): Array<string>;
+
+            // HANDLE ALL EDGES OF NODES
+            deleteInEdgesOf(node: core.IBaseNode): void;
+            deleteOutEdgesOf(node: core.IBaseNode): void;
+            deleteDirEdgesOf(node: core.IBaseNode): void;
+            deleteUndEdgesOf(node: core.IBaseNode): void;
+            deleteAllEdgesOf(node: core.IBaseNode): void;
+
+            // HANDLE ALL EDGES IN GRAPH
             clearAllDirEdges(): void;
             clearAllUndEdges(): void;
             clearAllEdges(): void;
-            pickRandomProperty(propList) : any;
-            pickRandomProperties(propList, amount) : Array<string>;
-            clone() : IGraph;
-            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
+
+            // CLONING
+            clone(): IGraph;
+            cloneSubGraph(start: core.IBaseNode, cutoff: Number): IGraph;
+
+            // REPRESENTATIONS
+            adjListDict(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
+            adjListArray(incoming?: boolean): MinAdjacencyListArray;
+            nextArray(incoming?: boolean): NextArray;
         }
 
         export class BaseGraph implements IGraph {
@@ -270,31 +291,30 @@ declare module GraphiniusJS {
             nrUndEdges(): number;
 
             // NODE STUFF
-            addNodeByID(id: string, opts? : {}) : core.IBaseNode;
-	        addNode(node: core.IBaseNode) : boolean;
+            addNodeByID(id: string, opts?: {}): core.IBaseNode;
+            addNode(node: core.IBaseNode): boolean;
+            cloneAndAddNode(node: core.IBaseNode): core.IBaseNode;
             hasNodeID(id: string): boolean;
-            hasNodeLabel(label: string): boolean;
             getNodeById(id: string): IBaseNode;
-            getNodeByLabel(label: string): IBaseNode;
             getNodes(): {
                 [key: string]: IBaseNode;
             };
             getRandomNode(): IBaseNode;
             deleteNode(node: any): void;
             hasEdgeID(id: string): boolean;
-            hasEdgeLabel(label: string): boolean;
             getEdgeById(id: string): IBaseEdge;
-            getEdgeByLabel(label: string): IBaseEdge;
-            getDirEdges(): {
-                [key: string]: IBaseEdge;
-            };
-            getUndEdges(): {
-                [key: string]: IBaseEdge;
-            };
+            getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): core.IBaseEdge;
+            getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): core.IBaseEdge;
+            getDirEdges(): { [key: string]: IBaseEdge };
+            getUndEdges(): { [key: string]: IBaseEdge };
+            getDirEdgesArray(): Array<core.IBaseEdge>;
+            getUndEdgesArray(): Array<core.IBaseEdge>;
             addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+            
             // EDGE STUFF
-	        addEdgeByID(label: string, node_a : core.IBaseNode, node_b : core.IBaseNode, opts? : {}) : core.IBaseEdge;
-            addEdge(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
+            addEdgeByID(label: string, node_a: core.IBaseNode, node_b: core.IBaseNode, opts?: {}): core.IBaseEdge;
+            addEdge(edge: core.IBaseEdge): core.IBaseEdge;
+            addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): core.IBaseEdge;
             deleteEdge(edge: IBaseEdge): void;
             deleteInEdgesOf(node: IBaseNode): void;
             deleteOutEdgesOf(node: IBaseNode): void;
@@ -308,10 +328,22 @@ declare module GraphiniusJS {
             getRandomUndEdge(): IBaseEdge;
             protected checkConnectedNodeOrThrow(node: IBaseNode): void;
             protected updateGraphMode(): void;
-            pickRandomProperty(propList) : any;
-            pickRandomProperties(propList, amount) : Array<string>;
-            clone() : IGraph;
-            adjList(incoming?:boolean, include_self?:boolean, self_dist?:number) : MinAdjacencyList;
+            pickRandomProperty(propList): any;
+            pickRandomProperties(propList, amount): Array<string>;
+
+            // CLONING
+            clone(): IGraph;
+            cloneSubGraph(start: core.IBaseNode, cutoff: Number): IGraph;
+
+            // REPRESENTATIONS
+            adjListDict(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
+            adjListArray(incoming?: boolean): MinAdjacencyListArray;
+            nextArray(incoming?: boolean): NextArray;
+
+            hasNegativeCycles(node?: core.IBaseNode): boolean;
+            // REINTERPRETING EDGES
+            toDirectedGraph(): IGraph;
+            toUndirectedGraph(): IGraph;
         }
     }
 
@@ -665,126 +697,126 @@ declare module GraphiniusJS {
      */
     export namespace mincut {
 
-      export interface MCMFConfig {
-        directed: boolean; // do we
-      }
+        export interface MCMFConfig {
+            directed: boolean; // do we
+        }
 
 
-      export interface MCMFResult {
-        edges : Array<core.IBaseEdge>;
-        edgeIDs: Array<string>;
-        cost  : number;
-      }
+        export interface MCMFResult {
+            edges: Array<core.IBaseEdge>;
+            edgeIDs: Array<string>;
+            cost: number;
+        }
 
 
-      export interface IMCMFBoykov {
-        calculateCycle() : MCMFResult;
-        convertToDirectedGraph(graph : core.IGraph) : core.IGraph;
-        prepareMCMFStandardConfig() : MCMFConfig;
-      }
+        export interface IMCMFBoykov {
+            calculateCycle(): MCMFResult;
+            convertToDirectedGraph(graph: core.IGraph): core.IGraph;
+            prepareMCMFStandardConfig(): MCMFConfig;
+        }
 
 
-      export interface MCMFState {
-        residGraph	: core.IGraph;
-        activeNodes : {[key:string] : core.IBaseNode};
-        orphans     : {[key:string] : core.IBaseNode};
-        treeS       : {[key:string] : core.IBaseNode};
-        treeT       : {[key:string] : core.IBaseNode};
-        parents			: {[key:string] : core.IBaseNode};
-        path        : Array<core.IBaseNode>;
-        // undGraph		: $G.IGraph;
-      }
+        export interface MCMFState {
+            residGraph: core.IGraph;
+            activeNodes: { [key: string]: core.IBaseNode };
+            orphans: { [key: string]: core.IBaseNode };
+            treeS: { [key: string]: core.IBaseNode };
+            treeT: { [key: string]: core.IBaseNode };
+            parents: { [key: string]: core.IBaseNode };
+            path: Array<core.IBaseNode>;
+            // undGraph		: $G.IGraph;
+        }
 
 
 
-      /**
-       *
-       */
-      export class MCMFBoykov implements IMCMFBoykov {
+        /**
+         *
+         */
+        export class MCMFBoykov implements IMCMFBoykov {
 
-        calculateCycle() : MCMFResult;
-        convertToDirectedGraph(graph : core.IGraph) : core.IGraph;
-        prepareMCMFStandardConfig() : MCMFConfig;
+            calculateCycle(): MCMFResult;
+            convertToDirectedGraph(graph: core.IGraph): core.IGraph;
+            prepareMCMFStandardConfig(): MCMFConfig;
+        }
     }
-  }
-
-  /**
-   * energyminimization
-   */
-  export namespace energyminimization {
-
-    export interface EMEConfig {
-    	directed: boolean; // do we
-      labeled: boolean;
-      // interactionTerm : EnergyFunctionInteractionTerm;
-      // dataTerm : EnergyFunctionDataTerm;
-    }
-
-
-    export interface EMEResult {
-      graph : core.IGraph;
-    }
-
-
-    export interface IEMEBoykov {
-      calculateCycle() : EMEResult;
-    	constructGraph() : core.IGraph;
-    	deepCopyGraph(graph : core.IGraph) : core.IGraph;
-    	initGraph(graph: core.IGraph) : core.IGraph;
-      prepareEMEStandardConfig() : EMEConfig;
-    }
-
-
-    export interface EMEState {
-    	expansionGraph	: core.IGraph;
-      labeledGraph    : core.IGraph;
-      activeLabel     : string;
-      energy          : number;
-    }
-
-
 
     /**
-     *
+     * energyminimization
      */
-    export class EMEBoykov implements IEMEBoykov {
+    export namespace energyminimization {
 
-      private _config : EMEConfig;
+        export interface EMEConfig {
+            directed: boolean; // do we
+            labeled: boolean;
+            // interactionTerm : EnergyFunctionInteractionTerm;
+            // dataTerm : EnergyFunctionDataTerm;
+        }
 
-      calculateCycle() : EMEResult;
-    	constructGraph() : core.IGraph;
-    	deepCopyGraph(graph : core.IGraph) : core.IGraph;
-    	initGraph(graph: core.IGraph) : core.IGraph;
-      prepareEMEStandardConfig() : EMEConfig;
-      // private _state  : EMEState = {
-    	// 	expansionGraph 	: null,
-      //   labeledGraph    : null,
-      //   activeLabel     : '',
-      //   energy          : Infinity
-      // };
-      // private _interactionTerm : EnergyFunctionInteractionTerm;
-      // private _dataTerm : EnergyFunctionDataTerm;
 
-      // constructor( private _graph 	 : core.IGraph,
-      //              private _labels   : Array<string>,
-    	// 					   config?           : EMEConfig );
-      // {
-      //    this._config = config || this.prepareEMEStandardConfig();
-      //
-    	// 	 // set the energery functions
-      //    this._interactionTerm = this._config.interactionTerm;
-      //    this._dataTerm = this._config.dataTerm;
-      //
-    	// 	 // initialize graph => set labels
-    	// 	 this._graph = this.initGraph(_graph);
-      //
-    	// 	 // init state
-    	// 	 this._state.labeledGraph = this.deepCopyGraph(this._graph);
-    	// 	 this._state.activeLabel = this._labels[0];
-      // }
+        export interface EMEResult {
+            graph: core.IGraph;
+        }
+
+
+        export interface IEMEBoykov {
+            calculateCycle(): EMEResult;
+            constructGraph(): core.IGraph;
+            deepCopyGraph(graph: core.IGraph): core.IGraph;
+            initGraph(graph: core.IGraph): core.IGraph;
+            prepareEMEStandardConfig(): EMEConfig;
+        }
+
+
+        export interface EMEState {
+            expansionGraph: core.IGraph;
+            labeledGraph: core.IGraph;
+            activeLabel: string;
+            energy: number;
+        }
+
+
+
+        /**
+         *
+         */
+        export class EMEBoykov implements IEMEBoykov {
+
+            private _config: EMEConfig;
+
+            calculateCycle(): EMEResult;
+            constructGraph(): core.IGraph;
+            deepCopyGraph(graph: core.IGraph): core.IGraph;
+            initGraph(graph: core.IGraph): core.IGraph;
+            prepareEMEStandardConfig(): EMEConfig;
+            // private _state  : EMEState = {
+            // 	expansionGraph 	: null,
+            //   labeledGraph    : null,
+            //   activeLabel     : '',
+            //   energy          : Infinity
+            // };
+            // private _interactionTerm : EnergyFunctionInteractionTerm;
+            // private _dataTerm : EnergyFunctionDataTerm;
+
+            // constructor( private _graph 	 : core.IGraph,
+            //              private _labels   : Array<string>,
+            // 					   config?           : EMEConfig );
+            // {
+            //    this._config = config || this.prepareEMEStandardConfig();
+            //
+            // 	 // set the energery functions
+            //    this._interactionTerm = this._config.interactionTerm;
+            //    this._dataTerm = this._config.dataTerm;
+            //
+            // 	 // initialize graph => set labels
+            // 	 this._graph = this.initGraph(_graph);
+            //
+            // 	 // init state
+            // 	 this._state.labeledGraph = this.deepCopyGraph(this._graph);
+            // 	 this._state.activeLabel = this._labels[0];
+            // }
+        }
+
     }
-
-}
 
 
 

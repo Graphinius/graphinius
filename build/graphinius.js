@@ -772,15 +772,6 @@
 	    BaseGraph.prototype.hasEdgeID = function (id) {
 	        return !!this._dir_edges[id] || !!this._und_edges[id];
 	    };
-	    BaseGraph.prototype.hasEdgeLabel = function (label) {
-	        var dir_id = $DS.findKey(this._dir_edges, function (edge) {
-	            return edge.getLabel() === label;
-	        });
-	        var und_id = $DS.findKey(this._und_edges, function (edge) {
-	            return edge.getLabel() === label;
-	        });
-	        return !!dir_id || !!und_id;
-	    };
 	    BaseGraph.prototype.getEdgeById = function (id) {
 	        var edge = this._dir_edges[id] || this._und_edges[id];
 	        if (!edge) {

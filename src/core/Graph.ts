@@ -50,7 +50,6 @@ export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
 	_label : string;
-
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 	degreeDistribution() : DegreeDistribution;
@@ -71,7 +70,6 @@ export interface IGraph {
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: string) : boolean;
-	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
 	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
@@ -424,20 +422,6 @@ class BaseGraph implements IGraph {
 
 	hasEdgeID(id: string) : boolean {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
-	}
-
-	/**
-	 * Use hasEdgeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #edges
-	 */
-	hasEdgeLabel(label: string) : boolean {
-		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		return !!dir_id || !!und_id;
 	}
 
 	getEdgeById(id: string) : $E.IBaseEdge {
