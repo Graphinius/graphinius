@@ -30,7 +30,7 @@ describe('GRAPH TESTS: ', () => {
 			clone_graph : $G.IGraph,
 			node_a 			: $N.IBaseNode,
 			node_b 			: $N.IBaseNode,
-			edge_1			: $E.IBaseEdge,
+			edge_ab			: $E.IBaseEdge,
 			edge_2			: $E.IBaseEdge,
 			stats				: $G.GraphStats,
 			csv					: $CSV.CSVInput = new $CSV.CSVInput(),
@@ -118,8 +118,8 @@ describe('GRAPH TESTS: ', () => {
 			it('should correctly add an undirected edge between two nodes', () => {
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge	
-				expect(edge_1.isDirected()).to.be.false;
+				edge_ab = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge	
+				expect(edge_ab.isDirected()).to.be.false;
 				expect(node_a.inDegree()).to.equal(0);
 				expect(node_a.outDegree()).to.equal(0);
 				expect(node_a.degree()).to.equal(1);
@@ -145,8 +145,8 @@ describe('GRAPH TESTS: ', () => {
 				graph = new Graph('Test graph');
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('dir_a_b', node_a, node_b, {directed: true});
-				expect(edge_1.isDirected()).to.be.true;
+				edge_ab = graph.addEdgeByID('dir_a_b', node_a, node_b, {directed: true});
+				expect(edge_ab.isDirected()).to.be.true;
 				expect(node_a.inDegree()).to.equal(0);
 				expect(node_a.outDegree()).to.equal(1);
 				expect(node_a.degree()).to.equal(0);
@@ -170,8 +170,8 @@ describe('GRAPH TESTS: ', () => {
 			it('should correctly add an undirected loop', () => {
 				graph = new Graph('Test graph');
 				node_a = graph.addNodeByID('A');
-				edge_1 = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: false});
-				expect(edge_1.isDirected()).to.be.false;
+				edge_ab = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: false});
+				expect(edge_ab.isDirected()).to.be.false;
 				expect(node_a.inDegree()).to.equal(0);
 				expect(node_a.outDegree()).to.equal(0);
 				expect(node_a.degree()).to.equal(1);
@@ -192,8 +192,8 @@ describe('GRAPH TESTS: ', () => {
 			it('should correctly add a directed loop', () => {
 				graph = new Graph('Test graph');
 				node_a = graph.addNodeByID('A');
-				edge_1 = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: true});
-				expect(edge_1.isDirected()).to.be.true;
+				edge_ab = graph.addEdgeByID('und_a_a', node_a, node_a, {directed: true});
+				expect(edge_ab.isDirected()).to.be.true;
 				expect(node_a.inDegree()).to.equal(1);
 				expect(node_a.outDegree()).to.equal(1);
 				expect(node_a.degree()).to.equal(0);
@@ -233,30 +233,30 @@ describe('GRAPH TESTS: ', () => {
 			it('should check if given node IDs are just coincidentally present in the graph but point to invalid node objects', () => {
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				edge_ab = graph.addEdgeByID('1', node_a, node_b);
 				let new_node_a = clone_graph.addNodeByID('A');
 				let new_node_b = clone_graph.addNodeByID('B');
-				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+				expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).to.throw("can only add edge between two nodes existing in graph");
 			});
 
 
 			it('should check if just one (A) of the given node IDs is just coincidentally present in the graph but points to an invalid node object', () => {
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				edge_ab = graph.addEdgeByID('1', node_a, node_b);
 				clone_graph.cloneAndAddNode(node_a);
 				let new_node_b = clone_graph.addNodeByID('B');
-				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+				expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).to.throw("can only add edge between two nodes existing in graph");
 			});
 
 
 			it('should check if just one (B) of the given node IDs is just coincidentally present in the graph but points to an invalid node object', () => {
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('1', node_a, node_b);
+				edge_ab = graph.addEdgeByID('1', node_a, node_b);
 				let new_node_a = clone_graph.addNodeByID('A');
 				clone_graph.cloneAndAddNode(node_b);
-				expect(clone_graph.addEdge.bind(clone_graph, edge_1)).to.throw("can only add edge between two nodes existing in graph");
+				expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).to.throw("can only add edge between two nodes existing in graph");
 			});
 			
 			
@@ -273,8 +273,8 @@ describe('GRAPH TESTS: ', () => {
 				graph = new Graph('Test graph');
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_1 = graph.addEdgeByID('und_a_b', node_a, node_b, {directed: false});
-				expect(edge_1.isDirected()).to.be.false;
+				edge_ab = graph.addEdgeByID('und_a_b', node_a, node_b, {directed: false});
+				expect(edge_ab.isDirected()).to.be.false;
 				edge_2 = graph.addEdgeByID('dir_b_b', node_b, node_b, {directed: true});
 				expect(edge_2.isDirected()).to.be.true;
 				expect(node_a.inDegree()).to.equal(0);
@@ -295,7 +295,26 @@ describe('GRAPH TESTS: ', () => {
 	});
 		
 	
+	/**
+	 * @TODO check graph traveral algorithms on loose end edges !!!
+	 * @TODO maybe split those tests for graph edges, loose edges and out edges
+	 */
 	describe('finding nodes and edges by ID and Label', () => {
+
+		const graph = new $G.BaseGraph("nodeEdgeIDLabelHasGetTestGraph");
+		const node_a = graph.addNodeByID("A");
+		const node_b = graph.addNodeByID("B");
+		const node_c = new $N.BaseNode("C");
+		const node_d = new $N.BaseNode("D");
+		const edge_abu = graph.addEdgeByID("edge_ab", node_a, node_b);
+		const edge_bad = graph.addEdgeByID("edge_bad", node_b, node_a, {directed: true});
+		const loose_edge = new $E.BaseEdge("loosey", node_a, node_c);
+		const out_edge = new $E.BaseEdge("outty", node_d, node_c);
+
+		before(() => {
+			
+		});
+
 		
 		it('should report the existence of a node by ID', () => {
 			expect(graph.hasNodeID("IDontExistInGraph")).to.be.false;
@@ -336,48 +355,45 @@ describe('GRAPH TESTS: ', () => {
 		});
 		
 		
-		/**
-		 * For all edge HAS? and GET tests:
-		 * edge_1 is UNDIRECTED
-		 * edge_2 is DIRECTED
-		 */
 		it('should report the existence of an edge by ID', () => {
 			expect(graph.hasEdgeID("IdontExist")).to.be.false;
-			expect(edge_1.isDirected()).to.be.false;
-			expect(graph.hasEdgeID(edge_1.getID())).to.be.true;
-			expect(edge_2.isDirected()).to.be.true;
-			expect(graph.hasEdgeID(edge_2.getID())).to.be.true;	
+			expect(graph.hasEdgeID(loose_edge.getID())).to.be.false;
+			expect(graph.hasEdgeID(out_edge.getID())).to.be.false;
+			expect(graph.hasEdgeID(edge_abu.getID())).to.be.true;
+			expect(graph.hasEdgeID(edge_bad.getID())).to.be.true;
 		});
 		
 		
 		it('should report the existence of an edge by Label', () => {
 			expect(graph.hasEdgeLabel("menonexistant")).to.be.false;
-			expect(edge_1.isDirected()).to.be.false;
-			expect(graph.hasEdgeLabel(edge_1.getLabel())).to.be.true;
-			expect(edge_2.isDirected()).to.be.true;
-			expect(graph.hasEdgeLabel(edge_2.getLabel())).to.be.true;	
+			expect(graph.hasEdgeLabel(loose_edge.getLabel())).to.be.false;
+			expect(graph.hasEdgeLabel(out_edge.getLabel())).to.be.false;
+			expect(graph.hasEdgeLabel(edge_abu.getLabel())).to.be.true;
+			expect(graph.hasEdgeLabel(edge_bad.getLabel())).to.be.true;
 		});
 		
 		
 		it('should throw an error upon trying to retrieve a non-existing edge by ID', () => {
-			expect(graph.getEdgeById.bind(graph, Number.NaN)).to.throw("cannot retrieve edge with non-existing ID.");
+			expect(graph.getEdgeById.bind(graph, undefined)).to.throw("cannot retrieve edge with non-existing ID.");
+			expect(graph.getEdgeById.bind(graph, loose_edge.getID())).to.throw("cannot retrieve edge with non-existing ID.");
+			expect(graph.getEdgeById.bind(graph, out_edge.getID())).to.throw("cannot retrieve edge with non-existing ID.");
 		});
 		
 		
 		it('should throw an error upon trying to retrieve a non-existing edge by Label', () => {
-			expect(graph.getEdgeByLabel.bind(graph, "menonexistant")).to.throw("cannot retrieve edge with non-existing Label.");
+			expect(graph.getEdgeByLabel.bind(graph, undefined)).to.throw("cannot retrieve edge with non-existing Label.");
+			expect(graph.getEdgeByLabel.bind(graph, loose_edge.getLabel())).to.throw("cannot retrieve edge with non-existing Label.");
+			expect(graph.getEdgeByLabel.bind(graph, out_edge.getLabel())).to.throw("cannot retrieve edge with non-existing Label.");
 		});
 			
 		
 		it('should return an edge by ID', () => {
-			expect(graph.getEdgeById(edge_1.getID())).to.equal(edge_1);
-			expect(graph.getEdgeById(edge_2.getID())).to.equal(edge_2);
+			expect(graph.getEdgeById(edge_abu.getID())).to.equal(edge_abu);
 		});
 		
 		
 		it('should return an edge by Label', () => {
-			expect(graph.getEdgeByLabel(edge_1.getLabel())).to.equal(edge_1);
-			expect(graph.getEdgeByLabel(edge_2.getLabel())).to.equal(edge_2);
+			expect(graph.getEdgeByLabel(edge_abu.getLabel())).to.equal(edge_abu);
 		});
 		
 		
@@ -411,7 +427,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(rand_und_edge.isDirected()).to.be.false;
 			expect(rand_und_edge).to.be.an.instanceof(Edge);
 			expect(graph.hasEdgeID(rand_und_edge.getID())).to.be.true;
-		});		
+		});
 		
 	});
 		

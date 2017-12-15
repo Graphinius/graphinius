@@ -499,25 +499,32 @@ class BaseGraph implements IGraph {
 		if ( !node_b ) {
 			throw new Error("Cannot find edge. Node B does not exist");
 		}
+
 		// check for outgoing directed edges
-		var edges_dir = node_a.outEdges();
-		for (let i = 0; i < Object.keys(edges_dir).length; i++) {
-		    var edge = edges_dir[Object.keys(edges_dir)[i]];
+		let edges_dir = node_a.outEdges(),
+				edges_dir_keys = Object.keys(edges_dir);
+		
+		for (let i = 0; i < edges_dir_keys.length; i++) {
+		    var edge = edges_dir[edges_dir_keys[i]];
 				if (edge.getNodes().b.getID() == node_b_id) {
 				    return edge;
 				}
 		}
+
 		// check for undirected edges
-		var edges_und = node_a.undEdges();
-		for (let i = 0; i < Object.keys(edges_und).length; i++) {
-		    var edge = edges_und[Object.keys(edges_und)[i]];
+		let edges_und = node_a.undEdges(),
+				edges_und_keys = Object.keys(edges_und);
+
+		for (let i = 0; i < edges_und_keys.length; i++) {
+		    var edge = edges_und[edges_und_keys[i]];
 				var b: string;
 				(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
 				if (b == node_b_id) {
 				    return edge;
 				}
 		}
-		// if we managed to go up to here, there is no edge!
+		
+		// if we managed to arrive here, there is no edge!
 		throw new Error("Cannot find edge. There is no edge between Node " + node_a_id +  " and " + node_b_id);
 	}
 
