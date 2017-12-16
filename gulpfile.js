@@ -30,7 +30,7 @@ const paths = {
   tests_perturb: ['test/perturbation/**/*.js'],
   tests_central: ['test/centralities/**/*.js'],
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.gitignore', '.circleci/*', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
+	git_sources: ['./*', '.gitignore', '.npmignore', '.circleci/*', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
 };
 
 
@@ -54,7 +54,7 @@ var tsProject = ts.createProject({
 // src is the file(s) to add (or ./*)
 gulp.task('git-add', ['bundle'], function () {
   return gulp.src(paths.git_sources)
-    .pipe(git.add());
+    .pipe(git.add({args: '-u'}));
 });
 
 // Run git commit
