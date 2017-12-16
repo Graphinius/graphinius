@@ -4,7 +4,7 @@
     "test": "gulp mocha",
     "clean": "gulp clean",
     "watch": "gulp watch",
-    "postinstall": "ln -sf dist/* ./"
+    "postinstall": "node install_dist.js"
   },
   "repository": {
     "type": "git",
