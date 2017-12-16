@@ -11,6 +11,7 @@ const rename 					= require('gulp-rename');
 const istanbul 				= require('gulp-istanbul');
 const git 						= require('gulp-git');
 const prompt	 				= require('gulp-prompt');
+const dtsGen					= require('dts-generator').default;
 
 
 //----------------------------
@@ -22,7 +23,7 @@ const paths = {
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
+	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist/**/*.js', 'docs', 'coverage'],
 	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
 	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
@@ -117,8 +118,18 @@ gulp.task('dist', ['clean'], function () {
 });
 
 
+gulp.task('dts', ['dist'], function() {
+	return dtsGen({
+		name: 'graphinius',
+		baseDir: './',
+		project: './src/',
+		out: 'graphinius.d.ts'
+	});
+});
+
+
 // Packaging - Webpack
-gulp.task('pack', ['dist'], function() {
+gulp.task('pack', ['dts'], function() {
 	return gulp.src('./index.js')
 		.pipe(webpack( require('./webpack.config.js') ))
 		.pipe(gulp.dest('build/'));

@@ -1061,43 +1061,42 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var LOG_LEVELS = __webpack_require__(6).LOG_LEVELS;
-	var RUN_CONFIG = __webpack_require__(6).RUN_CONFIG;
+	var run_config_1 = __webpack_require__(6);
 	var Logger = (function () {
 	    function Logger(config) {
 	        this.config = null;
-	        this.config = config || RUN_CONFIG;
+	        this.config = config || run_config_1.RUN_CONFIG;
 	    }
 	    Logger.prototype.log = function (msg) {
-	        if (this.config.log_level === LOG_LEVELS.debug) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.log.apply(console, Array.prototype.slice.call(arguments));
 	            return true;
 	        }
 	        return false;
 	    };
 	    Logger.prototype.error = function (err) {
-	        if (this.config.log_level === LOG_LEVELS.debug) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.error.apply(console, Array.prototype.slice.call(arguments));
 	            return true;
 	        }
 	        return false;
 	    };
 	    Logger.prototype.dir = function (obj) {
-	        if (this.config.log_level === LOG_LEVELS.debug) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.dir.apply(console, Array.prototype.slice.call(arguments));
 	            return true;
 	        }
 	        return false;
 	    };
 	    Logger.prototype.info = function (msg) {
-	        if (this.config.log_level === LOG_LEVELS.debug) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.info.apply(console, Array.prototype.slice.call(arguments));
 	            return true;
 	        }
 	        return false;
 	    };
 	    Logger.prototype.warn = function (msg) {
-	        if (this.config.log_level === LOG_LEVELS.debug) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.warn.apply(console, Array.prototype.slice.call(arguments));
 	            return true;
 	        }
@@ -1112,19 +1111,17 @@
 /* 6 */
 /***/ (function(module, exports) {
 
+	"use strict";
 	var LOG_LEVELS = {
-	  debug: "DEBUG",
-	  production: "PRODUCTION"
+	    debug: "DEBUG",
+	    production: "PRODUCTION"
 	};
-
+	exports.LOG_LEVELS = LOG_LEVELS;
 	var RUN_CONFIG = {
-	  log_level: LOG_LEVELS.debug
+	    log_level: LOG_LEVELS.debug
 	};
+	exports.RUN_CONFIG = RUN_CONFIG;
 
-	module.exports = {
-	  LOG_LEVELS: LOG_LEVELS,
-	  RUN_CONFIG: RUN_CONFIG
-	};
 
 /***/ }),
 /* 7 */

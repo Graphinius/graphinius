@@ -3,7 +3,8 @@
     "build": "gulp build",
     "test": "gulp mocha",
     "clean": "gulp clean",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "postinstall": "ln -sf dist/* ./"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,7 @@
   "name": "graphinius",
   "version": "0.7.2",
   "description": "Generic graph (analysis) library in Typescript",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "author": "Bernd Malle",
   "license": "Apache-2.0",
   "bugs": {
@@ -54,6 +55,7 @@
     "xhr-mock": "^1.6.0"
   },
   "dependencies": {
+    "ncp": "^2.0.0",
     "sylvester": "0.0.21"
   }
 }
