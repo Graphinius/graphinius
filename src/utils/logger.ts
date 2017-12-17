@@ -1,10 +1,4 @@
-/**
- * LOGGER UTILITY
- * 
- * @param context this pointer to the DFS or DFSVisit function
- */
-let LOG_LEVELS = require('../../config/run_config.js').LOG_LEVELS;
-let RUN_CONFIG = require('../../config/run_config.js').RUN_CONFIG;
+import {LOG_LEVELS, RUN_CONFIG} from '../config/run_config';
 
 export interface CONFIG {
   log_level : string;

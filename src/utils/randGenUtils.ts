@@ -111,7 +111,7 @@ function rcauchy(loc, scale) {
 }
 
 // Bernoulli distribution: gives 1 with probability p
-function rbernoulli(p) {
+function rbernoulli(p) : number {
   return Math.random() < p ? 1 : 0;
 }
 
