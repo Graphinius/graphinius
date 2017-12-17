@@ -907,6 +907,33 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 	export { EMEBoykov };
 
 }
+declare module 'graphinius/generators/kroneckerLeskovec' {
+	/// <reference path="../../typings/tsd.d.ts" />
+	import * as $G from 'graphinius/core/Graph';
+	export interface KROLConfig {
+	    generator: $G.IGraph;
+	    cycles: number;
+	}
+	export interface KROLResult {
+	    graph: $G.IGraph;
+	}
+	export interface IKROL {
+	    generate(): KROLResult;
+	    prepareKROLStandardConfig(): KROLConfig;
+	} class KROL implements IKROL {
+	    private _config;
+	    private _generator;
+	    private _genMat;
+	    private _cycles;
+	    private _graph;
+	    constructor(config?: KROLConfig);
+	    generate(): KROLResult;
+	    addEdge(node1: number, node2: number, dims: number): boolean;
+	    prepareKROLStandardConfig(): KROLConfig;
+	}
+	export { KROL };
+
+}
 declare module 'graphinius/utils/remoteUtils' {
 	import http = require('http'); function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
