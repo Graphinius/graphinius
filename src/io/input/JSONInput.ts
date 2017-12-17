@@ -42,8 +42,8 @@ export interface IJSONInput {
 class JSONInput implements IJSONInput {
 	
 	constructor(public _explicit_direction : boolean = true,
-							public _direction          : boolean = false,
-              public _weighted_mode      : boolean = false) {
+				public _direction          : boolean = false,
+				public _weighted_mode      : boolean = false) {
 	}
 	
 	readFromJSONFile(filepath : string) : $G.IGraph {
@@ -152,8 +152,24 @@ class JSONInput implements IJSONInput {
 				var edge_id = node_id + "_" + target_node_id + "_" + dir_char,
 						edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 								
-				if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
+				if ( graph.hasEdgeID(edge_id) ) {
 					// The completely same edge should only be added once...
+					// @ comment above: thats true! however with this you are not checking
+					// for identical edges! consider the case of undirected edges:
+					// if two undirected edges with ids a_b_u and b_a_u exists that have
+					// different properties (e.g. edge weights), this would lead to 
+					// ambiguous behaviour! which edge will be kept and which one rejected?
+					// There should be another way of handeling this!
+					// Proposed solution: merge the undirected edges into one undirected edge ->
+					// add the weights! 
+					
+					continue;
+				}
+				if (( !directed && graph.hasEdgeID(edge_id_u2) )) {
+					if ( this._weighted_mode ) {
+						let edge = graph.getEdgeById(edge_id_u2);
+						edge.setWeight(edge.getWeight() + edge_weight);	
+					}
 					continue;
 				}
 				else {

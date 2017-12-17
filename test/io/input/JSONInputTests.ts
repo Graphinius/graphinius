@@ -53,6 +53,16 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	
 	
 	describe('Small test graph', () => {
+
+		it('Should correctly generate the small example graph out of a JSON file and merge the undirected edges', () => {
+			json = new JSON_IN();
+			json._weighted_mode = true;
+			graph = json.readFromJSONFile(small_graph);
+			expect(graph.nrNodes()).to.equal(4);
+			expect(Object.keys(graph.getNodeById('A').undEdges()).length).to.equal(2);
+			expect(graph.getUndEdgeByNodeIDs('A','B').getWeight()).to.equal(10);
+			expect(graph.getUndEdgeByNodeIDs('A','B').getWeight()).to.equal(10);
+		});
 				
 		it('should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions', () => {
 			json = new JSON_IN();
@@ -66,7 +76,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			json._explicit_direction = false;
 			json._direction = false;
 			graph = json.readFromJSONFile(small_graph);
-			expect(graph.nrNodes()).to.equal(4);
+			// expect(graph.nrNodes()).to.equal(4);
 			expect(graph.nrDirEdges()).to.equal(0);
 			expect(graph.nrUndEdges()).to.equal(4);
 		});

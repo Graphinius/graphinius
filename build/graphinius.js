@@ -2624,7 +2624,14 @@
 	            for (var e in edges) {
 	                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 	                var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
-	                if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+	                if (graph.hasEdgeID(edge_id)) {
+	                    continue;
+	                }
+	                if ((!directed && graph.hasEdgeID(edge_id_u2))) {
+	                    if (this._weighted_mode) {
+	                        var edge_1 = graph.getEdgeById(edge_id_u2);
+	                        edge_1.setWeight(edge_1.getWeight() + edge_weight);
+	                    }
 	                    continue;
 	                }
 	                else {
