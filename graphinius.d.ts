@@ -911,7 +911,7 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
 	export interface KROLConfig {
-	    generator: $G.IGraph;
+	    genMat: Array<Array<number>>;
 	    cycles: number;
 	}
 	export interface KROLResult {
@@ -922,7 +922,6 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 	    prepareKROLStandardConfig(): KROLConfig;
 	} class KROL implements IKROL {
 	    private _config;
-	    private _generator;
 	    private _genMat;
 	    private _cycles;
 	    private _graph;
