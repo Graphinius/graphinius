@@ -19,7 +19,9 @@ var REAL_GRAPH_NR_NODES = 6204,
 		small_graph_no_features = "./test/test_data/small_graph_no_features.json",
     small_graph_weights_crap = "./test/test_data/small_graph_weights_crap.json",
     real_graph = "./test/test_data/real_graph.json",
-		extreme_weights_graph = "./test/test_data/extreme_weights_graph.json";
+		extreme_weights_graph = "./test/test_data/extreme_weights_graph.json",
+	small_graph_flawed = "./test/test_data/small_graph_flawed.json";
+		
 
 const DEFAULT_WEIGHT : number = 1;
 
@@ -54,14 +56,13 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	
 	describe('Small test graph', () => {
 
-		it('Should correctly generate the small example graph out of a JSON file and merge the undirected edges', () => {
+		it('Should not be possible to create this graph', () => {
 			json = new JSON_IN();
 			json._weighted_mode = true;
-			graph = json.readFromJSONFile(small_graph);
-			expect(graph.nrNodes()).to.equal(4);
-			expect(Object.keys(graph.getNodeById('A').undEdges()).length).to.equal(2);
-			expect(graph.getUndEdgeByNodeIDs('A','B').getWeight()).to.equal(10);
-			expect(graph.getUndEdgeByNodeIDs('A','B').getWeight()).to.equal(10);
+			let badFn = function () { 
+				json.readFromJSONFile(small_graph_flawed);
+			};
+			expect(badFn).to.throw(Error);
 		});
 				
 		it('should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions', () => {

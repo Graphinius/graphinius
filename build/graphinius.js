@@ -2630,7 +2630,9 @@
 	                if ((!directed && graph.hasEdgeID(edge_id_u2))) {
 	                    if (this._weighted_mode) {
 	                        var edge_1 = graph.getEdgeById(edge_id_u2);
-	                        edge_1.setWeight(edge_1.getWeight() + edge_weight);
+	                        if (edge_weight != edge_1.getWeight()) {
+	                            throw new Error('Input JSON flawed! Found duplicate edge with different weights!');
+	                        }
 	                    }
 	                    continue;
 	                }

@@ -160,15 +160,17 @@ class JSONInput implements IJSONInput {
 					// different properties (e.g. edge weights), this would lead to 
 					// ambiguous behaviour! which edge will be kept and which one rejected?
 					// There should be another way of handeling this!
-					// Proposed solution: merge the undirected edges into one undirected edge ->
-					// add the weights! 
+					// Proposed solution: dont allow this kind of input! => Throw Error!
 					
 					continue;
 				}
 				if (( !directed && graph.hasEdgeID(edge_id_u2) )) {
 					if ( this._weighted_mode ) {
 						let edge = graph.getEdgeById(edge_id_u2);
-						edge.setWeight(edge.getWeight() + edge_weight);	
+						if ( edge_weight != edge.getWeight())
+						{
+							throw new Error('Input JSON flawed! Found duplicate edge with different weights!');
+						}
 					}
 					continue;
 				}
