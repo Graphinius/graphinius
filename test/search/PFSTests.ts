@@ -10,9 +10,9 @@ import * as $BH from '../../src/datastructs/binaryHeap';
 
 
 var expect = chai.expect,
-    json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
-    search_graph = "./test/test_data/search_graph_pfs_extended.json",
-    graph : $G.IGraph;
+  json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+  search_graph = "./test/test_data/search_graph_pfs_extended.json",
+  graph: $G.IGraph;
 
 
 describe('PFS TESTS - ', () => {
@@ -24,18 +24,19 @@ describe('PFS TESTS - ', () => {
     expect(graph.nrUndEdges()).to.equal(2);
     expect(graph.nrDirEdges()).to.equal(12);
   });
-  
-  
+
+
   describe('Basic Instantiation tests - ', () => {
-  
+
     it('should refuse to traverse a graph without edges', () => {
       var empty_graph = new $G.BaseGraph('mesebeenempty'),
-          start = new $N.BaseNode("IAmNotInGraph");
-          
-      expect($PFS.PFS.bind($PFS.PFS, empty_graph, start)).to.throw('Cowardly refusing to traverse graph without edges.');
+        start = new $N.BaseNode("IAmNotInGraph");
+
+      expect($PFS.PFS.bind($PFS.PFS, empty_graph, start)).to.throw(
+        'Cowardly refusing to traverse graph without edges.');
     });
-    
-    
+
+
     /**
      * This use case is dependent on the existence of a valid config object..
      * Is there any way to specify this in mocha and skip it in case the
@@ -43,46 +44,47 @@ describe('PFS TESTS - ', () => {
      */
     it('should refuse to traverse a graph with DIR mode set to init', () => {
       var root = graph.getNodeById('A'),
-          config : $PFS.PFS_Config = {
-            result    : {},
-            callbacks : {},
-            dir_mode  : $G.GraphMode.INIT,
-            goal_node : null,
-            evalPriority : function(ne: $N.NeighborEntry) { return ne.best; },
-            evalObjID : function(ne: $N.NeighborEntry) { return ne.node.getID(); }
-          };
-          
-      expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Cannot traverse a graph with dir_mode set to INIT.');
+        config: $PFS.PFS_Config = {
+          result: {},
+          callbacks: {},
+          dir_mode: $G.GraphMode.INIT,
+          goal_node: null,
+          evalPriority: function (ne: $N.NeighborEntry) { return ne.best; },
+          evalObjID: function (ne: $N.NeighborEntry) { return ne.node.getID(); }
+        };
+
+      expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw(
+        'Cannot traverse a graph with dir_mode set to INIT.');
     });
-  
+
   });
-  
-  
+
+
   describe('Config object instantiation tests - ', () => {
-    
+
     it('should instantiate a default config object with correct result structure', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
       expect(config.result).to.exist;
     });
-    
-    
+
+
     it('should instantiate a default config object with correct DIR mode', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
       expect(config.dir_mode).to.exist;
       expect(config.dir_mode).to.equal($G.GraphMode.MIXED);
     });
-    
-    
+
+
     it('should instantiate a default config object with callback object', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
       expect(config.callbacks).to.exist;
       expect(config.callbacks).to.be.an.instanceOf(Object);
     });
-    
-    
+
+
     it('should instantiate a default config object with correctly structured callback object', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
@@ -98,17 +100,17 @@ describe('PFS TESTS - ', () => {
       expect(config.callbacks.equal_path).to.exist;
       expect(Array.isArray(config.callbacks.equal_path)).to.be.true;
       expect(config.callbacks.goal_reached).to.exist;
-      expect(Array.isArray(config.callbacks.goal_reached)).to.be.true;      
+      expect(Array.isArray(config.callbacks.goal_reached)).to.be.true;
     });
-     
-    
+
+
     it('should instantiate a default config object with messages object', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config.messages).to.exist;
       expect(config.messages).to.be.an.instanceOf(Object);
     });
-    
-    
+
+
     it('should instantiate a default config object with correctly structured messages object', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
@@ -116,25 +118,25 @@ describe('PFS TESTS - ', () => {
       expect(config.messages.init_pfs_msgs).to.exist;
       expect(Array.isArray(config.messages.init_pfs_msgs)).to.be.true;
       expect(config.messages.node_open_msgs).to.exist;
-      expect(Array.isArray(config.messages.node_open_msgs)).to.be.true;     
+      expect(Array.isArray(config.messages.node_open_msgs)).to.be.true;
       expect(config.messages.node_closed_msgs).to.exist;
       expect(Array.isArray(config.messages.node_closed_msgs)).to.be.true;
       expect(config.messages.better_path_msgs).to.exist;
       expect(Array.isArray(config.messages.better_path_msgs)).to.be.true;
       expect(config.messages.equal_path_msgs).to.exist;
-      expect(Array.isArray(config.messages.equal_path_msgs)).to.be.true;   
+      expect(Array.isArray(config.messages.equal_path_msgs)).to.be.true;
       expect(config.messages.goal_reached_msgs).to.exist;
-      expect(Array.isArray(config.messages.goal_reached_msgs)).to.be.true;     
+      expect(Array.isArray(config.messages.goal_reached_msgs)).to.be.true;
     });
-    
-    
+
+
     it('should instantiate a default config object with goal node set to null', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config).to.exist;
       expect(config.goal_node).to.be.null;
     });
-        
-    
+
+
     it('should instantiate a default config object with an existing init_pfs callback', () => {
       var config = $PFS.preparePFSStandardConfig();
       expect(config.callbacks).to.exist;
@@ -143,37 +145,37 @@ describe('PFS TESTS - ', () => {
       expect(config.callbacks.init_pfs[0]).to.exist;
       expect(config.callbacks.init_pfs[0]).to.be.instanceof(Function);
     });
-    
+
   });
-  
-  
+
+
   describe('Callback execution tests in different stages - ', () => {
-    
+
     it('should execute the initPFS callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
+        config = $PFS.preparePFSStandardConfig();
 
-			var pfsInitTestCallback = function() {
-				config.messages.init_pfs_msgs['test_message'] = "BFS INIT callback executed.";
-			};
-			config.callbacks.init_pfs.push(pfsInitTestCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.init_pfs_msgs['test_message']).to.equal("BFS INIT callback executed.");
+      var pfsInitTestCallback = function () {
+        config.messages.init_pfs_msgs['test_message'] = "BFS INIT callback executed.";
+      };
+      config.callbacks.init_pfs.push(pfsInitTestCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.init_pfs_msgs['test_message']).to.equal("BFS INIT callback executed.");
     });
-    
-    
+
+
     it('should execute the goal reached callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
-      
+        config = $PFS.preparePFSStandardConfig();
+
       config.goal_node = root;
 
-			var pfsGoalReachedCallback = function() {
-				config.messages.goal_reached_msgs['test_message'] = "GOAL REACHED callback executed.";
-			};
-			config.callbacks.goal_reached.push(pfsGoalReachedCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.goal_reached_msgs['test_message']).to.equal("GOAL REACHED callback executed.");
+      var pfsGoalReachedCallback = function () {
+        config.messages.goal_reached_msgs['test_message'] = "GOAL REACHED callback executed.";
+      };
+      config.callbacks.goal_reached.push(pfsGoalReachedCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.goal_reached_msgs['test_message']).to.equal("GOAL REACHED callback executed.");
     });
 
 
@@ -181,64 +183,64 @@ describe('PFS TESTS - ', () => {
       var root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsnotEncCallback = function() {
+      var pfsnotEncCallback = function () {
         config.messages.not_enc_msgs['test_message'] = "NOT ENCOUNTERED callback executed.";
       };
       config.callbacks.not_encountered.push(pfsnotEncCallback);
       var result = $PFS.PFS(graph, root, config);
       expect(config.messages.not_enc_msgs['test_message']).to.equal("NOT ENCOUNTERED callback executed.");
     });
-    
-    
+
+
     it('should execute the node open callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
+        config = $PFS.preparePFSStandardConfig();
 
-			var pfsNodeOpenCallback = function() {
-				config.messages.node_open_msgs['test_message'] = "NODE OPEN callback executed.";
-			};
-			config.callbacks.node_open.push(pfsNodeOpenCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.node_open_msgs['test_message']).to.equal("NODE OPEN callback executed.");
+      var pfsNodeOpenCallback = function () {
+        config.messages.node_open_msgs['test_message'] = "NODE OPEN callback executed.";
+      };
+      config.callbacks.node_open.push(pfsNodeOpenCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.node_open_msgs['test_message']).to.equal("NODE OPEN callback executed.");
     });
-    
-    
+
+
     it('should execute the node closed callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
+        config = $PFS.preparePFSStandardConfig();
 
-			var pfsNodeClosedCallback = function() {
-				config.messages.node_closed_msgs['test_message'] = "NODE CLOSED callback executed.";
-			};
-			config.callbacks.node_closed.push(pfsNodeClosedCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.node_closed_msgs['test_message']).to.equal("NODE CLOSED callback executed.");
+      var pfsNodeClosedCallback = function () {
+        config.messages.node_closed_msgs['test_message'] = "NODE CLOSED callback executed.";
+      };
+      config.callbacks.node_closed.push(pfsNodeClosedCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.node_closed_msgs['test_message']).to.equal("NODE CLOSED callback executed.");
     });
-    
+
 
     it('should execute the better path (found) callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
+        config = $PFS.preparePFSStandardConfig();
 
-			var pfsBetterPathFoundCallback = function() {
-				config.messages.better_path_msgs['test_message'] = "BETTER PATH FOUND callback executed.";
-			};
-			config.callbacks.better_path.push(pfsBetterPathFoundCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
+      var pfsBetterPathFoundCallback = function () {
+        config.messages.better_path_msgs['test_message'] = "BETTER PATH FOUND callback executed.";
+      };
+      config.callbacks.better_path.push(pfsBetterPathFoundCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.better_path_msgs['test_message']).to.equal("BETTER PATH FOUND callback executed.");
     });
 
 
     it('should execute the equal path (found) callbacks', () => {
       var root = graph.getNodeById('A'),
-					config = $PFS.preparePFSStandardConfig();
+        config = $PFS.preparePFSStandardConfig();
 
-			var pfsEqualPathFoundCallback = function() {
-				config.messages.equal_path_msgs['equal_test_message'] = "EQUAL PATH FOUND callback executed.";
-			};
-			config.callbacks.equal_path.push(pfsEqualPathFoundCallback);
-			var result = $PFS.PFS(graph, root, config);
-			expect(config.messages.equal_path_msgs['equal_test_message']).to.equal("EQUAL PATH FOUND callback executed.");
+      var pfsEqualPathFoundCallback = function () {
+        config.messages.equal_path_msgs['equal_test_message'] = "EQUAL PATH FOUND callback executed.";
+      };
+      config.callbacks.equal_path.push(pfsEqualPathFoundCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.equal_path_msgs['equal_test_message']).to.equal("EQUAL PATH FOUND callback executed.");
     });
 
 
@@ -248,12 +250,12 @@ describe('PFS TESTS - ', () => {
       config.dir_mode = -77;
       expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).to.throw('Unsupported traversal mode. Please use directed, undirected, or mixed');
     });
-    
+
   });
-  
-  
+
+
   describe('PFS search Scenarios in Search Graph PFS - ', () => {
-    
+
     describe('DIRECTED mode search', () => {
 
       var config = $PFS.preparePFSStandardConfig();
@@ -279,11 +281,11 @@ describe('PFS TESTS - ', () => {
         expect(result['F'].distance).to.equal(4);
       });
 
-      
+
       it('Should correctly compute best paths from Node B', () => {
         var root = graph.getNodeById('B'),
-            result = $PFS.PFS(graph, root, config);
-        
+          result = $PFS.PFS(graph, root, config);
+
         expect(Object.keys(result).length).to.equal(6);
 
         expect(result['A'].parent).to.equal(graph.getNodeById('C'));
@@ -303,7 +305,7 @@ describe('PFS TESTS - ', () => {
 
       it('Should correctly compute best paths from Node D', () => {
         var root = graph.getNodeById('D'),
-            result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).to.equal(6);
 
@@ -324,7 +326,7 @@ describe('PFS TESTS - ', () => {
 
       it('Should correctly compute best paths from Node F', () => {
         var root = graph.getNodeById('F'),
-            result = $PFS.PFS(graph, root, config);
+          result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).to.equal(6);
 
@@ -341,7 +343,7 @@ describe('PFS TESTS - ', () => {
         expect(result['F'].parent).to.equal(graph.getNodeById('F'));
         expect(result['F'].distance).to.equal(0);
       });
-      
+
     });
 
 
@@ -501,10 +503,10 @@ describe('PFS TESTS - ', () => {
       });
 
     });
-    
+
   });
 
-  
+
   describe('PFS search on search graph in UNWEIGHTED, mixed mode', () => {
 
     var config = $PFS.preparePFSStandardConfig();
@@ -522,7 +524,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node A', () => {
       var root = graph.getNodeById('A'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('A'));
@@ -542,7 +544,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node B', () => {
       var root = graph.getNodeById('B'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('B'));
@@ -562,7 +564,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node C', () => {
       var root = graph.getNodeById('C'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('C'));
@@ -582,7 +584,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node D', () => {
       var root = graph.getNodeById('D'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('C'));
@@ -602,7 +604,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node E', () => {
       var root = graph.getNodeById('E'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('B'));
@@ -622,7 +624,7 @@ describe('PFS TESTS - ', () => {
 
     it('Should correctly compute best paths from Node F', () => {
       var root = graph.getNodeById('F'),
-          result = $PFS.PFS(graph, root, config);
+        result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).to.equal(6);
       expect(result['A'].parent).to.equal(graph.getNodeById('C'));
@@ -640,29 +642,29 @@ describe('PFS TESTS - ', () => {
     });
 
   });
-  
+
 });
 
 
 describe('PFS TESTS on REAL sized graph - ', () => {
-  
+
   var real_graph = "./test/test_data/real_graph.json",
-      graph = json.readFromJSONFile(real_graph),
-      NR_NODES = 6204,
-      NR_UND_EDGES = 18550;
-      
+    graph = json.readFromJSONFile(real_graph),
+    NR_NODES = 6204,
+    NR_UND_EDGES = 18550;
+
 
   beforeEach(() => {
     expect(graph).to.exist;
     expect(graph.nrNodes()).to.equal(NR_NODES);
     expect(graph.nrUndEdges()).to.equal(NR_UND_EDGES);
   });
-      
-  
+
+
   it('should perform standard PFS without config initialization on real graph', () => {
     var root = graph.getRandomNode(),
-        result = $PFS.PFS(graph, root);
-        
+      result = $PFS.PFS(graph, root);
+
     expect(Object.keys(result).length).to.equal(NR_NODES);
   });
 

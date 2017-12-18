@@ -25,7 +25,7 @@ export interface IBaseEdge {
 
 	getNodes()	: IConnectedNodes;
 
-	clone(node_a : $N.BaseNode, node_b : $N.BaseNode) : BaseEdge;
+	clone(node_a : $N.BaseNode, node_b : $N.BaseNode) : IBaseEdge;
 
 	/**
 	 * An edge should either be directed or not, weighted or not.

@@ -119,40 +119,40 @@ describe('EME Boykov Tests - ', () => {
       // check edges to sink
       // weights should all be zero
       non_zero_nodes.forEach((element) => {
-        var edge: $E.IBaseEdge = eGraph.getEdgeByNodeIDs(element, 'SINK');
+        var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
         expect(edge.getWeight()).to.equal(0);
       });
       // weights should all be infinity
       zero_nodes.forEach((element) => {
-        var edge: $E.IBaseEdge = eGraph.getEdgeByNodeIDs(element, 'SINK');
+        var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
         expect(edge.getWeight()).to.equal(Infinity);
       });
       // weights should all be 1
       aux_nodes_ind.forEach((element) => {
-        var edge: $E.IBaseEdge = eGraph.getEdgeByNodeIDs(element, 'SINK');
+        var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
         expect(edge.getWeight()).to.equal(1);
       });
 
       // check edges to source
       // weights should all be zero
       non_zero_nodes.forEach((element) => {
-        var edge: $E.IBaseEdge = eGraph.getEdgeByNodeIDs(element, 'SOURCE');
+        var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SOURCE');
         expect(edge.getWeight()).to.equal(1.5);
       });
       // weights should all be infinity
       zero_nodes.forEach((element) => {
-        var edge: $E.IBaseEdge = eGraph.getEdgeByNodeIDs(element, 'SOURCE');
+        var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SOURCE');
         expect(edge.getWeight()).to.equal(0);
       });
 
       // check inter node edges
-      expect(eGraph.getEdgeByNodeIDs('E', 'F').getWeight()).to.equal(0);
-      expect(eGraph.getEdgeByNodeIDs('A', 'D').getWeight()).to.equal(1);
-      expect(eGraph.getEdgeByNodeIDs('B', 'E').getWeight()).to.equal(0);
-      expect(eGraph.getEdgeByNodeIDs('D', 'G').getWeight()).to.equal(1);
-      expect(eGraph.getEdgeByNodeIDs('E', 'H').getWeight()).to.equal(0);
-      expect(eGraph.getEdgeByNodeIDs('F', 'I').getWeight()).to.equal(0);
-      expect(eGraph.getEdgeByNodeIDs('H', 'I').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('E', 'F').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('A', 'D').getWeight()).to.equal(1);
+      expect(eGraph.getDirEdgeByNodeIDs('B', 'E').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('D', 'G').getWeight()).to.equal(1);
+      expect(eGraph.getDirEdgeByNodeIDs('E', 'H').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('F', 'I').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('H', 'I').getWeight()).to.equal(0);
       // check node -> aux_node edges
 
 

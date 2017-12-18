@@ -11,6 +11,7 @@ const rename 					= require('gulp-rename');
 const istanbul 				= require('gulp-istanbul');
 const git 						= require('gulp-git');
 const prompt	 				= require('gulp-prompt');
+const dtsGen					= require('dts-generator').default;
 
 
 //----------------------------gulp
@@ -22,14 +23,16 @@ const paths = {
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist', 'docs', 'coverage'], 
+	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist/**/*.js', 'docs', 'coverage'],
 	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
 	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
-  tests_perturb: ['test/perturbation/**/*.js'],
-  tests_central: ['test/centralities/**/*.js'],
+  	tests_perturb: ['test/perturbation/**/*.js'],
+	tests_central: ['test/centralities/**/*.js'],
+	tests_eme: ['test/energyminimization/**/*.js'],
+	tests_generators: ['test/generators/**/*.js'],	
 	tests_all: ['test/**/*.js'],
-	git_sources: ['./*', '.circleci/*', '!build', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock']
+	git_sources: ['./*', '.gitignore', '.npmignore', '.circleci/*', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
 };
 
 
@@ -53,7 +56,7 @@ var tsProject = ts.createProject({
 // src is the file(s) to add (or ./*)
 gulp.task('git-add', ['bundle'], function () {
   return gulp.src(paths.git_sources)
-    .pipe(git.add());
+    .pipe(git.add({args: '-u'}));
 });
 
 // Run git commit
@@ -76,6 +79,12 @@ gulp.task('git-commit', ['git-add'], function () {
 //----------------------------
 // TASKS
 //----------------------------
+gulp.task('clean', function () {
+	return gulp.src(paths.clean, {read: false})
+						 .pipe(clean());
+});
+
+
 gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts(tsProject))
@@ -91,14 +100,14 @@ gulp.task("tdoc", ['clean'], function() {
 			module: "commonjs",
 			target: "es5",
 			out: "docs/",
-			name: "Graphinius"//,
+			name: "GraphiniusJS"//,
 			//theme: "minimal"
 		}));
 });
 
 
 // Packaging - Node / Commonjs
-gulp.task('dist', function () {
+gulp.task('dist', ['clean'], function () {
 	var tsResult = gulp.src(paths.distsources)
 						 				 .pipe(ts(tsProject));
 	// Merge the two output streams, so this task is finished
@@ -111,8 +120,18 @@ gulp.task('dist', function () {
 });
 
 
+gulp.task('dts', ['dist'], function() {
+	return dtsGen({
+		name: 'graphinius',
+		baseDir: './',
+		project: './src/',
+		out: 'graphinius.d.ts'
+	});
+});
+
+
 // Packaging - Webpack
-gulp.task('pack', ['dist'], function() {
+gulp.task('pack', ['dts'], function() {
 	return gulp.src('./index.js')
 		.pipe(webpack( require('./webpack.config.js') ))
 		.pipe(gulp.dest('build/'));
@@ -176,6 +195,13 @@ gulp.task('test-eme', ['build'], function () {
 						 							timeout: 60000}));
 });
 
+// 'Generators tests'
+gulp.task('test-generators', ['build'], function () {
+	return gulp.src(paths.tests_generators, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 60000}));
+});
+
 
 // 'ALL tests '
 gulp.task('test-all', ['build'], function () {
@@ -206,12 +232,6 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 		// }));
 		.pipe(istanbul.writeReports());
 		// .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
-});
-
-
-gulp.task('clean', function () {
-	return gulp.src(paths.clean, {read: false})
-						 .pipe(clean());
 });
 
 

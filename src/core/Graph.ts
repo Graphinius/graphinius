@@ -33,6 +33,8 @@ export interface GraphStats {
 	nr_nodes			: number;
 	nr_und_edges	: number;
 	nr_dir_edges	: number;
+	density_dir		: number;
+	density_und		: number;
 }
 
 /**
@@ -48,7 +50,6 @@ export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
 	_label : string;
-
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 	degreeDistribution() : DegreeDistribution;
@@ -58,9 +59,7 @@ export interface IGraph {
 	addNode(node: $N.IBaseNode) : boolean;
 	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
-	hasNodeLabel(label: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
-	getNodeByLabel(label: string) : $N.IBaseNode;
 	getNodes() : {[key: string] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
@@ -71,10 +70,9 @@ export interface IGraph {
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : $E.IBaseEdge;
 	hasEdgeID(id: string) : boolean;
-	hasEdgeLabel(label: string) : boolean;
 	getEdgeById(id: string) : $E.IBaseEdge;
-	getEdgeByLabel(label: string) : $E.IBaseEdge;
-	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
+	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
+	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : $E.IBaseEdge;
 	getDirEdges() : {[key: string] : $E.IBaseEdge};
 	getUndEdges() : {[key: string] : $E.IBaseEdge};
 	getDirEdgesArray(): Array<$E.IBaseEdge>;
@@ -84,6 +82,9 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+
+	// NEGATIVE EDGES AND CYCLES
+	hasNegativeEdge(): boolean
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// REINTERPRETING EDGES
@@ -152,33 +153,40 @@ class BaseGraph implements IGraph {
 		return this;
 	}
 
-	/**
-	 * Do we want to throw an error if an edge is unweighted?
-	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
-	 */
-	hasNegativeCycles(node? : $N.IBaseNode) : boolean {
+
+	hasNegativeEdge(): boolean {
 		let negative_edge = false,
-				negative_cycle = false,
-				start = node ? node : this.getRandomNode(),
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
-		for ( let edge_id in this._und_edges ) {
+		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
+			if (edge.getWeight() < 0) {
 				return true;
 			}
 		}
-		for ( let edge_id in this._dir_edges ) {
+		for (let edge_id in this._dir_edges) {
 			edge = this._dir_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
+			if (edge.getWeight() < 0) {
 				negative_edge = true;
 				break;
 			}
 		}
-		if ( !negative_edge ) {
+		return negative_edge;
+	}
+
+	
+	/**
+	 * Do we want to throw an error if an edge is unweighted?
+	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
+	 */
+	hasNegativeCycles(node?: $N.IBaseNode): boolean {
+		if ( !this.hasNegativeEdge() ) {
 			return false;
 		}
+
+		let	negative_cycle = false,
+				start = node ? node : this.getRandomNode();
 
 		/**
 		 * Now do Bellman Ford over all graph components
@@ -194,7 +202,7 @@ class BaseGraph implements IGraph {
 				}
 			});
 
-			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node], true) ) {
+			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
 				negative_cycle = true;
 			}
 		});
@@ -312,7 +320,9 @@ class BaseGraph implements IGraph {
 			mode: this._mode,
 			nr_nodes: this._nr_nodes,
 			nr_und_edges: this._nr_und_edges,
-			nr_dir_edges: this._nr_dir_edges
+			nr_dir_edges: this._nr_dir_edges,
+			density_dir: this._nr_dir_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) ),
+			density_und: 2* this._nr_und_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) )
 		}
 	}
 
@@ -391,28 +401,7 @@ class BaseGraph implements IGraph {
 		return !!this._nodes[id];
 	}
 
-	/**
-	 * Use hasNodeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #nodes
-	 */
-	hasNodeLabel(label: string) : boolean {
-		return !!$DS.findKey(this._nodes, function(node : $N.IBaseNode) {
-			return node.getLabel() === label;
-		});
-	}
-
 	getNodeById(id: string) : $N.IBaseNode {
-		return this._nodes[id];
-	}
-
-	/**
-	 * Use getNodeByLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #nodes
-	 */
-	getNodeByLabel(label: string) : $N.IBaseNode {
-		var id = $DS.findKey(this._nodes, function(node : $N.IBaseNode) {
-			return node.getLabel() === label;
-		});
 		return this._nodes[id];
 	}
 
@@ -456,20 +445,6 @@ class BaseGraph implements IGraph {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
 	}
 
-	/**
-	 * Use hasEdgeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #edges
-	 */
-	hasEdgeLabel(label: string) : boolean {
-		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		return !!dir_id || !!und_id;
-	}
-
 	getEdgeById(id: string) : $E.IBaseEdge {
 		var edge = this._dir_edges[id] || this._und_edges[id];
 		if ( !edge ) {
@@ -478,54 +453,55 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 
-	/**
-	 * Use hasEdgeLabel with CAUTION ->
-	 * it has LINEAR runtime in the graph's #edges
-	 */
-	getEdgeByLabel(label: string) : $E.IBaseEdge {
-		var dir_id = $DS.findKey(this._dir_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var und_id = $DS.findKey(this._und_edges, function(edge : $E.IBaseEdge) {
-			return edge.getLabel() === label;
-		});
-		var edge = this._dir_edges[dir_id] || this._und_edges[und_id];
-		if ( !edge ) {
-			throw new Error("cannot retrieve edge with non-existing Label.");
+
+	private checkExistanceOfEdgeNodes(node_a: $N.IBaseNode, node_b: $N.IBaseNode) : void {
+		if ( !node_a ) {
+			throw new Error("Cannot find edge. Node A does not exist (in graph).");
 		}
-		return edge;
+		if ( !node_b ) {
+			throw new Error("Cannot find edge. Node B does not exist (in graph).");
+		}
 	}
 
 	// get the edge from node_a to node_b (or undirected)
-	getEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
-		var node_a = this.getNodeById(node_a_id);
-		if ( !node_a ) {
-			throw new Error("Cannot find edge. Node A does not exist");
-		}
-		var node_b = this.getNodeById(node_b_id);
-		if ( !node_b ) {
-			throw new Error("Cannot find edge. Node B does not exist");
-		}
+	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
+		const node_a = this.getNodeById(node_a_id);
+		const node_b = this.getNodeById(node_b_id);
+		this.checkExistanceOfEdgeNodes(node_a, node_b);
+
 		// check for outgoing directed edges
-		var edges_dir = node_a.outEdges();
-		for (let i = 0; i < Object.keys(edges_dir).length; i++) {
-		    var edge = edges_dir[Object.keys(edges_dir)[i]];
+		let edges_dir = node_a.outEdges(),
+				edges_dir_keys = Object.keys(edges_dir);
+		
+		for (let i = 0; i < edges_dir_keys.length; i++) {
+		    var edge = edges_dir[edges_dir_keys[i]];
 				if (edge.getNodes().b.getID() == node_b_id) {
 				    return edge;
 				}
 		}
+
+		// if we managed to arrive here, there is no edge!
+		throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
+	}
+
+
+	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
+		const node_a = this.getNodeById(node_a_id);
+		const node_b = this.getNodeById(node_b_id);
+		this.checkExistanceOfEdgeNodes(node_a, node_b);
+
 		// check for undirected edges
-		var edges_und = node_a.undEdges();
-		for (let i = 0; i < Object.keys(edges_und).length; i++) {
-		    var edge = edges_und[Object.keys(edges_und)[i]];
+		let edges_und = node_a.undEdges(),
+		edges_und_keys = Object.keys(edges_und);
+
+		for (let i = 0; i < edges_und_keys.length; i++) {
+		    var edge = edges_und[edges_und_keys[i]];
 				var b: string;
 				(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
 				if (b == node_b_id) {
 				    return edge;
 				}
 		}
-		// if we managed to go up to here, there is no edge!
-		throw new Error("Cannot find edge. There is no edge between Node " + node_a_id +  " and " + node_b_id);
 	}
 
 	getDirEdges() : {[key: string] : $E.IBaseEdge} {
@@ -769,7 +745,7 @@ class BaseGraph implements IGraph {
 		var bfsNodeUnmarkedTestCallback = function(context: $BFS.BFS_Scope) {
 			if(config.result[context.next_node.getID()].counter>cutoff){
 				context.queue = [];
-			}else{ //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
+			} else { //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
 				new_graph.addNode(context.next_node.clone());
 			}
 		};
@@ -832,8 +808,21 @@ class BaseGraph implements IGraph {
 	 * in one swoop, as calls to Object.keys() are really slow
 	 * for large input objects.
 	 *
-	 * In order to do this, we
-	 *
+	 * In order to do this, we only extract the keys once and then
+	 * iterate over the key list and add them to a result array
+	 * with probability = amount / keys.length
+	 * 
+	 * We also mark all used keys in case we haven't picked up
+	 * enough entities for the result array after the first round.
+	 * We then just fill up the rest of the result array linearly
+	 * with as many unused keys as necessary
+	 * 
+	 * 
+	 * @TODO include general Test Cases
+	 * @TODO check if amount is larger than propList size
+	 * @TODO This seems like a simple hack - filling up remaining objects
+	 * Could be replaced by a better fraction-increasing function above...
+	 * 
 	 * @param propList
 	 * @param fraction
 	 * @returns {Array}
@@ -851,9 +840,6 @@ class BaseGraph implements IGraph {
 			}
 		}
 
-		// Simple hack - filling up remaining objects (if any)
-		// Could be replaced by a much better fraction-increasing function above
-		// But too tired now...
 		let diff = amount - ids.length;
 		for ( let i = 0; i < keys.length && diff; i++ ) {
 			if ( used_keys[keys[i]] == null) {
