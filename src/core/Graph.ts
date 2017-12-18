@@ -82,6 +82,9 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+
+	// NEGATIVE EDGES AND CYCLES
+	hasNegativeEdge(): boolean
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// REINTERPRETING EDGES
@@ -142,33 +145,40 @@ class BaseGraph implements IGraph {
 		return this;
 	}
 
-	/**
-	 * Do we want to throw an error if an edge is unweighted?
-	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
-	 */
-	hasNegativeCycles(node? : $N.IBaseNode) : boolean {
+
+	hasNegativeEdge(): boolean {
 		let negative_edge = false,
-				negative_cycle = false,
-				start = node ? node : this.getRandomNode(),
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
-		for ( let edge_id in this._und_edges ) {
+		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
+			if (edge.getWeight() < 0) {
 				return true;
 			}
 		}
-		for ( let edge_id in this._dir_edges ) {
+		for (let edge_id in this._dir_edges) {
 			edge = this._dir_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
+			if (edge.getWeight() < 0) {
 				negative_edge = true;
 				break;
 			}
 		}
-		if ( !negative_edge ) {
+		return negative_edge;
+	}
+
+	
+	/**
+	 * Do we want to throw an error if an edge is unweighted?
+	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
+	 */
+	hasNegativeCycles(node?: $N.IBaseNode): boolean {
+		if ( !this.hasNegativeEdge() ) {
 			return false;
 		}
+
+		let	negative_cycle = false,
+				start = node ? node : this.getRandomNode();
 
 		/**
 		 * Now do Bellman Ford over all graph components

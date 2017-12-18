@@ -557,6 +557,7 @@ declare module 'graphinius/core/Graph' {
 	    deleteEdge(edge: $E.IBaseEdge): void;
 	    getRandomDirEdge(): $E.IBaseEdge;
 	    getRandomUndEdge(): $E.IBaseEdge;
+	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
 	    toDirectedGraph(): IGraph;
 	    toUndirectedGraph(): IGraph;
@@ -593,6 +594,7 @@ declare module 'graphinius/core/Graph' {
 	    constructor(_label: any);
 	    toDirectedGraph(): IGraph;
 	    toUndirectedGraph(): IGraph;
+	    hasNegativeEdge(): boolean;
 	    /**
 	     * Do we want to throw an error if an edge is unweighted?
 	     * Or shall we let the traversal algorithm deal with DEFAULT weights like now?

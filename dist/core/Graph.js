@@ -32,9 +32,8 @@ var BaseGraph = (function () {
     BaseGraph.prototype.toUndirectedGraph = function () {
         return this;
     };
-    BaseGraph.prototype.hasNegativeCycles = function (node) {
-        var _this = this;
-        var negative_edge = false, negative_cycle = false, start = node ? node : this.getRandomNode(), edge;
+    BaseGraph.prototype.hasNegativeEdge = function () {
+        var negative_edge = false, edge;
         for (var edge_id in this._und_edges) {
             edge = this._und_edges[edge_id];
             if (edge.getWeight() < 0) {
@@ -48,9 +47,14 @@ var BaseGraph = (function () {
                 break;
             }
         }
-        if (!negative_edge) {
+        return negative_edge;
+    };
+    BaseGraph.prototype.hasNegativeCycles = function (node) {
+        var _this = this;
+        if (!this.hasNegativeEdge()) {
             return false;
         }
+        var negative_cycle = false, start = node ? node : this.getRandomNode();
         $DFS.DFS(this, start).forEach(function (comp) {
             var min_count = Number.POSITIVE_INFINITY, comp_start_node;
             Object.keys(comp).forEach(function (node_id) {
