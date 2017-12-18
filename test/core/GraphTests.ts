@@ -8,6 +8,9 @@ import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+chai.use(sinonChai);
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
@@ -1294,7 +1297,13 @@ describe('GRAPH TESTS: ', () => {
 			e_1: $E.IBaseEdge,
 			e_2: $E.IBaseEdge,
 			e_3: $E.IBaseEdge,
-			e_4: $E.IBaseEdge;
+			e_4: $E.IBaseEdge,
+			e_5: $E.IBaseEdge,
+			e_6: $E.IBaseEdge,
+			backupIsWeightedSpy_e1,
+			backupIsWeightedSpy_e5,
+			isWeightedSpy_e1,
+			isWeightedSpy_e5;
 
 
 		beforeEach(() => {
@@ -1308,6 +1317,30 @@ describe('GRAPH TESTS: ', () => {
 			e_2 = graph.addEdgeByID("2", n_b, n_c, { directed: true, weighted: true, weight: 2 });
 			e_3 = graph.addEdgeByID("3", n_c, n_a, { directed: true, weighted: true, weight: 3 });
 			e_4 = graph.addEdgeByID("4", n_a, n_c, { directed: false, weighted: true, weight: 42 });
+			e_5 = graph.addEdgeByID("5", n_a, n_b, { directed: false, weighted: false });
+			e_6 = graph.addEdgeByID("6", n_a, n_c, { directed: true, weighted: false });
+
+			backupIsWeightedSpy_e1 = e_1.isWeighted;
+			backupIsWeightedSpy_e5 = e_5.isWeighted;
+			isWeightedSpy_e1 = sinon.spy(e_1.isWeighted);
+			isWeightedSpy_e5 = sinon.spy(e_5.isWeighted);
+			e_1.isWeighted = isWeightedSpy_e1;
+			e_5.isWeighted = isWeightedSpy_e5;
+		});
+
+
+		afterEach(() => {
+			e_1.isWeighted = backupIsWeightedSpy_e1;
+			e_5.isWeighted = backupIsWeightedSpy_e5;
+		});
+
+
+		it('should have called isWeighted on e_1 and e_6 once each and returned true and false, respectively', () => {
+			graph.hasNegativeEdge();
+			expect(isWeightedSpy_e1).to.have.been.calledOnce;
+			expect(isWeightedSpy_e1).to.have.returned(true);
+			expect(isWeightedSpy_e5).to.have.been.calledOnce;
+			expect(isWeightedSpy_e5).to.have.returned(false);
 		});
 
 

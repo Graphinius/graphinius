@@ -33,21 +33,27 @@ var BaseGraph = (function () {
         return this;
     };
     BaseGraph.prototype.hasNegativeEdge = function () {
-        var negative_edge = false, edge;
+        var has_neg_edge = false, edge;
         for (var edge_id in this._und_edges) {
             edge = this._und_edges[edge_id];
+            if (!edge.isWeighted()) {
+                continue;
+            }
             if (edge.getWeight() < 0) {
                 return true;
             }
         }
         for (var edge_id in this._dir_edges) {
             edge = this._dir_edges[edge_id];
+            if (!edge.isWeighted()) {
+                continue;
+            }
             if (edge.getWeight() < 0) {
-                negative_edge = true;
+                has_neg_edge = true;
                 break;
             }
         }
-        return negative_edge;
+        return has_neg_edge;
     };
     BaseGraph.prototype.hasNegativeCycles = function (node) {
         var _this = this;

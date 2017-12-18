@@ -153,7 +153,7 @@ describe('==== NODE TESTS ====', () => {
 				 * case the edge is a loop.
 				 * This case should be handled by the graph class correctly, so we need
 				 * to throw an error in case the graph class is wrongly implemented.
-				 */ 
+				 */
 				node_a.addEdge(edge);
 				// here we should get an exception for duplicate undirected edge
 				expect(node_a.addEdge.bind(node_a, edge)).to.throw("Cannot add same undirected edge multiple times.");
