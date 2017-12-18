@@ -13,7 +13,7 @@ const git 						= require('gulp-git');
 const prompt	 				= require('gulp-prompt');
 
 
-//----------------------------
+//----------------------------gulp
 // PATHS
 //----------------------------
 const paths = {

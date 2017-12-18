@@ -12,17 +12,18 @@ import { Dijkstra } from '../search/Dijkstra';
 //return types: similar to Floyd-Warshall, 
 //dist: a 2d array containing distances for each shortest paths
 //next: a 3d array containing the paths starting with the node right after the source
-function Johnsons(graph: $G.IGraph, cycle = true): any {
-
-  if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+function Johnsons(graph: $G.IGraph): any {
+  
+  /*if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
     throw new Error("Cowardly refusing to traverse graph without edges.");
   }
   //getting all graph nodes
   let allNodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
   let nodeKeys = Object.keys(allNodes);
 
+  //==========lets see this part together
   //this is not yet correct, I will need to check these lambda expressions once more
-  let hasNWE = graph => {
+  var hasNWE = (graph) => {
     let allDir = graph.getDirEdges();
     let allUnd = graph.getUndEdges();
     let resultHasNWE: boolean = false;
@@ -32,22 +33,26 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
       }
       if (allDir[diredge].getWeight() < 0) {
         resultHasNWE = true;
+        break;
       }
     }
+    if (!resultHasNWE){
     for (let undEdge in allUnd) {
       if (!allUnd[undEdge].isWeighted()) {
         continue;
       }
       if (allUnd[undEdge].getWeight() < 0) {
         resultHasNWE = true;
+        break;
       }
     }
+  }
     return resultHasNWE;
   };
 
+  //============check this logic
   //initialize the graph on which the Dijkstras will be made
   var RWGraph: $G.IGraph;
-
 
   //if the graph has negative weight edges, it needs to be re-weighed
   //if not, then RWGraph is a simple clone of the input graph, and one can directly go for the Dijkstra
@@ -58,7 +63,7 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
     var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
 
     //to help testing, I will have 3 different graphs
-    //original graph: unmodified input graph
+    //graph: unmodified input graph
     //graphForBF: clone of the original, contains extraNode and temporary edges
     //RWGraph: clone of the original graph, but edges are re-weighted
     //the RWGraph will be used for Dijkstras
@@ -79,7 +84,7 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
     /*for (let i = 0; i < nodeKeys.length; i++) {
       let actualNode = allNodes[nodeKeys[i]];
       graphForBF.addEdgeByID("temp"+i, extraNode, actualNode, { directed: true, weighted: true, weight: 0 });
-    }*/
+    }
 
     //now the Bellman-Ford, and re-weighting, if there are no negative edges
 
@@ -120,6 +125,9 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
   else {
     RWGraph = graph.clone();
   }
+
+  // PFS based version
+  let config 
 
   let RWAllNodes = RWGraph.getNodes();
   let RWNodeKeys = Object.keys(RWAllNodes);
@@ -164,12 +172,12 @@ function Johnsons(graph: $G.IGraph, cycle = true): any {
         if (parentForTgt==null){
           next[src_id][tgt_id].push(null);
           break;
-        }*/
+        }
 
   }
 
   return { dist, next };
-}
+*/}
 
 
 export {

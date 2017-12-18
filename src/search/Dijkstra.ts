@@ -24,6 +24,10 @@ function Dijkstra( graph   : $G.IGraph,
   return $PFS.PFS( graph, source, config );
 }
 
+
+
+
+//here comes my try, it is not (yet) correct
 //output types used for DijkstraAlt
 export type DijkstraAltDistOutput = {[key:string]:number};
 export type DijkstraAltParentOutput = {[key:string]:[$N.IBaseNode]};

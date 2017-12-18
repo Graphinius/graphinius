@@ -131,6 +131,7 @@ function PFS(graph 	 : $G.IGraph,
     // get currently best node
     scope.current = scope.OPEN_HEAP.pop();
     
+    //======== when does this occur?
     if (scope.current == null) {
       console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
     }
@@ -215,6 +216,8 @@ function PFS(graph 	 : $G.IGraph,
         /**
          * HOOK 6: Equal path found (same weight)
          */
+        //========where is this function "equal path?"
+        //return type has not changed: how will it host 2 (or even more) nodes?
         if ( scope.next.best === scope.better_dist ) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
         }
