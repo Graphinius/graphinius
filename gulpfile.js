@@ -27,8 +27,10 @@ const paths = {
 	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
 	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
-  tests_perturb: ['test/perturbation/**/*.js'],
-  tests_central: ['test/centralities/**/*.js'],
+  	tests_perturb: ['test/perturbation/**/*.js'],
+	tests_central: ['test/centralities/**/*.js'],
+	tests_eme: ['test/energyminimization/**/*.js'],
+	tests_generators: ['test/generators/**/*.js'],	
 	tests_all: ['test/**/*.js'],
 	git_sources: ['./*', '.gitignore', '.npmignore', '.circleci/*', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
 };
@@ -189,6 +191,13 @@ gulp.task('test-central', ['build'], function () {
 // 'Boykov Energyminimization tests - including mincutmaxflow'
 gulp.task('test-eme', ['build'], function () {
 	return gulp.src(paths.tests_eme, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: 60000}));
+});
+
+// 'Generators tests'
+gulp.task('test-generators', ['build'], function () {
+	return gulp.src(paths.tests_generators, {read: false})
 						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
