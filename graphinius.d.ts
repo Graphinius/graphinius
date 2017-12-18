@@ -481,7 +481,15 @@ declare module 'graphinius/search/PFS' {
 declare module 'graphinius/search/BellmanFord' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
-	import * as $N from 'graphinius/core/Nodes'; function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode, cycle?: boolean): Array<number> | boolean; function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode, cycle?: boolean): {} | boolean;
+	import * as $N from 'graphinius/core/Nodes';
+	export interface BFArrrayResult {
+	    distances: Array<number>;
+	    neg_cycle: boolean;
+	}
+	export interface BFDictResult {
+	    distances: {};
+	    neg_cycle: boolean;
+	} function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult; function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult;
 	export { BellmanFordDict, BellmanFordArray };
 
 }

@@ -194,7 +194,7 @@ class BaseGraph implements IGraph {
 				}
 			});
 
-			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node], true) ) {
+			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
 				negative_cycle = true;
 			}
 		});

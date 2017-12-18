@@ -63,7 +63,7 @@ var BaseGraph = (function () {
                     comp_start_node = node_id;
                 }
             });
-            if (BellmanFord_1.BellmanFordArray(_this, _this._nodes[comp_start_node], true)) {
+            if (BellmanFord_1.BellmanFordArray(_this, _this._nodes[comp_start_node]).neg_cycle) {
                 negative_cycle = true;
             }
         });
