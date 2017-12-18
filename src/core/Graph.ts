@@ -145,26 +145,37 @@ class BaseGraph implements IGraph {
 		return this;
 	}
 
-
+	/**
+	 * what to do if some edges are not weighted at all?
+	 * Since graph traversal algortihms (and later maybe graphs themselves)
+	 * use default weights anyways, I am simply ignoring them for now...
+	 * @TODO figure out how to test this...
+	 */
 	hasNegativeEdge(): boolean {
-		let negative_edge = false,
+		let has_neg_edge = false,
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
 		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
+			if (!edge.isWeighted()) {
+				continue;
+			}
 			if (edge.getWeight() < 0) {
 				return true;
 			}
 		}
 		for (let edge_id in this._dir_edges) {
 			edge = this._dir_edges[edge_id];
+			if (!edge.isWeighted()) {
+				continue;
+			}
 			if (edge.getWeight() < 0) {
-				negative_edge = true;
+				has_neg_edge = true;
 				break;
 			}
 		}
-		return negative_edge;
+		return has_neg_edge;
 	}
 
 	
@@ -194,7 +205,7 @@ class BaseGraph implements IGraph {
 				}
 			});
 
-			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
+			if ( BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
 				negative_cycle = true;
 			}
 		});

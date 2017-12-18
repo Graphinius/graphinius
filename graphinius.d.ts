@@ -602,6 +602,12 @@ declare module 'graphinius/core/Graph' {
 	    constructor(_label: any);
 	    toDirectedGraph(): IGraph;
 	    toUndirectedGraph(): IGraph;
+	    /**
+	     * what to do if some edges are not weighted at all?
+	     * Since graph traversal algortihms (and later maybe graphs themselves)
+	     * use default weights anyways, I am simply ignoring them for now...
+	     * @TODO figure out how to test this...
+	     */
 	    hasNegativeEdge(): boolean;
 	    /**
 	     * Do we want to throw an error if an edge is unweighted?

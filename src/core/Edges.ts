@@ -18,7 +18,6 @@ export interface IBaseEdge {
 	setLabel(label : string) : void;
 
 	isDirected()						: boolean;
-
 	isWeighted()						: boolean;
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
