@@ -8,15 +8,15 @@ var KROL = (function () {
         this._graph = new $G.BaseGraph('synth');
     }
     KROL.prototype.generate = function () {
-        var gen_dims = this._genMat.length;
-        var res_dims = Math.pow(gen_dims, this._cycles);
+        var gen_dims = this._genMat[0].length;
+        var res_dims = Math.pow(gen_dims, this._cycles + 1);
         for (var index = 0; index < res_dims; index++) {
             this._graph.addNodeByID(index.toString());
         }
         var nr_edges = 0;
-        for (var node1 = 0; node1 < res_dims - 1; node1++) {
-            for (var node2 = 0; node2 < res_dims - 1; node2++) {
-                if (this.addEdge(node1, node2, res_dims)) {
+        for (var node1 = 0; node1 < res_dims; node1++) {
+            for (var node2 = 0; node2 < res_dims; node2++) {
+                if (this.addEdge(node1, node2, gen_dims)) {
                     this._graph.addEdgeByNodeIDs(node1 + '_' + node2, node1.toString(), node2.toString());
                     ++nr_edges;
                 }
@@ -37,8 +37,6 @@ var KROL = (function () {
             if (rprob > prob) {
                 return false;
             }
-            node1 = node1 / dims | 0;
-            node2 = node2 / dims | 0;
         }
         return true;
     };

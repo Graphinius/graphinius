@@ -68,6 +68,8 @@
 	var BetweennessCent	= __webpack_require__(27);
 	var PRGauss					= __webpack_require__(28);
 	var PRRandomWalk		= __webpack_require__(30);
+	var kronLeskovec		= __webpack_require__(31);
+
 
 	// Define global object
 	var out = typeof window !== 'undefined' ? window : global;
@@ -123,6 +125,9 @@
 	  },
 		perturbation: {
 			SimplePerturber: simplePerturbation.SimplePerturber
+		},
+		generators: {
+			kronecker: kronLeskovec
 		}
 	};
 
@@ -3886,6 +3891,64 @@
 	    return pageRankCentrality;
 	}());
 	exports.pageRankCentrality = pageRankCentrality;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var $G = __webpack_require__(4);
+	var KROL = (function () {
+	    function KROL(config) {
+	        this._config = config || this.prepareKROLStandardConfig();
+	        this._genMat = this._config.genMat;
+	        this._cycles = this._config.cycles;
+	        this._graph = new $G.BaseGraph('synth');
+	    }
+	    KROL.prototype.generate = function () {
+	        var gen_dims = this._genMat[0].length;
+	        var res_dims = Math.pow(gen_dims, this._cycles + 1);
+	        for (var index = 0; index < res_dims; index++) {
+	            this._graph.addNodeByID(index.toString());
+	        }
+	        var nr_edges = 0;
+	        for (var node1 = 0; node1 < res_dims; node1++) {
+	            for (var node2 = 0; node2 < res_dims; node2++) {
+	                if (this.addEdge(node1, node2, gen_dims)) {
+	                    this._graph.addEdgeByNodeIDs(node1 + '_' + node2, node1.toString(), node2.toString());
+	                    ++nr_edges;
+	                }
+	            }
+	        }
+	        var result = {
+	            graph: this._graph
+	        };
+	        return result;
+	    };
+	    KROL.prototype.addEdge = function (node1, node2, dims) {
+	        var rprob = Math.random();
+	        var prob = 1.0;
+	        for (var level = 0; level < this._cycles; level++) {
+	            var id_1 = Math.floor(node1 / Math.pow(dims, level + 1)) % dims;
+	            var id_2 = Math.floor(node2 / Math.pow(dims, level + 1)) % dims;
+	            prob *= this._genMat[id_1][id_2];
+	            if (rprob > prob) {
+	                return false;
+	            }
+	        }
+	        return true;
+	    };
+	    KROL.prototype.prepareKROLStandardConfig = function () {
+	        var genMat = [[0.9, 0.5], [0.5, 0.1]];
+	        return {
+	            genMat: genMat,
+	            cycles: 5
+	        };
+	    };
+	    return KROL;
+	}());
+	exports.KROL = KROL;
 
 
 /***/ })
