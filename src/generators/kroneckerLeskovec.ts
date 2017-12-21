@@ -27,7 +27,7 @@ class KROL implements IKROL {
     private _cycles    :   number;
     private _graph     :   $G.IGraph;
 
-    constructor( config?            : KROLConfig )
+    constructor( config? : KROLConfig )
     {
         this._config = config || this.prepareKROLStandardConfig();
         // this._generator = this._config.generator;
@@ -56,7 +56,6 @@ class KROL implements IKROL {
                     ++nr_edges;
                 }
             }
-            
         }
 
         var result : KROLResult = {
