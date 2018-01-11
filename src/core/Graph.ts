@@ -164,6 +164,8 @@ class BaseGraph implements IGraph {
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
+		//reminder: a return statement breaks out of the for loop and finishes the function
+		
 		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
 			if (!edge.isWeighted()) {
@@ -230,15 +232,15 @@ class BaseGraph implements IGraph {
 		let next = [],
 				node_keys = Object.keys(this._nodes);
 
+		//?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
+		//I do not understand but it works so it should be okay	
 		const adjDict = this.adjListDict(incoming, true, 0);
 		
 		for ( let i = 0; i < this._nr_nodes; ++i ) {
 			next.push([]);
 			for ( let j = 0; j < this._nr_nodes; ++j ) {
 				next[i].push([]);
-				//=====================
-				//for me this is not clear, why is the next line different from the line of AdjListArray
-				//is it a mistake, or it is intentional because of later array (matrix) operations?
+				
 				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
 			}
 		}

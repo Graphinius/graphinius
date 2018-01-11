@@ -71,7 +71,8 @@ export interface PFS_Scope {
  * @config a config object similar to that used
  * in BFS, automatically instantiated if not given..
  */
-function PFS(graph 	 : $G.IGraph, 
+
+ function PFS(graph 	 : $G.IGraph, 
 						 v 			 : $N.IBaseNode,
              config? : PFS_Config) : {[id: string] : PFS_ResultEntry} 
 {
@@ -120,6 +121,7 @@ function PFS(graph 	 : $G.IGraph,
 	 * HOOK 1: PFS INIT
 	 */
   callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
+  //initializes the result entry, gives the start node the final values, and default values for all others
   
   scope.OPEN_HEAP.insert(start_ne);
   scope.OPEN[start_ne.node.getID()] = start_ne;
@@ -130,9 +132,10 @@ function PFS(graph 	 : $G.IGraph,
    */
   while ( scope.OPEN_HEAP.size() ) {
     // get currently best node
+    //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
+    //it removes it from the heap, too - no extra removal needed
     scope.current = scope.OPEN_HEAP.pop();
     
-    //======== when does this occur?
     if (scope.current == null) {
       console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
     }
@@ -208,6 +211,7 @@ function PFS(graph 	 : $G.IGraph,
 
           // HEAP operations are necessary for internal traversal,
           // so we handle them here in the main loop
+          //removing thext with the old value and adding it again with updated value
           scope.OPEN_HEAP.remove(scope.next);
           scope.next.best = scope.better_dist;
           scope.OPEN_HEAP.insert(scope.next);
@@ -217,8 +221,8 @@ function PFS(graph 	 : $G.IGraph,
         /**
          * HOOK 6: Equal path found (same weight)
          */
-        //========where is this function "equal path?"
-        //return type has not changed: how will it host 2 (or even more) nodes?
+        //at the moment, this callback array is empty. This hook is needed in the Johnsons only
+        
         if ( scope.next.best === scope.better_dist ) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
         }

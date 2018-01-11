@@ -25,9 +25,9 @@ function Dijkstra( graph   : $G.IGraph,
 
 
 
-
-//here comes my try, it is not (yet) correct
-//output types used for DijkstraAlt
+/*
+//my try for Dijkstra, written before I understood the PFS
+//I leave it here in case I need anything from it
 export type DijkstraAltDistOutput = {[key:string]:number};
 export type DijkstraAltParentOutput = {[key:string]:[$N.IBaseNode]};
 
@@ -98,11 +98,9 @@ for (let key in neighbors){
 }
 }
 
-
-
 return [distOutput, parentOutput];
 }
-
+*/
 export {
-  Dijkstra, DijkstraAlt
+  Dijkstra
 };
