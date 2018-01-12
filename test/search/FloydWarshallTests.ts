@@ -74,7 +74,10 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 			it('should correctly compute distance matrix for graph', () => {
 				FW_res = $FW.FloydWarshallAPSP(graph_search);
-				console.log(FW_res[0]);
+				console.log(FW_res[1]);
+				//@Bernd: when I solved it on paper, I got different results
+				//there is an edge between D and E with a weight of 0
+				//and it seems to re-weigh it to 1, that is causing the differences
 				let expected_result = [
 					[0, 3, 4, 1, 2, 4],
 					[2, 0, 1, 3, 2, 1],

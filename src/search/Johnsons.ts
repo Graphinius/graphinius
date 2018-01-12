@@ -11,69 +11,51 @@ import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
 import { Dijkstra } from '../search/Dijkstra';
 import { IGraph, BaseGraph } from '../core/Graph';
 import { IBaseNode, BaseNode } from '../core/Nodes';
-import { prepareBFSStandardConfig } from './BFS';
 
-
-//PFS for Johnsons: initiation and run is the same as in normal PFS
-
-//return types: should be same as Floyd-Warshall
-//dist: a 2d array containing distances for each shortest paths
-//next: a 3d array containing "next" nodes (sort of parent nodes)
 function Johnsons(graph: $G.IGraph): {} {
 
   if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
     throw new Error("Cowardly refusing to traverse graph without edges.");
   }
+
   //getting all graph nodes
   let allNodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
   let nodeKeys = Object.keys(allNodes);
 
-  var hasNWE = graph.hasNegativeEdge();
-
-  if (!hasNWE) {
-    return PFSforAllSources2(graph);
-  }
-
-  else {
+  if (graph.hasNegativeEdge()) {
     var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
-    graph = addExtraNandE(graph, extraNode);
+      graph = addExtraNandE(graph, extraNode);
+      let BFresult=BellmanFordDict(graph, extraNode);
+
     //reminder: output of the BellmanFordDict is BFDictResult
     //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
-
-    //now call BF
-    if (BellmanFordDict(graph, extraNode).neg_cycle) {
+    if (BFresult.neg_cycle) {
       throw new Error("The graph contains a negative edge, thus it can not be processed");
     }
-    else {
-      let newWeights: {} = BellmanFordDict(graph, extraNode).distances;
-      //removing the extraNode and re-weighing here, call outer function(s)
 
-      //deleting the distance 0 of the extraNode, it is no more needed
-      delete newWeights["extraNode"];
-      //target graph still has the extraNode
-      //reminder: deleteNode function removes its edges, too
-      graph.deleteNode(extraNode);
+    else {
+      let newWeights: {} = BFresult.distances;
 
       graph = reWeighGraph(graph, newWeights);
-
-      for (let nodeID in allNodes) {
-        Dijkstra(graph, allNodes[nodeID]);
-      }
-
-      //these lines will die soon
-      let dist: any[];
-      let next: any[];
-
-      return PFSforAllSources2(graph);
+      //graph still has the extraNode
+      //reminder: deleteNode function removes its edges, too
+      graph.deleteNode(extraNode);
     }
   }
+
+  //@Bernd: I have written two functions, one is PFSforAllSources (see below), but that one did not give the right results
+  //then I wrote PFSforAllSources2, an alternative approach (see below), when this one is called, it gives nice output
+  return PFSforAllSources2(graph);
 }
 
 function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
   let allNodes: { [key: string]: $N.IBaseNode } = target.getNodes();
   target.addNode(nodeToAdd);
+  let tempCounter=0;
+  //be aware, it adds an edge between extraNode and extraNode too!
   for (let nodeKey in allNodes) {
-    target.addEdgeByNodeIDs("temp", nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
+    target.addEdgeByNodeIDs("temp"+tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
+    tempCounter++;
   }
   return target;
 }
@@ -81,11 +63,11 @@ function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
 function reWeighGraph(target: $G.IGraph, distDict: {}): $G.IGraph {
 
   //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
-  //clone is needed!
   let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
   for (let edge of edges) {
     var a = edge.getNodes().a.getID();
     var b = edge.getNodes().b.getID();
+
     if (edge.isWeighted) {
       let oldWeight = edge.getWeight();
       let newWeight = oldWeight + distDict[a] - distDict[b];
@@ -105,8 +87,12 @@ function reWeighGraph(target: $G.IGraph, distDict: {}): $G.IGraph {
   return target;
 }
 
+//@ Bernd: this was my first try. 
+//the idea was that I let the PFS do its thing, but I already create the dists and next arrays before starting it
+//and put in two callbacks into the PFS Config, which update the dists and next arrays
+//those two callbacks are written and could be pushed into the config.callbacks
+//however the output of the Johnsons was not correct, when I called this function (could not yet figure out why)
 function PFSforAllSources(graph: $G.IGraph): {} {
-  //the same output types will be used as in FW
 
   //reminder: this is a 2d array,
   //value of a given [i][j]: 0 if self, value if j is directly reachable from i, positive infinity in all other cases
@@ -120,22 +106,18 @@ function PFSforAllSources(graph: $G.IGraph): {} {
   //for positioning, i will always be the source node, 
   //j will always be the actual goal node
 
-  //create an array of graph nodes, so that later indices can be get
+  //create an array of graph nodes, so when I later need the index of a nodeID, I can find it
+  //so the original order of nodes will not be messed up by PFS
   let nodesDict = graph.getNodes();
   let nodeIDsArray: Array<string> = [];
   for (let key in nodesDict) {
     nodeIDsArray.push(nodesDict[key].getID());
   }
-  //now whenever I need the position of any nodeID, I can get it
-  //so that the original order of nodes will not be messed up by PFS
 
-  //PFS needs to be called for each node as source
   //creating the config for the PFS
-
   let specialConfig: $PFS.PFS_Config = $PFS.preparePFSStandardConfig();
+
   //and now modify whatever I need to
-
-
   var betterPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDsArray.indexOf(context.root_node.getID()),
       j = nodeIDsArray.indexOf(context.next.node.getID());
@@ -143,11 +125,9 @@ function PFSforAllSources(graph: $G.IGraph): {} {
     dists[i][j] = context.better_dist;
     next[i][j].splice(0, next[i][j].length, nodeIDsArray.indexOf(context.current.node.getID()));
   };
-  //splice replaces the content created by the preparePFSStandardConfig function, 
+  //info: splice replaces the content created by the preparePFSStandardConfig function, 
   //to the one I need here
-
-  specialConfig.callbacks.better_path.push(betterPathJohnsons);
-  //specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
+  specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 
   var equalPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDsArray.indexOf(context.root_node.getID()),
@@ -160,7 +140,7 @@ function PFSforAllSources(graph: $G.IGraph): {} {
       next[i][j].push(nodeIDsArray.indexOf(context.current.node.getID()));
     }
   }
-
+  //this array is empty so it is fine to just push
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
 
   for (let key in nodesDict) {
@@ -169,6 +149,13 @@ function PFSforAllSources(graph: $G.IGraph): {} {
 
   return [dists, next, specialConfig];
 }
+
+//@ Bernd: since the above approach did not work, I tried an alternative
+//now I first get the result of the PFS for each source node, and sort them out into the output arrays dists and next
+//however, I needed a new PFS_Entry, when I wanted to change the type of the parent (it was IBaseNode, but now I need an array)
+//because of this, I needed to re-write PFSConfig, preparePFSStandardConfig, and PFS itself
+//these are here below (I did not change anything in the PFS class)
+//this is what I meant, it is working but quite long piece of code - can one make it simpler? I suppose, yes. 
 
 export interface PFS_ResultEntry2 {
   distance: number; // evaluated by a
@@ -194,18 +181,18 @@ function PFSforAllSources2(graph: $G.IGraph): {} {
   let PFSSpecialConfig2: PFS_Config2 = preparePFSStandardConfig2();
 
   let nodesDict = graph.getNodes();
-  for (let key in nodesDict){
-    let distsSub :Array<number> = [];
-    let nextSub : Array<Array<string>> =[];
-    let resultDict= PFS2(graph, nodesDict[key], PFSSpecialConfig2);
-    for (let key in nodesDict){
-      let currentGoalID=nodesDict[key].getID();
-      let currentGoalDist=resultDict[currentGoalID].distance;
+  for (let key in nodesDict) {
+    let distsSub: Array<number> = [];
+    let nextSub: Array<Array<string>> = [];
+    let resultDict = PFS2(graph, nodesDict[key], PFSSpecialConfig2);
+    for (let key in nodesDict) {
+      let currentGoalID = nodesDict[key].getID();
+      let currentGoalDist = resultDict[currentGoalID].distance;
       distsSub.push(currentGoalDist);
       //I need to pack the node IDs into the output array next
-      let currentGoalParent:Array<IBaseNode>=resultDict[currentGoalID].parent;
-      let currentGoalParentIDs:Array<string>=[];
-      for (let node of currentGoalParent){
+      let currentGoalParent: Array<IBaseNode> = resultDict[currentGoalID].parent;
+      let currentGoalParentIDs: Array<string> = [];
+      for (let node of currentGoalParent) {
         let nodeID = node.getID();
         currentGoalParentIDs.push(nodeID);
       }
@@ -285,8 +272,8 @@ function preparePFSStandardConfig2(): PFS_Config2 {
 
     config.result[context.next.node.getID()] = {
       distance: context.next.best,
-      parent: [context.current.node===context.root_node? context.next.node : context.current.node],//or next? not sure yet
-      //nodes directly reachable from root node should get next, I think...
+      parent: [context.current.node === context.root_node ? context.next.node : context.current.node],//or next? not sure yet
+      //nodes directly reachable from root node should get next, if I am correct
       counter: undefined
     };
   };
@@ -300,6 +287,7 @@ function preparePFSStandardConfig2(): PFS_Config2 {
   };
   callbacks.better_path.push(betterPathFound);
 
+  //callback for equal path, modifies the parent only
   var equalPathFound = function (context: $PFS.PFS_Scope) {
     if (config.result[context.next.node.getID()].parent.indexOf(context.current.node) === -1) {
       config.result[context.next.node.getID()].parent.push(context.current.node);
@@ -310,179 +298,178 @@ function preparePFSStandardConfig2(): PFS_Config2 {
   return config;
 }
 
-function PFS2(graph 	 : $G.IGraph, 
-  v 			 : $N.IBaseNode,
-  config? : PFS_Config2) : {[id: string] : PFS_ResultEntry2} 
-{
-var config = config || preparePFSStandardConfig2(),
-callbacks = config.callbacks,
-dir_mode = config.dir_mode,
-evalPriority = config.evalPriority,
-evalObjID = config.evalObjID;
+function PFS2(graph: $G.IGraph,
+  v: $N.IBaseNode,
+  config?: PFS_Config2): { [id: string]: PFS_ResultEntry2 } {
+  var config = config || preparePFSStandardConfig2(),
+    callbacks = config.callbacks,
+    dir_mode = config.dir_mode,
+    evalPriority = config.evalPriority,
+    evalObjID = config.evalObjID;
 
 
-/**
-* We are not traversing an empty graph...
-*/
-if ( graph.getMode() === $G.GraphMode.INIT ) {
-throw new Error('Cowardly refusing to traverse graph without edges.');
-}
-/**
-* We are not traversing a graph taking NO edges into account
-*/
-if ( dir_mode === $G.GraphMode.INIT ) {
-throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-}
+  /**
+  * We are not traversing an empty graph...
+  */
+  if (graph.getMode() === $G.GraphMode.INIT) {
+    throw new Error('Cowardly refusing to traverse graph without edges.');
+  }
+  /**
+  * We are not traversing a graph taking NO edges into account
+  */
+  if (dir_mode === $G.GraphMode.INIT) {
+    throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+  }
 
 
-// We need to push NeighborEntries
-// TODO: Virtual edge addition OK?
-var start_ne : $N.NeighborEntry = {
-node: v,
-edge: new $E.BaseEdge('virtual start edge', v, v, {weighted: true, weight: 0}),
-best: 0
-};
+  // We need to push NeighborEntries
+  // TODO: Virtual edge addition OK?
+  var start_ne: $N.NeighborEntry = {
+    node: v,
+    edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
+    best: 0
+  };
 
-var scope : $PFS.PFS_Scope = {
-OPEN_HEAP   : new $BH.BinaryHeap( $BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
-OPEN        : {},
-CLOSED      : {},
-nodes       : graph.getNodes(),
-root_node   : v,
-current     : start_ne,
-adj_nodes   : [],
-next        : null,
-better_dist : Number.POSITIVE_INFINITY,
-};
+  var scope: $PFS.PFS_Scope = {
+    OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
+    OPEN: {},
+    CLOSED: {},
+    nodes: graph.getNodes(),
+    root_node: v,
+    current: start_ne,
+    adj_nodes: [],
+    next: null,
+    better_dist: Number.POSITIVE_INFINITY,
+  };
 
-/**
-* HOOK 1: PFS INIT
-*/
-callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
-//initializes the result entry, gives the start node the final values, and default values for all others
+  /**
+  * HOOK 1: PFS INIT
+  */
+  callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
+  //initializes the result entry, gives the start node the final values, and default values for all others
 
-scope.OPEN_HEAP.insert(start_ne);
-scope.OPEN[start_ne.node.getID()] = start_ne;
-
-
-/**
-* Main loop
-*/
-while ( scope.OPEN_HEAP.size() ) {
-// get currently best node
-//pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
-//it removes it from the heap, too - no extra removal needed
-scope.current = scope.OPEN_HEAP.pop();
-
-if (scope.current == null) {
-console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
-}
-
-// remove from OPEN
-scope.OPEN[scope.current.node.getID()] = undefined;
-
-// add it to CLOSED
-scope.CLOSED[scope.current.node.getID()] = scope.current;
-
-// TODO what if we already reached the goal?
-if ( scope.current.node === config.goal_node ) {
-/**
-* HOOK 2: Goal node reached
-*/
-config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
-
-// If a goal node is set from the outside & we reach it, we stop.
-return config.result;
-}
+  scope.OPEN_HEAP.insert(start_ne);
+  scope.OPEN[start_ne.node.getID()] = start_ne;
 
 
-/**
-* Extend the current node, also called
-* "create n's successors"...
-*/
+  /**
+  * Main loop
+  */
+  while (scope.OPEN_HEAP.size()) {
+    // get currently best node
+    //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
+    //it removes it from the heap, too - no extra removal needed
+    scope.current = scope.OPEN_HEAP.pop();
 
-// TODO: Reverse callback logic to NOT merge anything by default!!!
-if ( dir_mode === $G.GraphMode.MIXED ) {
-scope.adj_nodes = scope.current.node.reachNodes();
-}
-else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
-scope.adj_nodes = scope.current.node.connNodes();
-}
-else if ( dir_mode === $G.GraphMode.DIRECTED ) {
-scope.adj_nodes = scope.current.node.nextNodes();
-}
-else {
-throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
-}
+    if (scope.current == null) {
+      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
+    }
 
-/**
-* EXPAND AND EXAMINE NEIGHBORHOOD
-*/
-for ( var adj_idx in scope.adj_nodes ) {
-scope.next = scope.adj_nodes[adj_idx];
+    // remove from OPEN
+    scope.OPEN[scope.current.node.getID()] = undefined;
 
-if ( scope.CLOSED[scope.next.node.getID()] ) {
-/**
-* HOOK 3: Goal node already closed
-*/
-config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
-continue;
-}
+    // add it to CLOSED
+    scope.CLOSED[scope.current.node.getID()] = scope.current;
 
-if ( scope.OPEN[scope.next.node.getID()] ) {
-// First let's recover the previous best solution from our OPEN structure,
-// as the node's neighborhood-retrieving function cannot know it...
-scope.next.best = scope.OPEN[scope.next.node.getID()].best;
+    // TODO what if we already reached the goal?
+    if (scope.current.node === config.goal_node) {
+      /**
+      * HOOK 2: Goal node reached
+      */
+      config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
 
-/**
-* HOOK 4: Goal node already visited, but not yet closed
-*/
-config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
+      // If a goal node is set from the outside & we reach it, we stop.
+      return config.result;
+    }
 
-scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : scope.next.edge.getWeight());
 
-/**
-* HOOK 5: Better path found
-*/
-if ( scope.next.best > scope.better_dist ) {
-config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
+    /**
+    * Extend the current node, also called
+    * "create n's successors"...
+    */
 
-// HEAP operations are necessary for internal traversal,
-// so we handle them here in the main loop
-//removing thext with the old value and adding it again with updated value
-scope.OPEN_HEAP.remove(scope.next);
-scope.next.best = scope.better_dist;
-scope.OPEN_HEAP.insert(scope.next);
-scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
-}
+    // TODO: Reverse callback logic to NOT merge anything by default!!!
+    if (dir_mode === $G.GraphMode.MIXED) {
+      scope.adj_nodes = scope.current.node.reachNodes();
+    }
+    else if (dir_mode === $G.GraphMode.UNDIRECTED) {
+      scope.adj_nodes = scope.current.node.connNodes();
+    }
+    else if (dir_mode === $G.GraphMode.DIRECTED) {
+      scope.adj_nodes = scope.current.node.nextNodes();
+    }
+    else {
+      throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
+    }
 
-/**
-* HOOK 6: Equal path found (same weight)
-*/
-//at the moment, this callback array is empty. This hook is needed in the Johnsons only
+    /**
+    * EXPAND AND EXAMINE NEIGHBORHOOD
+    */
+    for (var adj_idx in scope.adj_nodes) {
+      scope.next = scope.adj_nodes[adj_idx];
 
-if ( scope.next.best === scope.better_dist ) {
-config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
-}
+      if (scope.CLOSED[scope.next.node.getID()]) {
+        /**
+        * HOOK 3: Goal node already closed
+        */
+        config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
+        continue;
+      }
 
-continue;
-}
+      if (scope.OPEN[scope.next.node.getID()]) {
+        // First let's recover the previous best solution from our OPEN structure,
+        // as the node's neighborhood-retrieving function cannot know it...
+        scope.next.best = scope.OPEN[scope.next.node.getID()].best;
 
-// NODE NOT ENCOUNTERED
-config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
+        /**
+        * HOOK 4: Goal node already visited, but not yet closed
+        */
+        config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 
-// HEAP operations are necessary for internal traversal,
-// so we handle them here in the main loop
-scope.OPEN_HEAP.insert(scope.next);
-scope.OPEN[scope.next.node.getID()] = scope.next;
-}
-}
+        scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : scope.next.edge.getWeight());
 
-return config.result;           
+        /**
+        * HOOK 5: Better path found
+        */
+        if (scope.next.best > scope.better_dist) {
+          config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
+
+          // HEAP operations are necessary for internal traversal,
+          // so we handle them here in the main loop
+          //removing thext with the old value and adding it again with updated value
+          scope.OPEN_HEAP.remove(scope.next);
+          scope.next.best = scope.better_dist;
+          scope.OPEN_HEAP.insert(scope.next);
+          scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
+        }
+
+        /**
+        * HOOK 6: Equal path found (same weight)
+        */
+        //at the moment, this callback array is empty. This hook is needed in the Johnsons only
+
+        if (scope.next.best === scope.better_dist) {
+          config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
+        }
+
+        continue;
+      }
+
+      // NODE NOT ENCOUNTERED
+      config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
+
+      // HEAP operations are necessary for internal traversal,
+      // so we handle them here in the main loop
+      scope.OPEN_HEAP.insert(scope.next);
+      scope.OPEN[scope.next.node.getID()] = scope.next;
+    }
+  }
+
+  return config.result;
 }
 
 
 export {
-  Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources
+  Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources, PFSforAllSources2
 };
 
