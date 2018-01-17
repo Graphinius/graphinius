@@ -35,6 +35,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 		if(dists[a]==null)
 			dists[a] = {};
 
+		
 		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
 		if(!edges[edge].isDirected()){
 			if(dists[b]==null)

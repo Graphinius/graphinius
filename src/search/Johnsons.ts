@@ -45,7 +45,7 @@ function Johnsons(graph: $G.IGraph): {} {
 
   //@Bernd: I have written two functions, one is PFSforAllSources (see below), but that one did not give the right results
   //then I wrote PFSforAllSources2, an alternative approach (see below), when this one is called, it gives nice output
-  return PFSforAllSources2(graph);
+  return PFSforAllSources(graph);
 }
 
 function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
@@ -96,7 +96,9 @@ function PFSforAllSources(graph: $G.IGraph): {} {
 
   //reminder: this is a 2d array,
   //value of a given [i][j]: 0 if self, value if j is directly reachable from i, positive infinity in all other cases
-  let dists: $G.MinAdjacencyListArray = graph.adjListArray();
+  // let dists: $G.MinAdjacencyListArray = graph.adjListArray();
+  let dists = graph.adjListArray();
+  // console.log(dists);
 
   //reminder: this is a 3d array
   //value in given [i][j] subbarray: node itself if self, goal node if goal node is directly reachable from source node, 
@@ -109,9 +111,10 @@ function PFSforAllSources(graph: $G.IGraph): {} {
   //create an array of graph nodes, so when I later need the index of a nodeID, I can find it
   //so the original order of nodes will not be messed up by PFS
   let nodesDict = graph.getNodes();
-  let nodeIDsArray: Array<string> = [];
+  let nodeIDIdxMap = {};
+  let i = 0;
   for (let key in nodesDict) {
-    nodeIDsArray.push(nodesDict[key].getID());
+    nodeIDIdxMap[key] = i++;
   }
 
   //creating the config for the PFS
@@ -119,357 +122,40 @@ function PFSforAllSources(graph: $G.IGraph): {} {
 
   //and now modify whatever I need to
   var betterPathJohnsons = function (context: $PFS.PFS_Scope) {
-    let i = nodeIDsArray.indexOf(context.root_node.getID()),
-      j = nodeIDsArray.indexOf(context.next.node.getID());
-
+    let i = nodeIDIdxMap[ context.root_node.getID() ];
+    let j = nodeIDIdxMap[ context.next.node.getID() ];
     dists[i][j] = context.better_dist;
-    next[i][j].splice(0, next[i][j].length, nodeIDsArray.indexOf(context.current.node.getID()));
+    next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[ context.current.node.getID() ]);
   };
+
   //info: splice replaces the content created by the preparePFSStandardConfig function, 
   //to the one I need here
-  specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
+  specialConfig.callbacks.better_path.push( betterPathJohnsons );
 
   var equalPathJohnsons = function (context: $PFS.PFS_Scope) {
-    let i = nodeIDsArray.indexOf(context.root_node.getID()),
-      j = nodeIDsArray.indexOf(context.next.node.getID());
+    let i = nodeIDIdxMap[ context.root_node.getID() ];
+    let j = nodeIDIdxMap[ context.next.node.getID() ];
 
     if (next[i][j][0] === null) {
-      next[i][j].splice(0, next[i][j].length, nodeIDsArray.indexOf(context.current.node.getID()));
+      next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[ context.current.node.getID() ]);
     }
-    if (next[i][j].indexOf(nodeIDsArray.indexOf(context.current.node.getID())) === -1) {
-      next[i][j].push(nodeIDsArray.indexOf(context.current.node.getID()));
+    if (next[i][j].indexOf(nodeIDIdxMap[ context.current.node.getID() ]) === -1) {
+      next[i][j].push(nodeIDIdxMap[ context.current.node.getID() ]);
     }
   }
   //this array is empty so it is fine to just push
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
 
-  for (let key in nodesDict) {
-    $PFS.PFS(graph, nodesDict[key], specialConfig);
+  let allNodes = graph.getNodes();
+  for (let node_key in allNodes) {
+    $PFS.PFS(graph, allNodes[node_key], specialConfig);
   }
 
   return [dists, next, specialConfig];
 }
 
-//@ Bernd: since the above approach did not work, I tried an alternative
-//now I first get the result of the PFS for each source node, and sort them out into the output arrays dists and next
-//however, I needed a new PFS_Entry, when I wanted to change the type of the parent (it was IBaseNode, but now I need an array)
-//because of this, I needed to re-write PFSConfig, preparePFSStandardConfig, and PFS itself
-//these are here below (I did not change anything in the PFS class)
-//this is what I meant, it is working but quite long piece of code - can one make it simpler? I suppose, yes. 
-
-export interface PFS_ResultEntry2 {
-  distance: number; // evaluated by a
-  parent: Array<$N.IBaseNode>;
-  counter: number; // order of discovery
-}
-export interface PFS_Config2 {
-  result: { [id: string]: PFS_ResultEntry2 };
-  callbacks: $PFS.PFS_Callbacks;
-  dir_mode: $G.GraphMode;
-  goal_node: $N.IBaseNode;
-  messages?: $PFS.PFS_Messages;
-  filters?: any;
-  evalPriority: any;
-  evalObjID: any;
-}
-
-function PFSforAllSources2(graph: $G.IGraph): {} {
-  //creating the superarrays for the outputs
-  let dists: Array<Array<number>> = [];
-  let next: Array<Array<Array<string>>> = [];
-
-  let PFSSpecialConfig2: PFS_Config2 = preparePFSStandardConfig2();
-
-  let nodesDict = graph.getNodes();
-  for (let key in nodesDict) {
-    let distsSub: Array<number> = [];
-    let nextSub: Array<Array<string>> = [];
-    let resultDict = PFS2(graph, nodesDict[key], PFSSpecialConfig2);
-    for (let key in nodesDict) {
-      let currentGoalID = nodesDict[key].getID();
-      let currentGoalDist = resultDict[currentGoalID].distance;
-      distsSub.push(currentGoalDist);
-      //I need to pack the node IDs into the output array next
-      let currentGoalParent: Array<IBaseNode> = resultDict[currentGoalID].parent;
-      let currentGoalParentIDs: Array<string> = [];
-      for (let node of currentGoalParent) {
-        let nodeID = node.getID();
-        currentGoalParentIDs.push(nodeID);
-      }
-
-      nextSub.push(currentGoalParentIDs);
-    }
-    dists.push(distsSub);
-    next.push(nextSub);
-  }
-
-  return [dists, next];
-}
-
-function preparePFSStandardConfig2(): PFS_Config2 {
-  var config: PFS_Config2 = {
-    result: {},
-    callbacks: {
-      init_pfs: [],
-      not_encountered: [],
-      node_open: [],
-      node_closed: [],
-      better_path: [],
-      equal_path: [],
-      goal_reached: []
-    },
-    messages: {
-      init_pfs_msgs: [],
-      not_enc_msgs: [],
-      node_open_msgs: [],
-      node_closed_msgs: [],
-      better_path_msgs: [],
-      equal_path_msgs: [],
-      goal_reached_msgs: []
-    },
-    dir_mode: $G.GraphMode.MIXED,
-    goal_node: null,
-    evalPriority: function (ne: $N.NeighborEntry) {
-      return ne.best || $PFS.DEFAULT_WEIGHT;
-    },
-    evalObjID: function (ne: $N.NeighborEntry) {
-      return ne.node.getID();
-    }
-  },
-    callbacks = config.callbacks;
-
-  var count = 0;
-  var counter = function () {
-    return count++;
-  };
-
-  // Standard INIT callback
-  var initPFS = function (context: $PFS.PFS_Scope) {
-    // initialize all nodes to infinite distance
-    for (var key in context.nodes) {
-      config.result[key] = {
-        distance: Number.POSITIVE_INFINITY,
-        parent: [null],
-        counter: -1
-      };
-    }
-    // initialize root node entry
-    // maybe take heuristic into account right here...??
-    config.result[context.root_node.getID()] = {
-      distance: 0,
-      parent: [context.root_node],
-      counter: counter()
-    };
-  };
-  callbacks.init_pfs.push(initPFS);
-
-
-  // Node not yet encountered callback
-  var notEncountered = function (context: $PFS.PFS_Scope) {
-    // setting it's best score to actual distance + edge weight
-    // and update result structure
-    context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
-
-    config.result[context.next.node.getID()] = {
-      distance: context.next.best,
-      parent: [context.current.node === context.root_node ? context.next.node : context.current.node],//or next? not sure yet
-      //nodes directly reachable from root node should get next, if I am correct
-      counter: undefined
-    };
-  };
-  callbacks.not_encountered.push(notEncountered);
-
-
-  // Callback for when we find a better solution
-  var betterPathFound = function (context: $PFS.PFS_Scope) {
-    config.result[context.next.node.getID()].distance = context.better_dist;
-    config.result[context.next.node.getID()].parent = [context.current.node];
-  };
-  callbacks.better_path.push(betterPathFound);
-
-  //callback for equal path, modifies the parent only
-  var equalPathFound = function (context: $PFS.PFS_Scope) {
-    if (config.result[context.next.node.getID()].parent.indexOf(context.current.node) === -1) {
-      config.result[context.next.node.getID()].parent.push(context.current.node);
-    }
-  };
-  callbacks.equal_path.push(equalPathFound);
-
-  return config;
-}
-
-function PFS2(graph: $G.IGraph,
-  v: $N.IBaseNode,
-  config?: PFS_Config2): { [id: string]: PFS_ResultEntry2 } {
-  var config = config || preparePFSStandardConfig2(),
-    callbacks = config.callbacks,
-    dir_mode = config.dir_mode,
-    evalPriority = config.evalPriority,
-    evalObjID = config.evalObjID;
-
-
-  /**
-  * We are not traversing an empty graph...
-  */
-  if (graph.getMode() === $G.GraphMode.INIT) {
-    throw new Error('Cowardly refusing to traverse graph without edges.');
-  }
-  /**
-  * We are not traversing a graph taking NO edges into account
-  */
-  if (dir_mode === $G.GraphMode.INIT) {
-    throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
-  }
-
-
-  // We need to push NeighborEntries
-  // TODO: Virtual edge addition OK?
-  var start_ne: $N.NeighborEntry = {
-    node: v,
-    edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
-    best: 0
-  };
-
-  var scope: $PFS.PFS_Scope = {
-    OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
-    OPEN: {},
-    CLOSED: {},
-    nodes: graph.getNodes(),
-    root_node: v,
-    current: start_ne,
-    adj_nodes: [],
-    next: null,
-    better_dist: Number.POSITIVE_INFINITY,
-  };
-
-  /**
-  * HOOK 1: PFS INIT
-  */
-  callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
-  //initializes the result entry, gives the start node the final values, and default values for all others
-
-  scope.OPEN_HEAP.insert(start_ne);
-  scope.OPEN[start_ne.node.getID()] = start_ne;
-
-
-  /**
-  * Main loop
-  */
-  while (scope.OPEN_HEAP.size()) {
-    // get currently best node
-    //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
-    //it removes it from the heap, too - no extra removal needed
-    scope.current = scope.OPEN_HEAP.pop();
-
-    if (scope.current == null) {
-      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
-    }
-
-    // remove from OPEN
-    scope.OPEN[scope.current.node.getID()] = undefined;
-
-    // add it to CLOSED
-    scope.CLOSED[scope.current.node.getID()] = scope.current;
-
-    // TODO what if we already reached the goal?
-    if (scope.current.node === config.goal_node) {
-      /**
-      * HOOK 2: Goal node reached
-      */
-      config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
-
-      // If a goal node is set from the outside & we reach it, we stop.
-      return config.result;
-    }
-
-
-    /**
-    * Extend the current node, also called
-    * "create n's successors"...
-    */
-
-    // TODO: Reverse callback logic to NOT merge anything by default!!!
-    if (dir_mode === $G.GraphMode.MIXED) {
-      scope.adj_nodes = scope.current.node.reachNodes();
-    }
-    else if (dir_mode === $G.GraphMode.UNDIRECTED) {
-      scope.adj_nodes = scope.current.node.connNodes();
-    }
-    else if (dir_mode === $G.GraphMode.DIRECTED) {
-      scope.adj_nodes = scope.current.node.nextNodes();
-    }
-    else {
-      throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
-    }
-
-    /**
-    * EXPAND AND EXAMINE NEIGHBORHOOD
-    */
-    for (var adj_idx in scope.adj_nodes) {
-      scope.next = scope.adj_nodes[adj_idx];
-
-      if (scope.CLOSED[scope.next.node.getID()]) {
-        /**
-        * HOOK 3: Goal node already closed
-        */
-        config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
-        continue;
-      }
-
-      if (scope.OPEN[scope.next.node.getID()]) {
-        // First let's recover the previous best solution from our OPEN structure,
-        // as the node's neighborhood-retrieving function cannot know it...
-        scope.next.best = scope.OPEN[scope.next.node.getID()].best;
-
-        /**
-        * HOOK 4: Goal node already visited, but not yet closed
-        */
-        config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
-
-        scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : scope.next.edge.getWeight());
-
-        /**
-        * HOOK 5: Better path found
-        */
-        if (scope.next.best > scope.better_dist) {
-          config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
-
-          // HEAP operations are necessary for internal traversal,
-          // so we handle them here in the main loop
-          //removing thext with the old value and adding it again with updated value
-          scope.OPEN_HEAP.remove(scope.next);
-          scope.next.best = scope.better_dist;
-          scope.OPEN_HEAP.insert(scope.next);
-          scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
-        }
-
-        /**
-        * HOOK 6: Equal path found (same weight)
-        */
-        //at the moment, this callback array is empty. This hook is needed in the Johnsons only
-
-        if (scope.next.best === scope.better_dist) {
-          config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
-        }
-
-        continue;
-      }
-
-      // NODE NOT ENCOUNTERED
-      config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
-
-      // HEAP operations are necessary for internal traversal,
-      // so we handle them here in the main loop
-      scope.OPEN_HEAP.insert(scope.next);
-      scope.OPEN[scope.next.node.getID()] = scope.next;
-    }
-  }
-
-  return config.result;
-}
-
 
 export {
-  Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources, PFSforAllSources2
+  Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources
 };
 

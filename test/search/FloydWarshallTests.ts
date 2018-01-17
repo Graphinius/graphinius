@@ -9,9 +9,9 @@ import * as $FW from '../../src/search/FloydWarshall';
 import * as sinonChai from 'sinon-chai';
 
 chai.use(sinonChai);
-let expect 	= chai.expect;
-let JSON_IN	= $J.JSONInput;
-let CSV_IN	= $C.CSVInput;
+let expect = chai.expect;
+let JSON_IN = $J.JSONInput;
+let CSV_IN = $C.CSVInput;
 
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json";
 let bernd_graph = "./test/test_data/bernd_ares_pos.json";
@@ -21,21 +21,21 @@ let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json
 
 
 describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
-	
-	let json 							: $J.IJSONInput,
-			csv								: $C.ICSVInput,
-			graph_search			: $G.IGraph,
-			graph_nullcycle		: $G.IGraph,
-			graph_bernd				: $G.IGraph,
-			graph_midsize			: $G.IGraph,
-			graph_social			: $G.IGraph,
-			stats							: $G.GraphStats,
-			FW_res						: {};
+
+	let json: $J.IJSONInput,
+		csv: $C.ICSVInput,
+		graph_search: $G.IGraph,
+		graph_nullcycle: $G.IGraph,
+		graph_bernd: $G.IGraph,
+		graph_midsize: $G.IGraph,
+		graph_social: $G.IGraph,
+		stats: $G.GraphStats,
+		FW_res: {};
 
 
 	before(() => {
-		json = new JSON_IN(true,false,true);
-		csv = new CSV_IN(' ',false,false);
+		json = new JSON_IN(true, false, true);
+		csv = new CSV_IN(' ', false, false);
 		graph_search = json.readFromJSONFile(search_graph_pos);
 		graph_bernd = json.readFromJSONFile(bernd_graph);
 		graph_nullcycle = json.readFromJSONFile(search_graph);
@@ -92,12 +92,14 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			it('should correctly compute distance matrix for graph with normal FW', () => {
 				FW_res = $FW.FloydWarshall(graph_search);
 				let expected_result =
-					{ A: { B: 3, C: 4, D: 1, F: 4, E: 2 },
-					B: { F: 1, C: 1, A: 2, E: 2, D: 3 },
-					C: { E: 1, A: 1, B: 4, D: 2, F: 5 },
-					D: { C: 6, E: 1, A: 7, B: 6, F: 7 },
-					F: { E: 4, C: 3, A: 4, B: 7, D: 5 },
-					E: { B: 5, D: 1, A: 7, C: 6, F: 6 } };
+					{
+						A: { B: 3, C: 4, D: 1, F: 4, E: 2 },
+						B: { F: 1, C: 1, A: 2, E: 2, D: 3 },
+						C: { E: 1, A: 1, B: 4, D: 2, F: 5 },
+						D: { C: 6, E: 1, A: 7, B: 6, F: 7 },
+						F: { E: 4, C: 3, A: 4, B: 7, D: 5 },
+						E: { B: 5, D: 1, A: 7, C: 6, F: 6 }
+					};
 
 				expect(FW_res).to.deep.equal(expected_result);
 			});
@@ -131,11 +133,11 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 		it('performance test of Floyd Warshal on a ~75 node / ~200 edge graph', () => {
 			let d = +new Date();
-			FW_res = $FW.FloydWarshallArray(graph_bernd);			
+			FW_res = $FW.FloydWarshallArray(graph_bernd);
 			// FW_res = $FW.FloydWarshallWithShortestPaths(graph_bernd);
 			// FW_res = $FW.FloydWarshallAPSP(graph_bernd);
 			let e = +new Date();
-			console.log("Floyd on Bernd (75 nodes) took " + (e-d) + "ms to finish");
+			console.log("Floyd on Bernd (75 nodes) took " + (e - d) + "ms to finish");
 		});
 
 
@@ -143,22 +145,22 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
 			let e = +new Date();
-			console.log("Floyd on intermediate graph (246 nodes) with SPs took " + (e-d) + "ms to finish");
+			console.log("Floyd on intermediate graph (246 nodes) with SPs took " + (e - d) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshall(graph_midsize);
 			e = +new Date();
-			console.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (e-d) + "ms to finish");
+			console.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (e - d) + "ms to finish");
 			d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_midsize);
 			// console.log(FW_res);
 			e = +new Date();
-			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e-d) + "ms to finish");
+			console.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e - d) + "ms to finish");
 		});
 
 
 		it.skip('75 nodes - FW with and without next should return same distance matrix', () => {
-			let FW_with_next  = $FW.FloydWarshallAPSP(graph_bernd)[0];
-			let FW_normal     = $FW.FloydWarshallArray(graph_bernd);
+			let FW_with_next = $FW.FloydWarshallAPSP(graph_bernd)[0];
+			let FW_normal = $FW.FloydWarshallArray(graph_bernd);
 			expect(FW_with_next).to.deep.equal(FW_normal);
 		});
 
@@ -168,10 +170,10 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			FW_res = $FW.FloydWarshallArray(graph_social);
 			// FW_res = $FW.FloydWarshallAPSP(graph_social);
 			let e = +new Date();
-			console.log("Floyd on social network ~1k (Array version) took " + (e-d) + "ms to finish");
+			console.log("Floyd on social network ~1k (Array version) took " + (e - d) + "ms to finish");
 		});
 	});
-	
+
 });
 
 
@@ -181,70 +183,70 @@ function checkFWCentralitiesOnSmallGraph(graph_l, FW_res) {
 	for (let i in nodes) {
 		for (let j in nodes) {
 			//For Node A
-			if(i=="A"&&j=="B")
+			if (i == "A" && j == "B")
 				expect(FW_res[i][j]).to.equal(3);
-			else if(i=="A"&&j=="C")
+			else if (i == "A" && j == "C")
 				expect(FW_res[i][j]).to.equal(4);
-			else if(i=="A"&&j=="D")
+			else if (i == "A" && j == "D")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="A"&&j=="E")
+			else if (i == "A" && j == "E")
 				expect(FW_res[i][j]).to.equal(2);
-			else if(i=="A"&&j=="F")
+			else if (i == "A" && j == "F")
 				expect(FW_res[i][j]).to.equal(4);
 			//For Node B
-			else if(i=="B"&&j=="A")
+			else if (i == "B" && j == "A")
 				expect(FW_res[i][j]).to.equal(2);
-			else if(i=="B"&&j=="C")
+			else if (i == "B" && j == "C")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="B"&&j=="D")
+			else if (i == "B" && j == "D")
 				expect(FW_res[i][j]).to.equal(3);
-			else if(i=="B"&&j=="E")
+			else if (i == "B" && j == "E")
 				expect(FW_res[i][j]).to.equal(2);
-			else if(i=="B"&&j=="F")
+			else if (i == "B" && j == "F")
 				expect(FW_res[i][j]).to.equal(1);
 			//For Node C
-			else if(i=="C"&&j=="A")
+			else if (i == "C" && j == "A")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="C"&&j=="B")
+			else if (i == "C" && j == "B")
 				expect(FW_res[i][j]).to.equal(4);
-			else if(i=="C"&&j=="D")
+			else if (i == "C" && j == "D")
 				expect(FW_res[i][j]).to.equal(2);
-			else if(i=="C"&&j=="E")
+			else if (i == "C" && j == "E")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="C"&&j=="F")
+			else if (i == "C" && j == "F")
 				expect(FW_res[i][j]).to.equal(5);
 			//For Node D
-			else if(i=="D"&&j=="A")
+			else if (i == "D" && j == "A")
 				expect(FW_res[i][j]).to.equal(7);
-			else if(i=="D"&&j=="B")
+			else if (i == "D" && j == "B")
 				expect(FW_res[i][j]).to.equal(6);
-			else if(i=="D"&&j=="C")
+			else if (i == "D" && j == "C")
 				expect(FW_res[i][j]).to.equal(6);
-			else if(i=="D"&&j=="E")
+			else if (i == "D" && j == "E")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="D"&&j=="F")
+			else if (i == "D" && j == "F")
 				expect(FW_res[i][j]).to.equal(7);
 			// For Node E
-			else if(i=="E"&&j=="A")
+			else if (i == "E" && j == "A")
 				expect(FW_res[i][j]).to.equal(7);
-			else if(i=="E"&&j=="B")
+			else if (i == "E" && j == "B")
 				expect(FW_res[i][j]).to.equal(5);
-			else if(i=="E"&&j=="C")
+			else if (i == "E" && j == "C")
 				expect(FW_res[i][j]).to.equal(6);
-			else if(i=="E"&&j=="D")
+			else if (i == "E" && j == "D")
 				expect(FW_res[i][j]).to.equal(1);
-			else if(i=="E"&&j=="F")
+			else if (i == "E" && j == "F")
 				expect(FW_res[i][j]).to.equal(6);
 			// For Node F
-			else if(i=="F"&&j=="A")
+			else if (i == "F" && j == "A")
 				expect(FW_res[i][j]).to.equal(4);
-			else if(i=="F"&&j=="B")
+			else if (i == "F" && j == "B")
 				expect(FW_res[i][j]).to.equal(7);
-			else if(i=="F"&&j=="C")
+			else if (i == "F" && j == "C")
 				expect(FW_res[i][j]).to.equal(3);
-			else if(i=="F"&&j=="D")
+			else if (i == "F" && j == "D")
 				expect(FW_res[i][j]).to.equal(5);
-			else if(i=="F"&&j=="E")
+			else if (i == "F" && j == "E")
 				expect(FW_res[i][j]).to.equal(4);
 		}
 	}

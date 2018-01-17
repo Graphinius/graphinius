@@ -72,7 +72,7 @@ export interface PFS_Scope {
  * in BFS, automatically instantiated if not given..
  */
 
- function PFS(graph 	 : $G.IGraph, 
+ function PFS(graph  : $G.IGraph, 
 						 v 			 : $N.IBaseNode,
              config? : PFS_Config) : {[id: string] : PFS_ResultEntry} 
 {
