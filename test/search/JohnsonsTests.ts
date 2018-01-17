@@ -21,18 +21,14 @@ let expect = chai.expect;
 let JSON_IN = $J.JSONInput;
 let CSV_IN = $C.CSVInput;
 
-//creating the spies
-let BFDSpy = sinon.spy($BF.BellmanFordDict),
-    extraNSpy = sinon.spy($JO.addExtraNandE),
-    reWeighSpy = sinon.spy($JO.reWeighGraph),
-    PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources2);
+
 
 //paths to the graphs
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
     bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
 
-describe.only('Johnsons ASPS TEST -', () => {
+describe('Johnsons ASPS TEST -', () => {
 
     //initialize graph objects
     let graph_search: $G.IGraph,
@@ -40,6 +36,12 @@ describe.only('Johnsons ASPS TEST -', () => {
         graph_NC: $G.IGraph;
 
     before(() => {
+        //creating the spies
+        var BFDSpy = sinon.spy($BF.BellmanFordDict),
+            extraNSpy = sinon.spy($JO.addExtraNandE),
+            reWeighSpy = sinon.spy($JO.reWeighGraph),
+            PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources2);
+
         let json: $J.IJSONInput = new $J.JSONInput(true, false, true);
         //read in the graph objects from file
         graph_search = json.readFromJSONFile(search_graph),
@@ -53,10 +55,12 @@ describe.only('Johnsons ASPS TEST -', () => {
         $JO.PFSforAllSources2 = PFSinJohnsonsSpy;
     });
 
-    it('temporary part, used for exploring', () => {
+    it.only('temporary part, used for exploring', () => {
+
         //@ Bernd: if you run this one, it gives the results I calculated on paper for this graph
         //except that the order of the nodes is always abcdfe, instead of abcdef!
-        console.log(Johnsons(graph_search)[1]);
+        //console.log(Johnsons(graph_BF)[0]);
+        console.log(isNaN(0-0));
 
         /*//in case you want to check the order of iteration, run this code
         let nodesDict=graph_search.getNodes();
@@ -89,6 +93,8 @@ describe.only('Johnsons ASPS TEST -', () => {
     });
 
     it('graphs with negative edges should go through the longer way', () => {
+        //I have checked, the BF for this graph gives really true -> the problem is not with the function
+        //there is some problem in my code
         Johnsons(graph_BF);
         expect(BFDSpy).to.have.been.calledOnce;
         expect(extraNSpy).to.have.been.calledOnce;
