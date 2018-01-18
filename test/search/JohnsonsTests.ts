@@ -11,6 +11,7 @@ import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
+import * as $FW from '../../src/search/FloydWarshall';
 import { Johnsons, PFSforAllSources, addExtraNandE } from '../../src/search/Johnsons';
 import * as sinonChai from 'sinon-chai';
 
@@ -26,27 +27,37 @@ let CSV_IN = $C.CSVInput;
 //paths to the graphs
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
-    bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
+    bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
+    bernd_graph = "./test/test_data/bernd_ares_pos.json",
+    intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
+    social_graph = "./test/test_data/social_network_edges.csv";
 
 describe('Johnsons ASPS TEST -', () => {
 
     //initialize graph objects
     let graph_search: $G.IGraph,
         graph_BF: $G.IGraph,
-        graph_NC: $G.IGraph;
+        graph_NC: $G.IGraph,
+        graph_bernd: $G.IGraph,
+        graph_midsize: $G.IGraph,
+        graph_social: $G.IGraph;
 
     before(() => {
         //creating the spies
         var BFDSpy = sinon.spy($BF.BellmanFordDict),
             extraNSpy = sinon.spy($JO.addExtraNandE),
             reWeighSpy = sinon.spy($JO.reWeighGraph),
-            PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources2);
+            PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources);
 
-        let json: $J.IJSONInput = new $J.JSONInput(true, false, true);
+        let json: $J.IJSONInput = new $J.JSONInput(true, false, true),
+        csv	: $C.ICSVInput = new CSV_IN(' ',false,false);
         //read in the graph objects from file
         graph_search = json.readFromJSONFile(search_graph),
             graph_BF = json.readFromJSONFile(bf_graph_file),
-            graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file);
+            graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
+            graph_bernd = json.readFromJSONFile(bernd_graph),
+            graph_midsize = json.readFromJSONFile(intermediate),
+            graph_social= csv.readFromEdgeListFile(social_graph);
 
         //these give the same error message which is given in the DijkstraTest
         $BF.BellmanFordDict = BFDSpy;
@@ -56,10 +67,27 @@ describe('Johnsons ASPS TEST -', () => {
     });
 
     it.only('temporary part, used for testing/debugging', () => {
-        
-        
+        let resultJ= $JO.Johnsons(graph_search);
+        console.log("Johnsons results");
+        console.log(resultJ[0]);
+        console.log(resultJ[1]);
 
+        let resultFW= $FW.FloydWarshallAPSP(graph_search);
+        console.log("FW results");
+        console.log(resultFW[0]);
+        console.log(resultFW[1]);
+    
 
+        /*let startF = +new Date();
+        $FW.FloydWarshallAPSP(graph_social);
+        let endF = +new Date();
+
+       let startJ = +new Date();
+        $JO.Johnsons(graph_social);
+        let endJ = +new Date();
+
+        console.log("Johnsons runtime" + (endJ - startJ));
+        //console.log("FW runtime: " + (endF - startF));*/
 
     });
 

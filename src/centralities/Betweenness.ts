@@ -2,11 +2,9 @@
 
 import * as $G from '../core/Graph';
 import * as $FW from '../search/FloydWarshall';
+import * as $JO from '../search/Johnsons';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
-//automatic import, seems to work below, without calling class with dollar sign - is that correct so?
-import { Johnsons } from '../search/Johnsons';
-
 
 /**
  * This is used to get the betweenness of a graph by either
@@ -18,14 +16,14 @@ import { Johnsons } from '../search/Johnsons';
  */
 function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let paths;
-  //Johnsons implemented here
+  var sparse = sparse || false;
   
-  /*if(sparse){ 
-  paths=Johnsons(graph)[1];
+  if(sparse){ 
+  paths=$JO.Johnsons(graph)[1];
   }
   else {
     paths = $FW.FloydWarshallAPSP(graph)[1];
-  }*/
+  }
 
   paths = $FW.FloydWarshallAPSP(graph)[1];
   let nodes = graph.adjListArray();

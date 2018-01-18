@@ -91,7 +91,7 @@ function PFSforAllSources(graph: $G.IGraph): {} {
   //reminder: this is a 2d array,
   //value of a given [i][j]: 0 if self, value if j is directly reachable from i, positive infinity in all other cases
   let dists: Array<Array<number>> = graph.adjListArray();
-  
+
   //reminder: this is a 3d array
   //value in given [i][j] subbarray: node itself if self, goal node if goal node is directly reachable from source node, 
   //null in all other cases
@@ -114,39 +114,39 @@ function PFSforAllSources(graph: $G.IGraph): {} {
     context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
-      if (context.current.node==context.root_node){
-        dists [i][j]=context.next.best;
-        next [i][j][0]=j;
-      }
-      else {
-        dists [i][j]=context.next.best;
-        next [i][j][0]=nodeIDIdxMap[context.current.node.getID()];
-      }
+    if (context.current.node == context.root_node) {
+      dists[i][j] = context.next.best;
+      next[i][j][0] = j;
+    }
+    else {
+      dists[i][j] = context.next.best;
+      next[i][j][0] = nodeIDIdxMap[context.current.node.getID()];
+    }
   };
+  specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
 
   var betterPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
 
-      dists[i][j] = context.better_dist;
-
-    next[i][j][0] =
-    .splice(0, next[i][j].length, nodeIDsArray.indexOf(context.current.node.getID()));
+    dists[i][j] = context.better_dist;
+    //here I do need the splice, because I do not know how many elements are there in the subarray
+    next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
   };
   //info: splice replaces the content created by the preparePFSStandardConfig function, 
   //to the one I need here
   specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 
   var equalPathJohnsons = function (context: $PFS.PFS_Scope) {
-    let i = nodeIDsArray.indexOf(context.root_node.getID()),
-      j = nodeIDsArray.indexOf(context.next.node.getID());
+    let i = nodeIDIdxMap[context.root_node.getID()],
+    j = nodeIDIdxMap[context.next.node.getID()];
 
-    if (next[i][j][0] === null) {
-      next[i][j].splice(0, next[i][j].length, nodeIDsArray.indexOf(context.current.node.getID()));
+    if (context.current.node == context.root_node) {
+      next[i][j][0]= nodeIDIdxMap[context.next.node.getID()];
     }
-    if (next[i][j].indexOf(nodeIDsArray.indexOf(context.current.node.getID())) === -1) {
-      next[i][j].push(nodeIDsArray.indexOf(context.current.node.getID()));
-    }
+    else {
+      next[i][j]=$SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+    } 
   }
   //this array is empty so it is fine to just push
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
