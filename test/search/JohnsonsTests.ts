@@ -52,20 +52,14 @@ describe('Johnsons ASPS TEST -', () => {
         $BF.BellmanFordDict = BFDSpy;
         $JO.addExtraNandE = extraNSpy;
         $JO.reWeighGraph = reWeighSpy;
-        $JO.PFSforAllSources2 = PFSinJohnsonsSpy;
+        $JO.PFSforAllSources = PFSinJohnsonsSpy;
     });
 
-    it.only('temporary part, used for exploring', () => {
+    it.only('temporary part, used for testing/debugging', () => {
+        
+        
 
-        //@ Bernd: if you run this one, it gives the results I calculated on paper for this graph
-        //except that the order of the nodes is always abcdfe, instead of abcdef!
-        //console.log(Johnsons(graph_BF)[0]);
-        console.log(isNaN(0-0));
 
-        /*//in case you want to check the order of iteration, run this code
-        let nodesDict=graph_search.getNodes();
-        for (let key in nodesDict){
-            console.log(key);*/
 
     });
 
@@ -83,7 +77,7 @@ describe('Johnsons ASPS TEST -', () => {
         expect(graph_NC.hasNegativeEdge()).to.equal(true);
     });
 
-    it('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
+    /*it('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
         Johnsons(graph_search);
         expect(BFDSpy).to.have.not.been.called;
         expect(extraNSpy).to.have.not.been.called;
@@ -124,7 +118,7 @@ describe('Johnsons ASPS TEST -', () => {
     it('graph with negative cycle should throw an error message', () => {
         expect($JO.Johnsons.bind($JO.Johnsons, graph_NC)).to.throw(
             "The graph contains a negative edge, thus it can not be processed");
-    });
+    });*/
 
 
 
