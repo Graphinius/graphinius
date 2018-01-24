@@ -24,7 +24,7 @@ function Johnsons(graph: $G.IGraph): {} {
   let nodeKeys = Object.keys(allNodes);
 
   if (graph.hasNegativeEdge()) {
-    var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
+    var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
     graph = addExtraNandE(graph, extraNode);
     let BFresult = BellmanFordDict(graph, extraNode);
 
@@ -37,10 +37,11 @@ function Johnsons(graph: $G.IGraph): {} {
     else {
       let newWeights: {} = BFresult.distances;
 
-      graph = reWeighGraph(graph, newWeights);
+      graph = reWeighGraph(graph, newWeights, extraNode);
       //graph still has the extraNode
       //reminder: deleteNode function removes its edges, too
       graph.deleteNode(extraNode);
+      return PFSforAllSources(graph);
     }
   }
 
@@ -51,15 +52,18 @@ function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
   let allNodes: { [key: string]: $N.IBaseNode } = target.getNodes();
   target.addNode(nodeToAdd);
   let tempCounter = 0;
-  //be aware, it adds an edge between extraNode and extraNode too!
+  //now add a directed edge from the extranode to all graph nodes, excluding itself
   for (let nodeKey in allNodes) {
-    target.addEdgeByNodeIDs("temp" + tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
-    tempCounter++;
+    if (allNodes[nodeKey].getID() != nodeToAdd.getID()) {
+      target.addEdgeByNodeIDs("temp" + tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(),
+        { directed: true, weighted: true, weight: 0 });
+      tempCounter++;
+    }
   }
   return target;
 }
 
-function reWeighGraph(target: $G.IGraph, distDict: {}): $G.IGraph {
+function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph {
 
   //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
   let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
@@ -67,19 +71,25 @@ function reWeighGraph(target: $G.IGraph, distDict: {}): $G.IGraph {
     var a = edge.getNodes().a.getID();
     var b = edge.getNodes().b.getID();
 
-    if (edge.isWeighted) {
+    //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
+    if (a == tempNode.getID()) {
+      continue;
+    }
+     //assuming that the node keys in the distDict correspond to the nodeIDs
+    else if (edge.isWeighted) {
       let oldWeight = edge.getWeight();
       let newWeight = oldWeight + distDict[a] - distDict[b];
       edge.setWeight(newWeight);
     }
     else {
+      let oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
+      let newWeight = oldWeight + distDict[a] - distDict[b];
       //collecting edgeID and directedness for later re-use
       let edgeID: string = edge.getID();
       let dirNess: boolean = edge.isDirected();
-      //to re-weigh, one needs to delete and then re-establish the edge
+
+      //one does not simply make an edge weighted, but needs to delete and re-create it
       target.deleteEdge(edge);
-      let oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
-      let newWeight = oldWeight + distDict[a] - distDict[b];
       target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
     }
   }
@@ -111,7 +121,8 @@ function PFSforAllSources(graph: $G.IGraph): {} {
 
   //and now modify whatever I need to
   var notEncounteredJohnsons = function (context: $PFS.PFS_Scope) {
-    context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
+    context.next.best =
+      context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
     if (context.current.node == context.root_node) {
@@ -139,14 +150,14 @@ function PFSforAllSources(graph: $G.IGraph): {} {
 
   var equalPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDIdxMap[context.root_node.getID()],
-    j = nodeIDIdxMap[context.next.node.getID()];
+      j = nodeIDIdxMap[context.next.node.getID()];
 
     if (context.current.node == context.root_node) {
-      next[i][j][0]= nodeIDIdxMap[context.next.node.getID()];
+      next[i][j][0] = nodeIDIdxMap[context.next.node.getID()];
     }
     else {
-      next[i][j]=$SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
-    } 
+      next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+    }
   }
   //this array is empty so it is fine to just push
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
