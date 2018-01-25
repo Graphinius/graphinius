@@ -73,7 +73,15 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
 				if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
-					next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+					//-a new fix from Rita-
+					//if a node is unreachable, the corresponding value in next should stay null as it was
+					if (dists[i][j] == Number.POSITIVE_INFINITY) {
+						continue;
+					}
+					else {
+						next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+					}
+
 				}
 
 				if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
@@ -156,54 +164,51 @@ function FloydWarshall(graph: $G.IGraph): {} {
 	return dists;
 }
 
-//I give this up for today.
+//I think it is correct, but I again get the maximum call stack size exceeded message
 function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.NextArray {
-	let originalNext = graph.nextArray();
-	var input:$G.NextArray=input;
-	let output: $G.NextArray = graph.nextArray();
-	
-	
-	let N = input.length;
-	for (var a = 0; a < N; ++a) {
-		for (var b = 0; b < N; ++b) {
-			//if a==b, no update needed
-			//if node is not reachable, no update, either
-			if (input[a][b] = [null]) {
+	let output: Array<Array<Array<number>>> = [];
+
+	//build the output and fill out with input values
+
+	for (let a = 0; a < input.length; a++) {
+		output.push([]);
+		for (let b = 0; b < input.length; b++) {
+			output[a].push([]);
+			output[a][b] = input[a][b];
+		}
+	}
+
+	//now the output is a copy of the input
+	for (let a = 0; a < input.length; a++) {
+		for (let b = 0; b < input.length; b++) {
+			//when unreachable, no update needed
+			if (input[a][b] == null) {
 				continue;
 			}
 
-			if (a!=b && input[a][b].length == 1 && input[a][b][0] != originalNext[a][b][0]){
-
-			}
-
-			
-
-
-			//if a==b, or b is the only direct parent of a, this will prove false. In all other cases, it is true
 			else if (a != b && !(input[a][b].length == 1 && input[a][b][0] == b)) {
 				output[a][b] = [];
-				update(a, b, input, output, originalNext, a);
+				findDirectParents(a, b, input, output, a);
 			}
 		}
 	}
+
 	return output;
 }
 
-function update(u:number, v:number, next: $G.NextArray, out:$G.NextArray, original : $G.NextArray, start:number): void {
-	
-	for (let e = 0; e < next[u][v].length; e++) {
-		if (next[u][v][e] != original[u][v][0]) {
-			if (next[u][v][e] != original[u][v][0]) {
-				u = next[u][v][e];
-				update(u, v, next, out, original, start);
-			}
-			out[start][v].push(u);
-		}
-		else {
-			out[start][v].push(next[u][v][e]);
-		}
+function findDirectParents(u, v, inNext, outNext, start): number {
+	if (u == v)
+		return 1;
+	let neverNeed = 0;
+	for (let e = 0; e < inNext[u][v].length; e++) {
+		neverNeed += findDirectParents(inNext[u][v][e], v, inNext, outNext, start);
 	}
+	if (u != start) {
+		outNext[start][v].push(u);
+	}
+	return neverNeed;
 }
+
 
 
 export {

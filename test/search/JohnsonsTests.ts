@@ -84,8 +84,8 @@ describe('Johnsons APSP TEST -', () => {
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
-    //status: not yet working
-    it.only('next result of FW could be transformed to the one the Johnsons gives', () =>{
+    //status: not yet working, gives maximal call stack size exceeded message
+    it('next result of FW could be transformed to the one the Johnsons gives', () =>{
         let resultJ = $JO.Johnsons(graph_search);
         console.log("Johnsons next: ");
         console.log(resultJ[1]);
@@ -204,8 +204,15 @@ describe('Johnsons APSP TEST -', () => {
 
     //status: it runs without error, Johnsons gives the expected results
     //FW gives different dists - this is normal. However it gives very strange results for the parents - not normal.
-    it('debugging corner :)', () => {
+    it.only('debugging corner :)', () => {
         //careful! If FW is run after the Johnsons, it goes with the re-weighed graph!
+        
+        /*I tried these, but they are initialized correctly. So the problem with the FW comes somewhere later.
+        console.log("nextArray for the BF graph:");
+        console.log(graph_BF.nextArray());
+        console.log(graph_BF.adjListDict());
+        console.log(graph_BF.adjListArray());*/
+        
         console.log("results of FW:");
         let FWresultBFgraph = $FW.FloydWarshallAPSP(graph_BF);
         console.log(FWresultBFgraph[0]);
@@ -216,12 +223,7 @@ describe('Johnsons APSP TEST -', () => {
         console.log(JresultBFgraph[0]);
         console.log(JresultBFgraph[1]);
 
-        /*var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
-        graph_BF = $JO.addExtraNandE(graph_BF, extraNode);
-        let BFresult = $BF.BellmanFordDict(graph_BF, extraNode);
-        graph_BF = $JO.reWeighGraph(graph_BF, BFresult.distances, extraNode);
-        console.log(graph_BF.getDirEdgesArray());*/
-
+        
     });
 
 
