@@ -72,9 +72,10 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
-				if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
+				//-new fix from Rita, i!=j -> if it is not there, zero-weight edges generate false parents
+				if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j && i != j) {
 					//-a new fix from Rita-
-					//if a node is unreachable, the corresponding value in next should stay null as it was
+					//if a node is unreachable, the corresponding value in next should not be updated, but stay null
 					if (dists[i][j] == Number.POSITIVE_INFINITY) {
 						continue;
 					}
@@ -167,9 +168,7 @@ function FloydWarshall(graph: $G.IGraph): {} {
 //I think it is correct, but I again get the maximum call stack size exceeded message
 function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.NextArray {
 	let output: Array<Array<Array<number>>> = [];
-
-	//build the output and fill out with input values
-
+	//build the output and make it a copy of the input
 	for (let a = 0; a < input.length; a++) {
 		output.push([]);
 		for (let b = 0; b < input.length; b++) {
@@ -178,7 +177,6 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 		}
 	}
 
-	//now the output is a copy of the input
 	for (let a = 0; a < input.length; a++) {
 		for (let b = 0; b < input.length; b++) {
 			//when unreachable, no update needed
@@ -196,17 +194,55 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 	return output;
 }
 
-function findDirectParents(u, v, inNext, outNext, start): number {
-	if (u == v)
-		return 1;
-	let neverNeed = 0;
+//new try
+function findDirectParents(u, v, inNext, outNext, start): void {
+
 	for (let e = 0; e < inNext[u][v].length; e++) {
-		neverNeed += findDirectParents(inNext[u][v][e], v, inNext, outNext, start);
+		let directIsThere = false;
+		for (let f = 0; f < inNext[u][v].length; f++) {
+			if (inNext[u][v][f] == v)
+				directIsThere = true;
+		}
+		if (directIsThere = true && inNext[u][v].length == 1) {
+			outNext[start][v].push(v);
+			break;
+		}
+
+		else if (directIsThere = true && inNext[u][v][e] == v) {
+			outNext[start][v].push(v);
+			continue;
+		}
+		else {
+			while (true) {
+				u = inNext[u][v][e];
+				if (inNext[u][v][e] == v) {
+					outNext[start][v].push(u);
+					break;
+				}
+			}
+		}
 	}
-	if (u != start) {
-		outNext[start][v].push(u);
+
+	/*shortcut = false;
+
+for (let f = 0; f < inNext[u][v].length; f++) {
+	if (inNext[u][v][f] == v) {
+		outNext[start][v].push(v);
+		shortcut = true;
 	}
-	return neverNeed;
+}	
+
+	while (true) {
+		u = inNext[u][v][e];
+		for (let g = 0; g < inNext[u][v].length; g++) {
+			if (inNext[u][v][g] == v) {
+				outNext[start][v].push(u);
+				break;
+			}
+		}
+	}
+}*/
+
 }
 
 

@@ -84,8 +84,9 @@ describe('Johnsons APSP TEST -', () => {
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
-    //status: not yet working, gives maximal call stack size exceeded message
-    it('next result of FW could be transformed to the one the Johnsons gives', () =>{
+    //DO NOT REMOVE SKIP! It is not yet ready and gives an infinite loop!
+    //status: not yet working.
+    /*it.skip('next result of FW could be transformed to the one the Johnsons gives', () =>{
         let resultJ = $JO.Johnsons(graph_search);
         console.log("Johnsons next: ");
         console.log(resultJ[1]);
@@ -94,9 +95,9 @@ describe('Johnsons APSP TEST -', () => {
         console.log(resultFW[1]);
         console.log("the same, transformed: ");
         console.log($FW.changeNextToDirectParents(resultFW[1], graph_search));
-    });
+    });*/
 
-    //status: works fine.
+    //status: worked fine but not more - WHY?
     //no need to skip this as default, this does not take that long
     it('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
@@ -191,7 +192,7 @@ describe('Johnsons APSP TEST -', () => {
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).to.equal(graph_search.nrDirEdges() + graph_search.nrUndEdges() + graph_search.nrNodes());
     });
 
-    //status: works fine.
+    //status: works fine - but only when it is run as only!
     it('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).to.equal(true);
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
@@ -204,7 +205,7 @@ describe('Johnsons APSP TEST -', () => {
 
     //status: it runs without error, Johnsons gives the expected results
     //FW gives different dists - this is normal. However it gives very strange results for the parents - not normal.
-    it.only('debugging corner :)', () => {
+    it('debugging corner :)', () => {
         //careful! If FW is run after the Johnsons, it goes with the re-weighed graph!
         
         /*I tried these, but they are initialized correctly. So the problem with the FW comes somewhere later.
