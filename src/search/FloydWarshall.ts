@@ -73,8 +73,12 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
 				//-new fix from Rita, i!=j -> if it is not there, zero-weight edges generate false parents
-				if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j && i != j) {
-					//-a new fix from Rita-
+				if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j && i!=j) {
+
+					//original line of code
+					//next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+
+					//-a new fix from Rita- However, this fix makes it faster on the midsize graph!
 					//if a node is unreachable, the corresponding value in next should not be updated, but stay null
 					if (dists[i][j] == Number.POSITIVE_INFINITY) {
 						continue;
@@ -82,7 +86,6 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 					else {
 						next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
 					}
-
 				}
 
 				if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
@@ -94,7 +97,6 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 			}
 		}
 	}
-
 	return [dists, next];
 }
 
@@ -165,7 +167,6 @@ function FloydWarshall(graph: $G.IGraph): {} {
 	return dists;
 }
 
-//I think it is correct, but I again get the maximum call stack size exceeded message
 function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.NextArray {
 	let output: Array<Array<Array<number>>> = [];
 	//build the output and make it a copy of the input
@@ -186,7 +187,7 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 
 			else if (a != b && !(input[a][b].length == 1 && input[a][b][0] == b)) {
 				output[a][b] = [];
-				findDirectParents(a, b, input, output, a);
+				findDirectParents(a, b, input, output);
 			}
 		}
 	}
@@ -195,55 +196,85 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 }
 
 //new try
-function findDirectParents(u, v, inNext, outNext, start): void {
+function findDirectParents(u, v, inNext, outNext): void {
+	let nodesInTracking: Array<number>;
 
-	for (let e = 0; e < inNext[u][v].length; e++) {
-		let directIsThere = false;
-		for (let f = 0; f < inNext[u][v].length; f++) {
-			if (inNext[u][v][f] == v)
-				directIsThere = true;
-		}
-		if (directIsThere = true && inNext[u][v].length == 1) {
-			outNext[start][v].push(v);
-			break;
+	nodesInTracking = inNext[u][v];
+
+	while (nodesInTracking.length > 0) {
+		let currNode = nodesInTracking.pop();
+		if (inNext[currNode][v].length == 1 && inNext[currNode][v][0] == v) {
+			outNext[u][v] = outNext[u][v].length == 0 ? [currNode == u ? v : currNode] :
+				$SU.mergeOrderedArraysNoDups(outNext[u][v], [currNode == u ? v : currNode]);
 		}
 
-		else if (directIsThere = true && inNext[u][v][e] == v) {
-			outNext[start][v].push(v);
-			continue;
-		}
 		else {
-			while (true) {
-				u = inNext[u][v][e];
-				if (inNext[u][v][e] == v) {
-					outNext[start][v].push(u);
-					break;
+			for (let node of inNext[currNode][v]) {
+				if (node == v) {
+					outNext[u][v] = outNext[u][v].length == 0 ? [currNode == u ? v : currNode] :
+						$SU.mergeOrderedArraysNoDups(outNext[u][v], [currNode == u ? v : currNode]);
+				}
+				else {
+					nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, [node]);
 				}
 			}
 		}
 	}
+}
 
-	/*shortcut = false;
+
+//old versions, do not run them, in their present state they give an infinite loop!
+/*let directIsThere = false;
+
+for (let e = 0; e < inNext[u][v].length; e++) {
+}
+	
+for (let f = 0; f < inNext[u][v].length; f++) {
+	if (inNext[u][v][f] == v)
+		directIsThere = true;
+}
+if (directIsThere = true && inNext[u][v].length == 1) {
+	outNext[start][v].push(v);
+	break;
+}
+
+else if (directIsThere = true && inNext[u][v][e] == v) {
+	outNext[start][v].push(v);
+	continue;
+}
+else {
+	while (true) {
+		u = inNext[u][v][e];
+		if (inNext[u][v][e] == v) {
+			outNext[start][v].push(u);
+			break;
+		}
+	}
+}*/
+
+/*let shortcut: boolean = false;
+
 
 for (let f = 0; f < inNext[u][v].length; f++) {
 	if (inNext[u][v][f] == v) {
 		outNext[start][v].push(v);
 		shortcut = true;
 	}
-}	
+}
 
-	while (true) {
-		u = inNext[u][v][e];
-		for (let g = 0; g < inNext[u][v].length; g++) {
-			if (inNext[u][v][g] == v) {
-				outNext[start][v].push(u);
-				break;
-			}
+while (true) {
+	u = inNext[u][v][e];
+	for (let g = 0; g < inNext[u][v].length; g++) {
+		if (inNext[u][v][g] == v) {
+			outNext[start][v].push(u);
+			break;
 		}
 	}
-}*/
-
 }
+*/
+
+
+
 
 
 
