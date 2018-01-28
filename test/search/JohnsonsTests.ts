@@ -12,6 +12,7 @@ import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
+import * as $SU from '../../src/utils/structUtils';
 import { Johnsons, PFSforAllSources, addExtraNandE } from '../../src/search/Johnsons';
 import * as sinonChai from 'sinon-chai';
 
@@ -87,14 +88,22 @@ describe('Johnsons APSP TEST -', () => {
     //DO NOT REMOVE SKIP! It is not yet ready and gives an infinite loop!
     //status: not yet working.
     it.only('next result of FW could be transformed to the one the Johnsons gives', () => {
-        let resultJ = $JO.Johnsons(graph_search);
-        console.log("Johnsons next: ");
-        console.log(resultJ[1]);
-        let resultFW = $FW.FloydWarshallAPSP(graph_search);
+        /*let myArray:Array<number>=[1,5];
+         let testArr:Array<number>=[1,3];
+
+         testArr=$SU.mergeOrderedArraysNoDups(myArray, testArr);
+         
+         console.log(testArr);*/
+
+        
+        let resultFW = $FW.FloydWarshallAPSP(graph_BF);
         console.log("FW next before transformation :");
         console.log(resultFW[1]);
         console.log("the same, transformed: ");
-        console.log($FW.changeNextToDirectParents(resultFW[1], graph_search));
+        console.log($FW.changeNextToDirectParents(resultFW[1], graph_BF));
+        let resultJ = $JO.Johnsons(graph_BF);
+        console.log("Johnsons next: ");
+        console.log(resultJ[1]);
     });
 
     //status: with original FW, works fine. With FW including my fixes, FW is faster.
