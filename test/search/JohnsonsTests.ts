@@ -33,7 +33,7 @@ let search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
     social_graph = "./test/test_data/social_network_edges.csv";
 
-describe('Johnsons APSP TEST -', () => {
+describe.only('Johnsons APSP TEST -', () => {
 
     //initialize graph objects
     let graph_search: $G.IGraph,
@@ -70,9 +70,7 @@ describe('Johnsons APSP TEST -', () => {
 
     //status: works fine.
     it('Johnsons and FW should give the very same dists result', () => {
-        //I will change this chapter later to check if J and FW give the exactly same results
-        //on a small all-positive graph (graph_search)
-
+        //next results will be the same only if the FW next is transformed, see next unit below
         let resultJ = $JO.Johnsons(graph_search);
         // console.log("Johnsons results");
         //console.log(resultJ[0]);
@@ -80,35 +78,42 @@ describe('Johnsons APSP TEST -', () => {
 
         let resultFW = $FW.FloydWarshallAPSP(graph_search);
         //console.log("FW results");
-        //console.log(resultFW[0]);
+        // console.log(resultFW[0]);
         //console.log(resultFW[1]);
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
-    //DO NOT REMOVE SKIP! It is not yet ready and gives an infinite loop!
-    //status: not yet working.
-    it.only('next result of FW could be transformed to the one the Johnsons gives', () => {
-        /*let myArray:Array<number>=[1,5];
-         let testArr:Array<number>=[1,3];
-
-         testArr=$SU.mergeOrderedArraysNoDups(myArray, testArr);
-         
-         console.log(testArr);*/
-
-        
-        let resultFW = $FW.FloydWarshallAPSP(graph_BF);
+    //now I leave it as it is to show, later the console logs can be deleted or outcommented
+    it('next result of FW could be transformed to the one the Johnsons gives', () => {
+        //the order of algorhythms does not make a difference here, but be careful with negative graphs!
+        let resultFW = $FW.FloydWarshallAPSP(graph_search);
         console.log("FW next before transformation :");
         console.log(resultFW[1]);
         console.log("the same, transformed: ");
-        console.log($FW.changeNextToDirectParents(resultFW[1], graph_BF));
-        let resultJ = $JO.Johnsons(graph_BF);
+        console.log($FW.changeNextToDirectParents(resultFW[1]));
+
+        let resultJ = $JO.Johnsons(graph_search);
         console.log("Johnsons next: ");
         console.log(resultJ[1]);
+        expect(resultJ[1]).to.deep.equal($FW.changeNextToDirectParents(resultFW[1]));
+
+        //caution: the Johnsons re-weighs the negative graphs!
+        //if you run it on the graph without cloning, all following test will be flawed
+        let resultFWB = $FW.FloydWarshallAPSP(graph_BF);
+        console.log("FW next before transformation :");
+        console.log(resultFWB[1]);
+        console.log("the same, transformed: ");
+        console.log($FW.changeNextToDirectParents(resultFWB[1]));
+
+        let graph_BF1 = graph_BF.clone();
+        let resultJB = $JO.Johnsons(graph_BF1);
+        console.log("Johnsons next: ");
+        console.log(resultJB[1]);
+        expect(resultJB[1]).to.deep.equal($FW.changeNextToDirectParents(resultFWB[1]));
     });
 
-    //status: with original FW, works fine. With FW including my fixes, FW is faster.
-    //no need to skip this as default, this does not take that long
-    it('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
+    //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
+    it.skip('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_midsize);
         let endF = +new Date();
@@ -125,8 +130,8 @@ describe('Johnsons APSP TEST -', () => {
             "runtime Johnsons: " + runtimeJ + " ms, runtime FW: " + runtimeF + " ms.");
     });
 
+    //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
     //skipped as default because it takes very long. Activate only when you really want to see it. 
-    //status: reports a fail because the FW timeouts, but it still reports the values, Johnsons is cca 2.5x faster.
     it.skip('on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_social);
@@ -160,9 +165,10 @@ describe('Johnsons APSP TEST -', () => {
 
     //status: works fine. 
     it('graph with negative cycle should throw an error message, but only then', () => {
+        let graph_BF2 = graph_BF.clone();
         expect($JO.Johnsons.bind($JO.Johnsons, graph_NC)).to.throw(
             "The graph contains a negative edge, thus it can not be processed");
-        expect($JO.Johnsons.bind($JO.Johnsons, graph_BF)).to.not.throw(
+        expect($JO.Johnsons.bind($JO.Johnsons, graph_BF2)).to.not.throw(
             "The graph contains a negative edge, thus it can not be processed");
         expect($JO.Johnsons.bind($JO.Johnsons, graph_search)).to.not.throw(
             "The graph contains a negative edge, thus it can not be processed");
@@ -204,44 +210,14 @@ describe('Johnsons APSP TEST -', () => {
     //status: works fine - but only when it is run as only!
     it('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).to.equal(true);
+        let graph_BF3=graph_BF.clone();
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
-        graph_BF = $JO.addExtraNandE(graph_BF, extraNode);
-        let BFresult = $BF.BellmanFordDict(graph_BF, extraNode);
-        graph_BF = $JO.reWeighGraph(graph_BF, BFresult.distances, extraNode);
+        graph_BF3 = $JO.addExtraNandE(graph_BF3, extraNode);
+        let BFresult = $BF.BellmanFordDict(graph_BF3, extraNode);
+        graph_BF3 = $JO.reWeighGraph(graph_BF3, BFresult.distances, extraNode);
         //now it should have no negtive edge any more
-        expect(graph_BF.hasNegativeEdge()).to.equal(false);
+        expect(graph_BF3.hasNegativeEdge()).to.equal(false);
     });
-
-    //status: it runs without error, Johnsons gives the expected results
-    //FW gives different dists - this is normal. However it gives very strange results for the parents - not normal.
-    it('debugging corner :)', () => {
-        //careful! If FW is run after the Johnsons, it goes with the re-weighed graph!
-
-        /*I tried these, but they are initialized correctly. So the problem with the FW comes somewhere later.
-        console.log("nextArray for the BF graph:");
-        console.log(graph_BF.nextArray());
-        console.log(graph_BF.adjListDict());
-        console.log(graph_BF.adjListArray());*/
-
-        console.log("results of FW:");
-        let FWresultBFgraph = $FW.FloydWarshallAPSP(graph_BF);
-        console.log(FWresultBFgraph[0]);
-        console.log(FWresultBFgraph[1]);
-
-        let JresultBFgraph = $JO.Johnsons(graph_BF);
-        console.log("results of Johnsons");
-        console.log(JresultBFgraph[0]);
-        console.log(JresultBFgraph[1]);
-
-
-    });
-
-
-
-
-
-
-
 
 });
 

@@ -167,7 +167,7 @@ function FloydWarshall(graph: $G.IGraph): {} {
 	return dists;
 }
 
-function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.NextArray {
+function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
 	let output: Array<Array<Array<number>>> = [];
 	//build the output and make it a copy of the input
 	for (let a = 0; a < input.length; a++) {
@@ -182,7 +182,7 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 		for (let b = 0; b < input.length; b++) {
 			//when unreachable, no update needed
 			if (input[a][b][0] == null) {
-				output[a][b][0]=null;
+				output[a][b][0] = null;
 				continue;
 			}
 
@@ -198,40 +198,29 @@ function changeNextToDirectParents(input: $G.NextArray, graph: $G.IGraph): $G.Ne
 function findDirectParents(u, v, inNext, outNext): void {
 	//console.log("\n new call with " + u + " , " + v)
 	let nodesInTracking = [u];
-	let counter=0;
+	let counter = 0;
 
 	while (nodesInTracking.length > 0) {
 		//console.log("nodesInTracking: " + nodesInTracking);
 		let currNode = nodesInTracking.pop();
 		//console.log("currNode= " + currNode);
-		if (currNode==u && counter>0){
+
+		//the starting node u must never be considered more than once, it may give an infinite loop!
+		if (currNode == u && counter > 0) {
 			continue;
-		}
-
-		else if (currNode == v && counter==0) {
-			let arrTM0 = [u];
-			outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM0);
-		}
-
-		else if (currNode == v && counter!=0) {
-			let arrTM1 = [v];
-			outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM1);
 		}
 
 		else {
 			for (let e = 0; e < inNext[currNode][v].length; e++) {
-				if (inNext[currNode][v][e] == v && counter==0) {
-					let arrTM2 = [v];
-					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM2);
+				//if counter ==0, currNode is the start node u
+				if (inNext[currNode][v][e] == v && counter == 0) {
+					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
 				}
-				else if (inNext[currNode][v][e] == v ){
-					let arrTM2 = [currNode];
-					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM2);
+				else if (inNext[currNode][v][e] == v) {
+					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [currNode]);
 				}
 				else {
-					let arrToMerge :Array<number> = [];
-					arrToMerge.push(inNext[currNode][v][e]);
-					nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, arrToMerge);
+					nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, [inNext[currNode][v][e]]);
 				}
 			}
 		}
@@ -239,6 +228,48 @@ function findDirectParents(u, v, inNext, outNext): void {
 	}
 }
 
+//safety copy of the first fully working version
+/*//console.log("\n new call with " + u + " , " + v)
+let nodesInTracking = [u];
+let counter=0;
+
+while (nodesInTracking.length > 0) {
+	//console.log("nodesInTracking: " + nodesInTracking);
+	let currNode = nodesInTracking.pop();
+	//console.log("currNode= " + currNode);
+	if (currNode==u && counter>0){
+		continue;
+	}
+
+	else if (currNode == v && counter==0) {
+		let arrTM0 = [u];
+		outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM0);
+	}
+
+	else if (currNode == v && counter!=0) {
+		let arrTM1 = [v];
+		outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM1);
+	}
+
+	else {
+		for (let e = 0; e < inNext[currNode][v].length; e++) {
+			if (inNext[currNode][v][e] == v && counter==0) {
+				let arrTM2 = [v];
+				outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM2);
+			}
+			else if (inNext[currNode][v][e] == v ){
+				let arrTM2 = [currNode];
+				outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], arrTM2);
+			}
+			else {
+				let arrToMerge :Array<number> = [];
+				arrToMerge.push(inNext[currNode][v][e]);
+				nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, arrToMerge);
+			}
+		}
+	}
+	counter++;
+}*/
 
 export {
 	FloydWarshallAPSP,
