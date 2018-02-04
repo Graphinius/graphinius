@@ -14,18 +14,17 @@ import * as $N from '../core/Nodes';
  * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
  */
-function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
+function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
   let paths;
   var sparse = sparse || false;
-  
-  if(sparse){ 
-  paths=$JO.Johnsons(graph)[1];
+
+  if (sparse) {
+    paths = $JO.Johnsons(graph)[1];
   }
   else {
     paths = $FW.FloydWarshallAPSP(graph)[1];
   }
 
-  paths = $FW.FloydWarshallAPSP(graph)[1];
   let nodes = graph.adjListArray();
   let map = {};
   for (let keyA in nodes) {
@@ -34,18 +33,18 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
   let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
-      
-      if(a!=b && !(paths[a][b].length == 1 && paths[a][b][0] == b)){
+
+      if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
         addBetweeness(a, b, paths, map, a);
       }
     }
   }
   let dem = 0;
-  for(let a in map){
-    dem +=map[a];
+  for (let a in map) {
+    dem += map[a];
   }
-  for(let a in map){
-    map[a]/=dem;
+  for (let a in map) {
+    map[a] /= dem;
   }
   return map;
 }
@@ -60,15 +59,15 @@ function inBetweennessCentrality( graph: $G.IGraph, sparse?: boolean ) {
  * @constructor
  */
 
- 
-function addBetweeness(u, v, next, map, start){
-  if(u==v)
+
+function addBetweeness(u, v, next, map, start) {
+  if (u == v)
     return 1;     //Terminal nodes return 1
   let nodes = 0;  //count of terminal nodes (= number of path's to v)
-  for(let e = 0; e < next[u][v].length; e ++){
-      nodes += addBetweeness(next[u][v][e], v, next, map, start); //Add all child nodes reachable from this node
+  for (let e = 0; e < next[u][v].length; e++) {
+    nodes += addBetweeness(next[u][v][e], v, next, map, start); //Add all child nodes reachable from this node
   }
-  if(u!=start){
+  if (u != start) {
     map[u] += nodes;
   }
   return nodes;

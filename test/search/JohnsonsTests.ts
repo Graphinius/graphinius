@@ -207,7 +207,7 @@ describe.only('Johnsons APSP TEST -', () => {
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).to.equal(graph_search.nrDirEdges() + graph_search.nrUndEdges() + graph_search.nrNodes());
     });
 
-    //status: works fine - but only when it is run as only!
+    //status: works fine
     it('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).to.equal(true);
         let graph_BF3=graph_BF.clone();
