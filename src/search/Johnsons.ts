@@ -166,7 +166,7 @@ function PFSforAllSources(graph: $G.IGraph): {} {
     $PFS.PFS(graph, nodesDict[key], specialConfig);
   }
 
-  return [dists, next, specialConfig];
+  return [dists, next];
 }
 
 export {

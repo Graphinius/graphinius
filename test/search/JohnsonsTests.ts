@@ -13,6 +13,7 @@ import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import * as $SU from '../../src/utils/structUtils';
+import * as $BE from '../../src/centralities/Betweenness';
 import { Johnsons, PFSforAllSources, addExtraNandE } from '../../src/search/Johnsons';
 import * as sinonChai from 'sinon-chai';
 
@@ -26,14 +27,16 @@ let CSV_IN = $C.CSVInput;
 
 
 //paths to the graphs
-let search_graph = "./test/test_data/search_graph_multiple_SPs.json",
+let search_graph = "./test/test_data/search_graph_multiple_SPs_positive.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
     bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
     bernd_graph = "./test/test_data/bernd_ares_pos.json",
     intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
     social_graph = "./test/test_data/social_network_edges.csv";
 
-describe.only('Johnsons APSP TEST -', () => {
+    
+
+describe('Johnsons APSP TEST -', () => {
 
     //initialize graph objects
     let graph_search: $G.IGraph,
@@ -43,12 +46,14 @@ describe.only('Johnsons APSP TEST -', () => {
         graph_midsize: $G.IGraph,
         graph_social: $G.IGraph;
 
+    var BFDSpy = sinon.spy($BF.BellmanFordDict),
+        extraNSpy = sinon.spy($JO.addExtraNandE),
+        reWeighSpy = sinon.spy($JO.reWeighGraph),
+        PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources);
+
     before(() => {
         //creating the spies
-        var BFDSpy = sinon.spy($BF.BellmanFordDict),
-            extraNSpy = sinon.spy($JO.addExtraNandE),
-            reWeighSpy = sinon.spy($JO.reWeighGraph),
-            PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources);
+
 
         let json: $J.IJSONInput = new $J.JSONInput(true, false, true),
             csv: $C.ICSVInput = new CSV_IN(' ', false, false);
@@ -62,10 +67,10 @@ describe.only('Johnsons APSP TEST -', () => {
 
         //these are not working, 
         //they give the same error message which is given in the DijkstraTest
-        /* $BF.BellmanFordDict = BFDSpy;
-         $JO.addExtraNandE = extraNSpy;
-         $JO.reWeighGraph = reWeighSpy;
-         $JO.PFSforAllSources = PFSinJohnsonsSpy;*/
+        $BF.BellmanFordDict = BFDSpy;
+        $JO.addExtraNandE = extraNSpy;
+        $JO.reWeighGraph = reWeighSpy;
+        $JO.PFSforAllSources = PFSinJohnsonsSpy;
     });
 
     //status: works fine.
@@ -81,6 +86,13 @@ describe.only('Johnsons APSP TEST -', () => {
         // console.log(resultFW[0]);
         //console.log(resultFW[1]);
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
+    });
+
+    it('Johnsons and FW should give the very same dists result', () => {
+        //next results will be the same only if the FW next is transformed, see next unit below
+        console.log($BE.inBetweennessCentrality(graph_search, false));
+
+                
     });
 
     //now I leave it as it is to show, later the console logs can be deleted or outcommented
@@ -113,7 +125,7 @@ describe.only('Johnsons APSP TEST -', () => {
     });
 
     //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
-    it.skip('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
+    it('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_midsize);
         let endF = +new Date();
@@ -132,7 +144,7 @@ describe.only('Johnsons APSP TEST -', () => {
 
     //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
     //skipped as default because it takes very long. Activate only when you really want to see it. 
-    it.skip('on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
+    it.only('on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_social);
         let endF = +new Date();
@@ -210,7 +222,7 @@ describe.only('Johnsons APSP TEST -', () => {
     //status: works fine
     it('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).to.equal(true);
-        let graph_BF3=graph_BF.clone();
+        let graph_BF3 = graph_BF.clone();
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         graph_BF3 = $JO.addExtraNandE(graph_BF3, extraNode);
         let BFresult = $BF.BellmanFordDict(graph_BF3, extraNode);

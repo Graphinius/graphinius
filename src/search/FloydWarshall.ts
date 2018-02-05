@@ -182,11 +182,10 @@ function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
 		for (let b = 0; b < input.length; b++) {
 			//when unreachable, no update needed
 			if (input[a][b][0] == null) {
-				output[a][b][0] = null;
 				continue;
 			}
 
-			else if (a != b && !(input[a][b].length == 1 && input[a][b][0] == b)) {
+			else if (a != b && !(input[a][b].length === 1 && input[a][b][0] === b)) {
 				output[a][b] = [];
 				findDirectParents(a, b, input, output);
 			}
