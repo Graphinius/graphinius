@@ -88,10 +88,9 @@ describe('Johnsons APSP TEST -', () => {
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
-    it('Johnsons and FW should give the very same dists result', () => {
+    it.only('Betwennness stuff', () => {
         //next results will be the same only if the FW next is transformed, see next unit below
-        console.log($BE.inBetweennessCentrality(graph_search, false));
-
+        console.log($BE.inBetweennessCentrality(graph_search, true));
                 
     });
 
@@ -144,7 +143,7 @@ describe('Johnsons APSP TEST -', () => {
 
     //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
     //skipped as default because it takes very long. Activate only when you really want to see it. 
-    it.only('on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
+    it.skip('on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_social);
         let endF = +new Date();

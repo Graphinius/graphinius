@@ -22,7 +22,7 @@ function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
     paths = $JO.Johnsons(graph)[1];
   }
   else {
-    paths = $FW.changeNextToDirectParents( $FW.FloydWarshallAPSP(graph)[1]);
+    paths =  $FW.FloydWarshallAPSP(graph)[1];
   }
 
   let nodes = graph.adjListArray();

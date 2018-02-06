@@ -72,21 +72,11 @@
 					"to": "E",
 					"directed": true,
 					"weight": 17
-				},
-				{
-					"to": "E",
-					"directed": false,
-					"weight": 1
 				}
 			]
 		},
 		"E": {
 			"edges": [
-				{
-					"to": "D",
-					"directed": false,
-					"weight": 1
-				},
 				{
 					"to": "B",
 					"directed": false,
