@@ -76,3 +76,5 @@ function addBetweeness(u, v, next, map, start) {
 export {
   inBetweennessCentrality
 };
+
+//TODO write a simpler and more accurate one
