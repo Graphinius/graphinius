@@ -24,6 +24,7 @@ function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
   else {
     paths =  $FW.FloydWarshallAPSP(graph)[1];
   }
+  
 
   let nodes = graph.adjListArray();
   let map = {};
