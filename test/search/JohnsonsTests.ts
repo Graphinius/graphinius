@@ -17,7 +17,6 @@ import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 
 
-
 chai.use(sinonChai);
 const expect = chai.expect,
     json: $J.IJSONInput = new $J.JSONInput(true, false, true),
