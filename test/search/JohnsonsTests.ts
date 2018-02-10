@@ -6,7 +6,6 @@ import * as $J from '../../src/io/input/JSONInput';
 import * as $D from '../../src/search/Dijkstra';
 import * as $PFS from '../../src/search/PFS';
 import * as $BH from '../../src/datastructs/binaryHeap';
-import * as sinon from 'sinon';
 import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
@@ -14,64 +13,113 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import * as $SU from '../../src/utils/structUtils';
 import * as $BE from '../../src/centralities/Betweenness';
-import { Johnsons, PFSforAllSources, addExtraNandE } from '../../src/search/Johnsons';
 import * as sinonChai from 'sinon-chai';
+import * as sinon from 'sinon';
+
 
 
 chai.use(sinonChai);
-let expect = chai.expect;
-
-let JSON_IN = $J.JSONInput;
-let CSV_IN = $C.CSVInput;
-
-
-
-//paths to the graphs
-let search_graph = "./test/test_data/search_graph_multiple_SPs_positive.json",
+const expect = chai.expect,
+    json: $J.IJSONInput = new $J.JSONInput(true, false, true),
+    csv: $C.ICSVInput = new $C.CSVInput(' ', false, false),
+    search_graph = "./test/test_data/search_graph_multiple_SPs_positive.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
-    bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
-    bernd_graph = "./test/test_data/bernd_ares_pos.json",
-    intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
-    social_graph = "./test/test_data/social_network_edges.csv";
+    graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
+    graph_BF: $G.IGraph = json.readFromJSONFile(bf_graph_file);
 
-    
+
+//spy stuff
+let BFDSpy = sinon.spy($BF.BellmanFordDict),
+    extraNSpy = sinon.spy($JO.addExtraNandE),
+    reWeighSpy = sinon.spy($JO.reWeighGraph),
+    PFSinJohnsonsSpy = sinon.spy($PFS.preparePFSStandardConfig),
+    backupBFD,
+    backupextraN,
+    backupreWeigh,
+    backupPFSinJohnsons;
+
+
+describe.only('Spy section Johnsons', () => {
+
+    before(() => {
+        backupBFD = $BF.BellmanFordDict;
+        backupextraN = $JO.addExtraNandE;
+        backupreWeigh = $JO.reWeighGraph;
+        backupPFSinJohnsons = $PFS.preparePFSStandardConfig;
+        $BF.BellmanFordDict = BFDSpy;
+        $JO.addExtraNandE = extraNSpy;
+        $JO.reWeighGraph = reWeighSpy;
+        $PFS.preparePFSStandardConfig = PFSinJohnsonsSpy;
+    });
+
+    after(() => {
+        $BF.BellmanFordDict = backupBFD;
+        $JO.addExtraNandE = backupextraN;
+        $JO.reWeighGraph = backupreWeigh;
+        $PFS.preparePFSStandardConfig = backupPFSinJohnsons;
+    });
+
+
+    //status: the call of PFS is not detected!!!
+    it('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
+        $JO.Johnsons(graph_search);
+        console.log(BFDSpy.callCount);
+        console.log(extraNSpy.callCount);
+        console.log(reWeighSpy.callCount);
+        //when PFS, this is 6x, correct, because the graph has 6 nodes!
+        console.log(PFSinJohnsonsSpy.callCount);
+        expect(BFDSpy).to.have.not.been.called;
+        expect(extraNSpy).to.have.not.been.called;
+        expect(reWeighSpy).to.have.not.been.called;
+        //expect(PFSinJohnsonsSpy).to.have.been.calledOnce;
+        //why does this fail??? It should be called once!
+    });
+
+    it('negative graph should go through all methods of the Johnsons', () => {
+        $JO.Johnsons(graph_BF);
+        console.log(BFDSpy.callCount);
+        console.log(extraNSpy.callCount);
+        console.log(reWeighSpy.callCount);
+        //when PFS, this is 12x, 6 nodes here and 6 nodes from previous unit
+        console.log(PFSinJohnsonsSpy.callCount);
+    });
+
+    it('debugging', () => {
+        //let graph_BF = json.readFromJSONFile(bf_graph_file);
+        $PFS.PFS(graph_search, graph_search.getRandomNode());
+        //$JO.Johnsons(graph_search);
+        console.log(BFDSpy.callCount);
+        console.log(extraNSpy.callCount);
+        console.log(reWeighSpy.callCount);
+        console.log(PFSinJohnsonsSpy.callCount);
+    });
+
+});
 
 describe('Johnsons APSP TEST -', () => {
 
+    //paths to the graphs
+    let bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
+        bernd_graph = "./test/test_data/bernd_ares_pos.json",
+        intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
+        social_graph = "./test/test_data/social_network_edges.csv";
+
     //initialize graph objects
-    let graph_search: $G.IGraph,
-        graph_BF: $G.IGraph,
-        graph_NC: $G.IGraph,
+    let graph_NC: $G.IGraph,
         graph_bernd: $G.IGraph,
         graph_midsize: $G.IGraph,
         graph_social: $G.IGraph;
 
-    var BFDSpy = sinon.spy($BF.BellmanFordDict),
-        extraNSpy = sinon.spy($JO.addExtraNandE),
-        reWeighSpy = sinon.spy($JO.reWeighGraph),
-        PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources);
 
     before(() => {
-        //creating the spies
 
-
-        let json: $J.IJSONInput = new $J.JSONInput(true, false, true),
-            csv: $C.ICSVInput = new CSV_IN(' ', false, false);
         //read in the graph objects from file
-        graph_search = json.readFromJSONFile(search_graph),
-            graph_BF = json.readFromJSONFile(bf_graph_file),
-            graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
+        graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
             graph_bernd = json.readFromJSONFile(bernd_graph),
             graph_midsize = json.readFromJSONFile(intermediate),
             graph_social = csv.readFromEdgeListFile(social_graph);
-
-        //these are not working, 
-        //they give the same error message which is given in the DijkstraTest
-        $BF.BellmanFordDict = BFDSpy;
-        $JO.addExtraNandE = extraNSpy;
-        $JO.reWeighGraph = reWeighSpy;
-        $JO.PFSforAllSources = PFSinJohnsonsSpy;
     });
+
 
     //status: works fine.
     it('Johnsons and FW should give the very same dists result', () => {
@@ -88,10 +136,10 @@ describe('Johnsons APSP TEST -', () => {
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
-    it.only('Betwennness stuff', () => {
+    it('Betwennness stuff', () => {
         //next results will be the same only if the FW next is transformed, see next unit below
         console.log($BE.inBetweennessCentrality(graph_search, true));
-                
+
     });
 
     //now I leave it as it is to show, later the console logs can be deleted or outcommented
@@ -185,28 +233,6 @@ describe('Johnsons APSP TEST -', () => {
             "The graph contains a negative edge, thus it can not be processed");
     });
 
-
-    //I coded out this part with the spies, they are causing build errors!
-    /*
-    //status: the call of PFS is not detected!!! - therefore it fails
-    it.skip('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
-        Johnsons(graph_search);
-        expect(BFDSpy).to.have.not.been.called;
-        expect(extraNSpy).to.have.not.been.called;
-        expect(reWeighSpy).to.have.not.been.called;
-        expect(PFSinJohnsonsSpy).to.have.been.calledOnce;
-        //why does this fail??? It should be called once!
-    });
-
-    //status: fails, spies are not detecting the call
-    it.skip('graphs with negative edges should go through the longer way', () => {
-        Johnsons(graph_BF);
-        expect(BFDSpy).to.have.been.calledOnce;
-        expect(extraNSpy).to.have.been.calledOnce;
-        expect(reWeighSpy).to.have.been.calledOnce;
-        expect(PFSinJohnsonsSpy).to.have.been.calledOnce;
-        //why does this fail??? they should be called!
-    });*/
 
     //status: works fine.
     it('function addextraNandE should function correctly', () => {

@@ -48,6 +48,8 @@ describe('Dijkstra TESTS - ', () => {
     $Dijkstra.Dijkstra(graph, graph.getRandomNode());
     expect(PFSSpy).to.have.been.calledOnce;
     expect(PFSPrepareConfigSpy).to.have.been.calledOnce;
+   /* console.log(PFSSpy.callCount);
+    console.log(PFSPrepareConfigSpy.callCount);*/
   });
 
 

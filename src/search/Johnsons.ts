@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
@@ -7,11 +8,8 @@ import * as $BF from '../search/BellmanFord';
 import * as $D from '../search/Dijkstra';
 import * as $CB from '../utils/callbackUtils';
 import * as $BH from '../datastructs/binaryHeap';
-import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
 import * as $SU from '../utils/structUtils'
-import { Dijkstra } from '../search/Dijkstra';
-import { IGraph, BaseGraph } from '../core/Graph';
-import { IBaseNode, BaseNode } from '../core/Nodes';
+
 
 function Johnsons(graph: $G.IGraph): {} {
 
@@ -26,7 +24,7 @@ function Johnsons(graph: $G.IGraph): {} {
   if (graph.hasNegativeEdge()) {
     var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
     graph = addExtraNandE(graph, extraNode);
-    let BFresult = BellmanFordDict(graph, extraNode);
+    let BFresult = $BF.BellmanFordDict(graph, extraNode);
 
     //reminder: output of the BellmanFordDict is BFDictResult
     //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
