@@ -28,10 +28,10 @@ function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
 
   let nodes = graph.adjListArray();
   let map = {};
-  for (let keyA in nodes) {
+  /*for (let keyA in nodes) {
     map[keyA] = 0;
   }
-  /*let N = paths.length;
+  let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
 

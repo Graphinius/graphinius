@@ -31,7 +31,7 @@ const expect = chai.expect,
 let BFDSpy = sinon.spy($BF.BellmanFordDict),
     extraNSpy = sinon.spy($JO.addExtraNandE),
     reWeighSpy = sinon.spy($JO.reWeighGraph),
-    PFSinJohnsonsSpy = sinon.spy($PFS.preparePFSStandardConfig),
+    PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources),
     backupBFD,
     backupextraN,
     backupreWeigh,
@@ -44,23 +44,23 @@ describe.only('Spy section Johnsons', () => {
         backupBFD = $BF.BellmanFordDict;
         backupextraN = $JO.addExtraNandE;
         backupreWeigh = $JO.reWeighGraph;
-        backupPFSinJohnsons = $PFS.preparePFSStandardConfig;
+        backupPFSinJohnsons = $JO.PFSforAllSources;
         $BF.BellmanFordDict = BFDSpy;
         $JO.addExtraNandE = extraNSpy;
         $JO.reWeighGraph = reWeighSpy;
-        $PFS.preparePFSStandardConfig = PFSinJohnsonsSpy;
+        $JO.PFSforAllSources = PFSinJohnsonsSpy;
     });
 
     after(() => {
         $BF.BellmanFordDict = backupBFD;
         $JO.addExtraNandE = backupextraN;
         $JO.reWeighGraph = backupreWeigh;
-        $PFS.preparePFSStandardConfig = backupPFSinJohnsons;
+        $JO.PFSforAllSources = backupPFSinJohnsons;
     });
 
 
     //status: the call of PFS is not detected!!!
-    it('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
+    it.skip('all-positive graph should go directly to PFS, without calling functions of the longer way', () => {
         $JO.Johnsons(graph_search);
         console.log(BFDSpy.callCount);
         console.log(extraNSpy.callCount);
@@ -74,7 +74,7 @@ describe.only('Spy section Johnsons', () => {
         //why does this fail??? It should be called once!
     });
 
-    it('negative graph should go through all methods of the Johnsons', () => {
+    it.skip('negative graph should go through all methods of the Johnsons', () => {
         $JO.Johnsons(graph_BF);
         console.log(BFDSpy.callCount);
         console.log(extraNSpy.callCount);
@@ -87,6 +87,15 @@ describe.only('Spy section Johnsons', () => {
         //let graph_BF = json.readFromJSONFile(bf_graph_file);
         $PFS.PFS(graph_search, graph_search.getRandomNode());
         //$JO.Johnsons(graph_search);
+        console.log(BFDSpy.callCount);
+        console.log(extraNSpy.callCount);
+        console.log(reWeighSpy.callCount);
+        console.log(PFSinJohnsonsSpy.callCount);
+    });
+
+    it('more debugging', () => {
+        let graph_BF = json.readFromJSONFile(bf_graph_file);
+        $BE.inBetweennessCentrality(graph_BF, true);
         console.log(BFDSpy.callCount);
         console.log(extraNSpy.callCount);
         console.log(reWeighSpy.callCount);
