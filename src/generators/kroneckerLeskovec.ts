@@ -41,17 +41,17 @@ class KROL implements IKROL {
 
     generate() {
         // var gen_dims = this._generator.nrNodes();
-        var gen_dims = this._genMat.length;
-        var res_dims = Math.pow(gen_dims, this._cycles);
+        var gen_dims = this._genMat[0].length;
+        var res_dims = Math.pow(gen_dims, this._cycles+1);
 
         for (let index = 0; index < res_dims; index++) {
             this._graph.addNodeByID(index.toString());
         }
 
         var nr_edges: number = 0;
-        for (let node1 = 0; node1 < res_dims-1; node1++) {
-            for (let node2 = 0; node2 < res_dims-1; node2++) {
-                if (this.addEdge(node1, node2, res_dims)) {
+        for (let node1 = 0; node1 < res_dims; node1++) {
+            for (let node2 = 0; node2 < res_dims; node2++) {
+                if (this.addEdge(node1, node2, gen_dims)) {
                     this._graph.addEdgeByNodeIDs(node1 + '_' + node2, node1.toString(), node2.toString());
                     ++nr_edges;
                 }
@@ -72,8 +72,6 @@ class KROL implements IKROL {
             var id_2 = Math.floor(node2 / Math.pow(dims, level+1)) % dims;            
             prob *= this._genMat[id_1][id_2];
             if (rprob > prob) { return false; }
-            node1 = node1 / dims |0;
-            node2 = node2 / dims |0;
         }
         return true;
     }

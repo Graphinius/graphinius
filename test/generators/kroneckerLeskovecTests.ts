@@ -22,24 +22,25 @@ describe("Base Tests", () => {
     it('should generate a graph from standard config', () => {
         var gen = new $KRON.KROL();
         var synGraph = gen.generate().graph;
-        expect(synGraph.nrNodes()).to.equal(32);
+        expect(synGraph.nrNodes() ).to.equal(64);
         // TODO: what can we test besides the number of nodes?
     });
 
     it('should generate a graph with 256 nodes', () => {
         var cfg = {
             genMat: [[0.9, 0.5], [0.5, 0.1]],
-            cycles: 8
+            cycles: 7
         };
         var gen = new $KRON.KROL(cfg);
         var synGraph = gen.generate().graph;
-        expect(synGraph.nrNodes()).to.equal(256);
+        expect(synGraph.nrNodes() ).to.equal(256);
     });
+    
 
     it.skip('Performance Test - should generate a graph with 2^13 nodes', () => {
         var cfg = {
             genMat: [[0.7, 0.5], [0.5, 0.7]],
-            cycles: 13
+            cycles: 12
         };
         var gen = new $KRON.KROL(cfg);
         var synGraph = gen.generate().graph;

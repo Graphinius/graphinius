@@ -22,6 +22,8 @@ var ClosenessCent	 	= require("./dist/centralities/Closeness.js");
 var BetweennessCent	= require("./dist/centralities/Betweenness.js");
 var PRGauss					= require("./dist/centralities/PageRankGaussian.js");
 var PRRandomWalk		= require("./dist/centralities/PageRankRandomWalk.js");
+var kronLeskovec		= require("./dist/generators/kroneckerLeskovec.js");
+
 
 // Define global object
 var out = typeof window !== 'undefined' ? window : global;
@@ -77,6 +79,9 @@ out.$G = {
   },
 	perturbation: {
 		SimplePerturber: simplePerturbation.SimplePerturber
+	},
+	generators: {
+		kronecker: kronLeskovec
 	}
 };
 
