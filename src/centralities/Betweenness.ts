@@ -16,7 +16,7 @@ import * as $N from '../core/Nodes';
  */
 
 
-function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boolean) {
+function betweennessCentrality1(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;
 
@@ -30,7 +30,7 @@ function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boo
   let nodes = graph.getNodes();
   let map = {};
   for (let keyA in nodes) {
-    //initializing the map which will be returned at the end - should it contain the keys, or the node IDs?
+    //initializing the map which will be returned at the end - should it contain the keys (numbers), or the node IDs?
     map[keyA] = 0;
   }
 
@@ -39,46 +39,97 @@ function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boo
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
       if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
-        //goals: trace back until the starting node, reconstruct paths in a dict or array?
-        //give scores: for each node, 1/x, where x is the total number of shortest paths
         let nodesToScore = [];
+        let allSPs: Array<Array<number>> = [];
         //strategy: build all shortest paths, as a 2d array
         //push each node on the way into the nodesToScore array
         //scoring: pop the array until empty, check for the node, in how many subarrays does it occur?/total num of subarrays -> score
-        let allSPs: Array<Array<number>> = [];
+
+        //initializing the allSPs and nodesToScore arrays
         for (let parent of paths[a][b]) {
           if (parent != b) {
             allSPs.push([parent]);
             nodesToScore.push(parent);
           }
-          //now there is at least one array in the allSPs
-          //start a while or a do...while loop, with counter (init=0), at the end, ++. while count < allSps.length       
-          //in case the parent path diverges, the array needs to be multiplicated
-          //for each array of the appSPs: 
-          //grab length-1. element of the first array - ALWAYS push each elements into the nodesToScore!!!
-          //paths [a][this element], if length=1, push it into the array and continue
-          //if length>1, push first element into this array
-          //for each other elements, clone the array into allSps and push the element into the clone
-          //continue this until [a][this element]=this element. This element should still be part of the array
-          //do this with all arrays in the allSPs
-          
-          //finished: start popping nodes to score
-          //score: occurrence of node in the arrays/total number of arrays
+          let counter = 0;
 
-          //finished: normalize each scores, put values into separate normMap?
+          do {
+            while (true) {
+              //lastNode is the last element of the working array
+              let lastNode = allSPs[counter][(allSPs[counter].length - 1)];
+              let previous = paths[a][lastNode];
+              //1 or more elements in previous
+              if (previous.length == 1 && previous[0] == lastNode) {
+                break;
+              }
+              else if (previous.length == 1) {
+                allSPs[counter].push(previous[0]);
+                nodesToScore.push(previous[0]);
+              }
+              else if (previous.indexOf(lastNode) != -1) {
+                for (let prev of previous) {
+                  let newArray = false;
+                  //first it needs to continue the working array
+                  if (prev != lastNode && newArray == false) {
+                    allSPs[counter].push(prev);
+                    nodesToScore.push(prev);
+                    newArray = true;
+                  }
+                  else if (prev != lastNode && newArray) {
+                    let newArray = [];
+                    //copy the working array
+                    newArray = allSPs[counter].slice(0);
+                    newArray.push(prev);
+                    allSPs.push(newArray);
+                    nodesToScore.push(prev);
+                  }
+                }
+                break;
+              }
+              else {
+                for (let prev of previous) {
+                  let newArray = false;
+                  //first it needs to continue the working array
+                  if (prev != lastNode && newArray == false) {
+                    allSPs[counter].push(prev);
+                    nodesToScore.push(prev);
+                    newArray = true;
+                  }
+                  else if (prev != lastNode && newArray) {
+                    let newArray = [];
+                    //copy the working array and push prev into the copy
+                    newArray = allSPs[counter].slice(0);
+                    newArray.push(prev);
+                    allSPs.push(newArray);
+                    nodesToScore.push(prev);
+                  }
+                }
+                counter++;
+              }
+            }
+          } while (counter < allSPs.length)
+
+          //and now the scoring
+          let node = nodesToScore.pop();
+          let score = 0;
+          allSPs.forEach(subArray => {
+            if (subArray.indexOf(node) != -1) {
+              score += 1;
+            }
+          });
+
+          score /= allSPs.length;
+          map[node] += score;
+          //normalization is missing yet
 
         }
       }
     }
   }
+  return map;
 }
 
-
-
-
-
-//code from Benedict, commented out for a while
-/*function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
+function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;
 
@@ -86,10 +137,90 @@ function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boo
     paths = $JO.Johnsons(graph)[1];
   }
   else {
+    paths = $FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph)[1]);
+  }
+
+  let nodes = graph.getNodes();
+  let map = {};
+  for (let key in nodes) {
+    //initializing the map which will be returned at the end - should it contain the keys (numbers), or the node IDs?
+    map[key] = 0;
+  }
+
+  let N = paths.length;
+  for (var a = 0; a < N; ++a) {
+    for (var b = 0; b < N; ++b) {
+      //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
+      if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
+        //strategy: for each graph node, follow back the path, and give the score immediately when the node is found on the path
+        //if a fork is found, put them in the following arrays
+        for (let key in nodes) {
+          let upStreamForks = [b];
+          let downStreamForks = [];
+          let nrOfPaths = 0;
+          let nodeFound = 0;
+          while (upStreamForks.length > 0 || downStreamForks.length > 0) {
+            let nodeEncountered = false;
+            let current;
+            nrOfPaths += 1;
+            if (upStreamForks.length > 0) {
+              current = upStreamForks.pop();
+            }
+            else {
+              nodeFound += 1;
+              nodeEncountered = true;
+              current = downStreamForks.pop();
+            }
+            let endOfTrace=false;
+            while (!endOfTrace) {
+              current=paths[a][current][0];
+              if (current.indexOf(b)!=-1){
+                for (let c of current){
+                  if (c!=b && c!=key){
+                    //continue tomorrow
+                    //logic: if node is ever encountered, set nodeEncountered to true
+                    //still trace back until start node
+                    //somehow identify start node! if it is the start node, it should not get a score!
+                    //if previous array has more than one element: continue with the first
+                    //put the rest into upstream is node not yet encountered
+                    //put into downstream if node already encountered
+                  }
+                }
+
+              }
+
+
+
+              
+            }
+
+
+          }
+
+
+        }
+      }
+    }
+  }
+
+  return map;
+}
+
+
+
+//old code from Benedict, commented out for a while
+/*function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean) {
+  let paths;
+  var sparse = sparse || false;
+ 
+  if (sparse) {
+    paths = $JO.Johnsons(graph)[1];
+  }
+  else {
     paths =  $FW.FloydWarshallAPSP(graph)[1];
   }
   
-
+ 
   let nodes = graph.adjListArray();
   let map = {};
   for (let keyA in nodes) {
@@ -98,7 +229,7 @@ function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boo
   let N = paths.length;
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
-
+ 
       if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
         addBetweeness(a, b, paths, map, a);
       }
@@ -139,5 +270,5 @@ function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boo
 }*/
 
 export {
-  betweennessCentrality
+  betweennessCentrality1, betweennessCentrality2
 };
