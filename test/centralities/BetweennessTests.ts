@@ -22,7 +22,11 @@ describe.only('test if graph and node features can be read in from Json', () => 
         console.log(graph_3nodeUnd.nrUndEdges());
         console.log(graph_3nodeUnd.nrNodes());
         console.log(graph_3nodeUnd.getNodeById("B").getFeatures()["betweenness"].default);
-    })
+    });
+
+    it ('should compute betweenness correctly', () => {
+        
+    });
 
 });
 
