@@ -6,6 +6,8 @@ import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 import * as $IB from '../../src/centralities/Betweenness';
 import * as $B from '../../src/centralities/Brandes';
+import * as $JO from '../../src/search/Johnsons';
+import * as $FW from '../../src/search/FloydWarshall';
 
 
 const SN_GRAPH_NODES = 1034,
@@ -42,7 +44,9 @@ describe.only('test if graph and node features can be read in from Json', () => 
 
     //status: bc1 does not terminate, bc2 gives error
     it('should compute betweenness correctly', () => {
-        console.log($IB.betweennessCentrality1(graph_3nodeUnd, false, true));
+        console.log($JO.Johnsons(graph_3nodeUnd)[0]);
+        console.log($JO.Johnsons(graph_3nodeUnd)[1]);
+        console.log($IB.betweennessCentrality2(graph_3nodeUnd, false, true));
     });
 
 });

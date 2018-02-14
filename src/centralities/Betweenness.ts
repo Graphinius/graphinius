@@ -16,7 +16,7 @@ import { ifError } from 'assert';
  * @constructor
  */
 
-
+//This one does not run yet, but go for betweennessCentrality2 (below), that is new!
 function betweennessCentrality1(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;
@@ -130,9 +130,11 @@ function betweennessCentrality1(graph: $G.IGraph, directed: boolean, sparse?: bo
   return map;
 }
 
+//new idea included, now in debugging
 function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;
+  //the argument directed is not yet used, it will be important later when we normalize
 
   if (sparse) {
     paths = $JO.Johnsons(graph)[1];
@@ -153,76 +155,94 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
       if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
-        //first follow back the paths and fill up the nodesToScore array - nodes a and b are allowed  will be ruled out later
-        //for each node, follow back all paths, score when the node is on the path
-        //if a fork is found, put them in the arrays downstream or upstream
 
-        let nodesToScore = [];
-        //first exploratory followback to fill up the nodesToScore array - nodes a and b are allowed, will be ruled out later
-        let forks = [b];
-        while (forks.length > 0) {
-          let end = forks.pop();
-          while (end != a) {
-            let prev = paths[a][end];
-            for (let p = 0; p < prev.length; p++) {
-              nodesToScore.push(prev[p]);
-              if (p == 0) {
-                end = prev[0];
-              }
-              else {
-                forks.push(prev[p]);
-              }
+        let tempMap = {};
+        let leadArray: Array<Array<number>> = [];
+        let pathCount = 0;
+
+        do {
+          let tracer = b;
+          let leadCounter = 0;
+          pathCount++;
+
+          while (true) {
+            let previous = paths[a][tracer];
+            let terminate = false;
+            //no branching: 
+            if (previous.length == 1 && previous[0] == tracer) {
+              break;
             }
-          }
-        }
-        for (let node of nodesToScore) {
-          if (node == a || node == b) {
-            continue;
-          }
-          let upStreamForks = [b];
-          let downStreamForks = [];
-          let nrOfPaths = 0;
-          let numNodeFound = 0;
-          while (upStreamForks.length > 0 || downStreamForks.length > 0) {
-            let nodeFound = false;
-            nrOfPaths += 1;
-            let tracer;
-            if (upStreamForks.length > 0) {
-              tracer = upStreamForks.pop();
-              if (tracer == node) {
-                numNodeFound++;
-                nodeFound = true;
-              }
+            else if (previous.length == 1) {
+              tracer = previous[0];
+              //scoring on the fly
+              tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
             }
+            //if there is a branching:
+            //handle reaching the terminal node here too!          
             else {
-              numNodeFound += 1;
-              nodeFound = true;
-              tracer = downStreamForks.pop();
-            }
-            while (tracer != a) {
-              let prev = paths[a][tracer];
-              for (let p = 0; p < prev.length; p++) {
-                if (p == 0) {
-                  tracer = prev[0];
-                  if (tracer == node) {
-                    numNodeFound++;
-                    nodeFound = true;
-                  }
+              //case: leadArray is empty and we find a branch
+              if (leadArray.length == 0) {
+                if (previous[0] == tracer) {
+                  terminate = true;
                 }
                 else {
-                  if (nodeFound) {
-                    downStreamForks.push(prev[p]);
-                  }
-                  else {
-                    upStreamForks.push(prev[p])
-                  }
+                  tracer = previous[0];
+                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
                 }
+                //leave a trace in the leadArray
+                leadArray.push([0, previous.length]);
               }
-              let score = numNodeFound / nrOfPaths;
-              map[node] += score;
+              //case: branch is covered by the leadArray
+              else if (leadCounter < leadArray.length) {
+                let choice = leadArray[leadCounter][0];
+                if (previous[choice] == tracer) {
+                  terminate = true;
+                }
+                else {
+                  tracer = previous[choice];
+                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+                }
+                leadCounter++;
+              }
+
+              //case: branch is beyond the leadArray (new branching encountered)
+              else {
+                if (previous[0] == tracer) {
+                  terminate = true;
+                }
+                else {
+                  tracer = previous[0];
+                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+                }
+                //leave a trace in the leadArray
+                leadArray.push([0, previous.length]);
+              }
+            }
+            if (terminate) {
+              break;
             }
           }
-        }
+          // here I need to update the leadArray, if not empty
+          //reminder: each subarray in leadArray: [current branchpoint, length]
+          if (leadArray.length > 0) {
+            leadArray[length - 1][0]++;
+            while (leadArray[length - 1][0] == leadArray[length - 1][1]) {
+              //then remove last item from leadArray
+              leadArray.splice(leadArray.length - 1, 1);
+              if (leadArray.length == 0) {
+                break;
+              }
+              leadArray[length - 1][0]++;
+            }
+          }
+        } while (leadArray.length != 0)
+        console.log("pathcount is: "+pathCount);
+        console.log("tempMap content: "+ tempMap.toString());
+
+        //now put the correct scores into the final map
+        /*for (let key in tempMap){
+          map[key] += tempMap[key]/pathCount;
+        }*/
       }
     }
   }
