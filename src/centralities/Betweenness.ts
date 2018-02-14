@@ -5,6 +5,7 @@ import * as $FW from '../search/FloydWarshall';
 import * as $JO from '../search/Johnsons';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
+import { ifError } from 'assert';
 
 /**
  * This is used to get the betweenness of a graph by either
@@ -152,57 +153,79 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
       if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
-        //strategy: for each graph node, follow back the path, and give the score immediately when the node is found on the path
-        //if a fork is found, put them in the following arrays
-        for (let key in nodes) {
+        //first follow back the paths and fill up the nodesToScore array - nodes a and b are allowed  will be ruled out later
+        //for each node, follow back all paths, score when the node is on the path
+        //if a fork is found, put them in the arrays downstream or upstream
+
+        let nodesToScore = [];
+        //first exploratory followback to fill up the nodesToScore array - nodes a and b are allowed, will be ruled out later
+        let forks = [b];
+        while (forks.length > 0) {
+          let end = forks.pop();
+          while (end != a) {
+            let prev = paths[a][end];
+            for (let p = 0; p < prev.length; p++) {
+              nodesToScore.push(prev[p]);
+              if (p == 0) {
+                end = prev[0];
+              }
+              else {
+                forks.push(prev[p]);
+              }
+            }
+          }
+        }
+        for (let node of nodesToScore) {
+          if (node == a || node == b) {
+            continue;
+          }
           let upStreamForks = [b];
           let downStreamForks = [];
           let nrOfPaths = 0;
-          let nodeFound = 0;
+          let numNodeFound = 0;
           while (upStreamForks.length > 0 || downStreamForks.length > 0) {
-            let nodeEncountered = false;
-            let current;
+            let nodeFound = false;
             nrOfPaths += 1;
+            let tracer;
             if (upStreamForks.length > 0) {
-              current = upStreamForks.pop();
+              tracer = upStreamForks.pop();
+              if (tracer == node) {
+                numNodeFound++;
+                nodeFound = true;
+              }
             }
             else {
-              nodeFound += 1;
-              nodeEncountered = true;
-              current = downStreamForks.pop();
+              numNodeFound += 1;
+              nodeFound = true;
+              tracer = downStreamForks.pop();
             }
-            let endOfTrace=false;
-            while (!endOfTrace) {
-              current=paths[a][current][0];
-              if (current.indexOf(b)!=-1){
-                for (let c of current){
-                  if (c!=b && c!=key){
-                    //continue tomorrow
-                    //logic: if node is ever encountered, set nodeEncountered to true
-                    //still trace back until start node
-                    //somehow identify start node! if it is the start node, it should not get a score!
-                    //if previous array has more than one element: continue with the first
-                    //put the rest into upstream is node not yet encountered
-                    //put into downstream if node already encountered
+            while (tracer != a) {
+              let prev = paths[a][tracer];
+              for (let p = 0; p < prev.length; p++) {
+                if (p == 0) {
+                  tracer = prev[0];
+                  if (tracer == node) {
+                    numNodeFound++;
+                    nodeFound = true;
                   }
                 }
-
+                else {
+                  if (nodeFound) {
+                    downStreamForks.push(prev[p]);
+                  }
+                  else {
+                    upStreamForks.push(prev[p])
+                  }
+                }
               }
-
-
-
-              
+              let score = numNodeFound / nrOfPaths;
+              map[node] += score;
             }
-
-
           }
-
-
         }
       }
     }
   }
-
   return map;
 }
 

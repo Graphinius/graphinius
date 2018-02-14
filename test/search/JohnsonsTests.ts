@@ -95,7 +95,7 @@ describe.only('Spy section Johnsons', () => {
 
     it('more debugging', () => {
         let graph_BF = json.readFromJSONFile(bf_graph_file);
-        $BE.inBetweennessCentrality(graph_BF, true);
+        $BE.betweennessCentrality1(graph_BF, true);
         console.log(BFDSpy.callCount);
         console.log(extraNSpy.callCount);
         console.log(reWeighSpy.callCount);
@@ -146,7 +146,7 @@ describe('Johnsons APSP TEST -', () => {
 
     it('Betwennness stuff', () => {
         //next results will be the same only if the FW next is transformed, see next unit below
-        console.log($BE.inBetweennessCentrality(graph_search, true));
+        console.log($BE.betweennessCentrality1(graph_search, true));
 
     });
 
