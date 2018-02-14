@@ -7,6 +7,7 @@ import * as $JSON from '../../src/io/input/JSONInput';
 import * as $IB from '../../src/centralities/Betweenness';
 import * as $B from '../../src/centralities/Brandes';
 
+
 const SN_GRAPH_NODES = 1034,
     SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
@@ -14,18 +15,34 @@ let expect = chai.expect,
     csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
 
-let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json";
-let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd);
+let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
+    path_3nodeDir = "./test/test_data/centralities/3nodeDir.json",
+    path_3node2SPs1direct = "./test/test_data/centralities/3node2SPs1direct.json",
+    path_4node2SPs1direct = "./test/test_data/centralities/4node2SPs1direct.json",
+    path_5nodeLinear = "./test/test_data/centralities/5nodeLinear.json",
+    path_7nodeMerge1beforeGoal = "./test/test_data/centralities/7nodeMerge1beforeGoal.json",
+    path_8nodeSplitMerge = "./test/test_data/centralities/8nodeSplitMerge.json",
+    path_8nodeSplitAfter1mergeBefore1 = "./test/test_data/centralities/8nodeSplitAfter1mergeBefore1.json";
+
+let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
+    graph_3nodeDir = json.readFromJSONFile(path_3nodeDir),
+    graph_3node2SPs1direct = json.readFromJSONFile(path_3node2SPs1direct),
+    graph_4node2SPs1direct = json.readFromJSONFile(path_4node2SPs1direct),
+    graph_5nodeLinear = json.readFromJSONFile(path_5nodeLinear),
+    graph_7nodeMerge1beforeGoal = json.readFromJSONFile(path_7nodeMerge1beforeGoal),
+    graph_8nodeSplitMerge = json.readFromJSONFile(path_8nodeSplitMerge),
+    graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1);
 
 describe.only('test if graph and node features can be read in from Json', () => {
-    it ('should instantiate the correct graph', () => {
+    it('should instantiate the correct graph', () => {
         console.log(graph_3nodeUnd.nrUndEdges());
         console.log(graph_3nodeUnd.nrNodes());
         console.log(graph_3nodeUnd.getNodeById("B").getFeatures()["betweenness"].default);
     });
 
-    it ('should compute betweenness correctly', () => {
-        
+    //status: bc1 does not terminate, bc2 gives error
+    it('should compute betweenness correctly', () => {
+        console.log($IB.betweennessCentrality1(graph_3nodeUnd, false, true));
     });
 
 });
