@@ -24,7 +24,8 @@ let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
     path_5nodeLinear = "./test/test_data/centralities/5nodeLinear.json",
     path_7nodeMerge1beforeGoal = "./test/test_data/centralities/7nodeMerge1beforeGoal.json",
     path_8nodeSplitMerge = "./test/test_data/centralities/8nodeSplitMerge.json",
-    path_8nodeSplitAfter1mergeBefore1 = "./test/test_data/centralities/8nodeSplitAfter1mergeBefore1.json";
+    path_8nodeSplitAfter1mergeBefore1 = "./test/test_data/centralities/8nodeSplitAfter1mergeBefore1.json",
+    path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json";
 
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_3nodeDir = json.readFromJSONFile(path_3nodeDir),
@@ -33,10 +34,11 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_5nodeLinear = json.readFromJSONFile(path_5nodeLinear),
     graph_7nodeMerge1beforeGoal = json.readFromJSONFile(path_7nodeMerge1beforeGoal),
     graph_8nodeSplitMerge = json.readFromJSONFile(path_8nodeSplitMerge),
-    graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1);
+    graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1),
+    graph_midSizeGraph= json.readFromJSONFile(path_midSizeGraph);
 
 describe.only('test if graph and node features can be read in from Json', () => {
-    it('should instantiate the correct graph', () => {
+    it.skip('should instantiate the correct graph', () => {
         console.log(graph_3nodeUnd.nrUndEdges());
         console.log(graph_3nodeUnd.nrNodes());
         console.log(graph_3nodeUnd.getNodeById("B").getFeatures()["betweenness"].default);
@@ -44,9 +46,9 @@ describe.only('test if graph and node features can be read in from Json', () => 
 
     //status: bc1 does not terminate, bc2 gives error
     it('should compute betweenness correctly', () => {
-        console.log($JO.Johnsons(graph_3nodeUnd)[0]);
-        console.log($JO.Johnsons(graph_3nodeUnd)[1]);
-        console.log($IB.betweennessCentrality2(graph_3nodeUnd, false, true));
+        //console.log($JO.Johnsons(graph_8nodeSplitMerge)[0]);
+        //console.log($JO.Johnsons(graph_8nodeSplitMerge)[1]);
+        console.log($IB.betweennessCentrality2(graph_8nodeSplitAfter1mergeBefore1, false, true));
     });
 
 });

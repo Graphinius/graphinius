@@ -42,7 +42,7 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
-      if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b)) {
+      if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b) && paths[a][b][0] != null) {
 
         let tempMap = {};
         let leadArray: Array<Array<number>> = [];
@@ -124,7 +124,7 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
             }
           }
         } while (leadArray.length != 0)
-
+        
         /*console.log("pathcount is: " + pathCount);
         for (let key in tempMap) {
           console.log("tempMap content: " + tempMap[key]);

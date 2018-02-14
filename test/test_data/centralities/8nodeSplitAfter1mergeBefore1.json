@@ -30,95 +30,112 @@
           "endpointsUnnormalized": 7.0
         }
       }
-    }
-  },
-  "C": {
-    "edges": [
-      {
-        "to": "D",
-        "directed": true,
-        "weight": 1
-      },
-      {
-        "to": "I",
-        "directed": true,
-        "weight": 1
+    },
+    "C": {
+      "edges": [
+        {
+          "to": "D",
+          "directed": true,
+          "weight": 1
+        },
+        {
+          "to": "I",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.1428,
+          "unnormalized": 6.0,
+          "endpoints": 0.3095,
+          "endpointsUnnormalized": 13.0
+        }
       }
-    ],
-    "features": {
-      "betweenness": {
-        "default": 0.1428,
-        "unnormalized": 6.0,
-        "endpoints": 0.3095,
-        "endpointsUnnormalized": 13.0
+    },
+    "D": {
+      "edges": [
+        {
+          "to": "E",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.0952,
+          "unnormalized": 4.0,
+          "endpoints": 0.2142,
+          "endpointsUnnormalized": 9.0
+        }
       }
-    }
-  },
-  "D": {
-    "edges": [
-      {
-        "to": "E",
-        "directed": true,
-        "weight": 1
+    },
+    "E": {
+      "edges": [
+        {
+          "to": "F",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.0952,
+          "unnormalized": 4.0,
+          "endpoints": 0.2142,
+          "endpointsUnnormalized": 9.0
+        }
       }
-    ],
-    "features": {
-      "betweenness": {
-        "default": 0.0952,
-        "unnormalized": 4.0,
-        "endpoints": 0.2142,
-        "endpointsUnnormalized": 9.0
+    },
+    "I": {
+      "edges": [
+        {
+          "to": "J",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.0952,
+          "unnormalized": 4.0,
+          "endpoints": 0.2142,
+          "endpointsUnnormalized": 9.0
+        }
       }
-    }
-  },
-  "E": {
-    "edges": [
-      {
-        "to": "B",
-        "directed": true,
-        "weight": 1
+    },
+    "J": {
+      "edges": [
+        {
+          "to": "F",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.0952,
+          "unnormalized": 4.0,
+          "endpoints": 0.2142,
+          "endpointsUnnormalized": 9.0
+        }
       }
-    ],
-    "features": {
-      "betweenness": {
-        "default": 0.0952,
-        "unnormalized": 4.0,
-        "endpoints": 0.2142,
-        "endpointsUnnormalized": 9.0
-      }
-    }
-  },
-  "I": {
-    "edges": [
-      {
-        "to": "J",
-        "directed": true,
-        "weight": 1
-      }
-    ],
-    "features": {
-      "betweenness": {
-        "default": 0.0952,
-        "unnormalized": 4.0,
-        "endpoints": 0.2142,
-        "endpointsUnnormalized": 9.0
-      }
-    }
-  },
-  "J": {
-    "edges": [
-      {
-        "to": "F",
-        "directed": true,
-        "weight": 1
-      }
-    ],
-    "features": {
-      "betweenness": {
-        "default": 0.0952,
-        "unnormalized": 4.0,
-        "endpoints": 0.2142,
-        "endpointsUnnormalized": 9.0
+    },
+    "F": {
+      "edges": [
+        {
+          "to": "B",
+          "directed": true,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "betweenness": {
+          "default": 0.1428,
+          "unnormalized": 6.0,
+          "endpoints": 0.3095,
+          "endpointsUnnormalized": 13.0
+        }
       }
     }
   }
