@@ -25,7 +25,11 @@ let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
     path_7nodeMerge1beforeGoal = "./test/test_data/centralities/7nodeMerge1beforeGoal.json",
     path_8nodeSplitMerge = "./test/test_data/centralities/8nodeSplitMerge.json",
     path_8nodeSplitAfter1mergeBefore1 = "./test/test_data/centralities/8nodeSplitAfter1mergeBefore1.json",
-    path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json";
+    path_search_no1DE = "./test/test_data/search_graph_multiple_SPs_no1DE.json",
+    //until this point, all graphs have checking values in the features
+    path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json",
+    path_search_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
+    path_search_nullEdge = "./test/test_data/search_graph_multiple_SPs.json";
 
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_3nodeDir = json.readFromJSONFile(path_3nodeDir),
@@ -35,27 +39,45 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_7nodeMerge1beforeGoal = json.readFromJSONFile(path_7nodeMerge1beforeGoal),
     graph_8nodeSplitMerge = json.readFromJSONFile(path_8nodeSplitMerge),
     graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1),
-    graph_midSizeGraph= json.readFromJSONFile(path_midSizeGraph);
+    graph_midSizeGraph = json.readFromJSONFile(path_midSizeGraph),
+    graph_search_no1DE = json.readFromJSONFile(path_search_no1DE),
+    graph_search_pos = json.readFromJSONFile(path_search_pos),
+    graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge);
 
-describe.only('test if graph and node features can be read in from Json', () => {
-    it.skip('should instantiate the correct graph', () => {
-        console.log(graph_3nodeUnd.nrUndEdges());
-        console.log(graph_3nodeUnd.nrNodes());
-        console.log(graph_3nodeUnd.getNodeById("B").getFeatures()["betweenness"].default);
+describe.only('check correctness and runtime of new betweennessCentrality function', () => {
+    it('should compute betweenness correctly and compare it to networkx values', () => {
+        //here one can give in any graph from the above ones and compare to 
+        //caution! this works only with the new Jsons, where we have the networkx data
+        let graph = graph_5nodeLinear;
+        let nodes = graph.getNodes();
+        console.log("unnormalized betweenness values for the chosen graph");
+        for (let key in nodes) {
+            console.log(nodes[key].getID() + " : " + nodes[key].getFeatures()["betweenness"].unnormalized);
+        }
+        console.log("Betweenness computed with betweennessCentrality2 function:");
+        //info: first boolean is yet indifferent (will have a role once we want to normalize)
+        //second boolean: if true or missing, Johnsons is used, if false, FW with nextArray transformation
+        console.log($IB.betweennessCentrality2(graph, false, true));
     });
 
-    //status: bc1 does not terminate, bc2 gives error
-    it('should compute betweenness correctly', () => {
-        //console.log($JO.Johnsons(graph_8nodeSplitMerge)[0]);
-        //console.log($JO.Johnsons(graph_8nodeSplitMerge)[1]);
-        console.log($IB.betweennessCentrality2(graph_8nodeSplitAfter1mergeBefore1, false, true));
+    
+    it('should compute betweenness correctly, no comparison to networkx', () => {
+        let graph = graph_search_pos;
+        console.log("Betweenness computed with betweennessCentrality2 function:");
+        console.log($IB.betweennessCentrality2(graph, false, true));
     });
+
+    //to measure runtimes
+    it('runtime checker', () => {
+        let startF = +new Date();
+        $IB.betweennessCentrality2(graph_midSizeGraph, false, true);
+        let endF = +new Date();
+        //runtimes are always in ms
+        console.log("runtime: " + (endF - startF));
+    });
+
 
 });
-
-
-
-
 
 //old part, now coded out for a while
 /*let sn_graph_file = "./test/test_data/social_network_edges.csv",

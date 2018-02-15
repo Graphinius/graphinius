@@ -43,17 +43,18 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
       if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b) && paths[a][b][0] != null) {
-
         let tempMap = {};
         let leadArray: Array<Array<number>> = [];
         let pathCount = 0;
 
         do {
+          //ends when all paths are traced back
           let tracer = b;
           let leadCounter = 0;
           pathCount++;
 
           while (true) {
+            //ends when one path is traced back
             let previous: Array<number> = paths[a][tracer];
             let terminate = false;
             //no branching: 
@@ -67,9 +68,11 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
             }
             //if there is a branching:
             //handle reaching the terminal node here too!          
-            else {
+            if (previous.length > 1) {
               //case: leadArray is empty and we find a branch
               if (leadArray.length == 0) {
+                //leave a trace in the leadArray
+                leadArray.push([0, previous.length]);
                 if (previous[0] == tracer) {
                   terminate = true;
                 }
@@ -77,8 +80,7 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
                   tracer = previous[0];
                   tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
                 }
-                //leave a trace in the leadArray
-                leadArray.push([0, previous.length]);
+                leadCounter++;
               }
               //case: branch is covered by the leadArray
               else if (leadCounter < leadArray.length) {
@@ -95,6 +97,8 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
 
               //case: branch is beyond the leadArray (new branching encountered)
               else {
+                //leave a trace in the leadArray
+                leadArray.push([0, previous.length]);
                 if (previous[0] == tracer) {
                   terminate = true;
                 }
@@ -102,8 +106,7 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
                   tracer = previous[0];
                   tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
                 }
-                //leave a trace in the leadArray
-                leadArray.push([0, previous.length]);
+                leadCounter++;
               }
             }
             if (terminate) {
@@ -124,11 +127,6 @@ function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: bo
             }
           }
         } while (leadArray.length != 0)
-        
-        /*console.log("pathcount is: " + pathCount);
-        for (let key in tempMap) {
-          console.log("tempMap content: " + tempMap[key]);
-        }*/
 
         //now put the correct scores into the final map
         //be careful, the return map uses letters as nodekeys! - one must transform, otherwise one gets rubbish
