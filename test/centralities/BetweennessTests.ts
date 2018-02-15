@@ -44,27 +44,47 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_search_pos = json.readFromJSONFile(path_search_pos),
     graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge);
 
-describe.only('check correctness and runtime of new betweennessCentrality function', () => {
-    it('should compute betweenness correctly and compare it to networkx values', () => {
+describe('check correctness and runtime of new betweennessCentrality function', () => {
+    it.only('should compute betweenness correctly and compare it to networkx values', () => {
         //here one can give in any graph from the above ones and compare to 
         //caution! this works only with the new Jsons, where we have the networkx data
-        let graph = graph_5nodeLinear;
+        let graph = graph_8nodeSplitMerge;
         let nodes = graph.getNodes();
-        console.log("unnormalized betweenness values for the chosen graph");
+        let mapControl = {};
+        console.log("unnormalized betweenness values for the chosen graph (Networkx)");
         for (let key in nodes) {
-            console.log(nodes[key].getID() + " : " + nodes[key].getFeatures()["betweenness"].unnormalized);
+            mapControl[nodes[key].getID()] = nodes[key].getFeatures()["betweenness"].unnormalized;
+
         }
+        console.log(mapControl);
         console.log("Betweenness computed with betweennessCentrality2 function:");
         //info: first boolean is yet indifferent (will have a role once we want to normalize)
         //second boolean: if true or missing, Johnsons is used, if false, FW with nextArray transformation
-        console.log($IB.betweennessCentrality2(graph, false, true));
+        console.log($IB.betweennessCentrality2(graph, false, false));
     });
 
-    
     it('should compute betweenness correctly, no comparison to networkx', () => {
         let graph = graph_search_pos;
         console.log("Betweenness computed with betweennessCentrality2 function:");
         console.log($IB.betweennessCentrality2(graph, false, true));
+    });
+
+    it('our Brandes, just for a comparison', () => {
+        //here one can give in any graph from the above ones and compare to 
+        //caution! this works only with the new Jsons, where we have the networkx data
+        let graph = graph_8nodeSplitMerge;
+        let nodes = graph.getNodes();
+        let mapControl = {};
+        console.log("unnormalized betweenness values for the chosen graph (Networkx)");
+        for (let key in nodes) {
+            mapControl[nodes[key].getID()] = nodes[key].getFeatures()["betweenness"].unnormalized;
+
+        }
+        console.log(mapControl);
+        console.log("Betweenness computed with our Brandes function:");
+        //info: first boolean is yet indifferent (will have a role once we want to normalize)
+        //second boolean: if true or missing, Johnsons is used, if false, FW with nextArray transformation
+        console.log($B.Brandes(graph));
     });
 
     //to measure runtimes
