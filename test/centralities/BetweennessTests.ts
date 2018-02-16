@@ -45,7 +45,7 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge);
 
 describe('check correctness and runtime of new betweennessCentrality function', () => {
-    it.only('should compute betweenness correctly and compare it to networkx values', () => {
+    it('should compute betweenness correctly and compare it to networkx values', () => {
         //here one can give in any graph from the above ones and compare to 
         //caution! this works only with the new Jsons, where we have the networkx data
         let graph = graph_8nodeSplitMerge;
@@ -67,6 +67,22 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         let graph = graph_search_pos;
         console.log("Betweenness computed with betweennessCentrality2 function:");
         console.log($IB.betweennessCentrality2(graph, false, true));
+    });
+
+    it.only('debugging - logging for the inconsistent graphs', () => {
+        // console.log("logs for the 3node2SP... graph");
+        // console.log("nextArray, according to FW:");
+        // console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_3node2SPs1direct)[1]));
+        // console.log("nextArray, according to Johnsons:");
+        // console.log($JO.Johnsons(graph_3node2SPs1direct)[1]);
+        // $IB.betweennessCentrality2(graph_3node2SPs1direct, false, true);
+
+        console.log("logs for the 4node2SP... graph");
+        console.log("nextArray, according to FW:");
+        console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_4node2SPs1direct)[1]));
+        console.log("nextArray, according to Johnsons:");
+        console.log($JO.Johnsons(graph_4node2SPs1direct)[1]);
+        $IB.betweennessCentrality2(graph_4node2SPs1direct, false, true);
     });
 
     it('our Brandes, just for a comparison', () => {
