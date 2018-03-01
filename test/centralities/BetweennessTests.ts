@@ -10,6 +10,7 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 
 
+
 const SN_GRAPH_NODES = 1034,
     SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
@@ -48,7 +49,7 @@ describe('check correctness and runtime of new betweennessCentrality function', 
     it('should compute betweenness correctly and compare it to networkx values', () => {
         //here one can give in any graph from the above ones and compare to 
         //caution! this works only with the new Jsons, where we have the networkx data
-        let graph = graph_8nodeSplitMerge;
+        let graph = graph_4node2SPs1direct;
         let nodes = graph.getNodes();
         let mapControl = {};
         console.log("unnormalized betweenness values for the chosen graph (Networkx)");
@@ -69,7 +70,7 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         console.log($IB.betweennessCentrality2(graph, false, true));
     });
 
-    it.only('debugging - logging for the inconsistent graphs', () => {
+    it('debugging - logging for the inconsistent graphs', () => {
         // console.log("logs for the 3node2SP... graph");
         // console.log("nextArray, according to FW:");
         // console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_3node2SPs1direct)[1]));
@@ -79,16 +80,16 @@ describe('check correctness and runtime of new betweennessCentrality function', 
 
         console.log("logs for the 4node2SP... graph");
         console.log("nextArray, according to FW:");
-        console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_4node2SPs1direct)[1]));
+        console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_search_nullEdge)[1]));
         console.log("nextArray, according to Johnsons:");
-        console.log($JO.Johnsons(graph_4node2SPs1direct)[1]);
-        $IB.betweennessCentrality2(graph_4node2SPs1direct, false, true);
+        console.log($JO.Johnsons(graph_search_nullEdge)[1]);
+        $IB.betweennessCentrality2(graph_search_nullEdge, false, true);
     });
 
     it('our Brandes, just for a comparison', () => {
         //here one can give in any graph from the above ones and compare to 
         //caution! this works only with the new Jsons, where we have the networkx data
-        let graph = graph_8nodeSplitMerge;
+        let graph = graph_5nodeLinear;
         let nodes = graph.getNodes();
         let mapControl = {};
         console.log("unnormalized betweenness values for the chosen graph (Networkx)");
@@ -103,13 +104,40 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         console.log($B.Brandes(graph));
     });
 
+    it('BrandesForWeighted tests', () => {
+        let graph = graph_search_no1DE;
+        console.log("Betweenness with slow but good algorithm:");
+        console.log($IB.betweennessCentrality2(graph, false, true));
+
+        // let nodes = graph.getNodes();
+        // let mapControl = {};
+        // console.log("unnormalized betweenness values for the chosen graph (Networkx)");
+        // for (let key in nodes) {
+        //     mapControl[nodes[key].getID()] = nodes[key].getFeatures()["betweenness"].unnormalized;
+
+        // }
+        // console.log(mapControl);
+        
+        console.log("Betweenness computed with our BrandesForWeighted function:");
+        console.log($B.BrandesForWeighted(graph));
+        //console.log($JO.Johnsons(graph)[1]);
+    });
+
     //to measure runtimes
-    it('runtime checker', () => {
-        let startF = +new Date();
-        $IB.betweennessCentrality2(graph_midSizeGraph, false, true);
-        let endF = +new Date();
+    it.only('runtime checker', () => {
+        let graph=graph_midSizeGraph;
+        
+        let startB = +new Date();
+        $B.BrandesForWeighted(graph);
+        let endB = +new Date();
         //runtimes are always in ms
-        console.log("runtime: " + (endF - startF));
+        console.log("runtime of BrandesForWeighted: " + (endB - startB));
+
+        let startP = +new Date();
+        $JO.PFSforAllSources(graph);
+        let endP = +new Date();
+        console.log("runtime of PSFforAllSources: " + (endP - startP));
+
     });
 
 

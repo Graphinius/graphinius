@@ -221,7 +221,7 @@ export interface PFS_Scope {
         /**
          * HOOK 6: Equal path found (same weight)
          */
-        //at the moment, this callback array is empty. This hook is needed in the Johnsons only
+        //at the moment, this callback array is empty here in the PFS and in the Dijkstra, but used in the Johnsons
         
         if ( scope.next.best === scope.better_dist ) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
