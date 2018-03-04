@@ -105,7 +105,8 @@ describe('check correctness and runtime of new betweennessCentrality function', 
     });
 
     it('BrandesForWeighted tests', () => {
-        let graph = graph_search_no1DE;
+        let graph = graph_search_pos;
+        // console.log(graph.adjListDict());
         console.log("Betweenness with slow but good algorithm:");
         console.log($IB.betweennessCentrality2(graph, false, true));
 
@@ -117,16 +118,16 @@ describe('check correctness and runtime of new betweennessCentrality function', 
 
         // }
         // console.log(mapControl);
-        
+
         console.log("Betweenness computed with our BrandesForWeighted function:");
         console.log($B.BrandesForWeighted(graph));
-        //console.log($JO.Johnsons(graph)[1]);
+        // console.log($JO.Johnsons(graph)[1]);
     });
 
     //to measure runtimes
-    it.only('runtime checker', () => {
-        let graph=graph_midSizeGraph;
-        
+    it('runtime checker for Brandes, compare to PFS', () => {
+        let graph = graph_midSizeGraph;
+
         let startB = +new Date();
         $B.BrandesForWeighted(graph);
         let endB = +new Date();
@@ -140,6 +141,34 @@ describe('check correctness and runtime of new betweennessCentrality function', 
 
     });
 
+    //to test the PFS alternative for correctness
+    it('test alternative PFS', () => {
+        let graph = graph_search_no1DE;
+        console.log("results by PFSforAllSources (Johnsons)");
+        console.log($JO.Johnsons(graph)[0]);
+        console.log($JO.Johnsons(graph)[1]);
+
+        console.log("results from new PFS");
+        console.log($B.PFSdictBased(graph)[0]);
+        console.log($B.PFSdictBased(graph)[1]);
+    });
+
+    //to measure runtimes
+    it.only('runtime checker for alternative PFS; a fair comparison', () => {
+        let graph = graph_midSizeGraph;
+
+        let startB = +new Date();
+        $B.PFSdictBased(graph);
+        let endB = +new Date();
+        //runtimes are always in ms
+        console.log("runtime of PFSdictBased: " + (endB - startB));
+
+        let startP = +new Date();
+        $JO.PFSforAllSources(graph);
+        let endP = +new Date();
+        console.log("runtime of PSFforAllSources: " + (endP - startP));
+
+    });
 
 });
 
