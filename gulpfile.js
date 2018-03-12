@@ -101,7 +101,7 @@ gulp.task("tdoc", ['clean'], function() {
 		.src(paths.typesources)
 		.pipe(tdoc({
 			module: "commonjs",
-			target: "ES5",
+			target: "es2017",
 			out: "docs/",
 			name: "GraphiniusJS"//,
 			//theme: "minimal"
