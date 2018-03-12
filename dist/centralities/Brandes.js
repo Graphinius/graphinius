@@ -1,12 +1,5 @@
 "use strict";
-/**
- * Previous version created by ru on 14.09.17 is to be found below.
- * Modifications by Rita on 28.02.2018 - now it can handle branchings too.
- * CONTENTS:
- * Brandes: according to Brandes 2001, it is meant for unweighted graphs (+undirected according to the paper, but runs fine on directed ones, too)
- * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
- * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
- */
+/// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @param graph input graph

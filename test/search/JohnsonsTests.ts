@@ -218,7 +218,6 @@ describe('Johnsons APSP TEST -', () => {
             "The graph contains a negative edge, thus it can not be processed");
     });
 
-
     //status: works fine.
     it('function addextraNandE should function correctly', () => {
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");

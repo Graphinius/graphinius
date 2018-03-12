@@ -786,6 +786,7 @@ declare module 'graphinius/centralities/Betweenness' {
 
 }
 declare module 'graphinius/centralities/Brandes' {
+	/// <reference path="../../typings/tsd.d.ts" />
 	/**
 	 * Previous version created by ru on 14.09.17 is to be found below.
 	 * Modifications by Rita on 28.02.2018 - now it can handle branchings too.
