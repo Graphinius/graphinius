@@ -28,35 +28,29 @@ const expect = chai.expect,
 
 
 //spy stuff
-let BFDSpy = sinon.spy($BF.BellmanFordDict),
-    extraNSpy = sinon.spy($JO.addExtraNandE),
-    preparePFSSpy = sinon.spy($PFS.preparePFSStandardConfig),
-    PFSinJohnsonsSpy = sinon.spy($JO.PFSforAllSources),
-    backupBFD,
-    backupextraN,
-    backuppreparePFS,
-    backupPFSinJohnsons;
+let BFDSpy, 
+    extraNSpy, 
+    preparePFSSpy, 
+    PFSinJohnsonsSpy;
 
-    //can I have more than one describe sections in a test file?
-describe.only('Spy section Johnsons', () => {
+//can I have more than one describe sections in a test file?
+describe('Spy section Johnsons', () => {
 
-    before(() => {
-        backupBFD = $BF.BellmanFordDict;
-        backupextraN = $JO.addExtraNandE;
-        backuppreparePFS = $PFS.preparePFSStandardConfig;
-        backupPFSinJohnsons = $JO.PFSforAllSources;
-        $BF.BellmanFordDict = BFDSpy;
-        $JO.addExtraNandE = extraNSpy;
-        $PFS.preparePFSStandardConfig = preparePFSSpy;
-        $JO.PFSforAllSources = PFSinJohnsonsSpy;
+    let sandbox = sinon.sandbox.create();
+
+    beforeEach(() => {
+        BFDSpy = sandbox.spy($BF, "BellmanFordDict");
+        extraNSpy = sandbox.spy($JO, "addExtraNandE");
+        preparePFSSpy = sandbox.spy($PFS, "preparePFSStandardConfig");
+        PFSinJohnsonsSpy = sandbox.spy($JO, "PFSforAllSources");
     });
 
-    after(() => {
-        $BF.BellmanFordDict = backupBFD;
-        $JO.addExtraNandE = backupextraN;
-        $PFS.preparePFSStandardConfig = backuppreparePFS;
-        $JO.PFSforAllSources = backupPFSinJohnsons;
+    afterEach(() => {
+        sandbox.restore();
     });
+
+
+
 
     it('debugging - positive graph in Johnsons', () => {
         $JO.Johnsons(graph_search);
@@ -106,12 +100,11 @@ describe('Johnsons APSP TEST -', () => {
 
 
     before(() => {
-
         //read in the graph objects from file
         graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
-            graph_bernd = json.readFromJSONFile(bernd_graph),
-            graph_midsize = json.readFromJSONFile(intermediate),
-            graph_social = csv.readFromEdgeListFile(social_graph);
+        graph_bernd = json.readFromJSONFile(bernd_graph),
+        graph_midsize = json.readFromJSONFile(intermediate),
+        graph_social = csv.readFromEdgeListFile(social_graph);
     });
 
 
@@ -161,6 +154,9 @@ describe('Johnsons APSP TEST -', () => {
     });
 
     //Screwed! Since I made some small fix to the FW, this is screwed!!! FW is faster!
+    /**
+     * Performance comparisons should be extracted out, especially when spies are used on some functions involved, since spying drastically impairs performance
+     */
     it.skip('on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall', () => {
         let startF = +new Date();
         $FW.FloydWarshallAPSP(graph_midsize);

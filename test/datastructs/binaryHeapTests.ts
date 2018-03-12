@@ -84,12 +84,12 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('should accept String encoded Integers as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("55")).to.equal(55);
+      expect(binHeap.evalInputPriority("55.55")).to.equal(55);
     });
 
 
     it('should accept String encoded negative Integers as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("-55")).to.equal(-55);
+      expect(binHeap.evalInputPriority("-55.55")).to.equal(-55);
     });
 
 

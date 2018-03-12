@@ -567,7 +567,7 @@ declare module 'graphinius/core/Graph' {
 	    getRandomUndEdge(): $E.IBaseEdge;
 	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
-	    toDirectedGraph(): IGraph;
+	    toDirectedGraph(copy?: any): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    pickRandomProperty(propList: any): any;
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
@@ -600,7 +600,11 @@ declare module 'graphinius/core/Graph' {
 	        [key: string]: $E.IBaseEdge;
 	    };
 	    constructor(_label: any);
-	    toDirectedGraph(): IGraph;
+	    /**
+	     * Version 1: do it in-place (to the object you receive)
+	     * Version 2: clone the graph first, return the mutated clone
+	     */
+	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    /**
 	     * what to do if some edges are not weighted at all?
@@ -745,22 +749,53 @@ declare module 'graphinius/core/Graph' {
 }
 declare module 'graphinius/search/FloydWarshall' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshall(graph: $G.IGraph): {};
-	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshall };
+	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshall(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshall, changeNextToDirectParents };
+
+}
+declare module 'graphinius/search/Dijkstra' {
+	/// <reference path="../../typings/tsd.d.ts" />
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph';
+	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
+	    [id: string]: $PFS.PFS_ResultEntry;
+	};
+	export { Dijkstra };
+
+}
+declare module 'graphinius/search/Johnsons' {
+	/// <reference path="../../typings/tsd.d.ts" />
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSforAllSources(graph: $G.IGraph): {};
+	export { Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources };
 
 }
 declare module 'graphinius/centralities/Betweenness' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean): {};
-	export { inBetweennessCentrality };
+	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: boolean): {};
+	/**
+	 * This is used to run through all shortest paths and
+	 * apply betweenness score to all nodes between start
+	 * and endnode
+	 *
+	 * @param graph the graph to perform Floyd-Warshall on
+	 * @returns m*m matrix of values, m*m*m matrix of neighbors
+	 * @constructor
+	 */
+	export { betweennessCentrality2 };
 
 }
 declare module 'graphinius/centralities/Brandes' {
 	/**
-	 * Created by ru on 14.09.17.
+	 * Previous version created by ru on 14.09.17 is to be found below.
+	 * Modifications by Rita on 28.02.2018 - now it can handle branchings too.
+	 * CONTENTS:
+	 * Brandes: according to Brandes 2001, it is meant for unweighted graphs (+undirected according to the paper, but runs fine on directed ones, too)
+	 * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
+	 * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
 	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph): {};
-	export { Brandes };
+	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph): {}; function BrandesForWeighted(graph: $G.IGraph): {}; function PFSdictBased(graph: $G.IGraph): {};
+	export { Brandes, BrandesForWeighted, PFSdictBased };
 
 }
 declare module 'graphinius/centralities/Closeness' {
@@ -950,6 +985,7 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 
 }
 declare module 'graphinius/utils/remoteUtils' {
+	/// <reference types="node" />
 	import http = require('http'); function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
 
@@ -1203,15 +1239,5 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    }): void;
 	}
 	export { SimplePerturber };
-
-}
-declare module 'graphinius/search/Dijkstra' {
-	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
-	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
-	    [id: string]: $PFS.PFS_ResultEntry;
-	};
-	export { Dijkstra };
 
 }

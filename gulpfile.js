@@ -41,10 +41,13 @@ const paths = {
 //----------------------------
 var tsProject = ts.createProject({
 	target: "ES5",
-	module: "commonjs",
-	declaration: false,
-	noExternalResolve: false,
-  removeComments: true
+	lib: [
+		"es2017",
+		"dom"
+	],
+	// module: "commonjs",
+	// declaration: false,
+  // removeComments: true
 });
 
 
@@ -87,7 +90,7 @@ gulp.task('clean', function () {
 
 gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
-						 .pipe(ts(tsProject))
+						 .pipe(tsProject())
 						 .pipe(gulp.dest('.'));
 });
 
@@ -98,7 +101,7 @@ gulp.task("tdoc", ['clean'], function() {
 		.src(paths.typesources)
 		.pipe(tdoc({
 			module: "commonjs",
-			target: "es5",
+			target: "ES5",
 			out: "docs/",
 			name: "GraphiniusJS"//,
 			//theme: "minimal"
@@ -109,7 +112,7 @@ gulp.task("tdoc", ['clean'], function() {
 // Packaging - Node / Commonjs
 gulp.task('dist', ['clean'], function () {
 	var tsResult = gulp.src(paths.distsources)
-						 				 .pipe(ts(tsProject));
+						 				 .pipe(tsProject());
 	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
 	return merge([
@@ -258,7 +261,7 @@ gulp.task('watch-perturb', function () {
 });
 
 
-gulp.task('watch-cenral', function () {
+gulp.task('watch-central', function () {
 	gulp.watch(paths.typescripts, ['test-central']);
 });
 

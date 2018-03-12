@@ -54,7 +54,10 @@ class BinaryHeap implements IBinaryHeap {
                  if ( typeof obj !== 'number' && typeof obj !== 'string') {
                    return NaN;
                  }
-                 return parseInt(obj)
+                 if ( typeof obj === 'number' ) {
+                   return obj|0;
+                 }
+                 return parseInt(obj);
                },
                private _evalObjID = (obj:any) : any => {
                  return obj;

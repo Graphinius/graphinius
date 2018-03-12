@@ -1,13 +1,18 @@
 {
     "compilerOptions": {
       "module": "commonjs",
-      "target": "es5",
+      "target": "es2017",
+      "lib": [
+          "es2017",
+          "dom"
+      ],
       "declaration": true,
       "sourceMap": true,
       "outDir": "./dist"
     },
     "compileOnSave": false,
     "include": [
-        "./src/**/*.ts"
+        "./src/**/*.ts",
+        "./test/**/*.ts"
     ]
 }

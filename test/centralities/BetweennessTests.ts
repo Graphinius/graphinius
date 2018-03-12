@@ -154,7 +154,7 @@ describe('check correctness and runtime of new betweennessCentrality function', 
     });
 
     //to measure runtimes
-    it.only('runtime checker for alternative PFS; a fair comparison', () => {
+    it('runtime checker for alternative PFS; a fair comparison', () => {
         let graph = graph_midSizeGraph;
 
         let startB = +new Date();

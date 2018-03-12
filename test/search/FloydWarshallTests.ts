@@ -32,7 +32,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			stats							: $G.GraphStats,
 			FW_res						: {};
 
-
 	before(() => {
 		json = new JSON_IN(true,false,true);
 		csv = new CSV_IN(' ',false,false);
