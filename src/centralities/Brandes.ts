@@ -12,7 +12,8 @@
 import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
 import * as $P from '../search/PFS';
-import * as $SU from '../utils/structUtils'
+import * as $SU from '../utils/structUtils';
+
 
 
 /**
@@ -26,6 +27,7 @@ import * as $SU from '../utils/structUtils'
 function Brandes(graph: $G.IGraph, directed: boolean): {} {
     //directed: will be important later, when we normalize
     let nodes = graph.getNodes();
+    
 
     //Variables for Brandes algorithm
     let s,     //source node
