@@ -47,8 +47,8 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
 
 describe('check correctness and runtime of new betweennessCentrality function', () => {
     it('should compute betweenness correctly and compare it to networkx values', () => {
-        //here one can give in any graph from the above ones and compare to 
-        //caution! this works only with the new Jsons, where we have the networkx data
+        //the test graph can be changed any time,
+        //but caution! this works only with the new Jsons, where we have the networkx data        
         let graph = graph_4node2SPs1direct;
         let nodes = graph.getNodes();
         let mapControl = {};
@@ -70,26 +70,12 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         console.log($IB.betweennessCentrality2(graph, false, true));
     });
 
-    it('debugging - logging for the inconsistent graphs', () => {
-        // console.log("logs for the 3node2SP... graph");
-        // console.log("nextArray, according to FW:");
-        // console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_3node2SPs1direct)[1]));
-        // console.log("nextArray, according to Johnsons:");
-        // console.log($JO.Johnsons(graph_3node2SPs1direct)[1]);
-        // $IB.betweennessCentrality2(graph_3node2SPs1direct, false, true);
-
-        console.log("logs for the 4node2SP... graph");
-        console.log("nextArray, according to FW:");
-        console.log($FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph_search_nullEdge)[1]));
-        console.log("nextArray, according to Johnsons:");
-        console.log($JO.Johnsons(graph_search_nullEdge)[1]);
-        $IB.betweennessCentrality2(graph_search_nullEdge, false, true);
-    });
-
-    it('our Brandes, just for a comparison', () => {
-        //here one can give in any graph from the above ones and compare to 
-        //caution! this works only with the new Jsons, where we have the networkx data
-        let graph = graph_5nodeLinear;
+    
+    it('our Brandes', () => {
+        //here one can give in any graph from the above ones
+        //it will be compared to results from the BetwennessCentrality2
+        //works with any Jsons, new and old
+        let graph = graph_8nodeSplitAfter1mergeBefore1;
         let nodes = graph.getNodes();
         let mapControl = {};
         console.log("unnormalized betweenness values for the chosen graph (Networkx)");
@@ -99,9 +85,8 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         }
         console.log(mapControl);
         console.log("Betweenness computed with our Brandes function:");
-        //info: first boolean is yet indifferent (will have a role once we want to normalize)
-        //second boolean: if true or missing, Johnsons is used, if false, FW with nextArray transformation
-        console.log($B.Brandes(graph));
+        
+        console.log($B.Brandes(graph, true));
     });
 
     it('BrandesForWeighted tests', () => {
@@ -120,29 +105,29 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         // console.log(mapControl);
 
         console.log("Betweenness computed with our BrandesForWeighted function:");
-        console.log($B.BrandesForWeighted(graph));
+        console.log($B.BrandesForWeighted(graph, true));
         // console.log($JO.Johnsons(graph)[1]);
     });
 
     //to measure runtimes
-    it('runtime checker for Brandes, compare to PFS', () => {
+    it.only('runtime checker for Brandes, compare to PFS', () => {
         let graph = graph_midSizeGraph;
 
         let startB = +new Date();
-        $B.BrandesForWeighted(graph);
+        $B.BrandesForWeighted(graph, true);
         let endB = +new Date();
         //runtimes are always in ms
         console.log("runtime of BrandesForWeighted: " + (endB - startB));
 
         let startP = +new Date();
-        $JO.PFSforAllSources(graph);
+        $B.BrandesHeapBased(graph, true);
         let endP = +new Date();
-        console.log("runtime of PSFforAllSources: " + (endP - startP));
+        console.log("runtime of BrandesHeapBased: " + (endP - startP));
 
     });
 
     //to test the PFS alternative for correctness
-    it('test alternative PFS', () => {
+    it('test alternative PFS for correctness', () => {
         let graph = graph_search_no1DE;
         console.log("results by PFSforAllSources (Johnsons)");
         console.log($JO.Johnsons(graph)[0]);
@@ -153,7 +138,7 @@ describe('check correctness and runtime of new betweennessCentrality function', 
         console.log($B.PFSdictBased(graph)[1]);
     });
 
-    //to measure runtimes
+    //to measure runtimes, unfortunately the dict based PFS is slower
     it('runtime checker for alternative PFS; a fair comparison', () => {
         let graph = graph_midSizeGraph;
 

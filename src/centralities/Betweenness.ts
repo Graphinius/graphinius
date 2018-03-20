@@ -11,12 +11,12 @@ import { ifError } from 'assert';
  * This is used to get the betweenness of a graph by either
  * Bellman Ford (Johnsons) or Floyd Warshall with APSP.
  *
- * @param graph the graph to perform Floyd-Warshall on
+ * @param graph the graph to perform Floyd-Warshall/Johnsons on
  * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
  */
 
-//new idea included, now in debugging
+//function gives the correct results but is slow. Now good for testing, will not be kept later.
 function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;

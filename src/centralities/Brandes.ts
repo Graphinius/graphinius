@@ -11,6 +11,9 @@
 
 import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
+import * as $P from '../search/PFS';
+import * as $SU from '../utils/structUtils'
+
 
 /**
  * @param graph input graph
@@ -20,8 +23,8 @@ import * as $N from '../core/Nodes';
 
 //Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
 //for WEIGHTED graphs, see function BrandesForWeighted below!
-function Brandes(graph: $G.IGraph): {} {
-    //Information taken from graph
+function Brandes(graph: $G.IGraph, directed: boolean): {} {
+    //directed: will be important later, when we normalize
     let nodes = graph.getNodes();
 
     //Variables for Brandes algorithm
@@ -41,14 +44,17 @@ function Brandes(graph: $G.IGraph): {} {
 
     for (let n in nodes) {
         CB[nodes[n].getID()] = 0;
-        dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
-        sigma[nodes[n].getID()] = 0;
-        delta[nodes[n].getID()] = 0;
-        Pred[nodes[n].getID()] = [];
     }
 
     for (let i in nodes) {
         s = nodes[i];
+
+        for (let n in nodes) {
+            dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
+            sigma[nodes[n].getID()] = 0;
+            delta[nodes[n].getID()] = 0;
+            Pred[nodes[n].getID()] = [];
+        }
 
         //Initialization
         dist[s.getID()] = 0;
@@ -84,10 +90,10 @@ function Brandes(graph: $G.IGraph): {} {
                 CB[w.getID()] += delta[w.getID()];
             }
             //This spares us from having to loop over all nodes again for initialization
-            sigma[w.getID()] = 0;
-            delta[w.getID()] = 0;
-            dist[w.getID()] = Number.POSITIVE_INFINITY;
-            Pred[w.getID()] = [];
+            // sigma[w.getID()] = 0;
+            // delta[w.getID()] = 0;
+            // dist[w.getID()] = Number.POSITIVE_INFINITY;
+            // Pred[w.getID()] = [];
         }
     }
 
@@ -95,7 +101,7 @@ function Brandes(graph: $G.IGraph): {} {
 }
 
 //works on all graphs, weighted/unweighted, directed/undirected, with/without null weight edge!
-function BrandesForWeighted(graph: $G.IGraph): {} {
+function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {} {
 
     let nodes = graph.getNodes();
     let adjList = graph.adjListDict();
@@ -115,14 +121,17 @@ function BrandesForWeighted(graph: $G.IGraph): {} {
 
     for (let n in nodes) {
         CB[nodes[n].getID()] = 0;
-        dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
-        sigma[nodes[n].getID()] = 0;
-        delta[nodes[n].getID()] = 0;
-        Pred[nodes[n].getID()] = [];
     }
 
     for (let i in nodes) {
         s = nodes[i];
+
+        for (let n in nodes) {
+            dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
+            sigma[nodes[n].getID()] = 0;
+            delta[nodes[n].getID()] = 0;
+            Pred[nodes[n].getID()] = [];
+        }
 
         //Initialization
         dist[s.getID()] = 0;
@@ -131,7 +140,7 @@ function BrandesForWeighted(graph: $G.IGraph): {} {
 
         //graph traversal for actual source node
         while (Object.keys(Q).length >= 1) { //until Priority queue not empty
-            var values = Object.values(Q); //this seems to give an error, however it works fine!
+            var values = Object.values(Q);
             var min = Math.min(...values);
             for (let key in Q) {
                 if (Q[key] == min) {
@@ -168,7 +177,6 @@ function BrandesForWeighted(graph: $G.IGraph): {} {
                 if (dist[w] == dist[v] + neighbors[w]) {
                     sigma[w] += sigma[v];
                     Pred[w].push(v);
-
                 }
             }
         }
@@ -182,10 +190,10 @@ function BrandesForWeighted(graph: $G.IGraph): {} {
                 CB[w] += delta[w];
             }
             //This spares us from having to loop over all nodes again for initialization
-            sigma[w] = 0;
-            delta[w] = 0;
-            dist[w] = Number.POSITIVE_INFINITY;
-            Pred[w] = [];
+            // sigma[w] = 0;
+            // delta[w] = 0;
+            // dist[w] = Number.POSITIVE_INFINITY;
+            // Pred[w] = [];
         }
 
         //restoring the adjList using the tempJunk:
@@ -194,13 +202,92 @@ function BrandesForWeighted(graph: $G.IGraph): {} {
                 adjList[outKey][inKey] = tempJunk[outKey][inKey];
             }
         }
+    }
+    return CB;
+}
 
+//status: does not work yet, I need to figure out how to put nodes into the S stack
+function BrandesHeapBased(graph: $G.IGraph, directed: boolean): {} {
+    let nodes = graph.getNodes();
+    let adjList = graph.adjListDict();
+
+    //Variables for Brandes algorithm
+    let Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
+        sigma: { [key: string]: number } = {}, //number of shortest paths from source s to each node as goal node
+        delta: { [key: string]: number } = {}, //dependency of source node s on a node 
+        S: string[] = [],     //stack of nodeIDs - nodes waiting for their dependency values
+        CB: { [key: string]: number } = {};    //Betweenness values for each node
+
+    for (let n in nodes) {
+        CB[nodes[n].getID()] = 0;
+    }
+
+    //creating the config for the PFS
+    let specialConfig: $P.PFS_Config = $P.preparePFSStandardConfig();
+
+    //and now modify whatever I need to
+    var notEncounteredJohnsons = function (context: $P.PFS_Scope) {
+        context.next.best =
+            context.current.best + (isNaN(context.next.edge.getWeight()) ? $P.DEFAULT_WEIGHT : context.next.edge.getWeight());
+
+        Pred[context.next.node.getID()] = [];
+    };
+    specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
+
+    var betterPathJohnsons = function (context: $P.PFS_Scope) {
+        sigma[context.next.node.getID()] = 0;
+        sigma[context.next.node.getID()] += sigma[context.current.node.getID()];
+        Pred[context.next.node.getID()].push(context.current.node.getID());
+    };
+    //info: splice replaces the content created by the preparePFSStandardConfig function, 
+    //to the one I need here
+    specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
+
+    var equalPathJohnsons = function (context: $P.PFS_Scope) {
+        sigma[context.next.node.getID()] += sigma[context.current.node.getID()];
+        //mergeOrderedArrayNoDups does not work with the string[] of Pred! - works with number[] only...
+        //other approach needed to avoid duplicates
+        if (Pred[context.next.node.getID()].indexOf(context.current.node.getID()) == -1) {
+            Pred[context.next.node.getID()].push(context.current.node.getID());
+        }
+    }
+    //this array is empty so it is fine to just push
+    specialConfig.callbacks.equal_path.push(equalPathJohnsons);
+
+    //step: initialize dicts and call the PFS for each node
+    for (let i in nodes) {
+        let s = nodes[i];
+
+        for (let n in nodes) {
+            sigma[nodes[n].getID()] = 0;
+            delta[nodes[n].getID()] = 0;
+            Pred[nodes[n].getID()] = [];
+        }
+
+        //Initialization
+        sigma[s.getID()] = 1;
+
+        //now call the PFS
+        $P.PFS(graph, s, specialConfig);
+        
+
+        //step: do the scoring, using S, Pred and sigma
+        //Accumulation: back-propagation of dependencies
+        while (S.length >= 1) {
+            let w = S.pop();
+            for (let parent of Pred[w]) {
+                delta[parent] += (sigma[parent] / sigma[w] * (1 + delta[w]));
+            }
+            if (w != s.getID()) {
+                CB[w] += delta[w];
+            }
+        }
     }
 
     return CB;
 }
 
-//an alternative for our PFS, returns the same output arrays as the Johnsons
+//an alternative for our PFS, returns the same output arrays as the Johnsons - for a fair comparison, which is faster (Johnsons, alias heap-based)
 function PFSdictBased(graph: $G.IGraph): {} {
 
     let nodes = graph.getNodes();
@@ -226,38 +313,39 @@ function PFSdictBased(graph: $G.IGraph): {} {
     }
 
     //Variables for Brandes algorithm
-    let s,     //source node, 
+    let s,     //source node, it is a node, while v and w are nodeIDs (therefore, strings)
         v: string,    //parent of w, at least one shortest path between s and w leads through v
         w: string,     //neighbour of v, lies one edge further than v from s
-        Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
-        dist: { [key: string]: number } = {},  //distances from source node s to each node
+        // Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
+        // dist: { [key: string]: number } = {},  //distances from source node s to each node
         Q: { [key: string]: number } = {},     //Nodes to visit - this time, a Priority queue, so it is a dict
         tempJunk: $G.MinAdjacencyListDict = {}; // will be used to store key-value pairs temporarily
 
-    for (let n in nodes) {
-        dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
-        Pred[nodes[n].getID()] = [];
+    //filling up the output arrays with initial values
+    for (let i = 0; i < N; i++) {
+        dists.push([]);
+        next.push([]);
+        for (let j = 0; j < N; j++) {
+            dists[i][j] = Number.POSITIVE_INFINITY;
+            next[i][j] = [null];
+        }
     }
 
     //graph traversal for each source nodes
-    for (let i in nodes) {
-        s = nodes[i];
+    for (let n in nodes) {
+        s = nodes[n];
 
         tempJunk = {}; // will be used later to store key-value pairs temporarily
 
-        for (let n in nodes) {
-            dist[nodes[n].getID()] = Number.POSITIVE_INFINITY;
-            Pred[nodes[n].getID()] = [];
-        }
-
         //Initialization for source node
-        dist[s.getID()] = 0;
-        Pred[s.getID()].push(nodeIDMap[s.getID()]);
+        let i = nodeIDMap[s.getID()];
+        dists[i][i] = 0;
+        next[i][i] = [i];
         Q[s.getID()] = 0;
 
         //graph traversal for actual source node
         while (Object.keys(Q).length >= 1) { //until Priority queue not empty
-            var values = Object.values(Q); //this seems to give an error, however it works fine!
+            var values = Object.values(Q);
             var min = Math.min(...values);
             for (let key in Q) {
                 if (Q[key] == min) {
@@ -272,6 +360,7 @@ function PFSdictBased(graph: $G.IGraph): {} {
             //explore neigbourhood for actual node
             for (let w in neighbors) {
                 //cleaning up the v node from the neighbors of w to avoid returns
+                //necessary to handle graphs with zero weight edges correctly
                 //but before, key-value needs to be stored temporarily, to restore the adjList before the next source node
                 if (tempJunk[w] == undefined) {
                     tempJunk[w] = {};
@@ -281,19 +370,21 @@ function PFSdictBased(graph: $G.IGraph): {} {
 
                 //reminder: edge weight of e(v,w) is neighbors[w]
                 //Path discovery: w found for the first time, or shorter path found?
-                if (dist[w] > dist[v] + neighbors[w]) {
-                    Q[w] = dist[v] + neighbors[w];
-                    dist[w] = dist[v] + neighbors[w];
-                    Pred[w] = [];
+                let pw = nodeIDMap[w];
+                let pv = nodeIDMap[v];
+                if (dists[i][pw] > dists[i][pv] + neighbors[w]) {
+                    Q[w] = dists[i][pv] + neighbors[w];
+                    dists[i][pw] = dists[i][pv] + neighbors[w];
+                    next[i][pw] = [];
                 }
 
                 //Path counting: edge (v,w) on shortest path?
-                if (dist[w] == dist[v] + neighbors[w]) {
+                if (dists[i][pw] == dists[i][pv] + neighbors[w]) {
                     if (v == s.getID()) {
-                        Pred[w].push(nodeIDMap[w]);
+                        next[i][pw].push(nodeIDMap[w]);
                     }
                     else {
-                        Pred[w].push(nodeIDMap[v]);
+                        next[i][pw].push(nodeIDMap[v]);
                     }
                 }
             }
@@ -306,31 +397,11 @@ function PFSdictBased(graph: $G.IGraph): {} {
             }
         }
 
-        //here I need to copy the dist and Pred to the final arrays
-        let distsSubArr = [];
-        let nextSubArr=[];
-        for (let i=0; i<N; i++){
-            distsSubArr.push(0);
-            nextSubArr.push([]);
-        }
-        
-        for (let key in dist) {
-            let pos= nodeIDMap[key];
-            distsSubArr[pos]=dist[key];
-        }
-
-        for (let key in Pred){
-            let pos = nodeIDMap[key];
-            nextSubArr[pos]=Pred[key];            
-        }
-        dists.push(distsSubArr);
-        next.push(nextSubArr);
-
     }
     return [dists, next];
 }
 
-export { Brandes, BrandesForWeighted, PFSdictBased }
+export { Brandes, BrandesForWeighted, PFSdictBased, BrandesHeapBased }
 
 //stuff to explore how to create a priority queue
     // var map: { [key: string]: number } = {};
