@@ -795,8 +795,8 @@ declare module 'graphinius/centralities/Brandes' {
 	 * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
 	 * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
 	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph): {}; function BrandesForWeighted(graph: $G.IGraph): {}; function PFSdictBased(graph: $G.IGraph): {};
-	export { Brandes, BrandesForWeighted, PFSdictBased };
+	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph, directed: boolean): {}; function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {}; function BrandesHeapBased(graph: $G.IGraph, directed: boolean): {}; function PFSdictBased(graph: $G.IGraph): {};
+	export { Brandes, BrandesForWeighted, PFSdictBased, BrandesHeapBased };
 
 }
 declare module 'graphinius/centralities/Closeness' {
