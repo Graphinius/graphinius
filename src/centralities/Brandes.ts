@@ -13,7 +13,7 @@ import * as $G from '../core/Graph';
 import * as $N from '../core/Nodes';
 import * as $P from '../search/PFS';
 import * as $SU from '../utils/structUtils';
-
+import {BinaryHeap, BinaryHeapMode} from '../datastructs/binaryHeap';
 
 
 /**
@@ -108,15 +108,22 @@ function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {} {
     let nodes = graph.getNodes();
     let adjList = graph.adjListDict();
 
+    // eval Function for Neighbor distance
+    const neighborEval = (nb) => nb.dist;
+
     //Variables for Brandes algorithm
     let s,     //source node, 
         v: string,    //parent of w, at least one shortest path between s and w leads through v
         w: string,     //neighbour of v, lies one edge further than v from s
+        
+        nb_entry: {id: string, dist: number},
+
         Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
         sigma: { [key: string]: number } = {}, //number of shortest paths from source s to each node as goal node
         delta: { [key: string]: number } = {}, //dependency of source node s on a node 
         dist: { [key: string]: number } = {},  //distances from source node s to each node
-        Q: { [key: string]: number } = {},     //Nodes to visit - this time, a Priority queue, so it is a dict
+        // Q: { [key: string]: number } = {},     //Nodes to visit - this time, a Priority queue, so it is a dict
+        // Q: BinaryHeap = new BinaryHeap(BinaryHeapMode.MIN, neighborEval),
         S: string[] = [],     //stack of nodeIDs - nodes waiting for their dependency values
         CB: { [key: string]: number } = {},    //Betweenness values for each node
         tempJunk: $G.MinAdjacencyListDict = {}; // will be used to store key-key-value pairs temporarily
@@ -138,22 +145,28 @@ function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {} {
         //Initialization
         dist[s.getID()] = 0;
         sigma[s.getID()] = 1;
-        Q[s.getID()] = 0;
+        let Q: BinaryHeap = new BinaryHeap(BinaryHeapMode.MIN, neighborEval);
+        Q.insert({id: s.getID(), dist: 0});
 
         //graph traversal for actual source node
-        while (Object.keys(Q).length >= 1) { //until Priority queue not empty
-            var values = Object.values(Q);
-            var min = Math.min(...values);
-            for (let key in Q) {
-                if (Q[key] == min) {
-                    v = key;
-                    delete Q[key];
-                    break;
-                }
-            }
+        while ( Q.peek() ) { // unless Priority queue empty
+            
+            v = Q.pop();
 
-            S.push(v);
-            let neighbors = adjList[v]; //this is a dict itself, with node ID and dist values
+            // var values = Object.values(Q);
+            // var min = Math.min(...values);
+            // for (let key in Q) {
+            //     if (Q[key] == min) {
+            //         v = key;
+            //         delete Q[key];
+            //         break;
+            //     }
+            // }
+
+            // TODO: Make interface...
+            let id = v['id'];
+            S.push(id);
+            let neighbors = adjList[id];
 
 
             //explore neighbourhood for actual node
@@ -163,22 +176,24 @@ function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {} {
                 if (tempJunk[w] == undefined) {
                     tempJunk[w] = {};
                 }
-                tempJunk[w][v] = adjList[w][v];
-                delete adjList[w][v];
+                tempJunk[w][id] = adjList[w][id];
+                delete adjList[w][id];
 
                 //reminder: edge weight of e(v,w) is neighbors[w]
                 //Path discovery: w found for the first time, or shorter path found?
-                if (dist[w] > dist[v] + neighbors[w]) {
-                    Q[w] = dist[v] + neighbors[w];
+                let new_dist = dist[id] + neighbors[w];
+                if (dist[w] > new_dist ) {
+                    // Q[w] = dist[v] + neighbors[w];
+                    Q.insert({id: w, dist: new_dist})
                     sigma[w] = 0;
-                    dist[w] = dist[v] + neighbors[w];
+                    dist[w] = new_dist;
                     Pred[w] = [];
                 }
 
                 //Path counting: edge (v,w) on shortest path?
-                if (dist[w] == dist[v] + neighbors[w]) {
-                    sigma[w] += sigma[v];
-                    Pred[w].push(v);
+                if (dist[w] === new_dist) {
+                    sigma[w] += sigma[id];
+                    Pred[w].push(id);
                 }
             }
         }

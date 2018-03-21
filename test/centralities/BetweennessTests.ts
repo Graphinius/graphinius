@@ -111,19 +111,28 @@ describe('check correctness and runtime of new betweennessCentrality function', 
 
     //to measure runtimes
     it.only('runtime checker for Brandes, compare to PFS', () => {
-        let graph = graph_midSizeGraph;
+        // let graph = graph_midSizeGraph;
+        let graph = graph_8nodeSplitMerge;
 
-        let startB = +new Date();
-        $B.BrandesForWeighted(graph, true);
-        let endB = +new Date();
+        let startBU = +new Date();
+        let resBU = $B.Brandes(graph, false);
+        let endBU = +new Date();
         //runtimes are always in ms
-        console.log("runtime of BrandesForWeighted: " + (endB - startB));
+        console.log(`runtime of Brandes, UNweighted: ${endBU - startBU}`);
+
+        let startBW = +new Date();
+        let resBW = $B.BrandesForWeighted(graph, true);
+        let endBW = +new Date();
+        //runtimes are always in ms
+        console.log(`runtime of Brandes, Weighted: ${endBW - startBW}`);
 
         let startP = +new Date();
-        $B.BrandesHeapBased(graph, true);
+        let resBH = $B.BrandesHeapBased(graph, true);
         let endP = +new Date();
-        console.log("runtime of BrandesHeapBased: " + (endP - startP));
+        console.log("runtime of Brandes, PFS Based: " + (endP - startP));
 
+        expect(resBU).to.deep.equal(resBW);
+        // expect(resBU).to.deep.equal(resBH);
     });
 
     //to test the PFS alternative for correctness
