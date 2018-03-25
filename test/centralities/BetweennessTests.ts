@@ -31,6 +31,7 @@ let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
     path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json",
     path_search_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     path_search_nullEdge = "./test/test_data/search_graph_multiple_SPs.json";
+    
 
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_3nodeDir = json.readFromJSONFile(path_3nodeDir),
