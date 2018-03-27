@@ -29,7 +29,7 @@ function Johnsons(graph: $G.IGraph): {} {
     //reminder: output of the BellmanFordDict is BFDictResult
     //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
     if (BFresult.neg_cycle) {
-      throw new Error("The graph contains a negative edge, thus it can not be processed");
+      throw new Error("The graph contains a negative cycle, thus it can not be processed");
     }
 
     else {

@@ -91,6 +91,8 @@ describe('PFS TESTS - ', () => {
       expect(config.callbacks).to.exist;
       expect(config.callbacks.init_pfs).to.exist;
       expect(Array.isArray(config.callbacks.init_pfs)).to.be.true;
+      expect(config.callbacks.new_current).to.exist;
+      expect(Array.isArray(config.callbacks.new_current)).to.be.true;
       expect(config.callbacks.node_open).to.exist;
       expect(Array.isArray(config.callbacks.node_open)).to.be.true;
       expect(config.callbacks.node_closed).to.exist;
@@ -117,6 +119,8 @@ describe('PFS TESTS - ', () => {
       expect(config.messages).to.exist;
       expect(config.messages.init_pfs_msgs).to.exist;
       expect(Array.isArray(config.messages.init_pfs_msgs)).to.be.true;
+      expect(config.messages.new_current_msgs).to.exist;
+      expect(Array.isArray(config.messages.new_current_msgs)).to.be.true;
       expect(config.messages.node_open_msgs).to.exist;
       expect(Array.isArray(config.messages.node_open_msgs)).to.be.true;
       expect(config.messages.node_closed_msgs).to.exist;
@@ -156,13 +160,27 @@ describe('PFS TESTS - ', () => {
         config = $PFS.preparePFSStandardConfig();
 
       var pfsInitTestCallback = function () {
-        config.messages.init_pfs_msgs['test_message'] = "BFS INIT callback executed.";
+        config.messages.init_pfs_msgs['test_message'] = "PFS INIT callback executed.";
       };
       config.callbacks.init_pfs.push(pfsInitTestCallback);
       var result = $PFS.PFS(graph, root, config);
-      expect(config.messages.init_pfs_msgs['test_message']).to.equal("BFS INIT callback executed.");
+      expect(config.messages.init_pfs_msgs['test_message']).to.equal("PFS INIT callback executed.");
     });
 
+    it.only('should execute the new_current callbacks', () => {
+      var root = graph.getNodeById('E'),
+        config = $PFS.preparePFSStandardConfig();
+
+      var pfsNewCurrentTestCallback = function (scope: $PFS.PFS_Scope) {
+        console.log("current node: " + scope.current.node.getID());
+        console.log(scope.current.best);
+        config.messages.new_current_msgs['test_message'] = "PFS NEW CURRENT callback executed.";
+      };
+      config.callbacks.new_current.push(pfsNewCurrentTestCallback);
+      var result = $PFS.PFS(graph, root, config);
+      expect(config.messages.new_current_msgs['test_message']).to.equal("PFS NEW CURRENT callback executed.");
+
+    });
 
     it('should execute the goal reached callbacks', () => {
       var root = graph.getNodeById('A'),
