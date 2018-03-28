@@ -133,7 +133,7 @@ function PFS(graph: $G.IGraph,
    * Main loop
    */
   while (scope.OPEN_HEAP.size()) {
-    // console.log(scope.OPEN_HEAP); //LOG!
+    console.log(scope.OPEN_HEAP); //LOG!
     // get currently best node
     //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
     //it removes it from the heap, too - no extra removal needed
@@ -189,20 +189,14 @@ function PFS(graph: $G.IGraph,
      * EXPAND AND EXAMINE NEIGHBORHOOD
      */
 
-    //NEW STUFF! NEEDED TO AVOID DOUBLE INSERTION INTO THE OPEN HEAP!
-    //Check with Bernd!
-    //status when stopped: 
-    //from D, there are two edges to E. Therefore E is added twice to the open heap - for PFS; it is okay, for BC, it is not!
-    //the againstDups array would work fine, however the directed edge D-E with weight of 17 is handled first
-    //which changes the order of graph traversal
-    //duplications should be avoided, but if they offer a better edge, the value should be changed! - how????
+    
 
     for (var adj_idx in scope.adj_nodes) {
 
       scope.next = scope.adj_nodes[adj_idx];
 
-      // console.log("scopeNext now:"); //LOG!
-      // console.log(scope.next.node.getID());
+      console.log("scopeNext now:"); //LOG!
+      console.log(scope.next.node.getID());
 
       if (scope.CLOSED[scope.next.node.getID()]) {
         /**
@@ -215,7 +209,7 @@ function PFS(graph: $G.IGraph,
       if (scope.OPEN[scope.next.node.getID()]) {
         // First let's recover the previous best solution from our OPEN structure,
         // as the node's neighborhood-retrieving function cannot know it...
-        // console.log("MARKER - ALREADY OPEN"); //LOG!
+        console.log("MARKER - ALREADY OPEN"); //LOG!
         scope.next.best = scope.OPEN[scope.next.node.getID()].best;
 
         /**
@@ -259,7 +253,7 @@ function PFS(graph: $G.IGraph,
       // so we handle them here in the main loop
       scope.OPEN_HEAP.insert(scope.next);
       scope.OPEN[scope.next.node.getID()] = scope.next;
-      // console.log("MARKER-NOT ENCOUNTERED"); //LOG!
+      console.log("MARKER-NOT ENCOUNTERED"); //LOG!
 
     }
 

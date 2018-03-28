@@ -122,6 +122,19 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         expect(resBCslow).to.deep.equal(resBFW);
     });
 
+    it.only('temporary for debugging', () => {
+        let graph = graph_search_pos;
+
+        let br2 = $B.BrandesForWeighted2(graph, false, false);
+        console.log("graph traversal with min-based: ");
+        
+        //the heap-based BranfesForWeighted is not yet working on weighted graphs
+        //until that's fixed, one can run the BRandesForWeighted2 (min-based, slower)
+        let resBFW = $B.BrandesForWeighted(graph, false, false);
+        console.log("graph traversal with heap-based: ");
+        
+    });
+
     it('test correctness of BrandesForWeighted without normalization, on a graph containing zero-weight edge', () => {
         //now the comparison is made with the BetweennessCentrality2 algorithm (correct but slow one, good for testing only)
         //(with networkx, we have only unweighted test graphs)
@@ -159,18 +172,27 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         //better to clone graph, it will be transformed!
         let graph = graph_bf_graph;
         let workingGraph = graph.clone();
+        let workingGraph2 = graph.clone();
 
         expect(workingGraph.hasNegativeEdge()).to.equal(true);
+        expect(workingGraph2.hasNegativeEdge()).to.equal(true);
         //the heap-based BranfesForWeighted is not yet working on weighted graphs
         //until that's fixed, one can run the BRandesForWeighted2 (min-based, slower)
-        let resBFW = $B.BrandesForWeighted2(workingGraph, false, false);
+        let resSlow = $IB.betweennessCentrality2(workingGraph, true, true);
+        console.log("Betweenness with slow but correct algorithm: ");
+        console.log(resSlow);
+
+        let resBFW = $B.BrandesForWeighted2(workingGraph2, false, false);
         console.log("Betweenness computed with BrandesForWeighted2: ");
         console.log(resBFW);
 
+        expect(resSlow).to.deep.equal(resBFW);
+
         expect(workingGraph.hasNegativeEdge()).to.equal(false);
+        expect(workingGraph2.hasNegativeEdge()).to.equal(false);
     });
 
-    it.only('compare runtime of BrandesForWeighted to PFS based Brandes', () => {
+    it('compare runtime of BrandesForWeighted to PFS based Brandes', () => {
         //now the BrandesForWeighted2 is included too - now that's the only correct one
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;

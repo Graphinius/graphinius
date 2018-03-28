@@ -26,7 +26,7 @@ import * as $BH from '../datastructs/binaryHeap';
 
 //Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
 //for WEIGHTED graphs, see function BrandesForWeighted below!
-function Brandes(graph: $G.IGraph, normalize: boolean, directed: boolean): {} {
+function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean = false): {} {
 
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -118,7 +118,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean, directed: boolean): {} {
 
 //COPY USING MIN; NO HEAPS - FOR TESTING ONLY; WILL NOT STAY!
 //works on all graphs, weighted/unweighted, directed/undirected, with/without null weight edge!
-function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: boolean): {} {
+function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean = false, directed: boolean = false): {} {
 
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -161,11 +161,8 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
         S: string[] = [],     //stack of nodeIDs - nodes waiting for their dependency values
         CB: { [key: string]: number } = {};    //Betweenness values for each node
 
-    //APPR 3!
-    let closedNodes: { [key: string]: boolean } = {};
 
-    //APPR 2!
-    // let tempJunk: $G.MinAdjacencyListDict = {}; // will be used to store key-key-value pairs temporarily
+    let closedNodes: { [key: string]: boolean } = {};
 
     for (let n in nodes) {
         let currID = nodes[n].getID();
@@ -174,8 +171,6 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
         sigma[currID] = 0;
         delta[currID] = 0;
         Pred[currID] = [];
-
-        //APPR 3!
         closedNodes[currID] = false;
     }
 
@@ -187,8 +182,6 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
         dist[id_s] = 0;
         sigma[id_s] = 1;
         Q[id_s] = 0;
-
-        //APPR 3!
         closedNodes[id_s] = true;
 
         //graph traversal for actual source node
@@ -203,39 +196,19 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
                     break;
                 }
             }
-            // console.log("graph traversal2:" + v);
+            console.log("graph traversal Brandes2:" + v);
             S.push(v);
 
-            //APPR 3!
             closedNodes[v] = true;
 
             let neighbors = adjList[v];
 
-            //IDEAS FOR NOT TURNING BACK AT ZERO EDGE: (time costs are given on the midsize graph, base value : 500-520 ms)
-            // APPR1: check presence of node in S (all closed nodes are in S!) - time cost: 160-180 ms, 1 outcommented section
-            //APPR2: use tempJunk, but only for zero edges! - time cost: 20-30 ms, 3 outcommented sections
-            //APPR3: have a Dict, node id:boolean, set to true when node is closed. - time cost: 0-20 ms, 6 outcommented sections
-            //time cost of tempJunk, when used constantly: 80-100 ms
-
             //explore neighbourhood for actual node     
             for (let w in neighbors) {
 
-                //APPR 3!
-                if (closedNodes[w])
+                if (closedNodes[w]) {
                     continue;
-
-                //APPR 1!
-                // if (S.indexOf(w) !== -1)
-                //     continue;
-
-                //APPR 2!
-                // if (neighbors[w] === 0) {
-                //     if (tempJunk[w] == undefined) {
-                //         tempJunk[w] = {};
-                //     }
-                //     tempJunk[w][v] = adjList[w][v];
-                //     delete adjList[w][v];
-                // }
+                }
 
                 //reminder: edge weight of e(v,w) is neighbors[w]
                 //Path discovery: w found for the first time, or shorter path found?
@@ -254,7 +227,7 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
                 }
             }
         }
-        // console.log();
+        console.log();
         //Accumulation: back-propagation of dependencies
         while (S.length >= 1) {
             w = S.pop();
@@ -270,20 +243,8 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean, directed?: bo
             delta[w] = 0;
             dist[w] = Number.POSITIVE_INFINITY;
             Pred[w] = [];
-
-            //APPR 3!
             closedNodes[w] = false;
         }
-
-        //APPR 2!
-        //restoring the adjList using the tempJunk:
-        // if (Object.keys(tempJunk).length > 0) {
-        //     for (let outKey in tempJunk) {
-        //         for (let inKey in tempJunk[outKey]) {
-        //             adjList[outKey][inKey] = tempJunk[outKey][inKey];
-        //         }
-        //     }
-        // }
 
     }
 
@@ -323,8 +284,6 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
         sigma: { [key: string]: number } = {}, //number of shortest paths from source s to each node as goal node
         delta: { [key: string]: number } = {}, //dependency of source node s on a node 
         dist: { [key: string]: number } = {},  //distances from source node s to each node
-        // Q: { [key: string]: number } = {},     //Nodes to visit - this time, a Priority queue, so it is a dict
-        // Q: BinaryHeap = new BinaryHeap(BinaryHeapMode.MIN, neighborEval),
         S: string[] = [],     //stack of nodeIDs - nodes waiting for their dependency values
         CB: { [key: string]: number } = {},    //Betweenness values for each node
         tempJunk: $G.MinAdjacencyListDict = {}; // will be used to store key-key-value pairs temporarily
