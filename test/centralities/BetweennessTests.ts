@@ -122,17 +122,17 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         expect(resBCslow).to.deep.equal(resBFW);
     });
 
-    it.only('temporary for debugging', () => {
+    it('temporary for debugging', () => {
         let graph = graph_search_pos;
 
         let br2 = $B.BrandesForWeighted2(graph, false, false);
         console.log("graph traversal with min-based: ");
-        
+
         //the heap-based BranfesForWeighted is not yet working on weighted graphs
         //until that's fixed, one can run the BRandesForWeighted2 (min-based, slower)
         let resBFW = $B.BrandesForWeighted(graph, false, false);
         console.log("graph traversal with heap-based: ");
-        
+
     });
 
     it('test correctness of BrandesForWeighted without normalization, on a graph containing zero-weight edge', () => {
@@ -192,7 +192,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         expect(workingGraph2.hasNegativeEdge()).to.equal(false);
     });
 
-    it('compare runtime of BrandesForWeighted to PFS based Brandes', () => {
+    it.only('compare runtime of BrandesForWeighted to PFS based Brandes', () => {
         //now the BrandesForWeighted2 is included too - now that's the only correct one
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;
@@ -200,22 +200,22 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         let startBO = +new Date();
         let resBO = $B.BrandesForWeighted2(graph, false, false);
         let endBO = +new Date();
-        console.log("runtime of Brandes, weighted, original: " + (endBO - startBO));
+        console.log("runtime of Brandes, weighted, min-based: " + (endBO - startBO));
 
-        //now better to comment it out, as it contains lots of debugging-logs now..
-        // let startBW = +new Date();
-        // let resBW = $B.BrandesForWeighted(graph, false, false);
-        // let endBW = +new Date();
-        // //runtimes are always in ms
-        // console.log(`runtime of Brandes, Weighted: ${endBW - startBW}`);
+        let startBW = +new Date();
+        let resBW = $B.BrandesForWeighted(graph, false, false);
+        let endBW = +new Date();
+        //runtimes are always in ms
+        console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
 
         let startBP = +new Date();
         let resBP = $B.BrandesPFSbased(graph, false, false);
         let endBP = +new Date();
         console.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
-        //dont use these until the heap problem is not yet fixed! will just give an error...
-        //expect(resBO).to.deep.equal(resBW);
+        //these give an error, because sometimes the n-th digit after the decimal point is not the same... 
+        //but give it a try and look at the values...
+        // expect(resBO).to.deep.equal(resBW);
         // expect(resBW).to.deep.equal(resBP);        
     });
 
@@ -223,15 +223,19 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         //it will be compared to results from the BetwennessCentrality2
         //works with any Jsons, new and old
         //once the heap problem is fixed, the second can be modified to BrandesForWeighted, and all three will give the same results
-        let graph = graph_search_pos;
+        let graph = graph_search_nullEdge;
 
         console.log("Betweenness with slow but good algorithm:");
-        let resultBCOld = $IB.betweennessCentrality2(graph, false, true);
+        let resultBCOld = $IB.betweennessCentrality2(graph, true, true);
         console.log(resultBCOld);
 
         console.log("Betweenness computed with our BrandesForWeighted2 function:");
         let resultBCWMinBased = $B.BrandesForWeighted2(graph, false, false);
         console.log(resultBCWMinBased);
+
+        console.log("Betweenness computed with our BrandesForWeighted function:");
+        let resultBCWHeapBased = $B.BrandesForWeighted(graph, false, false);
+        console.log(resultBCWHeapBased);
 
         console.log("Betweenness computed with our BrandesPFSBased function:");
         let resultBrandesPFS = $B.BrandesPFSbased(graph, false, false);

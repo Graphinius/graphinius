@@ -25,6 +25,7 @@ export interface IBinaryHeap {
 
   // Actual heap operations
   insert(obj: any): void;
+  // reInsert(obj: any): void;
   remove(obj: any): any;
   peek(): any;
   pop(): any;
@@ -128,7 +129,23 @@ class BinaryHeap implements IBinaryHeap {
     this.trickleUp(this.size() - 1);
   }
 
+  //was a try but probably not needed
+  // /**
+  //  * Insert - Adding an object to the heap
+  //  * @param obj the obj to add to the heap
+  //  * @returns {number} the objects index in the internal array
+  //  */
+  // //this needs a fix so it should not give error
+  // reInsert(obj: any) {
+  //   if (isNaN(this._evalPriority(obj))) {
+  //     throw new Error("Cannot insert object without numeric priority.")
+  //   }
 
+  //   this._array.push(obj);
+  //   let nodeID = obj.node.getID();
+  //   this.setNodePosition(obj, this.size() - 1, true, this._positions[nodeID].position);
+  //   this.trickleUp(this.size() - 1);
+  // }
   /**
    * 
    */
@@ -167,20 +184,33 @@ class BinaryHeap implements IBinaryHeap {
         found = this._array[pos];
         // we pop the last element
         var last = this._array.pop();
+
+        //new fix on 01.04.2018 by Rita
+        //we need to remove it from the positions dict, too!
+        var occurrence = this._positions;
+        delete occurrence[objID];
+
         // we switch the last with the found element
         // and restore the heaps order, but only if the
         // heap size is not down to zero
         if (this.size()) {
-          this._array[pos] = last;
-          this.trickleUp(pos);
-          this.trickleDown(pos);
+          if (found !== last) {
+            this._array[pos] = last;
+            this.trickleUp(pos);
+            this.trickleDown(pos);
+          }
+          //new fix on 30.03.2018 by Rita
+          //if the found element is the last one, we should not give it back again to the array... 
+          else {
+            this.trickleUp(pos-1);
+            this.trickleDown(0);
+          }
         }
+
         return found;
       }
     }
-
     // console.log("Found undefined object at position: " + pos);
-
     return found;
   }
 
@@ -264,7 +294,7 @@ class BinaryHeap implements IBinaryHeap {
    */
   private setNodePosition(obj: any, new_pos: number, replace = true, old_pos?: number): void {
     if (typeof obj === 'undefined' || obj === null || typeof new_pos === 'undefined' || new_pos === null) {
-      throw new Error('minium required arguments are ojb and new_pos');
+      throw new Error('minium required arguments are obj and new_pos');
     }
     if (replace === true && (typeof old_pos === 'undefined' || old_pos === null)) {
       throw new Error('replacing a node position requires an old_pos');

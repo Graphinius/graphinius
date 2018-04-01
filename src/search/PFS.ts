@@ -133,12 +133,14 @@ function PFS(graph: $G.IGraph,
    * Main loop
    */
   while (scope.OPEN_HEAP.size()) {
-    console.log(scope.OPEN_HEAP); //LOG!
+    // console.log(scope.OPEN_HEAP); //LOG!
     // get currently best node
     //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
     //it removes it from the heap, too - no extra removal needed
 
     scope.current = scope.OPEN_HEAP.pop();
+    // console.log("current node: " + scope.current.node.getID()); //LOG!
+    // console.log(scope.current.best); //LOG!
     /**
      * HOOK 2: NEW CURRENT
      */
@@ -189,14 +191,14 @@ function PFS(graph: $G.IGraph,
      * EXPAND AND EXAMINE NEIGHBORHOOD
      */
 
-    
+
 
     for (var adj_idx in scope.adj_nodes) {
 
       scope.next = scope.adj_nodes[adj_idx];
 
-      console.log("scopeNext now:"); //LOG!
-      console.log(scope.next.node.getID());
+      // console.log("scopeNext now:"); //LOG!
+      // console.log(scope.next.node.getID());
 
       if (scope.CLOSED[scope.next.node.getID()]) {
         /**
@@ -209,7 +211,7 @@ function PFS(graph: $G.IGraph,
       if (scope.OPEN[scope.next.node.getID()]) {
         // First let's recover the previous best solution from our OPEN structure,
         // as the node's neighborhood-retrieving function cannot know it...
-        console.log("MARKER - ALREADY OPEN"); //LOG!
+        // console.log("MARKER - ALREADY OPEN"); //LOG!
         scope.next.best = scope.OPEN[scope.next.node.getID()].best;
 
         /**
@@ -229,6 +231,8 @@ function PFS(graph: $G.IGraph,
           // so we handle them here in the main loop
           //removing thext with the old value and adding it again with updated value
           scope.OPEN_HEAP.remove(scope.next);
+          // console.log("MARKER - BETTER DISTANCE");
+          // console.log(scope.OPEN_HEAP);
           scope.next.best = scope.better_dist;
           scope.OPEN_HEAP.insert(scope.next);
           scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
@@ -253,7 +257,7 @@ function PFS(graph: $G.IGraph,
       // so we handle them here in the main loop
       scope.OPEN_HEAP.insert(scope.next);
       scope.OPEN[scope.next.node.getID()] = scope.next;
-      console.log("MARKER-NOT ENCOUNTERED"); //LOG!
+      // console.log("MARKER-NOT ENCOUNTERED"); //LOG!
 
     }
 

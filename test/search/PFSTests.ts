@@ -168,12 +168,11 @@ describe('PFS TESTS - ', () => {
     });
 
     it.only('should execute the new_current callbacks', () => {
-      var root = graph.getNodeById('E'),
+      var root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
       var pfsNewCurrentTestCallback = function (scope: $PFS.PFS_Scope) {
-        console.log("current node: " + scope.current.node.getID());
-        console.log(scope.current.best);
+        
         config.messages.new_current_msgs['test_message'] = "PFS NEW CURRENT callback executed.";
       };
       config.callbacks.new_current.push(pfsNewCurrentTestCallback);
