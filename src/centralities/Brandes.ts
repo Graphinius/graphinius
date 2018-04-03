@@ -24,12 +24,12 @@ import * as $BH from '../datastructs/binaryHeap';
  * @constructor
  */
 
- /**
-  * Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
-  * for WEIGHTED graphs, see function BrandesForWeighted below!
-  * 
-  * @TODO: Try an adjacency list & see if that's faster...
-  */
+/**
+ * Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
+ * for WEIGHTED graphs, see function BrandesForWeighted below!
+ * 
+ * @TODO: Try an adjacency list & see if that's faster...
+ */
 function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean = false): {} {
 
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
@@ -48,7 +48,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
         delta: { [key: string]: number } = {}, //dependency of source node s on a node 
         dist: { [key: string]: number } = {},  //distances from source node s to each node
         Q: $N.IBaseNode[] = [],     //Queue of nodes - nodes to visit
-        
+
         S: $N.IBaseNode[] = [],     //stack of nodes - nodes waiting for their dependency values
         CB: { [key: string]: number } = {};    //Betweenness values for each node
     //info: push element to array - last position
@@ -84,7 +84,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
 
             for (let ne of neighbors) {
                 w = ne.node;
-                
+
                 if (closedNodes[w.getID()]) {
                     continue;
                 }
@@ -131,6 +131,106 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
 
     return CB;
 }
+
+function Brandes2(graph: $G.IGraph, normalize: boolean = false, directed: boolean = false): {} {
+
+    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+        throw new Error("Cowardly refusing to traverse graph without edges.");
+    }
+
+    let nodes = graph.getNodes();
+    let N = Object.keys(nodes).length;
+    let adjList = graph.adjListDict();
+
+    //Variables for Brandes algorithm
+    let s: $N.IBaseNode,     //source node
+        v: string,     //parent of w, at least one shortest path between s and w leads through v
+        w: string,     //neighbour of v, lies one edge further than v from s
+        Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
+        sigma: { [key: string]: number } = {}, //number of shortest paths from source s to each node as goal node
+        delta: { [key: string]: number } = {}, //dependency of source node s on a node 
+        dist: { [key: string]: number } = {},  //distances from source node s to each node
+        Q: string[] = [],     //Queue of nodes - nodes to visit
+        S: string[] = [],     //stack of nodes - nodes waiting for their dependency values
+        CB: { [key: string]: number } = {};    //Betweenness values for each node
+    //info: push element to array - last position
+    //array.shift: returns and removes the first element - when used, array behaves as queue
+    //array.pop: returns and removes last element - when used, array behaves as stack
+    let closedNodes: { [key: string]: boolean } = {};
+
+    for (let n in nodes) {
+        let node_id = nodes[n].getID();
+        CB[node_id] = 0;
+        dist[node_id] = Number.POSITIVE_INFINITY;
+        sigma[node_id] = 0;
+        delta[node_id] = 0;
+        Pred[node_id] = [];
+        closedNodes[node_id] = false;
+    }
+
+    for (let i in nodes) {
+        s = nodes[i];
+
+        //Initialization
+        dist[s.getID()] = 0;
+        sigma[s.getID()] = 1;
+        Q.push(s.getID());
+        closedNodes[s.getID()] = true;
+
+        while (Q.length >= 1) { //Queue not empty
+            v = Q.shift();
+            S.push(v);
+            let neighbors = adjList[v];
+            closedNodes[v] = true;
+
+            for (let w in neighbors) {
+
+                if (closedNodes[w]) {
+                    continue;
+                }
+
+                //Path discovery: w found for the first time?
+                if (dist[w] == Number.POSITIVE_INFINITY) {
+                    Q.push(w);
+                    dist[w] = dist[v] + 1;
+                }
+                //Path counting: edge (v,w) on shortest path?
+                if (dist[w] == dist[v] + 1) {
+                    sigma[w] += sigma[v];
+                    Pred[w].push(v);
+                }
+            }
+        }
+        //Accumulation: back-propagation of dependencies
+        while (S.length >= 1) {
+            w = S.pop();
+            for (let parent of Pred[w]) {
+                delta[parent] += (sigma[parent] / sigma[w] * (1 + delta[w]));
+            }
+            if (w != s.getID()) {
+                CB[w] += delta[w];
+            }
+
+            // This spares us from having to loop over all nodes again for initialization
+            sigma[w] = 0;
+            delta[w] = 0;
+            dist[w] = Number.POSITIVE_INFINITY;
+            Pred[w] = [];
+            closedNodes[w] = false;
+        }
+    }
+
+    //normalize, if requested 
+    if (normalize) {
+        let factor = directed ? ((N - 1) * (N - 2)) : ((N - 1) * (N - 2) / 2);
+
+        for (let node in CB) {
+            CB[node] /= factor;
+        }
+    }
+    return CB;
+}
+
 
 //COPY USING MIN; NO HEAPS - FOR TESTING ONLY; WILL NOT STAY!
 //works on all graphs, weighted/unweighted, directed/undirected, with/without null weight edge!
@@ -352,7 +452,7 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
         let id_s = s.getID();
         dist[id_s] = 0;
         sigma[id_s] = 1;
-        
+
         let source: BrandesHeapEntry = { id: id_s, best: 0 };
         Q.insert(source);
         closedNodes[id_s] = true;
@@ -428,7 +528,7 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
         normalizeScores(CB, N, directed);
     }
 
-    console.log( `Nr. of heap remove operations: ${Q._nr_removes}` );
+    console.log(`Nr. of heap remove operations: ${Q._nr_removes}`);
     return CB;
 }
 
@@ -553,11 +653,14 @@ function normalizeScores(CB, N, directed) {
 }
 
 
-export { Brandes, 
-         BrandesForWeighted, 
-         BrandesForWeighted2, 
-         BrandesPFSbased,
-         normalizeScores }
+export {
+    Brandes,
+    Brandes2,
+    BrandesForWeighted,
+    BrandesForWeighted2,
+    BrandesPFSbased,
+    normalizeScores
+}
 
 
 //copy of old version (Benedict), for safety
