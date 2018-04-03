@@ -580,7 +580,7 @@ function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean
         let next_id = context.next.node.getID();
         let current_id = context.current.node.getID();
         sigma[next_id] = 0;
-        //here just empty the sigma, but the path will be counted in the equal path callback!
+        sigma[next_id] += sigma[current_id];
         Pred[next_id] = [];
         Pred[next_id].push(current_id);
     };

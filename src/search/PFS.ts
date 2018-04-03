@@ -138,18 +138,18 @@ function PFS(graph: $G.IGraph,
     //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
     //it removes it from the heap, too - no extra removal needed
 
-    // process.stdout.write(`heap array: [`);
-    // scope.OPEN_HEAP.getArray().forEach( ne => {
-    //   process.stdout.write( ne.node.getID() + ", " );
-    // });
-    // console.log(']');
+    process.stdout.write(`heap array: [`);
+    scope.OPEN_HEAP.getArray().forEach( ne => {
+      process.stdout.write( ne.node.getID() + ", " );
+    });
+    console.log(']');
 
-    // console.log(`heap positions: \n`)
-    // console.log(scope.OPEN_HEAP.getPositions());
+    console.log(`heap positions: \n`)
+    console.log(scope.OPEN_HEAP.getPositions());
 
     scope.current = scope.OPEN_HEAP.pop();
-    // console.log(`node: ${scope.current.node.getID()}`); //LOG!
-    // console.log(`best: ${scope.current.best}`); //LOG!
+    console.log(`node: ${scope.current.node.getID()}`); //LOG!
+    console.log(`best: ${scope.current.best}`); //LOG!
 
 
 
@@ -255,7 +255,7 @@ function PFS(graph: $G.IGraph,
          */
         //at the moment, this callback array is empty here in the PFS and in the Dijkstra, but used in the Johnsons
 
-        if (scope.next.best === scope.better_dist) {
+        else if (scope.next.best === scope.better_dist) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
         }
 

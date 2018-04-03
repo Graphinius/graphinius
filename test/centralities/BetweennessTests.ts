@@ -56,7 +56,7 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
 
 describe('check correctness and runtime of betweenness centrality functions', () => {
 
-    it.only('test correctness of Brandes without normalization - compare to networkx data', () => {
+    it('test correctness of Brandes without normalization - compare to networkx data', () => {
         //FOR UNWEIGHTED; NON-NEGATIVE GRAPHS! FOR ALL OTHERS, SEE OTHER BRANDES VERSIONS!
         //the test graph can be changed any time,
         //but caution! choose only those new Jsons, where we have the networkx data (see above)       
@@ -248,14 +248,14 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     });
 
 
-    it('compare results of all BrandesForWeighted functions, using the betweennessCentrality2 too', () => {
+    it.only('compare results of all BrandesForWeighted functions, using the betweennessCentrality2 too', () => {
         //it will be compared to results from the BetwennessCentrality2
         //works with any Jsons, new and old
         //once the heap problem is fixed, the second can be modified to BrandesForWeighted, and all three will give the same results
         let graph = graph_search_nullEdge;
 
         console.log("Betweenness with slow but good algorithm:");
-        let resultBCOld = $IB.betweennessCentrality2(graph, true, true);
+        let resultBCOld = $IB.betweennessCentrality2(graph, true, false);
         console.log(resultBCOld);
 
         console.log("Betweenness computed with our BrandesForWeighted2 function:");
