@@ -56,7 +56,7 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
 
 describe('check correctness and runtime of betweenness centrality functions', () => {
 
-    it('test correctness of Brandes without normalization - compare to networkx data', () => {
+    it.only('test correctness of Brandes without normalization - compare to networkx data', () => {
         //FOR UNWEIGHTED; NON-NEGATIVE GRAPHS! FOR ALL OTHERS, SEE OTHER BRANDES VERSIONS!
         //the test graph can be changed any time,
         //but caution! choose only those new Jsons, where we have the networkx data (see above)       
@@ -68,7 +68,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
             mapControl[nodes[key].getID()] = nodes[key].getFeatures()["betweenness"].unnormalized;
         }
         console.log(mapControl);
-        let BResult = $B.Brandes(graph, false, false);
+        let BResult = $B.Brandes2(graph, false, false);
         console.log("Betweenness computed with Brandes: ");
         console.log(BResult);
 
@@ -215,7 +215,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         Object.keys(resBP).forEach( n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));   
     });
 
-    it.only('compare runtime of BrandesForWeighted to PFS based Brandes, normalized', () => {
+    it('compare runtime of BrandesForWeighted to PFS based Brandes, normalized', () => {
         //now the BrandesForWeighted2 is included too - now that's the only correct one
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;
@@ -274,7 +274,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     });
 
 
-    describe.only('Brandes Performance tests on small sample social networks', () => {
+    describe('Brandes Performance tests on small sample social networks', () => {
         [graph_midSizeGraph, graph_social_300].forEach( graph => { // , graph_social_1K
             it('Runtime of Brandes (+ Weighted) on mid-sized graph', () => {
                 console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
