@@ -132,7 +132,6 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         //until that's fixed, one can run the BRandesForWeighted2 (min-based, slower)
         let resBFW = $B.BrandesForWeighted(graph, false, false);
         console.log("graph traversal with heap-based: ");
-
     });
 
     it('test correctness of BrandesForWeighted without normalization, on a graph containing zero-weight edge', () => {
@@ -192,10 +191,12 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         expect(workingGraph2.hasNegativeEdge()).to.equal(false);
     });
 
-    it.only('compare runtime of BrandesForWeighted to PFS based Brandes', () => {
+    it('compare runtime of BrandesForWeighted to PFS based Brandes, unnormalized', () => {
         //now the BrandesForWeighted2 is included too - now that's the only correct one
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;
+
+        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges:`);
 
         let startBO = +new Date();
         let resBO = $B.BrandesForWeighted2(graph, false, false);
@@ -213,10 +214,44 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         let endBP = +new Date();
         console.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
-        //these give an error, because sometimes the n-th digit after the decimal point is not the same... 
-        //but give it a try and look at the values...
-        // expect(resBO).to.deep.equal(resBW);
-        // expect(resBW).to.deep.equal(resBP);        
+        /**
+         * Comparing floats to within epsilon precision
+         */
+        let epsilon = 1e-6;
+        Object.keys(resBO).forEach( n => expect(resBO[n]).to.be.closeTo(resBW[n], epsilon));
+        Object.keys(resBP).forEach( n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));   
+    });
+
+    it.only('compare runtime of BrandesForWeighted to PFS based Brandes, normalized', () => {
+        //now the BrandesForWeighted2 is included too - now that's the only correct one
+        //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
+        let graph = graph_midSizeGraph;
+
+        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges:`);
+
+        let startBO = +new Date();
+        let resBO = $B.BrandesForWeighted2(graph, true, false);
+        let endBO = +new Date();
+        console.log("runtime of Brandes, weighted, min-based: " + (endBO - startBO));
+
+        let startBW = +new Date();
+        let resBW = $B.BrandesForWeighted(graph, true, false);
+        let endBW = +new Date();
+        //runtimes are always in ms
+        console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
+
+        let startBP = +new Date();
+        let resBP = $B.BrandesPFSbased(graph, true, false);
+        let endBP = +new Date();
+        console.log("runtime of Brandes, PFS based: " + (endBP - startBP));
+
+        /**
+         * Comparing floats to within epsilon precision
+         * Smaller epsilon due to normalization of scores
+         */
+        let epsilon = 1e-12;
+        Object.keys(resBO).forEach( n => expect(resBO[n]).to.be.closeTo(resBW[n], epsilon));
+        Object.keys(resBP).forEach( n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));   
     });
 
     it('compare results of all BrandesForWeighted functions, using the betweennessCentrality2 too', () => {

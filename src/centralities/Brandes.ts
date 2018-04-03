@@ -253,13 +253,8 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean = false, direc
         }
     }
 
-    //normalize, if requested 
     if (normalize) {
-        let factor = directed ? ((N - 1) * (N - 2)) : ((N - 1) * (N - 2) / 2);
-
-        for (let node in CB) {
-            CB[node] /= factor;
-        }
+        normalizeScores(CB, N, directed);
     }
 
     return CB;
@@ -410,13 +405,8 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
         }
     }
 
-    //normalize, if requested 
     if (normalize) {
-        let factor = directed ? ((N - 1) * (N - 2)) : ((N - 1) * (N - 2) / 2);
-
-        for (let node in CB) {
-            CB[node] /= factor;
-        }
+        normalizeScores(CB, N, directed);
     }
     return CB;
 }
@@ -524,10 +514,29 @@ function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean
             Pred[w] = [];
         }
     }
+
+    if (normalize) {
+        normalizeScores(CB, graph.nrNodes(), directed);
+    }
+
     return CB;
 }
 
-export { Brandes, BrandesForWeighted, BrandesForWeighted2, BrandesPFSbased }
+
+function normalizeScores(CB, N, directed) {
+    let factor = directed ? ((N - 1) * (N - 2)) : ((N - 1) * (N - 2) / 2);
+
+    for (let node in CB) {
+        CB[node] /= factor;
+    }
+}
+
+
+export { Brandes, 
+         BrandesForWeighted, 
+         BrandesForWeighted2, 
+         BrandesPFSbased,
+         normalizeScores }
 
 
 //copy of old version (Benedict), for safety
