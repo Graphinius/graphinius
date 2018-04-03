@@ -21,7 +21,7 @@ chai.use(sinonChai);
 const expect = chai.expect,
     json: $J.IJSONInput = new $J.JSONInput(true, false, true),
     csv: $C.ICSVInput = new $C.CSVInput(' ', false, false),
-    search_graph = "./test/test_data/search_graph_multiple_SPs_positive.json",
+    search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
     graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
     graph_BF: $G.IGraph = json.readFromJSONFile(bf_graph_file);
@@ -113,43 +113,44 @@ describe('Johnsons APSP TEST -', () => {
         //next results will be the same only if the FW next is transformed, see next unit below
         let resultJ = $JO.Johnsons(graph_search);
         // console.log("Johnsons results");
-        //console.log(resultJ[0]);
-        //console.log(resultJ[1]);
+        // console.log(resultJ[0]);
+        // console.log(resultJ[1]);
 
         let resultFW = $FW.FloydWarshallAPSP(graph_search);
-        //console.log("FW results");
+        // console.log("FW results");
         // console.log(resultFW[0]);
-        //console.log(resultFW[1]);
+        // console.log(resultFW[1]);
         expect(resultJ[0]).to.deep.equal(resultFW[0]);
     });
 
 
     //now I leave it as it is to show, later the console logs can be deleted or outcommented
-    it('next result of FW could be transformed to the one the Johnsons gives', () => {
-        //the order of algorhythms does not make a difference here, but be careful with negative graphs!
+    it.only('next result of FW could be transformed to the one the Johnsons gives', () => {
+        //the order of algorithms does not make a difference here, but be careful with negative graphs!
+        
         let resultFW = $FW.FloydWarshallAPSP(graph_search);
-        console.log("FW next before transformation :");
-        console.log(resultFW[1]);
-        console.log("the same, transformed: ");
-        console.log($FW.changeNextToDirectParents(resultFW[1]));
+        // console.log("FW next before transformation :");
+        // console.log(resultFW[1]);
+        // console.log("the same, transformed: ");
+        // console.log($FW.changeNextToDirectParents(resultFW[1]));
 
         let resultJ = $JO.Johnsons(graph_search);
-        console.log("Johnsons next: ");
-        console.log(resultJ[1]);
+        // console.log("Johnsons next: ");
+        // console.log(resultJ[1]);
         expect(resultJ[1]).to.deep.equal($FW.changeNextToDirectParents(resultFW[1]));
 
         //caution: the Johnsons re-weighs the negative graphs!
         //if you run it on the graph without cloning or re-reading the graph, all following tests will be flawed
         let resultFWB = $FW.FloydWarshallAPSP(graph_BF);
-        console.log("FW next before transformation :");
-        console.log(resultFWB[1]);
-        console.log("the same, transformed: ");
-        console.log($FW.changeNextToDirectParents(resultFWB[1]));
+        // console.log("FW next before transformation :");
+        // console.log(resultFWB[1]);
+        // console.log("the same, transformed: ");
+        // console.log($FW.changeNextToDirectParents(resultFWB[1]));
 
         let graph_BF1 = graph_BF.clone();
         let resultJB = $JO.Johnsons(graph_BF1);
-        console.log("Johnsons next: ");
-        console.log(resultJB[1]);
+        // console.log("Johnsons next: ");
+        // console.log(resultJB[1]);
         expect(resultJB[1]).to.deep.equal($FW.changeNextToDirectParents(resultFWB[1]));
     });
 

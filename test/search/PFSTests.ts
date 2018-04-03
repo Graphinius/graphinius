@@ -167,7 +167,7 @@ describe('PFS TESTS - ', () => {
       expect(config.messages.init_pfs_msgs['test_message']).to.equal("PFS INIT callback executed.");
     });
 
-    it.only('should execute the new_current callbacks', () => {
+    it('should execute the new_current callbacks', () => {
       var root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
