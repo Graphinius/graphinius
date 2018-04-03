@@ -29,6 +29,8 @@ let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
     //until this point, all graphs have checking values in the features
     path_search_no1DE = "./test/test_data/search_graph_multiple_SPs_no1DE.json",
     path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json",
+    path_socialNet300 = "./test/test_data/social_network_edges_300.csv", 
+    path_socialNet1K = "./test/test_data/social_network_edges.csv",
     path_search_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     path_search_nullEdge = "./test/test_data/search_graph_multiple_SPs.json",
     path_bf_graph = "./test/test_data/bellman_ford.json",
@@ -44,6 +46,8 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_8nodeSplitMerge = json.readFromJSONFile(path_8nodeSplitMerge),
     graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1),
     graph_midSizeGraph = json.readFromJSONFile(path_midSizeGraph),
+    graph_social_300 = csv.readFromEdgeListFile(path_socialNet300), 
+    graph_social_1K = csv.readFromEdgeListFile(path_socialNet1K),
     graph_search_no1DE = json.readFromJSONFile(path_search_no1DE),
     graph_search_pos = json.readFromJSONFile(path_search_pos),
     graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge),
@@ -90,17 +94,6 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
         //one can not use "expect..." here, because of the different precision of fractional numbers
         //expect(BResult).to.deep.equal(mapControl);
-    });
-
-    it('runtime checker for the Brandes', () => {
-        //caution! since this graph is weighed, the result will not be correct!
-        let graph = graph_midSizeGraph;
-
-        let startBU = +new Date();
-        let resBU = $B.Brandes(graph, false, false);
-        let endBU = +new Date();
-        //runtimes are always in ms
-        console.log("runtime of Brandes, Unweighted: " + (endBU - startBU));
     });
 
     //from this point on, functions can handle weighted graphs, too!
@@ -191,12 +184,12 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         expect(workingGraph2.hasNegativeEdge()).to.equal(false);
     });
 
-    it('compare runtime of BrandesForWeighted to PFS based Brandes, unnormalized', () => {
+    it('compare runtime of BrandesForWeighted to PFS based Brandes, UNnormalized', () => {
         //now the BrandesForWeighted2 is included too - now that's the only correct one
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;
 
-        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges:`);
+        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, UNnormalized mode:`);
 
         let startBO = +new Date();
         let resBO = $B.BrandesForWeighted2(graph, false, false);
@@ -227,7 +220,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         //BrandesForWeighted and BrandesPFSBased do not yet give correct results on weighted graphs!
         let graph = graph_midSizeGraph;
 
-        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges:`);
+        console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
 
         let startBO = +new Date();
         let resBO = $B.BrandesForWeighted2(graph, true, false);
@@ -254,6 +247,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         Object.keys(resBP).forEach( n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));   
     });
 
+
     it('compare results of all BrandesForWeighted functions, using the betweennessCentrality2 too', () => {
         //it will be compared to results from the BetwennessCentrality2
         //works with any Jsons, new and old
@@ -278,7 +272,32 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
         expect(resultBCOld).to.deep.equal(resultBCWMinBased);
     });
+
+
+    describe.only('Brandes Performance tests on small sample social networks', () => {
+        [graph_midSizeGraph, graph_social_300].forEach( graph => { // , graph_social_1K
+            it('Runtime of Brandes (+ Weighted) on mid-sized graph', () => {
+                console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
+
+                let startBU = +new Date();
+                let resBU = $B.Brandes(graph, true, false);
+                let endBU = +new Date();
+                console.log("runtime of Brandes, Unweighted: " + (endBU - startBU));
+
+                let startBW = +new Date();
+                let resBW = $B.BrandesForWeighted(graph, true, false);
+                let endBW = +new Date();
+                console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
+            });
+        });
+    });
 });
+
+/**
+ * TODO: Write some normalization tests...
+ */
+
+
 
 //my old tests, kept here for safety
 // it.skip('should compute betweenness correctly and compare it to networkx values', () => {
@@ -301,7 +320,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
 
 //old code from Benedict, now coded out for a while
-/*let sn_graph_file = "./test/test_data/social_network_edges.csv",
+/* let sn_graph_file = "./test/test_data/social_network_edges.csv",
     iBt_cent_graph = "./test/test_data/search_graph_multiple_SPs.json",
     iBt_cent_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     graph_300_file = "./test/test_data/social_network_edges_300.csv",

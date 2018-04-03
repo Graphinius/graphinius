@@ -138,9 +138,21 @@ function PFS(graph: $G.IGraph,
     //pop returns the first element of the OPEN_HEAP, which is the node with the smallest distance
     //it removes it from the heap, too - no extra removal needed
 
+    // process.stdout.write(`heap array: [`);
+    // scope.OPEN_HEAP.getArray().forEach( ne => {
+    //   process.stdout.write( ne.node.getID() + ", " );
+    // });
+    // console.log(']');
+
+    // console.log(`heap positions: \n`)
+    // console.log(scope.OPEN_HEAP.getPositions());
+
     scope.current = scope.OPEN_HEAP.pop();
-    // console.log("current node: " + scope.current.node.getID()); //LOG!
-    // console.log(scope.current.best); //LOG!
+    // console.log(`node: ${scope.current.node.getID()}`); //LOG!
+    // console.log(`best: ${scope.current.best}`); //LOG!
+
+
+
     /**
      * HOOK 2: NEW CURRENT
      */

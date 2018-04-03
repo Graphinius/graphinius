@@ -24,8 +24,12 @@ import * as $BH from '../datastructs/binaryHeap';
  * @constructor
  */
 
-//Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
-//for WEIGHTED graphs, see function BrandesForWeighted below!
+ /**
+  * Brandes, written based on Brandes 2001, works good on UNWEIGHTED graphs
+  * for WEIGHTED graphs, see function BrandesForWeighted below!
+  * 
+  * @TODO: Try an adjacency list & see if that's faster...
+  */
 function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean = false): {} {
 
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
@@ -44,11 +48,14 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
         delta: { [key: string]: number } = {}, //dependency of source node s on a node 
         dist: { [key: string]: number } = {},  //distances from source node s to each node
         Q: $N.IBaseNode[] = [],     //Queue of nodes - nodes to visit
+        
         S: $N.IBaseNode[] = [],     //stack of nodes - nodes waiting for their dependency values
         CB: { [key: string]: number } = {};    //Betweenness values for each node
     //info: push element to array - last position
     //array.shift: returns and removes the first element - when used, array behaves as queue
     //array.pop: returns and removes last element - when used, array behaves as stack
+
+    let closedNodes: { [key: string]: boolean } = {};
 
     for (let n in nodes) {
         let node_id = nodes[n].getID();
@@ -57,6 +64,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
         sigma[node_id] = 0;
         delta[node_id] = 0;
         Pred[node_id] = [];
+        closedNodes[node_id] = false;
     }
 
     for (let i in nodes) {
@@ -66,14 +74,21 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
         dist[s.getID()] = 0;
         sigma[s.getID()] = 1;
         Q.push(s);
+        closedNodes[s.getID()] = true;
 
         while (Q.length >= 1) { //Queue not empty
             v = Q.shift();
             S.push(v);
+            closedNodes[v.getID()] = true;
             let neighbors = v.reachNodes();
 
             for (let ne of neighbors) {
                 w = ne.node;
+                
+                if (closedNodes[w.getID()]) {
+                    continue;
+                }
+
                 //Path discovery: w found for the first time?
                 if (dist[w.getID()] == Number.POSITIVE_INFINITY) {
                     Q.push(w);
@@ -92,7 +107,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
             for (let parent of Pred[w.getID()]) {
                 delta[parent] += (sigma[parent] / sigma[w.getID()] * (1 + delta[w.getID()]));
             }
-            if (w.getID() != s.getID()) {
+            if (w.getID() !== s.getID()) {
                 CB[w.getID()] += delta[w.getID()];
             }
 
@@ -101,6 +116,7 @@ function Brandes(graph: $G.IGraph, normalize: boolean = false, directed: boolean
             delta[w.getID()] = 0;
             dist[w.getID()] = Number.POSITIVE_INFINITY;
             Pred[w.getID()] = [];
+            closedNodes[w.getID()] = false;
         }
     }
 
@@ -185,6 +201,9 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean = false, direc
         Q[id_s] = 0;
         closedNodes[id_s] = true;
 
+        /**
+         * TODO: check if Map() is performant now in 2018...
+         */
         //graph traversal for actual source node
         while (Object.keys(Q).length > 0) { // unless Priority queue empty
 
@@ -408,6 +427,8 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
     if (normalize) {
         normalizeScores(CB, N, directed);
     }
+
+    console.log( `Nr. of heap remove operations: ${Q._nr_removes}` );
     return CB;
 }
 

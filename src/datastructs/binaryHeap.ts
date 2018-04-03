@@ -38,6 +38,7 @@ export interface IBinaryHeap {
 
 
 class BinaryHeap implements IBinaryHeap {
+  _nr_removes : number = 0; // just for debugging
   private _array = [];
   private _positions: { [id: string]: PositionHeapEntry } | { [id: string]: Array<PositionHeapEntry> } = {};
 
@@ -150,6 +151,8 @@ class BinaryHeap implements IBinaryHeap {
    * 
    */
   remove(obj: any): any {
+    this._nr_removes++;
+    
     if (isNaN(this._evalPriority(obj))) {
       throw new Error('Object invalid.');
     }
