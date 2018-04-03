@@ -152,7 +152,7 @@ class BinaryHeap implements IBinaryHeap {
    */
   remove(obj: any): any {
     this._nr_removes++;
-    
+
     if (isNaN(this._evalPriority(obj))) {
       throw new Error('Object invalid.');
     }
@@ -181,39 +181,36 @@ class BinaryHeap implements IBinaryHeap {
      * OLD SEARCH in O(n) (but simpler)
      */
     var objID = this._evalObjID(obj),
-      found = undefined;
+        found = undefined;
     for (var pos = 0; pos < this._array.length; pos++) {
       if (this._evalObjID(this._array[pos]) === objID) {
         found = this._array[pos];
-        // we pop the last element
-        var last = this._array.pop();
-
-        //new fix on 01.04.2018 by Rita
-        //we need to remove it from the positions dict, too!
-        var occurrence = this._positions;
-        delete occurrence[objID];
-
-        // we switch the last with the found element
-        // and restore the heaps order, but only if the
-        // heap size is not down to zero
-        if (this.size()) {
-          if (found !== last) {
-            this._array[pos] = last;
-            this.trickleUp(pos);
-            this.trickleDown(pos);
-          }
-          //new fix on 30.03.2018 by Rita
-          //if the found element is the last one, we should not give it back again to the array... 
-          else {
-            this.trickleUp(pos-1);
-            this.trickleDown(0);
-          }
-        }
-
-        return found;
+        break;
       }
     }
-    // console.log("Found undefined object at position: " + pos);
+    
+    // we pop the last element
+    var last = this._array.pop();
+
+    //new fix on 01.04.2018 by Rita
+    //we need to remove it from the positions dict, too!
+    var occurrence = this._positions;
+    delete occurrence[objID];
+
+    // we switch the last with the found element
+    // and restore the heaps order, but only if the
+    // heap size is not down to zero
+    if (this.size() && found !== last ) {
+      this._array[pos] = last;
+      /**
+       * @TODO: update the node position here too !?!?
+       * setNodePosition...
+       */
+      // this.setNodePosition(found, pos, true, last);
+      this.trickleUp(pos);
+      this.trickleDown(pos);
+    }
+
     return found;
   }
 

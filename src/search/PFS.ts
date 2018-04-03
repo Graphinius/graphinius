@@ -255,7 +255,7 @@ function PFS(graph: $G.IGraph,
          */
         //at the moment, this callback array is empty here in the PFS and in the Dijkstra, but used in the Johnsons
 
-        if (scope.next.best === scope.better_dist) {
+        else if (scope.next.best === scope.better_dist) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
         }
 

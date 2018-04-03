@@ -139,17 +139,16 @@ function Brandes2(graph: $G.IGraph, normalize: boolean = false, directed: boolea
     }
 
     let nodes = graph.getNodes();
-    let N = Object.keys(nodes).length;
     let adjList = graph.adjListDict();
 
     //Variables for Brandes algorithm
     let s: $N.IBaseNode,     //source node
-        v: string,     //parent of w, at least one shortest path between s and w leads through v
-        w: string,     //neighbour of v, lies one edge further than v from s
+        v: string,          //parent of w, at least one shortest path between s and w leads through v
+        w: string,         //neighbour of v, lies one edge further than v from s
         Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes
-        sigma: { [key: string]: number } = {}, //number of shortest paths from source s to each node as goal node
-        delta: { [key: string]: number } = {}, //dependency of source node s on a node 
-        dist: { [key: string]: number } = {},  //distances from source node s to each node
+        sigma: { [key: string]: number } = {},      //number of shortest paths from source s to each node as goal node
+        delta: { [key: string]: number } = {},      //dependency of source node s on a node 
+        dist: { [key: string]: number } = {},       //distances from source node s to each node
         Q: string[] = [],     //Queue of nodes - nodes to visit
         S: string[] = [],     //stack of nodes - nodes waiting for their dependency values
         CB: { [key: string]: number } = {};    //Betweenness values for each node
@@ -172,12 +171,15 @@ function Brandes2(graph: $G.IGraph, normalize: boolean = false, directed: boolea
         s = nodes[i];
 
         //Initialization
-        dist[s.getID()] = 0;
-        sigma[s.getID()] = 1;
-        Q.push(s.getID());
-        closedNodes[s.getID()] = true;
+        let id = s.getID();
+        dist[id] = 0;
+        sigma[id] = 1;
+        Q.push(id);
+        closedNodes[id] = true;
 
-        while (Q.length >= 1) { //Queue not empty
+        let counter = 0;
+
+        while ( Q.length ) { //Queue not empty
             v = Q.shift();
             S.push(v);
             let neighbors = adjList[v];
@@ -190,12 +192,12 @@ function Brandes2(graph: $G.IGraph, normalize: boolean = false, directed: boolea
                 }
 
                 //Path discovery: w found for the first time?
-                if (dist[w] == Number.POSITIVE_INFINITY) {
+                if (dist[w] === Number.POSITIVE_INFINITY) {
                     Q.push(w);
                     dist[w] = dist[v] + 1;
                 }
                 //Path counting: edge (v,w) on shortest path?
-                if (dist[w] == dist[v] + 1) {
+                if (dist[w] === dist[v] + 1) {
                     sigma[w] += sigma[v];
                     Pred[w].push(v);
                 }
@@ -220,13 +222,8 @@ function Brandes2(graph: $G.IGraph, normalize: boolean = false, directed: boolea
         }
     }
 
-    //normalize, if requested 
     if (normalize) {
-        let factor = directed ? ((N - 1) * (N - 2)) : ((N - 1) * (N - 2) / 2);
-
-        for (let node in CB) {
-            CB[node] /= factor;
-        }
+        normalizeScores(CB, graph.nrNodes(), directed);
     }
     return CB;
 }
@@ -262,7 +259,6 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean = false, direc
     }
 
     let nodes = graph.getNodes();
-    let N = Object.keys(nodes).length;
     let adjList = graph.adjListDict();
 
     //Variables for Brandes algorithm
@@ -373,7 +369,7 @@ function BrandesForWeighted2(graph: $G.IGraph, normalize: boolean = false, direc
     }
 
     if (normalize) {
-        normalizeScores(CB, N, directed);
+        normalizeScores(CB, graph.nrNodes(), directed);
     }
 
     return CB;
@@ -562,7 +558,7 @@ function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean
         //this needed to keep the PFS going
         context.next.best =
             context.current.best + (isNaN(context.next.edge.getWeight()) ? $P.DEFAULT_WEIGHT : context.next.edge.getWeight());
-        //these needed for BC
+        //these needed for betweenness
         let next_id = context.next.node.getID();
         let current_id = context.current.node.getID();
         Pred[next_id] = [current_id];
@@ -580,6 +576,8 @@ function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean
         let next_id = context.next.node.getID();
         let current_id = context.current.node.getID();
         sigma[next_id] = 0;
+        sigma[next_id] += sigma[current_id];
+        
         //here just empty the sigma, but the path will be counted in the equal path callback!
         Pred[next_id] = [];
         Pred[next_id].push(current_id);
