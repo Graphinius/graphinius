@@ -54,6 +54,11 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_bf_graph = json.readFromJSONFile(path_bf_graph),
     graph_bf_graph_neg_cycle = json.readFromJSONFile(path_bf_graph_neg_cycle);
 
+
+/**
+ * @TODO Rita: Only read graphs when needed within test...
+ * => Test Isolation
+ */
 describe('check correctness and runtime of betweenness centrality functions', () => {
 
     it('test correctness of Brandes without normalization - compare to networkx data', () => {
@@ -130,7 +135,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     it('test correctness of BrandesForWeighted without normalization, on a graph containing zero-weight edge', () => {
         //now the comparison is made with the BetweennessCentrality2 algorithm (correct but slow one, good for testing only)
         //(with networkx, we have only unweighted test graphs)
-        let graph = graph_bf_graph_neg_cycle;
+        let graph = graph_search_nullEdge;
 
         let resBCslow = $IB.betweennessCentrality2(graph, true, false);
         console.log("Betweenness centrality calculated with slow but correct algorithm: ");
@@ -280,7 +285,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
                 console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
 
                 let startBU = +new Date();
-                let resBU = $B.Brandes(graph, true, false);
+                let resBU = $B.Brandes2(graph, true, false);
                 let endBU = +new Date();
                 console.log("runtime of Brandes, Unweighted: " + (endBU - startBU));
 
@@ -288,6 +293,11 @@ describe('check correctness and runtime of betweenness centrality functions', ()
                 let resBW = $B.BrandesForWeighted(graph, true, false);
                 let endBW = +new Date();
                 console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
+
+                let startBP = +new Date();
+                let resBP = $B.BrandesPFSbased(graph, true, false);
+                let endBP = +new Date();
+                console.log("runtime of Brandes for Weighted, PFS based: " + (endBP - startBP));
             });
         });
     });
