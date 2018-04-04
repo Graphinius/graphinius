@@ -43,18 +43,18 @@
     "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^1.5.4",
     "gulp-watch": "^4.3.11",
-    "istanbul": "^0.4.2",
-    "jsdom": "8.2.0",
-    "jsdom-global": "1.7.0",
-    "json-loader": "^0.5.4",
-    "merge2": "^1.0.0",
-    "mocha": "^2.3.4",
-    "sinon": "^4.4.3",
+    "istanbul": "^0.4.5",
+    "jsdom": "^8.2.0",
+    "jsdom-global": "^1.7.0",
+    "json-loader": "^0.5.7",
+    "merge2": "^1.2.1",
+    "mocha": "^2.5.3",
+    "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
     "typedoc": "^0.9.0",
-    "typescript": "^2.7.2",
-    "webpack-stream": "^3.1.0",
-    "xhr-mock": "^1.6.0"
+    "typescript": "^2.8.1",
+    "webpack-stream": "^3.2.0",
+    "xhr-mock": "^1.9.1"
   },
   "dependencies": {
     "ncp": "^2.0.0"

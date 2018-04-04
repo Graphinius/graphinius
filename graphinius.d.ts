@@ -335,7 +335,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    MAX = 1,
 	}
 	export interface PositionHeapEntry {
-	    priority: number;
+	    score: number;
 	    position: number;
 	}
 	export interface IBinaryHeap {
@@ -343,7 +343,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    getArray(): Array<any>;
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    insert(obj: any): void;
@@ -378,7 +378,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    };
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    peek(): any;
@@ -474,7 +474,7 @@ declare module 'graphinius/search/PFS' {
 	    current: $N.NeighborEntry;
 	    adj_nodes: Array<$N.NeighborEntry>;
 	    next: $N.NeighborEntry;
-	    better_dist: number;
+	    proposed_dist: number;
 	} function PFS(graph: $G.IGraph, v: $N.IBaseNode, config?: PFS_Config): {
 	    [id: string]: PFS_ResultEntry;
 	}; function preparePFSStandardConfig(): PFS_Config;
@@ -506,13 +506,6 @@ declare module 'graphinius/core/Graph' {
 	    UNDIRECTED = 2,
 	    MIXED = 3,
 	}
-	export interface DegreeDistribution {
-	    in: Uint16Array;
-	    out: Uint16Array;
-	    dir: Uint16Array;
-	    und: Uint16Array;
-	    all: Uint16Array;
-	}
 	export interface GraphStats {
 	    mode: GraphMode;
 	    nr_nodes: number;
@@ -536,7 +529,6 @@ declare module 'graphinius/core/Graph' {
 	    _label: string;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    degreeDistribution(): DegreeDistribution;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
 	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
@@ -649,10 +641,6 @@ declare module 'graphinius/core/Graph' {
 	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    /**
-	     * We assume graphs in which no node has higher total degree than 65536
-	     */
-	    degreeDistribution(): DegreeDistribution;
 	    nrNodes(): number;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
@@ -826,13 +814,27 @@ declare module 'graphinius/centralities/Degree' {
 	    und = 2,
 	    dir = 3,
 	    all = 4,
-	} class degreeCentrality {
+	}
+	/**
+	 * @TODO per edge type ???
+	 */
+	export interface DegreeDistribution {
+	    in: Uint32Array;
+	    out: Uint32Array;
+	    dir: Uint32Array;
+	    und: Uint32Array;
+	    all: Uint32Array;
+	} class DegreeCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode): {
 	        [id: string]: number;
 	    };
-	    getHistorgram(graph: $G.IGraph): $G.DegreeDistribution;
+	    /**
+	     * @TODO Weighted version !
+	   * @TODO per edge type !
+	     */
+	    degreeDistribution(graph: $G.IGraph): DegreeDistribution;
 	}
-	export { degreeCentrality };
+	export { DegreeCentrality };
 
 }
 declare module 'graphinius/centralities/gauss' {
