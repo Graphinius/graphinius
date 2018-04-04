@@ -210,11 +210,9 @@ describe('Johnsons APSP TEST -', () => {
     it('graph with negative cycle should throw an error message, but only then', () => {
         let graph_BF2 = graph_BF.clone();
         expect($JO.Johnsons.bind($JO.Johnsons, graph_NC)).to.throw(
-            "The graph contains a negative edge, thus it can not be processed");
-        expect($JO.Johnsons.bind($JO.Johnsons, graph_BF2)).to.not.throw(
-            "The graph contains a negative edge, thus it can not be processed");
-        expect($JO.Johnsons.bind($JO.Johnsons, graph_search)).to.not.throw(
-            "The graph contains a negative edge, thus it can not be processed");
+            "The graph contains a negative cycle, thus it can not be processed");
+        expect($JO.Johnsons.bind($JO.Johnsons, graph_BF2)).to.not.throw();
+        expect($JO.Johnsons.bind($JO.Johnsons, graph_search)).to.not.throw();
     });
 
     //status: works fine.

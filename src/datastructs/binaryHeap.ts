@@ -8,7 +8,7 @@ export enum BinaryHeapMode {
 
 
 export interface PositionHeapEntry {
-  priority: number;
+  score: number;
   position: number;
 }
 
@@ -19,7 +19,7 @@ export interface IBinaryHeap {
   getArray(): Array<any>;
   size(): number;
   getEvalPriorityFun(): Function;
-  evalInputPriority(obj: any): number;
+  evalInputScore(obj: any): number;
   getEvalObjIDFun(): Function;
   evalInputObjID(obj: any): any;
 
@@ -88,7 +88,7 @@ class BinaryHeap implements IBinaryHeap {
     return this._evalPriority;
   }
 
-  evalInputPriority(obj: any): number {
+  evalInputScore(obj: any): number {
     return this._evalPriority(obj);
   }
 
@@ -181,12 +181,16 @@ class BinaryHeap implements IBinaryHeap {
      * OLD SEARCH in O(n) (but simpler)
      */
     var objID = this._evalObjID(obj),
-        found = undefined;
+        found = null;
     for (var pos = 0; pos < this._array.length; pos++) {
       if (this._evalObjID(this._array[pos]) === objID) {
         found = this._array[pos];
         break;
       }
+    }
+
+    if (found === null) {
+      return undefined;
     }
     
     // we pop the last element
@@ -194,8 +198,8 @@ class BinaryHeap implements IBinaryHeap {
 
     //new fix on 01.04.2018 by Rita
     //we need to remove it from the positions dict, too!
-    var occurrence = this._positions;
-    delete occurrence[objID];
+    // var occurrence = this._positions;
+    // delete occurrence[objID];
 
     // we switch the last with the found element
     // and restore the heaps order, but only if the
@@ -293,16 +297,16 @@ class BinaryHeap implements IBinaryHeap {
    * @param pos
    */
   private setNodePosition(obj: any, new_pos: number, replace = true, old_pos?: number): void {
-    if (typeof obj === 'undefined' || obj === null || typeof new_pos === 'undefined' || new_pos === null) {
+    if ( obj == null || new_pos == null ) {
       throw new Error('minium required arguments are obj and new_pos');
     }
-    if (replace === true && (typeof old_pos === 'undefined' || old_pos === null)) {
+    if ( replace === true && old_pos == null ) {
       throw new Error('replacing a node position requires an old_pos');
     }
 
     // First we create a new entry object
     var pos_obj: PositionHeapEntry = {
-      priority: this.evalInputPriority(obj),
+      score: this.evalInputScore(obj),
       position: new_pos
     };
     var obj_key = this.evalInputObjID(obj);

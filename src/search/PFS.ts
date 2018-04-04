@@ -58,7 +58,7 @@ export interface PFS_Scope {
   current: $N.NeighborEntry;
   adj_nodes: Array<$N.NeighborEntry>;
   next: $N.NeighborEntry;
-  better_dist: number;
+  proposed_dist: number;
 }
 
 /**
@@ -115,7 +115,7 @@ function PFS(graph: $G.IGraph,
     current: start_ne,
     adj_nodes: [],
     next: null,
-    better_dist: Number.POSITIVE_INFINITY,
+    proposed_dist: Number.POSITIVE_INFINITY,
   };
 
 
@@ -229,12 +229,12 @@ function PFS(graph: $G.IGraph,
          */
         config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
 
-        scope.better_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
+        scope.proposed_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
 
         /**
          * HOOK 6: Better path found
          */
-        if (scope.next.best > scope.better_dist) {
+        if (scope.next.best > scope.proposed_dist) {
           config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
 
           // HEAP operations are necessary for internal traversal,
@@ -243,9 +243,9 @@ function PFS(graph: $G.IGraph,
           scope.OPEN_HEAP.remove(scope.next);
           // console.log("MARKER - BETTER DISTANCE");
           // console.log(scope.OPEN_HEAP);
-          scope.next.best = scope.better_dist;
+          scope.next.best = scope.proposed_dist;
           scope.OPEN_HEAP.insert(scope.next);
-          scope.OPEN[scope.next.node.getID()].best = scope.better_dist;
+          scope.OPEN[scope.next.node.getID()].best = scope.proposed_dist;
         }
 
         /**
@@ -253,7 +253,7 @@ function PFS(graph: $G.IGraph,
          */
         //at the moment, this callback array is empty here in the PFS and in the Dijkstra, but used in the Johnsons
 
-        else if (scope.next.best === scope.better_dist) {
+        else if (scope.next.best === scope.proposed_dist) {
           config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
         }
 
@@ -354,7 +354,7 @@ function preparePFSStandardConfig(): PFS_Config {
 
   // Callback for when we find a better solution
   var betterPathFound = function (context: PFS_Scope) {
-    config.result[context.next.node.getID()].distance = context.better_dist;
+    config.result[context.next.node.getID()].distance = context.proposed_dist;
     config.result[context.next.node.getID()].parent = context.current.node;
   };
   callbacks.better_path.push(betterPathFound);

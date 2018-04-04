@@ -24,7 +24,7 @@ const paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist/**/*.js', 'docs', 'coverage'],
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
+	tests_core: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
 	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
   	tests_perturb: ['test/perturbation/**/*.js'],
@@ -154,8 +154,8 @@ gulp.task('bundle', ['pack'], function() {
 // TEST TASKS
 //----------------------------
 // 'Normal' synchronous tests
-gulp.task('test-basic', ['build'], function () {
-	return gulp.src(paths.tests_basic, {read: false})
+gulp.task('test-core', ['build'], function () {
+	return gulp.src(paths.tests_core, {read: false})
 						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
@@ -241,8 +241,8 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 //----------------------------
 // WATCH TASKS
 //----------------------------
-gulp.task('watch-basic', function () {
-	gulp.watch(paths.typescripts, ['test-basic']);
+gulp.task('watch-core', function () {
+	gulp.watch(paths.typescripts, ['test-core']);
 });
 
 
@@ -271,4 +271,4 @@ gulp.task('watch-all', function () {
 });
 
 
-gulp.task('default', ['watch-basic']);
+gulp.task('default', ['watch-core']);

@@ -12,7 +12,9 @@ import * as $BH from '../../src/datastructs/binaryHeap';
 var expect = chai.expect,
   json: $I.IJSONInput = new $I.JSONInput(true, false, true),
   search_graph = "./test/test_data/search_graph_pfs_extended.json",
-  graph: $G.IGraph;
+  equal_dists = "./test/test_data/equal_path_graph.json",
+  graph: $G.IGraph,
+  graph_equal_dist: $G.IGraph;
 
 
 describe('PFS TESTS - ', () => {
@@ -167,6 +169,7 @@ describe('PFS TESTS - ', () => {
       expect(config.messages.init_pfs_msgs['test_message']).to.equal("PFS INIT callback executed.");
     });
 
+
     it('should execute the new_current callbacks', () => {
       var root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
@@ -180,6 +183,7 @@ describe('PFS TESTS - ', () => {
       expect(config.messages.new_current_msgs['test_message']).to.equal("PFS NEW CURRENT callback executed.");
 
     });
+
 
     it('should execute the goal reached callbacks', () => {
       var root = graph.getNodeById('A'),
@@ -249,6 +253,8 @@ describe('PFS TESTS - ', () => {
 
 
     it('should execute the equal path (found) callbacks', () => {
+      graph = json.readFromJSONFile(equal_dists);
+
       var root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 

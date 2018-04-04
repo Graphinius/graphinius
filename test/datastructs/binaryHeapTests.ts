@@ -64,68 +64,68 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('should accept Integers as input and evaluate to that same Integer', () => {
-      expect(binHeap.evalInputPriority(55)).to.equal(55);
+      expect(binHeap.evalInputScore(55)).to.equal(55);
     });
 
 
     it('should accept negative Integers as input and evaluate to that same Integer', () => {
-      expect(binHeap.evalInputPriority(-55)).to.equal(-55);
+      expect(binHeap.evalInputScore(-55)).to.equal(-55);
     });
 
 
     it('should accept Floats as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority(55.55)).to.equal(55);
+      expect(binHeap.evalInputScore(55.55)).to.equal(55);
     });
 
 
     it('should accept negative Floats as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority(-55.55)).to.equal(-55);
+      expect(binHeap.evalInputScore(-55.55)).to.equal(-55);
     });
 
 
     it('should accept String encoded Integers as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("55.55")).to.equal(55);
+      expect(binHeap.evalInputScore("55.55")).to.equal(55);
     });
 
 
     it('should accept String encoded negative Integers as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("-55.55")).to.equal(-55);
+      expect(binHeap.evalInputScore("-55.55")).to.equal(-55);
     });
 
 
     it('should accept String encoded Floats as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("55.55")).to.equal(55);
+      expect(binHeap.evalInputScore("55.55")).to.equal(55);
     });
 
 
     it('should accept String encoded negative Floats as input and evaluate to their Integer value', () => {
-      expect(binHeap.evalInputPriority("-55.55")).to.equal(-55);
+      expect(binHeap.evalInputScore("-55.55")).to.equal(-55);
     });
 
 
     it('should not accept booleans as input values (makes no sense...) ', () => {
-      expect(binHeap.evalInputPriority(true)).to.be.NaN;
-      expect(binHeap.evalInputPriority(false)).to.be.NaN;
+      expect(binHeap.evalInputScore(true)).to.be.NaN;
+      expect(binHeap.evalInputScore(false)).to.be.NaN;
     });
 
 
     it('should not accept strings that do not encode numbers', () => {
-      expect(binHeap.evalInputPriority("blahoo")).to.be.NaN;
+      expect(binHeap.evalInputScore("blahoo")).to.be.NaN;
     });
 
 
     it('should not accept arrays as input', () => {
-      expect(binHeap.evalInputPriority([1, 2, 3])).to.be.NaN;
+      expect(binHeap.evalInputScore([1, 2, 3])).to.be.NaN;
     });
 
 
     it('should not accept objects as input', () => {
-      expect(binHeap.evalInputPriority({1: 1, 2: 2, 3: 3})).to.be.NaN;
+      expect(binHeap.evalInputScore({1: 1, 2: 2, 3: 3})).to.be.NaN;
     });
 
 
     it('should not accept functions as input', () => {
-      expect(binHeap.evalInputPriority(()=>{})).to.be.NaN;
+      expect(binHeap.evalInputScore(()=>{})).to.be.NaN;
     });
 
   });
@@ -175,7 +175,7 @@ describe('BINARY HEAP TESTS - ', () => {
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, evalFunc);
 
-      expect(binHeap.evalInputPriority(55)).to.be.NaN;
+      expect(binHeap.evalInputScore(55)).to.be.NaN;
     });
 
 
@@ -188,11 +188,11 @@ describe('BINARY HEAP TESTS - ', () => {
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, evalFunc);
 
-      expect(binHeap.evalInputPriority(55)).to.be.NaN;
-      expect(binHeap.evalInputPriority("55")).to.be.NaN;
-      expect(binHeap.evalInputPriority([])).to.be.NaN;
-      expect(binHeap.evalInputPriority([1])).to.be.NaN;
-      expect(binHeap.evalInputPriority([1, 2])).to.equal(2);
+      expect(binHeap.evalInputScore(55)).to.be.NaN;
+      expect(binHeap.evalInputScore("55")).to.be.NaN;
+      expect(binHeap.evalInputScore([])).to.be.NaN;
+      expect(binHeap.evalInputScore([1])).to.be.NaN;
+      expect(binHeap.evalInputScore([1, 2])).to.equal(2);
     });
   });
 
@@ -293,7 +293,7 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(0);
       binHeap.insert(15);
       binHeap.insert(5);
-      binHeap.insert(1);      
+      binHeap.insert(1);
       
       expect(binHeap.pop()).to.equal(0);
       expect(binHeap.pop()).to.equal(1);
@@ -616,8 +616,8 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
     binHeap.insert(4);
     binHeap.insert(1);
     var exp_arr = [1, 4];
-    var exp_struct = {1: {priority: 1, position: 0},
-                      4: {priority: 4, position: 1}};
+    var exp_struct = {1: {score: 1, position: 0},
+                      4: {score: 4, position: 1}};
     expect(binHeap.getArray()).to.deep.equal(exp_arr);
     expect(binHeap.getPositions()).to.deep.equal(exp_struct);
   });
@@ -628,8 +628,8 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
     binHeap.insert(4);
     binHeap.insert(4);
     var exp_arr = [4, 4];
-    var exp_struct = {4: [{priority: 4, position: 0}, 
-                          {priority: 4, position: 1}]};
+    var exp_struct = {4: [{score: 4, position: 0}, 
+                          {score: 4, position: 1}]};
     expect(binHeap.getArray()).to.deep.equal(exp_arr);
     expect(binHeap.getPositions()).to.deep.equal(exp_struct);
   });

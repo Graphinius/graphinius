@@ -288,7 +288,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
       it('should add a specified amount of UNdirected edges', () => {
-        let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE) || 1;
         perturber.randomlyAddEdgesAmount(nr_und_edges_to_be_added, {directed: false});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_und_edges_to_be_added);
@@ -491,7 +491,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
       it('should add a specified amount of directed edges', () => {
-        let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE) || 1;
         perturber.randomlyAddEdgesAmount(nr_dir_edges_to_be_added, {directed: true});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_dir_edges_to_be_added);

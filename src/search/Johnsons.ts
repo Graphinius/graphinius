@@ -139,7 +139,7 @@ function PFSforAllSources(graph: $G.IGraph): {} {
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
 
-    dists[i][j] = context.better_dist;
+    dists[i][j] = context.proposed_dist;
 
     if (context.current.node == context.root_node) {
       next[i][j][0] = nodeIDIdxMap[context.next.node.getID()];
