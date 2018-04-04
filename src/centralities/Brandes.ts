@@ -524,7 +524,10 @@ function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: bool
         normalizeScores(CB, N, directed);
     }
 
-    console.log(`Nr. of heap remove operations: ${Q._nr_removes}`);
+    /**
+     * @TODO remove
+     */
+    // console.log(`Nr. of heap remove operations: ${Q._nr_removes}`);
     return CB;
 }
 

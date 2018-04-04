@@ -9,11 +9,13 @@ import * as $E from '../../core/Edges';
 import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
 
+const DEFAULT_WEIGHT = 1;
 
 export interface ICSVInput {
 	_separator					: string;
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
+	_weighted						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
@@ -28,7 +30,9 @@ class CSVInput implements ICSVInput {
 	
 	constructor(public _separator: string = ',',
 							public _explicit_direction: boolean = true,
-							public _direction_mode: boolean = false) {		
+							public _direction_mode: boolean = false,
+							public _weighted: boolean = false
+						) {
 	}
 	
 	
@@ -153,7 +157,7 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(input : Array<string>, graph_name : string) : $G.IGraph {
+	readFromEdgeList(input : Array<string>, graph_name : string, weighted = false) : $G.IGraph {
 		
 		var graph = new $G.BaseGraph(graph_name);
 		
@@ -166,8 +170,10 @@ class CSVInput implements ICSVInput {
 				continue;
 			}
 			
-			if ( elements.length < 2 ) {
+			if ( elements.length < 2 || elements.length > 3 ) {
+				
 				console.log(elements);
+
 				throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 			}
 			
@@ -179,7 +185,9 @@ class CSVInput implements ICSVInput {
 					dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u',
 					directed: boolean,
 					edge_id: string,
-					edge_id_u2: string;
+					edge_id_u2: string,
+					parse_weight: number,
+					edge_weight: number;
 			
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 			target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
@@ -190,11 +198,17 @@ class CSVInput implements ICSVInput {
 			directed = dir_char === 'd';
 			
 			edge_id = node_id + "_" + target_node_id + "_" + dir_char;
-			edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;		
+			edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+			
+			parse_weight = parseFloat(elements[2]);
+			edge_weight = this._weighted ? (isNaN(parse_weight) ? DEFAULT_WEIGHT : parse_weight) : null;
 							
 			if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
 				// The completely same edge should only be added once...
 				continue;
+			}
+			else if (this._weighted) {
+				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed, weighted: true, weight: edge_weight});
 			}
 			else {
 				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed});

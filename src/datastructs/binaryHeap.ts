@@ -195,11 +195,7 @@ class BinaryHeap implements IBinaryHeap {
     
     // we pop the last element
     var last = this._array.pop();
-
-    //new fix on 01.04.2018 by Rita
-    //we need to remove it from the positions dict, too!
-    // var occurrence = this._positions;
-    // delete occurrence[objID];
+    delete this._positions[objID];
 
     // we switch the last with the found element
     // and restore the heaps order, but only if the

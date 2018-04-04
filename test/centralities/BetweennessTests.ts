@@ -31,6 +31,8 @@ let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
     path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json",
     path_socialNet300 = "./test/test_data/social_network_edges_300.csv",
     path_socialNet1K = "./test/test_data/social_network_edges.csv",
+    path_weightedSocialNet300 = "./test/test_data/social_network_edges_300_weighted.csv",
+    path_weightedSocialNet1K = "./test/test_data/social_network_edges_weighted.csv",
     path_search_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
     path_search_nullEdge = "./test/test_data/search_graph_multiple_SPs.json",
     path_bf_graph = "./test/test_data/bellman_ford.json",
@@ -53,6 +55,10 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge),
     graph_bf_graph = json.readFromJSONFile(path_bf_graph),
     graph_bf_graph_neg_cycle = json.readFromJSONFile(path_bf_graph_neg_cycle);
+
+csv._weighted = true;
+let graph_weighted_social_300 = csv.readFromEdgeListFile(path_weightedSocialNet300),
+    graph_weighted_social_1K = csv.readFromEdgeListFile(path_weightedSocialNet1K);
 
 
 /**
@@ -290,33 +296,22 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     });
 
 
-    describe.only('Brandes Performance tests on small sample social networks', () => {
-        [path_midSizeGraph, path_socialNet300, path_socialNet1K].forEach(graphPath => { // , graph_socialNet1K
-            it(`Runtime of Brandes (+ Weighted) on graph ${graphPath}:`, () => {
-                let graph;
-                try {
-                    graph = json.readFromJSONFile(graphPath);
-                }
-                catch (SyntaxError) {
-                    graph = csv.readFromEdgeListFile(graphPath);
-                }
-
-                console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
-
+    describe.only('Brandes Performance tests on small, unweighted social networks', () => {
+        [graph_social_300, graph_social_1K].forEach(graph => { // graph_social_1K
+            it(`Runtime of Brandes (+ Weighted) on graph ${graph}:`, () => {
                 let startBU = +new Date();
                 let resBU = $B.Brandes2(graph, true, false);
                 let endBU = +new Date();
-                console.log("runtime of Brandes, Unweighted: " + (endBU - startBU));
+                console.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ` + (endBU - startBU));
+            });
+        });
 
+        [graph_weighted_social_300, graph_weighted_social_1K].forEach(graph => { // graph_social_1K
+            it(`Runtime of Brandes (+ Weighted) on graph ${graph}:`, () => {
                 let startBW = +new Date();
                 let resBW = $B.BrandesForWeighted(graph, true, false);
                 let endBW = +new Date();
-                console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
-
-                // let startBP = +new Date();
-                // let resBP = $B.BrandesPFSbased(graph, true, false);
-                // let endBP = +new Date();
-                // console.log("runtime of Brandes for Weighted, PFS based: " + (endBP - startBP));
+                console.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ` + (endBW - startBW));
             });
         });
     });
