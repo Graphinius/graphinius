@@ -356,6 +356,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    private _mode;
 	    private _evalPriority;
 	    private _evalObjID;
+	    _nr_removes: number;
 	    private _array;
 	    private _positions;
 	    /**
@@ -440,6 +441,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Callbacks {
 	    init_pfs?: Array<Function>;
+	    new_current?: Array<Function>;
 	    not_encountered?: Array<Function>;
 	    node_open?: Array<Function>;
 	    node_closed?: Array<Function>;
@@ -449,6 +451,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Messages {
 	    init_pfs_msgs?: Array<string>;
+	    new_current_msgs?: Array<string>;
 	    not_enc_msgs?: Array<string>;
 	    node_open_msgs?: Array<string>;
 	    node_closed_msgs?: Array<string>;
@@ -795,8 +798,12 @@ declare module 'graphinius/centralities/Brandes' {
 	 * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
 	 * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
 	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph, directed: boolean): {}; function BrandesForWeighted(graph: $G.IGraph, directed: boolean): {}; function BrandesHeapBased(graph: $G.IGraph, directed: boolean): {}; function PFSdictBased(graph: $G.IGraph): {};
-	export { Brandes, BrandesForWeighted, PFSdictBased, BrandesHeapBased };
+	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {}; function Brandes2(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {}; function BrandesForWeighted2(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
+	export interface BrandesHeapEntry {
+	    id: string;
+	    best: number;
+	} function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function normalizeScores(CB: any, N: any, directed: any): void;
+	export { Brandes, Brandes2, BrandesForWeighted, BrandesForWeighted2, BrandesPFSbased, normalizeScores };
 
 }
 declare module 'graphinius/centralities/Closeness' {

@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
+import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
 import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
@@ -11,6 +12,8 @@ import * as $JSON from '../../src/io/input/JSONInput';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 chai.use(sinonChai);
+
+const degCent = new DegreeCentrality();
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
@@ -522,12 +525,12 @@ describe('GRAPH TESTS: ', () => {
 
 
 		it('should output the correct degree distribution', () => {
-			var deg_dist: $G.DegreeDistribution = graph.degreeDistribution();
-			expect(deg_dist.und).to.deep.equal(new Uint16Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
-			expect(deg_dist.in).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.out).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.dir).to.deep.equal(new Uint16Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
-			expect(deg_dist.all).to.deep.equal(new Uint16Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
+			var deg_dist: DegreeDistribution = degCent.degreeDistribution(graph);
+			expect(deg_dist.und).to.deep.equal(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
+			expect(deg_dist.in).to.deep.equal(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.out).to.deep.equal(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.dir).to.deep.equal(new Uint32Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
+			expect(deg_dist.all).to.deep.equal(new Uint32Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
 		});
 
 
@@ -968,9 +971,9 @@ describe('GRAPH TESTS: ', () => {
 		it('should successfully clone a toy graph in explicit mode including weights', () => {
 			json_in = new $JSON.JSONInput(true, false, true);
 			graph = json_in.readFromJSONFile(small_graph_file);
-			let deg_dist_all = graph.degreeDistribution().all;
+			let deg_dist_all = degCent.degreeDistribution(graph).all;
 			clone_graph = graph.clone();
-			let clone_deg_dist_all = graph.degreeDistribution().all;
+			let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 			expect(clone_graph.nrNodes()).to.equal(SMALL_GRAPH_NR_NODES);
 			expect(clone_graph.nrUndEdges()).to.equal(SMALL_GRAPH_NR_UND_EDGES);
 			expect(clone_graph.nrDirEdges()).to.equal(SMALL_GRAPH_NR_DIR_EDGES);
@@ -982,12 +985,12 @@ describe('GRAPH TESTS: ', () => {
 		/**
 		 * JUST FOR FUN - can also be removed - The REAL graph example
 		 */
-		it('should successfully clone a toy graph in explicit mode including weights', () => {
+		it('should successfully clone a real-world graph in explicit mode including weights', () => {
 			json_in = new $JSON.JSONInput(false, false, true);
 			graph = json_in.readFromJSONFile(real_graph_file);
-			let deg_dist_all = graph.degreeDistribution().all;
+			let deg_dist_all = degCent.degreeDistribution(graph).all;
 			clone_graph = graph.clone();
-			let clone_deg_dist_all = graph.degreeDistribution().all;
+			let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 
 			expect(clone_graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
 			expect(clone_graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);

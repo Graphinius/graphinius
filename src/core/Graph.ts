@@ -20,14 +20,6 @@ export enum GraphMode {
 	MIXED
 }
 
-export interface DegreeDistribution {
-	in	: Uint16Array;
-	out	: Uint16Array;
-	dir	: Uint16Array;
-	und	: Uint16Array;
-	all	: Uint16Array;
-}
-
 export interface GraphStats {
 	mode					: GraphMode;
 	nr_nodes			: number;
@@ -52,7 +44,6 @@ export interface IGraph {
 	_label : string;
 	getMode() : GraphMode;
 	getStats() : GraphStats;
-	degreeDistribution() : DegreeDistribution;
 
 	// NODE STUFF
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
@@ -337,41 +328,6 @@ class BaseGraph implements IGraph {
 			density_dir: this._nr_dir_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) ),
 			density_und: 2* this._nr_und_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) )
 		}
-	}
-
-	/**
-	 * We assume graphs in which no node has higher total degree than 65536
-	 */
-	degreeDistribution() : DegreeDistribution {
-		var max_deg : number = 0,
-				key			: string,
-				node 		: $N.IBaseNode,
-				all_deg : number;
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
-			max_deg =  all_deg > max_deg ? all_deg : max_deg;
-		}
-
-		var deg_dist : DegreeDistribution = {
-			in:  new Uint16Array(max_deg),
-			out: new Uint16Array(max_deg),
-			dir: new Uint16Array(max_deg),
-			und: new Uint16Array(max_deg),
-			all: new Uint16Array(max_deg)
-		};
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			deg_dist.in[node.inDegree()]++;
-			deg_dist.out[node.outDegree()]++;
-			deg_dist.dir[node.inDegree() + node.outDegree()]++;
-			deg_dist.und[node.degree()]++;
-			deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
-		}
-		// console.dir(deg_dist);
-		return deg_dist;
 	}
 
 	nrNodes() : number {

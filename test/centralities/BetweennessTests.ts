@@ -59,7 +59,7 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
  * @TODO Rita: Only read graphs when needed within test...
  * => Test Isolation
  */
-describe.only('check correctness and runtime of betweenness centrality functions', () => {
+describe('check correctness and runtime of betweenness centrality functions', () => {
 
     it('test correctness of Brandes without normalization - compare to networkx data', () => {
         //FOR UNWEIGHTED; NON-NEGATIVE GRAPHS! FOR ALL OTHERS, SEE OTHER BRANDES VERSIONS!

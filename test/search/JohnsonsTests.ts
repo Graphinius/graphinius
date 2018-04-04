@@ -28,9 +28,9 @@ const expect = chai.expect,
 
 
 //spy stuff
-let BFDSpy, 
-    extraNSpy, 
-    preparePFSSpy, 
+let BFDSpy,
+    extraNSpy,
+    preparePFSSpy,
     PFSinJohnsonsSpy;
 
 //can I have more than one describe sections in a test file?
@@ -50,36 +50,34 @@ describe('Spy section Johnsons', () => {
     });
 
 
+    // it('debugging - positive graph in Johnsons', () => {
+    //     $JO.Johnsons(graph_search);
+    //     console.log(BFDSpy.callCount);
+    //     //here this is normal not to be called (positive graph)
+    //     console.log(extraNSpy.callCount);
+    //     console.log(preparePFSSpy.callCount);
+    //     console.log(PFSinJohnsonsSpy.callCount);
+    //     // expect(BFDSpy).to.have.not.been.called;
+    //     // expect(extraNSpy).to.have.not.been.called;
+    //     // expect(reWeighSpy).to.have.not.been.called;
+    //     //expect(PFSinJohnsonsSpy).to.have.been.calledOnce;
+    // });
 
+    // it('debugging - negative graph in Johnsons', () => {
+    //     $JO.Johnsons(graph_BF);
+    //     console.log(BFDSpy.callCount);
+    //     console.log(extraNSpy.callCount);
+    //     console.log(preparePFSSpy.callCount);
+    //     console.log(PFSinJohnsonsSpy.callCount);
+    // });
 
-    it('debugging - positive graph in Johnsons', () => {
-        $JO.Johnsons(graph_search);
-        console.log(BFDSpy.callCount);
-        //here this is normal not to be called (positive graph)
-        console.log(extraNSpy.callCount);
-        console.log(preparePFSSpy.callCount);
-        console.log(PFSinJohnsonsSpy.callCount);
-        // expect(BFDSpy).to.have.not.been.called;
-        // expect(extraNSpy).to.have.not.been.called;
-        // expect(reWeighSpy).to.have.not.been.called;
-        //expect(PFSinJohnsonsSpy).to.have.been.calledOnce;
-    });
-
-    it('debugging - negative graph in Johnsons', () => {
-        $JO.Johnsons(graph_BF);
-        console.log(BFDSpy.callCount);
-        console.log(extraNSpy.callCount);
-        console.log(preparePFSSpy.callCount);
-        console.log(PFSinJohnsonsSpy.callCount);
-    });
-
-    it('debugging', () => {
-        $PFS.PFS(graph_search, graph_search.getRandomNode());
-        console.log(BFDSpy.callCount);
-        console.log(extraNSpy.callCount);
-        console.log(preparePFSSpy.callCount);
-        console.log(PFSinJohnsonsSpy.callCount);
-    });
+    // it('debugging', () => {
+    //     $PFS.PFS(graph_search, graph_search.getRandomNode());
+    //     console.log(BFDSpy.callCount);
+    //     console.log(extraNSpy.callCount);
+    //     console.log(preparePFSSpy.callCount);
+    //     console.log(PFSinJohnsonsSpy.callCount);
+    // });
 
 });
 
@@ -99,7 +97,7 @@ describe('Johnsons APSP TEST -', () => {
         graph_social: $G.IGraph;
 
 
-    before(() => {
+    beforeEach(() => {
         //read in the graph objects from file
         graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
         graph_bernd = json.readFromJSONFile(bernd_graph),
@@ -125,7 +123,7 @@ describe('Johnsons APSP TEST -', () => {
 
 
     //now I leave it as it is to show, later the console logs can be deleted or outcommented
-    it.only('next result of FW could be transformed to the one the Johnsons gives', () => {
+    it('next result of FW could be transformed to the one the Johnsons gives', () => {
         //the order of algorithms does not make a difference here, but be careful with negative graphs!
         
         let resultFW = $FW.FloydWarshallAPSP(graph_search);
