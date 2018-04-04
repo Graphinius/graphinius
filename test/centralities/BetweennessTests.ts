@@ -290,15 +290,15 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     });
 
 
-    describe('Brandes Performance tests on small sample social networks', () => {
-        [path_midSizeGraph, path_socialNet300].forEach(graphPath => { // , graph_socialNet1K
-            it('Runtime of Brandes (+ Weighted) on mid-sized graph', () => {
+    describe.only('Brandes Performance tests on small sample social networks', () => {
+        [path_midSizeGraph, path_socialNet300, path_socialNet1K].forEach(graphPath => { // , graph_socialNet1K
+            it(`Runtime of Brandes (+ Weighted) on graph ${graphPath}:`, () => {
                 let graph;
                 try {
                     graph = json.readFromJSONFile(graphPath);
                 }
                 catch (SyntaxError) {
-                    graph = csv.readFromEdgeListFile(graphPath)
+                    graph = csv.readFromEdgeListFile(graphPath);
                 }
 
                 console.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
@@ -313,10 +313,10 @@ describe('check correctness and runtime of betweenness centrality functions', ()
                 let endBW = +new Date();
                 console.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
 
-                let startBP = +new Date();
-                let resBP = $B.BrandesPFSbased(graph, true, false);
-                let endBP = +new Date();
-                console.log("runtime of Brandes for Weighted, PFS based: " + (endBP - startBP));
+                // let startBP = +new Date();
+                // let resBP = $B.BrandesPFSbased(graph, true, false);
+                // let endBP = +new Date();
+                // console.log("runtime of Brandes for Weighted, PFS based: " + (endBP - startBP));
             });
         });
     });

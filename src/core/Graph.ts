@@ -342,12 +342,26 @@ class BaseGraph implements IGraph {
 		return this._nr_und_edges;
 	}
 
+
+	/**
+	 * 
+	 * @param id 
+	 * @param opts
+	 * 
+	 * @TODO addNode functions should check if a node with a given ID already exists -> node IDs have to be unique... 
+	 */
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode {
+		if ( this.hasNodeID( id ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		var node = new $N.BaseNode(id, opts);
 		return this.addNode(node) ? node : null;
 	}
 
 	addNode(node: $N.IBaseNode) : boolean {
+		if ( this.hasNodeID( node.getID() ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return true;

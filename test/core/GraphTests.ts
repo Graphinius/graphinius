@@ -60,7 +60,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		describe('adding nodes and edges', () => {
+		describe('adding nodes and edges -', () => {
 
 			it('should correctly add a node', () => {
 				stats = graph.getStats();
@@ -73,8 +73,25 @@ describe('GRAPH TESTS: ', () => {
 			it('should correctly add a node by ID', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(0);
-				node_a = graph.addNodeByID('A');
-				expect(node_a).to.be.an.instanceof(Node);
+				expect(graph.addNodeByID('A')).to.be.an.instanceof(Node);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should refuse to add a node with same ID as existing node', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				expect(graph.addNode(new $N.BaseNode('A'))).to.be.true;
+				expect(graph.addNode.bind(graph, new $N.BaseNode('A') ) ).to.throw("Won't add node with duplicate ID.");
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should refuse to add a node by ID with same ID as existing node', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				expect(graph.addNodeByID('A')).to.be.an.instanceof(Node);
+				expect(graph.addNodeByID.bind(graph, 'A' ) ).to.throw("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(1);
 			});
@@ -1438,13 +1455,8 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('should show Rita some basic expectations and what can go right / wrong ;)', () => {
-
-			});
-
-
 			it('should throw an error if we hand it an empty graph', () => {
-				// 'throws an error' behavior is not really a return value of the function
+				// graph is emptinius...
 				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
 			});
 
