@@ -1021,7 +1021,7 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		it('should successfully clone a part of a social network', () => {
 			json_in = new $JSON.JSONInput(false, false, true);
-			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges.csv");
+			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
 
 			clone_graph = graph.cloneSubGraph(graph.getNodeById("1374"), 300);
 

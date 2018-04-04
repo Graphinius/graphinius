@@ -88,7 +88,7 @@ describe('Johnsons APSP TEST -', () => {
     let bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
         bernd_graph = "./test/test_data/bernd_ares_pos.json",
         intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
-        social_graph = "./test/test_data/social_network_edges.csv";
+        social_graph = "./test/test_data/social_network_edges_1K.csv";
 
     //initialize graph objects
     let graph_NC: $G.IGraph,

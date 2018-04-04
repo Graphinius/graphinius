@@ -16,7 +16,7 @@ let CSV_IN	= $C.CSVInput;
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json";
 let bernd_graph = "./test/test_data/bernd_ares_pos.json";
 let intermediate = "./test/test_data/bernd_ares_intermediate_pos.json";
-let social_graph = "./test/test_data/social_network_edges.csv";
+let social_graph = "./test/test_data/social_network_edges_1K.csv";
 let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
 

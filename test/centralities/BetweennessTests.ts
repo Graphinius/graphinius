@@ -1,5 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
+import * as fs from 'fs';
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
@@ -10,33 +11,35 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 
 
-
 const SN_GRAPH_NODES = 1034,
     SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
 let expect = chai.expect,
     csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
+const PATH_PREFIX = "./test/test_data/",
+      PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
 
-let path_3nodeUnd = "./test/test_data/centralities/3nodeUnd.json",
-    path_3nodeDir = "./test/test_data/centralities/3nodeDir.json",
-    path_3node2SPs1direct = "./test/test_data/centralities/3node2SPs1direct.json",
-    path_4node2SPs1direct = "./test/test_data/centralities/4node2SPs1direct.json",
-    path_5nodeLinear = "./test/test_data/centralities/5nodeLinear.json",
-    path_7nodeMerge1beforeGoal = "./test/test_data/centralities/7nodeMerge1beforeGoal.json",
-    path_8nodeSplitMerge = "./test/test_data/centralities/8nodeSplitMerge.json",
-    path_8nodeSplitAfter1mergeBefore1 = "./test/test_data/centralities/8nodeSplitAfter1mergeBefore1.json",
+let socialNet300 = "social_network_edges_300",
+    socialNet1K = "social_network_edges_1K",
+    weightedSocialNet300 = "social_network_edges_300_weighted",
+    weightedSocialNet1K = "social_network_edges_1K_weighted";
+
+let path_3nodeUnd = PATH_PREFIX_CENTRALITIES + "3nodeUnd.json",
+    path_3nodeDir = PATH_PREFIX_CENTRALITIES + "3nodeDir.json",
+    path_3node2SPs1direct = PATH_PREFIX_CENTRALITIES + "3node2SPs1direct.json",
+    path_4node2SPs1direct = PATH_PREFIX_CENTRALITIES + "4node2SPs1direct.json",
+    path_5nodeLinear = PATH_PREFIX_CENTRALITIES + "5nodeLinear.json",
+    path_7nodeMerge1beforeGoal = PATH_PREFIX_CENTRALITIES + "7nodeMerge1beforeGoal.json",
+    path_8nodeSplitMerge = PATH_PREFIX_CENTRALITIES + "8nodeSplitMerge.json",
+    path_8nodeSplitAfter1mergeBefore1 = PATH_PREFIX_CENTRALITIES + "8nodeSplitAfter1mergeBefore1.json",
     //until this point, all graphs have checking values in the features
-    path_search_no1DE = "./test/test_data/search_graph_multiple_SPs_no1DE.json",
-    path_midSizeGraph = "./test/test_data/bernd_ares_intermediate_pos.json",
-    path_socialNet300 = "./test/test_data/social_network_edges_300.csv",
-    path_socialNet1K = "./test/test_data/social_network_edges.csv",
-    path_weightedSocialNet300 = "./test/test_data/social_network_edges_300_weighted.csv",
-    path_weightedSocialNet1K = "./test/test_data/social_network_edges_weighted.csv",
-    path_search_pos = "./test/test_data/search_graph_multiple_SPs_positive.json",
-    path_search_nullEdge = "./test/test_data/search_graph_multiple_SPs.json",
-    path_bf_graph = "./test/test_data/bellman_ford.json",
-    path_bf_graph_neg_cycle = "./test/test_data/negative_cycle.json";
+    path_search_no1DE = PATH_PREFIX + "search_graph_multiple_SPs_no1DE.json",
+    path_midSizeGraph = PATH_PREFIX + "bernd_ares_intermediate_pos.json",
+    path_search_pos = PATH_PREFIX + "search_graph_multiple_SPs_positive.json",
+    path_search_nullEdge = PATH_PREFIX + "search_graph_multiple_SPs.json",
+    path_bf_graph = PATH_PREFIX + "bellman_ford.json",
+    path_bf_graph_neg_cycle = PATH_PREFIX + "negative_cycle.json";
 
 
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
@@ -48,17 +51,11 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
     graph_8nodeSplitMerge = json.readFromJSONFile(path_8nodeSplitMerge),
     graph_8nodeSplitAfter1mergeBefore1 = json.readFromJSONFile(path_8nodeSplitAfter1mergeBefore1),
     graph_midSizeGraph = json.readFromJSONFile(path_midSizeGraph),
-    graph_social_300 = csv.readFromEdgeListFile(path_socialNet300),
-    graph_social_1K = csv.readFromEdgeListFile(path_socialNet1K),
     graph_search_no1DE = json.readFromJSONFile(path_search_no1DE),
     graph_search_pos = json.readFromJSONFile(path_search_pos),
     graph_search_nullEdge = json.readFromJSONFile(path_search_nullEdge),
     graph_bf_graph = json.readFromJSONFile(path_bf_graph),
     graph_bf_graph_neg_cycle = json.readFromJSONFile(path_bf_graph_neg_cycle);
-
-csv._weighted = true;
-let graph_weighted_social_300 = csv.readFromEdgeListFile(path_weightedSocialNet300),
-    graph_weighted_social_1K = csv.readFromEdgeListFile(path_weightedSocialNet1K);
 
 
 /**
@@ -106,6 +103,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         console.log(BResult);
 
         //one can not use "expect..." here, because of the different precision of fractional numbers
+        let epsilon = 1e-4
+        Object.keys(BResult).forEach( n => expect(BResult[n]).to.be.closeTo(mapControl[n], epsilon) );
         //expect(BResult).to.deep.equal(mapControl);
     });
 
@@ -296,31 +295,59 @@ describe('check correctness and runtime of betweenness centrality functions', ()
     });
 
 
-    describe.only('Brandes Performance tests on small, unweighted social networks', () => {
-        [graph_social_300, graph_social_1K].forEach(graph => { // graph_social_1K
-            it(`Runtime of Brandes (+ Weighted) on graph ${graph}:`, () => {
+    /**
+     * Usually, a social network would have undirected (bi-directional) friend relations - nevertheless, for sake of comparison (edge lists are read in a directed manner by networkx) we are switching to directed mode as well.
+     */
+    describe('Brandes Performance tests on small, unweighted social networks', () => {
+
+        [socialNet300].forEach(graph_name => { // socialNet1K
+            it(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
+                let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, false);
+                let graph_path = PATH_PREFIX + graph_name + ".csv",
+                    graph = csv.readFromEdgeListFile( graph_path );
+
                 let startBU = +new Date();
-                let resBU = $B.Brandes2(graph, true, false);
+                let resBU = $B.Brandes2(graph, true, true);
                 let endBU = +new Date();
-                console.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ` + (endBU - startBU));
+                console.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBU - startBU} ms.`);
+
+                let controlFileName = `./test/test_data/centralities/betweenness_${graph_name}_results.json`;
+                let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
+
+                expect(Object.keys(resBU).length).to.equal(Object.keys(controlMap).length);
+                
+                let epsilon = 1e-12
+                Object.keys(resBU).forEach(n => expect(resBU[n]).to.be.closeTo(controlMap[n], epsilon));
             });
         });
 
-        [graph_weighted_social_300, graph_weighted_social_1K].forEach(graph => { // graph_social_1K
-            it(`Runtime of Brandes (+ Weighted) on graph ${graph}:`, () => {
+        [weightedSocialNet300].forEach(graph_name => { // weightedSocialNet1K
+            it(`Runtime of Brandes (Weighted) on graph ${graph_name}:`, () => {
+                let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, true);
+                let graph_path = PATH_PREFIX + graph_name + ".csv",
+                    graph = csv.readFromEdgeListFile( graph_path );
+
                 let startBW = +new Date();
-                let resBW = $B.BrandesForWeighted(graph, true, false);
+                let resBW = $B.BrandesForWeighted(graph, true, true);
                 let endBW = +new Date();
-                console.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ` + (endBW - startBW));
+                console.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBW - startBW} ms.`);
+
+                let controlFileName = `./test/test_data/centralities/betweenness_${graph_name}_results.json`;
+                let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
+
+                expect(Object.keys(resBW).length).to.equal(Object.keys(controlMap).length);
+
+                let epsilon = 1e-12
+                Object.keys(resBW).forEach(n => expect(resBW[n]).to.be.closeTo(controlMap[n], epsilon));
             });
         });
     });
 });
 
+
 /**
  * TODO: Write some normalization tests...
  */
-
 
 
 

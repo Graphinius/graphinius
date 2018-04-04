@@ -1,4 +1,5 @@
-import http = require('http');
+import * as http from 'http';
+import * as https from 'https';
 
 /**
  * @TODO: Test it !!!
@@ -12,7 +13,7 @@ function retrieveRemoteFile(url: string, cb: Function) {
     throw new Error('Provided callback is not a function.');
   }
   
-  return http.get(url, function(response) {
+  return https.get(url, function(response) {
     // Continuously update stream with data
     var body = '';
     response.on('data', function(d) {

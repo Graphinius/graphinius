@@ -12,12 +12,13 @@ var expect = chai.expect,
 		Edge = $E.BaseEdge,
 		Graph = $G.BaseGraph,
 		CSV = $I.CSVInput,
-		REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/csv/";
+		REMOTE_HOST = "https://raw.githubusercontent.com/cassinius/graphinius-demo/master/test_data/csv/";
 
 var REAL_GRAPH_NR_NODES = 5937,
 		REAL_GRAPH_NR_EDGES = 17777;
 
-describe("Async CSVInput Tests, fetching the files from a remote server", () => {
+		
+describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 	
 	var csv: $I.ICSVInput,
 			sep: string,
