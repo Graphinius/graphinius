@@ -363,18 +363,14 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * Mode of a min heap should only be set upon
 	     * instantiation and never again afterwards...
 	     * @param _mode MIN or MAX heap
-	     * @param _evalPriority the evaluation function applied to
-	     * all incoming objects to determine it's score
-	     * @param _evalObjID function to determine the identity of
-	     * the object we are looking for at removal etc..
+	     * @param _evalObjID function to determine an object's identity
+	     * @param _evalPriority function to determine an objects score
 	     */
 	    constructor(_mode?: BinaryHeapMode, _evalPriority?: (obj: any) => number, _evalObjID?: (obj: any) => any);
 	    getMode(): BinaryHeapMode;
 	    getArray(): Array<any>;
 	    getPositions(): {
 	        [id: string]: PositionHeapEntry;
-	    } | {
-	        [id: string]: PositionHeapEntry[];
 	    };
 	    size(): number;
 	    getEvalPriorityFun(): Function;
@@ -390,9 +386,6 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @returns {number} the objects index in the internal array
 	     */
 	    insert(obj: any): void;
-	    /**
-	     *
-	     */
 	    remove(obj: any): any;
 	    private trickleDown(i);
 	    private trickleUp(i);
@@ -402,7 +395,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @param obj
 	     * @param pos
 	     */
-	    private setNodePosition(obj, new_pos, replace?, old_pos?);
+	    private setNodePosition(obj, pos);
 	    /**
 	     *
 	     */
@@ -411,7 +404,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @param obj
 	     * @returns {number}
 	     */
-	    private unsetNodePosition(obj);
+	    private removeNodePosition(obj);
 	}
 	export { BinaryHeap };
 
@@ -644,6 +637,13 @@ declare module 'graphinius/core/Graph' {
 	    nrNodes(): number;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
+	    /**
+	     *
+	     * @param id
+	     * @param opts
+	     *
+	     * @TODO addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
+	     */
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
 	    /**
@@ -996,7 +996,7 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 }
 declare module 'graphinius/utils/remoteUtils' {
 	/// <reference types="node" />
-	import http = require('http'); function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
+	import * as http from 'http'; function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
 
 }
@@ -1007,6 +1007,7 @@ declare module 'graphinius/io/input/CSVInput' {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
+	    _weighted: boolean;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
 	    readFromAdjacencyListURL(fileurl: string, cb: Function): any;
@@ -1017,7 +1018,8 @@ declare module 'graphinius/io/input/CSVInput' {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
-	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
+	    _weighted: boolean;
+	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean, _weighted?: boolean);
 	    readFromAdjacencyListURL(fileurl: string, cb: Function): void;
 	    readFromEdgeListURL(fileurl: string, cb: Function): void;
 	    private readGraphFromURL(fileurl, cb, localFun);
@@ -1025,7 +1027,7 @@ declare module 'graphinius/io/input/CSVInput' {
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
 	    private readFileAndReturn(filepath, func);
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromEdgeList(input: Array<string>, graph_name: string): $G.IGraph;
+	    readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
 	    private checkNodeEnvironment();
 	}
 	export { CSVInput };

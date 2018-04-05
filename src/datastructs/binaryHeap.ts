@@ -34,7 +34,8 @@ export interface IBinaryHeap {
 
 
 /**
- * We only support unique object ID's
+ * We only support unique object ID's for now !!!
+ * @TODO Rename into "ObjectBinaryHeap" or such...
  */
 class BinaryHeap implements IBinaryHeap {
   _nr_removes : number = 0; // just for debugging
@@ -143,28 +144,27 @@ class BinaryHeap implements IBinaryHeap {
     var pos = this.getNodePosition(obj),
         found = this._array[pos] != null ? this._array[pos] : null;
 
-        console.log(`Pos: ${pos}`);
-        console.log(`Found: ${found}`);
     /**
      * Search in O(n)
      */
-    // for (var pos = 0; pos < this._array.length; pos++) {
+    // for (var pos = 0; pos < this._array.length; ++pos) {
     //   if (this._evalObjID(this._array[pos]) === objID) {
     //     found = this._array[pos];
     //     break;
     //   }
     // }
 
+
     if (found === null) {
       return undefined;
     }
     
-    var last = this._array.pop();
-    delete this._positions[objID];
+    var last_array_obj = this._array.pop();
+    this.removeNodePosition(obj);
 
-    if (this.size() && found !== last ) {
-      this._array[pos] = last;
-      // this.setNodePosition(obj, pos);
+    if (this.size() && found !== last_array_obj ) {
+      this._array[pos] = last_array_obj;
+      this.setNodePosition(last_array_obj, pos);
 
       this.trickleUp(pos);
       this.trickleDown(pos);
@@ -203,7 +203,7 @@ class BinaryHeap implements IBinaryHeap {
       this._array[i] = this._array[swap];
       this._array[swap] = parent;
 
-      console.log(`Trickle down: swapping ${i} and ${swap}`);
+      // console.log(`Trickle down: swapping ${this._array[i]} and ${this._array[swap]}`);
       this.setNodePosition(this._array[i], i);
       this.setNodePosition(this._array[swap], swap);
 
@@ -225,7 +225,7 @@ class BinaryHeap implements IBinaryHeap {
         this._array[parent_idx] = child;
         this._array[i] = parent;
 
-        console.log(`Trickle up: swapping ${child} and ${parent}`);
+        // console.log(`Trickle up: swapping ${child} and ${parent}`);
         this.setNodePosition(child, parent_idx);
         this.setNodePosition(parent, i);
 
