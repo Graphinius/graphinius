@@ -219,10 +219,10 @@ declare module 'graphinius/config/run_config' {
 
 }
 declare module 'graphinius/utils/logger' {
-	export interface CONFIG {
+	export interface LOG_CONFIG {
 	    log_level: string;
 	} class Logger {
-	    config: CONFIG;
+	    config: LOG_CONFIG;
 	    constructor(config?: any);
 	    log(msg: any): boolean;
 	    error(err: any): boolean;
@@ -335,7 +335,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    MAX = 1,
 	}
 	export interface PositionHeapEntry {
-	    priority: number;
+	    score: number;
 	    position: number;
 	}
 	export interface IBinaryHeap {
@@ -343,7 +343,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    getArray(): Array<any>;
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    insert(obj: any): void;
@@ -356,28 +356,25 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    private _mode;
 	    private _evalPriority;
 	    private _evalObjID;
+	    _nr_removes: number;
 	    private _array;
 	    private _positions;
 	    /**
 	     * Mode of a min heap should only be set upon
 	     * instantiation and never again afterwards...
 	     * @param _mode MIN or MAX heap
-	     * @param _evalPriority the evaluation function applied to
-	     * all incoming objects to determine it's score
-	     * @param _evalObjID function to determine the identity of
-	     * the object we are looking for at removal etc..
+	     * @param _evalObjID function to determine an object's identity
+	     * @param _evalPriority function to determine an objects score
 	     */
 	    constructor(_mode?: BinaryHeapMode, _evalPriority?: (obj: any) => number, _evalObjID?: (obj: any) => any);
 	    getMode(): BinaryHeapMode;
 	    getArray(): Array<any>;
 	    getPositions(): {
 	        [id: string]: PositionHeapEntry;
-	    } | {
-	        [id: string]: PositionHeapEntry[];
 	    };
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    peek(): any;
@@ -389,9 +386,6 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @returns {number} the objects index in the internal array
 	     */
 	    insert(obj: any): void;
-	    /**
-	     *
-	     */
 	    remove(obj: any): any;
 	    private trickleDown(i);
 	    private trickleUp(i);
@@ -401,7 +395,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @param obj
 	     * @param pos
 	     */
-	    private setNodePosition(obj, new_pos, replace?, old_pos?);
+	    private setNodePosition(obj, pos);
 	    /**
 	     *
 	     */
@@ -410,7 +404,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     * @param obj
 	     * @returns {number}
 	     */
-	    private unsetNodePosition(obj);
+	    private removeNodePosition(obj);
 	}
 	export { BinaryHeap };
 
@@ -440,6 +434,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Callbacks {
 	    init_pfs?: Array<Function>;
+	    new_current?: Array<Function>;
 	    not_encountered?: Array<Function>;
 	    node_open?: Array<Function>;
 	    node_closed?: Array<Function>;
@@ -449,6 +444,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Messages {
 	    init_pfs_msgs?: Array<string>;
+	    new_current_msgs?: Array<string>;
 	    not_enc_msgs?: Array<string>;
 	    node_open_msgs?: Array<string>;
 	    node_closed_msgs?: Array<string>;
@@ -471,7 +467,7 @@ declare module 'graphinius/search/PFS' {
 	    current: $N.NeighborEntry;
 	    adj_nodes: Array<$N.NeighborEntry>;
 	    next: $N.NeighborEntry;
-	    better_dist: number;
+	    proposed_dist: number;
 	} function PFS(graph: $G.IGraph, v: $N.IBaseNode, config?: PFS_Config): {
 	    [id: string]: PFS_ResultEntry;
 	}; function preparePFSStandardConfig(): PFS_Config;
@@ -503,13 +499,6 @@ declare module 'graphinius/core/Graph' {
 	    UNDIRECTED = 2,
 	    MIXED = 3,
 	}
-	export interface DegreeDistribution {
-	    in: Uint16Array;
-	    out: Uint16Array;
-	    dir: Uint16Array;
-	    und: Uint16Array;
-	    all: Uint16Array;
-	}
 	export interface GraphStats {
 	    mode: GraphMode;
 	    nr_nodes: number;
@@ -533,7 +522,6 @@ declare module 'graphinius/core/Graph' {
 	    _label: string;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    degreeDistribution(): DegreeDistribution;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
 	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
@@ -567,7 +555,7 @@ declare module 'graphinius/core/Graph' {
 	    getRandomUndEdge(): $E.IBaseEdge;
 	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
-	    toDirectedGraph(): IGraph;
+	    toDirectedGraph(copy?: any): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    pickRandomProperty(propList: any): any;
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
@@ -600,13 +588,17 @@ declare module 'graphinius/core/Graph' {
 	        [key: string]: $E.IBaseEdge;
 	    };
 	    constructor(_label: any);
-	    toDirectedGraph(): IGraph;
+	    /**
+	     * Version 1: do it in-place (to the object you receive)
+	     * Version 2: clone the graph first, return the mutated clone
+	     */
+	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    /**
 	     * what to do if some edges are not weighted at all?
 	     * Since graph traversal algortihms (and later maybe graphs themselves)
 	     * use default weights anyways, I am simply ignoring them for now...
-	     * @TODO figure out how to test this...
+	     * @todo figure out how to test this...
 	     */
 	    hasNegativeEdge(): boolean;
 	    /**
@@ -642,13 +634,16 @@ declare module 'graphinius/core/Graph' {
 	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    /**
-	     * We assume graphs in which no node has higher total degree than 65536
-	     */
-	    degreeDistribution(): DegreeDistribution;
 	    nrNodes(): number;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
+	    /**
+	     *
+	     * @param id
+	     * @param opts
+	     *
+	     * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
+	     */
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
 	    /**
@@ -729,9 +724,9 @@ declare module 'graphinius/core/Graph' {
 	     * with as many unused keys as necessary
 	     *
 	     *
-	     * @TODO include general Test Cases
-	     * @TODO check if amount is larger than propList size
-	     * @TODO This seems like a simple hack - filling up remaining objects
+	     * @todo include generic Test Cases
+	     * @todo check if amount is larger than propList size
+	     * @todo This seems like a simple hack - filling up remaining objects
 	     * Could be replaced by a better fraction-increasing function above...
 	     *
 	     * @param propList
@@ -745,22 +740,49 @@ declare module 'graphinius/core/Graph' {
 }
 declare module 'graphinius/search/FloydWarshall' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshall(graph: $G.IGraph): {};
-	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshall };
+	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshallDict(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshallDict, changeNextToDirectParents };
+
+}
+declare module 'graphinius/search/Dijkstra' {
+	/// <reference path="../../typings/tsd.d.ts" />
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph';
+	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
+	    [id: string]: $PFS.PFS_ResultEntry;
+	};
+	export { Dijkstra };
+
+}
+declare module 'graphinius/search/Johnsons' {
+	/// <reference path="../../typings/tsd.d.ts" />
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
+	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
 
 }
 declare module 'graphinius/centralities/Betweenness' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean): {};
-	export { inBetweennessCentrality };
+	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boolean): {};
+	export { betweennessCentrality };
 
 }
 declare module 'graphinius/centralities/Brandes' {
+	/// <reference path="../../typings/tsd.d.ts" />
 	/**
-	 * Created by ru on 14.09.17.
+	 * Previous version created by ru on 14.09.17 is to be found below.
+	 * Modifications by Rita on 28.02.2018 - now it can handle branchings too.
+	 * CONTENTS:
+	 * Brandes: according to Brandes 2001, it is meant for unweighted graphs (+undirected according to the paper, but runs fine on directed ones, too)
+	 * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
+	 * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
 	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph): {};
-	export { Brandes };
+	import * as $G from 'graphinius/core/Graph'; function BrandesUnweighted(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
+	export interface BrandesHeapEntry {
+	    id: string;
+	    best: number;
+	} function BrandesWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function normalizeScores(CB: any, N: any, directed: any): void;
+	export { BrandesUnweighted, BrandesWeighted, BrandesPFSbased, normalizeScores };
 
 }
 declare module 'graphinius/centralities/Closeness' {
@@ -783,13 +805,27 @@ declare module 'graphinius/centralities/Degree' {
 	    und = 2,
 	    dir = 3,
 	    all = 4,
-	} class degreeCentrality {
+	}
+	/**
+	 * @TODO per edge type ???
+	 */
+	export interface DegreeDistribution {
+	    in: Uint32Array;
+	    out: Uint32Array;
+	    dir: Uint32Array;
+	    und: Uint32Array;
+	    all: Uint32Array;
+	} class DegreeCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode): {
 	        [id: string]: number;
 	    };
-	    getHistorgram(graph: $G.IGraph): $G.DegreeDistribution;
+	    /**
+	     * @TODO Weighted version !
+	   * @TODO per edge type !
+	     */
+	    degreeDistribution(graph: $G.IGraph): DegreeDistribution;
 	}
-	export { degreeCentrality };
+	export { DegreeCentrality };
 
 }
 declare module 'graphinius/centralities/gauss' {
@@ -950,7 +986,8 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 
 }
 declare module 'graphinius/utils/remoteUtils' {
-	import http = require('http'); function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
+	/// <reference types="node" />
+	import * as http from 'http'; function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
 
 }
@@ -961,6 +998,7 @@ declare module 'graphinius/io/input/CSVInput' {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
+	    _weighted: boolean;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
 	    readFromAdjacencyListURL(fileurl: string, cb: Function): any;
@@ -971,7 +1009,8 @@ declare module 'graphinius/io/input/CSVInput' {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
-	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
+	    _weighted: boolean;
+	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean, _weighted?: boolean);
 	    readFromAdjacencyListURL(fileurl: string, cb: Function): void;
 	    readFromEdgeListURL(fileurl: string, cb: Function): void;
 	    private readGraphFromURL(fileurl, cb, localFun);
@@ -979,7 +1018,7 @@ declare module 'graphinius/io/input/CSVInput' {
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
 	    private readFileAndReturn(filepath, func);
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromEdgeList(input: Array<string>, graph_name: string): $G.IGraph;
+	    readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
 	    private checkNodeEnvironment();
 	}
 	export { CSVInput };
@@ -1203,15 +1242,5 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    }): void;
 	}
 	export { SimplePerturber };
-
-}
-declare module 'graphinius/search/Dijkstra' {
-	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
-	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
-	    [id: string]: $PFS.PFS_ResultEntry;
-	};
-	export { Dijkstra };
 
 }

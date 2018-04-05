@@ -1,6 +1,8 @@
 "use strict";
-var fs = require('fs');
-var CSVOutput = (function () {
+/// <reference path="../../../typings/tsd.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
+var fs = require("fs");
+var CSVOutput = /** @class */ (function () {
     function CSVOutput(_separator, _explicit_direction, _direction_mode) {
         if (_separator === void 0) { _separator = ','; }
         if (_explicit_direction === void 0) { _explicit_direction = true; }
@@ -21,6 +23,7 @@ var CSVOutput = (function () {
         var mergeFunc = function (ne) {
             return ne.node.getID();
         };
+        // TODO make generic for graph mode
         for (var node_key in nodes) {
             node = nodes[node_key];
             graphString += node.getID();
@@ -38,6 +41,8 @@ var CSVOutput = (function () {
     };
     CSVOutput.prototype.writeToEdgeList = function (graph) {
         throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
+        // var graphString = "";
+        // return graphString;
     };
     return CSVOutput;
 }());

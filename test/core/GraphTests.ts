@@ -4,6 +4,7 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
+import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
 import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
@@ -11,6 +12,8 @@ import * as $JSON from '../../src/io/input/JSONInput';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 chai.use(sinonChai);
+
+const degCent = new DegreeCentrality();
 
 var expect = chai.expect;
 var Node = $N.BaseNode;
@@ -57,7 +60,7 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		describe('adding nodes and edges', () => {
+		describe('adding nodes and edges -', () => {
 
 			it('should correctly add a node', () => {
 				stats = graph.getStats();
@@ -70,8 +73,25 @@ describe('GRAPH TESTS: ', () => {
 			it('should correctly add a node by ID', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(0);
-				node_a = graph.addNodeByID('A');
-				expect(node_a).to.be.an.instanceof(Node);
+				expect(graph.addNodeByID('A')).to.be.an.instanceof(Node);
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should refuse to add a node with same ID as existing node', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				expect(graph.addNode(new $N.BaseNode('A'))).to.be.true;
+				expect(graph.addNode.bind(graph, new $N.BaseNode('A') ) ).to.throw("Won't add node with duplicate ID.");
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(1);
+			});
+
+			it('should refuse to add a node by ID with same ID as existing node', () => {
+				stats = graph.getStats();
+				expect(stats.nr_nodes).to.equal(0);
+				expect(graph.addNodeByID('A')).to.be.an.instanceof(Node);
+				expect(graph.addNodeByID.bind(graph, 'A' ) ).to.throw("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(1);
 			});
@@ -299,8 +319,8 @@ describe('GRAPH TESTS: ', () => {
 
 
 	/**
-	 * @TODO check graph traveral algorithms on loose end edges !!!
-	 * @TODO maybe split those tests for graph edges, loose edges and out edges
+	 * @todo check graph traveral algorithms on loose end edges !!!
+	 * @todo maybe split those tests for graph edges, loose edges and out edges
 	 */
 	describe('finding nodes and edges by ID and Label', () => {
 
@@ -396,7 +416,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		/**
-		 * @TODO We're just checking for 1st edge right now - what about multiple edges?
+		 * @todo We're just checking for 1st edge right now - what about multiple edges?
 		 * 
 		 */
 		it('should throw an error retrieving an edge by Node IDs if node_a does not exist', () => {
@@ -522,12 +542,12 @@ describe('GRAPH TESTS: ', () => {
 
 
 		it('should output the correct degree distribution', () => {
-			var deg_dist: $G.DegreeDistribution = graph.degreeDistribution();
-			expect(deg_dist.und).to.deep.equal(new Uint16Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
-			expect(deg_dist.in).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.out).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-			expect(deg_dist.dir).to.deep.equal(new Uint16Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
-			expect(deg_dist.all).to.deep.equal(new Uint16Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
+			var deg_dist: DegreeDistribution = degCent.degreeDistribution(graph);
+			expect(deg_dist.und).to.deep.equal(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
+			expect(deg_dist.in).to.deep.equal(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.out).to.deep.equal(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+			expect(deg_dist.dir).to.deep.equal(new Uint32Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
+			expect(deg_dist.all).to.deep.equal(new Uint32Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
 		});
 
 
@@ -968,9 +988,9 @@ describe('GRAPH TESTS: ', () => {
 		it('should successfully clone a toy graph in explicit mode including weights', () => {
 			json_in = new $JSON.JSONInput(true, false, true);
 			graph = json_in.readFromJSONFile(small_graph_file);
-			let deg_dist_all = graph.degreeDistribution().all;
+			let deg_dist_all = degCent.degreeDistribution(graph).all;
 			clone_graph = graph.clone();
-			let clone_deg_dist_all = graph.degreeDistribution().all;
+			let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 			expect(clone_graph.nrNodes()).to.equal(SMALL_GRAPH_NR_NODES);
 			expect(clone_graph.nrUndEdges()).to.equal(SMALL_GRAPH_NR_UND_EDGES);
 			expect(clone_graph.nrDirEdges()).to.equal(SMALL_GRAPH_NR_DIR_EDGES);
@@ -982,12 +1002,12 @@ describe('GRAPH TESTS: ', () => {
 		/**
 		 * JUST FOR FUN - can also be removed - The REAL graph example
 		 */
-		it('should successfully clone a toy graph in explicit mode including weights', () => {
+		it('should successfully clone a real-world graph in explicit mode including weights', () => {
 			json_in = new $JSON.JSONInput(false, false, true);
 			graph = json_in.readFromJSONFile(real_graph_file);
-			let deg_dist_all = graph.degreeDistribution().all;
+			let deg_dist_all = degCent.degreeDistribution(graph).all;
 			clone_graph = graph.clone();
-			let clone_deg_dist_all = graph.degreeDistribution().all;
+			let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 
 			expect(clone_graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
 			expect(clone_graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
@@ -1001,7 +1021,7 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		it('should successfully clone a part of a social network', () => {
 			json_in = new $JSON.JSONInput(false, false, true);
-			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges.csv");
+			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
 
 			clone_graph = graph.cloneSubGraph(graph.getNodeById("1374"), 300);
 
@@ -1134,7 +1154,29 @@ describe('GRAPH TESTS: ', () => {
 
 
 		/**
-		 * TODO how to deal with negative loops?
+		 * @todo outsource to performance test suite (once instantiated)
+		 */
+		describe("Adjacency List, DICT Version, performance test - ", () => {
+			let csv_in_custom = new $CSV.CSVInput(" ", false, true, true);
+
+			it('should measure the time it takes to create the adj.list.dict for a 1034 node graph', () => {
+
+				graph = csv_in_custom.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
+				expect(graph.nrNodes()).to.equal(1034);
+				expect(graph.nrDirEdges()).to.equal(53498);
+
+				let start = +new Date();
+				let adjListDict = graph.adjListDict(false, false);
+				let end = +new Date();
+				console.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end-start} ms.`);
+				expect(Object.keys(adjListDict).length).to.equal(graph.nrNodes());
+			});
+
+		});
+
+
+		/**
+		 * @todo  how to deal with negative loops?
 		 */
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 
@@ -1435,13 +1477,36 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('should return the same empty graph if there were no edges before', () => {
-
+			it('should throw an error if we hand it an empty graph', () => {
+				// graph is emptinius...
+				expect(graph.toDirectedGraph.bind(graph)).to.throw("Cowardly refusing to re-interpret an empty graph.");
 			});
 
 
 			it('should return the same directed graph if all edges were directed before', () => {
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+				expect(digraph.toDirectedGraph()).to.equal(digraph);
+			});
 
+
+			it('should return a copy of the same directed graph if all edges were directed before', () => {
+				let digraph_file = "./test/test_data/search_graph_pfs.json";
+				let json = new $JSON.JSONInput(true, true, false);
+				let digraph = json.readFromJSONFile(digraph_file);
+				expect(digraph).to.exist;
+				expect(digraph.nrNodes()).to.equal(6);
+				expect(digraph.nrDirEdges()).to.equal(9);
+				expect(digraph.nrUndEdges()).to.equal(0);
+
+				let res_graph = digraph.toDirectedGraph(true);
+				expect(res_graph).not.to.equal(digraph); // refs
+				expect(res_graph).to.deep.equal(digraph); // content
 			});
 
 
@@ -1450,9 +1515,9 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			it('should return a directed graph when all edges were UNdirected before', () => {
+			// it('should return a directed graph when all edges were UNdirected before', () => {
 
-			});
+			// });
 
 
 			it('should return an UNdirected graph when all edges were directed before', () => {

@@ -28,7 +28,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 	});
 
-	describe('Basic input tests', () => {
+	describe('Basic input tests - ', () => {
 
 		beforeEach('instantiate the CSV input class', () => {
 			csv = new CSV();
@@ -108,7 +108,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		it('should construct a very small graph from an edge list with edges set to undirected', () => {
 			csv._explicit_direction = false;
 			input_file = "./test/test_data/small_graph_edge_list_no_dir.csv";
-			graph = csv.readFromAdjacencyListFile(input_file);
+			graph = csv.readFromEdgeListFile(input_file);
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(4);
 			expect(stats.nr_dir_edges).to.equal(0);
@@ -125,14 +125,37 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			csv._explicit_direction = false;
 			csv._direction_mode = true;
 			input_file = "./test/test_data/small_graph_edge_list_no_dir.csv";
-			graph = csv.readFromAdjacencyListFile(input_file);
+			graph = csv.readFromEdgeListFile(input_file);
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(4);
 			expect(stats.nr_dir_edges).to.equal(7);
 			expect(stats.nr_und_edges).to.equal(0);
 			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
 		});
-		
+
+
+		/**
+		 * Weighted edge list
+		 */
+		it('small weighted, directed graph from an edge list', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			csv._weighted = true;
+			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph.csv";
+			graph = csv.readFromEdgeListFile(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(4);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
+			Object.keys(graph.getDirEdges()).forEach( e_id => {
+				let edge = graph.getEdgeById( e_id );
+				expect( edge.isWeighted() ).to.be.true;
+				expect( edge.getWeight() ).to.be.a('number');
+			});
+		});
+
 		
 		/**
 		 * Edge list, but with a REAL graph now, edges set to undirected
@@ -202,6 +225,68 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			input_file = "./test/test_data/csv_erroneous/adj_list_edge_dir_undefined.csv";
 			expect(csv.readFromAdjacencyListFile.bind(csv, input_file)).to.throw('Every edge entry has to contain its direction info in explicit mode.');
 		});
+
+
+		it('weighted graph from edge list, too many params', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			csv._weighted = true;
+			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_four_args.csv";
+			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
+		});
+
+
+		it('weighted graph from edge list, too many params', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			csv._weighted = true;
+			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_four_args.csv";
+			expect(csv.readFromEdgeListFile.bind(csv, input_file)).to.throw('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
+		});
+
+
+		it('weighted graph from edge list, NaN weight - replaced with 1', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			csv._weighted = true;
+			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_NaN.csv";
+			graph = csv.readFromEdgeListFile(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(4);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
+			Object.keys(graph.getDirEdges()).forEach( e_id => {
+				let edge = graph.getEdgeById( e_id );
+				expect( edge.isWeighted() ).to.be.true;
+				expect( edge.getWeight() ).to.equal(1);
+			});
+		});
+
+
+		it('weighted graph from edge list, missing weight - replaced with 1', () => {
+			csv._separator = " ";
+			csv._explicit_direction = false;
+			csv._direction_mode = true;
+			csv._weighted = true;
+			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_missing.csv";
+			graph = csv.readFromEdgeListFile(input_file);
+			stats = graph.getStats();
+			expect(stats.nr_nodes).to.equal(4);
+			expect(stats.nr_dir_edges).to.equal(4);
+			expect(stats.nr_und_edges).to.equal(0);
+			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
+			Object.keys(graph.getDirEdges()).forEach( e_id => {
+				let edge = graph.getEdgeById( e_id );
+				expect( edge.isWeighted() ).to.be.true;
+			});
+			expect( graph.getEdgeById('A_C_d').getWeight() ).to.equal(1);
+		});
+
+
 	
 	});
 

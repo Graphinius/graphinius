@@ -1,6 +1,9 @@
 "use strict";
+/// <reference path="../../typings/tsd.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
 var $SU = require("../utils/structUtils");
-var pageRankCentrality = (function () {
+//Calculates the page rank for a given graph
+var pageRankCentrality = /** @class */ (function () {
     function pageRankCentrality() {
     }
     pageRankCentrality.prototype.getCentralityMap = function (graph, weighted, alpha, conv, iterations) {
@@ -10,6 +13,7 @@ var pageRankCentrality = (function () {
             iterations = 1000;
         if (conv == null)
             conv = 0.000125;
+        //First initialize the values for all nodes
         var curr = {};
         var old = {};
         var nrNodes = graph.nrNodes();
@@ -29,6 +33,7 @@ var pageRankCentrality = (function () {
                 structure[key]['inc'].push(parent_1.getID());
             }
         }
+        //console.log(JSON.stringify(structure));
         for (var key in graph.getNodes()) {
             key = String(key);
             curr[key] = 1 / nrNodes;
@@ -36,20 +41,23 @@ var pageRankCentrality = (function () {
         }
         for (var i = 0; i < iterations; i++) {
             var me = 0.0;
-            for (var key in graph.getNodes()) {
+            for (var key in graph.getNodes()) { //Run through all nodes in graph
                 key = String(key);
+                //console.log(structure[key]);
                 var total = 0;
                 var parents = structure[key]['inc'];
                 for (var k in parents) {
                     var p = String(parents[k]);
                     total += old[p] / structure[p]['deg'];
                 }
+                //console.log("o:"+old[key] + " n:"+curr[key]);
                 curr[key] = total * (1 - alpha) + alpha / nrNodes;
                 me += Math.abs(curr[key] - old[key]);
             }
             if (me <= conv) {
                 return curr;
             }
+            //console.log("Error:"+me/nrNodes);
             old = $SU.clone(curr);
         }
         return curr;

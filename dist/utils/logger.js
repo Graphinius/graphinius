@@ -1,6 +1,7 @@
 "use strict";
-var run_config_1 = require('../config/run_config');
-var Logger = (function () {
+Object.defineProperty(exports, "__esModule", { value: true });
+var run_config_1 = require("../config/run_config");
+var Logger = /** @class */ (function () {
     function Logger(config) {
         this.config = null;
         this.config = config || run_config_1.RUN_CONFIG;

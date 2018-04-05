@@ -1,5 +1,12 @@
 "use strict";
+/// <reference path="../../typings/tsd.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
 var PFS_1 = require("./PFS");
+/**
+ *
+ * @param graph
+ * @param start
+ */
 function BFSanityChecks(graph, start) {
     if (graph == null || start == null) {
         throw new Error('Graph as well as start node have to be valid objects.');
@@ -19,6 +26,7 @@ function BellmanFordArray(graph, start) {
         distances[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
         id_idx_map[node.getID()] = n_idx;
     }
+    // Initialize an edge array just holding the node indices, weight and directed
     var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
     var bf_edges = [];
     for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
@@ -56,10 +64,15 @@ function BellmanFordArray(graph, start) {
     return { distances: distances, neg_cycle: neg_cycle };
 }
 exports.BellmanFordArray = BellmanFordArray;
+/**
+ *
+ * @param graph
+ * @param start
+ */
 function BellmanFordDict(graph, start) {
     BFSanityChecks(graph, start);
     var distances = {}, edges, edge, a, b, weight, new_weight, nodes_size, neg_cycle = false;
-    distances = {};
+    distances = {}; // Reset dists, TODO refactor
     edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
     nodes_size = graph.nrNodes();
     for (var node in graph.getNodes()) {

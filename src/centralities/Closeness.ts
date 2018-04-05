@@ -45,7 +45,7 @@ class closenessCentrality{
     //We found a better path, we need to correct the accumulated distance
     var betterPathFound = function( context: $PFS.PFS_Scope  ) {
       //console.log("correcting distance "+context.current.node.getID()+"->"+context.next.node.getID()+" from " + pfs_config.result[context.next.node.getID()].distance + "to" + context.better_dist);
-      accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.better_dist;
+      accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.proposed_dist;
       };
 
     let bp = pfs_config.callbacks.better_path.pop(); //change the order, otherwise our betterPathFound would not do anything

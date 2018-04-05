@@ -14,7 +14,7 @@ const prompt	 				= require('gulp-prompt');
 const dtsGen					= require('dts-generator').default;
 
 
-//----------------------------
+//----------------------------gulp
 // PATHS
 //----------------------------
 const paths = {
@@ -24,7 +24,7 @@ const paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist/**/*.js', 'docs', 'coverage'],
-	tests_basic: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
+	tests_core: ['test/core/**/*.js', 'test/datastructs/**/*.js', 'test/io/**/*.js', 'test/mincutmaxflow/**/*.js', 'test/utils/**/*.js'],
 	tests_search: ['test/search/**/*.js'],
 	tests_async: ['test/test_async/**/*.js'],
   	tests_perturb: ['test/perturbation/**/*.js'],
@@ -41,10 +41,13 @@ const paths = {
 //----------------------------
 var tsProject = ts.createProject({
 	target: "ES5",
-	module: "commonjs",
-	declaration: false,
-	noExternalResolve: false,
-  removeComments: true
+	lib: [
+		"es2017",
+		"dom"
+	],
+	// module: "commonjs",
+	// declaration: false,
+  // removeComments: true
 });
 
 
@@ -87,7 +90,7 @@ gulp.task('clean', function () {
 
 gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
-						 .pipe(ts(tsProject))
+						 .pipe(tsProject())
 						 .pipe(gulp.dest('.'));
 });
 
@@ -98,7 +101,7 @@ gulp.task("tdoc", ['clean'], function() {
 		.src(paths.typesources)
 		.pipe(tdoc({
 			module: "commonjs",
-			target: "es5",
+			target: "es2017",
 			out: "docs/",
 			name: "GraphiniusJS"//,
 			//theme: "minimal"
@@ -109,7 +112,7 @@ gulp.task("tdoc", ['clean'], function() {
 // Packaging - Node / Commonjs
 gulp.task('dist', ['clean'], function () {
 	var tsResult = gulp.src(paths.distsources)
-						 				 .pipe(ts(tsProject));
+						 				 .pipe(tsProject());
 	// Merge the two output streams, so this task is finished
 	// when the IO of both operations are done.
 	return merge([
@@ -151,8 +154,8 @@ gulp.task('bundle', ['pack'], function() {
 // TEST TASKS
 //----------------------------
 // 'Normal' synchronous tests
-gulp.task('test-basic', ['build'], function () {
-	return gulp.src(paths.tests_basic, {read: false})
+gulp.task('test-core', ['build'], function () {
+	return gulp.src(paths.tests_core, {read: false})
 						 .pipe(mocha({reporter: 'spec',
 						 							timeout: 60000}));
 });
@@ -238,8 +241,8 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 //----------------------------
 // WATCH TASKS
 //----------------------------
-gulp.task('watch-basic', function () {
-	gulp.watch(paths.typescripts, ['test-basic']);
+gulp.task('watch-core', function () {
+	gulp.watch(paths.typescripts, ['test-core']);
 });
 
 
@@ -258,7 +261,7 @@ gulp.task('watch-perturb', function () {
 });
 
 
-gulp.task('watch-cenral', function () {
+gulp.task('watch-central', function () {
 	gulp.watch(paths.typescripts, ['test-central']);
 });
 
@@ -268,4 +271,4 @@ gulp.task('watch-all', function () {
 });
 
 
-gulp.task('default', ['watch-basic']);
+gulp.task('default', ['watch-core']);

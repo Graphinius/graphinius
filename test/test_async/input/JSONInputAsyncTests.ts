@@ -14,13 +14,13 @@ var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
 
-describe('ASYNC GRAPH JSON INPUT TESTS', () => {
+describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 	
 	var json 					: $I.IJSONInput,
 			remote_file		: string,
 			graph					: $G.IGraph,
 			stats					: $G.GraphStats,
-			REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/json/";
+			REMOTE_HOST = "https://raw.githubusercontent.com/cassinius/graphinius-demo/master/test_data/json/";
 
 	var REAL_GRAPH_NR_NODES = 6204,
 			REAL_GRAPH_NR_EDGES = 18550;

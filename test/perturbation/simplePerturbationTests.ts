@@ -2,9 +2,12 @@
 
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
+import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
 import * as $JI from '../../src/io/input/JSONInput';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $P from '../../src/perturbation/SimplePerturbations';
+
+const degCent = new DegreeCentrality();
 
 let expect = chai.expect;
 let REAL_GRAPH_NR_NODES = 6204,
@@ -285,7 +288,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
       it('should add a specified amount of UNdirected edges', () => {
-        let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        let nr_und_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE) || 1;
         perturber.randomlyAddEdgesAmount(nr_und_edges_to_be_added, {directed: false});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_und_edges_to_be_added);
@@ -488,7 +491,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
       it('should add a specified amount of directed edges', () => {
-        let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE);
+        let nr_dir_edges_to_be_added = Math.floor(Math.random() * MAX_EDGES_TO_CREATE) || 1;
         perturber.randomlyAddEdgesAmount(nr_dir_edges_to_be_added, {directed: true});
         expect(graph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
         expect(graph.nrDirEdges()).to.equal(REAL_GRAPH_NR_EDGES + nr_dir_edges_to_be_added);
@@ -523,7 +526,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 				probability : number,
 				min	: number,
 				max : number,
-				deg_dist : $G.DegreeDistribution,
+				deg_dist : DegreeDistribution,
         graph : $G.IGraph,
         perturber: $P.ISimplePerturber,
 			  csv	: $CSV.CSVInput = new $CSV.CSVInput();
@@ -539,7 +542,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 				
 			it('should throw an error if probability is smaller 0', () => {
 				probability = -1;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
@@ -549,7 +552,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			
 			it('should throw an error if probability is greater 1', () => {
 				probability = 2;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
@@ -559,40 +562,40 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			
 			it('DIRECTED - should randomly generate directed edges', () => {
 				probability = 0.5;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
 				perturber.createRandomEdgesProb(probability, true);
 				expect(graph.nrDirEdges()).not.to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
-				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+				expect(degCent.degreeDistribution(graph)).not.to.deep.equal(deg_dist);
 			});
 
 			
 			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
 				probability = 0.5;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
 				perturber.createRandomEdgesProb(probability, false);
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).not.to.equal(0);		
-				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+				expect(degCent.degreeDistribution(graph)).not.to.deep.equal(deg_dist);
 			});
 
 			
 			it('UNDIRECTED - should default to UNdirected edges if no direction is provided', () => {
 				probability = 0.5;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
 				perturber.createRandomEdgesProb(probability);
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).not.to.equal(0);		
-				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+				expect(degCent.degreeDistribution(graph)).not.to.deep.equal(deg_dist);
 			});
 		
 		});
@@ -610,7 +613,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			it('should throw an error if min is smaller 0', () => {
 				min = -1;
 				max = 10;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);
@@ -621,7 +624,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			it('should throw an error if max is greater (n-1)', () => {
 				min = 0;
 				max = 4;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
@@ -632,7 +635,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			it('should throw an error if max is greater (n-1)', () => {
 				min = 4;
 				max = 2;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
@@ -643,28 +646,28 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			it('DIRECTED - should randomly generate directed edges', () => {
 				min = 1;
 				max = 3;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
 				perturber.createRandomEdgesSpan(min, max, true);
 				expect(graph.nrDirEdges()).not.to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(0);		
-				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+				expect(degCent.degreeDistribution(graph)).not.to.deep.equal(deg_dist);
 			});
 			
 			
 			it('UNDIRECTED - should randomly generate UNdirected edges', () => {
 				min = 1;
 				max = 3;
-				deg_dist = graph.degreeDistribution();
+				deg_dist = degCent.degreeDistribution(graph);
 				graph.clearAllEdges();
 				expect(graph.nrDirEdges()).to.equal(0);
-				expect(graph.nrUndEdges()).to.equal(0);		
+				expect(graph.nrUndEdges()).to.equal(0);
 				perturber.createRandomEdgesSpan(min, max, false);
 				expect(graph.nrDirEdges()).to.equal(0);
-				expect(graph.nrUndEdges()).not.to.equal(0);		
-				expect(graph.degreeDistribution()).not.to.deep.equal(deg_dist);
+				expect(graph.nrUndEdges()).not.to.equal(0);
+				expect(degCent.degreeDistribution(graph)).not.to.deep.equal(deg_dist);
 			});
 		
 		});

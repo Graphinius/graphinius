@@ -2,6 +2,8 @@
 
 import * as chai from 'chai';
 import * as $G from '../../../src/core/Graph';
+import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
+const degCent = new DegreeCentrality();
 
 var expect 	= chai.expect;
 		
@@ -12,12 +14,12 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(stats.nr_und_edges).to.equal(2);
 	expect(stats.mode).to.equal($G.GraphMode.MIXED);
 	
-	var deg_dist : $G.DegreeDistribution = graph.degreeDistribution();
-	expect(deg_dist.und).to.deep.equal(new Uint16Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
-	expect(deg_dist.in).to.deep.equal( new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-	expect(deg_dist.out).to.deep.equal(new Uint16Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
-	expect(deg_dist.dir).to.deep.equal(new Uint16Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
-	expect(deg_dist.all).to.deep.equal(new Uint16Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
+	var deg_dist : DegreeDistribution = degCent.degreeDistribution(graph);
+	expect(deg_dist.und).to.deep.equal(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
+	expect(deg_dist.in).to.deep.equal( new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+	expect(deg_dist.out).to.deep.equal(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
+	expect(deg_dist.dir).to.deep.equal(new Uint32Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
+	expect(deg_dist.all).to.deep.equal(new Uint32Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
 	
 	var nodes = graph.getNodes();
 	var n_a = nodes["A"],

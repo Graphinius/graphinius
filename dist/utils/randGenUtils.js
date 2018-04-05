@@ -1,8 +1,20 @@
 "use strict";
+/**
+ * Taken from https://github.com/robbrit/randgen
+ * and slightly modified to give TS completion
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Generate a random Base36  UID of length 24
+ */
 function randBase36String() {
     return (Math.random() + 1).toString(36).substr(2, 24);
 }
 exports.randBase36String = randBase36String;
+/*jslint indent: 2, plusplus: true, sloppy: true */
+// Generate uniformly distributed random numbers
+// Gives a random number on the interval [min, max).
+// If discrete is true, the number will be an integer.
 function runif(min, max, discrete) {
     if (min === undefined) {
         min = 0;
@@ -19,6 +31,9 @@ function runif(min, max, discrete) {
     return Math.random() * (max - min) + min;
 }
 exports.runif = runif;
+// Generate normally-distributed random nubmers
+// Algorithm adapted from:
+// http://c-faq.com/lib/gaussian.html
 function rnorm(mean, stdev) {
     this.v2 = null;
     var u1, u2, v1, v2, s;
@@ -44,6 +59,8 @@ function rnorm(mean, stdev) {
     return stdev * v2 + mean;
 }
 exports.rnorm = rnorm;
+// rnorm.v2 = null;
+// Generate Chi-square distributed random numbers
 function rchisq(degreesOfFreedom) {
     if (degreesOfFreedom === undefined) {
         degreesOfFreedom = 1;
@@ -56,6 +73,7 @@ function rchisq(degreesOfFreedom) {
     return sum;
 }
 exports.rchisq = rchisq;
+// Generate Poisson distributed random numbers
 function rpoisson(lambda) {
     if (lambda === undefined) {
         lambda = 1;
@@ -68,6 +86,7 @@ function rpoisson(lambda) {
     return k - 1;
 }
 exports.rpoisson = rpoisson;
+// Generate Cauchy distributed random numbers
 function rcauchy(loc, scale) {
     if (loc === undefined) {
         loc = 0.0;
@@ -82,10 +101,12 @@ function rcauchy(loc, scale) {
     return loc + scale * n1 / n2;
 }
 exports.rcauchy = rcauchy;
+// Bernoulli distribution: gives 1 with probability p
 function rbernoulli(p) {
     return Math.random() < p ? 1 : 0;
 }
 exports.rbernoulli = rbernoulli;
+// Vectorize a random generator
 function vectorize(generator) {
     return function () {
         var n, result, i, args;
@@ -98,20 +119,27 @@ function vectorize(generator) {
         return result;
     };
 }
+// Generate a histogram from a list of numbers
 function histogram(data, binCount) {
     binCount = binCount || 10;
     var bins, i, scaled, max = Math.max.apply(this, data), min = Math.min.apply(this, data);
+    // edge case: max == min
     if (max === min) {
         return [data.length];
     }
     bins = [];
+    // zero each bin
     for (i = 0; i < binCount; i++) {
         bins.push(0);
     }
     for (i = 0; i < data.length; i++) {
+        // scale it to be between 0 and 1
         scaled = (data[i] - min) / (max - min);
+        // scale it up to the histogram size
         scaled *= binCount;
+        // drop it in a bin
         scaled = Math.floor(scaled);
+        // edge case: the max
         if (scaled === binCount) {
             scaled--;
         }
@@ -120,6 +148,9 @@ function histogram(data, binCount) {
     return bins;
 }
 exports.histogram = histogram;
+/**
+ * Get a random element from a list
+ */
 function rlist(list) {
     return list[runif(0, list.length, true)];
 }

@@ -1,9 +1,11 @@
 "use strict";
-var fs = require('fs');
-var $G = require('../../core/Graph');
-var $R = require('../../utils/remoteUtils');
+/// <reference path="../../../typings/tsd.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
+var fs = require("fs");
+var $G = require("../../core/Graph");
+var $R = require("../../utils/remoteUtils");
 var DEFAULT_WEIGHT = 1;
-var JSONInput = (function () {
+var JSONInput = /** @class */ (function () {
     function JSONInput(_explicit_direction, _direction, _weighted_mode) {
         if (_explicit_direction === void 0) { _explicit_direction = true; }
         if (_direction === void 0) { _direction = false; }
@@ -14,14 +16,19 @@ var JSONInput = (function () {
     }
     JSONInput.prototype.readFromJSONFile = function (filepath) {
         this.checkNodeEnvironment();
+        // TODO test for existing file...
         var json = JSON.parse(fs.readFileSync(filepath).toString());
         return this.readFromJSON(json);
     };
     JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
         var self = this, graph, request, json;
+        // Node or browser ??
         if (typeof window !== 'undefined') {
+            // Browser...			
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
+                // console.log("Ready state: " + request.readyState);
+                // console.log("Reqst status: " + request.status);
                 if (request.readyState == 4 && request.status == 200) {
                     var json = JSON.parse(request.responseText);
                     graph = self.readFromJSON(json);
@@ -36,19 +43,39 @@ var JSONInput = (function () {
             request.send();
         }
         else {
+            // Node.js
             $R.retrieveRemoteFile(fileurl, function (raw_graph) {
                 graph = self.readFromJSON(JSON.parse(raw_graph));
                 cb(graph, undefined);
             });
         }
     };
+    /**
+     * In this case, there is one great difference to the CSV edge list cases:
+     * If you don't explicitly define a directed edge, it will simply
+     * instantiate an undirected one
+     * we'll leave that for now, as we will produce apt JSON sources later anyways...
+     */
     JSONInput.prototype.readFromJSON = function (json) {
         var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
         for (var node_id in json.data) {
             var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+            /**
+             * Reading and instantiating features
+             * We are using the shortcut setFeatures here,
+             * so we have to read them before any special features
+             */
             if (features = json.data[node_id].features) {
+                // for ( feature in features ) {
+                // 	node.setFeature(feature, features[feature]);
+                // }
                 node.setFeatures(features);
             }
+            /**
+             * Reading and instantiating coordinates
+             * Coordinates are treated as special features,
+             * and are therefore added after general features
+             */
             if (coords_json = json.data[node_id].coords) {
                 coords = {};
                 for (coord_idx in coords_json) {
@@ -56,11 +83,17 @@ var JSONInput = (function () {
                 }
                 node.setFeature('coords', coords);
             }
+            // Reading and instantiating edges
             var edges = json.data[node_id].edges;
             for (var e in edges) {
-                var edge_input = edges[e], target_node_id = edge_input.to, directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
+                var edge_input = edges[e], target_node_id = edge_input.to, 
+                // Is there any direction information?            
+                directed = this._explicit_direction ? edge_input.directed : this._direction, dir_char = directed ? 'd' : 'u', 
+                // Is there any weight information?,
+                weight_float = this.handleEdgeWeights(edge_input), weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT, edge_weight = this._weighted_mode ? weight_info : undefined, target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
                 var edge_id = node_id + "_" + target_node_id + "_" + dir_char, edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
                 if (graph.hasEdgeID(edge_id) || (!directed && graph.hasEdgeID(edge_id_u2))) {
+                    // The completely same edge should only be added once...
                     continue;
                 }
                 else {
@@ -74,6 +107,11 @@ var JSONInput = (function () {
         }
         return graph;
     };
+    /**
+     * Infinity & -Infinity cases are redundant, as JavaScript
+     * handles them correctly anyways (for now)
+     * @param edge_input
+     */
     JSONInput.prototype.handleEdgeWeights = function (edge_input) {
         switch (edge_input.weight) {
             case "undefined":

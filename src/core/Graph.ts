@@ -20,14 +20,6 @@ export enum GraphMode {
 	MIXED
 }
 
-export interface DegreeDistribution {
-	in	: Uint16Array;
-	out	: Uint16Array;
-	dir	: Uint16Array;
-	und	: Uint16Array;
-	all	: Uint16Array;
-}
-
 export interface GraphStats {
 	mode					: GraphMode;
 	nr_nodes			: number;
@@ -52,7 +44,6 @@ export interface IGraph {
 	_label : string;
 	getMode() : GraphMode;
 	getStats() : GraphStats;
-	degreeDistribution() : DegreeDistribution;
 
 	// NODE STUFF
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
@@ -88,7 +79,7 @@ export interface IGraph {
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// REINTERPRETING EDGES
-	toDirectedGraph() : IGraph;
+	toDirectedGraph(copy?) : IGraph;
 	toUndirectedGraph() : IGraph;
 
 	// PROPERTIES
@@ -133,10 +124,18 @@ class BaseGraph implements IGraph {
 
 	constructor (public _label) {	}
 
+	/**
+	 * Version 1: do it in-place (to the object you receive)
+	 * Version 2: clone the graph first, return the mutated clone
+	 */
+	toDirectedGraph(copy = false) : IGraph {
+		let result_graph = copy ? this.clone() : this;
+		// if graph has no edges, we want to throw an exception
+		if ( this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+			throw new Error("Cowardly refusing to re-interpret an empty graph.")
+		}
 
-	toDirectedGraph() : IGraph {
-
-		return this;
+		return result_graph;
 	}
 
 
@@ -149,13 +148,15 @@ class BaseGraph implements IGraph {
 	 * what to do if some edges are not weighted at all?
 	 * Since graph traversal algortihms (and later maybe graphs themselves)
 	 * use default weights anyways, I am simply ignoring them for now...
-	 * @TODO figure out how to test this...
+	 * @todo figure out how to test this...
 	 */
 	hasNegativeEdge(): boolean {
 		let has_neg_edge = false,
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
+		//reminder: a return statement breaks out of the for loop and finishes the function
+		
 		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
 			if (!edge.isWeighted()) {
@@ -222,12 +223,15 @@ class BaseGraph implements IGraph {
 		let next = [],
 				node_keys = Object.keys(this._nodes);
 
+		//?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
+		//I do not understand but it works so it should be okay	
 		const adjDict = this.adjListDict(incoming, true, 0);
 		
 		for ( let i = 0; i < this._nr_nodes; ++i ) {
 			next.push([]);
 			for ( let j = 0; j < this._nr_nodes; ++j ) {
 				next[i].push([]);
+				
 				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
 			}
 		}
@@ -326,41 +330,6 @@ class BaseGraph implements IGraph {
 		}
 	}
 
-	/**
-	 * We assume graphs in which no node has higher total degree than 65536
-	 */
-	degreeDistribution() : DegreeDistribution {
-		var max_deg : number = 0,
-				key			: string,
-				node 		: $N.IBaseNode,
-				all_deg : number;
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
-			max_deg =  all_deg > max_deg ? all_deg : max_deg;
-		}
-
-		var deg_dist : DegreeDistribution = {
-			in:  new Uint16Array(max_deg),
-			out: new Uint16Array(max_deg),
-			dir: new Uint16Array(max_deg),
-			und: new Uint16Array(max_deg),
-			all: new Uint16Array(max_deg)
-		};
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			deg_dist.in[node.inDegree()]++;
-			deg_dist.out[node.outDegree()]++;
-			deg_dist.dir[node.inDegree() + node.outDegree()]++;
-			deg_dist.und[node.degree()]++;
-			deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
-		}
-		// console.dir(deg_dist);
-		return deg_dist;
-	}
-
 	nrNodes() : number {
 		return this._nr_nodes;
 	}
@@ -373,12 +342,26 @@ class BaseGraph implements IGraph {
 		return this._nr_und_edges;
 	}
 
+
+	/**
+	 * 
+	 * @param id 
+	 * @param opts
+	 * 
+	 * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique... 
+	 */
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode {
+		if ( this.hasNodeID( id ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		var node = new $N.BaseNode(id, opts);
 		return this.addNode(node) ? node : null;
 	}
 
 	addNode(node: $N.IBaseNode) : boolean {
+		if ( this.hasNodeID( node.getID() ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return true;
@@ -818,9 +801,9 @@ class BaseGraph implements IGraph {
 	 * with as many unused keys as necessary
 	 * 
 	 * 
-	 * @TODO include general Test Cases
-	 * @TODO check if amount is larger than propList size
-	 * @TODO This seems like a simple hack - filling up remaining objects
+	 * @todo include generic Test Cases
+	 * @todo check if amount is larger than propList size
+	 * @todo This seems like a simple hack - filling up remaining objects
 	 * Could be replaced by a better fraction-increasing function above...
 	 * 
 	 * @param propList

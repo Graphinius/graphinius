@@ -14,40 +14,40 @@ const expect = chai.expect,
     json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     search_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
-let PFSSpy = sinon.spy($PFS.PFS),
-    PFSPrepareConfigSpy = sinon.spy($PFS.preparePFSStandardConfig),
-    backupPFS,
-    backupPFSPrepareConfig;
 
-
+let PFSSpy,
+    PFSPrepareConfigSpy;
 
 /**
  * come up with more tests
  */
 describe('Dijkstra TESTS - ', () => {
 
+  let sandbox = sinon.sandbox.create();
+
   before(() => {
     expect(graph).not.to.be.undefined;
     expect(graph.nrNodes()).to.equal(6);
     expect(graph.nrUndEdges()).to.equal(2);
     expect(graph.nrDirEdges()).to.equal(12);
-    backupPFS = $PFS.PFS;
-    backupPFSPrepareConfig = $PFS.preparePFSStandardConfig;
-    $PFS.PFS = PFSSpy;
-    $PFS.preparePFSStandardConfig = PFSPrepareConfigSpy;
   });
 
-
-  after(() => {
-    $PFS.PFS = backupPFS;
-    $PFS.preparePFSStandardConfig = backupPFSPrepareConfig;
+  beforeEach(() => {
+    PFSSpy = sandbox.spy($PFS, "PFS");
+    PFSPrepareConfigSpy = sandbox.spy($PFS, "preparePFSStandardConfig");
   });
+
+  afterEach(() => {
+    sandbox.restore();
+  })
   
   
   it('should call PFS in the background - ', () => {
     $Dijkstra.Dijkstra(graph, graph.getRandomNode());
     expect(PFSSpy).to.have.been.calledOnce;
     expect(PFSPrepareConfigSpy).to.have.been.calledOnce;
+   /* console.log(PFSSpy.callCount);
+    console.log(PFSPrepareConfigSpy.callCount);*/
   });
 
 

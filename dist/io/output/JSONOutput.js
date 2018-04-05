@@ -1,6 +1,8 @@
 "use strict";
-var fs = require('fs');
-var JSONOutput = (function () {
+/// <reference path="../../../typings/tsd.d.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
+var fs = require("fs");
+var JSONOutput = /** @class */ (function () {
     function JSONOutput() {
     }
     JSONOutput.prototype.writeToJSONFile = function (filepath, graph) {
@@ -18,12 +20,14 @@ var JSONOutput = (function () {
             und_edges: graph.nrUndEdges(),
             data: {}
         };
+        // Go through all nodes 
         nodes = graph.getNodes();
         for (var node_key in nodes) {
             node = nodes[node_key];
             node_struct = result.data[node.getID()] = {
                 edges: []
             };
+            // UNdirected Edges
             und_edges = node.undEdges();
             for (var edge_key in und_edges) {
                 edge = und_edges[edge_key];
@@ -34,6 +38,7 @@ var JSONOutput = (function () {
                     weight: edge.isWeighted() ? edge.getWeight() : undefined
                 });
             }
+            // Directed Edges
             dir_edges = node.outEdges();
             for (var edge_key in dir_edges) {
                 edge = dir_edges[edge_key];
@@ -44,7 +49,9 @@ var JSONOutput = (function () {
                     weight: this.handleEdgeWeight(edge)
                 });
             }
+            // Features
             node_struct.features = node.getFeatures();
+            // Coords (shall we really?)
             if ((coords = node.getFeature('coords')) != null) {
                 node_struct['coords'] = coords;
             }

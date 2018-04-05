@@ -7,6 +7,9 @@ import * as $I from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/callbackUtils';
 
+// import { Callbacks } from '../../src/utils/callbackUtils';
+// let callbacks = new Callbacks();
+
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
@@ -36,14 +39,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 	/**
-	 * HUGE TODO:
-	 * Make sure the callbacks are not only executed, but
-	 * executed at the right stage of the code
-	 * Don't know how yet...
-	 * probably by dividing the messages object into separate
-	 * CB-stage related nested objects (messages.init_bfs etc.)
-	 * and only handing them to the callback as distinct
-	 * message parameter to use...
+	 * 
 	 */
 	describe('should properly execute the different callback stages', () => {
 
@@ -103,11 +99,14 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 		
 		
+		/**
+		 * Spies created and tore down within function...?
+		 */
 		it('should not execute any callback at all', () => {
 			// prepare Spy...
-			var execCBSpy = sinon.spy($CB.execCallbacks);
-			var origExecCB = $CB.execCallbacks;
-			$CB.execCallbacks = execCBSpy;
+
+			let sandbox = sinon.sandbox.create();
+			var execCBSpy = sandbox.spy($CB, 'execCallbacks');
 			
 			// execute test
 			var root = graph.getNodeById('A'),
@@ -125,11 +124,14 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			var bfs_res = $BFS.BFS(graph, root, config);
 			
 			expect(execCBSpy).to.have.not.been.called;
-			// restore original function
-			$CB.execCallbacks = origExecCB;
+			sandbox.restore();
 		});
 
 	});
+
+	/**
+	 * 
+	 */
 
 	
 	

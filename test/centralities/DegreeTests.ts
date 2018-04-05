@@ -10,89 +10,53 @@ var expect = chai.expect,
     json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
-    DC: $DC.degreeCentrality = new $DC.degreeCentrality();
+    DC: $DC.DegreeCentrality = new $DC.DegreeCentrality();
 
 
-describe("Degree Centrality Tests", () => {
+describe("Degree Centrality Tests - ", () => {
+
+  const GRAPH_SIZE = 7;
 
   it('should return a degree distribution object of length 7', () => {
-    let deg_dist = DC.getHistorgram( graph ).all;
-    expect( Object.keys( deg_dist ).length ).to.equal(7);
+    let deg_dist = DC.degreeDistribution( graph ).all;
+    expect( deg_dist.length ).to.equal(GRAPH_SIZE);
   });
 
 
   it('should return the correct IN degree distribution', () => {
-    let expected_in_dist = {
-      0: 0,
-      1: 3,
-      2: 1,
-      3: 1,
-      4: 1,
-      5: 0,
-      6: 0
-    };
-    let in_deg_dist = DC.getHistorgram( graph ).in;
-    expect( in_deg_dist ).to.deep.equal( expected_in_dist );
+    let expected_in_dist = new Uint32Array([0, 3, 1, 1, 1, 0, 0]);
+    let in_dist = DC.degreeDistribution( graph ).in;
+    expect( in_dist ).to.deep.equal( expected_in_dist );
   });
 
+
   it('should return the correct OUT degree distribution', () => {
-    let expected_out_dist = {
-      0: 1,
-      1: 0,
-      2: 3,
-      3: 2,
-      4: 0,
-      5: 0,
-      6: 0
-    };
-    let out_deg_dist = DC.getHistorgram( graph ).out;
-    expect( out_deg_dist ).to.deep.equal( expected_out_dist );
+    let expected_out_dist = new Uint32Array([1, 0, 3, 2, 0, 0, 0]);
+    let out_dist = DC.degreeDistribution( graph ).out;
+    expect( out_dist ).to.deep.equal( expected_out_dist );
   });
 
 
   it('should return the correct UND degree distribution', () => {
-    let expected_und_dist = {
-      0: 3,
-      1: 2,
-      2: 1,
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0
-    };
-    let und_deg_dist = DC.getHistorgram( graph ).und;
-    expect( und_deg_dist ).to.deep.equal( expected_und_dist );
+    let expected_und_dist = new Uint32Array([3, 2, 1, 0, 0, 0, 0]);
+    let und_dist = DC.degreeDistribution( graph ).und;
+    expect( und_dist ).to.deep.equal( expected_und_dist );
   });
 
 
   it('should return the correct DIR degree distribution', () => {
-    let expected_dir_dist = {
-      0: 0,
-      1: 0,
-      2: 0,
-      3: 3,
-      4: 1,
-      5: 1,
-      6: 1
-    };
-    let dir_deg_dist = DC.getHistorgram( graph ).dir;
-    expect( dir_deg_dist ).to.deep.equal( expected_dir_dist );
+    let expected_dir_dist = new Uint32Array([0, 0, 0, 3, 1, 1, 1]);
+    let dir_dist = DC.degreeDistribution( graph ).dir;
+    expect( dir_dist ).to.deep.equal( expected_dir_dist );
   });
 
 
   it('should return the correct ALL degree distribution', () => {
-    let expected_all_dist = {
-      0: 0,
-      1: 0,
-      2: 0,
-      3: 1,
-      4: 1,
-      5: 3,
-      6: 1
-    };
-    let all_deg_dist = DC.getHistorgram( graph ).all;
-    expect( all_deg_dist ).to.deep.equal( expected_all_dist );
+    let expected_all_dist = new Uint32Array([0, 0, 0, 1, 1, 3, 1]);
+    let all_dist = DC.degreeDistribution( graph ).all;
+    expect( all_dist ).to.deep.equal( expected_all_dist );
   });
+
 
   let DC_map_allW = DC.getCentralityMap(graph, true);
   let DC_map_inW = DC.getCentralityMap(graph, true, $DC.DegreeMode.in);

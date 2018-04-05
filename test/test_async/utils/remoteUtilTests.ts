@@ -6,7 +6,7 @@ import * as sinonChai from 'sinon-chai';
 import * as $RU from '../../../src/utils/remoteUtils';
 
 var expect = chai.expect;
-var REMOTE_HOST = "http://berndmalle.com/graphinius-demo/test_data/json/";
+var REMOTE_HOST = "https://raw.githubusercontent.com/cassinius/graphinius-demo/master/test_data/json/";
 var small_graph_url = REMOTE_HOST + "small_graph.json";
 
 describe('Retrieve remote file tests - ', () => {

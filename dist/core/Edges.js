@@ -1,6 +1,7 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var $N = require("./Nodes");
-var BaseEdge = (function () {
+var BaseEdge = /** @class */ (function () {
     function BaseEdge(_id, _node_a, _node_b, options) {
         this._id = _id;
         this._node_a = _node_a;
@@ -11,6 +12,7 @@ var BaseEdge = (function () {
         options = options || {};
         this._directed = options.directed || false;
         this._weighted = options.weighted || false;
+        // @NOTE isNaN and Number.isNaN confusion...
         this._weight = this._weighted ? (isNaN(options.weight) ? 1 : options.weight) : undefined;
         this._label = options.label || this._id;
     }
