@@ -17,7 +17,7 @@
     "graph analysis"
   ],
   "name": "graphinius",
-  "version": "0.7.4",
+  "version": "0.8.0",
   "description": "Generic graph (analysis) library in Typescript",
   "main": "./dist/index.js",
   "author": "Bernd Malle",
