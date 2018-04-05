@@ -274,6 +274,13 @@ describe('BINARY HEAP TESTS - ', () => {
   });
 
 
+  describe('_position map tests - ', () => {
+
+    it('')
+
+  });
+
+
   describe('Ordering tests on single elements - ', () => {
     
     it('should trickle up a smaller element in a MIN HEAP', () => {
@@ -287,19 +294,32 @@ describe('BINARY HEAP TESTS - ', () => {
     });
     
     
-    it('should trickle up a smaller element in a MIN HEAP, with ZERO', () => {
+    it.only('should trickle up a smaller element in a MIN HEAP, with ZERO', () => {
       binHeap = new $BH.BinaryHeap();
+
+      console.log("\n ##### INSERTING ##### \n")
       binHeap.insert(155);
+      console.log( binHeap.getPositions() );
       binHeap.insert(0);
+      console.log( binHeap.getPositions() );
       binHeap.insert(15);
+      console.log( binHeap.getPositions() );
       binHeap.insert(5);
+      console.log( binHeap.getPositions() );
       binHeap.insert(1);
+      console.log( binHeap.getPositions() );
       
+      console.log("\n ##### POPPING ##### \n")
       expect(binHeap.pop()).to.equal(0);
+      console.log( binHeap.getPositions() );
       expect(binHeap.pop()).to.equal(1);
+      console.log( binHeap.getPositions() );
       expect(binHeap.pop()).to.equal(5);
+      console.log( binHeap.getPositions() );
       expect(binHeap.pop()).to.equal(15);
+      console.log( binHeap.getPositions() );
       expect(binHeap.pop()).to.equal(155);
+      console.log( binHeap.getPositions() );
     });
 
 
@@ -547,7 +567,7 @@ describe('BINARY HEAP TESTS - ', () => {
     /**
      * TODO Outsource to performance testing...
      */
-    it.skip('should run 30000 finds in just a few milliseconds (if the O(1) algorithm works...)', () => {
+    it('should run 30000 finds in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
       while ( i < 30000 ) {
@@ -559,7 +579,7 @@ describe('BINARY HEAP TESTS - ', () => {
     });
     
     
-    it.skip('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
+    it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
       while ( i < 30000 ) {
