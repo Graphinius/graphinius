@@ -25,6 +25,7 @@ const PATH_PREFIX = "./test/test_data/",
 
 let socialNet300 = "social_network_edges_300",
     socialNet1K = "social_network_edges_1K",
+    socialNet20K = "social_network_edges_20K",
     weightedSocialNet300 = "social_network_edges_300_weighted",
     weightedSocialNet1K = "social_network_edges_1K_weighted";
 
