@@ -319,8 +319,8 @@ describe('GRAPH TESTS: ', () => {
 
 
 	/**
-	 * @TODO check graph traveral algorithms on loose end edges !!!
-	 * @TODO maybe split those tests for graph edges, loose edges and out edges
+	 * @todo check graph traveral algorithms on loose end edges !!!
+	 * @todo maybe split those tests for graph edges, loose edges and out edges
 	 */
 	describe('finding nodes and edges by ID and Label', () => {
 
@@ -416,7 +416,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		/**
-		 * @TODO We're just checking for 1st edge right now - what about multiple edges?
+		 * @todo We're just checking for 1st edge right now - what about multiple edges?
 		 * 
 		 */
 		it('should throw an error retrieving an edge by Node IDs if node_a does not exist', () => {
@@ -1154,7 +1154,29 @@ describe('GRAPH TESTS: ', () => {
 
 
 		/**
-		 * TODO how to deal with negative loops?
+		 * @todo outsource to performance test suite (once instantiated)
+		 */
+		describe("Adjacency List, DICT Version, performance test - ", () => {
+			let csv_in_custom = new $CSV.CSVInput(" ", false, true, true);
+
+			it('should measure the time it takes to create the adj.list.dict for a 1034 node graph', () => {
+
+				graph = csv_in_custom.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
+				expect(graph.nrNodes()).to.equal(1034);
+				expect(graph.nrDirEdges()).to.equal(53498);
+
+				let start = +new Date();
+				let adjListDict = graph.adjListDict(false, false);
+				let end = +new Date();
+				console.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end-start} ms.`);
+				expect(Object.keys(adjListDict).length).to.equal(graph.nrNodes());
+			});
+
+		});
+
+
+		/**
+		 * @todo  how to deal with negative loops?
 		 */
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 

@@ -51,7 +51,7 @@ var BaseGraph = /** @class */ (function () {
      * what to do if some edges are not weighted at all?
      * Since graph traversal algortihms (and later maybe graphs themselves)
      * use default weights anyways, I am simply ignoring them for now...
-     * @TODO figure out how to test this...
+     * @todo figure out how to test this...
      */
     BaseGraph.prototype.hasNegativeEdge = function () {
         var has_neg_edge = false, edge;
@@ -214,7 +214,7 @@ var BaseGraph = /** @class */ (function () {
      * @param id
      * @param opts
      *
-     * @TODO addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
+     * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
      */
     BaseGraph.prototype.addNodeByID = function (id, opts) {
         if (this.hasNodeID(id)) {
@@ -584,9 +584,9 @@ var BaseGraph = /** @class */ (function () {
      * with as many unused keys as necessary
      *
      *
-     * @TODO include general Test Cases
-     * @TODO check if amount is larger than propList size
-     * @TODO This seems like a simple hack - filling up remaining objects
+     * @todo include generic Test Cases
+     * @todo check if amount is larger than propList size
+     * @todo This seems like a simple hack - filling up remaining objects
      * Could be replaced by a better fraction-increasing function above...
      *
      * @param propList

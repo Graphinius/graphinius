@@ -4,18 +4,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var $FW = require("../search/FloydWarshall");
 var $JO = require("../search/Johnsons");
 /**
- * This is used to get the betweenness of a graph by either
- * Bellman Ford (Johnsons) or Floyd Warshall with APSP.
+ * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
  *
  * @param graph the graph to perform Floyd-Warshall/Johnsons on
+ * @param directed for normalization, not used at the moment
+ * @param sparse decides if using the FW (dense) or Johnsons (sparse)
+ *
  * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
+ *
+ * @comment function gives the correct results but is slow.
+ *
+ * !!! DO NOT USE FOR PRODUCTION !!!
+ *
+ * @todo decide if we still need it...
  */
-//function gives the correct results but is slow. Now good for testing, will not be kept later.
-function betweennessCentrality2(graph, directed, sparse) {
+function betweennessCentrality(graph, directed, sparse) {
     var paths;
     var sparse = sparse || false;
-    //the argument directed is not yet used, it will be important later when we normalize
     if (sparse) {
         paths = $JO.Johnsons(graph)[1];
     }
@@ -131,4 +137,4 @@ function betweennessCentrality2(graph, directed, sparse) {
     }
     return map;
 }
-exports.betweennessCentrality2 = betweennessCentrality2;
+exports.betweennessCentrality = betweennessCentrality;

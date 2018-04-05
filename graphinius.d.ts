@@ -219,10 +219,10 @@ declare module 'graphinius/config/run_config' {
 
 }
 declare module 'graphinius/utils/logger' {
-	export interface CONFIG {
+	export interface LOG_CONFIG {
 	    log_level: string;
 	} class Logger {
-	    config: CONFIG;
+	    config: LOG_CONFIG;
 	    constructor(config?: any);
 	    log(msg: any): boolean;
 	    error(err: any): boolean;
@@ -598,7 +598,7 @@ declare module 'graphinius/core/Graph' {
 	     * what to do if some edges are not weighted at all?
 	     * Since graph traversal algortihms (and later maybe graphs themselves)
 	     * use default weights anyways, I am simply ignoring them for now...
-	     * @TODO figure out how to test this...
+	     * @todo figure out how to test this...
 	     */
 	    hasNegativeEdge(): boolean;
 	    /**
@@ -642,7 +642,7 @@ declare module 'graphinius/core/Graph' {
 	     * @param id
 	     * @param opts
 	     *
-	     * @TODO addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
+	     * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
 	     */
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
@@ -724,9 +724,9 @@ declare module 'graphinius/core/Graph' {
 	     * with as many unused keys as necessary
 	     *
 	     *
-	     * @TODO include general Test Cases
-	     * @TODO check if amount is larger than propList size
-	     * @TODO This seems like a simple hack - filling up remaining objects
+	     * @todo include generic Test Cases
+	     * @todo check if amount is larger than propList size
+	     * @todo This seems like a simple hack - filling up remaining objects
 	     * Could be replaced by a better fraction-increasing function above...
 	     *
 	     * @param propList
@@ -740,8 +740,8 @@ declare module 'graphinius/core/Graph' {
 }
 declare module 'graphinius/search/FloydWarshall' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshall(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
-	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshall, changeNextToDirectParents };
+	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshallDict(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshallDict, changeNextToDirectParents };
 
 }
 declare module 'graphinius/search/Dijkstra' {
@@ -757,23 +757,14 @@ declare module 'graphinius/search/Dijkstra' {
 declare module 'graphinius/search/Johnsons' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSforAllSources(graph: $G.IGraph): {};
-	export { Johnsons, addExtraNandE, reWeighGraph, PFSforAllSources };
+	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
+	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
 
 }
 declare module 'graphinius/centralities/Betweenness' {
 	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality2(graph: $G.IGraph, directed: boolean, sparse?: boolean): {};
-	/**
-	 * This is used to run through all shortest paths and
-	 * apply betweenness score to all nodes between start
-	 * and endnode
-	 *
-	 * @param graph the graph to perform Floyd-Warshall on
-	 * @returns m*m matrix of values, m*m*m matrix of neighbors
-	 * @constructor
-	 */
-	export { betweennessCentrality2 };
+	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boolean): {};
+	export { betweennessCentrality };
 
 }
 declare module 'graphinius/centralities/Brandes' {
@@ -786,12 +777,12 @@ declare module 'graphinius/centralities/Brandes' {
 	 * BrandesForWeighted: according to Brandes 2007, handles WEIGHTED graphs, including graphs with null edges
 	 * PFSdictBased: an alternative for our PFS, not heap based but dictionary based, however, not faster (see BetweennessTests)
 	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {}; function Brandes2(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {}; function BrandesForWeighted2(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
+	import * as $G from 'graphinius/core/Graph'; function BrandesUnweighted(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
 	export interface BrandesHeapEntry {
 	    id: string;
 	    best: number;
-	} function BrandesForWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function normalizeScores(CB: any, N: any, directed: any): void;
-	export { Brandes, Brandes2, BrandesForWeighted, BrandesForWeighted2, BrandesPFSbased, normalizeScores };
+	} function BrandesWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function normalizeScores(CB: any, N: any, directed: any): void;
+	export { BrandesUnweighted, BrandesWeighted, BrandesPFSbased, normalizeScores };
 
 }
 declare module 'graphinius/centralities/Closeness' {

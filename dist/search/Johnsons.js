@@ -27,10 +27,10 @@ function Johnsons(graph) {
             //graph still has the extraNode
             //reminder: deleteNode function removes its edges, too
             graph.deleteNode(extraNode);
-            return PFSforAllSources(graph);
+            return PFSFromAllNodes(graph);
         }
     }
-    return PFSforAllSources(graph);
+    return PFSFromAllNodes(graph);
 }
 exports.Johnsons = Johnsons;
 function addExtraNandE(target, nodeToAdd) {
@@ -78,25 +78,16 @@ function reWeighGraph(target, distDict, tempNode) {
     return target;
 }
 exports.reWeighGraph = reWeighGraph;
-function PFSforAllSources(graph) {
-    //reminder: this is a 2d array,
-    //value of a given [i][j]: 0 if self, value if j is directly reachable from i, positive infinity in all other cases
+function PFSFromAllNodes(graph) {
     var dists = graph.adjListArray();
-    //reminder: this is a 3d array
-    //value in given [i][j] subbarray: node itself if self, goal node if goal node is directly reachable from source node, 
-    //null in all other cases
     var next = graph.nextArray();
-    //create a dict of graph nodes, format: {[nodeID:string]:number}
-    //so the original order of nodes will not be messed up by PFS
     var nodesDict = graph.getNodes();
     var nodeIDIdxMap = {};
     var i = 0;
     for (var key in nodesDict) {
         nodeIDIdxMap[nodesDict[key].getID()] = i++;
     }
-    //creating the config for the PFS
     var specialConfig = $PFS.preparePFSStandardConfig();
-    //and now modify whatever I need to
     var notEncounteredJohnsons = function (context) {
         context.next.best =
             context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
@@ -114,26 +105,21 @@ function PFSforAllSources(graph) {
     var betterPathJohnsons = function (context) {
         var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
         dists[i][j] = context.proposed_dist;
-        if (context.current.node == context.root_node) {
-            next[i][j][0] = nodeIDIdxMap[context.next.node.getID()];
-        }
-        else {
-            //here I do need the splice, because I do not know how many elements are there in the subarray
+        if (context.current.node !== context.root_node) {
             next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
         }
     };
-    //info: splice replaces the content created by the preparePFSStandardConfig function, 
-    //to the one I need here
     specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
     var equalPathJohnsons = function (context) {
         var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
-        next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+        if (context.current.node !== context.root_node) {
+            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+        }
     };
-    //this array is empty so it is fine to just push
     specialConfig.callbacks.equal_path.push(equalPathJohnsons);
     for (var key in nodesDict) {
         $PFS.PFS(graph, nodesDict[key], specialConfig);
     }
     return [dists, next];
 }
-exports.PFSforAllSources = PFSforAllSources;
+exports.PFSFromAllNodes = PFSFromAllNodes;

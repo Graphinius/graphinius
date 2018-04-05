@@ -632,7 +632,7 @@ describe('BINARY HEAP TESTS - ', () => {
     it.skip('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
-      while ( i < 30000 ) {
+      while ( i < 300000 ) {
         binHeap.insert( i++ );
       }
       while ( i ) {

@@ -47,20 +47,20 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(13);
+	var CSVInput 	      = __webpack_require__(14);
 	var CSVOutput       = __webpack_require__(19);
 	var JSONInput       = __webpack_require__(20);
 	var JSONOutput      = __webpack_require__(21);
-	var BFS				      = __webpack_require__(7);
-	var DFS				      = __webpack_require__(9);
-	var PFS             = __webpack_require__(11);
-	var BellmanFord     = __webpack_require__(10);
+	var BFS				      = __webpack_require__(8);
+	var DFS				      = __webpack_require__(10);
+	var PFS             = __webpack_require__(12);
+	var BellmanFord     = __webpack_require__(11);
 	var FloydWarshall		= __webpack_require__(22);
 	var structUtils     = __webpack_require__(3);
 	var remoteUtils     = __webpack_require__(17);
-	var callbackUtils   = __webpack_require__(8);
+	var callbackUtils   = __webpack_require__(9);
 	var randGen         = __webpack_require__(23);
-	var binaryHeap      = __webpack_require__(12);
+	var binaryHeap      = __webpack_require__(13);
 	var simplePerturbation = __webpack_require__(24);
 	var MCMFBoykov			= __webpack_require__(25);
 	var DegreeCent		 	= __webpack_require__(26);
@@ -632,9 +632,9 @@
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
 	var logger_1 = __webpack_require__(5);
-	var $BFS = __webpack_require__(7);
-	var $DFS = __webpack_require__(9);
-	var BellmanFord_1 = __webpack_require__(10);
+	var $BFS = __webpack_require__(8);
+	var $DFS = __webpack_require__(10);
+	var BellmanFord_1 = __webpack_require__(11);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	var GraphMode;
@@ -678,7 +678,7 @@
 	     * what to do if some edges are not weighted at all?
 	     * Since graph traversal algortihms (and later maybe graphs themselves)
 	     * use default weights anyways, I am simply ignoring them for now...
-	     * @TODO figure out how to test this...
+	     * @todo figure out how to test this...
 	     */
 	    BaseGraph.prototype.hasNegativeEdge = function () {
 	        var has_neg_edge = false, edge;
@@ -841,7 +841,7 @@
 	     * @param id
 	     * @param opts
 	     *
-	     * @TODO addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
+	     * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
 	     */
 	    BaseGraph.prototype.addNodeByID = function (id, opts) {
 	        if (this.hasNodeID(id)) {
@@ -1211,9 +1211,9 @@
 	     * with as many unused keys as necessary
 	     *
 	     *
-	     * @TODO include general Test Cases
-	     * @TODO check if amount is larger than propList size
-	     * @TODO This seems like a simple hack - filling up remaining objects
+	     * @todo include generic Test Cases
+	     * @todo check if amount is larger than propList size
+	     * @todo This seems like a simple hack - filling up remaining objects
 	     * Could be replaced by a better fraction-increasing function above...
 	     *
 	     * @param propList
@@ -1299,30 +1299,221 @@
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var LOG_LEVELS = {
-	    debug: "DEBUG",
-	    production: "PRODUCTION"
+	    debug: "debug",
+	    production: "production"
 	};
 	exports.LOG_LEVELS = LOG_LEVELS;
 	var RUN_CONFIG = {
-	    log_level: LOG_LEVELS.debug
+	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
 	};
 	exports.RUN_CONFIG = RUN_CONFIG;
 
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports) {
+
+	// shim for using process in browser
+	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
+	(function () {
+	    try {
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
+	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
+	    }
+	    try {
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
+	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+
+
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+
+
+
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = runTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    runClearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        runTimeout(drainQueue);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(8);
+	var $CB = __webpack_require__(9);
 	/**
 	 * Breadth first search - usually performed to see
 	 * reachability etc. Therefore we do not want 'segments'
@@ -1469,7 +1660,7 @@
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -1491,14 +1682,14 @@
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(8);
+	var $CB = __webpack_require__(9);
 	/**
 	 * DFS Visit - one run to see what nodes are reachable
 	 * from a given "current" root node
@@ -1753,13 +1944,13 @@
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var PFS_1 = __webpack_require__(11);
+	var PFS_1 = __webpack_require__(12);
 	/**
 	 *
 	 * @param graph
@@ -1871,7 +2062,7 @@
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1879,8 +2070,8 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(8);
-	var $BH = __webpack_require__(12);
+	var $CB = __webpack_require__(9);
+	var $BH = __webpack_require__(13);
 	exports.DEFAULT_WEIGHT = 1;
 	/**
 	 * Priority first search
@@ -2127,7 +2318,7 @@
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2216,6 +2407,9 @@
 	        if (isNaN(this._evalPriority(obj))) {
 	            throw new Error("Cannot insert object without numeric priority.");
 	        }
+	        /**
+	         * @todo if we keep the unique ID stuff, check for it here and throw an Error if needed...
+	         */
 	        this._array.push(obj);
 	        this.setNodePosition(obj, this.size() - 1);
 	        this.trickleUp(this.size() - 1);
@@ -2345,13 +2539,13 @@
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var path = __webpack_require__(14);
+	var path = __webpack_require__(15);
 	var fs = __webpack_require__(16);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
@@ -2498,7 +2692,7 @@
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2726,197 +2920,7 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-	// shim for using process in browser
-	var process = module.exports = {};
-
-	// cached from whatever global is present so that test runners that stub it
-	// don't break things.  But we need to wrap it in a try catch in case it is
-	// wrapped in strict mode code which doesn't define any globals.  It's inside a
-	// function because try/catches deoptimize in certain engines.
-
-	var cachedSetTimeout;
-	var cachedClearTimeout;
-
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
-	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
-	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
-	    }
-	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-
-
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-
-
-
-	}
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = runTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    runClearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 16 */
@@ -3278,14 +3282,8 @@
 	 * @returns m*m matrix of values
 	 * @constructor
 	 */
-	//returns the array dists, 
-	//which is a 2d array
-	//containing initial distance values after going through the edges
 	function initializeDistsWithEdges(graph) {
-	    //info: here, dists is a dictionary, not yet an array
-	    var dists = {}, 
-	    //info: the getters below give a dict as an output
-	    edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 	    for (var edge in edges) {
 	        var a = edges[edge].getNodes().a.getID();
 	        var b = edges[edge].getNodes().b.getID();
@@ -3309,9 +3307,6 @@
 	 * @returns m*m matrix of values, m*m*m matrix of neighbors
 	 * @constructor
 	 */
-	//returns a 2d array dists and a 3d array next (sort of parent nodes)
-	//going through each possible intermediate nodes (labeled as k), 
-	//checking if k introduces a shorter path between the nodes i and j
 	function FloydWarshallAPSP(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
@@ -3322,22 +3317,13 @@
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
-	                //-new fix from Rita, i!=j -> if it is not there, zero-weight edges generate false parents
-	                if (dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j && i != j) {
-	                    //original line of code
-	                    //next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
-	                    //-a new fix from Rita- However, this fix makes it faster on the midsize graph!
+	                if (k != i && k != j && i != j && dists[i][j] == (dists[i][k] + dists[k][j])) {
 	                    //if a node is unreachable, the corresponding value in next should not be updated, but stay null
-	                    if (dists[i][j] == Number.POSITIVE_INFINITY) {
-	                        continue;
-	                    }
-	                    else {
+	                    if (dists[i][j] !== Number.POSITIVE_INFINITY) {
 	                        next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
 	                    }
 	                }
-	                if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
-	                    //info: slice(0) returns the array itself, unmodified
-	                    //so practically copying the array contents next [i][k] into the array next [i][j]
+	                if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
 	                    next[i][j] = next[i][k].slice(0);
 	                    dists[i][j] = dists[i][k] + dists[k][j];
 	                }
@@ -3366,7 +3352,7 @@
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
-	                if (dists[i][j] > dists[i][k] + dists[k][j]) {
+	                if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
 	                    dists[i][j] = dists[i][k] + dists[k][j];
 	                }
 	            }
@@ -3384,7 +3370,7 @@
 	 * @returns m*m matrix of values
 	 * @constructor
 	 */
-	function FloydWarshall(graph) {
+	function FloydWarshallDict(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
@@ -3406,10 +3392,9 @@
 	    }
 	    return dists;
 	}
-	exports.FloydWarshall = FloydWarshall;
+	exports.FloydWarshallDict = FloydWarshallDict;
 	function changeNextToDirectParents(input) {
 	    var output = [];
-	    //build the output and make it a copy of the input
 	    for (var a = 0; a < input.length; a++) {
 	        output.push([]);
 	        for (var b = 0; b < input.length; b++) {
@@ -3419,7 +3404,6 @@
 	    }
 	    for (var a = 0; a < input.length; a++) {
 	        for (var b = 0; b < input.length; b++) {
-	            //when unreachable, no update needed
 	            if (input[a][b][0] == null) {
 	                continue;
 	            }
@@ -3433,20 +3417,15 @@
 	}
 	exports.changeNextToDirectParents = changeNextToDirectParents;
 	function findDirectParents(u, v, inNext, outNext) {
-	    //console.log("\n new call with " + u + " , " + v)
 	    var nodesInTracking = [u];
 	    var counter = 0;
 	    while (nodesInTracking.length > 0) {
-	        //console.log("nodesInTracking: " + nodesInTracking);
 	        var currNode = nodesInTracking.pop();
-	        //console.log("currNode= " + currNode);
-	        //the starting node u must never be considered more than once, it may give an infinite loop!
 	        if (currNode == u && counter > 0) {
 	            continue;
 	        }
 	        else {
 	            for (var e = 0; e < inNext[currNode][v].length; e++) {
-	                //if counter ==0, currNode is the start node u
 	                if (inNext[currNode][v][e] == v && counter == 0) {
 	                    outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
 	                }
@@ -4465,7 +4444,7 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $PFS = __webpack_require__(11);
+	var $PFS = __webpack_require__(12);
 	var $FW = __webpack_require__(22);
 	//Calculates all the shortest path's to all other nodes for all given nodes in the graph
 	//Returns a map with every node as key and the average distance to all other nodes as value
@@ -4530,18 +4509,24 @@
 	var $FW = __webpack_require__(22);
 	var $JO = __webpack_require__(29);
 	/**
-	 * This is used to get the betweenness of a graph by either
-	 * Bellman Ford (Johnsons) or Floyd Warshall with APSP.
+	 * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
 	 *
 	 * @param graph the graph to perform Floyd-Warshall/Johnsons on
+	 * @param directed for normalization, not used at the moment
+	 * @param sparse decides if using the FW (dense) or Johnsons (sparse)
+	 *
 	 * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
 	 * @constructor
+	 *
+	 * @comment function gives the correct results but is slow.
+	 *
+	 * !!! DO NOT USE FOR PRODUCTION !!!
+	 *
+	 * @todo decide if we still need it...
 	 */
-	//function gives the correct results but is slow. Now good for testing, will not be kept later.
-	function betweennessCentrality2(graph, directed, sparse) {
+	function betweennessCentrality(graph, directed, sparse) {
 	    var paths;
 	    var sparse = sparse || false;
-	    //the argument directed is not yet used, it will be important later when we normalize
 	    if (sparse) {
 	        paths = $JO.Johnsons(graph)[1];
 	    }
@@ -4657,7 +4642,7 @@
 	    }
 	    return map;
 	}
-	exports.betweennessCentrality2 = betweennessCentrality2;
+	exports.betweennessCentrality = betweennessCentrality;
 
 
 /***/ }),
@@ -4668,8 +4653,8 @@
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $N = __webpack_require__(2);
-	var $PFS = __webpack_require__(11);
-	var $BF = __webpack_require__(10);
+	var $PFS = __webpack_require__(12);
+	var $BF = __webpack_require__(11);
 	var $SU = __webpack_require__(3);
 	function Johnsons(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
@@ -4693,10 +4678,10 @@
 	            //graph still has the extraNode
 	            //reminder: deleteNode function removes its edges, too
 	            graph.deleteNode(extraNode);
-	            return PFSforAllSources(graph);
+	            return PFSFromAllNodes(graph);
 	        }
 	    }
-	    return PFSforAllSources(graph);
+	    return PFSFromAllNodes(graph);
 	}
 	exports.Johnsons = Johnsons;
 	function addExtraNandE(target, nodeToAdd) {
@@ -4744,25 +4729,16 @@
 	    return target;
 	}
 	exports.reWeighGraph = reWeighGraph;
-	function PFSforAllSources(graph) {
-	    //reminder: this is a 2d array,
-	    //value of a given [i][j]: 0 if self, value if j is directly reachable from i, positive infinity in all other cases
+	function PFSFromAllNodes(graph) {
 	    var dists = graph.adjListArray();
-	    //reminder: this is a 3d array
-	    //value in given [i][j] subbarray: node itself if self, goal node if goal node is directly reachable from source node, 
-	    //null in all other cases
 	    var next = graph.nextArray();
-	    //create a dict of graph nodes, format: {[nodeID:string]:number}
-	    //so the original order of nodes will not be messed up by PFS
 	    var nodesDict = graph.getNodes();
 	    var nodeIDIdxMap = {};
 	    var i = 0;
 	    for (var key in nodesDict) {
 	        nodeIDIdxMap[nodesDict[key].getID()] = i++;
 	    }
-	    //creating the config for the PFS
 	    var specialConfig = $PFS.preparePFSStandardConfig();
-	    //and now modify whatever I need to
 	    var notEncounteredJohnsons = function (context) {
 	        context.next.best =
 	            context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
@@ -4780,29 +4756,24 @@
 	    var betterPathJohnsons = function (context) {
 	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
 	        dists[i][j] = context.proposed_dist;
-	        if (context.current.node == context.root_node) {
-	            next[i][j][0] = nodeIDIdxMap[context.next.node.getID()];
-	        }
-	        else {
-	            //here I do need the splice, because I do not know how many elements are there in the subarray
+	        if (context.current.node !== context.root_node) {
 	            next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
 	        }
 	    };
-	    //info: splice replaces the content created by the preparePFSStandardConfig function, 
-	    //to the one I need here
 	    specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 	    var equalPathJohnsons = function (context) {
 	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
-	        next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+	        if (context.current.node !== context.root_node) {
+	            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+	        }
 	    };
-	    //this array is empty so it is fine to just push
 	    specialConfig.callbacks.equal_path.push(equalPathJohnsons);
 	    for (var key in nodesDict) {
 	        $PFS.PFS(graph, nodesDict[key], specialConfig);
 	    }
 	    return [dists, next];
 	}
-	exports.PFSforAllSources = PFSforAllSources;
+	exports.PFSFromAllNodes = PFSFromAllNodes;
 
 
 /***/ }),

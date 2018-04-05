@@ -1,11 +1,11 @@
 import {LOG_LEVELS, RUN_CONFIG} from '../config/run_config';
 
-export interface CONFIG {
+export interface LOG_CONFIG {
   log_level : string;
 }
 
 class Logger {
-  public config : CONFIG = null;
+  public config : LOG_CONFIG = null;
   
   constructor(config?) {
     this.config = config || RUN_CONFIG;
@@ -49,8 +49,7 @@ class Logger {
       return true;
     }
     return false;
-  }  
-
+  }
 }
 
 export { Logger };

@@ -123,6 +123,10 @@ class BinaryHeap implements IBinaryHeap {
       throw new Error("Cannot insert object without numeric priority.")
     }
 
+    /**
+     * @todo if we keep the unique ID stuff, check for it here and throw an Error if needed...
+     */
+
     this._array.push(obj);
     this.setNodePosition(obj, this.size() - 1);
     this.trickleUp(this.size() - 1);
