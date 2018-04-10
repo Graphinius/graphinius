@@ -6,10 +6,11 @@ import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $I from '../../../src/io/input/JSONInput';
 import * as $C from '../../../test/io/input/common';
+import {RequestConfig} from '../../../src/utils/remoteUtils';
 
 var expect 	= chai.expect;
-var Node 		= $N.BaseNode;
-var Edge 		= $E.BaseEdge;
+var Node 	= $N.BaseNode;
+var Edge 	= $E.BaseEdge;
 var Graph 	= $G.BaseGraph;
 var JSON_IN	= $I.JSONInput;
 
@@ -19,18 +20,31 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 	var json 					: $I.IJSONInput,
 			remote_file		: string,
 			graph					: $G.IGraph,
-			stats					: $G.GraphStats,
-			REMOTE_HOST = "https://raw.githubusercontent.com/cassinius/graphinius-demo/master/test_data/json/";
-
-	var REAL_GRAPH_NR_NODES = 6204,
-			REAL_GRAPH_NR_EDGES = 18550;
+			stats					: $G.GraphStats;
 	
+	const REMOTE_HOST = "raw.githubusercontent.com";
+	const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/json/";
+	const JSON_EXTENSION = ".json";
+
+	const REAL_GRAPH_NR_NODES = 6204,
+		  	REAL_GRAPH_NR_EDGES = 18550;
+	
+	let config : RequestConfig;
+
+
 	describe('Small test graph', () => {
+
+		beforeEach(() => {
+			config = {
+				remote_host: REMOTE_HOST,
+				remote_path: REMOTE_PATH,
+				file_name: "small_graph" + JSON_EXTENSION
+			};
+		});
 				
 		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
 			json = new JSON_IN();
-			remote_file = REMOTE_HOST + "small_graph.json";
-			json.readFromJSONURL(remote_file, function(graph, err) {
+			json.readFromJSONURL(config, function(graph, err) {
 				$C.checkSmallGraphStats(graph);
 				done();
 			});
@@ -41,8 +55,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = false; // undirected graph
-			remote_file = REMOTE_HOST + "small_graph.json";
-			json.readFromJSONURL(remote_file, function(graph, err) {
+			json.readFromJSONURL(config, function(graph, err) {
 				expect(graph.nrNodes()).to.equal(4);
 				expect(graph.nrDirEdges()).to.equal(0);
 				expect(graph.nrUndEdges()).to.equal(4);
@@ -56,8 +69,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = true; // undirected graph
-			remote_file = REMOTE_HOST + "small_graph.json";
-			json.readFromJSONURL(remote_file, function(graph, err) {
+			json.readFromJSONURL(config, function(graph, err) {
 				expect(graph.nrNodes()).to.equal(4);
 				expect(graph.nrDirEdges()).to.equal(7);
 				expect(graph.nrUndEdges()).to.equal(0);
@@ -77,8 +89,8 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		 */ 
 		it('should construct a real sized graph from a remotely fetched edge list with edges set to undirected', (done) => {
 			json = new JSON_IN();
-			remote_file = REMOTE_HOST + "real_graph.json";
-			json.readFromJSONURL(remote_file, function(graph, err) {
+			config.file_name = "real_graph" + JSON_EXTENSION;
+			json.readFromJSONURL(config, function(graph, err) {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).to.equal(0);
@@ -144,7 +156,8 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 				
 		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
 			json = new JSON_IN();
-			json.readFromJSONURL(small_graph_url, function(graph, err) {
+			// config.file_name = "small_graph" + JSON_EXTENSION;
+			json.readFromJSONURL(config, function(graph, err) {
 				$C.checkSmallGraphStats(graph);
         expect(mocked).to.be.true;
 				done();

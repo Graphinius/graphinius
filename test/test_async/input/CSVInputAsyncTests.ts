@@ -6,16 +6,21 @@ import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $C from '../../../test/io/input/common';
+import {RequestConfig} from '../../../src/utils/remoteUtils';
+import { ADDRCONFIG } from 'dns';
 
 var expect = chai.expect,
 		Node = $N.BaseNode,
 		Edge = $E.BaseEdge,
 		Graph = $G.BaseGraph,
-		CSV = $I.CSVInput,
-		REMOTE_HOST = "https://raw.githubusercontent.com/cassinius/graphinius-demo/master/test_data/csv/";
+		CSV = $I.CSVInput;
 
-var REAL_GRAPH_NR_NODES = 5937,
-		REAL_GRAPH_NR_EDGES = 17777;
+const REMOTE_HOST = "raw.githubusercontent.com";
+const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/csv/";
+const CSV_EXTENSION = ".csv";
+
+const REAL_GRAPH_NR_NODES = 5937,
+	  REAL_GRAPH_NR_EDGES = 17777;
 
 		
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
@@ -25,8 +30,16 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 			input_file: string,
 			graph: $G.IGraph,
 			stats: $G.GraphStats,
-			DEFAULT_SEP: string = ',';
-		
+			DEFAULT_SEP: string = ',',
+			config : RequestConfig;
+	
+	beforeEach(() => {
+		config = {
+			remote_host: REMOTE_HOST,
+			remote_path: REMOTE_PATH,
+			file_name: undefined
+		};
+	});	
 		
 	/**
 		* REMOTE test
@@ -34,8 +47,8 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 		*/
 	it('should construct a very small graph from a REMOTELY FETCHED adjacency list and produce the right stats', (done) => {
 		csv = new $I.CSVInput();
-		input_file = REMOTE_HOST + "small_graph_adj_list_def_sep.csv";
-		csv.readFromAdjacencyListURL(input_file, function(graph, err) {
+		config.file_name = "small_graph_adj_list_def_sep" + CSV_EXTENSION;
+		csv.readFromAdjacencyListURL(config, function(graph, err) {
 			$C.checkSmallGraphStats(graph);
 			done();
 		});
@@ -47,8 +60,8 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 		* The CSV will be encoded as an edge list
 		*/
 	it('should construct a very small graph from a REMOTELY FETCHED edge list and produce the right stats', (done) => {
-		input_file = REMOTE_HOST + "small_graph_edge_list.csv";
-		csv.readFromEdgeListURL(input_file, function(graph, err) {
+		config.file_name = "small_graph_edge_list" + CSV_EXTENSION;
+		csv.readFromEdgeListURL(config, function(graph, err) {
 			$C.checkSmallGraphStats(graph);
 			done();
 		});
@@ -63,8 +76,8 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 		csv._separator = " ";
 		csv._explicit_direction = false;
 		csv._direction_mode = true;
-		input_file = REMOTE_HOST + "real_graph_edge_list_no_dir.csv";
-		csv.readFromEdgeListURL(input_file, function(graph, err) {
+		config.file_name = "real_graph_edge_list_no_dir" + CSV_EXTENSION;
+		csv.readFromEdgeListURL(config, function(graph, err) {
 			stats = graph.getStats();
 			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
 			expect(stats.nr_dir_edges).to.equal(REAL_GRAPH_NR_EDGES);
@@ -82,7 +95,12 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
         mocked = false;
 		
 		// URL to replace with path
-		var small_graph_url = REMOTE_HOST + "small_graph_edge_list.csv";
+
+		config = {
+			remote_host: REMOTE_HOST,
+			remote_path: REMOTE_PATH,
+			file_name: "small_graph_edge_list" + CSV_EXTENSION
+		};
 		var small_graph_path = 'test/test_data/small_graph_edge_list.csv';
 		
 		beforeEach(() => {		
@@ -97,8 +115,8 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 			mock.setup();
 			
 			// Mocking Browser GET request to test server
-			mock.get(small_graph_url, function(req, res) {
-        mocked = true;
+			mock.get(small_graph_path, function(req, res) {
+        		mocked = true;
 				return res
 					.status(200)
 					.header('Content-Type', 'application/json')
@@ -123,9 +141,9 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 		});
 		
 				
-		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
+		it('should correctly generate our small example graph from a remotely fetched CSV file with explicitly encoded edge directions', (done) => {
 			csv = new $I.CSVInput();
-			csv.readFromEdgeListURL(small_graph_url, function(graph, err) {
+			csv.readFromEdgeListURL(config, function(graph, err) {
 				$C.checkSmallGraphStats(graph);
         expect(mocked).to.be.true;
 				done();

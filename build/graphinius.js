@@ -2555,6 +2555,7 @@
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
 	var DEFAULT_WEIGHT = 1;
+	var CSV_EXTENSION = ".csv";
 	var CSVInput = /** @class */ (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -2566,16 +2567,17 @@
 	        this._direction_mode = _direction_mode;
 	        this._weighted = _weighted;
 	    }
-	    CSVInput.prototype.readFromAdjacencyListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	    CSVInput.prototype.readFromAdjacencyListURL = function (config, cb) {
+	        this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
 	    };
-	    CSVInput.prototype.readFromEdgeListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+	    CSVInput.prototype.readFromEdgeListURL = function (config, cb) {
+	        this.readGraphFromURL(config, cb, this.readFromEdgeList);
 	    };
-	    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
-	        var self = this, graph_name = path.basename(fileurl), graph, request;
+	    CSVInput.prototype.readGraphFromURL = function (config, cb, localFun) {
+	        var self = this, graph_name = config.file_name, graph, request;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
+	            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
 	            // Browser...
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
@@ -2591,7 +2593,7 @@
 	        }
 	        else {
 	            // Node.js
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	            $R.retrieveRemoteFile(config, function (raw_graph) {
 	                var input = raw_graph.toString().split('\n');
 	                graph = localFun.apply(self, [input, graph_name]);
 	                cb(graph, undefined);
@@ -2940,6 +2942,9 @@
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var https = __webpack_require__(18);
+	var logger_1 = __webpack_require__(5);
+	var logger = new logger_1.Logger();
+	var SSL_PORT = '443';
 	/**
 	 * @TODO: Test it !!!
 	 *
@@ -2947,13 +2952,21 @@
 	 * @param cb
 	 * @returns {ClientRequest}
 	 */
-	function retrieveRemoteFile(url, cb) {
+	function retrieveRemoteFile(config, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
 	    }
-	    return https.get(url, function (response) {
+	    logger.log("Retrieving graph: " + config.remote_host + config.remote_path + config.file_name);
+	    var options = {
+	        host: config.remote_host,
+	        port: SSL_PORT,
+	        path: config.remote_path + config.file_name,
+	        method: 'GET'
+	    };
+	    var req = https.get(options, function (response) {
 	        // Continuously update stream with data
 	        var body = '';
+	        response.setEncoding('utf8');
 	        response.on('data', function (d) {
 	            body += d;
 	        });
@@ -2962,6 +2975,10 @@
 	            cb(body);
 	        });
 	    });
+	    req.on('error', function (e) {
+	        logger.log("Request error: " + e.message);
+	    });
+	    return req;
 	}
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
@@ -3052,6 +3069,7 @@
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
 	var DEFAULT_WEIGHT = 1;
+	var JSON_EXTENSION = ".json";
 	var JSONInput = /** @class */ (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
 	        if (_explicit_direction === void 0) { _explicit_direction = true; }
@@ -3067,11 +3085,12 @@
 	        var json = JSON.parse(fs.readFileSync(filepath).toString());
 	        return this.readFromJSON(json);
 	    };
-	    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
+	    JSONInput.prototype.readFromJSONURL = function (config, cb) {
 	        var self = this, graph, request, json;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
 	            // Browser...			
+	            var fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
 	                // console.log("Ready state: " + request.readyState);
@@ -3091,7 +3110,7 @@
 	        }
 	        else {
 	            // Node.js
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	            $R.retrieveRemoteFile(config, function (raw_graph) {
 	                graph = self.readFromJSON(JSON.parse(raw_graph));
 	                cb(graph, undefined);
 	            });

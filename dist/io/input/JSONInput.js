@@ -5,6 +5,7 @@ var fs = require("fs");
 var $G = require("../../core/Graph");
 var $R = require("../../utils/remoteUtils");
 var DEFAULT_WEIGHT = 1;
+var JSON_EXTENSION = ".json";
 var JSONInput = /** @class */ (function () {
     function JSONInput(_explicit_direction, _direction, _weighted_mode) {
         if (_explicit_direction === void 0) { _explicit_direction = true; }
@@ -20,11 +21,12 @@ var JSONInput = /** @class */ (function () {
         var json = JSON.parse(fs.readFileSync(filepath).toString());
         return this.readFromJSON(json);
     };
-    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
+    JSONInput.prototype.readFromJSONURL = function (config, cb) {
         var self = this, graph, request, json;
         // Node or browser ??
         if (typeof window !== 'undefined') {
             // Browser...			
+            var fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 // console.log("Ready state: " + request.readyState);
@@ -44,7 +46,7 @@ var JSONInput = /** @class */ (function () {
         }
         else {
             // Node.js
-            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+            $R.retrieveRemoteFile(config, function (raw_graph) {
                 graph = self.readFromJSON(JSON.parse(raw_graph));
                 cb(graph, undefined);
             });

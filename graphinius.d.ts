@@ -213,7 +213,7 @@ declare module 'graphinius/config/run_config' {
 	    debug: string;
 	    production: string;
 	}; const RUN_CONFIG: {
-	    log_level: string;
+	    log_level: any;
 	};
 	export { LOG_LEVELS, RUN_CONFIG };
 
@@ -987,13 +987,19 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 }
 declare module 'graphinius/utils/remoteUtils' {
 	/// <reference types="node" />
-	import * as http from 'http'; function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
+	import * as http from 'http';
+	export interface RequestConfig {
+	    remote_host: string;
+	    remote_path: string;
+	    file_name: string;
+	} function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
 
 }
 declare module 'graphinius/io/input/CSVInput' {
 	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
+	import * as $R from 'graphinius/utils/remoteUtils';
 	export interface ICSVInput {
 	    _separator: string;
 	    _explicit_direction: boolean;
@@ -1001,19 +1007,19 @@ declare module 'graphinius/io/input/CSVInput' {
 	    _weighted: boolean;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromAdjacencyListURL(fileurl: string, cb: Function): any;
+	    readFromAdjacencyListURL(config: $R.RequestConfig, cb: Function): any;
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
 	    readFromEdgeList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromEdgeListURL(fileurl: string, cb: Function): any;
+	    readFromEdgeListURL(config: $R.RequestConfig, cb: Function): any;
 	} class CSVInput implements ICSVInput {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
 	    _weighted: boolean;
 	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean, _weighted?: boolean);
-	    readFromAdjacencyListURL(fileurl: string, cb: Function): void;
-	    readFromEdgeListURL(fileurl: string, cb: Function): void;
-	    private readGraphFromURL(fileurl, cb, localFun);
+	    readFromAdjacencyListURL(config: $R.RequestConfig, cb: Function): void;
+	    readFromEdgeListURL(config: $R.RequestConfig, cb: Function): void;
+	    private readGraphFromURL(config, cb, localFun);
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
 	    private readFileAndReturn(filepath, func);
@@ -1027,6 +1033,7 @@ declare module 'graphinius/io/input/CSVInput' {
 declare module 'graphinius/io/input/JSONInput' {
 	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
+	import * as $R from 'graphinius/utils/remoteUtils';
 	export interface JSONEdge {
 	    to: string;
 	    directed?: string;
@@ -1056,14 +1063,14 @@ declare module 'graphinius/io/input/JSONInput' {
 	    _weighted_mode: boolean;
 	    readFromJSONFile(file: string): $G.IGraph;
 	    readFromJSON(json: {}): $G.IGraph;
-	    readFromJSONURL(fileurl: string, cb: Function): void;
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	} class JSONInput implements IJSONInput {
 	    _explicit_direction: boolean;
 	    _direction: boolean;
 	    _weighted_mode: boolean;
 	    constructor(_explicit_direction?: boolean, _direction?: boolean, _weighted_mode?: boolean);
 	    readFromJSONFile(filepath: string): $G.IGraph;
-	    readFromJSONURL(fileurl: string, cb: Function): void;
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	    /**
 	     * In this case, there is one great difference to the CSV edge list cases:
 	     * If you don't explicitly define a directed edge, it will simply
@@ -1242,5 +1249,9 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    }): void;
 	}
 	export { SimplePerturber };
+
+}
+declare module 'graphinius/utils/genRandomWeights' {
+	export {};
 
 }
