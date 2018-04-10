@@ -203,11 +203,6 @@ declare module 'graphinius/core/Nodes' {
 	export { BaseNode };
 
 }
-declare module 'graphinius/utils/randGenUtils' {
-	 function randBase36String(): string; function runif(min: any, max: any, discrete: any): any; function rnorm(mean?: any, stdev?: any): any; function rchisq(degreesOfFreedom: any): number; function rpoisson(lambda: any): number; function rcauchy(loc: any, scale: any): any; function rbernoulli(p: any): number; function histogram(data: any, binCount: any): any; function rlist(list: any): any; let rvunif: () => any; let rvnorm: () => any; let rvchisq: () => any; let rvpoisson: () => any; let rvcauchy: () => any; let rvbernoulli: () => any; let rvlist: () => any;
-	export { randBase36String, runif, rnorm, rchisq, rpoisson, rcauchy, rbernoulli, rlist, histogram, rvunif, rvnorm, rvchisq, rvpoisson, rvcauchy, rvbernoulli, rvlist };
-
-}
 declare module 'graphinius/config/run_config' {
 	 const LOG_LEVELS: {
 	    debug: string;

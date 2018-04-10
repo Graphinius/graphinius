@@ -3,7 +3,6 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 
@@ -226,7 +225,10 @@ class SimplePerturber implements ISimplePerturber {
 		let new_nodes : { [key: string] : $N.IBaseNode } = {};
 		
 		while ( amount-- ) {
-			let new_node_id = randgen.randBase36String();
+			/**
+			 * @todo check if this procedure is 'random enough'
+			 */
+			let new_node_id = (Math.random()+1).toString(36).substr(2, 32) + (Math.random()+1).toString(36).substr(2, 32);
 			new_nodes[new_node_id] = this._graph.addNodeByID( new_node_id );
 		}
 		
