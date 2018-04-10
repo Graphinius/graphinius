@@ -2554,6 +2554,8 @@
 	var fs = __webpack_require__(16);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
+	var logger_1 = __webpack_require__(5);
+	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	var CSV_EXTENSION = ".csv";
 	var CSVInput = /** @class */ (function () {
@@ -2578,6 +2580,7 @@
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
 	            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+	            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
 	            // Browser...
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
@@ -2956,7 +2959,7 @@
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
 	    }
-	    logger.log("Retrieving graph: " + config.remote_host + config.remote_path + config.file_name);
+	    logger.log("Requesting file via NodeJS request: " + config.remote_host + config.remote_path + config.file_name);
 	    var options = {
 	        host: config.remote_host,
 	        port: SSL_PORT,

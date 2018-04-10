@@ -23,7 +23,7 @@ function retrieveRemoteFile(config: RequestConfig, cb: Function) {
     throw new Error('Provided callback is not a function.');
   }
 
-  logger.log(`Retrieving graph: ${config.remote_host}${config.remote_path}${config.file_name}`);
+  logger.log(`Requesting file via NodeJS request: ${config.remote_host}${config.remote_path}${config.file_name}`);
 
   let options : https.RequestOptions = {
     host: config.remote_host,

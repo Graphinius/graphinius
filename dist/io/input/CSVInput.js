@@ -5,6 +5,8 @@ var path = require("path");
 var fs = require("fs");
 var $G = require("../../core/Graph");
 var $R = require("../../utils/remoteUtils");
+var logger_1 = require("../../utils/logger");
+var logger = new logger_1.Logger();
 var DEFAULT_WEIGHT = 1;
 var CSV_EXTENSION = ".csv";
 var CSVInput = /** @class */ (function () {
@@ -29,6 +31,7 @@ var CSVInput = /** @class */ (function () {
         // Node or browser ??
         if (typeof window !== 'undefined') {
             var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
             // Browser...
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {

@@ -8,7 +8,9 @@ import * as $N from '../../core/Nodes';
 import * as $E from '../../core/Edges';
 import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
+import { Logger } from '../../utils/logger';
 
+const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 const CSV_EXTENSION = ".csv";
@@ -56,6 +58,9 @@ class CSVInput implements ICSVInput {
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
 			let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+
+			logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
+
 			// Browser...
 			request = new XMLHttpRequest();	
 			request.onreadystatechange = function() {

@@ -15,7 +15,7 @@ function retrieveRemoteFile(config, cb) {
     if (typeof cb !== 'function') {
         throw new Error('Provided callback is not a function.');
     }
-    logger.log("Retrieving graph: " + config.remote_host + config.remote_path + config.file_name);
+    logger.log("Requesting file via NodeJS request: " + config.remote_host + config.remote_path + config.file_name);
     var options = {
         host: config.remote_host,
         port: SSL_PORT,
