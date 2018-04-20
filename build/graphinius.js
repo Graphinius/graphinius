@@ -2662,7 +2662,6 @@
 	                continue;
 	            }
 	            if (elements.length < 2 || elements.length > 3) {
-	                console.log(elements);
 	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 	            }
 	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2, parse_weight, edge_weight;
@@ -3751,6 +3750,8 @@
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
+	var logger_1 = __webpack_require__(5);
+	var logger = new logger_1.Logger();
 	/**
 	 *
 	 */
@@ -3797,19 +3798,14 @@
 	        this._state.activeNodes[this._source.getID()] = this._source;
 	        this._state.activeNodes[this._sink.getID()] = this._sink;
 	        var nrCycles = 0;
-	        // start
 	        while (true) {
-	            // console.log("grow");
 	            this.grow();
 	            if (!this._state.path.length) {
 	                break;
 	            }
-	            // console.log("augment");
 	            this.augmentation();
-	            // console.log("adopt");
 	            this.adoption();
 	            ++nrCycles;
-	            // console.log(nrCycles);
 	        }
 	        // compute the cut edges and the total cost of the cut
 	        // var tree_ids = Object.keys(this._state.tree);
@@ -3820,7 +3816,7 @@
 	        //         ++size_S;
 	        //     }
 	        // }
-	        console.log("computing result");
+	        logger.log("computing result");
 	        var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
 	        var smallTree_size = Object.keys(smallTree).length;
 	        var smallTree_ids = Object.keys(smallTree);
@@ -3882,10 +3878,10 @@
 	                }
 	            }
 	        }
-	        //console.log(result.edges);
-	        console.log("Cost => " + result.cost);
-	        console.log("# cycles => " + nrCycles);
-	        // console.log(result.edges);
+	        //logger.log(result.edges);
+	        logger.log("Cost => " + result.cost);
+	        logger.log("# cycles => " + nrCycles);
+	        // logger.log(result.edges);
 	        return result;
 	    };
 	    MCMFBoykov.prototype.renameEdges = function (graph) {
@@ -3908,7 +3904,7 @@
 	        var nodes = uGraph.getNodes();
 	        var nodes_ids = Object.keys(nodes);
 	        var nodes_length = nodes_ids.length;
-	        // console.log("#nodes: " + Object.keys(nodes).length);
+	        // logger.log("#nodes: " + Object.keys(nodes).length);
 	        for (var i = 0; i < nodes_length; i++) {
 	            // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
 	            var node = nodes[nodes_ids[i]];
@@ -3927,7 +3923,7 @@
 	            dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
 	            dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
 	        }
-	        // console.log(dGraph);
+	        // logger.log(dGraph);
 	        return dGraph;
 	    };
 	    MCMFBoykov.prototype.tree = function (node) {

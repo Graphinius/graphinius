@@ -6,7 +6,7 @@ import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $I from '../../../src/io/input/JSONInput';
 import * as $C from '../../../test/io/input/common';
-import {RequestConfig} from '../../../src/utils/remoteUtils';
+import * as $R from '../../../src/utils/remoteUtils';
 
 var expect 	= chai.expect;
 var Node 	= $N.BaseNode;
@@ -29,7 +29,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 	const REAL_GRAPH_NR_NODES = 6204,
 		  	REAL_GRAPH_NR_EDGES = 18550;
 	
-	let config : RequestConfig;
+	let config : $R.RequestConfig;
 
 
 	describe('Small test graph', () => {

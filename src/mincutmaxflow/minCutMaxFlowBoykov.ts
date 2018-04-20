@@ -4,6 +4,8 @@ import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
+import { Logger } from '../utils/logger';
+const logger = new Logger();
 
 
 export interface MCMFConfig {
@@ -95,21 +97,19 @@ class MCMFBoykov implements IMCMFBoykov {
 		this._state.activeNodes[this._source.getID()] = this._source;
 		this._state.activeNodes[this._sink.getID()] = this._sink;
 
- 		var nrCycles= 0;
-		// start
+		 var nrCycles= 0;
+		 
 		while(true) {
-			// console.log("grow");
 			this.grow();
 
 			if (!this._state.path.length) {
 			    break;
 			}
-			// console.log("augment");
+			
 			this.augmentation();
-			// console.log("adopt");
+			
 			this.adoption();
 			++nrCycles;
-			// console.log(nrCycles);
 		}
 
 		// compute the cut edges and the total cost of the cut
@@ -121,7 +121,7 @@ class MCMFBoykov implements IMCMFBoykov {
 		//         ++size_S;
 		//     }
 		// }
-		console.log("computing result");
+		logger.log("computing result");
 		var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
 		var smallTree_size:number = Object.keys(smallTree).length;
 		var smallTree_ids: Array<string> = Object.keys(smallTree);
@@ -184,12 +184,11 @@ class MCMFBoykov implements IMCMFBoykov {
 							}
 					}
 				}
-
 		}
-		//console.log(result.edges);
-		console.log("Cost => " +result.cost);
-		console.log("# cycles => " + nrCycles);
-		// console.log(result.edges);
+		//logger.log(result.edges);
+		logger.log("Cost => " +result.cost);
+		logger.log("# cycles => " + nrCycles);
+		// logger.log(result.edges);
 
     return result;
   }
@@ -217,7 +216,7 @@ class MCMFBoykov implements IMCMFBoykov {
 		var nodes: {[keys: string] : $N.IBaseNode} = uGraph.getNodes();
 		var nodes_ids: Array<string> = Object.keys(nodes);
 		var nodes_length: number = nodes_ids.length;
-		// console.log("#nodes: " + Object.keys(nodes).length);
+		// logger.log("#nodes: " + Object.keys(nodes).length);
 		for (let i = 0; i < nodes_length; i++) {
 		    // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
 				var node: $N.IBaseNode = nodes[nodes_ids[i]];
@@ -241,7 +240,7 @@ class MCMFBoykov implements IMCMFBoykov {
 				dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
 
 		}
-		// console.log(dGraph);
+		// logger.log(dGraph);
 		return dGraph;
 	}
 
