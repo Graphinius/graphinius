@@ -208,7 +208,7 @@ declare module 'graphinius/config/run_config' {
 	    debug: string;
 	    production: string;
 	}; const RUN_CONFIG: {
-	    log_level: any;
+	    log_level: string;
 	};
 	export { LOG_LEVELS, RUN_CONFIG };
 

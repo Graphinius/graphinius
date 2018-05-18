@@ -28,7 +28,8 @@
   "homepage": "https://github.com/cassinius/Graphinius#readme",
   "devDependencies": {
     "@types/core-js": "^0.9.46",
-    "@types/lodash": "^4.14.106",
+    "@types/lodash": "^4.14.108",
+    "@types/node": "^10.1.1",
     "chai": "^4.1.2",
     "dts-generator": "^2.1.0",
     "gulp": "^3.9.0",
