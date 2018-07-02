@@ -46,6 +46,14 @@ function Johnsons(graph: $G.IGraph): {} {
   return PFSFromAllNodes(graph);
 }
 
+
+/**
+ * 
+ * @param target 
+ * @param nodeToAdd 
+ * 
+ * @todo check if 
+ */
 function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
   let allNodes: { [key: string]: $N.IBaseNode } = target.getNodes();
   target.addNode(nodeToAdd);
@@ -62,7 +70,6 @@ function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
 }
 
 function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph {
-
   //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
   let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
   for (let edge of edges) {

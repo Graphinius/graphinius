@@ -1553,4 +1553,42 @@ describe('GRAPH TESTS: ', () => {
 
 	});
 
+
+	describe.only('generator tests - ', () => {
+
+		let it_graph		:	$G.IGraph,
+				node_a			: $N.IBaseNode,
+				node_b			: $N.IBaseNode,
+				node_c			: $N.IBaseNode,
+				node_it			: Iterator<$N.IBaseNode>,
+				json				: $JSON.IJSONInput,
+				graph_bernd : $G.IGraph;
+
+		beforeEach(() => {
+			it_graph = new $G.BaseGraph('iterator graph');
+			node_a = it_graph.addNodeByID("A");
+			node_b = it_graph.addNodeByID("B");
+			node_c = it_graph.addNodeByID("C");
+			json = new $JSON.JSONInput(false, false, false);
+			graph_bernd = json.readFromJSONFile(bernd_graph_file);
+		});
+
+		it('should yield nodes in the same order as inserted', () => {
+			node_it = it_graph.getNodeIterator();
+			expect(node_it.next().value).to.equal(node_a);
+			expect(node_it.next().value).to.equal(node_b);
+			expect(node_it.next().value).to.equal(node_c);
+		});
+
+		it('should return all nodes of a graph', () => {
+			let i = 0,
+					node_it = graph_bernd.getNodeIterator();
+			while( node_it.next().value ) {
+				i++;
+			}
+			expect(i).to.equal(graph_bernd.nrNodes());
+		});
+
+	});
+
 });

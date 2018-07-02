@@ -33,6 +33,13 @@ function Johnsons(graph) {
     return PFSFromAllNodes(graph);
 }
 exports.Johnsons = Johnsons;
+/**
+ *
+ * @param target
+ * @param nodeToAdd
+ *
+ * @todo check if
+ */
 function addExtraNandE(target, nodeToAdd) {
     var allNodes = target.getNodes();
     target.addNode(nodeToAdd);

@@ -6,7 +6,8 @@ import * as $DS from '../utils/structUtils';
 import { Logger } from '../utils/logger';
 import * as $BFS from '../search/BFS';
 import * as $DFS from '../search/DFS';
-import { BellmanFordArray } from '../search/BellmanFord';
+import * as $BF from '../search/BellmanFord';
+import * as $JO from '../search/Johnsons';
 
 let logger : Logger = new Logger();
 
@@ -54,7 +55,8 @@ export interface IGraph {
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
 	deleteNode(node) : void;
-
+	getNodeIterator();
+	
 	// EDGE STUFF
 	addEdgeByID(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
@@ -105,6 +107,9 @@ export interface IGraph {
 	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
 	nextArray(incoming?:boolean) : NextArray;
+
+	// REWEIGHTING
+	reweighIfHasNegativeEdge(clone: boolean): IGraph;
 }
 
 
@@ -122,6 +127,46 @@ class BaseGraph implements IGraph {
   // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
 
 	constructor (public _label) {	}
+
+
+
+	*getNodeIterator() : Iterator<$N.IBaseNode> {
+		let keys = Object.keys(this.getNodes());
+		for ( let node_id of keys ) {
+			yield this._nodes[node_id];
+		}
+	}
+
+	
+	/**
+	 * 
+	 * @param clone 
+	 * 
+	 * @comment Convenience method -
+	 * Tests to be found in test suites for
+	 * BaseGraph, BellmanFord and Johnsons
+	 */
+  reweighIfHasNegativeEdge(clone: boolean = false): IGraph {
+    if (this.hasNegativeEdge()) {
+      let result_graph : IGraph = clone ? this.clone() : this;
+
+      var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
+      result_graph = $JO.addExtraNandE(result_graph, extraNode);
+      let BFresult = $BF.BellmanFordDict(result_graph, extraNode);
+
+      if (BFresult.neg_cycle) {
+        throw new Error("The graph contains a negative cycle, thus it can not be processed");
+      }
+      else {
+        let newWeights: {} = BFresult.distances;
+
+        result_graph = $JO.reWeighGraph(result_graph, newWeights, extraNode);
+        result_graph.deleteNode(extraNode);
+      } 
+      return result_graph;
+    }
+	}
+	
 
 	/**
 	 * Version 1: do it in-place (to the object you receive)
@@ -205,7 +250,7 @@ class BaseGraph implements IGraph {
 				}
 			});
 
-			if ( BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
+			if ( $BF.BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
 				negative_cycle = true;
 			}
 		});

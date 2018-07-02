@@ -47,24 +47,24 @@
 	/* WEBPACK VAR INJECTION */(function(global) {var Edges			      = __webpack_require__(1);
 	var Nodes 		      = __webpack_require__(2);
 	var Graph 		      = __webpack_require__(4);
-	var CSVInput 	      = __webpack_require__(14);
-	var CSVOutput       = __webpack_require__(19);
-	var JSONInput       = __webpack_require__(20);
-	var JSONOutput      = __webpack_require__(21);
+	var CSVInput 	      = __webpack_require__(15);
+	var CSVOutput       = __webpack_require__(20);
+	var JSONInput       = __webpack_require__(21);
+	var JSONOutput      = __webpack_require__(22);
 	var BFS				      = __webpack_require__(8);
 	var DFS				      = __webpack_require__(10);
 	var PFS             = __webpack_require__(12);
 	var BellmanFord     = __webpack_require__(11);
-	var FloydWarshall		= __webpack_require__(22);
+	var FloydWarshall		= __webpack_require__(23);
 	var structUtils     = __webpack_require__(3);
-	var remoteUtils     = __webpack_require__(17);
+	var remoteUtils     = __webpack_require__(18);
 	var callbackUtils   = __webpack_require__(9);
 	var binaryHeap      = __webpack_require__(13);
-	var simplePerturbation = __webpack_require__(23);
-	var MCMFBoykov			= __webpack_require__(24);
-	var DegreeCent		 	= __webpack_require__(25);
-	var ClosenessCent	 	= __webpack_require__(26);
-	var BetweennessCent	= __webpack_require__(27);
+	var simplePerturbation = __webpack_require__(24);
+	var MCMFBoykov			= __webpack_require__(25);
+	var DegreeCent		 	= __webpack_require__(26);
+	var ClosenessCent	 	= __webpack_require__(27);
+	var BetweennessCent	= __webpack_require__(28);
 	var PRGauss					= __webpack_require__(29);
 	var PRRandomWalk		= __webpack_require__(31);
 	var kronLeskovec		= __webpack_require__(32);
@@ -630,6 +630,33 @@
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
+	var __generator = (this && this.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
@@ -637,7 +664,8 @@
 	var logger_1 = __webpack_require__(5);
 	var $BFS = __webpack_require__(8);
 	var $DFS = __webpack_require__(10);
-	var BellmanFord_1 = __webpack_require__(11);
+	var $BF = __webpack_require__(11);
+	var $JO = __webpack_require__(14);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	var GraphMode;
@@ -661,6 +689,54 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
+	    BaseGraph.prototype.getNodeIterator = function () {
+	        var keys, _i, keys_1, node_id;
+	        return __generator(this, function (_a) {
+	            switch (_a.label) {
+	                case 0:
+	                    keys = Object.keys(this.getNodes());
+	                    _i = 0, keys_1 = keys;
+	                    _a.label = 1;
+	                case 1:
+	                    if (!(_i < keys_1.length)) return [3 /*break*/, 4];
+	                    node_id = keys_1[_i];
+	                    return [4 /*yield*/, this._nodes[node_id]];
+	                case 2:
+	                    _a.sent();
+	                    _a.label = 3;
+	                case 3:
+	                    _i++;
+	                    return [3 /*break*/, 1];
+	                case 4: return [2 /*return*/];
+	            }
+	        });
+	    };
+	    /**
+	     *
+	     * @param clone
+	     *
+	     * @comment Convenience method -
+	     * Tests to be found in test suites for
+	     * BaseGraph, BellmanFord and Johnsons
+	     */
+	    BaseGraph.prototype.reweighIfHasNegativeEdge = function (clone) {
+	        if (clone === void 0) { clone = false; }
+	        if (this.hasNegativeEdge()) {
+	            var result_graph = clone ? this.clone() : this;
+	            var extraNode = new $N.BaseNode("extraNode");
+	            result_graph = $JO.addExtraNandE(result_graph, extraNode);
+	            var BFresult = $BF.BellmanFordDict(result_graph, extraNode);
+	            if (BFresult.neg_cycle) {
+	                throw new Error("The graph contains a negative cycle, thus it can not be processed");
+	            }
+	            else {
+	                var newWeights = BFresult.distances;
+	                result_graph = $JO.reWeighGraph(result_graph, newWeights, extraNode);
+	                result_graph.deleteNode(extraNode);
+	            }
+	            return result_graph;
+	        }
+	    };
 	    /**
 	     * Version 1: do it in-place (to the object you receive)
 	     * Version 2: clone the graph first, return the mutated clone
@@ -729,7 +805,7 @@
 	                    comp_start_node = node_id;
 	                }
 	            });
-	            if (BellmanFord_1.BellmanFordArray(_this, _this._nodes[comp_start_node]).neg_cycle) {
+	            if ($BF.BellmanFordArray(_this, _this._nodes[comp_start_node]).neg_cycle) {
 	                negative_cycle = true;
 	            }
 	        });
@@ -2546,12 +2622,150 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
+	/// <reference path="../../typings/tsd.d.ts" />
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var $N = __webpack_require__(2);
+	var $PFS = __webpack_require__(12);
+	var $BF = __webpack_require__(11);
+	var $SU = __webpack_require__(3);
+	function Johnsons(graph) {
+	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+	        throw new Error("Cowardly refusing to traverse graph without edges.");
+	    }
+	    //getting all graph nodes
+	    var allNodes = graph.getNodes();
+	    var nodeKeys = Object.keys(allNodes);
+	    if (graph.hasNegativeEdge()) {
+	        var extraNode = new $N.BaseNode("extraNode");
+	        graph = addExtraNandE(graph, extraNode);
+	        var BFresult = $BF.BellmanFordDict(graph, extraNode);
+	        //reminder: output of the BellmanFordDict is BFDictResult
+	        //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
+	        if (BFresult.neg_cycle) {
+	            throw new Error("The graph contains a negative cycle, thus it can not be processed");
+	        }
+	        else {
+	            var newWeights = BFresult.distances;
+	            graph = reWeighGraph(graph, newWeights, extraNode);
+	            //graph still has the extraNode
+	            //reminder: deleteNode function removes its edges, too
+	            graph.deleteNode(extraNode);
+	            return PFSFromAllNodes(graph);
+	        }
+	    }
+	    return PFSFromAllNodes(graph);
+	}
+	exports.Johnsons = Johnsons;
+	/**
+	 *
+	 * @param target
+	 * @param nodeToAdd
+	 *
+	 * @todo check if
+	 */
+	function addExtraNandE(target, nodeToAdd) {
+	    var allNodes = target.getNodes();
+	    target.addNode(nodeToAdd);
+	    var tempCounter = 0;
+	    //now add a directed edge from the extranode to all graph nodes, excluding itself
+	    for (var nodeKey in allNodes) {
+	        if (allNodes[nodeKey].getID() != nodeToAdd.getID()) {
+	            target.addEdgeByNodeIDs("temp" + tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
+	            tempCounter++;
+	        }
+	    }
+	    return target;
+	}
+	exports.addExtraNandE = addExtraNandE;
+	function reWeighGraph(target, distDict, tempNode) {
+	    //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
+	    var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
+	    for (var _i = 0, edges_1 = edges; _i < edges_1.length; _i++) {
+	        var edge = edges_1[_i];
+	        var a = edge.getNodes().a.getID();
+	        var b = edge.getNodes().b.getID();
+	        //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
+	        if (a == tempNode.getID()) {
+	            continue;
+	        }
+	        //assuming that the node keys in the distDict correspond to the nodeIDs
+	        else if (edge.isWeighted) {
+	            var oldWeight = edge.getWeight();
+	            var newWeight = oldWeight + distDict[a] - distDict[b];
+	            edge.setWeight(newWeight);
+	        }
+	        else {
+	            var oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
+	            var newWeight = oldWeight + distDict[a] - distDict[b];
+	            //collecting edgeID and directedness for later re-use
+	            var edgeID = edge.getID();
+	            var dirNess = edge.isDirected();
+	            //one does not simply make an edge weighted, but needs to delete and re-create it
+	            target.deleteEdge(edge);
+	            target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
+	        }
+	    }
+	    return target;
+	}
+	exports.reWeighGraph = reWeighGraph;
+	function PFSFromAllNodes(graph) {
+	    var dists = graph.adjListArray();
+	    var next = graph.nextArray();
+	    var nodesDict = graph.getNodes();
+	    var nodeIDIdxMap = {};
+	    var i = 0;
+	    for (var key in nodesDict) {
+	        nodeIDIdxMap[nodesDict[key].getID()] = i++;
+	    }
+	    var specialConfig = $PFS.preparePFSStandardConfig();
+	    var notEncounteredJohnsons = function (context) {
+	        context.next.best =
+	            context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
+	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        if (context.current.node == context.root_node) {
+	            dists[i][j] = context.next.best;
+	            next[i][j][0] = j;
+	        }
+	        else {
+	            dists[i][j] = context.next.best;
+	            next[i][j][0] = nodeIDIdxMap[context.current.node.getID()];
+	        }
+	    };
+	    specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
+	    var betterPathJohnsons = function (context) {
+	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        dists[i][j] = context.proposed_dist;
+	        if (context.current.node !== context.root_node) {
+	            next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
+	        }
+	    };
+	    specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
+	    var equalPathJohnsons = function (context) {
+	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        if (context.current.node !== context.root_node) {
+	            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
+	        }
+	    };
+	    specialConfig.callbacks.equal_path.push(equalPathJohnsons);
+	    for (var key in nodesDict) {
+	        $PFS.PFS(graph, nodesDict[key], specialConfig);
+	    }
+	    return [dists, next];
+	}
+	exports.PFSFromAllNodes = PFSFromAllNodes;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var path = __webpack_require__(15);
-	var fs = __webpack_require__(16);
+	var path = __webpack_require__(16);
+	var fs = __webpack_require__(17);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(17);
+	var $R = __webpack_require__(18);
 	var logger_1 = __webpack_require__(5);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
@@ -2699,7 +2913,7 @@
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2930,18 +3144,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var https = __webpack_require__(18);
+	var https = __webpack_require__(19);
 	var logger_1 = __webpack_require__(5);
 	var logger = new logger_1.Logger();
 	var SSL_PORT = '443';
@@ -2984,10 +3198,10 @@
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var http = __webpack_require__(16);
+	var http = __webpack_require__(17);
 
 	var https = module.exports;
 
@@ -3004,13 +3218,13 @@
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(16);
+	var fs = __webpack_require__(17);
 	var CSVOutput = /** @class */ (function () {
 	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -3059,15 +3273,15 @@
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(16);
+	var fs = __webpack_require__(17);
 	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(17);
+	var $R = __webpack_require__(18);
 	var DEFAULT_WEIGHT = 1;
 	var JSON_EXTENSION = ".json";
 	var JSONInput = /** @class */ (function () {
@@ -3205,13 +3419,13 @@
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(16);
+	var fs = __webpack_require__(17);
 	var JSONOutput = /** @class */ (function () {
 	    function JSONOutput() {
 	    }
@@ -3291,7 +3505,7 @@
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3467,7 +3681,7 @@
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3743,7 +3957,7 @@
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4141,7 +4355,7 @@
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4284,14 +4498,14 @@
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $PFS = __webpack_require__(12);
-	var $FW = __webpack_require__(22);
+	var $FW = __webpack_require__(23);
 	//Calculates all the shortest path's to all other nodes for all given nodes in the graph
 	//Returns a map with every node as key and the average distance to all other nodes as value
 	var closenessCentrality = /** @class */ (function () {
@@ -4346,14 +4560,14 @@
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $FW = __webpack_require__(22);
-	var $JO = __webpack_require__(28);
+	var $FW = __webpack_require__(23);
+	var $JO = __webpack_require__(14);
 	/**
 	 * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
 	 *
@@ -4489,137 +4703,6 @@
 	    return map;
 	}
 	exports.betweennessCentrality = betweennessCentrality;
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/// <reference path="../../typings/tsd.d.ts" />
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var $N = __webpack_require__(2);
-	var $PFS = __webpack_require__(12);
-	var $BF = __webpack_require__(11);
-	var $SU = __webpack_require__(3);
-	function Johnsons(graph) {
-	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-	        throw new Error("Cowardly refusing to traverse graph without edges.");
-	    }
-	    //getting all graph nodes
-	    var allNodes = graph.getNodes();
-	    var nodeKeys = Object.keys(allNodes);
-	    if (graph.hasNegativeEdge()) {
-	        var extraNode = new $N.BaseNode("extraNode");
-	        graph = addExtraNandE(graph, extraNode);
-	        var BFresult = $BF.BellmanFordDict(graph, extraNode);
-	        //reminder: output of the BellmanFordDict is BFDictResult
-	        //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
-	        if (BFresult.neg_cycle) {
-	            throw new Error("The graph contains a negative cycle, thus it can not be processed");
-	        }
-	        else {
-	            var newWeights = BFresult.distances;
-	            graph = reWeighGraph(graph, newWeights, extraNode);
-	            //graph still has the extraNode
-	            //reminder: deleteNode function removes its edges, too
-	            graph.deleteNode(extraNode);
-	            return PFSFromAllNodes(graph);
-	        }
-	    }
-	    return PFSFromAllNodes(graph);
-	}
-	exports.Johnsons = Johnsons;
-	function addExtraNandE(target, nodeToAdd) {
-	    var allNodes = target.getNodes();
-	    target.addNode(nodeToAdd);
-	    var tempCounter = 0;
-	    //now add a directed edge from the extranode to all graph nodes, excluding itself
-	    for (var nodeKey in allNodes) {
-	        if (allNodes[nodeKey].getID() != nodeToAdd.getID()) {
-	            target.addEdgeByNodeIDs("temp" + tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
-	            tempCounter++;
-	        }
-	    }
-	    return target;
-	}
-	exports.addExtraNandE = addExtraNandE;
-	function reWeighGraph(target, distDict, tempNode) {
-	    //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
-	    var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
-	    for (var _i = 0, edges_1 = edges; _i < edges_1.length; _i++) {
-	        var edge = edges_1[_i];
-	        var a = edge.getNodes().a.getID();
-	        var b = edge.getNodes().b.getID();
-	        //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
-	        if (a == tempNode.getID()) {
-	            continue;
-	        }
-	        //assuming that the node keys in the distDict correspond to the nodeIDs
-	        else if (edge.isWeighted) {
-	            var oldWeight = edge.getWeight();
-	            var newWeight = oldWeight + distDict[a] - distDict[b];
-	            edge.setWeight(newWeight);
-	        }
-	        else {
-	            var oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
-	            var newWeight = oldWeight + distDict[a] - distDict[b];
-	            //collecting edgeID and directedness for later re-use
-	            var edgeID = edge.getID();
-	            var dirNess = edge.isDirected();
-	            //one does not simply make an edge weighted, but needs to delete and re-create it
-	            target.deleteEdge(edge);
-	            target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
-	        }
-	    }
-	    return target;
-	}
-	exports.reWeighGraph = reWeighGraph;
-	function PFSFromAllNodes(graph) {
-	    var dists = graph.adjListArray();
-	    var next = graph.nextArray();
-	    var nodesDict = graph.getNodes();
-	    var nodeIDIdxMap = {};
-	    var i = 0;
-	    for (var key in nodesDict) {
-	        nodeIDIdxMap[nodesDict[key].getID()] = i++;
-	    }
-	    var specialConfig = $PFS.preparePFSStandardConfig();
-	    var notEncounteredJohnsons = function (context) {
-	        context.next.best =
-	            context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
-	        if (context.current.node == context.root_node) {
-	            dists[i][j] = context.next.best;
-	            next[i][j][0] = j;
-	        }
-	        else {
-	            dists[i][j] = context.next.best;
-	            next[i][j][0] = nodeIDIdxMap[context.current.node.getID()];
-	        }
-	    };
-	    specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
-	    var betterPathJohnsons = function (context) {
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
-	        dists[i][j] = context.proposed_dist;
-	        if (context.current.node !== context.root_node) {
-	            next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
-	        }
-	    };
-	    specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
-	    var equalPathJohnsons = function (context) {
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
-	        if (context.current.node !== context.root_node) {
-	            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
-	        }
-	    };
-	    specialConfig.callbacks.equal_path.push(equalPathJohnsons);
-	    for (var key in nodesDict) {
-	        $PFS.PFS(graph, nodesDict[key], specialConfig);
-	    }
-	    return [dists, next];
-	}
-	exports.PFSFromAllNodes = PFSFromAllNodes;
 
 
 /***/ }),

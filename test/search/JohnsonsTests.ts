@@ -173,7 +173,7 @@ describe('Johnsons APSP TEST -', () => {
         expect(graph_NC.hasNegativeEdge()).to.equal(true);
     });
 
-    it('graph with negative cycle should throw an error message, but only then', () => {
+    it('should refuse to compute a graph with negative cycle', () => {
         let graph_BF2 = graph_BF.clone();
         expect($JO.Johnsons.bind($JO.Johnsons, graph_NC)).to.throw(
             "The graph contains a negative cycle, thus it can not be processed");
@@ -181,12 +181,17 @@ describe('Johnsons APSP TEST -', () => {
         expect($JO.Johnsons.bind($JO.Johnsons, graph_search)).to.not.throw();
     });
 
-    it('function addextraNandE should function correctly', () => {
+    it('function addextraNandE should correctly add a node', () => {
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
-        //need to clone to be able to make a comparison, but works without cloning, too. I checked. 
         let graph_extra = graph_search.clone();
         graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
-        expect(graph_search.nrNodes()).to.equal((graph_extra.nrNodes()) - 1);
+        expect(graph_extra.nrNodes()).to.equal(graph_search.nrNodes() + 1);
+    });
+
+    it('function addextraNandE should correctly add n edges', () => {
+        var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
+        let graph_extra = graph_search.clone();
+        graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).to.equal(graph_search.nrDirEdges() + graph_search.nrUndEdges() + graph_search.nrNodes());
     });
 
@@ -199,6 +204,11 @@ describe('Johnsons APSP TEST -', () => {
         graph_BF3 = $JO.reWeighGraph(graph_BF3, BFresult.distances, extraNode);
         expect(graph_BF3.hasNegativeEdge()).to.equal(false);
     });
+
+
+    /**
+     * @todo Write tests specific to corrected weights in toy graphs
+     */
 
 });
 
