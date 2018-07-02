@@ -1554,7 +1554,7 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe.only('generator tests - ', () => {
+	describe('generator tests - ', () => {
 
 		let it_graph		:	$G.IGraph,
 				node_a			: $N.IBaseNode,
