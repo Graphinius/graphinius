@@ -50,6 +50,7 @@ class Logger {
     }
     return false;
   }
+
 }
 
 export { Logger };

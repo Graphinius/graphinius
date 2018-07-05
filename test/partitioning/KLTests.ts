@@ -84,9 +84,23 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
 
     it('should correctly compute the internal and external cost for each node', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
-      let init_partitioning = kl_part._partitioning;
-
-      
+      let costs = kl_part._costs;
+      expect(costs.external["1"]).to.equal(2);
+      expect(costs.internal["1"]).to.equal(1);
+      expect(costs.external["2"]).to.equal(2);
+      expect(costs.internal["2"]).to.equal(1);
+      expect(costs.external["3"]).to.equal(3);
+      expect(costs.internal["3"]).to.equal(1);
+      expect(costs.external["4"]).to.equal(2);
+      expect(costs.internal["4"]).to.equal(1);
+      expect(costs.external["5"]).to.equal(2);
+      expect(costs.internal["5"]).to.equal(1);
+      expect(costs.external["6"]).to.equal(3);
+      expect(costs.internal["6"]).to.equal(1);
+      expect(costs.external["7"]).to.equal(2);
+      expect(costs.internal["7"]).to.equal(1);
+      expect(costs.external["8"]).to.equal(2);
+      expect(costs.internal["8"]).to.equal(1);
     });
 
   });

@@ -1196,12 +1196,6 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	import { IGraph } from 'graphinius/core/Graph';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { IBaseNode } from 'graphinius/core/Nodes';
-	interface SubGain {
-	    target: IBaseNode;
-	    gain: number;
-	} type Gains = {
-	    [source: string]: SubGain;
-	};
 	interface KL_Costs {
 	    internal: {
 	        [key: string]: number;
@@ -1209,7 +1203,6 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    external: {
 	        [key: string]: number;
 	    };
-	    gain: Gains;
 	    maxGain: {
 	        source: IBaseNode;
 	        target: IBaseNode;
@@ -1220,7 +1213,14 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    private _graph;
 	    _partitioning: GraphPartitioning;
 	    _costs: KL_Costs;
+	    _fixed: {
+	        [key: string]: IBaseNode;
+	    };
 	    constructor(_graph: IGraph, initShuffle?: boolean);
+	    private initPartitioning;
+	    private initCosts;
+	    calculateIterationGains(): void;
+	    doIterationSwap(): void;
 	}
 	export {};
 
