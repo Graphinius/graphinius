@@ -1,24 +1,9 @@
 import { IGraph } from '../core/Graph';
-import { IBaseNode } from '../core/Nodes';
-import { IBaseEdge } from '../core/Edges';
 import * as $SU from '../utils/structUtils';
+import { GraphPartitioning, Partition } from './Interfaces';
 import { Logger } from '../utils/logger';
 const logger = new Logger();
 
-
-export interface GraphPartitioning {
-  partitions: {[key:string]: Partition};
-  nodePartMap: {[key:string]: string};
-  nodeFrontMap: {[key:string]: boolean};
-  // intraEdges: {[key:string]: IBaseEdge};
-  // interEdges: {[key:string]: IBaseEdge};
-  cut_cost: number;
-}
-
-
-export interface Partition {
-  nodes: {[key:string]: IBaseNode};
-}
 
 
 export default class KCut {

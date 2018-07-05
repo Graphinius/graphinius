@@ -3,7 +3,8 @@
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
-import KCut, { GraphPartitioning } from '../../src/partitioning/KCut';
+import { GraphPartitioning } from '../../src/partitioning/Interfaces';
+import KCut from '../../src/partitioning/KCut';
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
@@ -24,7 +25,7 @@ const expect = chai.expect,
  * 
  * Testing for sequential as well as shuffle partitioning
  */
-describe.only("K-cut partitioning tests - ", () => {
+describe("K-cut partitioning tests - ", () => {
 
 	let n6_und_graph : $G.IGraph,
 			n333_und_graph : $G.IGraph,

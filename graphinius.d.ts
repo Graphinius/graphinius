@@ -1136,8 +1136,7 @@ declare module 'graphinius/io/output/JSONOutput' {
 	export { JSONOutput };
 
 }
-declare module 'graphinius/partitioning/KCut' {
-	import { IGraph } from 'graphinius/core/Graph';
+declare module 'graphinius/partitioning/Interfaces' {
 	import { IBaseNode } from 'graphinius/core/Nodes';
 	export interface GraphPartitioning {
 	    partitions: {
@@ -1156,11 +1155,32 @@ declare module 'graphinius/partitioning/KCut' {
 	        [key: string]: IBaseNode;
 	    };
 	}
+
+}
+declare module 'graphinius/partitioning/KCut' {
+	import { IGraph } from 'graphinius/core/Graph';
+	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	export default class KCut {
 	    private _graph;
 	    private _partitioning;
 	    constructor(_graph: IGraph);
 	    cut(k: number, shuffle?: boolean): GraphPartitioning;
+	}
+
+}
+declare module 'graphinius/partitioning/KLPartitioning' {
+	import { IGraph } from 'graphinius/core/Graph';
+	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
+	export class KLPartitioning {
+	    private _graph;
+	    _partitioning: GraphPartitioning;
+	    _internalCosts: {
+	        [key: string]: number;
+	    };
+	    _externalCosts: {
+	        [key: string]: number;
+	    };
+	    constructor(_graph: IGraph, initShuffle?: boolean);
 	}
 
 }
