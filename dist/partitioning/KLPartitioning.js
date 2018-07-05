@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
 var KLPartitioning = /** @class */ (function () {
-    // private _diffCosts : {[key:string]: number};
     function KLPartitioning(_graph, initShuffle) {
         if (initShuffle === void 0) { initShuffle = false; }
         this._graph = _graph;
@@ -12,6 +11,12 @@ var KLPartitioning = /** @class */ (function () {
             nodePartMap: {},
             nodeFrontMap: {},
             cut_cost: 0
+        };
+        this._costs = {
+            internal: {},
+            external: {},
+            gain: {},
+            maxGain: { source: null, target: null, gain: 0 }
         };
         for (var _i = 0, _a = Object.keys(this._graph.getNodes()); _i < _a.length; _i++) {
             var key = _a[_i];
@@ -33,7 +38,14 @@ var KLPartitioning = /** @class */ (function () {
                     this._partitioning.partitions[node_part].nodes[key] = node;
                 }
             }
-            // Initialize the node costs
+            if (Object.keys(this._partitioning.partitions).length > 2) {
+                throw new Error("KL partitioning works on 2 initial partitions only.");
+            }
+            /**
+             * Initialize the node costs
+             *
+             * @todo shall we introduce "in-partition-edges" & "cross-partition-edges"?
+             */
         }
     }
     return KLPartitioning;

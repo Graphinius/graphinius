@@ -50,13 +50,12 @@ export interface IBaseNode {
 	clearUndEdges() : void;
 	clearEdges() : void;
 	
-	// get Nodes connected by incoming / outgoing edges
+	// neighborhood methods
 	prevNodes() : Array<NeighborEntry>;
 	nextNodes() : Array<NeighborEntry>;
-	// get Nodes connected by undirected edges
 	connNodes() : Array<NeighborEntry>;
-	// get Nodes connected by outgoing + undirected edges
 	reachNodes(identityFunc?: Function) : Array<NeighborEntry>;
+	allNeighbors(identityFunc?: Function) : Array<NeighborEntry>;
 
 	clone() : IBaseNode;
 }
@@ -110,10 +109,6 @@ class BaseNode implements IBaseNode {
 	
 	getFeature(key: string) : any {
 		return this._features[key];
-		// if ( !feat ) {
-		// 	throw new Error("Cannot retrieve non-existing feature.");
-		// }
-		// return feat;
 	}
 	
 	setFeatures( features: { [k:string]: any } ) : void {
@@ -126,9 +121,6 @@ class BaseNode implements IBaseNode {
 	
 	deleteFeature(key: string) : any {
 		var feat = this._features[key];
-		// if ( !feat ) {
-		// 	throw new Error("Cannot delete non-existing feature.");
-		// }
 		delete this._features[key];
 		return feat;
 	}
@@ -300,6 +292,10 @@ class BaseNode implements IBaseNode {
 		this.clearUndEdges();
 	}
 	
+	/**
+	 * return the set of all nodes that have
+	 * directed edges coming into this node
+	 */
 	prevNodes() : Array<NeighborEntry> {
 		var prevs : Array<NeighborEntry> = [];
 		var key 	: string,
@@ -317,6 +313,10 @@ class BaseNode implements IBaseNode {
 		return prevs;
 	}
 	
+	/**
+	 * return the set of all nodes that have
+	 * directed edges going out from this node
+	 */
 	nextNodes() : Array<NeighborEntry> {
 		var nexts : Array<NeighborEntry> = [];
 		var key 	: string,
@@ -334,6 +334,10 @@ class BaseNode implements IBaseNode {
 		return nexts;
 	}
 	
+	/**
+	 * return the set of all nodes that are
+	 * connected to this node via undirected edges
+	 */
 	connNodes() : Array<NeighborEntry> {
 		var conns : Array<NeighborEntry> = [];
 		var key 	: string,
@@ -362,6 +366,8 @@ class BaseNode implements IBaseNode {
 
 
 	/**
+	 * return the set of all nodes 'reachable' from this node,
+	 * either via unconnected or outgoing edges
 	 *
 	 * @param identityFunc can be used to remove 'duplicates' from resulting array,
 	 * if necessary
@@ -374,6 +380,23 @@ class BaseNode implements IBaseNode {
     return $SU.mergeArrays([this.nextNodes(), this.connNodes()],
 			identityFunc || function(ne) {return identity++});
 	}
+
+
+	/**
+	 * return the set of all nodes connected to this node
+	 *
+	 * @param identityFunc can be used to remove 'duplicates' from resulting array,
+	 * if necessary
+	 * @returns {Array}
+	 *
+   */
+	allNeighbors(identityFunc?: Function) : Array<NeighborEntry> {
+		var identity = 0;
+		// console.log(this.nextNodes());
+    return $SU.mergeArrays([this.prevNodes(), this.nextNodes(), this.connNodes()],
+			identityFunc || function(ne) {return identity++});
+	}
+
 
 
 	clone() : IBaseNode {

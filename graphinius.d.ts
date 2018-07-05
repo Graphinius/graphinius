@@ -104,6 +104,7 @@ declare module 'graphinius/core/Nodes' {
 	    nextNodes(): Array<NeighborEntry>;
 	    connNodes(): Array<NeighborEntry>;
 	    reachNodes(identityFunc?: Function): Array<NeighborEntry>;
+	    allNeighbors(identityFunc?: Function): Array<NeighborEntry>;
 	    clone(): IBaseNode;
 	} class BaseNode implements IBaseNode {
 	    protected _id: string;
@@ -187,10 +188,24 @@ declare module 'graphinius/core/Nodes' {
 	    clearInEdges(): void;
 	    clearUndEdges(): void;
 	    clearEdges(): void;
+	    /**
+	     * return the set of all nodes that have
+	     * directed edges coming into this node
+	     */
 	    prevNodes(): Array<NeighborEntry>;
+	    /**
+	     * return the set of all nodes that have
+	     * directed edges going out from this node
+	     */
 	    nextNodes(): Array<NeighborEntry>;
+	    /**
+	     * return the set of all nodes that are
+	     * connected to this node via undirected edges
+	     */
 	    connNodes(): Array<NeighborEntry>;
 	    /**
+	     * return the set of all nodes 'reachable' from this node,
+	     * either via unconnected or outgoing edges
 	     *
 	     * @param identityFunc can be used to remove 'duplicates' from resulting array,
 	     * if necessary
@@ -198,6 +213,15 @@ declare module 'graphinius/core/Nodes' {
 	     *
 	   */
 	    reachNodes(identityFunc?: Function): Array<NeighborEntry>;
+	    /**
+	     * return the set of all nodes connected to this node
+	     *
+	     * @param identityFunc can be used to remove 'duplicates' from resulting array,
+	     * if necessary
+	     * @returns {Array}
+	     *
+	   */
+	    allNeighbors(identityFunc?: Function): Array<NeighborEntry>;
 	    clone(): IBaseNode;
 	}
 	export { BaseNode };
@@ -1171,17 +1195,34 @@ declare module 'graphinius/partitioning/KCut' {
 declare module 'graphinius/partitioning/KLPartitioning' {
 	import { IGraph } from 'graphinius/core/Graph';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
+	import { IBaseNode } from 'graphinius/core/Nodes';
+	interface SubGain {
+	    target: IBaseNode;
+	    gain: number;
+	} type Gains = {
+	    [source: string]: SubGain;
+	};
+	interface KL_Costs {
+	    internal: {
+	        [key: string]: number;
+	    };
+	    external: {
+	        [key: string]: number;
+	    };
+	    gain: Gains;
+	    maxGain: {
+	        source: IBaseNode;
+	        target: IBaseNode;
+	        gain: number;
+	    };
+	}
 	export class KLPartitioning {
 	    private _graph;
 	    _partitioning: GraphPartitioning;
-	    _internalCosts: {
-	        [key: string]: number;
-	    };
-	    _externalCosts: {
-	        [key: string]: number;
-	    };
+	    _costs: KL_Costs;
 	    constructor(_graph: IGraph, initShuffle?: boolean);
 	}
+	export {};
 
 }
 declare module 'graphinius/perturbation/SimplePerturbations' {

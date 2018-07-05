@@ -2,15 +2,29 @@ import { IGraph } from '../core/Graph';
 import * as $SU from '../utils/structUtils';
 import { GraphPartitioning, Partition } from './Interfaces';
 import { Logger } from '../utils/logger';
+import { IBaseNode } from '../core/Nodes';
 const logger = new Logger();
+
+
+interface SubGain {
+  target: IBaseNode;
+  gain: number;
+}
+
+type Gains = {[source: string]: SubGain};
+
+interface KL_Costs {
+  internal: {[key:string]: number};
+  external: {[key:string]: number};
+  gain: Gains;
+  maxGain: {source: IBaseNode, target: IBaseNode, gain: number};
+}
 
 
 export class KLPartitioning {
 
   public _partitioning : GraphPartitioning;
-  public _internalCosts : {[key:string]: number};
-  public _externalCosts : {[key:string]: number};
-  // private _diffCosts : {[key:string]: number};
+  public _costs : KL_Costs;
 
   constructor(private _graph : IGraph, initShuffle: boolean = false) {
     this._partitioning = {
@@ -18,6 +32,12 @@ export class KLPartitioning {
       nodePartMap: {},
       nodeFrontMap: {},
       cut_cost: 0
+    };
+    this._costs = {
+      internal: {},
+      external: {},
+      gain: {},
+      maxGain: {source: null, target: null, gain: 0}
     };
 
     for (let key of Object.keys(this._graph.getNodes())) {
@@ -40,8 +60,19 @@ export class KLPartitioning {
         }
       }
 
-      // Initialize the node costs
+      if ( Object.keys(this._partitioning.partitions).length > 2) {
+        throw new Error("KL partitioning works on 2 initial partitions only.")
+      }
+
+      /**
+       * Initialize the node costs
+       * 
+       * @todo shall we introduce "in-partition-edges" & "cross-partition-edges"?
+       */
       
+            
+      
+
 
     }
   }

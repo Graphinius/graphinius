@@ -294,12 +294,12 @@ describe('==== NODE TESTS ====', () => {
 			* Moreover, we will also test the implementations of the
 			* prevNodes(), nextNodes() and undNodes() methods
 			*/
-		describe('a little more complex scenario - ', () => {
+		describe.only('a little more complex scenario - ', () => {
 			
-			var n_a = new $N.BaseNode("A", {label: "A"}),
-					n_b = new $N.BaseNode("B", {label: "B"}),
-					n_c = new $N.BaseNode("C", {label: "C"}),
-					n_d = new $N.BaseNode("D", {label: "D"}),
+			var n_a = new $N.BaseNode("A"),
+					n_b = new $N.BaseNode("B"),
+					n_c = new $N.BaseNode("C"),
+					n_d = new $N.BaseNode("D"),
 					e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
 					e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
 					e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
@@ -373,9 +373,9 @@ describe('==== NODE TESTS ====', () => {
 								
 			});			
 			
-			describe('previous, next, connected and adjacent nodes', () => {
+			describe('previous, next, connected, reachable and adjacent nodes', () => {
 				
-				it('should find nodes c and d as previous nodes', () => {
+				it('should find nodes c and d as previous nodes (from A)', () => {
 					var prevs = collectNodesFromNeighbors(n_a.prevNodes());
 					expect(prevs).to.be.an.instanceof(Array);
 					expect(prevs.length).to.equal(3);
@@ -384,7 +384,7 @@ describe('==== NODE TESTS ====', () => {
 					expect(prevs).to.contain(n_d);		
 				});
 
-				it('should find nodes a, b and d as next nodes', () => {
+				it('should find nodes a, b and d as next nodes (from A)', () => {
 					var nexts = collectNodesFromNeighbors(n_a.nextNodes());
 					expect(nexts).to.be.an.instanceof(Array);
 					expect(nexts.length).to.equal(3);
@@ -394,7 +394,7 @@ describe('==== NODE TESTS ====', () => {
 					expect(nexts).to.contain(n_d);	
 				});
 				
-				it('should find nodes b and c as connected (undirected) nodes', () => {
+				it('should find nodes b and c as connected (undirected) nodes (from A)', () => {
 					var conns = collectNodesFromNeighbors(n_a.connNodes());
 					expect(conns).to.be.an.instanceof(Array);
 					expect(conns.length).to.equal(2);
@@ -403,14 +403,38 @@ describe('==== NODE TESTS ====', () => {
 					expect(conns).to.contain(n_c);
 				});
 				
-				it('should find nodes a, b, c and d as adjacent (reachable) nodes', () => {
-					var adjs = collectNodesFromNeighbors(n_a.reachNodes((ne) => {return ne.node.getID()}));
+				it('should find nodes a, b, c and d as reachable nodes (from A)', () => {
+					var reach = collectNodesFromNeighbors(n_a.reachNodes((ne) => {return ne.node.getID()}));
+					expect(reach).to.be.an.instanceof(Array);
+					expect(reach.length).to.equal(4);
+					expect(reach).to.contain(n_a);
+					expect(reach).to.contain(n_b);
+					expect(reach).to.contain(n_c);	
+					expect(reach).to.contain(n_d);
+				});
+
+				/**
+				 * Updated 2018...
+				 */
+				it('should find nodes A, E, F, G as adjacent nodes (from D)', () => {
+					let n_e = new $N.BaseNode("E");
+					let n_f = new $N.BaseNode("F");
+					let n_g = new $N.BaseNode("G");
+					let e_8 = new $E.BaseEdge("u_de", n_d, n_e);
+					let e_9 = new $E.BaseEdge("d_fd", n_f, n_d, {directed: true});
+					let e_10 = new $E.BaseEdge("d_dg", n_d, n_g, {directed: true});
+					n_d.addEdge(e_5);
+					n_d.addEdge(e_7);
+					n_d.addEdge(e_8);
+					n_d.addEdge(e_9);
+					n_d.addEdge(e_10);
+					let adjs = collectNodesFromNeighbors(n_d.allNeighbors((ne) => {return ne.node.getID()}));
 					expect(adjs).to.be.an.instanceof(Array);
 					expect(adjs.length).to.equal(4);
 					expect(adjs).to.contain(n_a);
-					expect(adjs).to.contain(n_b);
-					expect(adjs).to.contain(n_c);	
-					expect(adjs).to.contain(n_d);
+					expect(adjs).to.contain(n_e);
+					expect(adjs).to.contain(n_f);	
+					expect(adjs).to.contain(n_g);
 				});
 				
 				it('should find node a as undirected neighbor node from node b', () => {

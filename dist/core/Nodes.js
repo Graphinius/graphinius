@@ -28,10 +28,6 @@ var BaseNode = /** @class */ (function () {
     };
     BaseNode.prototype.getFeature = function (key) {
         return this._features[key];
-        // if ( !feat ) {
-        // 	throw new Error("Cannot retrieve non-existing feature.");
-        // }
-        // return feat;
     };
     BaseNode.prototype.setFeatures = function (features) {
         this._features = $SU.clone(features);
@@ -41,9 +37,6 @@ var BaseNode = /** @class */ (function () {
     };
     BaseNode.prototype.deleteFeature = function (key) {
         var feat = this._features[key];
-        // if ( !feat ) {
-        // 	throw new Error("Cannot delete non-existing feature.");
-        // }
         delete this._features[key];
         return feat;
     };
@@ -194,6 +187,10 @@ var BaseNode = /** @class */ (function () {
         this.clearOutEdges();
         this.clearUndEdges();
     };
+    /**
+     * return the set of all nodes that have
+     * directed edges coming into this node
+     */
     BaseNode.prototype.prevNodes = function () {
         var prevs = [];
         var key, edge;
@@ -208,6 +205,10 @@ var BaseNode = /** @class */ (function () {
         }
         return prevs;
     };
+    /**
+     * return the set of all nodes that have
+     * directed edges going out from this node
+     */
     BaseNode.prototype.nextNodes = function () {
         var nexts = [];
         var key, edge;
@@ -222,6 +223,10 @@ var BaseNode = /** @class */ (function () {
         }
         return nexts;
     };
+    /**
+     * return the set of all nodes that are
+     * connected to this node via undirected edges
+     */
     BaseNode.prototype.connNodes = function () {
         var conns = [];
         var key, edge;
@@ -246,6 +251,8 @@ var BaseNode = /** @class */ (function () {
         return conns;
     };
     /**
+     * return the set of all nodes 'reachable' from this node,
+     * either via unconnected or outgoing edges
      *
      * @param identityFunc can be used to remove 'duplicates' from resulting array,
      * if necessary
@@ -256,6 +263,19 @@ var BaseNode = /** @class */ (function () {
         var identity = 0;
         // console.log(this.nextNodes());
         return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+    };
+    /**
+     * return the set of all nodes connected to this node
+     *
+     * @param identityFunc can be used to remove 'duplicates' from resulting array,
+     * if necessary
+     * @returns {Array}
+     *
+   */
+    BaseNode.prototype.allNeighbors = function (identityFunc) {
+        var identity = 0;
+        // console.log(this.nextNodes());
+        return $SU.mergeArrays([this.prevNodes(), this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
     };
     BaseNode.prototype.clone = function () {
         var new_node = new BaseNode(this._id);
