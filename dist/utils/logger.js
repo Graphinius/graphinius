@@ -41,6 +41,13 @@ var Logger = /** @class */ (function () {
         }
         return false;
     };
+    Logger.prototype.write = function (msg) {
+        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+            process.stdout.write.apply(process.stdout, Array.prototype.slice.call(arguments));
+            return true;
+        }
+        return false;
+    };
     return Logger;
 }());
 exports.Logger = Logger;

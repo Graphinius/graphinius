@@ -51,6 +51,13 @@ class Logger {
     return false;
   }
 
+  write(msg) : boolean {
+    if ( this.config.log_level === LOG_LEVELS.debug ) {
+      process.stdout.write.apply(process.stdout, Array.prototype.slice.call(arguments));
+      return true;
+    }
+    return false;
+  }
 }
 
 export { Logger };

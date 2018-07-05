@@ -1364,9 +1364,9 @@
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var run_config_1 = __webpack_require__(6);
+	var run_config_1 = __webpack_require__(7);
 	var Logger = /** @class */ (function () {
 	    function Logger(config) {
 	        this.config = null;
@@ -1407,31 +1407,21 @@
 	        }
 	        return false;
 	    };
+	    Logger.prototype.write = function (msg) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            process.stdout.write.apply(process.stdout, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
 	    return Logger;
 	}());
 	exports.Logger = Logger;
 
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var LOG_LEVELS = {
-	    debug: "debug",
-	    production: "production"
-	};
-	exports.LOG_LEVELS = LOG_LEVELS;
-	var RUN_CONFIG = {
-	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
-	};
-	exports.RUN_CONFIG = RUN_CONFIG;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1619,6 +1609,24 @@
 	};
 	process.umask = function() { return 0; };
 
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var LOG_LEVELS = {
+	    debug: "debug",
+	    production: "production"
+	};
+	exports.LOG_LEVELS = LOG_LEVELS;
+	var RUN_CONFIG = {
+	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
+	};
+	exports.RUN_CONFIG = RUN_CONFIG;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 8 */
@@ -3177,7 +3185,7 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
 /* 17 */

@@ -248,6 +248,7 @@ declare module 'graphinius/utils/logger' {
 	    dir(obj: any): boolean;
 	    info(msg: any): boolean;
 	    warn(msg: any): boolean;
+	    write(msg: any): boolean;
 	}
 	export { Logger };
 

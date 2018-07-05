@@ -79,6 +79,8 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("6");
       expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("7");
       expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("8");
+
+      expect(kl_part._costs.maxGain.gain).to.equal(Number.NEGATIVE_INFINITY);
     });
 
 
@@ -101,6 +103,9 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(costs.internal["7"]).to.equal(1);
       expect(costs.external["8"]).to.equal(2);
       expect(costs.internal["8"]).to.equal(1);
+
+      expect(kl_part._partitioning.cut_cost).to.equal(9);
+      // expect(costs.maxGain.gain).to.equal(0);
     });
 
   });

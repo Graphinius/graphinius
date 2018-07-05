@@ -1,8 +1,9 @@
 import { IGraph } from '../core/Graph';
 import * as $SU from '../utils/structUtils';
 import { GraphPartitioning, Partition } from './Interfaces';
-import { Logger } from '../utils/logger';
 import { IBaseNode } from '../core/Nodes';
+
+import { Logger } from '../utils/logger';
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
@@ -39,7 +40,7 @@ export class KLPartitioning {
       internal: {},
       external: {},
       // gain: {},
-      maxGain: {source: null, target: null, gain: 0}
+      maxGain: {source: null, target: null, gain: Number.NEGATIVE_INFINITY}
     };
     this._fixed = {};
 
@@ -88,32 +89,36 @@ export class KLPartitioning {
 
       let nodePartMap = this._partitioning.nodePartMap;
 
-      process.stdout.write(key + ' : ');
+      logger.write(key + ' : ');
       /**
        * @todo introduce weighted mode
        */
       Object.keys(adj_list[key]).forEach( target => {
-        process.stdout.write(target);
-        process.stdout.write(`[${nodePartMap[key]}, ${nodePartMap[target]}]`);
+        logger.write(target);
+        logger.write(`[${nodePartMap[key]}, ${nodePartMap[target]}]`);
 
         if ( nodePartMap[key] === nodePartMap[target] ) {
-          process.stdout.write('\u2713' + ' ');
+          logger.write('\u2713' + ' ');
           if ( this._costs.internal[key] ) {
             this._costs.internal[key] += DEFAULT_WEIGHT;
           } else {
             this._costs.internal[key] = DEFAULT_WEIGHT;
           }
         } else {
-          process.stdout.write('\u2717' + ' ');
+          logger.write('\u2717' + ' ');
           if ( this._costs.external[key] ) {
             this._costs.external[key] += DEFAULT_WEIGHT;
           } else {
             this._costs.external[key] = DEFAULT_WEIGHT;
           }
+          this._partitioning.cut_cost += DEFAULT_WEIGHT;
         }
       });
-      console.log('');
+      logger.log('');
     }
+
+    // we count every edge twice...
+    this._partitioning.cut_cost /= 2;
   }
 
 

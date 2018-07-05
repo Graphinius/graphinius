@@ -17,7 +17,7 @@ var KLPartitioning = /** @class */ (function () {
             internal: {},
             external: {},
             // gain: {},
-            maxGain: { source: null, target: null, gain: 0 }
+            maxGain: { source: null, target: null, gain: Number.NEGATIVE_INFINITY }
         };
         this._fixed = {};
         this.initPartitioning(initShuffle);
@@ -58,15 +58,15 @@ var KLPartitioning = /** @class */ (function () {
              * @todo shall we introduce "in-partition-edges" & "cross-partition-edges"?
              */
             var nodePartMap = this_1._partitioning.nodePartMap;
-            process.stdout.write(key + ' : ');
+            logger.write(key + ' : ');
             /**
              * @todo introduce weighted mode
              */
             Object.keys(adj_list[key]).forEach(function (target) {
-                process.stdout.write(target);
-                process.stdout.write("[" + nodePartMap[key] + ", " + nodePartMap[target] + "]");
+                logger.write(target);
+                logger.write("[" + nodePartMap[key] + ", " + nodePartMap[target] + "]");
                 if (nodePartMap[key] === nodePartMap[target]) {
-                    process.stdout.write('\u2713' + ' ');
+                    logger.write('\u2713' + ' ');
                     if (_this._costs.internal[key]) {
                         _this._costs.internal[key] += DEFAULT_WEIGHT;
                     }
@@ -75,22 +75,25 @@ var KLPartitioning = /** @class */ (function () {
                     }
                 }
                 else {
-                    process.stdout.write('\u2717' + ' ');
+                    logger.write('\u2717' + ' ');
                     if (_this._costs.external[key]) {
                         _this._costs.external[key] += DEFAULT_WEIGHT;
                     }
                     else {
                         _this._costs.external[key] = DEFAULT_WEIGHT;
                     }
+                    _this._partitioning.cut_cost += DEFAULT_WEIGHT;
                 }
             });
-            console.log('');
+            logger.log('');
         };
         var this_1 = this;
         for (var _i = 0, _a = Object.keys(this._graph.getNodes()); _i < _a.length; _i++) {
             var key = _a[_i];
             _loop_1(key);
         }
+        // we count every edge twice...
+        this._partitioning.cut_cost /= 2;
     };
     KLPartitioning.prototype.calculateIterationGains = function () {
     };
