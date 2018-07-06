@@ -44,14 +44,12 @@ describe("K-cut partitioning tests - ", () => {
 	it('should partition a 6-node graph into two node-sets of size 3, no shuffle', () => {
 		partitioning = new KCut(n6_und_graph).cut(2);
 
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			logger.log(Object.keys(partitioning.partitions[part_nr].nodes));
-		});
+		logPartitions( partitioning.partitions );
 
-		expect(Object.keys(partitioning.partitions).length).to.equal(2);
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			expect(Object.keys(partitioning.partitions[part_nr].nodes).length).to.equal(3);
-		});
+		expect(partitioning.partitions.size).to.equal(2);
+		for ( let [part_nr, partition] of partitioning.partitions ) {
+			expect(partition.nodes.size).to.equal(3);
+		}
 	});
 
 
@@ -59,37 +57,33 @@ describe("K-cut partitioning tests - ", () => {
 		n6_und_graph.addNodeByID("extra!!!");
 		partitioning = new KCut(n6_und_graph).cut(2);
 
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			logger.log(Object.keys(partitioning.partitions[part_nr].nodes));
-		});
+		logPartitions( partitioning.partitions );
 
-		expect(Object.keys(partitioning.partitions).length).to.equal(2);
-		expect(Object.keys(partitioning.partitions[0].nodes).length).to.equal(4);
-		expect(Object.keys(partitioning.partitions[1].nodes).length).to.equal(3);
+		expect(partitioning.partitions.size).to.equal(2);
+		expect(partitioning.partitions.get(0).nodes.size).to.equal(4);
+		expect(partitioning.partitions.get(1).nodes.size).to.equal(3);
 	});
 
 
 	it('should partition the 6-node graph into two node-sets of size 3, with shuffle', () => {
 		partitioning = new KCut(n6_und_graph).cut(2, true);
 
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			logger.log(Object.keys(partitioning.partitions[part_nr].nodes));
-		});
+		logPartitions( partitioning.partitions );
 
-		expect(Object.keys(partitioning.partitions).length).to.equal(2);
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			expect(Object.keys(partitioning.partitions[part_nr].nodes).length).to.equal(3);
-		});
+		expect(partitioning.partitions.size).to.equal(2);
+		for ( let [part_nr, partition] of partitioning.partitions ) {
+			expect(partition.nodes.size).to.equal(3);
+		}
 	});
 
 
 	it('shuffle should make a difference', () => {
 		partitioning = new KCut(n333_und_graph).cut(111);
 		let partitioning_shuffle = new KCut(n333_und_graph).cut(111, true);
-		expect(Object.keys(partitioning.partitions).length).to.equal(111);
-		Object.keys(partitioning.partitions).forEach( part_nr => {
-			expect(Object.keys(partitioning.partitions[part_nr].nodes).length).to.equal(3);
-		});
+		expect(partitioning.partitions.size).to.equal(111);
+		for ( let [part_nr, partition] of partitioning.partitions ) {
+			expect(partition.nodes.size).to.equal(3);
+		}
 		expect(partitioning).not.to.deep.equal(partitioning_shuffle);
 	});
 
@@ -107,3 +101,11 @@ describe("K-cut partitioning tests - ", () => {
 	});
 });
 
+
+let logPartitions =  partitions => {
+	for ( let [part_nr, partition] of partitions ) {
+		process.stdout.write('[');
+		partition.nodes.forEach( (id, node) => process.stdout.write(node + ', ') )
+		process.stdout.write(']\n');
+	}
+}

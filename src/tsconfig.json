@@ -3,7 +3,8 @@
       "module": "commonjs",
       "target": "es5",
       "declaration": true,
-      "sourceMap": true
+      "sourceMap": true,
+      "downlevelIteration": true
     //   "outDir": "../"
     },
     "compileOnSave": false,

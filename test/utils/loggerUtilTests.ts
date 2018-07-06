@@ -17,7 +17,7 @@ const obj_to_log = {
 };
 
 
-describe.only('Basic logger tests - (standard) DEBUG config - output expected - ', () => {
+describe('Basic logger tests - (standard) DEBUG config - output expected - ', () => {
 
 
   describe('Basic logger function tests - debug config - output expected', () => {
@@ -94,6 +94,28 @@ describe.only('Basic logger tests - (standard) DEBUG config - output expected - 
 
     it('Should not output a message via process.stdout', () => {
       expect(logger.write(obj_to_log)).to.be.false;
+    });
+
+  });
+
+
+  describe.skip('funny countdown function', () => {
+
+    before(() => {
+      const config : LOG_CONFIG = { log_level: LOG_LEVELS.debug };
+      logger = new Logger(config);
+    });
+    
+    after(() => {
+      logger = null;
+    });
+
+
+    it('should display the FINAL countdown...', () => {
+      let countdown = 1e6;
+      while ( countdown-- ) {
+        logger.write(`It's the final countdown: ${countdown} \r`);
+      }
     });
 
   });

@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $JSON from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
-import { KLPartitioning } from '../../src/partitioning/KLPartitioning';
+import { KLPartitioning, Gain } from '../../src/partitioning/KLPartitioning';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
@@ -54,33 +54,39 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
+    it('should construct data structures of correct length', () => {
+      kl_part = new KLPartitioning(n8_kl_graph);
+      let init_partitioning = kl_part._partitioning;
+      expect(init_partitioning.nodePartMap.size).to.equal(8);
+      expect(init_partitioning.partitions.size).to.equal(2);
+      expect(init_partitioning.partitions.get(1).nodes.size).to.equal(4);
+      expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
+      expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
+      expect(Object.keys(kl_part._costs.external).length).to.equal(8);
+    });
+
+
     it('should correctly initialize the partitioning', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
       let init_partitioning = kl_part._partitioning;
 
-      expect(Object.keys(init_partitioning.nodePartMap).length).to.equal(8);
-      expect(init_partitioning.nodePartMap["1"]).to.equal(1);
-      expect(init_partitioning.nodePartMap["2"]).to.equal(1);
-      expect(init_partitioning.nodePartMap["3"]).to.equal(1);
-      expect(init_partitioning.nodePartMap["4"]).to.equal(1);
-      expect(init_partitioning.nodePartMap["5"]).to.equal(2);
-      expect(init_partitioning.nodePartMap["6"]).to.equal(2);
-      expect(init_partitioning.nodePartMap["7"]).to.equal(2);
-      expect(init_partitioning.nodePartMap["8"]).to.equal(2);
+      expect(init_partitioning.nodePartMap.get("1")).to.equal(1);
+      expect(init_partitioning.nodePartMap.get("2")).to.equal(1);
+      expect(init_partitioning.nodePartMap.get("3")).to.equal(1);
+      expect(init_partitioning.nodePartMap.get("4")).to.equal(1);
+      expect(init_partitioning.nodePartMap.get("5")).to.equal(2);
+      expect(init_partitioning.nodePartMap.get("6")).to.equal(2);
+      expect(init_partitioning.nodePartMap.get("7")).to.equal(2);
+      expect(init_partitioning.nodePartMap.get("8")).to.equal(2);
 
-      expect(Object.keys(init_partitioning.partitions).length).to.equal(2);
-      expect(Object.keys(init_partitioning.partitions["1"].nodes).length).to.equal(4);
-      expect(Object.keys(init_partitioning.partitions["2"].nodes).length).to.equal(4);
-      expect(Object.keys(init_partitioning.partitions["1"].nodes)).to.contain("1");
-      expect(Object.keys(init_partitioning.partitions["1"].nodes)).to.contain("2");
-      expect(Object.keys(init_partitioning.partitions["1"].nodes)).to.contain("3");
-      expect(Object.keys(init_partitioning.partitions["1"].nodes)).to.contain("4");
-      expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("5");
-      expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("6");
-      expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("7");
-      expect(Object.keys(init_partitioning.partitions["2"].nodes)).to.contain("8");
-
-      expect(kl_part._costs.maxGain.gain).to.equal(Number.NEGATIVE_INFINITY);
+      expect(init_partitioning.partitions.get(1).nodes.has("1")).to.be.true;
+      expect(init_partitioning.partitions.get(1).nodes.has("2")).to.be.true;
+      expect(init_partitioning.partitions.get(1).nodes.has("3")).to.be.true;
+      expect(init_partitioning.partitions.get(1).nodes.has("4")).to.be.true;
+      expect(init_partitioning.partitions.get(2).nodes.has("5")).to.be.true;
+      expect(init_partitioning.partitions.get(2).nodes.has("6")).to.be.true;
+      expect(init_partitioning.partitions.get(2).nodes.has("7")).to.be.true;
+      expect(init_partitioning.partitions.get(2).nodes.has("8")).to.be.true;
     });
 
 
@@ -105,8 +111,14 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(costs.internal["8"]).to.equal(1);
 
       expect(kl_part._partitioning.cut_cost).to.equal(9);
-      // expect(costs.maxGain.gain).to.equal(0);
     });
+
+
+    it.skip('should correctly compute the maximum gain of an iteration', () => {
+      kl_part = new KLPartitioning(n8_kl_graph);
+
+    });
+
 
   });
 

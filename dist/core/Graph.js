@@ -27,6 +27,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var $N = require("./Nodes");
 var $E = require("./Edges");
@@ -60,24 +70,38 @@ var BaseGraph = /** @class */ (function () {
         this._und_edges = {};
     }
     BaseGraph.prototype.getNodeIterator = function () {
-        var keys, _i, keys_1, node_id;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var e_1, _a, keys, keys_1, keys_1_1, node_id, e_1_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     keys = Object.keys(this.getNodes());
-                    _i = 0, keys_1 = keys;
-                    _a.label = 1;
+                    _b.label = 1;
                 case 1:
-                    if (!(_i < keys_1.length)) return [3 /*break*/, 4];
-                    node_id = keys_1[_i];
-                    return [4 /*yield*/, this._nodes[node_id]];
+                    _b.trys.push([1, 6, 7, 8]);
+                    keys_1 = __values(keys), keys_1_1 = keys_1.next();
+                    _b.label = 2;
                 case 2:
-                    _a.sent();
-                    _a.label = 3;
+                    if (!!keys_1_1.done) return [3 /*break*/, 5];
+                    node_id = keys_1_1.value;
+                    return [4 /*yield*/, this._nodes[node_id]];
                 case 3:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 4: return [2 /*return*/];
+                    _b.sent();
+                    _b.label = 4;
+                case 4:
+                    keys_1_1 = keys_1.next();
+                    return [3 /*break*/, 2];
+                case 5: return [3 /*break*/, 8];
+                case 6:
+                    e_1_1 = _b.sent();
+                    e_1 = { error: e_1_1 };
+                    return [3 /*break*/, 8];
+                case 7:
+                    try {
+                        if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                    return [7 /*endfinally*/];
+                case 8: return [2 /*return*/];
             }
         });
     };

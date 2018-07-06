@@ -101,15 +101,6 @@ var BinaryHeap = /** @class */ (function () {
          * Search in O(1)
          */
         var pos = this.getNodePosition(obj), found = this._array[pos] != null ? this._array[pos] : null;
-        /**
-         * Search in O(n)
-         */
-        // for (var pos = 0; pos < this._array.length; ++pos) {
-        //   if (this._evalObjID(this._array[pos]) === objID) {
-        //     found = this._array[pos];
-        //     break;
-        //   }
-        // }
         if (found === null) {
             return undefined;
         }

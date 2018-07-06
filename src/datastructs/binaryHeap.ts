@@ -148,17 +148,6 @@ class BinaryHeap implements IBinaryHeap {
     var pos = this.getNodePosition(obj),
         found = this._array[pos] != null ? this._array[pos] : null;
 
-    /**
-     * Search in O(n)
-     */
-    // for (var pos = 0; pos < this._array.length; ++pos) {
-    //   if (this._evalObjID(this._array[pos]) === objID) {
-    //     found = this._array[pos];
-    //     break;
-    //   }
-    // }
-
-
     if (found === null) {
       return undefined;
     }
@@ -166,7 +155,7 @@ class BinaryHeap implements IBinaryHeap {
     var last_array_obj = this._array.pop();
     this.removeNodePosition(obj);
 
-    if (this.size() && found !== last_array_obj ) {
+    if ( this.size() && found !== last_array_obj ) {
       this._array[pos] = last_array_obj;
       this.setNodePosition(last_array_obj, pos);
 

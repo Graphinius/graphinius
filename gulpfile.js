@@ -47,7 +47,8 @@ var tsProject = ts.createProject({
 	],
 	// module: "commonjs",
 	// declaration: false,
-  // removeComments: true
+	// removeComments: true
+	downlevelIteration: true
 });
 
 

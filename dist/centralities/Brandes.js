@@ -1,5 +1,15 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var $N = require("../core/Nodes");
 var $P = require("../search/PFS");
@@ -14,6 +24,7 @@ var $BH = require("../datastructs/binaryHeap");
 function BrandesUnweighted(graph, normalize, directed) {
     if (normalize === void 0) { normalize = false; }
     if (directed === void 0) { directed = false; }
+    var e_1, _a;
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
@@ -76,9 +87,18 @@ function BrandesUnweighted(graph, normalize, directed) {
         //Accumulation: back-propagation of dependencies
         while (S.length >= 1) {
             w = S.pop();
-            for (var _i = 0, _a = Pred[w]; _i < _a.length; _i++) {
-                var parent_1 = _a[_i];
-                delta[parent_1] += (sigma[parent_1] / sigma[w] * (1 + delta[w]));
+            try {
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_1 = _c.value;
+                    delta[parent_1] += (sigma[parent_1] / sigma[w] * (1 + delta[w]));
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
             }
             if (w != s.getID()) {
                 CB[w] += delta[w];
@@ -98,6 +118,7 @@ function BrandesUnweighted(graph, normalize, directed) {
 }
 exports.BrandesUnweighted = BrandesUnweighted;
 function BrandesWeighted(graph, normalize, directed) {
+    var e_2, _a;
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
@@ -182,9 +203,18 @@ function BrandesWeighted(graph, normalize, directed) {
         // Accumulation: back-propagation of dependencies
         while (S.length >= 1) {
             w = S.pop();
-            for (var _i = 0, _a = Pred[w]; _i < _a.length; _i++) {
-                var parent_2 = _a[_i];
-                delta[parent_2] += (sigma[parent_2] / sigma[w] * (1 + delta[w]));
+            try {
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_2 = _c.value;
+                    delta[parent_2] += (sigma[parent_2] / sigma[w] * (1 + delta[w]));
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_2) throw e_2.error; }
             }
             if (w != s.getID()) {
                 CB[w] += delta[w];
@@ -212,6 +242,7 @@ exports.BrandesWeighted = BrandesWeighted;
  * @todo decide to remove or not
  */
 function BrandesPFSbased(graph, normalize, directed) {
+    var e_3, _a;
     var nodes = graph.getNodes();
     var adjList = graph.adjListDict();
     //Variables for Brandes algorithm
@@ -273,9 +304,18 @@ function BrandesPFSbased(graph, normalize, directed) {
         //step: do the scoring, using S, Pred and sigma
         while (S.length >= 1) {
             var w = S.pop();
-            for (var _i = 0, _a = Pred[w]; _i < _a.length; _i++) {
-                var parent_3 = _a[_i];
-                delta[parent_3] += (sigma[parent_3] / sigma[w] * (1 + delta[w]));
+            try {
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_3 = _c.value;
+                    delta[parent_3] += (sigma[parent_3] / sigma[w] * (1 + delta[w]));
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                }
+                finally { if (e_3) throw e_3.error; }
             }
             if (w != s.getID()) {
                 CB[w] += delta[w];

@@ -1162,23 +1162,16 @@ declare module 'graphinius/io/output/JSONOutput' {
 
 }
 declare module 'graphinius/partitioning/Interfaces' {
+	/// <reference types="core-js" />
+	/// <reference types="lodash" />
 	import { IBaseNode } from 'graphinius/core/Nodes';
 	export interface GraphPartitioning {
-	    partitions: {
-	        [key: string]: Partition;
-	    };
-	    nodePartMap: {
-	        [key: string]: string;
-	    };
-	    nodeFrontMap: {
-	        [key: string]: boolean;
-	    };
+	    partitions: Map<number, Partition>;
+	    nodePartMap: Map<string, number>;
 	    cut_cost: number;
 	}
 	export interface Partition {
-	    nodes: {
-	        [key: string]: IBaseNode;
-	    };
+	    nodes: Map<string, IBaseNode>;
 	}
 
 }
@@ -1197,6 +1190,13 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	import { IGraph } from 'graphinius/core/Graph';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { BinaryHeap } from 'graphinius/datastructs/binaryHeap';
+	export type Gain = {
+	    id: string;
+	    source: IBaseNode;
+	    target: IBaseNode;
+	    gain: number;
+	};
 	interface KL_Costs {
 	    internal: {
 	        [key: string]: number;
@@ -1204,24 +1204,20 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    external: {
 	        [key: string]: number;
 	    };
-	    maxGain: {
-	        source: IBaseNode;
-	        target: IBaseNode;
-	        gain: number;
-	    };
 	}
 	export class KLPartitioning {
 	    private _graph;
 	    _partitioning: GraphPartitioning;
 	    _costs: KL_Costs;
-	    _fixed: {
-	        [key: string]: IBaseNode;
-	    };
+	    _gainsHeap: BinaryHeap;
+	    private _adjList;
+	    private _keys;
 	    constructor(_graph: IGraph, initShuffle?: boolean);
 	    private initPartitioning;
 	    private initCosts;
-	    calculateIterationGains(): void;
-	    doIterationSwap(): void;
+	    initGainsHeap(): void;
+	    updateCosts(): void;
+	    doSwapAnd(): void;
 	}
 	export {};
 

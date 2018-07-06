@@ -294,7 +294,7 @@ describe('==== NODE TESTS ====', () => {
 			* Moreover, we will also test the implementations of the
 			* prevNodes(), nextNodes() and undNodes() methods
 			*/
-		describe.only('a little more complex scenario - ', () => {
+		describe('a little more complex scenario - ', () => {
 			
 			var n_a = new $N.BaseNode("A"),
 					n_b = new $N.BaseNode("B"),

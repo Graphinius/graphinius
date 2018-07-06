@@ -1,5 +1,15 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var $N = require("../core/Nodes");
 var $PFS = require("../search/PFS");
@@ -55,32 +65,42 @@ function addExtraNandE(target, nodeToAdd) {
 }
 exports.addExtraNandE = addExtraNandE;
 function reWeighGraph(target, distDict, tempNode) {
+    var e_1, _a;
     //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
     var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
-    for (var _i = 0, edges_1 = edges; _i < edges_1.length; _i++) {
-        var edge = edges_1[_i];
-        var a = edge.getNodes().a.getID();
-        var b = edge.getNodes().b.getID();
-        //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
-        if (a == tempNode.getID()) {
-            continue;
+    try {
+        for (var edges_1 = __values(edges), edges_1_1 = edges_1.next(); !edges_1_1.done; edges_1_1 = edges_1.next()) {
+            var edge = edges_1_1.value;
+            var a = edge.getNodes().a.getID();
+            var b = edge.getNodes().b.getID();
+            //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
+            if (a == tempNode.getID()) {
+                continue;
+            }
+            //assuming that the node keys in the distDict correspond to the nodeIDs
+            else if (edge.isWeighted) {
+                var oldWeight = edge.getWeight();
+                var newWeight = oldWeight + distDict[a] - distDict[b];
+                edge.setWeight(newWeight);
+            }
+            else {
+                var oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
+                var newWeight = oldWeight + distDict[a] - distDict[b];
+                //collecting edgeID and directedness for later re-use
+                var edgeID = edge.getID();
+                var dirNess = edge.isDirected();
+                //one does not simply make an edge weighted, but needs to delete and re-create it
+                target.deleteEdge(edge);
+                target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
+            }
         }
-        //assuming that the node keys in the distDict correspond to the nodeIDs
-        else if (edge.isWeighted) {
-            var oldWeight = edge.getWeight();
-            var newWeight = oldWeight + distDict[a] - distDict[b];
-            edge.setWeight(newWeight);
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (edges_1_1 && !edges_1_1.done && (_a = edges_1.return)) _a.call(edges_1);
         }
-        else {
-            var oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
-            var newWeight = oldWeight + distDict[a] - distDict[b];
-            //collecting edgeID and directedness for later re-use
-            var edgeID = edge.getID();
-            var dirNess = edge.isDirected();
-            //one does not simply make an edge weighted, but needs to delete and re-create it
-            target.deleteEdge(edge);
-            target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
-        }
+        finally { if (e_1) throw e_1.error; }
     }
     return target;
 }
