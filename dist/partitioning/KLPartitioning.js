@@ -13,17 +13,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var binaryHeap_1 = require("../datastructs/binaryHeap");
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
-var DEFAULT_WEIGHT = 1;
 var KLPartitioning = /** @class */ (function () {
     // public _open: {[key:string]: boolean}
-    function KLPartitioning(_graph, initShuffle) {
+    function KLPartitioning(_graph, weighted, initShuffle) {
+        if (weighted === void 0) { weighted = false; }
         if (initShuffle === void 0) { initShuffle = false; }
         this._graph = _graph;
-        this._partitioning = {
+        this._bestPartitioning = 1;
+        this._currentPartitioning = 1;
+        var partitioning = {
             partitions: new Map(),
             nodePartMap: new Map(),
             cut_cost: 0
         };
+        this._partitionings = new Map();
+        this._partitionings.set(this._currentPartitioning, partitioning);
         this._costs = {
             internal: {},
             external: {},
@@ -31,7 +35,7 @@ var KLPartitioning = /** @class */ (function () {
         this._adjList = this._graph.adjListDict();
         this._keys = Object.keys(this._graph.getNodes());
         this.initPartitioning(initShuffle);
-        if (this._partitioning.partitions.size > 2) {
+        if (this._partitionings.get(this._currentPartitioning).partitions.size > 2) {
             throw new Error("KL partitioning works on 2 initial partitions only.");
         }
         this.initCosts();
@@ -39,6 +43,7 @@ var KLPartitioning = /** @class */ (function () {
     }
     KLPartitioning.prototype.initPartitioning = function (initShuffle) {
         var e_1, _a;
+        var partitioning = this._partitionings.get(this._currentPartitioning);
         try {
             for (var _b = __values(this._keys), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var key = _c.value;
@@ -51,14 +56,17 @@ var KLPartitioning = /** @class */ (function () {
                         throw new Error('no node feature "partition" encountered - you need to set initShuffle to true');
                     }
                     else {
-                        this._partitioning.nodePartMap.set(key, node_part);
-                        if (!this._partitioning.partitions.get(node_part)) {
-                            this._partitioning.partitions.set(node_part, {
+                        partitioning.nodePartMap.set(key, node_part);
+                        if (!partitioning.partitions.get(node_part)) {
+                            partitioning.partitions.set(node_part, {
                                 nodes: new Map()
                             });
                         }
-                        this._partitioning.partitions.get(node_part).nodes.set(key, node);
+                        partitioning.partitions.get(node_part).nodes.set(key, node);
                     }
+                }
+                else {
+                    // we call a random 2-cut
                 }
             }
         }
@@ -73,8 +81,8 @@ var KLPartitioning = /** @class */ (function () {
     KLPartitioning.prototype.initCosts = function () {
         var _this = this;
         var e_2, _a;
+        var partitioning = this._partitionings.get(this._currentPartitioning), nodePartMap = partitioning.nodePartMap;
         var _loop_1 = function (key) {
-            var nodePartMap = this_1._partitioning.nodePartMap;
             logger.write(key + ' : ');
             /**
              * @todo introduce weighted mode
@@ -82,24 +90,25 @@ var KLPartitioning = /** @class */ (function () {
             Object.keys(this_1._adjList[key]).forEach(function (target) {
                 logger.write(target);
                 logger.write("[" + nodePartMap.get(key) + ", " + nodePartMap.get(target) + "]");
+                var edge_weight = _this._adjList[key][target];
                 if (nodePartMap.get(key) === nodePartMap.get(target)) {
                     logger.write('\u2713' + ' ');
                     if (_this._costs.internal[key]) {
-                        _this._costs.internal[key] += DEFAULT_WEIGHT;
+                        _this._costs.internal[key] += edge_weight;
                     }
                     else {
-                        _this._costs.internal[key] = DEFAULT_WEIGHT;
+                        _this._costs.internal[key] = edge_weight;
                     }
                 }
                 else {
                     logger.write('\u2717' + ' ');
                     if (_this._costs.external[key]) {
-                        _this._costs.external[key] += DEFAULT_WEIGHT;
+                        _this._costs.external[key] += edge_weight;
                     }
                     else {
-                        _this._costs.external[key] = DEFAULT_WEIGHT;
+                        _this._costs.external[key] = edge_weight;
                     }
-                    _this._partitioning.cut_cost += DEFAULT_WEIGHT;
+                    partitioning.cut_cost += edge_weight;
                 }
             });
             logger.log('');
@@ -119,9 +128,10 @@ var KLPartitioning = /** @class */ (function () {
             finally { if (e_2) throw e_2.error; }
         }
         // we counted every edge twice in the nested loop above...
-        this._partitioning.cut_cost /= 2;
+        partitioning.cut_cost /= 2;
     };
     KLPartitioning.prototype.initGainsHeap = function () {
+        var partitioning = this._partitionings.get(this._currentPartitioning);
         var evalID = function (obj) { return obj.id; };
         var evalPriority = function (obj) { return obj.gain; };
         this._gainsHeap = new binaryHeap_1.BinaryHeap(binaryHeap_1.BinaryHeapMode.MIN, evalID, evalPriority);
@@ -129,8 +139,10 @@ var KLPartitioning = /** @class */ (function () {
         });
     };
     KLPartitioning.prototype.updateCosts = function () {
+        // make a new partitioning for the next cycle / iteration
+        this._currentPartitioning++;
     };
-    KLPartitioning.prototype.doSwapAnd = function () {
+    KLPartitioning.prototype.doSwapAndDropLockedConnections = function () {
     };
     return KLPartitioning;
 }());

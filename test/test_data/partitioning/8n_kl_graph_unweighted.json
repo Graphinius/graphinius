@@ -8,17 +8,17 @@
         {
           "to": "2",
           "directed": false,
-          "weight": 1
+          "weight": 3
         },
         {
           "to": "5",
           "directed": false,
-          "weight": 1
+          "weight": 7
         },
         {
           "to": "6",
           "directed": false,
-          "weight": 1
+          "weight": 12
         }        
       ],
       "features": {
@@ -30,17 +30,17 @@
         {
           "to": "1",
           "directed": false,
-          "weight": 1
+          "weight": 3
         },
         {
           "to": "5",
           "directed": false,
-          "weight": 1
+          "weight": 2
         },
         {
           "to": "6",
           "directed": false,
-          "weight": 1
+          "weight": 2
         }
       ],
       "features": {
@@ -52,7 +52,7 @@
         {
           "to": "4",
           "directed": false,
-          "weight": 1
+          "weight": 11
         },
         {
           "to": "6",
@@ -62,12 +62,12 @@
         {
           "to": "7",
           "directed": false,
-          "weight": 1
+          "weight": 3
         },
         {
           "to": "8",
           "directed": false,
-          "weight": 1
+          "weight": 4
         }
       ],
       "features": {
@@ -79,12 +79,12 @@
         {
           "to": "3",
           "directed": false,
-          "weight": 1
+          "weight": 11
         },
         {
           "to": "7",
           "directed": false,
-          "weight": 1
+          "weight": 6
         },
         {
           "to": "8",
@@ -101,12 +101,12 @@
         {
           "to": "1",
           "directed": false,
-          "weight": 1
+          "weight": 7
         },
         {
           "to": "2",
           "directed": false,
-          "weight": 1
+          "weight": 2
         },
         {
           "to": "6",
@@ -123,12 +123,12 @@
         {
           "to": "1",
           "directed": false,
-          "weight": 1
+          "weight": 12
         },
         {
           "to": "2",
           "directed": false,
-          "weight": 1
+          "weight": 2
         },
         {
           "to": "3",
@@ -150,12 +150,12 @@
         {
           "to": "3",
           "directed": false,
-          "weight": 1
+          "weight": 3
         },
         {
           "to": "4",
           "directed": false,
-          "weight": 1
+          "weight": 6
         },
         {
           "to": "8",
@@ -172,7 +172,7 @@
         {
           "to": "3",
           "directed": false,
-          "weight": 1
+          "weight": 4
         },
         {
           "to": "4",

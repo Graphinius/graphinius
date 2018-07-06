@@ -56,7 +56,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
 
     it('should construct data structures of correct length', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
-      let init_partitioning = kl_part._partitioning;
+      let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
       expect(init_partitioning.nodePartMap.size).to.equal(8);
       expect(init_partitioning.partitions.size).to.equal(2);
       expect(init_partitioning.partitions.get(1).nodes.size).to.equal(4);
@@ -68,7 +68,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
 
     it('should correctly initialize the partitioning', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
-      let init_partitioning = kl_part._partitioning;
+      let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
 
       expect(init_partitioning.nodePartMap.get("1")).to.equal(1);
       expect(init_partitioning.nodePartMap.get("2")).to.equal(1);
@@ -90,7 +90,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
-    it('should correctly compute the internal and external cost for each node', () => {
+    it('should correctly compute the internal and external cost for each node, UNweighted mode', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
       let costs = kl_part._costs;
       expect(costs.external["1"]).to.equal(2);
@@ -109,8 +109,35 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(costs.internal["7"]).to.equal(1);
       expect(costs.external["8"]).to.equal(2);
       expect(costs.internal["8"]).to.equal(1);
+      expect(kl_part._partitionings.get(kl_part._currentPartitioning).cut_cost).to.equal(9);
+    });
 
-      expect(kl_part._partitioning.cut_cost).to.equal(9);
+
+    it('should correctly compute the internal and external cost for each node, WEIGHTED mode', () => {
+      json._weighted_mode = true;
+      n8_kl_graph = json.readFromJSONFile( n8_kl_file );
+      kl_part = new KLPartitioning(n8_kl_graph);
+      
+      logger.log(kl_part._adjList);
+      
+      let costs = kl_part._costs;
+      expect(costs.external["1"]).to.equal(19);
+      expect(costs.internal["1"]).to.equal(3);
+      expect(costs.external["2"]).to.equal(4);
+      expect(costs.internal["2"]).to.equal(3);
+      expect(costs.external["3"]).to.equal(8);
+      expect(costs.internal["3"]).to.equal(11);
+      expect(costs.external["4"]).to.equal(7);
+      expect(costs.internal["4"]).to.equal(11);
+      expect(costs.external["5"]).to.equal(9);
+      expect(costs.internal["5"]).to.equal(1);
+      expect(costs.external["6"]).to.equal(15);
+      expect(costs.internal["6"]).to.equal(1);
+      expect(costs.external["7"]).to.equal(9);
+      expect(costs.internal["7"]).to.equal(1);
+      expect(costs.external["8"]).to.equal(5);
+      expect(costs.internal["8"]).to.equal(1);
+      expect(kl_part._partitionings.get(kl_part._currentPartitioning).cut_cost).to.equal(38);
     });
 
 
