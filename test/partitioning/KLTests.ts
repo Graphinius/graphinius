@@ -18,7 +18,7 @@ const expect = chai.expect,
 
 
 
-describe.only("Kernighan-Lin graph partitioning tests - ", () => {
+describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 	let n8_kl_graph : $G.IGraph,
       kl_part: KLPartitioning,
@@ -169,47 +169,139 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
-    it('should correctly compute the correct gains of a first iteration', () => {
+    it('should correctly compute the correct gains of a first iteration', () => {      
       kl_part = new KLPartitioning(n8_kl_graph);
+      
+      logger.log('Order of nodes in graph: (take Map for absolute certainty)');
+      logger.log(Object.keys(n8_kl_graph.getNodes()));
+      let part_it = kl_part._partitionings.get(kl_part._currentPartitioning).partitions.values();
+      logger.log('Order of partition 1:');
+      logger.log(part_it.next().value.nodes.keys());
+      logger.log('Order of partition 2:');
+      logger.log(part_it.next().value.nodes.keys());
+
       let heap = kl_part._gainsHeap;
       expect(heap.getArray().length).to.equal(16);
       
+      /**
+       * We only check for correct priority, since heap
+       * operations do not necessarily preserve input order
+       * or same-priority elements (???)
+       */
       expect(heap.pop().gain).to.equal(3);
-
       expect(heap.pop().gain).to.equal(3);
-
       expect(heap.pop().gain).to.equal(2);
-
       expect(heap.pop().gain).to.equal(2);
-
       expect(heap.pop().gain).to.equal(2);
-
       expect(heap.pop().gain).to.equal(2);
-
       expect(heap.pop().gain).to.equal(2);
-
-      expect(heap.pop().gain).to.equal(2);
-      
+      expect(heap.pop().gain).to.equal(2);      
       expect(heap.pop().gain).to.equal(1);
-
       expect(heap.pop().gain).to.equal(1);
-
       expect(heap.pop().gain).to.equal(1);
-
       expect(heap.pop().gain).to.equal(1);
-
       expect(heap.pop().gain).to.equal(0);
-
       expect(heap.pop().gain).to.equal(0);
-
       expect(heap.pop().gain).to.equal(0);
-
       expect(heap.pop().gain).to.equal(0);
-      
-      // expect(<GainEntry>heap.pop())
-
     });
 
+
+    it('should correctly compute the correct gains of a first iteration, WEIGHTED MODE', () => {
+      config.weighted = true;     
+      kl_part = new KLPartitioning(n8_kl_graph, config);
+      
+      logger.log('Order of nodes in graph: (take Map for absolute certainty)');
+      logger.log(Object.keys(n8_kl_graph.getNodes()));
+      let part_it = kl_part._partitionings.get(kl_part._currentPartitioning).partitions.values();
+      logger.log('Order of partition 1:');
+      logger.log(part_it.next().value.nodes.keys());
+      logger.log('Order of partition 2:');
+      logger.log(part_it.next().value.nodes.keys());
+
+      let heap = kl_part._gainsHeap;
+      expect(heap.getArray().length).to.equal(16);
+      
+      /**
+       * We only check for correct priority, since heap
+       * operations do not necessarily preserve input order
+       * or same-priority elements (???)
+       */
+      expect(heap.pop().gain).to.equal(24);
+      expect(heap.pop().gain).to.equal(20);
+      expect(heap.pop().gain).to.equal(11);
+      expect(heap.pop().gain).to.equal(10);
+      expect(heap.pop().gain).to.equal(10);
+      expect(heap.pop().gain).to.equal(9);
+      expect(heap.pop().gain).to.equal(9);
+      expect(heap.pop().gain).to.equal(6);      
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(4);
+      expect(heap.pop().gain).to.equal(-1);
+      expect(heap.pop().gain).to.equal(-2);
+      expect(heap.pop().gain).to.equal(-7);
+      expect(heap.pop().gain).to.equal(-8);
+    });
+
+
+    it('should correctly perform an optimal swap and eliminate locked connections from heap', () => {      
+      kl_part = new KLPartitioning(n8_kl_graph);
+      kl_part.doSwapAndDropLockedConnections();
+      let heap = kl_part._gainsHeap;
+      expect(heap.getArray().length).to.equal(9);
+    });
+
+
+    it('should correctly perform an optimal swap and update costs accordingly', () => {      
+      kl_part = new KLPartitioning(n8_kl_graph);
+      let ge = kl_part.doSwapAndDropLockedConnections();
+      kl_part.updateCosts(ge);
+      expect(kl_part._partitionings.get(kl_part._currentPartitioning).cut_cost).to.equal(6);
+      
+      let heap = kl_part._gainsHeap;
+      expect(heap.getArray().length).to.equal(9);
+
+      /**
+       * These are heap entries before cost updates;
+       * Will be the same as before in NON-weighted mode...
+       */
+      expect(heap.pop().gain).to.equal(3);
+      expect(heap.pop().gain).to.equal(2);
+      expect(heap.pop().gain).to.equal(2);
+      expect(heap.pop().gain).to.equal(2);
+      expect(heap.pop().gain).to.equal(2);
+      expect(heap.pop().gain).to.equal(1);
+      expect(heap.pop().gain).to.equal(1);
+      expect(heap.pop().gain).to.equal(0);
+      expect(heap.pop().gain).to.equal(0);
+    });
+
+
+    it.only('should correctly swap and eliminate locked connections from heap, WEIGHTED mode', () => {      
+      config.weighted = true;
+      kl_part = new KLPartitioning( n8_kl_graph, config );
+      let ge = kl_part.doSwapAndDropLockedConnections();
+      kl_part.updateCosts(ge);
+      expect(kl_part._partitionings.get(kl_part._currentPartitioning).cut_cost).to.equal(14);
+
+      let heap = kl_part._gainsHeap;
+      expect(heap.getArray().length).to.equal(9);
+
+      /**
+       * Heap entries after cost update
+       */
+      expect(heap.pop().gain).to.equal(11);
+      expect(heap.pop().gain).to.equal(10);
+      expect(heap.pop().gain).to.equal(9);     
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(4);
+      expect(heap.pop().gain).to.equal(-2);
+      expect(heap.pop().gain).to.equal(-7);
+    });
 
   });
 

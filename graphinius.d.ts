@@ -1222,12 +1222,15 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    _adjList: {};
 	    private _keys;
 	    private _config;
+	    private _gainsHash;
 	    constructor(_graph: IGraph, config?: KL_Config);
 	    private initPartitioning;
 	    private initCosts;
 	    initGainsHeap(): void;
-	    updateCosts(): void;
-	    doSwapAndDropLockedConnections(): void;
+	    performIteration(): void;
+	    updateCosts(swap_ge: GainEntry): void;
+	    doSwapAndDropLockedConnections(): GainEntry;
+	    private removeGainsEntry;
 	}
 	export {};
 
