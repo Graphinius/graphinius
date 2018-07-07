@@ -86,32 +86,28 @@ var KLPartitioning = /** @class */ (function () {
         var _this = this;
         var e_2, _a;
         var partitioning = this._partitionings.get(this._currentPartitioning), nodePartMap = partitioning.nodePartMap;
-        var _loop_1 = function (key) {
-            logger.write(key + ' : ');
+        var _loop_1 = function (source) {
+            logger.write(source + ' : ');
+            // Initialize internal & external cost arrays
+            this_1._costs.external[source] = 0;
+            this_1._costs.internal[source] = 0;
             /**
              * @todo introduce weighted mode
              */
-            Object.keys(this_1._adjList[key]).forEach(function (target) {
+            Object.keys(this_1._adjList[source]).forEach(function (target) {
                 logger.write(target);
-                logger.write("[" + nodePartMap.get(key) + ", " + nodePartMap.get(target) + "]");
-                var edge_weight = _this._config.weighted ? _this._adjList[key][target] : DEFAULT_WEIGHT;
-                if (nodePartMap.get(key) === nodePartMap.get(target)) {
+                logger.write("[" + nodePartMap.get(source) + ", " + nodePartMap.get(target) + "]");
+                /**
+                 * @todo check for valid number, parse?
+                 */
+                var edge_weight = _this._config.weighted ? _this._adjList[source][target] : DEFAULT_WEIGHT;
+                if (nodePartMap.get(source) === nodePartMap.get(target)) {
                     logger.write('\u2713' + ' ');
-                    if (_this._costs.internal[key]) {
-                        _this._costs.internal[key] += edge_weight;
-                    }
-                    else {
-                        _this._costs.internal[key] = edge_weight;
-                    }
+                    _this._costs.internal[source] += edge_weight;
                 }
                 else {
                     logger.write('\u2717' + ' ');
-                    if (_this._costs.external[key]) {
-                        _this._costs.external[key] += edge_weight;
-                    }
-                    else {
-                        _this._costs.external[key] = edge_weight;
-                    }
+                    _this._costs.external[source] += edge_weight;
                     partitioning.cut_cost += edge_weight;
                 }
             });
@@ -120,8 +116,8 @@ var KLPartitioning = /** @class */ (function () {
         var this_1 = this;
         try {
             for (var _b = __values(Object.keys(this._graph.getNodes())), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var key = _c.value;
-                _loop_1(key);
+                var source = _c.value;
+                _loop_1(source);
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -135,11 +131,35 @@ var KLPartitioning = /** @class */ (function () {
         partitioning.cut_cost /= 2;
     };
     KLPartitioning.prototype.initGainsHeap = function () {
-        var partitioning = this._partitionings.get(this._currentPartitioning);
-        var evalID = function (obj) { return obj.id; };
-        var evalPriority = function (obj) { return obj.gain; };
-        this._gainsHeap = new binaryHeap_1.BinaryHeap(binaryHeap_1.BinaryHeapMode.MAX, evalID, evalPriority);
-        this._keys.forEach(function (source) {
+        var _this = this;
+        var partitioning = this._partitionings.get(this._currentPartitioning), partition_iterator = partitioning.partitions.values(), first_partition = partition_iterator.next().value, second_partition = partition_iterator.next().value;
+        var evalID = function (obj) { return obj.id; }, evalPriority = function (obj) { return obj.gain; };
+        this._gainsHeap = new binaryHeap_1.BinaryHeap(binaryHeap_1.BinaryHeapMode.MAX, evalPriority, evalID);
+        /**
+         * We only calculate for node pairs in different partitions
+         */
+        first_partition.nodes.forEach(function (source) {
+            var source_id = source.getID();
+            logger.write(source.getID() + ': ');
+            // Only get connected ones
+            second_partition.nodes.forEach(function (target) {
+                var target_id = target.getID();
+                logger.write(target.getID() + ', ');
+                var edge_weight = 0;
+                var adj_weight = parseFloat(_this._adjList[source_id][target_id]);
+                if (!isNaN(adj_weight)) {
+                    edge_weight = _this._config.weighted ? adj_weight : DEFAULT_WEIGHT;
+                }
+                var pair_gain = _this._costs.external[source_id] - _this._costs.internal[source_id] + _this._costs.external[target_id] - _this._costs.internal[target_id] - 2 * edge_weight;
+                var gain_entry = {
+                    id: source_id + "_" + target_id,
+                    source: source,
+                    target: target,
+                    gain: pair_gain
+                };
+                _this._gainsHeap.insert(gain_entry);
+            });
+            logger.log('');
         });
     };
     KLPartitioning.prototype.updateCosts = function () {

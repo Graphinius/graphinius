@@ -1193,7 +1193,7 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	import { IBaseNode } from 'graphinius/core/Nodes';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { BinaryHeap } from 'graphinius/datastructs/binaryHeap';
-	export type Gain = {
+	export type GainEntry = {
 	    id: string;
 	    source: IBaseNode;
 	    target: IBaseNode;

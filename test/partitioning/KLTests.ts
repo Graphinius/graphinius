@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $JSON from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
-import { KLPartitioning, KL_Config, Gain } from '../../src/partitioning/KLPartitioning';
+import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
@@ -81,6 +81,8 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
+    // For loop in order to evade 'random' errors
+    // for ( let i = 0; i < 1000; i++ ) {
     it('should construct data structures of correct length, SHUFFLE MODE', () => {
       config.initShuffle = true;
       kl_part = new KLPartitioning( n8_kl_graph, config );
@@ -89,14 +91,10 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(init_partitioning.partitions.size).to.equal(2);
       expect(init_partitioning.partitions.get(1).nodes.size).to.equal(4);
       expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
-
-      /**
-       * @comment Because of shuffling, not all nodes have external 
-       *          and / or internal costs...
-       */
-      // expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
-      // expect(Object.keys(kl_part._costs.external).length).to.equal(8);
+      expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
+      expect(Object.keys(kl_part._costs.external).length).to.equal(8);
     });
+    // }
 
 
     it('should correctly initialize the partitioning', () => {
@@ -171,8 +169,44 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
-    it.skip('should correctly compute the maximum gain of an iteration', () => {
+    it('should correctly compute the correct gains of a first iteration', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
+      let heap = kl_part._gainsHeap;
+      expect(heap.getArray().length).to.equal(16);
+      
+      expect(heap.pop().gain).to.equal(3);
+
+      expect(heap.pop().gain).to.equal(3);
+
+      expect(heap.pop().gain).to.equal(2);
+
+      expect(heap.pop().gain).to.equal(2);
+
+      expect(heap.pop().gain).to.equal(2);
+
+      expect(heap.pop().gain).to.equal(2);
+
+      expect(heap.pop().gain).to.equal(2);
+
+      expect(heap.pop().gain).to.equal(2);
+      
+      expect(heap.pop().gain).to.equal(1);
+
+      expect(heap.pop().gain).to.equal(1);
+
+      expect(heap.pop().gain).to.equal(1);
+
+      expect(heap.pop().gain).to.equal(1);
+
+      expect(heap.pop().gain).to.equal(0);
+
+      expect(heap.pop().gain).to.equal(0);
+
+      expect(heap.pop().gain).to.equal(0);
+
+      expect(heap.pop().gain).to.equal(0);
+      
+      // expect(<GainEntry>heap.pop())
 
     });
 

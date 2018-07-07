@@ -9,8 +9,12 @@ const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 
-
-export type Gain = {id: string, source: IBaseNode, target: IBaseNode, gain: number};
+export type GainEntry = {
+  id: string, 
+  source: IBaseNode, 
+  target: IBaseNode, 
+  gain: number
+};
 
 
 interface KL_Costs {
@@ -109,31 +113,31 @@ export class KLPartitioning {
     let partitioning = this._partitionings.get(this._currentPartitioning),
         nodePartMap = partitioning.nodePartMap;
 
-    for (let key of Object.keys(this._graph.getNodes())) {
-      logger.write(key + ' : ');
+    for (let source of Object.keys(this._graph.getNodes())) {
+      logger.write(source + ' : ');
+
+      // Initialize internal & external cost arrays
+      this._costs.external[source] = 0;
+      this._costs.internal[source] = 0;
+
       /**
        * @todo introduce weighted mode
        */
-      Object.keys(this._adjList[key]).forEach( target => {
+      Object.keys(this._adjList[source]).forEach( target => {
         logger.write(target);
-        logger.write(`[${nodePartMap.get(key)}, ${nodePartMap.get(target)}]`);
+        logger.write(`[${nodePartMap.get(source)}, ${nodePartMap.get(target)}]`);
 
-        let edge_weight = this._config.weighted ? this._adjList[key][target] : DEFAULT_WEIGHT;
+        /**
+         * @todo check for valid number, parse?
+         */
+        let edge_weight = this._config.weighted ? this._adjList[source][target] : DEFAULT_WEIGHT;
 
-        if ( nodePartMap.get(key) === nodePartMap.get(target) ) {
+        if ( nodePartMap.get(source) === nodePartMap.get(target) ) {
           logger.write('\u2713' + ' ');
-          if ( this._costs.internal[key] ) {
-            this._costs.internal[key] += edge_weight;
-          } else {
-            this._costs.internal[key] = edge_weight;
-          }
+          this._costs.internal[source] += edge_weight;
         } else {
           logger.write('\u2717' + ' ');
-          if ( this._costs.external[key] ) {
-            this._costs.external[key] += edge_weight;
-          } else {
-            this._costs.external[key] = edge_weight;
-          }
+          this._costs.external[source] += edge_weight;
           partitioning.cut_cost += edge_weight;
         }
       });
@@ -146,13 +150,44 @@ export class KLPartitioning {
 
 
   initGainsHeap() {
-    let partitioning = this._partitionings.get(this._currentPartitioning);
-    let evalID = obj => obj.id;
-    let evalPriority = obj => obj.gain;
-    this._gainsHeap = new BinaryHeap( BinaryHeapMode.MAX, evalID, evalPriority );
+    let partitioning = this._partitionings.get(this._currentPartitioning),
+        partition_iterator = partitioning.partitions.values(),
+        first_partition = partition_iterator.next().value,
+        second_partition = partition_iterator.next().value;
     
-    this._keys.forEach( source => {
+    let evalID = (obj: GainEntry) => obj.id,
+        evalPriority = (obj: GainEntry) => obj.gain;
+    this._gainsHeap = new BinaryHeap( BinaryHeapMode.MAX, evalPriority, evalID );
+    
+    /**
+     * We only calculate for node pairs in different partitions
+     */        
+    first_partition.nodes.forEach( source => {
+      let source_id = source.getID();
+      logger.write(source.getID() + ': ');
       
+      // Only get connected ones
+      second_partition.nodes.forEach( target => {
+        let target_id = target.getID();
+        logger.write(target.getID() + ', ');
+
+        let edge_weight = 0;
+        let adj_weight = parseFloat(this._adjList[source_id][target_id]);
+        if ( !isNaN(adj_weight) ) {
+          edge_weight = this._config.weighted ? adj_weight : DEFAULT_WEIGHT;
+        }
+        let pair_gain = this._costs.external[source_id] - this._costs.internal[source_id] + this._costs.external[target_id] - this._costs.internal[target_id] - 2*edge_weight;
+
+        let gain_entry : GainEntry = {
+          id: `${source_id}_${target_id}`,
+          source: source,
+          target: target,
+          gain: pair_gain
+        }
+        this._gainsHeap.insert(gain_entry);
+
+      });
+      logger.log('');
     });
   }
 
@@ -167,4 +202,5 @@ export class KLPartitioning {
   doSwapAndDropLockedConnections() {
     
   }
+
 }
