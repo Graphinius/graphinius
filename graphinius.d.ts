@@ -1207,6 +1207,11 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	        [key: string]: number;
 	    };
 	}
+	export interface KL_Config {
+	    initShuffle?: boolean;
+	    directed?: boolean;
+	    weighted?: boolean;
+	}
 	export class KLPartitioning {
 	    private _graph;
 	    _partitionings: Map<number, GraphPartitioning>;
@@ -1216,7 +1221,8 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    _currentPartitioning: number;
 	    _adjList: {};
 	    private _keys;
-	    constructor(_graph: IGraph, initShuffle?: boolean);
+	    private _config;
+	    constructor(_graph: IGraph, config?: KL_Config);
 	    private initPartitioning;
 	    private initCosts;
 	    initGainsHeap(): void;

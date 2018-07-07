@@ -4,28 +4,34 @@ import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $JSON from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
-import { KLPartitioning, Gain } from '../../src/partitioning/KLPartitioning';
+import { KLPartitioning, KL_Config, Gain } from '../../src/partitioning/KLPartitioning';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
 
 const expect = chai.expect,
-    json : $JSON.JSONInput = new $JSON.JSONInput(false, false, false),
+    json : $JSON.JSONInput = new $JSON.JSONInput(false, false, true), // undirected, weighted
     n8_kl_file = "./test/test_data/partitioning/8n_kl_graph_unweighted.json",
     n3_missing_partition_file = "./test/test_data/partitioning/n3_missing_parts.json", 
     n3_3partitions_file = "./test/test_data/partitioning/n3_3partitions.json";
 
 
 
-describe("Kernighan-Lin graph partitioning tests - ", () => {
+describe.only("Kernighan-Lin graph partitioning tests - ", () => {
 
 	let n8_kl_graph : $G.IGraph,
-			kl_part: KLPartitioning,
+      kl_part: KLPartitioning,
+      config: KL_Config,
 			partitioning : GraphPartitioning;
 
 
 	beforeEach( () => {
+    config = {
+      initShuffle: false,
+      directed: false,
+      weighted: false
+    }
     n8_kl_graph = json.readFromJSONFile( n8_kl_file );
     expect( n8_kl_graph.nrNodes() ).to.equal(8);
     expect( n8_kl_graph.nrDirEdges() ).to.equal(0);
@@ -55,15 +61,16 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 
     it('should automatically get 2 initial partitions in SHUFFLE mode', () => {
+      config.initShuffle = true;
       let goodInit = () => {
-        return new KLPartitioning( n8_kl_graph, true );
+        return new KLPartitioning( n8_kl_graph, config );
       }
       expect(goodInit).not.to.throw("KL partitioning works on 2 initial partitions only");
     });
 
 
     it('should construct data structures of correct length, no shuffle', () => {
-      kl_part = new KLPartitioning(n8_kl_graph);
+      kl_part = new KLPartitioning( n8_kl_graph );
       let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
       expect(init_partitioning.nodePartMap.size).to.equal(8);
       expect(init_partitioning.partitions.size).to.equal(2);
@@ -75,7 +82,8 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 
     it('should construct data structures of correct length, SHUFFLE MODE', () => {
-      kl_part = new KLPartitioning(n8_kl_graph, true);
+      config.initShuffle = true;
+      kl_part = new KLPartitioning( n8_kl_graph, config );
       let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
       expect(init_partitioning.nodePartMap.size).to.equal(8);
       expect(init_partitioning.partitions.size).to.equal(2);
@@ -92,7 +100,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 
     it('should correctly initialize the partitioning', () => {
-      kl_part = new KLPartitioning(n8_kl_graph);
+      kl_part = new KLPartitioning( n8_kl_graph );
       let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
 
       expect(init_partitioning.nodePartMap.get("1")).to.equal(1);
@@ -116,7 +124,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 
     it('should correctly compute the internal and external cost for each node, UNweighted mode', () => {
-      kl_part = new KLPartitioning(n8_kl_graph);
+      kl_part = new KLPartitioning( n8_kl_graph );
       let costs = kl_part._costs;
       expect(costs.external["1"]).to.equal(2);
       expect(costs.internal["1"]).to.equal(1);
@@ -139,9 +147,8 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 
     it('should correctly compute the internal and external cost for each node, WEIGHTED mode', () => {
-      json._weighted_mode = true;
-      n8_kl_graph = json.readFromJSONFile( n8_kl_file );
-      kl_part = new KLPartitioning(n8_kl_graph);
+      config.weighted = true;
+      kl_part = new KLPartitioning( n8_kl_graph, config );
       
       let costs = kl_part._costs;
       expect(costs.external["1"]).to.equal(19);

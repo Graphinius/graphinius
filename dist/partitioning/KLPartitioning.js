@@ -14,11 +14,15 @@ var KCut_1 = require("./KCut");
 var binaryHeap_1 = require("../datastructs/binaryHeap");
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
+var DEFAULT_WEIGHT = 1;
 var KLPartitioning = /** @class */ (function () {
-    // public _open: {[key:string]: boolean}
-    function KLPartitioning(_graph, initShuffle) {
-        if (initShuffle === void 0) { initShuffle = false; }
+    function KLPartitioning(_graph, config) {
         this._graph = _graph;
+        this._config = config || {
+            initShuffle: false,
+            directed: false,
+            weighted: false
+        };
         this._bestPartitioning = 1;
         this._currentPartitioning = 1;
         this._partitionings = new Map();
@@ -28,7 +32,7 @@ var KLPartitioning = /** @class */ (function () {
         };
         this._adjList = this._graph.adjListDict();
         this._keys = Object.keys(this._graph.getNodes());
-        this.initPartitioning(initShuffle);
+        this.initPartitioning(this._config.initShuffle);
         var nr_parts = this._partitionings.get(this._currentPartitioning).partitions.size;
         if (nr_parts !== 2) {
             throw new Error("KL partitioning works on 2 initial partitions only, got " + nr_parts + ".");
@@ -90,7 +94,7 @@ var KLPartitioning = /** @class */ (function () {
             Object.keys(this_1._adjList[key]).forEach(function (target) {
                 logger.write(target);
                 logger.write("[" + nodePartMap.get(key) + ", " + nodePartMap.get(target) + "]");
-                var edge_weight = _this._adjList[key][target];
+                var edge_weight = _this._config.weighted ? _this._adjList[key][target] : DEFAULT_WEIGHT;
                 if (nodePartMap.get(key) === nodePartMap.get(target)) {
                     logger.write('\u2713' + ' ');
                     if (_this._costs.internal[key]) {
@@ -134,7 +138,7 @@ var KLPartitioning = /** @class */ (function () {
         var partitioning = this._partitionings.get(this._currentPartitioning);
         var evalID = function (obj) { return obj.id; };
         var evalPriority = function (obj) { return obj.gain; };
-        this._gainsHeap = new binaryHeap_1.BinaryHeap(binaryHeap_1.BinaryHeapMode.MIN, evalID, evalPriority);
+        this._gainsHeap = new binaryHeap_1.BinaryHeap(binaryHeap_1.BinaryHeapMode.MAX, evalID, evalPriority);
         this._keys.forEach(function (source) {
         });
     };

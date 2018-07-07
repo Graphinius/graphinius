@@ -7,8 +7,7 @@ import { BinaryHeap, BinaryHeapMode } from '../datastructs/binaryHeap';
 import { Logger } from '../utils/logger';
 const logger = new Logger();
 
-// we get this through the adj_list...
-// const DEFAULT_WEIGHT = 1;
+const DEFAULT_WEIGHT = 1;
 
 
 export type Gain = {id: string, source: IBaseNode, target: IBaseNode, gain: number};
@@ -17,6 +16,13 @@ export type Gain = {id: string, source: IBaseNode, target: IBaseNode, gain: numb
 interface KL_Costs {
   internal: {[key:string]: number};
   external: {[key:string]: number};
+}
+
+
+export interface KL_Config {
+  initShuffle? : boolean;
+  directed?    : boolean;
+  weighted?    : boolean;
 }
 
 
@@ -30,12 +36,16 @@ export class KLPartitioning {
   public _currentPartitioning: number;
 
   public _adjList : {};
+  // for faster iteration, as long as we're not using Maps
   private _keys : Array<string>;
-  // public _open: {[key:string]: boolean}
+  private _config : KL_Config;
 
-  constructor(private _graph : IGraph,
-              initShuffle: boolean = false) {
-        
+  constructor(private _graph : IGraph, config? : KL_Config) {
+    this._config = config || {
+      initShuffle: false,
+      directed: false,
+      weighted: false
+    }
     this._bestPartitioning = 1;
     this._currentPartitioning = 1;
     this._partitionings = new Map<number, GraphPartitioning>();
@@ -48,7 +58,7 @@ export class KLPartitioning {
     this._adjList = this._graph.adjListDict();
     this._keys = Object.keys(this._graph.getNodes());
 
-    this.initPartitioning(initShuffle);
+    this.initPartitioning(this._config.initShuffle);
 
     let nr_parts = this._partitionings.get(this._currentPartitioning).partitions.size;
     if ( nr_parts !== 2 ) {
@@ -75,6 +85,7 @@ export class KLPartitioning {
 
       for (let key of this._keys) {
         let node = this._graph.getNodeById(key);        
+        
         
         // assume we have a node feature 'partition'
         let node_part = node.getFeature('partition');
@@ -107,7 +118,7 @@ export class KLPartitioning {
         logger.write(target);
         logger.write(`[${nodePartMap.get(key)}, ${nodePartMap.get(target)}]`);
 
-        let edge_weight = this._adjList[key][target];
+        let edge_weight = this._config.weighted ? this._adjList[key][target] : DEFAULT_WEIGHT;
 
         if ( nodePartMap.get(key) === nodePartMap.get(target) ) {
           logger.write('\u2713' + ' ');
@@ -138,7 +149,8 @@ export class KLPartitioning {
     let partitioning = this._partitionings.get(this._currentPartitioning);
     let evalID = obj => obj.id;
     let evalPriority = obj => obj.gain;
-    this._gainsHeap = new BinaryHeap( BinaryHeapMode.MIN, evalID, evalPriority );
+    this._gainsHeap = new BinaryHeap( BinaryHeapMode.MAX, evalID, evalPriority );
+    
     this._keys.forEach( source => {
       
     });
