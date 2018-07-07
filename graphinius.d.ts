@@ -1178,7 +1178,7 @@ declare module 'graphinius/partitioning/Interfaces' {
 declare module 'graphinius/partitioning/KCut' {
 	import { IGraph } from 'graphinius/core/Graph';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
-	export default class KCut {
+	export class KCut {
 	    private _graph;
 	    private _partitioning;
 	    constructor(_graph: IGraph);
@@ -1190,8 +1190,8 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	/// <reference types="core-js" />
 	/// <reference types="lodash" />
 	import { IGraph } from 'graphinius/core/Graph';
-	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { BinaryHeap } from 'graphinius/datastructs/binaryHeap';
 	export type Gain = {
 	    id: string;
@@ -1216,7 +1216,7 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    _currentPartitioning: number;
 	    _adjList: {};
 	    private _keys;
-	    constructor(_graph: IGraph, weighted?: boolean, initShuffle?: boolean);
+	    constructor(_graph: IGraph, initShuffle?: boolean);
 	    private initPartitioning;
 	    private initCosts;
 	    initGainsHeap(): void;

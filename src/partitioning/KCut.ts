@@ -4,7 +4,7 @@ import * as $SU from '../utils/structUtils';
 import { GraphPartitioning, Partition } from './Interfaces';
 
 
-export default class KCut {
+export class KCut {
 
   private _partitioning : GraphPartitioning;
 
@@ -28,25 +28,32 @@ export default class KCut {
     shuffle && $SU.shuffleArray( node_ids );
 
     let node_idx = 0;
+    let nodePartMap = new Map<string, number>();
 
-    for ( let i = 0; i < nr_parts; i++ ) {
+    // In maths, partition numbers start with "1"
+    for ( let i = 1; i <= nr_parts; i++ ) {
       let part_size = Math.floor(n/k);
       let partition : Partition = {
         nodes: new Map<string, IBaseNode>()
       }
+
       // Adding nodes, either in order or shuffled
       while ( part_size-- ) {
         let node = this._graph.getNodeById(node_ids[node_idx++]);
         partition.nodes.set(node.getID(), node);
+        nodePartMap.set(node.getID(), i);
       }
       // Distributing 'rest' nodes to earliest 'rest' partitions
       if ( nr_rest ) {
         let node = this._graph.getNodeById(node_ids[node_idx++]);
         partition.nodes.set(node.getID(), node);
+        nodePartMap.set(node.getID(), i);
         nr_rest--;
       }
       this._partitioning.partitions.set(i, partition);
     }
+
+    this._partitioning.nodePartMap = nodePartMap;
 
     return this._partitioning;
   }

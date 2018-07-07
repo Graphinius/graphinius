@@ -18,7 +18,7 @@ const expect = chai.expect,
 
 
 
-describe.only("Kernighan-Lin graph partitioning tests - ", () => {
+describe("Kernighan-Lin graph partitioning tests - ", () => {
 
 	let n8_kl_graph : $G.IGraph,
 			kl_part: KLPartitioning,
@@ -45,16 +45,24 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
-    it('should not accept a graph with >2 initial partitions (in non-shuffle mode)', () => {
+    it('should not accept a graph with !== 2 initial partitions (in non-shuffle mode)', () => {
       let n3_3parts_graph = json.readFromJSONFile( n3_3partitions_file );
       let badInput = () => {
         return new KLPartitioning( n3_3parts_graph );
       }
-      expect(badInput).to.throw("KL partitioning works on 2 initial partitions only.");
+      expect(badInput).to.throw("KL partitioning works on 2 initial partitions only");
     });
 
 
-    it('should construct data structures of correct length', () => {
+    it('should automatically get 2 initial partitions in SHUFFLE mode', () => {
+      let goodInit = () => {
+        return new KLPartitioning( n8_kl_graph, true );
+      }
+      expect(goodInit).not.to.throw("KL partitioning works on 2 initial partitions only");
+    });
+
+
+    it('should construct data structures of correct length, no shuffle', () => {
       kl_part = new KLPartitioning(n8_kl_graph);
       let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
       expect(init_partitioning.nodePartMap.size).to.equal(8);
@@ -63,6 +71,23 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
       expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
       expect(Object.keys(kl_part._costs.external).length).to.equal(8);
+    });
+
+
+    it('should construct data structures of correct length, SHUFFLE MODE', () => {
+      kl_part = new KLPartitioning(n8_kl_graph, true);
+      let init_partitioning = kl_part._partitionings.get(kl_part._currentPartitioning);
+      expect(init_partitioning.nodePartMap.size).to.equal(8);
+      expect(init_partitioning.partitions.size).to.equal(2);
+      expect(init_partitioning.partitions.get(1).nodes.size).to.equal(4);
+      expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
+
+      /**
+       * @comment Because of shuffling, not all nodes have external 
+       *          and / or internal costs...
+       */
+      // expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
+      // expect(Object.keys(kl_part._costs.external).length).to.equal(8);
     });
 
 
@@ -117,8 +142,6 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       json._weighted_mode = true;
       n8_kl_graph = json.readFromJSONFile( n8_kl_file );
       kl_part = new KLPartitioning(n8_kl_graph);
-      
-      logger.log(kl_part._adjList);
       
       let costs = kl_part._costs;
       expect(costs.external["1"]).to.equal(19);

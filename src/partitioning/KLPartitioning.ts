@@ -1,7 +1,7 @@
 import { IGraph } from '../core/Graph';
-import * as $SU from '../utils/structUtils';
-import { GraphPartitioning, Partition } from './Interfaces';
 import { IBaseNode } from '../core/Nodes';
+import { GraphPartitioning, Partition } from './Interfaces';
+import { KCut } from './KCut';
 import { BinaryHeap, BinaryHeapMode } from '../datastructs/binaryHeap';
 
 import { Logger } from '../utils/logger';
@@ -33,20 +33,12 @@ export class KLPartitioning {
   private _keys : Array<string>;
   // public _open: {[key:string]: boolean}
 
-  constructor(private _graph : IGraph, 
-              weighted: boolean = false, 
+  constructor(private _graph : IGraph,
               initShuffle: boolean = false) {
         
     this._bestPartitioning = 1;
     this._currentPartitioning = 1;
-
-    let partitioning = {
-      partitions: new Map<number, Partition>(),
-      nodePartMap: new Map<string, number>(),
-      cut_cost: 0
-    };
     this._partitionings = new Map<number, GraphPartitioning>();
-    this._partitionings.set(this._currentPartitioning, partitioning);
     
     this._costs = {
       internal: {},
@@ -58,8 +50,9 @@ export class KLPartitioning {
 
     this.initPartitioning(initShuffle);
 
-    if ( this._partitionings.get(this._currentPartitioning).partitions.size > 2 ) {
-      throw new Error("KL partitioning works on 2 initial partitions only.")
+    let nr_parts = this._partitionings.get(this._currentPartitioning).partitions.size;
+    if ( nr_parts !== 2 ) {
+      throw new Error(`KL partitioning works on 2 initial partitions only, got ${nr_parts}.`);
     }
 
     this.initCosts();
@@ -68,13 +61,21 @@ export class KLPartitioning {
 
 
   private initPartitioning(initShuffle) {
-    let partitioning = this._partitionings.get(this._currentPartitioning);
-    for (let key of this._keys) {
-      // this._open[key] = true;
+    logger.log(`Init Shuffle: ${initShuffle}`);
 
-      let node = this._graph.getNodeById(key);
-      
-      if ( !initShuffle ) {
+    if ( initShuffle ) {
+      this._partitionings.set(this._currentPartitioning, new KCut(this._graph).cut(2, true));
+    } else {
+      let partitioning = {
+        partitions: new Map<number, Partition>(),
+        nodePartMap: new Map<string, number>(),
+        cut_cost: 0
+      };
+      this._partitionings.set(this._currentPartitioning, partitioning);
+
+      for (let key of this._keys) {
+        let node = this._graph.getNodeById(key);        
+        
         // assume we have a node feature 'partition'
         let node_part = node.getFeature('partition');
         if ( node_part == null ) {
@@ -88,9 +89,6 @@ export class KLPartitioning {
           }
           partitioning.partitions.get(node_part).nodes.set(key, node);
         }
-      }
-      else {
-        // we call a random 2-cut
       }
     }
   }

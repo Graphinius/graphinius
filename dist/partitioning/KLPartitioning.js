@@ -10,24 +10,18 @@ var __values = (this && this.__values) || function (o) {
     };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var KCut_1 = require("./KCut");
 var binaryHeap_1 = require("../datastructs/binaryHeap");
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
 var KLPartitioning = /** @class */ (function () {
     // public _open: {[key:string]: boolean}
-    function KLPartitioning(_graph, weighted, initShuffle) {
-        if (weighted === void 0) { weighted = false; }
+    function KLPartitioning(_graph, initShuffle) {
         if (initShuffle === void 0) { initShuffle = false; }
         this._graph = _graph;
         this._bestPartitioning = 1;
         this._currentPartitioning = 1;
-        var partitioning = {
-            partitions: new Map(),
-            nodePartMap: new Map(),
-            cut_cost: 0
-        };
         this._partitionings = new Map();
-        this._partitionings.set(this._currentPartitioning, partitioning);
         this._costs = {
             internal: {},
             external: {},
@@ -35,21 +29,30 @@ var KLPartitioning = /** @class */ (function () {
         this._adjList = this._graph.adjListDict();
         this._keys = Object.keys(this._graph.getNodes());
         this.initPartitioning(initShuffle);
-        if (this._partitionings.get(this._currentPartitioning).partitions.size > 2) {
-            throw new Error("KL partitioning works on 2 initial partitions only.");
+        var nr_parts = this._partitionings.get(this._currentPartitioning).partitions.size;
+        if (nr_parts !== 2) {
+            throw new Error("KL partitioning works on 2 initial partitions only, got " + nr_parts + ".");
         }
         this.initCosts();
         this.initGainsHeap();
     }
     KLPartitioning.prototype.initPartitioning = function (initShuffle) {
         var e_1, _a;
-        var partitioning = this._partitionings.get(this._currentPartitioning);
-        try {
-            for (var _b = __values(this._keys), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var key = _c.value;
-                // this._open[key] = true;
-                var node = this._graph.getNodeById(key);
-                if (!initShuffle) {
+        logger.log("Init Shuffle: " + initShuffle);
+        if (initShuffle) {
+            this._partitionings.set(this._currentPartitioning, new KCut_1.KCut(this._graph).cut(2, true));
+        }
+        else {
+            var partitioning = {
+                partitions: new Map(),
+                nodePartMap: new Map(),
+                cut_cost: 0
+            };
+            this._partitionings.set(this._currentPartitioning, partitioning);
+            try {
+                for (var _b = __values(this._keys), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var key = _c.value;
+                    var node = this._graph.getNodeById(key);
                     // assume we have a node feature 'partition'
                     var node_part = node.getFeature('partition');
                     if (node_part == null) {
@@ -65,17 +68,14 @@ var KLPartitioning = /** @class */ (function () {
                         partitioning.partitions.get(node_part).nodes.set(key, node);
                     }
                 }
-                else {
-                    // we call a random 2-cut
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
+                finally { if (e_1) throw e_1.error; }
             }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
         }
     };
     KLPartitioning.prototype.initCosts = function () {

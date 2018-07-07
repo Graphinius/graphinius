@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
-import KCut from '../../src/partitioning/KCut';
+import { KCut } from '../../src/partitioning/KCut';
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
@@ -33,11 +33,13 @@ describe("K-cut partitioning tests - ", () => {
 			k_cut: KCut,
 			partitioning : GraphPartitioning;
 
-
-	beforeEach( () => {
-		n6_und_graph = csv.readFromEdgeListFile(n6_und_graph_file),
+	before( () => {
 		n333_und_graph = csv.readFromEdgeListFile(n333_und_graph_file),
 		n1034_und_graph = csv.readFromEdgeListFile(n1034_und_graph_file);
+	});
+
+	beforeEach( () => {
+		n6_und_graph = csv.readFromEdgeListFile(n6_und_graph_file);
 	});
 
 
@@ -60,8 +62,8 @@ describe("K-cut partitioning tests - ", () => {
 		logPartitions( partitioning.partitions );
 
 		expect(partitioning.partitions.size).to.equal(2);
-		expect(partitioning.partitions.get(0).nodes.size).to.equal(4);
-		expect(partitioning.partitions.get(1).nodes.size).to.equal(3);
+		expect(partitioning.partitions.get(1).nodes.size).to.equal(4);
+		expect(partitioning.partitions.get(2).nodes.size).to.equal(3);
 	});
 
 
