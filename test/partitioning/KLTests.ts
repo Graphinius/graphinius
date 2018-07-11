@@ -18,7 +18,7 @@ const expect = chai.expect,
 
 
 
-describe("Kernighan-Lin graph partitioning tests - ", () => {
+describe.only("Kernighan-Lin graph partitioning tests - ", () => {
 
 	let n8_kl_graph : $G.IGraph,
       kl_part: KLPartitioning,
@@ -78,6 +78,8 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
       expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
       expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
       expect(Object.keys(kl_part._costs.external).length).to.equal(8);
+      expect(kl_part._open_sets.partition_a.size).to.equal(4);
+      expect(kl_part._open_sets.partition_b.size).to.equal(4);
     });
 
 
@@ -93,6 +95,8 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
       expect(init_partitioning.partitions.get(2).nodes.size).to.equal(4);
       expect(Object.keys(kl_part._costs.internal).length).to.equal(8);
       expect(Object.keys(kl_part._costs.external).length).to.equal(8);
+      expect(kl_part._open_sets.partition_a.size).to.equal(4);
+      expect(kl_part._open_sets.partition_b.size).to.equal(4);
     });
     // }
 
@@ -279,7 +283,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
     });
 
 
-    it.only('should correctly swap and eliminate locked connections from heap, WEIGHTED mode', () => {      
+    it('should correctly swap and eliminate locked connections from heap, WEIGHTED mode', () => {      
       config.weighted = true;
       kl_part = new KLPartitioning( n8_kl_graph, config );
       let ge = kl_part.doSwapAndDropLockedConnections();

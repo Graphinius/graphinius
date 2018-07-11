@@ -12,12 +12,12 @@ const DEFAULT_WEIGHT = 1;
 export type GainEntry = {
   id: string, 
   source: IBaseNode, 
-  target: IBaseNode, 
+  target: IBaseNode,
   gain: number
 };
 
 
-interface KL_Costs {
+export interface KL_Costs {
   internal: {[key:string]: number};
   external: {[key:string]: number};
 }
@@ -30,14 +30,25 @@ export interface KL_Config {
 }
 
 
+export interface KL_Open_Sets {
+  partition_a : Map<string, boolean>;
+  partition_b : Map<string, boolean>;
+}
+
+/**
+ * We require node features to have partition entries 1 & 2, EXACTLY!
+ * 
+ * @todo make it less brittle? Is this brittle at all? Or a sound assumption?
+ */
 export class KLPartitioning {
 
-  public _partitionings : Map<number, GraphPartitioning>;
-  public _costs : KL_Costs;
-  public _gainsHeap : BinaryHeap;
+  public _partitionings       : Map<number, GraphPartitioning>;
+  public _costs               : KL_Costs;
+  public _gainsHeap           : BinaryHeap;
   
-  public _bestPartitioning: number;
-  public _currentPartitioning: number;
+  public _bestPartitioning    : number;
+  public _currentPartitioning : number;
+  public _open_sets           : KL_Open_Sets;
 
   public _adjList : {};
   // for faster iteration, as long as we're not using Maps
@@ -61,6 +72,11 @@ export class KLPartitioning {
       external: {},
     };
 
+    this._open_sets = {
+      partition_a : new Map<string, boolean>(),
+      partition_b : new Map<string, boolean>()
+    };
+
     this._adjList = this._graph.adjListDict();
     this._keys = Object.keys(this._graph.getNodes());
 
@@ -81,6 +97,14 @@ export class KLPartitioning {
 
     if ( initShuffle ) {
       this._partitionings.set(this._currentPartitioning, new KCut(this._graph).cut(2, true));
+      let part_it = this._partitionings.get(this._currentPartitioning).partitions.values();
+      // Redundant?
+      part_it.next().value.nodes.forEach( node => {
+        this._open_sets.partition_a.set(node.getID(), true);
+      });
+      part_it.next().value.nodes.forEach( node => {
+        this._open_sets.partition_b.set(node.getID(), true);
+      });
     } else {
       let partitioning = {
         partitions: new Map<number, Partition>(),
@@ -88,10 +112,9 @@ export class KLPartitioning {
         cut_cost: 0
       };
       this._partitionings.set(this._currentPartitioning, partitioning);
-
+      
       for (let key of this._keys) {
-        let node = this._graph.getNodeById(key);        
-        
+        let node = this._graph.getNodeById(key);
         
         // assume we have a node feature 'partition'
         let node_part = node.getFeature('partition');
@@ -105,6 +128,14 @@ export class KLPartitioning {
             });
           }
           partitioning.partitions.get(node_part).nodes.set(key, node);
+        }
+
+        // fill open sets
+        if (node_part === 1) {
+          this._open_sets.partition_a.set(key, true);
+        }
+        else {
+          this._open_sets.partition_b.set(key, true);
         }
       }
     }
@@ -215,39 +246,37 @@ export class KLPartitioning {
 
 
     [swap_ge.source, swap_ge.target].forEach( source => {
-      let source_id = source.getID();
+      let influencer = source.getID();
       source.allNeighbors().forEach( ne => {
-        let target_id = ne.node.getID();        
-        logger.log(`Cost update for node ${target_id}`);
+        let source_id = ne.node.getID();        
+        logger.log(`Cost update for node ${source_id}`);
+
+        /** 
+         * We need to update all gains that involve nodes hitherto
+         * connected to the swapped nodes, which means all entries
+         * on the heap array those nodes are part of!
+         * 
+         * @comment We cannot use the adjList however, since we need
+         * to update ALL possible future swaps, not only their connections...
+         * 
+         * @todo Find a way to look up those pairs efficiently
+         */
 
         // how to build source_target string (always part1_part2)...
         let gain_id;
-        if ( partitioning.nodePartMap.get(source_id) === first_partition ) {
-          gain_id = `${source_id}_${target_id}`;
+        if ( partitioning.nodePartMap.get(influencer) === first_partition ) {
+          gain_id = `${influencer}_${source_id}`;
         }
         else {
-          gain_id = `${target_id}_${source_id}`;
+          gain_id = `${source_id}_${influencer}`;
         }
-        let gain_entry = this._gainsHash.get(gain_id);
 
-        if ( !gain_entry ) {
-          logger.log(`No heap entry found for (${gain_id})`);
-          return;
-        }
-        this._gainsHeap.remove( gain_entry );
         
-        let edge_weight = this._config.weighted ? this._adjList[source_id][target_id] : DEFAULT_WEIGHT;
-        let same_part = partitioning.nodePartMap.get(source_id) === partitioning.nodePartMap.get(target_id);
-        if ( same_part ) { // same part NOW...
-          gain_entry.gain -= 2*edge_weight;
-        } 
-        else {
-          gain_entry.gain += 2*edge_weight;
-        }
+        
 
-        logger.log(`Pair gain for (${gain_id}): ${gain_entry.gain}`);
+        // logger.log(`Pair gain for (${gain_id}): ${gain_entry.gain}`);
 
-        this._gainsHeap.insert( gain_entry );      
+        // this._gainsHeap.insert( gain_entry );      
       });
 
     });
