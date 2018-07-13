@@ -243,12 +243,13 @@ declare module 'graphinius/utils/logger' {
 	} class Logger {
 	    config: LOG_CONFIG;
 	    constructor(config?: any);
-	    log(msg: any): boolean;
-	    error(err: any): boolean;
-	    dir(obj: any): boolean;
-	    info(msg: any): boolean;
-	    warn(msg: any): boolean;
-	    write(msg: any): boolean;
+	    log(msg: any, color?: number): boolean;
+	    error(err: any, color?: number): boolean;
+	    dir(obj: any, color?: number): boolean;
+	    info(msg: any, color?: number): boolean;
+	    warn(msg: any, color?: number): boolean;
+	    write(msg: any, color?: number): boolean;
+	    private colorize(color, output);
 	}
 	export { Logger };
 

@@ -15,6 +15,9 @@ var binaryHeap_1 = require("../datastructs/binaryHeap");
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
 var DEFAULT_WEIGHT = 1;
+;
+;
+;
 /**
  * We require node features to have partition entries 1 & 2, EXACTLY!
  *
@@ -116,26 +119,24 @@ var KLPartitioning = /** @class */ (function () {
             // Initialize internal & external cost arrays
             this_1._costs.external[source] = 0;
             this_1._costs.internal[source] = 0;
-            /**
-             * @todo introduce weighted mode
-             */
             Object.keys(this_1._adjList[source]).forEach(function (target) {
-                // logger.write(`[${nodePartMap.get(source)}, ${nodePartMap.get(target)}]`);
+                logger.write("[" + nodePartMap.get(source) + ", " + nodePartMap.get(target) + "]");
                 /**
-                 * @todo check for valid number, parse?
+                 * @todo just use node.allNeighbors() instead of adjList ??
+                 * @todo decide after implementing node & edge types
                  */
                 var edge_weight = _this._config.weighted ? _this._adjList[source][target] : DEFAULT_WEIGHT;
                 if (nodePartMap.get(source) === nodePartMap.get(target)) {
-                    // logger.write('\u2713' + ' ');
+                    logger.write('\u2713' + ' ', 32);
                     _this._costs.internal[source] += edge_weight;
                 }
                 else {
-                    // logger.write('\u2717' + ' ');
+                    logger.write('\u2717' + ' ', 31);
                     _this._costs.external[source] += edge_weight;
                     partitioning.cut_cost += edge_weight;
                 }
             });
-            // logger.log('');
+            logger.log('');
         };
         var this_1 = this;
         try {

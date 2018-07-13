@@ -17,10 +17,10 @@ const obj_to_log = {
 };
 
 
-describe('Basic logger tests - (standard) DEBUG config - output expected - ', () => {
+describe('Basic logger tests - ', () => {
 
 
-  describe('Basic logger function tests - debug config - output expected', () => {
+  describe('debug config - ', () => {
 
     before(() => {
       const config : LOG_CONFIG = { log_level: LOG_LEVELS.debug };
@@ -61,7 +61,7 @@ describe('Basic logger tests - (standard) DEBUG config - output expected - ', ()
   /**
    * @todo adapt to new environment variable based logging!
    */
-  describe('basic logger tests - production config - NO output expected - ', () => {
+  describe('production config - ', () => {
     
     before(() => {
       const config : LOG_CONFIG = { log_level: LOG_LEVELS.production };

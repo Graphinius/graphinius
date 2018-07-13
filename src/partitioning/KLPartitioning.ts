@@ -20,20 +20,20 @@ export type GainEntry = {
 export interface KL_Costs {
   internal: {[key:string]: number};
   external: {[key:string]: number};
-}
+};
 
 
 export interface KL_Config {
   initShuffle? : boolean;
   directed?    : boolean;
   weighted?    : boolean;
-}
+};
 
 
 export interface KL_Open_Sets {
   partition_a : Map<string, boolean>;
   partition_b : Map<string, boolean>;
-}
+};
 
 /**
  * We require node features to have partition entries 1 & 2, EXACTLY!
@@ -153,27 +153,25 @@ export class KLPartitioning {
       this._costs.external[source] = 0;
       this._costs.internal[source] = 0;
 
-      /**
-       * @todo introduce weighted mode
-       */
       Object.keys(this._adjList[source]).forEach( target => {
-        // logger.write(`[${nodePartMap.get(source)}, ${nodePartMap.get(target)}]`);
+        logger.write(`[${nodePartMap.get(source)}, ${nodePartMap.get(target)}]`);
 
         /**
-         * @todo check for valid number, parse?
+         * @todo just use node.allNeighbors() instead of adjList ??
+         * @todo decide after implementing node & edge types
          */
         let edge_weight = this._config.weighted ? this._adjList[source][target] : DEFAULT_WEIGHT;
 
         if ( nodePartMap.get(source) === nodePartMap.get(target) ) {
-          // logger.write('\u2713' + ' ');
+          logger.write('\u2713' + ' ', 32);
           this._costs.internal[source] += edge_weight;
         } else {
-          // logger.write('\u2717' + ' ');
+          logger.write('\u2717' + ' ', 31);
           this._costs.external[source] += edge_weight;
           partitioning.cut_cost += edge_weight;
         }
       });
-      // logger.log('');
+      logger.log('');
     }
 
     // we counted every edge twice in the nested loop above...

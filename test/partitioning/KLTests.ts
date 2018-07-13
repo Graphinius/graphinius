@@ -31,7 +31,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       initShuffle: false,
       directed: false,
       weighted: false
-    }
+    };
     n8_kl_graph = json.readFromJSONFile( n8_kl_file );
     expect( n8_kl_graph.nrNodes() ).to.equal(8);
     expect( n8_kl_graph.nrDirEdges() ).to.equal(0);
@@ -46,7 +46,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       let n3_missing_parts_graph = json.readFromJSONFile( n3_missing_partition_file );
       let badInput = () => {
         return new KLPartitioning( n3_missing_parts_graph );
-      }
+      };
       expect(badInput).to.throw('no node feature "partition" encountered - you need to set initShuffle to true');
     });
 
@@ -55,7 +55,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       let n3_3parts_graph = json.readFromJSONFile( n3_3partitions_file );
       let badInput = () => {
         return new KLPartitioning( n3_3parts_graph );
-      }
+      };
       expect(badInput).to.throw("KL partitioning works on 2 initial partitions only");
     });
 
@@ -64,7 +64,7 @@ describe.only("Kernighan-Lin graph partitioning tests - ", () => {
       config.initShuffle = true;
       let goodInit = () => {
         return new KLPartitioning( n8_kl_graph, config );
-      }
+      };
       expect(goodInit).not.to.throw("KL partitioning works on 2 initial partitions only");
     });
 
