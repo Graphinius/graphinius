@@ -13,6 +13,7 @@ import { Logger } from '../../utils/logger';
 let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
+const CSV_EXTENSION = ".csv";
 
 export interface ICSVInput {
 	_separator					: string;
@@ -22,11 +23,11 @@ export interface ICSVInput {
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
-	readFromAdjacencyListURL(fileurl : string, cb : Function);
+	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
 	readFromEdgeList(input : Array<string>, graph_name: string) : $G.IGraph;
-	readFromEdgeListURL(fileurl : string, cb : Function);
+	readFromEdgeListURL(config : $R.RequestConfig, cb : Function);
 }
 
 class CSVInput implements ICSVInput {
@@ -39,25 +40,29 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromAdjacencyListURL(fileurl : string, cb : Function) {
-		this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function) {
+		this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
 	}
 	
 	
-	readFromEdgeListURL(fileurl : string, cb : Function) {
-		this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+	readFromEdgeListURL(config : $R.RequestConfig, cb : Function) {
+		this.readGraphFromURL(config, cb, this.readFromEdgeList);
 	}
 	
 	
-	private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {	
+	private readGraphFromURL(config: $R.RequestConfig, cb: Function, localFun: Function) {
 		var self = this,
-				graph_name = path.basename(fileurl),
+				graph_name = config.file_name,
 				graph : $G.IGraph,
 				request;
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
+			let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+
+			logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
+
 			// Browser...
-			request = new XMLHttpRequest();			
+			request = new XMLHttpRequest();	
 			request.onreadystatechange = function() {
 					if (request.readyState == 4 && request.status == 200) {
 						var input = request.responseText.split('\n');
@@ -71,7 +76,7 @@ class CSVInput implements ICSVInput {
 		}
 		else {
 			// Node.js
-			$R.retrieveRemoteFile(fileurl, function(raw_graph) {
+			$R.retrieveRemoteFile(config, function(raw_graph) {
 				var input = raw_graph.toString().split('\n');
 				graph = localFun.apply(self, [input, graph_name]);
 				cb(graph, undefined);

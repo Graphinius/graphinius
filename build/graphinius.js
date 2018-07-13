@@ -59,16 +59,15 @@
 	var structUtils     = __webpack_require__(3);
 	var remoteUtils     = __webpack_require__(17);
 	var callbackUtils   = __webpack_require__(6);
-	var randGen         = __webpack_require__(23);
 	var binaryHeap      = __webpack_require__(10);
-	var simplePerturbation = __webpack_require__(24);
-	var MCMFBoykov			= __webpack_require__(25);
-	var DegreeCent		 	= __webpack_require__(26);
-	var ClosenessCent	 	= __webpack_require__(27);
-	var BetweennessCent	= __webpack_require__(28);
-	var PRGauss					= __webpack_require__(30);
-	var PRRandomWalk		= __webpack_require__(32);
-	var kronLeskovec		= __webpack_require__(33);
+	var simplePerturbation = __webpack_require__(23);
+	var MCMFBoykov			= __webpack_require__(24);
+	var DegreeCent		 	= __webpack_require__(25);
+	var ClosenessCent	 	= __webpack_require__(26);
+	var BetweennessCent	= __webpack_require__(27);
+	var PRGauss					= __webpack_require__(29);
+	var PRRandomWalk		= __webpack_require__(31);
+	var kronLeskovec		= __webpack_require__(32);
 
 
 	// Define global object
@@ -117,8 +116,7 @@
 	  utils: {
 	    struct          : structUtils,
 	    remote          : remoteUtils,
-	    callback        : callbackUtils,
-	    randgen         : randGen
+	    callback        : callbackUtils
 	  },
 	  datastructs: {
 	    BinaryHeap  : binaryHeap.BinaryHeap
@@ -2557,6 +2555,7 @@
 	var logger_1 = __webpack_require__(11);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
+	var CSV_EXTENSION = ".csv";
 	var CSVInput = /** @class */ (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
 	        if (_separator === void 0) { _separator = ','; }
@@ -2568,16 +2567,18 @@
 	        this._direction_mode = _direction_mode;
 	        this._weighted = _weighted;
 	    }
-	    CSVInput.prototype.readFromAdjacencyListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	    CSVInput.prototype.readFromAdjacencyListURL = function (config, cb) {
+	        this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
 	    };
-	    CSVInput.prototype.readFromEdgeListURL = function (fileurl, cb) {
-	        this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+	    CSVInput.prototype.readFromEdgeListURL = function (config, cb) {
+	        this.readGraphFromURL(config, cb, this.readFromEdgeList);
 	    };
-	    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
-	        var self = this, graph_name = path.basename(fileurl), graph, request;
+	    CSVInput.prototype.readGraphFromURL = function (config, cb, localFun) {
+	        var self = this, graph_name = config.file_name, graph, request;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
+	            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+	            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
 	            // Browser...
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
@@ -2593,7 +2594,7 @@
 	        }
 	        else {
 	            // Node.js
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	            $R.retrieveRemoteFile(config, function (raw_graph) {
 	                var input = raw_graph.toString().split('\n');
 	                graph = localFun.apply(self, [input, graph_name]);
 	                cb(graph, undefined);
@@ -2942,6 +2943,9 @@
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var https = __webpack_require__(18);
+	var logger_1 = __webpack_require__(11);
+	var logger = new logger_1.Logger();
+	var SSL_PORT = '443';
 	/**
 	 * @TODO: Test it !!!
 	 *
@@ -2949,13 +2953,21 @@
 	 * @param cb
 	 * @returns {ClientRequest}
 	 */
-	function retrieveRemoteFile(url, cb) {
+	function retrieveRemoteFile(config, cb) {
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
 	    }
-	    return https.get(url, function (response) {
+	    logger.log("Requesting file via NodeJS request: " + config.remote_host + config.remote_path + config.file_name);
+	    var options = {
+	        host: config.remote_host,
+	        port: SSL_PORT,
+	        path: config.remote_path + config.file_name,
+	        method: 'GET'
+	    };
+	    var req = https.get(options, function (response) {
 	        // Continuously update stream with data
 	        var body = '';
+	        response.setEncoding('utf8');
 	        response.on('data', function (d) {
 	            body += d;
 	        });
@@ -2964,6 +2976,10 @@
 	            cb(body);
 	        });
 	    });
+	    req.on('error', function (e) {
+	        logger.log("Request error: " + e.message);
+	    });
+	    return req;
 	}
 	exports.retrieveRemoteFile = retrieveRemoteFile;
 
@@ -3054,6 +3070,7 @@
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
 	var DEFAULT_WEIGHT = 1;
+	var JSON_EXTENSION = ".json";
 	var JSONInput = /** @class */ (function () {
 	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
 	        if (_explicit_direction === void 0) { _explicit_direction = true; }
@@ -3069,11 +3086,12 @@
 	        var json = JSON.parse(fs.readFileSync(filepath).toString());
 	        return this.readFromJSON(json);
 	    };
-	    JSONInput.prototype.readFromJSONURL = function (fileurl, cb) {
+	    JSONInput.prototype.readFromJSONURL = function (config, cb) {
 	        var self = this, graph, request, json;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
 	            // Browser...			
+	            var fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
 	                // console.log("Ready state: " + request.readyState);
@@ -3093,7 +3111,7 @@
 	        }
 	        else {
 	            // Node.js
-	            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+	            $R.retrieveRemoteFile(config, function (raw_graph) {
 	                graph = self.readFromJSON(JSON.parse(raw_graph));
 	                cb(graph, undefined);
 	            });
@@ -3451,189 +3469,11 @@
 
 /***/ }),
 /* 23 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	/**
-	 * Taken from https://github.com/robbrit/randgen
-	 * and slightly modified to give TS completion
-	 */
-	Object.defineProperty(exports, "__esModule", { value: true });
-	/**
-	 * Generate a random Base36  UID of length 24
-	 */
-	function randBase36String() {
-	    return (Math.random() + 1).toString(36).substr(2, 24);
-	}
-	exports.randBase36String = randBase36String;
-	/*jslint indent: 2, plusplus: true, sloppy: true */
-	// Generate uniformly distributed random numbers
-	// Gives a random number on the interval [min, max).
-	// If discrete is true, the number will be an integer.
-	function runif(min, max, discrete) {
-	    if (min === undefined) {
-	        min = 0;
-	    }
-	    if (max === undefined) {
-	        max = 1;
-	    }
-	    if (discrete === undefined) {
-	        discrete = false;
-	    }
-	    if (discrete) {
-	        return Math.floor(runif(min, max, false));
-	    }
-	    return Math.random() * (max - min) + min;
-	}
-	exports.runif = runif;
-	// Generate normally-distributed random nubmers
-	// Algorithm adapted from:
-	// http://c-faq.com/lib/gaussian.html
-	function rnorm(mean, stdev) {
-	    this.v2 = null;
-	    var u1, u2, v1, v2, s;
-	    if (mean === undefined) {
-	        mean = 0.0;
-	    }
-	    if (stdev === undefined) {
-	        stdev = 1.0;
-	    }
-	    if (this.v2 === null) {
-	        do {
-	            u1 = Math.random();
-	            u2 = Math.random();
-	            v1 = 2 * u1 - 1;
-	            v2 = 2 * u2 - 1;
-	            s = v1 * v1 + v2 * v2;
-	        } while (s === 0 || s >= 1);
-	        this.v2 = v2 * Math.sqrt(-2 * Math.log(s) / s);
-	        return stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean;
-	    }
-	    v2 = this.v2;
-	    this.v2 = null;
-	    return stdev * v2 + mean;
-	}
-	exports.rnorm = rnorm;
-	// rnorm.v2 = null;
-	// Generate Chi-square distributed random numbers
-	function rchisq(degreesOfFreedom) {
-	    if (degreesOfFreedom === undefined) {
-	        degreesOfFreedom = 1;
-	    }
-	    var i, z, sum = 0.0;
-	    for (i = 0; i < degreesOfFreedom; i++) {
-	        z = rnorm();
-	        sum += z * z;
-	    }
-	    return sum;
-	}
-	exports.rchisq = rchisq;
-	// Generate Poisson distributed random numbers
-	function rpoisson(lambda) {
-	    if (lambda === undefined) {
-	        lambda = 1;
-	    }
-	    var l = Math.exp(-lambda), k = 0, p = 1.0;
-	    do {
-	        k++;
-	        p *= Math.random();
-	    } while (p > l);
-	    return k - 1;
-	}
-	exports.rpoisson = rpoisson;
-	// Generate Cauchy distributed random numbers
-	function rcauchy(loc, scale) {
-	    if (loc === undefined) {
-	        loc = 0.0;
-	    }
-	    if (scale === undefined) {
-	        scale = 1.0;
-	    }
-	    var n2, n1 = rnorm();
-	    do {
-	        n2 = rnorm();
-	    } while (n2 === 0.0);
-	    return loc + scale * n1 / n2;
-	}
-	exports.rcauchy = rcauchy;
-	// Bernoulli distribution: gives 1 with probability p
-	function rbernoulli(p) {
-	    return Math.random() < p ? 1 : 0;
-	}
-	exports.rbernoulli = rbernoulli;
-	// Vectorize a random generator
-	function vectorize(generator) {
-	    return function () {
-	        var n, result, i, args;
-	        args = [].slice.call(arguments);
-	        n = args.shift();
-	        result = [];
-	        for (i = 0; i < n; i++) {
-	            result.push(generator.apply(this, args));
-	        }
-	        return result;
-	    };
-	}
-	// Generate a histogram from a list of numbers
-	function histogram(data, binCount) {
-	    binCount = binCount || 10;
-	    var bins, i, scaled, max = Math.max.apply(this, data), min = Math.min.apply(this, data);
-	    // edge case: max == min
-	    if (max === min) {
-	        return [data.length];
-	    }
-	    bins = [];
-	    // zero each bin
-	    for (i = 0; i < binCount; i++) {
-	        bins.push(0);
-	    }
-	    for (i = 0; i < data.length; i++) {
-	        // scale it to be between 0 and 1
-	        scaled = (data[i] - min) / (max - min);
-	        // scale it up to the histogram size
-	        scaled *= binCount;
-	        // drop it in a bin
-	        scaled = Math.floor(scaled);
-	        // edge case: the max
-	        if (scaled === binCount) {
-	            scaled--;
-	        }
-	        bins[scaled]++;
-	    }
-	    return bins;
-	}
-	exports.histogram = histogram;
-	/**
-	 * Get a random element from a list
-	 */
-	function rlist(list) {
-	    return list[runif(0, list.length, true)];
-	}
-	exports.rlist = rlist;
-	var rvunif = vectorize(runif);
-	exports.rvunif = rvunif;
-	var rvnorm = vectorize(rnorm);
-	exports.rvnorm = rvnorm;
-	var rvchisq = vectorize(rchisq);
-	exports.rvchisq = rvchisq;
-	var rvpoisson = vectorize(rpoisson);
-	exports.rvpoisson = rvpoisson;
-	var rvcauchy = vectorize(rcauchy);
-	exports.rvcauchy = rvcauchy;
-	var rvbernoulli = vectorize(rbernoulli);
-	exports.rvbernoulli = rvbernoulli;
-	var rvlist = vectorize(rlist);
-	exports.rvlist = rvlist;
-
-
-/***/ }),
-/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var randgen = __webpack_require__(23);
 	var logger_1 = __webpack_require__(11);
 	var logger = new logger_1.Logger();
 	var SimplePerturber = /** @class */ (function () {
@@ -3778,7 +3618,10 @@
 	        }
 	        var new_nodes = {};
 	        while (amount--) {
-	            var new_node_id = randgen.randBase36String();
+	            /**
+	             * @todo check if this procedure is 'random enough'
+	             */
+	            var new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
 	            new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
 	        }
 	        if (config == null) {
@@ -3901,7 +3744,7 @@
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3956,7 +3799,6 @@
 	        this._state.activeNodes[this._source.getID()] = this._source;
 	        this._state.activeNodes[this._sink.getID()] = this._sink;
 	        var nrCycles = 0;
-	        // start
 	        while (true) {
 	            // logger.log("grow");
 	            this.grow();
@@ -4304,7 +4146,7 @@
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4447,7 +4289,7 @@
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4509,14 +4351,14 @@
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $FW = __webpack_require__(22);
-	var $JO = __webpack_require__(29);
+	var $JO = __webpack_require__(28);
 	/**
 	 * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
 	 *
@@ -4655,7 +4497,7 @@
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4786,14 +4628,14 @@
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $SU = __webpack_require__(3);
-	var $GAUSS = __webpack_require__(31);
+	var $GAUSS = __webpack_require__(30);
 	//Calculates the page rank for a given graph
 	var pageRankDetCentrality = /** @class */ (function () {
 	    function pageRankDetCentrality() {
@@ -4866,7 +4708,7 @@
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -4942,7 +4784,7 @@
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -5015,7 +4857,7 @@
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";

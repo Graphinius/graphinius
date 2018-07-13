@@ -50,7 +50,6 @@ var MCMFBoykov = /** @class */ (function () {
         this._state.activeNodes[this._source.getID()] = this._source;
         this._state.activeNodes[this._sink.getID()] = this._sink;
         var nrCycles = 0;
-        // start
         while (true) {
             // logger.log("grow");
             this.grow();

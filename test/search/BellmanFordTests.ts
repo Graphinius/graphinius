@@ -7,6 +7,8 @@ import * as $J from '../../src/io/input/JSONInput';
 import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
 import * as sinonChai from 'sinon-chai';
+import { Logger } from '../../src/utils/logger';
+const logger = new Logger();
 
 chai.use(sinonChai);
 let expect 	= chai.expect;
@@ -141,10 +143,13 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	});
 
 
-	describe.skip('Performance Tests - ', () => {
+	/**
+	 * @todo abstract out to performance test suite
+	 */
+	describe('Performance Tests - ', () => {
 
 		let social_300_file = "./test/test_data/social_network_edges_300.csv",
-				social_1k_file = "./test/test_data/social_network_edges.csv",
+				social_1k_file = "./test/test_data/social_network_edges_1K.csv",
 				graph_6k_file = "./test/test_data/real_graph.json",
 				sn_300_graph  		: $G.IGraph,
 				sn_1k_graph				: $G.IGraph,
@@ -162,11 +167,11 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFordDict(sn_300_graph, sn_300_graph.getRandomNode());
 			let e = +new Date();
-			console.log("BellmanFord on social network of ~300 nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord on social network of ~300 nodes took " + (e-d) + " ms. to finish");
 			d = +new Date();
 			BF_compute = $BF.BellmanFordArray(sn_300_graph, sn_300_graph.getRandomNode());
 			e = +new Date();
-			console.log("BellmanFord (Array) on social network of ~300 nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord (Array) on social network of ~300 nodes took " + (e-d) + " ms. to finish");
 		});
 
 
@@ -174,26 +179,26 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFordDict(sn_1k_graph, sn_1k_graph.getRandomNode());
 			let e = +new Date();
-			console.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 			d = +new Date();
 			BF_compute = $BF.BellmanFordArray(sn_1k_graph, sn_1k_graph.getRandomNode());
 			e = +new Date();
-			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 		});
 
 
 		it.skip('BF performance test on ~6k graph', () => {
-			console.log(`Real sized graph has: ${graph_6k.nrNodes()} nodes.`);
-			console.log(`Real sized graph has ${graph_6k.nrDirEdges() + graph_6k.nrUndEdges()} edges.`);
+			logger.log(`Real sized graph has: ${graph_6k.nrNodes()} nodes.`);
+			logger.log(`Real sized graph has ${graph_6k.nrDirEdges() + graph_6k.nrUndEdges()} edges.`);
 
 			let d = +new Date();
 			BF_compute = $BF.BellmanFordDict(graph_6k, graph_6k.getRandomNode());
 			let e = +new Date();
-			console.log("BellmanFord (Dict) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord (Dict) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 			d = +new Date();
 			BF_compute = $BF.BellmanFordArray(graph_6k, graph_6k.getRandomNode());
 			e = +new Date();
-			console.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+			logger.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
 		});
 
 	});

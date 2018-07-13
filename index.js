@@ -13,7 +13,6 @@ var FloydWarshall		= require("./dist/search/FloydWarshall.js");
 var structUtils     = require("./dist/utils/structUtils.js");
 var remoteUtils     = require("./dist/utils/remoteUtils.js");
 var callbackUtils   = require("./dist/utils/callbackUtils.js");
-var randGen         = require("./dist/utils/randGenUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
 var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
@@ -71,8 +70,7 @@ out.$G = {
   utils: {
     struct          : structUtils,
     remote          : remoteUtils,
-    callback        : callbackUtils,
-    randgen         : randGen
+    callback        : callbackUtils
   },
   datastructs: {
     BinaryHeap  : binaryHeap.BinaryHeap

@@ -1,9 +1,5 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-/**
- * TODO switching to production should not raise errors... !!!
- */
-
 import * as chai from 'chai';
 import { LOG_LEVELS } from '../../src/config/run_config';
 import { Logger, LOG_CONFIG } from '../../src/utils/logger';
@@ -19,12 +15,12 @@ var obj_to_log = {
 };
 
 
-describe('Basic logger tests - (standard) DEBUG config - ', () => {
+describe('Basic logger tests - (standard) DEBUG config - output expected - ', () => {
 
   describe('Basic logger function tests - ', () => {
 
     before(() => {
-      const config : LOG_CONFIG = {log_level: LOG_LEVELS.debug};
+      const config : LOG_CONFIG = { log_level: LOG_LEVELS.debug };
       logger = new Logger(config);
     });
 
@@ -58,10 +54,10 @@ describe('Basic logger tests - (standard) DEBUG config - ', () => {
   /**
    * @todo adapt to new environment variable based logging!
    */
-  describe.skip('basic logger tests - production config ', () => {
+  describe('basic logger tests - production config - NO output expected - ', () => {
     
     before(() => {
-      const config : LOG_CONFIG = { log_level: "PRODUCTION" };
+      const config : LOG_CONFIG = { log_level: LOG_LEVELS.production };
       logger = new Logger(config);
     });
     

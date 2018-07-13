@@ -57,10 +57,6 @@ var EMEBoykov = /** @class */ (function () {
                 break;
             }
         }
-        // if (success) {
-        //   this.calculateCycle();
-        // 	logger.log("continue");
-        // }
         var result = {
             graph: this._state.labeledGraph
         };

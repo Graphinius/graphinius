@@ -8,6 +8,7 @@ var $R = require("../../utils/remoteUtils");
 var logger_1 = require("../../utils/logger");
 var logger = new logger_1.Logger();
 var DEFAULT_WEIGHT = 1;
+var CSV_EXTENSION = ".csv";
 var CSVInput = /** @class */ (function () {
     function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
         if (_separator === void 0) { _separator = ','; }
@@ -19,16 +20,18 @@ var CSVInput = /** @class */ (function () {
         this._direction_mode = _direction_mode;
         this._weighted = _weighted;
     }
-    CSVInput.prototype.readFromAdjacencyListURL = function (fileurl, cb) {
-        this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+    CSVInput.prototype.readFromAdjacencyListURL = function (config, cb) {
+        this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
     };
-    CSVInput.prototype.readFromEdgeListURL = function (fileurl, cb) {
-        this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+    CSVInput.prototype.readFromEdgeListURL = function (config, cb) {
+        this.readGraphFromURL(config, cb, this.readFromEdgeList);
     };
-    CSVInput.prototype.readGraphFromURL = function (fileurl, cb, localFun) {
-        var self = this, graph_name = path.basename(fileurl), graph, request;
+    CSVInput.prototype.readGraphFromURL = function (config, cb, localFun) {
+        var self = this, graph_name = config.file_name, graph, request;
         // Node or browser ??
         if (typeof window !== 'undefined') {
+            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
             // Browser...
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
@@ -44,7 +47,7 @@ var CSVInput = /** @class */ (function () {
         }
         else {
             // Node.js
-            $R.retrieveRemoteFile(fileurl, function (raw_graph) {
+            $R.retrieveRemoteFile(config, function (raw_graph) {
                 var input = raw_graph.toString().split('\n');
                 graph = localFun.apply(self, [input, graph_name]);
                 cb(graph, undefined);

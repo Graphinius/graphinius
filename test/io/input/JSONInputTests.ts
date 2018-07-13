@@ -99,8 +99,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			expect(stats.nr_dir_edges).to.equal(0);
 			expect(stats.nr_und_edges).to.equal(REAL_GRAPH_NR_EDGES);
 			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
-			
-			// console.dir(stats);
 		});
 		
 		

@@ -1,7 +1,6 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var randgen = require("../utils/randGenUtils");
 var logger_1 = require("../utils/logger");
 var logger = new logger_1.Logger();
 var SimplePerturber = /** @class */ (function () {
@@ -146,7 +145,10 @@ var SimplePerturber = /** @class */ (function () {
         }
         var new_nodes = {};
         while (amount--) {
-            var new_node_id = randgen.randBase36String();
+            /**
+             * @todo check if this procedure is 'random enough'
+             */
+            var new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
             new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
         }
         if (config == null) {

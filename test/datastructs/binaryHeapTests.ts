@@ -5,6 +5,8 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as $CB from '../../src/utils/callbackUtils';
 import * as $BH from '../../src/datastructs/binaryHeap';
+import { Logger } from '../../src/utils/logger';
+const logger = new Logger();
 
 var expect  = chai.expect,
     binHeap : $BH.BinaryHeap = null,
@@ -368,7 +370,7 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(5);
       binHeap.insert(1);
       
-      console.log("\n ##### POPPING ##### \n")
+      logger.log("\n ##### POPPING ##### \n")
       expect(binHeap.pop()).to.equal(0);
       expect(binHeap.pop()).to.equal(1);
       expect(binHeap.pop()).to.equal(5);
@@ -629,10 +631,10 @@ describe('BINARY HEAP TESTS - ', () => {
     });
     
     
-    it.skip('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
+    it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
       var i = 0;
-      while ( i < 300000 ) {
+      while ( i < 30000 ) {
         binHeap.insert( i++ );
       }
       while ( i ) {
@@ -657,7 +659,7 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
     binHeap.insert(1);
     binHeap.insert(0);
     
-    // console.dir(binHeap.getPositions());
+    logger.dir(binHeap.getPositions());
     expect((<any>binHeap).getNodePosition(0)).to.equal(0);
     expect((<any>binHeap).getNodePosition(1)).to.equal(2);
     expect((<any>binHeap).getNodePosition(2)).to.equal(1);

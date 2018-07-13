@@ -4,9 +4,9 @@ import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
-
 import { Logger } from '../utils/logger';
-let logger : Logger = new Logger();
+const logger = new Logger();
+
 
 export interface MCMFConfig {
 	directed: boolean; // do we
@@ -97,8 +97,8 @@ class MCMFBoykov implements IMCMFBoykov {
 		this._state.activeNodes[this._source.getID()] = this._source;
 		this._state.activeNodes[this._sink.getID()] = this._sink;
 
- 		var nrCycles= 0;
-		// start
+		 var nrCycles= 0;
+		 
 		while(true) {
 			// logger.log("grow");
 			this.grow();
@@ -186,7 +186,6 @@ class MCMFBoykov implements IMCMFBoykov {
 							}
 					}
 				}
-
 		}
 		//logger.log(result.edges);
 		logger.log("Cost => " +result.cost);

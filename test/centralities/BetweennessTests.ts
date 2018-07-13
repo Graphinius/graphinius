@@ -25,8 +25,10 @@ const PATH_PREFIX = "./test/test_data/",
 
 let socialNet300 = "social_network_edges_300",
     socialNet1K = "social_network_edges_1K",
+    socialNet20K = "social_network_edges_20K",
     weightedSocialNet300 = "social_network_edges_300_weighted",
-    weightedSocialNet1K = "social_network_edges_1K_weighted";
+    weightedSocialNet1K = "social_network_edges_1K_weighted",
+    weightedSocialNet20K = "social_network_edges_20K_weighted";
 
 let path_3nodeUnd = PATH_PREFIX_CENTRALITIES + "3nodeUnd.json",
     path_3nodeDir = PATH_PREFIX_CENTRALITIES + "3nodeDir.json",
@@ -265,7 +267,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
      */
     describe('Brandes Performance tests on small, unweighted social networks', () => {
 
-        [socialNet300].forEach(graph_name => { // socialNet1K
+        [socialNet300].forEach(graph_name => { // socialNet1K, socialNet20K
             it(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
                 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, false);
                 let graph_path = PATH_PREFIX + graph_name + ".csv",
@@ -286,7 +288,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
             });
         });
 
-        [weightedSocialNet300].forEach(graph_name => { // weightedSocialNet1K
+        [weightedSocialNet300].forEach(graph_name => { // weightedSocialNet1K, weightedSocialNet20K
             it(`Runtime of Brandes (Weighted) on graph ${graph_name}:`, () => {
                 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, true);
                 let graph_path = PATH_PREFIX + graph_name + ".csv",
