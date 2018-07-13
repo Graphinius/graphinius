@@ -166,7 +166,7 @@ gulp.task('test-core', ['build'], function () {
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
 						 .pipe(mocha({reporter: 'spec',
-						 							timeout: 6000}));
+						 							timeout: 60000}));
 });
 
 

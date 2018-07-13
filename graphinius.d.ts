@@ -227,6 +227,7 @@ declare module 'graphinius/core/Nodes' {
 	export { BaseNode };
 
 }
+<<<<<<< HEAD
 declare module 'graphinius/config/run_config' {
 	 const LOG_LEVELS: {
 	    debug: string;
@@ -272,6 +273,8 @@ declare module 'graphinius/utils/logger' {
 	export { Logger };
 
 }
+=======
+>>>>>>> master
 declare module 'graphinius/utils/callbackUtils' {
 	 function execCallbacks(cbs: Array<Function>, context?: any): void;
 	export { execCallbacks };
@@ -528,6 +531,7 @@ declare module 'graphinius/search/BellmanFord' {
 	export { BellmanFordDict, BellmanFordArray };
 
 }
+<<<<<<< HEAD
 declare module 'graphinius/search/Dijkstra' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
@@ -543,6 +547,31 @@ declare module 'graphinius/search/Johnsons' {
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
 	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
+=======
+declare module 'graphinius/config/run_config' {
+	 const LOG_LEVELS: {
+	    debug: string;
+	    production: string;
+	}; const RUN_CONFIG: {
+	    log_level: string;
+	};
+	export { LOG_LEVELS, RUN_CONFIG };
+
+}
+declare module 'graphinius/utils/logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any): boolean;
+	    error(err: any): boolean;
+	    dir(obj: any): boolean;
+	    info(msg: any): boolean;
+	    warn(msg: any): boolean;
+	}
+	export { Logger };
+>>>>>>> master
 
 }
 declare module 'graphinius/core/Graph' {

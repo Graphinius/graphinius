@@ -100,16 +100,18 @@ class MCMFBoykov implements IMCMFBoykov {
 		 var nrCycles= 0;
 		 
 		while(true) {
+			// logger.log("grow");
 			this.grow();
 
 			if (!this._state.path.length) {
 			    break;
 			}
-			
+			// logger.log("augment");
 			this.augmentation();
-			
+			// logger.log("adopt");
 			this.adoption();
 			++nrCycles;
+			// logger.log(nrCycles);
 		}
 
 		// compute the cut edges and the total cost of the cut
