@@ -4,7 +4,7 @@ import { GraphPartitioning, Partition } from './Interfaces';
 import { KCut } from './KCut';
 import { BinaryHeap, BinaryHeapMode } from '../datastructs/binaryHeap';
 
-import { Logger } from '../utils/logger';
+import { Logger, LogColors } from '../utils/logger';
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
@@ -163,10 +163,10 @@ export class KLPartitioning {
         let edge_weight = this._config.weighted ? this._adjList[source][target] : DEFAULT_WEIGHT;
 
         if ( nodePartMap.get(source) === nodePartMap.get(target) ) {
-          logger.write('\u2713' + ' ', 32);
+          logger.write('\u2713' + ' ', LogColors.FgGreen, true);
           this._costs.internal[source] += edge_weight;
         } else {
-          logger.write('\u2717' + ' ', 31);
+          logger.write('\u2717' + ' ', LogColors.FgRed, true);
           this._costs.external[source] += edge_weight;
           partitioning.cut_cost += edge_weight;
         }

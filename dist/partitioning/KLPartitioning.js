@@ -127,11 +127,11 @@ var KLPartitioning = /** @class */ (function () {
                  */
                 var edge_weight = _this._config.weighted ? _this._adjList[source][target] : DEFAULT_WEIGHT;
                 if (nodePartMap.get(source) === nodePartMap.get(target)) {
-                    logger.write('\u2713' + ' ', 32);
+                    logger.write('\u2713' + ' ', logger_1.LogColors.FgGreen, true);
                     _this._costs.internal[source] += edge_weight;
                 }
                 else {
-                    logger.write('\u2717' + ' ', 31);
+                    logger.write('\u2717' + ' ', logger_1.LogColors.FgRed, true);
                     _this._costs.external[source] += edge_weight;
                     partitioning.cut_cost += edge_weight;
                 }
