@@ -51,16 +51,16 @@
 	var CSVOutput       = __webpack_require__(19);
 	var JSONInput       = __webpack_require__(20);
 	var JSONOutput      = __webpack_require__(21);
-	var BFS				      = __webpack_require__(8);
-	var DFS				      = __webpack_require__(10);
-	var PFS             = __webpack_require__(12);
-	var BellmanFord     = __webpack_require__(11);
+	var BFS				      = __webpack_require__(5);
+	var DFS				      = __webpack_require__(7);
+	var PFS             = __webpack_require__(9);
+	var BellmanFord     = __webpack_require__(8);
 	var FloydWarshall		= __webpack_require__(22);
 	var structUtils     = __webpack_require__(3);
 	var remoteUtils     = __webpack_require__(17);
-	var callbackUtils   = __webpack_require__(9);
+	var callbackUtils   = __webpack_require__(6);
 	var randGen         = __webpack_require__(23);
-	var binaryHeap      = __webpack_require__(13);
+	var binaryHeap      = __webpack_require__(10);
 	var simplePerturbation = __webpack_require__(24);
 	var MCMFBoykov			= __webpack_require__(25);
 	var DegreeCent		 	= __webpack_require__(26);
@@ -636,10 +636,10 @@
 	var $N = __webpack_require__(2);
 	var $E = __webpack_require__(1);
 	var $DS = __webpack_require__(3);
-	var logger_1 = __webpack_require__(5);
-	var $BFS = __webpack_require__(8);
-	var $DFS = __webpack_require__(10);
-	var BellmanFord_1 = __webpack_require__(11);
+	var $BFS = __webpack_require__(5);
+	var $DFS = __webpack_require__(7);
+	var BellmanFord_1 = __webpack_require__(8);
+	var logger_1 = __webpack_require__(11);
 	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	var GraphMode;
@@ -1255,270 +1255,10 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var run_config_1 = __webpack_require__(6);
-	var Logger = /** @class */ (function () {
-	    function Logger(config) {
-	        this.config = null;
-	        this.config = config || run_config_1.RUN_CONFIG;
-	    }
-	    Logger.prototype.log = function (msg) {
-	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
-	            console.log.apply(console, Array.prototype.slice.call(arguments));
-	            return true;
-	        }
-	        return false;
-	    };
-	    Logger.prototype.error = function (err) {
-	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
-	            console.error.apply(console, Array.prototype.slice.call(arguments));
-	            return true;
-	        }
-	        return false;
-	    };
-	    Logger.prototype.dir = function (obj) {
-	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
-	            console.dir.apply(console, Array.prototype.slice.call(arguments));
-	            return true;
-	        }
-	        return false;
-	    };
-	    Logger.prototype.info = function (msg) {
-	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
-	            console.info.apply(console, Array.prototype.slice.call(arguments));
-	            return true;
-	        }
-	        return false;
-	    };
-	    Logger.prototype.warn = function (msg) {
-	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
-	            console.warn.apply(console, Array.prototype.slice.call(arguments));
-	            return true;
-	        }
-	        return false;
-	    };
-	    return Logger;
-	}());
-	exports.Logger = Logger;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var LOG_LEVELS = {
-	    debug: "debug",
-	    production: "production"
-	};
-	exports.LOG_LEVELS = LOG_LEVELS;
-	var RUN_CONFIG = {
-	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
-	};
-	exports.RUN_CONFIG = RUN_CONFIG;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-	// shim for using process in browser
-	var process = module.exports = {};
-
-	// cached from whatever global is present so that test runners that stub it
-	// don't break things.  But we need to wrap it in a try catch in case it is
-	// wrapped in strict mode code which doesn't define any globals.  It's inside a
-	// function because try/catches deoptimize in certain engines.
-
-	var cachedSetTimeout;
-	var cachedClearTimeout;
-
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
-	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
-	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
-	    }
-	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-
-
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-
-
-
-	}
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = runTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    runClearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(9);
+	var $CB = __webpack_require__(6);
 	/**
 	 * Breadth first search - usually performed to see
 	 * reachability etc. Therefore we do not want 'segments'
@@ -1665,7 +1405,7 @@
 
 
 /***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -1687,14 +1427,14 @@
 
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(9);
+	var $CB = __webpack_require__(6);
 	/**
 	 * DFS Visit - one run to see what nodes are reachable
 	 * from a given "current" root node
@@ -1949,13 +1689,13 @@
 
 
 /***/ }),
-/* 11 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var PFS_1 = __webpack_require__(12);
+	var PFS_1 = __webpack_require__(9);
 	/**
 	 *
 	 * @param graph
@@ -2067,7 +1807,7 @@
 
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2075,8 +1815,8 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $E = __webpack_require__(1);
 	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(9);
-	var $BH = __webpack_require__(13);
+	var $CB = __webpack_require__(6);
+	var $BH = __webpack_require__(10);
 	exports.DEFAULT_WEIGHT = 1;
 	/**
 	 * Priority first search
@@ -2323,7 +2063,7 @@
 
 
 /***/ }),
-/* 13 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2544,6 +2284,266 @@
 
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var run_config_1 = __webpack_require__(12);
+	var Logger = /** @class */ (function () {
+	    function Logger(config) {
+	        this.config = null;
+	        this.config = config || run_config_1.RUN_CONFIG;
+	    }
+	    Logger.prototype.log = function (msg) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            console.log.apply(console, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
+	    Logger.prototype.error = function (err) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            console.error.apply(console, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
+	    Logger.prototype.dir = function (obj) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            console.dir.apply(console, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
+	    Logger.prototype.info = function (msg) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            console.info.apply(console, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
+	    Logger.prototype.warn = function (msg) {
+	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
+	            console.warn.apply(console, Array.prototype.slice.call(arguments));
+	            return true;
+	        }
+	        return false;
+	    };
+	    return Logger;
+	}());
+	exports.Logger = Logger;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var LOG_LEVELS = {
+	    debug: "debug",
+	    production: "production"
+	};
+	exports.LOG_LEVELS = LOG_LEVELS;
+	var RUN_CONFIG = {
+	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
+	};
+	exports.RUN_CONFIG = RUN_CONFIG;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+	// shim for using process in browser
+	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
+	(function () {
+	    try {
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
+	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
+	    }
+	    try {
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
+	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+
+
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+
+
+
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = runTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    runClearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        runTimeout(drainQueue);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ }),
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2554,6 +2554,8 @@
 	var fs = __webpack_require__(16);
 	var $G = __webpack_require__(4);
 	var $R = __webpack_require__(17);
+	var logger_1 = __webpack_require__(11);
+	var logger = new logger_1.Logger();
 	var DEFAULT_WEIGHT = 1;
 	var CSVInput = /** @class */ (function () {
 	    function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
@@ -2659,7 +2661,7 @@
 	                continue;
 	            }
 	            if (elements.length < 2 || elements.length > 3) {
-	                console.log(elements);
+	                logger.log(elements);
 	                throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 	            }
 	            var node_id = elements[0], node, target_node, edge, target_node_id = elements[1], dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u', directed, edge_id, edge_id_u2, parse_weight, edge_weight;
@@ -2925,7 +2927,7 @@
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
 /* 16 */
@@ -3632,7 +3634,7 @@
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var randgen = __webpack_require__(23);
-	var logger_1 = __webpack_require__(5);
+	var logger_1 = __webpack_require__(11);
 	var logger = new logger_1.Logger();
 	var SimplePerturber = /** @class */ (function () {
 	    function SimplePerturber(_graph) {
@@ -3906,6 +3908,8 @@
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $G = __webpack_require__(4);
+	var logger_1 = __webpack_require__(11);
+	var logger = new logger_1.Logger();
 	/**
 	 *
 	 */
@@ -3954,17 +3958,17 @@
 	        var nrCycles = 0;
 	        // start
 	        while (true) {
-	            // console.log("grow");
+	            // logger.log("grow");
 	            this.grow();
 	            if (!this._state.path.length) {
 	                break;
 	            }
-	            // console.log("augment");
+	            // logger.log("augment");
 	            this.augmentation();
-	            // console.log("adopt");
+	            // logger.log("adopt");
 	            this.adoption();
 	            ++nrCycles;
-	            // console.log(nrCycles);
+	            // logger.log(nrCycles);
 	        }
 	        // compute the cut edges and the total cost of the cut
 	        // var tree_ids = Object.keys(this._state.tree);
@@ -3975,7 +3979,7 @@
 	        //         ++size_S;
 	        //     }
 	        // }
-	        console.log("computing result");
+	        logger.log("computing result");
 	        var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
 	        var smallTree_size = Object.keys(smallTree).length;
 	        var smallTree_ids = Object.keys(smallTree);
@@ -4037,10 +4041,10 @@
 	                }
 	            }
 	        }
-	        //console.log(result.edges);
-	        console.log("Cost => " + result.cost);
-	        console.log("# cycles => " + nrCycles);
-	        // console.log(result.edges);
+	        //logger.log(result.edges);
+	        logger.log("Cost => " + result.cost);
+	        logger.log("# cycles => " + nrCycles);
+	        // logger.log(result.edges);
 	        return result;
 	    };
 	    MCMFBoykov.prototype.renameEdges = function (graph) {
@@ -4063,7 +4067,7 @@
 	        var nodes = uGraph.getNodes();
 	        var nodes_ids = Object.keys(nodes);
 	        var nodes_length = nodes_ids.length;
-	        // console.log("#nodes: " + Object.keys(nodes).length);
+	        // logger.log("#nodes: " + Object.keys(nodes).length);
 	        for (var i = 0; i < nodes_length; i++) {
 	            // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
 	            var node = nodes[nodes_ids[i]];
@@ -4082,7 +4086,7 @@
 	            dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
 	            dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
 	        }
-	        // console.log(dGraph);
+	        // logger.log(dGraph);
 	        return dGraph;
 	    };
 	    MCMFBoykov.prototype.tree = function (node) {
@@ -4449,7 +4453,7 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $PFS = __webpack_require__(12);
+	var $PFS = __webpack_require__(9);
 	var $FW = __webpack_require__(22);
 	//Calculates all the shortest path's to all other nodes for all given nodes in the graph
 	//Returns a map with every node as key and the average distance to all other nodes as value
@@ -4658,8 +4662,8 @@
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var $N = __webpack_require__(2);
-	var $PFS = __webpack_require__(12);
-	var $BF = __webpack_require__(11);
+	var $PFS = __webpack_require__(9);
+	var $BF = __webpack_require__(8);
 	var $SU = __webpack_require__(3);
 	function Johnsons(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {

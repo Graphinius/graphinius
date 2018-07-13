@@ -9,6 +9,9 @@ import * as $E from '../../core/Edges';
 import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
 
+import { Logger } from '../../utils/logger';
+let logger : Logger = new Logger();
+
 const DEFAULT_WEIGHT = 1;
 
 export interface ICSVInput {
@@ -172,7 +175,7 @@ class CSVInput implements ICSVInput {
 			
 			if ( elements.length < 2 || elements.length > 3 ) {
 				
-				console.log(elements);
+				logger.log(elements);
 
 				throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 			}

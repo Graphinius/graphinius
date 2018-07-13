@@ -6,6 +6,9 @@ import * as $G from '../core/Graph';
 import * as $CB from '../utils/callbackUtils';
 import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
 
+import { Logger } from '../utils/logger';
+let logger : Logger = new Logger();
+
 export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
 // type EnergyFunctionDataTerm = (arg1: string, ...args: any[]) => number;
 // type EnergyFunction = (...args: any[]) => number;
@@ -92,12 +95,12 @@ class EMEBoykov implements IEMEBoykov {
 	        var source : $N.IBaseNode = this._state.expansionGraph.getNodeById("SOURCE");
 	        var sink   : $N.IBaseNode = this._state.expansionGraph.getNodeById("SINK");
 
-	console.log("compute mincut");
+	logger.log("compute mincut");
 					// compute the min cut
 	        var MinCut : $MC.IMCMFBoykov;
 	        MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
 	        var mincut_result: $MC.MCMFResult = MinCut.calculateCycle();
-	console.log("done mincut");
+	logger.log("done mincut");
 	        if (mincut_result.cost < this._state.energy) {
 	            this._state.energy = mincut_result.cost;
 	            this._state.labeledGraph = this.labelGraph(mincut_result, source);
@@ -113,7 +116,7 @@ class EMEBoykov implements IEMEBoykov {
 
     // if (success) {
     //   this.calculateCycle();
-		// 	console.log("continue");
+		// 	logger.log("continue");
     // }
 
     var result: EMEResult = {

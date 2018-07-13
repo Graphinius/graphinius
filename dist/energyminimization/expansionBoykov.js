@@ -3,6 +3,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var $G = require("../core/Graph");
 var $MC = require("../mincutmaxflow/minCutMaxFlowBoykov");
+var logger_1 = require("../utils/logger");
+var logger = new logger_1.Logger();
 /**
  *
  */
@@ -38,12 +40,12 @@ var EMEBoykov = /** @class */ (function () {
                 this._state.expansionGraph = this.constructGraph(); // construct new expansion graph
                 var source = this._state.expansionGraph.getNodeById("SOURCE");
                 var sink = this._state.expansionGraph.getNodeById("SINK");
-                console.log("compute mincut");
+                logger.log("compute mincut");
                 // compute the min cut
                 var MinCut;
                 MinCut = new $MC.MCMFBoykov(this._state.expansionGraph, source, sink, mincut_options);
                 var mincut_result = MinCut.calculateCycle();
-                console.log("done mincut");
+                logger.log("done mincut");
                 if (mincut_result.cost < this._state.energy) {
                     this._state.energy = mincut_result.cost;
                     this._state.labeledGraph = this.labelGraph(mincut_result, source);
@@ -57,7 +59,7 @@ var EMEBoykov = /** @class */ (function () {
         }
         // if (success) {
         //   this.calculateCycle();
-        // 	console.log("continue");
+        // 	logger.log("continue");
         // }
         var result = {
             graph: this._state.labeledGraph

@@ -2,6 +2,8 @@
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
 var $G = require("../core/Graph");
+var logger_1 = require("../utils/logger");
+var logger = new logger_1.Logger();
 /**
  *
  */
@@ -50,17 +52,17 @@ var MCMFBoykov = /** @class */ (function () {
         var nrCycles = 0;
         // start
         while (true) {
-            // console.log("grow");
+            // logger.log("grow");
             this.grow();
             if (!this._state.path.length) {
                 break;
             }
-            // console.log("augment");
+            // logger.log("augment");
             this.augmentation();
-            // console.log("adopt");
+            // logger.log("adopt");
             this.adoption();
             ++nrCycles;
-            // console.log(nrCycles);
+            // logger.log(nrCycles);
         }
         // compute the cut edges and the total cost of the cut
         // var tree_ids = Object.keys(this._state.tree);
@@ -71,7 +73,7 @@ var MCMFBoykov = /** @class */ (function () {
         //         ++size_S;
         //     }
         // }
-        console.log("computing result");
+        logger.log("computing result");
         var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
         var smallTree_size = Object.keys(smallTree).length;
         var smallTree_ids = Object.keys(smallTree);
@@ -133,10 +135,10 @@ var MCMFBoykov = /** @class */ (function () {
                 }
             }
         }
-        //console.log(result.edges);
-        console.log("Cost => " + result.cost);
-        console.log("# cycles => " + nrCycles);
-        // console.log(result.edges);
+        //logger.log(result.edges);
+        logger.log("Cost => " + result.cost);
+        logger.log("# cycles => " + nrCycles);
+        // logger.log(result.edges);
         return result;
     };
     MCMFBoykov.prototype.renameEdges = function (graph) {
@@ -159,7 +161,7 @@ var MCMFBoykov = /** @class */ (function () {
         var nodes = uGraph.getNodes();
         var nodes_ids = Object.keys(nodes);
         var nodes_length = nodes_ids.length;
-        // console.log("#nodes: " + Object.keys(nodes).length);
+        // logger.log("#nodes: " + Object.keys(nodes).length);
         for (var i = 0; i < nodes_length; i++) {
             // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
             var node = nodes[nodes_ids[i]];
@@ -178,7 +180,7 @@ var MCMFBoykov = /** @class */ (function () {
             dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
             dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
         }
-        // console.log(dGraph);
+        // logger.log(dGraph);
         return dGraph;
     };
     MCMFBoykov.prototype.tree = function (node) {

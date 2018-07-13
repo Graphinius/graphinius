@@ -208,31 +208,6 @@ declare module 'graphinius/utils/randGenUtils' {
 	export { randBase36String, runif, rnorm, rchisq, rpoisson, rcauchy, rbernoulli, rlist, histogram, rvunif, rvnorm, rvchisq, rvpoisson, rvcauchy, rvbernoulli, rvlist };
 
 }
-declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
-	    debug: string;
-	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
-
-}
-declare module 'graphinius/utils/logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any): boolean;
-	    error(err: any): boolean;
-	    dir(obj: any): boolean;
-	    info(msg: any): boolean;
-	    warn(msg: any): boolean;
-	}
-	export { Logger };
-
-}
 declare module 'graphinius/utils/callbackUtils' {
 	 function execCallbacks(cbs: Array<Function>, context?: any): void;
 	export { execCallbacks };
@@ -487,6 +462,31 @@ declare module 'graphinius/search/BellmanFord' {
 	    neg_cycle: boolean;
 	} function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult; function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult;
 	export { BellmanFordDict, BellmanFordArray };
+
+}
+declare module 'graphinius/config/run_config' {
+	 const LOG_LEVELS: {
+	    debug: string;
+	    production: string;
+	}; const RUN_CONFIG: {
+	    log_level: string;
+	};
+	export { LOG_LEVELS, RUN_CONFIG };
+
+}
+declare module 'graphinius/utils/logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any): boolean;
+	    error(err: any): boolean;
+	    dir(obj: any): boolean;
+	    info(msg: any): boolean;
+	    warn(msg: any): boolean;
+	}
+	export { Logger };
 
 }
 declare module 'graphinius/core/Graph' {
