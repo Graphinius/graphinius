@@ -157,7 +157,7 @@ gulp.task('bundle', ['pack'], function() {
 // 'Normal' synchronous tests
 gulp.task('test-core', ['build'], function () {
 	return gulp.src(paths.tests_core, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
@@ -165,7 +165,7 @@ gulp.task('test-core', ['build'], function () {
 // 'Async tests - usually take a tad longer'
 gulp.task('test-async', ['build'], function () {
 	return gulp.src(paths.tests_async, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
@@ -173,7 +173,7 @@ gulp.task('test-async', ['build'], function () {
 // 'Search tests - include Floyd Warshal and shortest paths'
 gulp.task('test-search', ['build'], function () {
 	return gulp.src(paths.tests_search, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
@@ -181,28 +181,28 @@ gulp.task('test-search', ['build'], function () {
 // 'Perturbation tests - usually take a tad longer'
 gulp.task('test-perturb', ['build'], function () {
 	return gulp.src(paths.tests_perturb, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
 // 'Centrality tests'
 gulp.task('test-central', ['build'], function () {
     return gulp.src(paths.tests_central, {read: false})
-						.pipe(mocha({reporter: 'spec',
+						.pipe(mocha({reporter: 'mochawesome',
 												 timeout: 600000}));
 });
 
 // 'Boykov Energyminimization tests - including mincutmaxflow'
 gulp.task('test-eme', ['build'], function () {
 	return gulp.src(paths.tests_eme, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
 // 'Generators tests'
 gulp.task('test-generators', ['build'], function () {
 	return gulp.src(paths.tests_generators, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
@@ -210,7 +210,7 @@ gulp.task('test-generators', ['build'], function () {
 // 'ALL tests '
 gulp.task('test-all', ['build'], function () {
 	return gulp.src(paths.tests_all, {read: false})
-						 .pipe(mocha({reporter: 'spec',
+						 .pipe(mocha({reporter: 'mochawesome',
 						 							timeout: 60000}));
 });
 
@@ -227,7 +227,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 
 gulp.task('coverage', ['pre-cov-test'], function () {
 	return gulp.src(paths.tests_all, {read: false})
-		.pipe(mocha({reporter: 'spec',
+		.pipe(mocha({reporter: 'mochawesome',
 			timeout: 600000}))
 		// .pipe(istanbul.writeReports({
 		// 	dir: './coverage/node-tests',

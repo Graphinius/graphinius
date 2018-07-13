@@ -227,54 +227,6 @@ declare module 'graphinius/core/Nodes' {
 	export { BaseNode };
 
 }
-<<<<<<< HEAD
-declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
-	    debug: string;
-	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
-
-}
-declare module 'graphinius/utils/logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	}
-	export enum LogColors {
-	    FgBlack = 30,
-	    FgRed = 31,
-	    FgGreen = 32,
-	    FgYellow = 33,
-	    FgBlue = 34,
-	    FgMagenta = 35,
-	    FgCyan = 36,
-	    FgWhite = 37,
-	    BgBlack = 40,
-	    BgRed = 41,
-	    BgGreen = 42,
-	    BgYellow = 43,
-	    BgBlue = 44,
-	    BgMagenta = 45,
-	    BgCyan = 46,
-	    BgWhite = 47,
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any, color?: number, bright?: boolean): boolean;
-	    error(err: any, color?: number, bright?: boolean): boolean;
-	    dir(obj: any, color?: number, bright?: boolean): boolean;
-	    info(msg: any, color?: number, bright?: boolean): boolean;
-	    warn(msg: any, color?: number, bright?: boolean): boolean;
-	    write(msg: any, color?: number, bright?: boolean): boolean;
-	    private colorize(color, output, bright);
-	}
-	export { Logger };
-
-}
-=======
->>>>>>> master
 declare module 'graphinius/utils/callbackUtils' {
 	 function execCallbacks(cbs: Array<Function>, context?: any): void;
 	export { execCallbacks };
@@ -374,7 +326,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	export enum BinaryHeapMode {
 	    MIN = 0,
-	    MAX = 1,
+	    MAX = 1
 	}
 	export interface PositionHeapEntry {
 	    score: number;
@@ -429,24 +381,24 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	     */
 	    insert(obj: any): void;
 	    remove(obj: any): any;
-	    private trickleDown(i);
-	    private trickleUp(i);
-	    private orderCorrect(obj_a, obj_b);
+	    private trickleDown;
+	    private trickleUp;
+	    private orderCorrect;
 	    /**
 	     * Superstructure to enable search in BinHeap in O(1)
 	     * @param obj
 	     * @param pos
 	     */
-	    private setNodePosition(obj, pos);
+	    private setNodePosition;
 	    /**
 	     *
 	     */
-	    private getNodePosition(obj);
+	    private getNodePosition;
 	    /**
 	     * @param obj
 	     * @returns {number}
 	     */
-	    private removeNodePosition(obj);
+	    private removeNodePosition;
 	}
 	export { BinaryHeap };
 
@@ -531,7 +483,6 @@ declare module 'graphinius/search/BellmanFord' {
 	export { BellmanFordDict, BellmanFordArray };
 
 }
-<<<<<<< HEAD
 declare module 'graphinius/search/Dijkstra' {
 	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
@@ -547,7 +498,8 @@ declare module 'graphinius/search/Johnsons' {
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
 	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
-=======
+
+}
 declare module 'graphinius/config/run_config' {
 	 const LOG_LEVELS: {
 	    debug: string;
@@ -561,17 +513,36 @@ declare module 'graphinius/config/run_config' {
 declare module 'graphinius/utils/logger' {
 	export interface LOG_CONFIG {
 	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
 	} class Logger {
 	    config: LOG_CONFIG;
 	    constructor(config?: any);
-	    log(msg: any): boolean;
-	    error(err: any): boolean;
-	    dir(obj: any): boolean;
-	    info(msg: any): boolean;
-	    warn(msg: any): boolean;
+	    log(msg: any, color?: number, bright?: boolean): boolean;
+	    error(err: any, color?: number, bright?: boolean): boolean;
+	    dir(obj: any, color?: number, bright?: boolean): boolean;
+	    info(msg: any, color?: number, bright?: boolean): boolean;
+	    warn(msg: any, color?: number, bright?: boolean): boolean;
+	    write(msg: any, color?: number, bright?: boolean): boolean;
+	    private colorize;
 	}
 	export { Logger };
->>>>>>> master
 
 }
 declare module 'graphinius/core/Graph' {
@@ -583,7 +554,7 @@ declare module 'graphinius/core/Graph' {
 	    INIT = 0,
 	    DIRECTED = 1,
 	    UNDIRECTED = 2,
-	    MIXED = 3,
+	    MIXED = 3
 	}
 	export interface GraphStats {
 	    mode: GraphMode;
@@ -762,7 +733,7 @@ declare module 'graphinius/core/Graph' {
 	    deleteNode(node: any): void;
 	    hasEdgeID(id: string): boolean;
 	    getEdgeById(id: string): $E.IBaseEdge;
-	    private checkExistanceOfEdgeNodes(node_a, node_b);
+	    private checkExistanceOfEdgeNodes;
 	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
 	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
 	    getDirEdges(): {
@@ -885,7 +856,7 @@ declare module 'graphinius/centralities/Degree' {
 	    out = 1,
 	    und = 2,
 	    dir = 3,
-	    all = 4,
+	    all = 4
 	}
 	/**
 	 * @TODO per edge type ???
@@ -1100,13 +1071,13 @@ declare module 'graphinius/io/input/CSVInput' {
 	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean, _weighted?: boolean);
 	    readFromAdjacencyListURL(config: $R.RequestConfig, cb: Function): void;
 	    readFromEdgeListURL(config: $R.RequestConfig, cb: Function): void;
-	    private readGraphFromURL(config, cb, localFun);
+	    private readGraphFromURL;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
-	    private readFileAndReturn(filepath, func);
+	    private readFileAndReturn;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
 	    readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
-	    private checkNodeEnvironment();
+	    private checkNodeEnvironment;
 	}
 	export { CSVInput };
 
@@ -1164,8 +1135,8 @@ declare module 'graphinius/io/input/JSONInput' {
 	     * handles them correctly anyways (for now)
 	     * @param edge_input
 	     */
-	    private handleEdgeWeights(edge_input);
-	    private checkNodeEnvironment();
+	    private handleEdgeWeights;
+	    private checkNodeEnvironment;
 	}
 	export { JSONInput };
 
@@ -1204,7 +1175,7 @@ declare module 'graphinius/io/output/JSONOutput' {
 	    constructor();
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONSString(graph: $G.IGraph): string;
-	    private handleEdgeWeight(edge);
+	    private handleEdgeWeight;
 	}
 	export { JSONOutput };
 
@@ -1282,13 +1253,13 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    private _config;
 	    private _gainsHash;
 	    constructor(_graph: IGraph, config?: KL_Config);
-	    private initPartitioning(initShuffle);
-	    private initCosts();
+	    private initPartitioning;
+	    private initCosts;
 	    initGainsHeap(): void;
 	    performIteration(): void;
 	    updateCosts(swap_ge: GainEntry): void;
 	    doSwapAndDropLockedConnections(): GainEntry;
-	    private removeGainsEntry(heap_id);
+	    private removeGainsEntry;
 	}
 
 }
@@ -1388,7 +1359,7 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	     * Go through the degree_configuration provided and create edges
 	     * as requested by config
 	     */
-	    private createEdgesByConfig(config, new_nodes);
+	    private createEdgesByConfig;
 	    /**
 	     * Simple edge generator:
 	     * Go through all node combinations, and

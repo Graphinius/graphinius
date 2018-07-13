@@ -48,6 +48,7 @@
     "json-loader": "^0.5.7",
     "merge2": "^1.2.1",
     "mocha": "^2.5.3",
+    "mochawesome": "^3.0.2",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0",
     "typedoc": "^0.9.0",
