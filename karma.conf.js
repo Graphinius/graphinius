@@ -3,7 +3,8 @@ module.exports = function(config) {
     plugins: [
       "karma-mocha",
       "karma-typescript",
-      "karma-chrome-launcher"
+      "karma-chrome-launcher",
+      "karma-firefox-launcher"
     ],
     frameworks: [
       "mocha", 
@@ -29,16 +30,33 @@ module.exports = function(config) {
         "include": [
           "./src/**/*.ts",
           "./test/**/*.ts"
-        ]
-      },
-      bundlerOptions: {
-        transforms: [
-            require("karma-typescript-es6-transform")()
-        ]
-      }
+        ]//,
+        // "exclude": [
+        //   "./node_modules"
+        // ]
+      }//,
+      // bundlerOptions: {
+      //   transforms: [
+      //       require("karma-typescript-es6-transform")({
+      //         presets: [
+      //             ["env", {
+      //                 targets: {
+      //                     chrome: "67"
+      //                 }
+      //             }]
+      //         ]
+      //     })
+      //   ]
+      // }
     },
-    reporters: ["progress", "karma-typescript"],
-    browsers: ["Chrome"],
+    reporters: [
+      "progress", 
+      "karma-typescript"
+    ],
+    browsers: [
+      // "Firefox"//,
+      "Chrome"
+    ],
     colors: true,
     logLevel: config.LOG_INFO,
     captureTimeout: 60000,
