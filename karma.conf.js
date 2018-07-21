@@ -12,10 +12,11 @@ module.exports = function(config) {
     ],
     files: [
       "src/**/*.ts",
-      "test/**/*.ts" // *.tsx for React Jsx
+      "test/test_async/**/*.ts",
+      "test/io/input/common.ts"
     ],
     preprocessors: {
-      "**/*.ts": "karma-typescript" // *.tsx for React Jsx
+      "**/*.ts": "karma-typescript"
     },
     karmaTypescriptConfig: {
       compilerOptions: {
@@ -60,6 +61,8 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     captureTimeout: 60000,
+    processKillTimeout: 60000,
+    browserDisconnectTimeout: 60000,
     singleRun: true
   });
 };
