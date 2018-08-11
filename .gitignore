@@ -52,3 +52,6 @@ test/test_data/output/**/*.json
 
 # MISC
 yarn.lock
+
+# Test reports
+mochawesome-report
