@@ -8,7 +8,6 @@ import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
 import { Logger } from '../utils/logger';
 const logger = new Logger();
 
-
 export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
 // type EnergyFunctionDataTerm = (arg1: string, ...args: any[]) => number;
 // type EnergyFunction = (...args: any[]) => number;

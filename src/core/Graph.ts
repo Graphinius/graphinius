@@ -3,11 +3,11 @@
 import * as $N from './Nodes';
 import * as $E from './Edges';
 import * as $DS from '../utils/structUtils';
-import { Logger } from '../utils/logger';
 import * as $BFS from '../search/BFS';
 import * as $DFS from '../search/DFS';
 import { BellmanFordArray } from '../search/BellmanFord';
 
+import { Logger } from '../utils/logger';
 let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;

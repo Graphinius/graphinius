@@ -51,13 +51,17 @@ var MCMFBoykov = /** @class */ (function () {
         this._state.activeNodes[this._sink.getID()] = this._sink;
         var nrCycles = 0;
         while (true) {
+            // logger.log("grow");
             this.grow();
             if (!this._state.path.length) {
                 break;
             }
+            // logger.log("augment");
             this.augmentation();
+            // logger.log("adopt");
             this.adoption();
             ++nrCycles;
+            // logger.log(nrCycles);
         }
         // compute the cut edges and the total cost of the cut
         // var tree_ids = Object.keys(this._state.tree);
