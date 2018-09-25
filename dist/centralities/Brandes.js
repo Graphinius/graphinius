@@ -24,6 +24,7 @@ var $BH = require("../datastructs/binaryHeap");
 function BrandesUnweighted(graph, normalize, directed) {
     if (normalize === void 0) { normalize = false; }
     if (directed === void 0) { directed = false; }
+    var e_1, _a;
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
@@ -87,15 +88,15 @@ function BrandesUnweighted(graph, normalize, directed) {
         while (S.length >= 1) {
             w = S.pop();
             try {
-                for (var _a = __values(Pred[w]), _b = _a.next(); !_b.done; _b = _a.next()) {
-                    var parent_1 = _b.value;
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_1 = _c.value;
                     delta[parent_1] += (sigma[parent_1] / sigma[w] * (1 + delta[w]));
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
@@ -114,10 +115,10 @@ function BrandesUnweighted(graph, normalize, directed) {
         normalizeScores(CB, graph.nrNodes(), directed);
     }
     return CB;
-    var e_1, _c;
 }
 exports.BrandesUnweighted = BrandesUnweighted;
 function BrandesWeighted(graph, normalize, directed) {
+    var e_2, _a;
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
@@ -203,15 +204,15 @@ function BrandesWeighted(graph, normalize, directed) {
         while (S.length >= 1) {
             w = S.pop();
             try {
-                for (var _a = __values(Pred[w]), _b = _a.next(); !_b.done; _b = _a.next()) {
-                    var parent_2 = _b.value;
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_2 = _c.value;
                     delta[parent_2] += (sigma[parent_2] / sigma[w] * (1 + delta[w]));
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
-                    if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
                 finally { if (e_2) throw e_2.error; }
             }
@@ -230,7 +231,6 @@ function BrandesWeighted(graph, normalize, directed) {
         normalizeScores(CB, N, directed);
     }
     return CB;
-    var e_2, _c;
 }
 exports.BrandesWeighted = BrandesWeighted;
 /**
@@ -242,6 +242,7 @@ exports.BrandesWeighted = BrandesWeighted;
  * @todo decide to remove or not
  */
 function BrandesPFSbased(graph, normalize, directed) {
+    var e_3, _a;
     var nodes = graph.getNodes();
     var adjList = graph.adjListDict();
     //Variables for Brandes algorithm
@@ -304,15 +305,15 @@ function BrandesPFSbased(graph, normalize, directed) {
         while (S.length >= 1) {
             var w = S.pop();
             try {
-                for (var _a = __values(Pred[w]), _b = _a.next(); !_b.done; _b = _a.next()) {
-                    var parent_3 = _b.value;
+                for (var _b = __values(Pred[w]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                    var parent_3 = _c.value;
                     delta[parent_3] += (sigma[parent_3] / sigma[w] * (1 + delta[w]));
                 }
             }
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
-                    if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
+                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
                 }
                 finally { if (e_3) throw e_3.error; }
             }
@@ -329,7 +330,6 @@ function BrandesPFSbased(graph, normalize, directed) {
         normalizeScores(CB, graph.nrNodes(), directed);
     }
     return CB;
-    var e_3, _c;
 }
 exports.BrandesPFSbased = BrandesPFSbased;
 function normalizeScores(CB, N, directed) {

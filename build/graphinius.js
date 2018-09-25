@@ -673,8 +673,8 @@
 	    function step(op) {
 	        if (f) throw new TypeError("Generator is already executing.");
 	        while (_) try {
-	            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [0, t.value];
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
 	            switch (op[0]) {
 	                case 0: case 1: t = op; break;
 	                case 4: _.label++; return { value: op[1], done: false };
@@ -736,7 +736,7 @@
 	        this._und_edges = {};
 	    }
 	    BaseGraph.prototype.getNodeIterator = function () {
-	        var keys, keys_1, keys_1_1, node_id, e_1_1, e_1, _a;
+	        var e_1, _a, keys, keys_1, keys_1_1, node_id, e_1_1;
 	        return __generator(this, function (_b) {
 	            switch (_b.label) {
 	                case 0:
@@ -2479,6 +2479,7 @@
 	}
 	exports.addExtraNandE = addExtraNandE;
 	function reWeighGraph(target, distDict, tempNode) {
+	    var e_1, _a;
 	    //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
 	    var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
 	    try {
@@ -2516,7 +2517,6 @@
 	        finally { if (e_1) throw e_1.error; }
 	    }
 	    return target;
-	    var e_1, _a;
 	}
 	exports.reWeighGraph = reWeighGraph;
 	function PFSFromAllNodes(graph) {

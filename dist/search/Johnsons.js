@@ -65,6 +65,7 @@ function addExtraNandE(target, nodeToAdd) {
 }
 exports.addExtraNandE = addExtraNandE;
 function reWeighGraph(target, distDict, tempNode) {
+    var e_1, _a;
     //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
     var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
     try {
@@ -102,7 +103,6 @@ function reWeighGraph(target, distDict, tempNode) {
         finally { if (e_1) throw e_1.error; }
     }
     return target;
-    var e_1, _a;
 }
 exports.reWeighGraph = reWeighGraph;
 function PFSFromAllNodes(graph) {
