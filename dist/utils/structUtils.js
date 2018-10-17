@@ -1,8 +1,8 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $N = require("../core/Nodes");
-var $E = require("../core/Edges");
+const $N = require("../core/Nodes");
+const $E = require("../core/Edges");
 /**
  * Method to deep clone an object
  *
@@ -55,8 +55,7 @@ exports.shuffleArray = shuffleArray;
  * if this is duplicate, the object will not be stored in result.
  * @returns {Array}
  */
-function mergeArrays(args, cb) {
-    if (cb === void 0) { cb = undefined; }
+function mergeArrays(args, cb = undefined) {
     for (var arg_idx in args) {
         if (!Array.isArray(args[arg_idx])) {
             throw new Error('Will only mergeArrays arrays');
@@ -120,9 +119,9 @@ exports.findKey = findKey;
  * @param b: second array
  */
 function mergeOrderedArraysNoDups(a, b) {
-    var ret = [];
-    var idx_a = 0;
-    var idx_b = 0;
+    let ret = [];
+    let idx_a = 0;
+    let idx_b = 0;
     if (a[0] != null && b[0] != null) {
         while (true) {
             if (idx_a >= a.length || idx_b >= b.length)

@@ -1,9 +1,9 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $SU = require("../utils/structUtils");
-var BaseNode = /** @class */ (function () {
-    function BaseNode(_id, features) {
+const $SU = require("../utils/structUtils");
+class BaseNode {
+    constructor(_id, features) {
         this._id = _id;
         this._in_degree = 0;
         this._out_degree = 0;
@@ -14,44 +14,44 @@ var BaseNode = /** @class */ (function () {
         this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
         this._label = this._features["label"] || this._id;
     }
-    BaseNode.prototype.getID = function () {
+    getID() {
         return this._id;
-    };
-    BaseNode.prototype.getLabel = function () {
+    }
+    getLabel() {
         return this._label;
-    };
-    BaseNode.prototype.setLabel = function (label) {
+    }
+    setLabel(label) {
         this._label = label;
-    };
-    BaseNode.prototype.getFeatures = function () {
+    }
+    getFeatures() {
         return this._features;
-    };
-    BaseNode.prototype.getFeature = function (key) {
+    }
+    getFeature(key) {
         return this._features[key];
-    };
-    BaseNode.prototype.setFeatures = function (features) {
+    }
+    setFeatures(features) {
         this._features = $SU.clone(features);
-    };
-    BaseNode.prototype.setFeature = function (key, value) {
+    }
+    setFeature(key, value) {
         this._features[key] = value;
-    };
-    BaseNode.prototype.deleteFeature = function (key) {
+    }
+    deleteFeature(key) {
         var feat = this._features[key];
         delete this._features[key];
         return feat;
-    };
-    BaseNode.prototype.clearFeatures = function () {
+    }
+    clearFeatures() {
         this._features = {};
-    };
-    BaseNode.prototype.inDegree = function () {
+    }
+    inDegree() {
         return this._in_degree;
-    };
-    BaseNode.prototype.outDegree = function () {
+    }
+    outDegree() {
         return this._out_degree;
-    };
-    BaseNode.prototype.degree = function () {
+    }
+    degree() {
         return this._und_degree;
-    };
+    }
     /**
      * We have to:
      * 1. throw an error if the edge is already attached
@@ -68,7 +68,7 @@ var BaseNode = /** @class */ (function () {
      * instead of simply checking the hash id...
      * ALTHOUGH: adding edges will (presumably) not occur often...
      */
-    BaseNode.prototype.addEdge = function (edge) {
+    addEdge(edge) {
         // is this edge connected to us at all?
         var nodes = edge.getNodes();
         if (nodes.a !== this && nodes.b !== this) {
@@ -100,36 +100,36 @@ var BaseNode = /** @class */ (function () {
             this._und_edges[edge.getID()] = edge;
             this._und_degree += 1;
         }
-    };
-    BaseNode.prototype.hasEdge = function (edge) {
+    }
+    hasEdge(edge) {
         return !!this._in_edges[edge.getID()] || !!this._out_edges[edge.getID()] || !!this._und_edges[edge.getID()];
-    };
-    BaseNode.prototype.hasEdgeID = function (id) {
+    }
+    hasEdgeID(id) {
         return !!this._in_edges[id] || !!this._out_edges[id] || !!this._und_edges[id];
-    };
-    BaseNode.prototype.getEdge = function (id) {
+    }
+    getEdge(id) {
         var edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
         if (!edge) {
             throw new Error("Cannot retrieve non-existing edge.");
         }
         return edge;
-    };
-    BaseNode.prototype.inEdges = function () {
+    }
+    inEdges() {
         return this._in_edges;
-    };
-    BaseNode.prototype.outEdges = function () {
+    }
+    outEdges() {
         return this._out_edges;
-    };
-    BaseNode.prototype.undEdges = function () {
+    }
+    undEdges() {
         return this._und_edges;
-    };
-    BaseNode.prototype.dirEdges = function () {
+    }
+    dirEdges() {
         return $SU.mergeObjects([this._in_edges, this._out_edges]);
-    };
-    BaseNode.prototype.allEdges = function () {
+    }
+    allEdges() {
         return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
-    };
-    BaseNode.prototype.removeEdge = function (edge) {
+    }
+    removeEdge(edge) {
         if (!this.hasEdge(edge)) {
             throw new Error("Cannot remove unconnected edge.");
         }
@@ -149,8 +149,8 @@ var BaseNode = /** @class */ (function () {
             delete this._out_edges[id];
             this._out_degree -= 1;
         }
-    };
-    BaseNode.prototype.removeEdgeID = function (id) {
+    }
+    removeEdgeID(id) {
         if (!this.hasEdgeID(id)) {
             throw new Error("Cannot remove unconnected edge.");
         }
@@ -169,29 +169,29 @@ var BaseNode = /** @class */ (function () {
             delete this._out_edges[id];
             this._out_degree -= 1;
         }
-    };
-    BaseNode.prototype.clearOutEdges = function () {
+    }
+    clearOutEdges() {
         this._out_edges = {};
         this._out_degree = 0;
-    };
-    BaseNode.prototype.clearInEdges = function () {
+    }
+    clearInEdges() {
         this._in_edges = {};
         this._in_degree = 0;
-    };
-    BaseNode.prototype.clearUndEdges = function () {
+    }
+    clearUndEdges() {
         this._und_edges = {};
         this._und_degree = 0;
-    };
-    BaseNode.prototype.clearEdges = function () {
+    }
+    clearEdges() {
         this.clearInEdges();
         this.clearOutEdges();
         this.clearUndEdges();
-    };
+    }
     /**
      * return the set of all nodes that have
      * directed edges coming into this node
      */
-    BaseNode.prototype.prevNodes = function () {
+    prevNodes() {
         var prevs = [];
         var key, edge;
         for (key in this._in_edges) {
@@ -204,12 +204,12 @@ var BaseNode = /** @class */ (function () {
             }
         }
         return prevs;
-    };
+    }
     /**
      * return the set of all nodes that have
      * directed edges going out from this node
      */
-    BaseNode.prototype.nextNodes = function () {
+    nextNodes() {
         var nexts = [];
         var key, edge;
         for (key in this._out_edges) {
@@ -222,12 +222,12 @@ var BaseNode = /** @class */ (function () {
             }
         }
         return nexts;
-    };
+    }
     /**
      * return the set of all nodes that are
      * connected to this node via undirected edges
      */
-    BaseNode.prototype.connNodes = function () {
+    connNodes() {
         var conns = [];
         var key, edge;
         for (key in this._und_edges) {
@@ -249,7 +249,7 @@ var BaseNode = /** @class */ (function () {
             }
         }
         return conns;
-    };
+    }
     /**
      * return the set of all nodes 'reachable' from this node,
      * either via unconnected or outgoing edges
@@ -259,11 +259,11 @@ var BaseNode = /** @class */ (function () {
      * @returns {Array}
      *
    */
-    BaseNode.prototype.reachNodes = function (identityFunc) {
+    reachNodes(identityFunc) {
         var identity = 0;
         // console.log(this.nextNodes());
         return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
-    };
+    }
     /**
      * return the set of all nodes connected to this node
      *
@@ -272,16 +272,15 @@ var BaseNode = /** @class */ (function () {
      * @returns {Array}
      *
    */
-    BaseNode.prototype.allNeighbors = function (identityFunc) {
+    allNeighbors(identityFunc) {
         var identity = 0;
         // console.log(this.nextNodes());
         return $SU.mergeArrays([this.prevNodes(), this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
-    };
-    BaseNode.prototype.clone = function () {
-        var new_node = new BaseNode(this._id);
+    }
+    clone() {
+        let new_node = new BaseNode(this._id);
         new_node.setFeatures(this.getFeatures());
         return new_node;
-    };
-    return BaseNode;
-}());
+    }
+}
 exports.BaseNode = BaseNode;

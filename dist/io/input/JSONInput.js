@@ -1,32 +1,29 @@
 "use strict";
 /// <reference path="../../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require("fs");
-var $G = require("../../core/Graph");
-var $R = require("../../utils/remoteUtils");
-var DEFAULT_WEIGHT = 1;
-var JSON_EXTENSION = ".json";
-var JSONInput = /** @class */ (function () {
-    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
-        if (_explicit_direction === void 0) { _explicit_direction = true; }
-        if (_direction === void 0) { _direction = false; }
-        if (_weighted_mode === void 0) { _weighted_mode = false; }
+const fs = require("fs");
+const $G = require("../../core/Graph");
+const $R = require("../../utils/remoteUtils");
+const DEFAULT_WEIGHT = 1;
+const JSON_EXTENSION = ".json";
+class JSONInput {
+    constructor(_explicit_direction = true, _direction = false, _weighted_mode = false) {
         this._explicit_direction = _explicit_direction;
         this._direction = _direction;
         this._weighted_mode = _weighted_mode;
     }
-    JSONInput.prototype.readFromJSONFile = function (filepath) {
+    readFromJSONFile(filepath) {
         this.checkNodeEnvironment();
         // TODO test for existing file...
         var json = JSON.parse(fs.readFileSync(filepath).toString());
         return this.readFromJSON(json);
-    };
-    JSONInput.prototype.readFromJSONURL = function (config, cb) {
+    }
+    readFromJSONURL(config, cb) {
         var self = this, graph, request, json;
         // Node or browser ??
         if (typeof window !== 'undefined') {
             // Browser...			
-            var fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
+            let fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 // console.log("Ready state: " + request.readyState);
@@ -51,14 +48,14 @@ var JSONInput = /** @class */ (function () {
                 cb(graph, undefined);
             });
         }
-    };
+    }
     /**
      * In this case, there is one great difference to the CSV edge list cases:
      * If you don't explicitly define a directed edge, it will simply
      * instantiate an undirected one
      * we'll leave that for now, as we will produce apt JSON sources later anyways...
      */
-    JSONInput.prototype.readFromJSON = function (json) {
+    readFromJSON(json) {
         var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
         for (var node_id in json.data) {
             var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
@@ -108,13 +105,13 @@ var JSONInput = /** @class */ (function () {
             }
         }
         return graph;
-    };
+    }
     /**
      * Infinity & -Infinity cases are redundant, as JavaScript
      * handles them correctly anyways (for now)
      * @param edge_input
      */
-    JSONInput.prototype.handleEdgeWeights = function (edge_input) {
+    handleEdgeWeights(edge_input) {
         switch (edge_input.weight) {
             case "undefined":
                 return DEFAULT_WEIGHT;
@@ -129,12 +126,11 @@ var JSONInput = /** @class */ (function () {
             default:
                 return parseFloat(edge_input.weight);
         }
-    };
-    JSONInput.prototype.checkNodeEnvironment = function () {
+    }
+    checkNodeEnvironment() {
         if (typeof window !== 'undefined') {
             throw new Error('Cannot read file in browser environment.');
         }
-    };
-    return JSONInput;
-}());
+    }
+}
 exports.JSONInput = JSONInput;

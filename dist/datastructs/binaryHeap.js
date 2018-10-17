@@ -10,7 +10,7 @@ var BinaryHeapMode;
  * We only support unique object ID's for now !!!
  * @TODO Rename into "ObjectBinaryHeap" or such...
  */
-var BinaryHeap = /** @class */ (function () {
+class BinaryHeap {
     /**
      * Mode of a min heap should only be set upon
      * instantiation and never again afterwards...
@@ -18,20 +18,17 @@ var BinaryHeap = /** @class */ (function () {
      * @param _evalObjID function to determine an object's identity
      * @param _evalPriority function to determine an objects score
      */
-    function BinaryHeap(_mode, _evalPriority, _evalObjID) {
-        if (_mode === void 0) { _mode = BinaryHeapMode.MIN; }
-        if (_evalPriority === void 0) { _evalPriority = function (obj) {
-            if (typeof obj !== 'number' && typeof obj !== 'string') {
-                return NaN;
-            }
-            if (typeof obj === 'number') {
-                return obj | 0;
-            }
-            return parseInt(obj);
-        }; }
-        if (_evalObjID === void 0) { _evalObjID = function (obj) {
-            return obj;
-        }; }
+    constructor(_mode = BinaryHeapMode.MIN, _evalPriority = (obj) => {
+        if (typeof obj !== 'number' && typeof obj !== 'string') {
+            return NaN;
+        }
+        if (typeof obj === 'number') {
+            return obj | 0;
+        }
+        return parseInt(obj);
+    }, _evalObjID = (obj) => {
+        return obj;
+    }) {
         this._mode = _mode;
         this._evalPriority = _evalPriority;
         this._evalObjID = _evalObjID;
@@ -39,48 +36,48 @@ var BinaryHeap = /** @class */ (function () {
         this._array = [];
         this._positions = {};
     }
-    BinaryHeap.prototype.getMode = function () {
+    getMode() {
         return this._mode;
-    };
-    BinaryHeap.prototype.getArray = function () {
+    }
+    getArray() {
         return this._array;
-    };
-    BinaryHeap.prototype.getPositions = function () {
+    }
+    getPositions() {
         return this._positions;
-    };
-    BinaryHeap.prototype.size = function () {
+    }
+    size() {
         return this._array.length;
-    };
-    BinaryHeap.prototype.getEvalPriorityFun = function () {
+    }
+    getEvalPriorityFun() {
         return this._evalPriority;
-    };
-    BinaryHeap.prototype.evalInputScore = function (obj) {
+    }
+    evalInputScore(obj) {
         return this._evalPriority(obj);
-    };
-    BinaryHeap.prototype.getEvalObjIDFun = function () {
+    }
+    getEvalObjIDFun() {
         return this._evalObjID;
-    };
-    BinaryHeap.prototype.evalInputObjID = function (obj) {
+    }
+    evalInputObjID(obj) {
         return this._evalObjID(obj);
-    };
-    BinaryHeap.prototype.peek = function () {
+    }
+    peek() {
         return this._array[0];
-    };
-    BinaryHeap.prototype.pop = function () {
+    }
+    pop() {
         if (this.size()) {
             return this.remove(this._array[0]);
         }
-    };
-    BinaryHeap.prototype.find = function (obj) {
+    }
+    find(obj) {
         var pos = this.getNodePosition(obj);
         return this._array[pos];
-    };
+    }
     /**
      * Insert - Adding an object to the heap
      * @param obj the obj to add to the heap
      * @returns {number} the objects index in the internal array
      */
-    BinaryHeap.prototype.insert = function (obj) {
+    insert(obj) {
         if (isNaN(this._evalPriority(obj))) {
             throw new Error("Cannot insert object without numeric priority.");
         }
@@ -90,8 +87,8 @@ var BinaryHeap = /** @class */ (function () {
         this._array.push(obj);
         this.setNodePosition(obj, this.size() - 1);
         this.trickleUp(this.size() - 1);
-    };
-    BinaryHeap.prototype.remove = function (obj) {
+    }
+    remove(obj) {
         this._nr_removes++;
         if (isNaN(this._evalPriority(obj))) {
             throw new Error('Object invalid.');
@@ -113,8 +110,8 @@ var BinaryHeap = /** @class */ (function () {
             this.trickleDown(pos);
         }
         return found;
-    };
-    BinaryHeap.prototype.trickleDown = function (i) {
+    }
+    trickleDown(i) {
         var parent = this._array[i];
         while (true) {
             var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
@@ -138,8 +135,8 @@ var BinaryHeap = /** @class */ (function () {
             this.setNodePosition(this._array[swap], swap);
             i = swap;
         }
-    };
-    BinaryHeap.prototype.trickleUp = function (i) {
+    }
+    trickleUp(i) {
         var child = this._array[i];
         // Can only trickle up from positive levels
         while (i) {
@@ -156,8 +153,8 @@ var BinaryHeap = /** @class */ (function () {
                 i = parent_idx;
             }
         }
-    };
-    BinaryHeap.prototype.orderCorrect = function (obj_a, obj_b) {
+    }
+    orderCorrect(obj_a, obj_b) {
         var obj_a_pr = this._evalPriority(obj_a);
         var obj_b_pr = this._evalPriority(obj_b);
         if (this._mode === BinaryHeapMode.MIN) {
@@ -166,13 +163,13 @@ var BinaryHeap = /** @class */ (function () {
         else {
             return obj_a_pr >= obj_b_pr;
         }
-    };
+    }
     /**
      * Superstructure to enable search in BinHeap in O(1)
      * @param obj
      * @param pos
      */
-    BinaryHeap.prototype.setNodePosition = function (obj, pos) {
+    setNodePosition(obj, pos) {
         if (obj == null || pos == null || pos !== (pos | 0)) {
             throw new Error('minium required arguments are obj and new_pos');
         }
@@ -182,25 +179,24 @@ var BinaryHeap = /** @class */ (function () {
         };
         var obj_key = this.evalInputObjID(obj);
         this._positions[obj_key] = pos_obj;
-    };
+    }
     /**
      *
      */
-    BinaryHeap.prototype.getNodePosition = function (obj) {
+    getNodePosition(obj) {
         var obj_key = this.evalInputObjID(obj);
         // console.log(obj_key);
         var occurrence = this._positions[obj_key];
         // console.log(occurrence);
         return occurrence ? occurrence.position : null;
-    };
+    }
     /**
      * @param obj
      * @returns {number}
      */
-    BinaryHeap.prototype.removeNodePosition = function (obj) {
+    removeNodePosition(obj) {
         var obj_key = this.evalInputObjID(obj);
         delete this._positions[obj_key];
-    };
-    return BinaryHeap;
-}());
+    }
+}
 exports.BinaryHeap = BinaryHeap;

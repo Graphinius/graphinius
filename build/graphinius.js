@@ -142,9 +142,9 @@
 
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $N = __webpack_require__(2);
-	var BaseEdge = /** @class */ (function () {
-	    function BaseEdge(_id, _node_a, _node_b, options) {
+	const $N = __webpack_require__(2);
+	class BaseEdge {
+	    constructor(_id, _node_a, _node_b, options) {
 	        this._id = _id;
 	        this._node_a = _node_a;
 	        this._node_b = _node_b;
@@ -158,34 +158,34 @@
 	        this._weight = this._weighted ? (isNaN(options.weight) ? 1 : options.weight) : undefined;
 	        this._label = options.label || this._id;
 	    }
-	    BaseEdge.prototype.getID = function () {
+	    getID() {
 	        return this._id;
-	    };
-	    BaseEdge.prototype.getLabel = function () {
+	    }
+	    getLabel() {
 	        return this._label;
-	    };
-	    BaseEdge.prototype.setLabel = function (label) {
+	    }
+	    setLabel(label) {
 	        this._label = label;
-	    };
-	    BaseEdge.prototype.isDirected = function () {
+	    }
+	    isDirected() {
 	        return this._directed;
-	    };
-	    BaseEdge.prototype.isWeighted = function () {
+	    }
+	    isWeighted() {
 	        return this._weighted;
-	    };
-	    BaseEdge.prototype.getWeight = function () {
+	    }
+	    getWeight() {
 	        return this._weight;
-	    };
-	    BaseEdge.prototype.setWeight = function (w) {
+	    }
+	    setWeight(w) {
 	        if (!this._weighted) {
 	            throw new Error("Cannot set weight on unweighted edge.");
 	        }
 	        this._weight = w;
-	    };
-	    BaseEdge.prototype.getNodes = function () {
+	    }
+	    getNodes() {
 	        return { a: this._node_a, b: this._node_b };
-	    };
-	    BaseEdge.prototype.clone = function (new_node_a, new_node_b) {
+	    }
+	    clone(new_node_a, new_node_b) {
 	        if (!(new_node_a instanceof $N.BaseNode) || !(new_node_b instanceof $N.BaseNode)) {
 	            throw new Error("refusing to clone edge if any new node is invalid");
 	        }
@@ -195,9 +195,8 @@
 	            weight: this._weight,
 	            label: this._label
 	        });
-	    };
-	    return BaseEdge;
-	}());
+	    }
+	}
 	exports.BaseEdge = BaseEdge;
 
 
@@ -208,9 +207,9 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $SU = __webpack_require__(3);
-	var BaseNode = /** @class */ (function () {
-	    function BaseNode(_id, features) {
+	const $SU = __webpack_require__(3);
+	class BaseNode {
+	    constructor(_id, features) {
 	        this._id = _id;
 	        this._in_degree = 0;
 	        this._out_degree = 0;
@@ -221,44 +220,44 @@
 	        this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
 	        this._label = this._features["label"] || this._id;
 	    }
-	    BaseNode.prototype.getID = function () {
+	    getID() {
 	        return this._id;
-	    };
-	    BaseNode.prototype.getLabel = function () {
+	    }
+	    getLabel() {
 	        return this._label;
-	    };
-	    BaseNode.prototype.setLabel = function (label) {
+	    }
+	    setLabel(label) {
 	        this._label = label;
-	    };
-	    BaseNode.prototype.getFeatures = function () {
+	    }
+	    getFeatures() {
 	        return this._features;
-	    };
-	    BaseNode.prototype.getFeature = function (key) {
+	    }
+	    getFeature(key) {
 	        return this._features[key];
-	    };
-	    BaseNode.prototype.setFeatures = function (features) {
+	    }
+	    setFeatures(features) {
 	        this._features = $SU.clone(features);
-	    };
-	    BaseNode.prototype.setFeature = function (key, value) {
+	    }
+	    setFeature(key, value) {
 	        this._features[key] = value;
-	    };
-	    BaseNode.prototype.deleteFeature = function (key) {
+	    }
+	    deleteFeature(key) {
 	        var feat = this._features[key];
 	        delete this._features[key];
 	        return feat;
-	    };
-	    BaseNode.prototype.clearFeatures = function () {
+	    }
+	    clearFeatures() {
 	        this._features = {};
-	    };
-	    BaseNode.prototype.inDegree = function () {
+	    }
+	    inDegree() {
 	        return this._in_degree;
-	    };
-	    BaseNode.prototype.outDegree = function () {
+	    }
+	    outDegree() {
 	        return this._out_degree;
-	    };
-	    BaseNode.prototype.degree = function () {
+	    }
+	    degree() {
 	        return this._und_degree;
-	    };
+	    }
 	    /**
 	     * We have to:
 	     * 1. throw an error if the edge is already attached
@@ -275,7 +274,7 @@
 	     * instead of simply checking the hash id...
 	     * ALTHOUGH: adding edges will (presumably) not occur often...
 	     */
-	    BaseNode.prototype.addEdge = function (edge) {
+	    addEdge(edge) {
 	        // is this edge connected to us at all?
 	        var nodes = edge.getNodes();
 	        if (nodes.a !== this && nodes.b !== this) {
@@ -307,36 +306,36 @@
 	            this._und_edges[edge.getID()] = edge;
 	            this._und_degree += 1;
 	        }
-	    };
-	    BaseNode.prototype.hasEdge = function (edge) {
+	    }
+	    hasEdge(edge) {
 	        return !!this._in_edges[edge.getID()] || !!this._out_edges[edge.getID()] || !!this._und_edges[edge.getID()];
-	    };
-	    BaseNode.prototype.hasEdgeID = function (id) {
+	    }
+	    hasEdgeID(id) {
 	        return !!this._in_edges[id] || !!this._out_edges[id] || !!this._und_edges[id];
-	    };
-	    BaseNode.prototype.getEdge = function (id) {
+	    }
+	    getEdge(id) {
 	        var edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
 	        if (!edge) {
 	            throw new Error("Cannot retrieve non-existing edge.");
 	        }
 	        return edge;
-	    };
-	    BaseNode.prototype.inEdges = function () {
+	    }
+	    inEdges() {
 	        return this._in_edges;
-	    };
-	    BaseNode.prototype.outEdges = function () {
+	    }
+	    outEdges() {
 	        return this._out_edges;
-	    };
-	    BaseNode.prototype.undEdges = function () {
+	    }
+	    undEdges() {
 	        return this._und_edges;
-	    };
-	    BaseNode.prototype.dirEdges = function () {
+	    }
+	    dirEdges() {
 	        return $SU.mergeObjects([this._in_edges, this._out_edges]);
-	    };
-	    BaseNode.prototype.allEdges = function () {
+	    }
+	    allEdges() {
 	        return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
-	    };
-	    BaseNode.prototype.removeEdge = function (edge) {
+	    }
+	    removeEdge(edge) {
 	        if (!this.hasEdge(edge)) {
 	            throw new Error("Cannot remove unconnected edge.");
 	        }
@@ -356,8 +355,8 @@
 	            delete this._out_edges[id];
 	            this._out_degree -= 1;
 	        }
-	    };
-	    BaseNode.prototype.removeEdgeID = function (id) {
+	    }
+	    removeEdgeID(id) {
 	        if (!this.hasEdgeID(id)) {
 	            throw new Error("Cannot remove unconnected edge.");
 	        }
@@ -376,29 +375,29 @@
 	            delete this._out_edges[id];
 	            this._out_degree -= 1;
 	        }
-	    };
-	    BaseNode.prototype.clearOutEdges = function () {
+	    }
+	    clearOutEdges() {
 	        this._out_edges = {};
 	        this._out_degree = 0;
-	    };
-	    BaseNode.prototype.clearInEdges = function () {
+	    }
+	    clearInEdges() {
 	        this._in_edges = {};
 	        this._in_degree = 0;
-	    };
-	    BaseNode.prototype.clearUndEdges = function () {
+	    }
+	    clearUndEdges() {
 	        this._und_edges = {};
 	        this._und_degree = 0;
-	    };
-	    BaseNode.prototype.clearEdges = function () {
+	    }
+	    clearEdges() {
 	        this.clearInEdges();
 	        this.clearOutEdges();
 	        this.clearUndEdges();
-	    };
+	    }
 	    /**
 	     * return the set of all nodes that have
 	     * directed edges coming into this node
 	     */
-	    BaseNode.prototype.prevNodes = function () {
+	    prevNodes() {
 	        var prevs = [];
 	        var key, edge;
 	        for (key in this._in_edges) {
@@ -411,12 +410,12 @@
 	            }
 	        }
 	        return prevs;
-	    };
+	    }
 	    /**
 	     * return the set of all nodes that have
 	     * directed edges going out from this node
 	     */
-	    BaseNode.prototype.nextNodes = function () {
+	    nextNodes() {
 	        var nexts = [];
 	        var key, edge;
 	        for (key in this._out_edges) {
@@ -429,12 +428,12 @@
 	            }
 	        }
 	        return nexts;
-	    };
+	    }
 	    /**
 	     * return the set of all nodes that are
 	     * connected to this node via undirected edges
 	     */
-	    BaseNode.prototype.connNodes = function () {
+	    connNodes() {
 	        var conns = [];
 	        var key, edge;
 	        for (key in this._und_edges) {
@@ -456,7 +455,7 @@
 	            }
 	        }
 	        return conns;
-	    };
+	    }
 	    /**
 	     * return the set of all nodes 'reachable' from this node,
 	     * either via unconnected or outgoing edges
@@ -466,11 +465,11 @@
 	     * @returns {Array}
 	     *
 	   */
-	    BaseNode.prototype.reachNodes = function (identityFunc) {
+	    reachNodes(identityFunc) {
 	        var identity = 0;
 	        // console.log(this.nextNodes());
 	        return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
-	    };
+	    }
 	    /**
 	     * return the set of all nodes connected to this node
 	     *
@@ -479,18 +478,17 @@
 	     * @returns {Array}
 	     *
 	   */
-	    BaseNode.prototype.allNeighbors = function (identityFunc) {
+	    allNeighbors(identityFunc) {
 	        var identity = 0;
 	        // console.log(this.nextNodes());
 	        return $SU.mergeArrays([this.prevNodes(), this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
-	    };
-	    BaseNode.prototype.clone = function () {
-	        var new_node = new BaseNode(this._id);
+	    }
+	    clone() {
+	        let new_node = new BaseNode(this._id);
 	        new_node.setFeatures(this.getFeatures());
 	        return new_node;
-	    };
-	    return BaseNode;
-	}());
+	    }
+	}
 	exports.BaseNode = BaseNode;
 
 
@@ -501,8 +499,8 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $N = __webpack_require__(2);
-	var $E = __webpack_require__(1);
+	const $N = __webpack_require__(2);
+	const $E = __webpack_require__(1);
 	/**
 	 * Method to deep clone an object
 	 *
@@ -555,8 +553,7 @@
 	 * if this is duplicate, the object will not be stored in result.
 	 * @returns {Array}
 	 */
-	function mergeArrays(args, cb) {
-	    if (cb === void 0) { cb = undefined; }
+	function mergeArrays(args, cb = undefined) {
 	    for (var arg_idx in args) {
 	        if (!Array.isArray(args[arg_idx])) {
 	            throw new Error('Will only mergeArrays arrays');
@@ -620,9 +617,9 @@
 	 * @param b: second array
 	 */
 	function mergeOrderedArraysNoDups(a, b) {
-	    var ret = [];
-	    var idx_a = 0;
-	    var idx_b = 0;
+	    let ret = [];
+	    let idx_a = 0;
+	    let idx_b = 0;
 	    if (a[0] != null && b[0] != null) {
 	        while (true) {
 	            if (idx_a >= a.length || idx_b >= b.length)
@@ -666,54 +663,17 @@
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
-	var __generator = (this && this.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [0, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	var __values = (this && this.__values) || function (o) {
-	    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-	    if (m) return m.call(o);
-	    return {
-	        next: function () {
-	            if (o && i >= o.length) o = void 0;
-	            return { value: o && o[i++], done: !o };
-	        }
-	    };
-	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $N = __webpack_require__(2);
-	var $E = __webpack_require__(1);
-	var $DS = __webpack_require__(3);
-	var $BFS = __webpack_require__(5);
-	var $DFS = __webpack_require__(7);
-	var $BF = __webpack_require__(8);
-	var $JO = __webpack_require__(11);
-	var logger_1 = __webpack_require__(12);
-	var logger = new logger_1.Logger();
-	var DEFAULT_WEIGHT = 1;
+	const $N = __webpack_require__(2);
+	const $E = __webpack_require__(1);
+	const $DS = __webpack_require__(3);
+	const $BFS = __webpack_require__(5);
+	const $DFS = __webpack_require__(7);
+	const $BF = __webpack_require__(8);
+	const $JO = __webpack_require__(11);
+	const logger_1 = __webpack_require__(12);
+	let logger = new logger_1.Logger();
+	const DEFAULT_WEIGHT = 1;
 	var GraphMode;
 	(function (GraphMode) {
 	    GraphMode[GraphMode["INIT"] = 0] = "INIT";
@@ -721,11 +681,11 @@
 	    GraphMode[GraphMode["UNDIRECTED"] = 2] = "UNDIRECTED";
 	    GraphMode[GraphMode["MIXED"] = 3] = "MIXED";
 	})(GraphMode = exports.GraphMode || (exports.GraphMode = {}));
-	var BaseGraph = /** @class */ (function () {
+	class BaseGraph {
 	    // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
 	    // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
 	    // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-	    function BaseGraph(_label) {
+	    constructor(_label) {
 	        this._label = _label;
 	        this._nr_nodes = 0;
 	        this._nr_dir_edges = 0;
@@ -735,42 +695,12 @@
 	        this._dir_edges = {};
 	        this._und_edges = {};
 	    }
-	    BaseGraph.prototype.getNodeIterator = function () {
-	        var keys, keys_1, keys_1_1, node_id, e_1_1, e_1, _a;
-	        return __generator(this, function (_b) {
-	            switch (_b.label) {
-	                case 0:
-	                    keys = Object.keys(this.getNodes());
-	                    _b.label = 1;
-	                case 1:
-	                    _b.trys.push([1, 6, 7, 8]);
-	                    keys_1 = __values(keys), keys_1_1 = keys_1.next();
-	                    _b.label = 2;
-	                case 2:
-	                    if (!!keys_1_1.done) return [3 /*break*/, 5];
-	                    node_id = keys_1_1.value;
-	                    return [4 /*yield*/, this._nodes[node_id]];
-	                case 3:
-	                    _b.sent();
-	                    _b.label = 4;
-	                case 4:
-	                    keys_1_1 = keys_1.next();
-	                    return [3 /*break*/, 2];
-	                case 5: return [3 /*break*/, 8];
-	                case 6:
-	                    e_1_1 = _b.sent();
-	                    e_1 = { error: e_1_1 };
-	                    return [3 /*break*/, 8];
-	                case 7:
-	                    try {
-	                        if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
-	                    }
-	                    finally { if (e_1) throw e_1.error; }
-	                    return [7 /*endfinally*/];
-	                case 8: return [2 /*return*/];
-	            }
-	        });
-	    };
+	    *getNodeIterator() {
+	        let keys = Object.keys(this.getNodes());
+	        for (let node_id of keys) {
+	            yield this._nodes[node_id];
+	        }
+	    }
 	    /**
 	     *
 	     * @param clone
@@ -779,51 +709,49 @@
 	     * Tests to be found in test suites for
 	     * BaseGraph, BellmanFord and Johnsons
 	     */
-	    BaseGraph.prototype.reweighIfHasNegativeEdge = function (clone) {
-	        if (clone === void 0) { clone = false; }
+	    reweighIfHasNegativeEdge(clone = false) {
 	        if (this.hasNegativeEdge()) {
-	            var result_graph = clone ? this.clone() : this;
+	            let result_graph = clone ? this.clone() : this;
 	            var extraNode = new $N.BaseNode("extraNode");
 	            result_graph = $JO.addExtraNandE(result_graph, extraNode);
-	            var BFresult = $BF.BellmanFordDict(result_graph, extraNode);
+	            let BFresult = $BF.BellmanFordDict(result_graph, extraNode);
 	            if (BFresult.neg_cycle) {
 	                throw new Error("The graph contains a negative cycle, thus it can not be processed");
 	            }
 	            else {
-	                var newWeights = BFresult.distances;
+	                let newWeights = BFresult.distances;
 	                result_graph = $JO.reWeighGraph(result_graph, newWeights, extraNode);
 	                result_graph.deleteNode(extraNode);
 	            }
 	            return result_graph;
 	        }
-	    };
+	    }
 	    /**
 	     * Version 1: do it in-place (to the object you receive)
 	     * Version 2: clone the graph first, return the mutated clone
 	     */
-	    BaseGraph.prototype.toDirectedGraph = function (copy) {
-	        if (copy === void 0) { copy = false; }
-	        var result_graph = copy ? this.clone() : this;
+	    toDirectedGraph(copy = false) {
+	        let result_graph = copy ? this.clone() : this;
 	        // if graph has no edges, we want to throw an exception
 	        if (this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
 	            throw new Error("Cowardly refusing to re-interpret an empty graph.");
 	        }
 	        return result_graph;
-	    };
-	    BaseGraph.prototype.toUndirectedGraph = function () {
+	    }
+	    toUndirectedGraph() {
 	        return this;
-	    };
+	    }
 	    /**
 	     * what to do if some edges are not weighted at all?
 	     * Since graph traversal algortihms (and later maybe graphs themselves)
 	     * use default weights anyways, I am simply ignoring them for now...
 	     * @todo figure out how to test this...
 	     */
-	    BaseGraph.prototype.hasNegativeEdge = function () {
-	        var has_neg_edge = false, edge;
+	    hasNegativeEdge() {
+	        let has_neg_edge = false, edge;
 	        // negative und_edges are always negative cycles
 	        //reminder: a return statement breaks out of the for loop and finishes the function
-	        for (var edge_id in this._und_edges) {
+	        for (let edge_id in this._und_edges) {
 	            edge = this._und_edges[edge_id];
 	            if (!edge.isWeighted()) {
 	                continue;
@@ -832,7 +760,7 @@
 	                return true;
 	            }
 	        }
-	        for (var edge_id in this._dir_edges) {
+	        for (let edge_id in this._dir_edges) {
 	            edge = this._dir_edges[edge_id];
 	            if (!edge.isWeighted()) {
 	                continue;
@@ -843,53 +771,51 @@
 	            }
 	        }
 	        return has_neg_edge;
-	    };
+	    }
 	    /**
 	     * Do we want to throw an error if an edge is unweighted?
 	     * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
 	     */
-	    BaseGraph.prototype.hasNegativeCycles = function (node) {
-	        var _this = this;
+	    hasNegativeCycles(node) {
 	        if (!this.hasNegativeEdge()) {
 	            return false;
 	        }
-	        var negative_cycle = false, start = node ? node : this.getRandomNode();
+	        let negative_cycle = false, start = node ? node : this.getRandomNode();
 	        /**
 	         * Now do Bellman Ford over all graph components
 	         */
-	        $DFS.DFS(this, start).forEach(function (comp) {
-	            var min_count = Number.POSITIVE_INFINITY, comp_start_node;
-	            Object.keys(comp).forEach(function (node_id) {
+	        $DFS.DFS(this, start).forEach(comp => {
+	            let min_count = Number.POSITIVE_INFINITY, comp_start_node;
+	            Object.keys(comp).forEach(node_id => {
 	                if (min_count > comp[node_id].counter) {
 	                    min_count = comp[node_id].counter;
 	                    comp_start_node = node_id;
 	                }
 	            });
-	            if ($BF.BellmanFordArray(_this, _this._nodes[comp_start_node]).neg_cycle) {
+	            if ($BF.BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle) {
 	                negative_cycle = true;
 	            }
 	        });
 	        return negative_cycle;
-	    };
+	    }
 	    /**
 	     *
 	     * @param incoming
 	     */
-	    BaseGraph.prototype.nextArray = function (incoming) {
-	        if (incoming === void 0) { incoming = false; }
-	        var next = [], node_keys = Object.keys(this._nodes);
+	    nextArray(incoming = false) {
+	        let next = [], node_keys = Object.keys(this._nodes);
 	        //?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
 	        //I do not understand but it works so it should be okay	
-	        var adjDict = this.adjListDict(incoming, true, 0);
-	        for (var i = 0; i < this._nr_nodes; ++i) {
+	        const adjDict = this.adjListDict(incoming, true, 0);
+	        for (let i = 0; i < this._nr_nodes; ++i) {
 	            next.push([]);
-	            for (var j = 0; j < this._nr_nodes; ++j) {
+	            for (let j = 0; j < this._nr_nodes; ++j) {
 	                next[i].push([]);
 	                next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
 	            }
 	        }
 	        return next;
-	    };
+	    }
 	    /**
 	     * This function iterates over the adjDict in order to use it's advantage
 	     * of being able to override edges if edges with smaller weights exist
@@ -903,29 +829,25 @@
 	     * @param include_self contains a distance to itself apart?
 	     * @param self_dist default distance to self
 	     */
-	    BaseGraph.prototype.adjListArray = function (incoming) {
-	        if (incoming === void 0) { incoming = false; }
-	        var adjList = [], node_keys = Object.keys(this._nodes);
-	        var adjDict = this.adjListDict(incoming, true, 0);
-	        for (var i = 0; i < this._nr_nodes; ++i) {
+	    adjListArray(incoming = false) {
+	        let adjList = [], node_keys = Object.keys(this._nodes);
+	        const adjDict = this.adjListDict(incoming, true, 0);
+	        for (let i = 0; i < this._nr_nodes; ++i) {
 	            adjList.push([]);
-	            for (var j = 0; j < this._nr_nodes; ++j) {
+	            for (let j = 0; j < this._nr_nodes; ++j) {
 	                adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
 	            }
 	        }
 	        return adjList;
-	    };
+	    }
 	    /**
 	     *
 	     * @param incoming whether or not to consider incoming edges as well
 	     * @param include_self contains a distance to itself apart?
 	     * @param self_dist default distance to self
 	     */
-	    BaseGraph.prototype.adjListDict = function (incoming, include_self, self_dist) {
-	        if (incoming === void 0) { incoming = false; }
-	        if (include_self === void 0) { include_self = false; }
-	        if (self_dist === void 0) { self_dist = 0; }
-	        var adj_list_dict = {}, nodes = this.getNodes(), cur_dist, key, cur_edge_weight;
+	    adjListDict(incoming = false, include_self = false, self_dist = 0) {
+	        let adj_list_dict = {}, nodes = this.getNodes(), cur_dist, key, cur_edge_weight;
 	        for (key in nodes) {
 	            adj_list_dict[key] = {};
 	            if (include_self) {
@@ -933,8 +855,8 @@
 	            }
 	        }
 	        for (key in nodes) {
-	            var neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
-	            neighbors.forEach(function (ne) {
+	            let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
+	            neighbors.forEach((ne) => {
 	                cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 	                cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
 	                if (cur_edge_weight < cur_dist) {
@@ -952,11 +874,11 @@
 	            });
 	        }
 	        return adj_list_dict;
-	    };
-	    BaseGraph.prototype.getMode = function () {
+	    }
+	    getMode() {
 	        return this._mode;
-	    };
-	    BaseGraph.prototype.getStats = function () {
+	    }
+	    getStats() {
 	        return {
 	            mode: this._mode,
 	            nr_nodes: this._nr_nodes,
@@ -965,16 +887,16 @@
 	            density_dir: this._nr_dir_edges / (this._nr_nodes * (this._nr_nodes - 1)),
 	            density_und: 2 * this._nr_und_edges / (this._nr_nodes * (this._nr_nodes - 1))
 	        };
-	    };
-	    BaseGraph.prototype.nrNodes = function () {
+	    }
+	    nrNodes() {
 	        return this._nr_nodes;
-	    };
-	    BaseGraph.prototype.nrDirEdges = function () {
+	    }
+	    nrDirEdges() {
 	        return this._nr_dir_edges;
-	    };
-	    BaseGraph.prototype.nrUndEdges = function () {
+	    }
+	    nrUndEdges() {
 	        return this._nr_und_edges;
-	    };
+	    }
 	    /**
 	     *
 	     * @param id
@@ -982,49 +904,49 @@
 	     *
 	     * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique...
 	     */
-	    BaseGraph.prototype.addNodeByID = function (id, opts) {
+	    addNodeByID(id, opts) {
 	        if (this.hasNodeID(id)) {
 	            throw new Error("Won't add node with duplicate ID.");
 	        }
 	        var node = new $N.BaseNode(id, opts);
 	        return this.addNode(node) ? node : null;
-	    };
-	    BaseGraph.prototype.addNode = function (node) {
+	    }
+	    addNode(node) {
 	        if (this.hasNodeID(node.getID())) {
 	            throw new Error("Won't add node with duplicate ID.");
 	        }
 	        this._nodes[node.getID()] = node;
 	        this._nr_nodes += 1;
 	        return true;
-	    };
+	    }
 	    /**
 	     * Instantiates a new node object, copies the features and
 	     * adds the node to the graph, but does NOT clone it's edges
 	     * @param node the node object to clone
 	     */
-	    BaseGraph.prototype.cloneAndAddNode = function (node) {
-	        var new_node = new $N.BaseNode(node.getID());
+	    cloneAndAddNode(node) {
+	        let new_node = new $N.BaseNode(node.getID());
 	        new_node.setFeatures($DS.clone(node.getFeatures()));
 	        this._nodes[node.getID()] = new_node;
 	        this._nr_nodes += 1;
 	        return new_node;
-	    };
-	    BaseGraph.prototype.hasNodeID = function (id) {
+	    }
+	    hasNodeID(id) {
 	        return !!this._nodes[id];
-	    };
-	    BaseGraph.prototype.getNodeById = function (id) {
+	    }
+	    getNodeById(id) {
 	        return this._nodes[id];
-	    };
-	    BaseGraph.prototype.getNodes = function () {
+	    }
+	    getNodes() {
 	        return this._nodes;
-	    };
+	    }
 	    /**
 	     * CAUTION - This function takes linear time in # nodes
 	     */
-	    BaseGraph.prototype.getRandomNode = function () {
+	    getRandomNode() {
 	        return this.pickRandomProperty(this._nodes);
-	    };
-	    BaseGraph.prototype.deleteNode = function (node) {
+	    }
+	    deleteNode(node) {
 	        var rem_node = this._nodes[node.getID()];
 	        if (!rem_node) {
 	            throw new Error('Cannot remove un-added node.');
@@ -1045,48 +967,48 @@
 	        }
 	        delete this._nodes[node.getID()];
 	        this._nr_nodes -= 1;
-	    };
-	    BaseGraph.prototype.hasEdgeID = function (id) {
+	    }
+	    hasEdgeID(id) {
 	        return !!this._dir_edges[id] || !!this._und_edges[id];
-	    };
-	    BaseGraph.prototype.getEdgeById = function (id) {
+	    }
+	    getEdgeById(id) {
 	        var edge = this._dir_edges[id] || this._und_edges[id];
 	        if (!edge) {
 	            throw new Error("cannot retrieve edge with non-existing ID.");
 	        }
 	        return edge;
-	    };
-	    BaseGraph.prototype.checkExistanceOfEdgeNodes = function (node_a, node_b) {
+	    }
+	    checkExistanceOfEdgeNodes(node_a, node_b) {
 	        if (!node_a) {
 	            throw new Error("Cannot find edge. Node A does not exist (in graph).");
 	        }
 	        if (!node_b) {
 	            throw new Error("Cannot find edge. Node B does not exist (in graph).");
 	        }
-	    };
+	    }
 	    // get the edge from node_a to node_b (or undirected)
-	    BaseGraph.prototype.getDirEdgeByNodeIDs = function (node_a_id, node_b_id) {
-	        var node_a = this.getNodeById(node_a_id);
-	        var node_b = this.getNodeById(node_b_id);
+	    getDirEdgeByNodeIDs(node_a_id, node_b_id) {
+	        const node_a = this.getNodeById(node_a_id);
+	        const node_b = this.getNodeById(node_b_id);
 	        this.checkExistanceOfEdgeNodes(node_a, node_b);
 	        // check for outgoing directed edges
-	        var edges_dir = node_a.outEdges(), edges_dir_keys = Object.keys(edges_dir);
-	        for (var i = 0; i < edges_dir_keys.length; i++) {
+	        let edges_dir = node_a.outEdges(), edges_dir_keys = Object.keys(edges_dir);
+	        for (let i = 0; i < edges_dir_keys.length; i++) {
 	            var edge = edges_dir[edges_dir_keys[i]];
 	            if (edge.getNodes().b.getID() == node_b_id) {
 	                return edge;
 	            }
 	        }
 	        // if we managed to arrive here, there is no edge!
-	        throw new Error("Cannot find edge. There is no edge between Node " + node_a_id + " and " + node_b_id + ".");
-	    };
-	    BaseGraph.prototype.getUndEdgeByNodeIDs = function (node_a_id, node_b_id) {
-	        var node_a = this.getNodeById(node_a_id);
-	        var node_b = this.getNodeById(node_b_id);
+	        throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
+	    }
+	    getUndEdgeByNodeIDs(node_a_id, node_b_id) {
+	        const node_a = this.getNodeById(node_a_id);
+	        const node_b = this.getNodeById(node_b_id);
 	        this.checkExistanceOfEdgeNodes(node_a, node_b);
 	        // check for undirected edges
-	        var edges_und = node_a.undEdges(), edges_und_keys = Object.keys(edges_und);
-	        for (var i = 0; i < edges_und_keys.length; i++) {
+	        let edges_und = node_a.undEdges(), edges_und_keys = Object.keys(edges_und);
+	        for (let i = 0; i < edges_und_keys.length; i++) {
 	            var edge = edges_und[edges_und_keys[i]];
 	            var b;
 	            (edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
@@ -1094,28 +1016,28 @@
 	                return edge;
 	            }
 	        }
-	    };
-	    BaseGraph.prototype.getDirEdges = function () {
+	    }
+	    getDirEdges() {
 	        return this._dir_edges;
-	    };
-	    BaseGraph.prototype.getUndEdges = function () {
+	    }
+	    getUndEdges() {
 	        return this._und_edges;
-	    };
-	    BaseGraph.prototype.getDirEdgesArray = function () {
-	        var edges = [];
-	        for (var e_id in this._dir_edges) {
+	    }
+	    getDirEdgesArray() {
+	        let edges = [];
+	        for (let e_id in this._dir_edges) {
 	            edges.push(this._dir_edges[e_id]);
 	        }
 	        return edges;
-	    };
-	    BaseGraph.prototype.getUndEdgesArray = function () {
-	        var edges = [];
-	        for (var e_id in this._und_edges) {
+	    }
+	    getUndEdgesArray() {
+	        let edges = [];
+	        for (let e_id in this._und_edges) {
 	            edges.push(this._und_edges[e_id]);
 	        }
 	        return edges;
-	    };
-	    BaseGraph.prototype.addEdgeByNodeIDs = function (label, node_a_id, node_b_id, opts) {
+	    }
+	    addEdgeByNodeIDs(label, node_a_id, node_b_id, opts) {
 	        var node_a = this.getNodeById(node_a_id), node_b = this.getNodeById(node_b_id);
 	        if (!node_a) {
 	            throw new Error("Cannot add edge. Node A does not exist");
@@ -1126,19 +1048,19 @@
 	        else {
 	            return this.addEdgeByID(label, node_a, node_b, opts);
 	        }
-	    };
+	    }
 	    /**
 	     * Now all test cases pertaining addEdge() call this one...
 	     */
-	    BaseGraph.prototype.addEdgeByID = function (id, node_a, node_b, opts) {
-	        var edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
+	    addEdgeByID(id, node_a, node_b, opts) {
+	        let edge = new $E.BaseEdge(id, node_a, node_b, opts || {});
 	        return this.addEdge(edge);
-	    };
+	    }
 	    /**
 	     * Test cases should be reversed / completed
 	     */
-	    BaseGraph.prototype.addEdge = function (edge) {
-	        var node_a = edge.getNodes().a, node_b = edge.getNodes().b;
+	    addEdge(edge) {
+	        let node_a = edge.getNodes().a, node_b = edge.getNodes().b;
 	        if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())
 	            || this._nodes[node_a.getID()] !== node_a || this._nodes[node_b.getID()] !== node_b) {
 	            throw new Error("can only add edge between two nodes existing in graph");
@@ -1162,8 +1084,8 @@
 	            this.updateGraphMode();
 	        }
 	        return edge;
-	    };
-	    BaseGraph.prototype.deleteEdge = function (edge) {
+	    }
+	    deleteEdge(edge) {
 	        var dir_edge = this._dir_edges[edge.getID()];
 	        var und_edge = this._und_edges[edge.getID()];
 	        if (!dir_edge && !und_edge) {
@@ -1183,9 +1105,9 @@
 	            this._nr_und_edges -= 1;
 	        }
 	        this.updateGraphMode();
-	    };
+	    }
 	    // Some atomicity / rollback feature would be nice here...
-	    BaseGraph.prototype.deleteInEdgesOf = function (node) {
+	    deleteInEdgesOf(node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var in_edges = node.inEdges();
 	        var key, edge;
@@ -1197,9 +1119,9 @@
 	        }
 	        node.clearInEdges();
 	        this.updateGraphMode();
-	    };
+	    }
 	    // Some atomicity / rollback feature would be nice here...
-	    BaseGraph.prototype.deleteOutEdgesOf = function (node) {
+	    deleteOutEdgesOf(node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var out_edges = node.outEdges();
 	        var key, edge;
@@ -1211,14 +1133,14 @@
 	        }
 	        node.clearOutEdges();
 	        this.updateGraphMode();
-	    };
+	    }
 	    // Some atomicity / rollback feature would be nice here...
-	    BaseGraph.prototype.deleteDirEdgesOf = function (node) {
+	    deleteDirEdgesOf(node) {
 	        this.deleteInEdgesOf(node);
 	        this.deleteOutEdgesOf(node);
-	    };
+	    }
 	    // Some atomicity / rollback feature would be nice here...
-	    BaseGraph.prototype.deleteUndEdgesOf = function (node) {
+	    deleteUndEdgesOf(node) {
 	        this.checkConnectedNodeOrThrow(node);
 	        var und_edges = node.undEdges();
 	        var key, edge;
@@ -1234,48 +1156,48 @@
 	        }
 	        node.clearUndEdges();
 	        this.updateGraphMode();
-	    };
+	    }
 	    // Some atomicity / rollback feature would be nice here...
-	    BaseGraph.prototype.deleteAllEdgesOf = function (node) {
+	    deleteAllEdgesOf(node) {
 	        this.deleteDirEdgesOf(node);
 	        this.deleteUndEdgesOf(node);
-	    };
+	    }
 	    /**
 	     * Remove all the (un)directed edges in the graph
 	     */
-	    BaseGraph.prototype.clearAllDirEdges = function () {
+	    clearAllDirEdges() {
 	        for (var edge in this._dir_edges) {
 	            this.deleteEdge(this._dir_edges[edge]);
 	        }
-	    };
-	    BaseGraph.prototype.clearAllUndEdges = function () {
+	    }
+	    clearAllUndEdges() {
 	        for (var edge in this._und_edges) {
 	            this.deleteEdge(this._und_edges[edge]);
 	        }
-	    };
-	    BaseGraph.prototype.clearAllEdges = function () {
+	    }
+	    clearAllEdges() {
 	        this.clearAllDirEdges();
 	        this.clearAllUndEdges();
-	    };
+	    }
 	    /**
 	     * CAUTION - This function is linear in # directed edges
 	     */
-	    BaseGraph.prototype.getRandomDirEdge = function () {
+	    getRandomDirEdge() {
 	        return this.pickRandomProperty(this._dir_edges);
-	    };
+	    }
 	    /**
 	     * CAUTION - This function is linear in # undirected edges
 	     */
-	    BaseGraph.prototype.getRandomUndEdge = function () {
+	    getRandomUndEdge() {
 	        return this.pickRandomProperty(this._und_edges);
-	    };
-	    BaseGraph.prototype.clone = function () {
-	        var new_graph = new BaseGraph(this._label), old_nodes = this.getNodes(), old_edge, new_node_a = null, new_node_b = null;
-	        for (var node_id in old_nodes) {
+	    }
+	    clone() {
+	        let new_graph = new BaseGraph(this._label), old_nodes = this.getNodes(), old_edge, new_node_a = null, new_node_b = null;
+	        for (let node_id in old_nodes) {
 	            new_graph.addNode(old_nodes[node_id].clone());
 	        }
-	        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
-	            for (var edge_id in old_edges) {
+	        [this.getDirEdges(), this.getUndEdges()].forEach((old_edges) => {
+	            for (let edge_id in old_edges) {
 	                old_edge = old_edges[edge_id];
 	                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
 	                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
@@ -1283,10 +1205,10 @@
 	            }
 	        });
 	        return new_graph;
-	    };
-	    BaseGraph.prototype.cloneSubGraph = function (root, cutoff) {
-	        var new_graph = new BaseGraph(this._label);
-	        var config = $BFS.prepareBFSStandardConfig();
+	    }
+	    cloneSubGraph(root, cutoff) {
+	        let new_graph = new BaseGraph(this._label);
+	        let config = $BFS.prepareBFSStandardConfig();
 	        var bfsNodeUnmarkedTestCallback = function (context) {
 	            if (config.result[context.next_node.getID()].counter > cutoff) {
 	                context.queue = [];
@@ -1297,9 +1219,9 @@
 	        };
 	        config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
 	        $BFS.BFS(this, root, config);
-	        var old_edge, new_node_a = null, new_node_b = null;
-	        [this.getDirEdges(), this.getUndEdges()].forEach(function (old_edges) {
-	            for (var edge_id in old_edges) {
+	        let old_edge, new_node_a = null, new_node_b = null;
+	        [this.getDirEdges(), this.getUndEdges()].forEach((old_edges) => {
+	            for (let edge_id in old_edges) {
 	                old_edge = old_edges[edge_id];
 	                new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
 	                new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
@@ -1308,14 +1230,14 @@
 	            }
 	        });
 	        return new_graph;
-	    };
-	    BaseGraph.prototype.checkConnectedNodeOrThrow = function (node) {
+	    }
+	    checkConnectedNodeOrThrow(node) {
 	        var node = this._nodes[node.getID()];
 	        if (!node) {
 	            throw new Error('Cowardly refusing to delete edges of un-added node.');
 	        }
-	    };
-	    BaseGraph.prototype.updateGraphMode = function () {
+	    }
+	    updateGraphMode() {
 	        var nr_dir = this._nr_dir_edges, nr_und = this._nr_und_edges;
 	        if (nr_dir && nr_und) {
 	            this._mode = GraphMode.MIXED;
@@ -1329,12 +1251,12 @@
 	        else {
 	            this._mode = GraphMode.INIT;
 	        }
-	    };
-	    BaseGraph.prototype.pickRandomProperty = function (propList) {
-	        var tmpList = Object.keys(propList);
-	        var randomPropertyName = tmpList[Math.floor(Math.random() * tmpList.length)];
+	    }
+	    pickRandomProperty(propList) {
+	        let tmpList = Object.keys(propList);
+	        let randomPropertyName = tmpList[Math.floor(Math.random() * tmpList.length)];
 	        return propList[randomPropertyName];
-	    };
+	    }
 	    /**
 	     * In some cases we need to give back a large number of objects
 	     * in one swoop, as calls to Object.keys() are really slow
@@ -1359,28 +1281,27 @@
 	     * @param fraction
 	     * @returns {Array}
 	     */
-	    BaseGraph.prototype.pickRandomProperties = function (propList, amount) {
-	        var ids = [];
-	        var keys = Object.keys(propList);
-	        var fraction = amount / keys.length;
-	        var used_keys = {};
-	        for (var i = 0; ids.length < amount && i < keys.length; i++) {
+	    pickRandomProperties(propList, amount) {
+	        let ids = [];
+	        let keys = Object.keys(propList);
+	        let fraction = amount / keys.length;
+	        let used_keys = {};
+	        for (let i = 0; ids.length < amount && i < keys.length; i++) {
 	            if (Math.random() < fraction) {
 	                ids.push(keys[i]);
 	                used_keys[keys[i]] = i;
 	            }
 	        }
-	        var diff = amount - ids.length;
-	        for (var i = 0; i < keys.length && diff; i++) {
+	        let diff = amount - ids.length;
+	        for (let i = 0; i < keys.length && diff; i++) {
 	            if (used_keys[keys[i]] == null) {
 	                ids.push(keys[i]);
 	                diff--;
 	            }
 	        }
 	        return ids;
-	    };
-	    return BaseGraph;
-	}());
+	    }
+	}
 	exports.BaseGraph = BaseGraph;
 
 
@@ -1391,8 +1312,8 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(6);
+	const $G = __webpack_require__(4);
+	const $CB = __webpack_require__(6);
 	/**
 	 * Breadth first search - usually performed to see
 	 * reachability etc. Therefore we do not want 'segments'
@@ -1567,8 +1488,8 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(6);
+	const $G = __webpack_require__(4);
+	const $CB = __webpack_require__(6);
 	/**
 	 * DFS Visit - one run to see what nodes are reachable
 	 * from a given "current" root node
@@ -1829,7 +1750,7 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var PFS_1 = __webpack_require__(9);
+	const PFS_1 = __webpack_require__(9);
 	/**
 	 *
 	 * @param graph
@@ -1848,32 +1769,32 @@
 	}
 	function BellmanFordArray(graph, start) {
 	    BFSanityChecks(graph, start);
-	    var distances = [], nodes = graph.getNodes(), edge, node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry, new_weight, neg_cycle = false;
-	    for (var n_idx = 0; n_idx < node_keys.length; ++n_idx) {
+	    let distances = [], nodes = graph.getNodes(), edge, node_keys = Object.keys(nodes), node, id_idx_map = {}, bf_edge_entry, new_weight, neg_cycle = false;
+	    for (let n_idx = 0; n_idx < node_keys.length; ++n_idx) {
 	        node = nodes[node_keys[n_idx]];
 	        distances[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
 	        id_idx_map[node.getID()] = n_idx;
 	    }
 	    // Initialize an edge array just holding the node indices, weight and directed
-	    var graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
-	    var bf_edges = [];
-	    for (var e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
+	    let graph_edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
+	    let bf_edges = [];
+	    for (let e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
 	        edge = graph_edges[e_idx];
-	        var bf_edge_entry_1 = bf_edges.push([
+	        let bf_edge_entry = bf_edges.push([
 	            id_idx_map[edge.getNodes().a.getID()],
 	            id_idx_map[edge.getNodes().b.getID()],
 	            isFinite(edge.getWeight()) ? edge.getWeight() : PFS_1.DEFAULT_WEIGHT,
 	            edge.isDirected()
 	        ]);
 	    }
-	    for (var i = 0; i < node_keys.length - 1; ++i) {
-	        for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	    for (let i = 0; i < node_keys.length - 1; ++i) {
+	        for (let e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
 	            edge = bf_edges[e_idx];
 	            updateDist(edge[0], edge[1], edge[2]);
 	            !edge[3] && updateDist(edge[1], edge[0], edge[2]);
 	        }
 	    }
-	    for (var e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
+	    for (let e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
 	        edge = bf_edges[e_idx];
 	        if (betterDist(edge[0], edge[1], edge[2]) || (!edge[3] && betterDist(edge[1], edge[0], edge[2]))) {
 	            neg_cycle = true;
@@ -1889,7 +1810,7 @@
 	    function betterDist(u, v, weight) {
 	        return (distances[v] > distances[u] + weight);
 	    }
-	    return { distances: distances, neg_cycle: neg_cycle };
+	    return { distances, neg_cycle };
 	}
 	exports.BellmanFordArray = BellmanFordArray;
 	/**
@@ -1899,16 +1820,16 @@
 	 */
 	function BellmanFordDict(graph, start) {
 	    BFSanityChecks(graph, start);
-	    var distances = {}, edges, edge, a, b, weight, new_weight, nodes_size, neg_cycle = false;
+	    let distances = {}, edges, edge, a, b, weight, new_weight, nodes_size, neg_cycle = false;
 	    distances = {}; // Reset dists, TODO refactor
 	    edges = graph.getDirEdgesArray().concat(graph.getUndEdgesArray());
 	    nodes_size = graph.nrNodes();
-	    for (var node in graph.getNodes()) {
+	    for (let node in graph.getNodes()) {
 	        distances[node] = Number.POSITIVE_INFINITY;
 	    }
 	    distances[start.getID()] = 0;
-	    for (var i = 0; i < nodes_size - 1; ++i) {
-	        for (var e_idx = 0; e_idx < edges.length; ++e_idx) {
+	    for (let i = 0; i < nodes_size - 1; ++i) {
+	        for (let e_idx = 0; e_idx < edges.length; ++e_idx) {
 	            edge = edges[e_idx];
 	            a = edge.getNodes().a.getID();
 	            b = edge.getNodes().b.getID();
@@ -1917,7 +1838,7 @@
 	            !edge.isDirected() && updateDist(b, a, weight);
 	        }
 	    }
-	    for (var edgeID in edges) {
+	    for (let edgeID in edges) {
 	        edge = edges[edgeID];
 	        a = edge.getNodes().a.getID();
 	        b = edge.getNodes().b.getID();
@@ -1935,7 +1856,7 @@
 	    function betterDist(u, v, weight) {
 	        return (distances[v] > distances[u] + weight);
 	    }
-	    return { distances: distances, neg_cycle: neg_cycle };
+	    return { distances, neg_cycle };
 	}
 	exports.BellmanFordDict = BellmanFordDict;
 
@@ -1947,10 +1868,10 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $E = __webpack_require__(1);
-	var $G = __webpack_require__(4);
-	var $CB = __webpack_require__(6);
-	var $BH = __webpack_require__(10);
+	const $E = __webpack_require__(1);
+	const $G = __webpack_require__(4);
+	const $CB = __webpack_require__(6);
+	const $BH = __webpack_require__(10);
 	exports.DEFAULT_WEIGHT = 1;
 	/**
 	 * Priority first search
@@ -2212,7 +2133,7 @@
 	 * We only support unique object ID's for now !!!
 	 * @TODO Rename into "ObjectBinaryHeap" or such...
 	 */
-	var BinaryHeap = /** @class */ (function () {
+	class BinaryHeap {
 	    /**
 	     * Mode of a min heap should only be set upon
 	     * instantiation and never again afterwards...
@@ -2220,20 +2141,17 @@
 	     * @param _evalObjID function to determine an object's identity
 	     * @param _evalPriority function to determine an objects score
 	     */
-	    function BinaryHeap(_mode, _evalPriority, _evalObjID) {
-	        if (_mode === void 0) { _mode = BinaryHeapMode.MIN; }
-	        if (_evalPriority === void 0) { _evalPriority = function (obj) {
-	            if (typeof obj !== 'number' && typeof obj !== 'string') {
-	                return NaN;
-	            }
-	            if (typeof obj === 'number') {
-	                return obj | 0;
-	            }
-	            return parseInt(obj);
-	        }; }
-	        if (_evalObjID === void 0) { _evalObjID = function (obj) {
-	            return obj;
-	        }; }
+	    constructor(_mode = BinaryHeapMode.MIN, _evalPriority = (obj) => {
+	        if (typeof obj !== 'number' && typeof obj !== 'string') {
+	            return NaN;
+	        }
+	        if (typeof obj === 'number') {
+	            return obj | 0;
+	        }
+	        return parseInt(obj);
+	    }, _evalObjID = (obj) => {
+	        return obj;
+	    }) {
 	        this._mode = _mode;
 	        this._evalPriority = _evalPriority;
 	        this._evalObjID = _evalObjID;
@@ -2241,48 +2159,48 @@
 	        this._array = [];
 	        this._positions = {};
 	    }
-	    BinaryHeap.prototype.getMode = function () {
+	    getMode() {
 	        return this._mode;
-	    };
-	    BinaryHeap.prototype.getArray = function () {
+	    }
+	    getArray() {
 	        return this._array;
-	    };
-	    BinaryHeap.prototype.getPositions = function () {
+	    }
+	    getPositions() {
 	        return this._positions;
-	    };
-	    BinaryHeap.prototype.size = function () {
+	    }
+	    size() {
 	        return this._array.length;
-	    };
-	    BinaryHeap.prototype.getEvalPriorityFun = function () {
+	    }
+	    getEvalPriorityFun() {
 	        return this._evalPriority;
-	    };
-	    BinaryHeap.prototype.evalInputScore = function (obj) {
+	    }
+	    evalInputScore(obj) {
 	        return this._evalPriority(obj);
-	    };
-	    BinaryHeap.prototype.getEvalObjIDFun = function () {
+	    }
+	    getEvalObjIDFun() {
 	        return this._evalObjID;
-	    };
-	    BinaryHeap.prototype.evalInputObjID = function (obj) {
+	    }
+	    evalInputObjID(obj) {
 	        return this._evalObjID(obj);
-	    };
-	    BinaryHeap.prototype.peek = function () {
+	    }
+	    peek() {
 	        return this._array[0];
-	    };
-	    BinaryHeap.prototype.pop = function () {
+	    }
+	    pop() {
 	        if (this.size()) {
 	            return this.remove(this._array[0]);
 	        }
-	    };
-	    BinaryHeap.prototype.find = function (obj) {
+	    }
+	    find(obj) {
 	        var pos = this.getNodePosition(obj);
 	        return this._array[pos];
-	    };
+	    }
 	    /**
 	     * Insert - Adding an object to the heap
 	     * @param obj the obj to add to the heap
 	     * @returns {number} the objects index in the internal array
 	     */
-	    BinaryHeap.prototype.insert = function (obj) {
+	    insert(obj) {
 	        if (isNaN(this._evalPriority(obj))) {
 	            throw new Error("Cannot insert object without numeric priority.");
 	        }
@@ -2292,8 +2210,8 @@
 	        this._array.push(obj);
 	        this.setNodePosition(obj, this.size() - 1);
 	        this.trickleUp(this.size() - 1);
-	    };
-	    BinaryHeap.prototype.remove = function (obj) {
+	    }
+	    remove(obj) {
 	        this._nr_removes++;
 	        if (isNaN(this._evalPriority(obj))) {
 	            throw new Error('Object invalid.');
@@ -2315,8 +2233,8 @@
 	            this.trickleDown(pos);
 	        }
 	        return found;
-	    };
-	    BinaryHeap.prototype.trickleDown = function (i) {
+	    }
+	    trickleDown(i) {
 	        var parent = this._array[i];
 	        while (true) {
 	            var right_child_idx = (i + 1) * 2, left_child_idx = right_child_idx - 1, right_child = this._array[right_child_idx], left_child = this._array[left_child_idx], swap = null;
@@ -2340,8 +2258,8 @@
 	            this.setNodePosition(this._array[swap], swap);
 	            i = swap;
 	        }
-	    };
-	    BinaryHeap.prototype.trickleUp = function (i) {
+	    }
+	    trickleUp(i) {
 	        var child = this._array[i];
 	        // Can only trickle up from positive levels
 	        while (i) {
@@ -2358,8 +2276,8 @@
 	                i = parent_idx;
 	            }
 	        }
-	    };
-	    BinaryHeap.prototype.orderCorrect = function (obj_a, obj_b) {
+	    }
+	    orderCorrect(obj_a, obj_b) {
 	        var obj_a_pr = this._evalPriority(obj_a);
 	        var obj_b_pr = this._evalPriority(obj_b);
 	        if (this._mode === BinaryHeapMode.MIN) {
@@ -2368,13 +2286,13 @@
 	        else {
 	            return obj_a_pr >= obj_b_pr;
 	        }
-	    };
+	    }
 	    /**
 	     * Superstructure to enable search in BinHeap in O(1)
 	     * @param obj
 	     * @param pos
 	     */
-	    BinaryHeap.prototype.setNodePosition = function (obj, pos) {
+	    setNodePosition(obj, pos) {
 	        if (obj == null || pos == null || pos !== (pos | 0)) {
 	            throw new Error('minium required arguments are obj and new_pos');
 	        }
@@ -2384,27 +2302,26 @@
 	        };
 	        var obj_key = this.evalInputObjID(obj);
 	        this._positions[obj_key] = pos_obj;
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    BinaryHeap.prototype.getNodePosition = function (obj) {
+	    getNodePosition(obj) {
 	        var obj_key = this.evalInputObjID(obj);
 	        // console.log(obj_key);
 	        var occurrence = this._positions[obj_key];
 	        // console.log(occurrence);
 	        return occurrence ? occurrence.position : null;
-	    };
+	    }
 	    /**
 	     * @param obj
 	     * @returns {number}
 	     */
-	    BinaryHeap.prototype.removeNodePosition = function (obj) {
+	    removeNodePosition(obj) {
 	        var obj_key = this.evalInputObjID(obj);
 	        delete this._positions[obj_key];
-	    };
-	    return BinaryHeap;
-	}());
+	    }
+	}
 	exports.BinaryHeap = BinaryHeap;
 
 
@@ -2414,39 +2331,29 @@
 
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
-	var __values = (this && this.__values) || function (o) {
-	    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-	    if (m) return m.call(o);
-	    return {
-	        next: function () {
-	            if (o && i >= o.length) o = void 0;
-	            return { value: o && o[i++], done: !o };
-	        }
-	    };
-	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $N = __webpack_require__(2);
-	var $PFS = __webpack_require__(9);
-	var $BF = __webpack_require__(8);
-	var $SU = __webpack_require__(3);
+	const $N = __webpack_require__(2);
+	const $PFS = __webpack_require__(9);
+	const $BF = __webpack_require__(8);
+	const $SU = __webpack_require__(3);
 	function Johnsons(graph) {
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
 	    //getting all graph nodes
-	    var allNodes = graph.getNodes();
-	    var nodeKeys = Object.keys(allNodes);
+	    let allNodes = graph.getNodes();
+	    let nodeKeys = Object.keys(allNodes);
 	    if (graph.hasNegativeEdge()) {
 	        var extraNode = new $N.BaseNode("extraNode");
 	        graph = addExtraNandE(graph, extraNode);
-	        var BFresult = $BF.BellmanFordDict(graph, extraNode);
+	        let BFresult = $BF.BellmanFordDict(graph, extraNode);
 	        //reminder: output of the BellmanFordDict is BFDictResult
 	        //contains a dictionary called distances, format: {[nodeID]:dist}, and a boolean called neg_cycle
 	        if (BFresult.neg_cycle) {
 	            throw new Error("The graph contains a negative cycle, thus it can not be processed");
 	        }
 	        else {
-	            var newWeights = BFresult.distances;
+	            let newWeights = BFresult.distances;
 	            graph = reWeighGraph(graph, newWeights, extraNode);
 	            //graph still has the extraNode
 	            //reminder: deleteNode function removes its edges, too
@@ -2465,11 +2372,11 @@
 	 * @todo check if
 	 */
 	function addExtraNandE(target, nodeToAdd) {
-	    var allNodes = target.getNodes();
+	    let allNodes = target.getNodes();
 	    target.addNode(nodeToAdd);
-	    var tempCounter = 0;
+	    let tempCounter = 0;
 	    //now add a directed edge from the extranode to all graph nodes, excluding itself
-	    for (var nodeKey in allNodes) {
+	    for (let nodeKey in allNodes) {
 	        if (allNodes[nodeKey].getID() != nodeToAdd.getID()) {
 	            target.addEdgeByNodeIDs("temp" + tempCounter, nodeToAdd.getID(), allNodes[nodeKey].getID(), { directed: true, weighted: true, weight: 0 });
 	            tempCounter++;
@@ -2480,59 +2387,48 @@
 	exports.addExtraNandE = addExtraNandE;
 	function reWeighGraph(target, distDict, tempNode) {
 	    //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
-	    var edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
-	    try {
-	        for (var edges_1 = __values(edges), edges_1_1 = edges_1.next(); !edges_1_1.done; edges_1_1 = edges_1.next()) {
-	            var edge = edges_1_1.value;
-	            var a = edge.getNodes().a.getID();
-	            var b = edge.getNodes().b.getID();
-	            //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
-	            if (a == tempNode.getID()) {
-	                continue;
-	            }
-	            //assuming that the node keys in the distDict correspond to the nodeIDs
-	            else if (edge.isWeighted) {
-	                var oldWeight = edge.getWeight();
-	                var newWeight = oldWeight + distDict[a] - distDict[b];
-	                edge.setWeight(newWeight);
-	            }
-	            else {
-	                var oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
-	                var newWeight = oldWeight + distDict[a] - distDict[b];
-	                //collecting edgeID and directedness for later re-use
-	                var edgeID = edge.getID();
-	                var dirNess = edge.isDirected();
-	                //one does not simply make an edge weighted, but needs to delete and re-create it
-	                target.deleteEdge(edge);
-	                target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
-	            }
+	    let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
+	    for (let edge of edges) {
+	        var a = edge.getNodes().a.getID();
+	        var b = edge.getNodes().b.getID();
+	        //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
+	        if (a == tempNode.getID()) {
+	            continue;
 	        }
-	    }
-	    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-	    finally {
-	        try {
-	            if (edges_1_1 && !edges_1_1.done && (_a = edges_1.return)) _a.call(edges_1);
+	        //assuming that the node keys in the distDict correspond to the nodeIDs
+	        else if (edge.isWeighted) {
+	            let oldWeight = edge.getWeight();
+	            let newWeight = oldWeight + distDict[a] - distDict[b];
+	            edge.setWeight(newWeight);
 	        }
-	        finally { if (e_1) throw e_1.error; }
+	        else {
+	            let oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
+	            let newWeight = oldWeight + distDict[a] - distDict[b];
+	            //collecting edgeID and directedness for later re-use
+	            let edgeID = edge.getID();
+	            let dirNess = edge.isDirected();
+	            //one does not simply make an edge weighted, but needs to delete and re-create it
+	            target.deleteEdge(edge);
+	            target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
+	        }
 	    }
 	    return target;
-	    var e_1, _a;
 	}
 	exports.reWeighGraph = reWeighGraph;
 	function PFSFromAllNodes(graph) {
-	    var dists = graph.adjListArray();
-	    var next = graph.nextArray();
-	    var nodesDict = graph.getNodes();
-	    var nodeIDIdxMap = {};
-	    var i = 0;
-	    for (var key in nodesDict) {
+	    let dists = graph.adjListArray();
+	    let next = graph.nextArray();
+	    let nodesDict = graph.getNodes();
+	    let nodeIDIdxMap = {};
+	    let i = 0;
+	    for (let key in nodesDict) {
 	        nodeIDIdxMap[nodesDict[key].getID()] = i++;
 	    }
-	    var specialConfig = $PFS.preparePFSStandardConfig();
+	    let specialConfig = $PFS.preparePFSStandardConfig();
 	    var notEncounteredJohnsons = function (context) {
 	        context.next.best =
 	            context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        let i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
 	        if (context.current.node == context.root_node) {
 	            dists[i][j] = context.next.best;
 	            next[i][j][0] = j;
@@ -2544,7 +2440,7 @@
 	    };
 	    specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
 	    var betterPathJohnsons = function (context) {
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        let i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
 	        dists[i][j] = context.proposed_dist;
 	        if (context.current.node !== context.root_node) {
 	            next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
@@ -2552,13 +2448,13 @@
 	    };
 	    specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 	    var equalPathJohnsons = function (context) {
-	        var i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
+	        let i = nodeIDIdxMap[context.root_node.getID()], j = nodeIDIdxMap[context.next.node.getID()];
 	        if (context.current.node !== context.root_node) {
 	            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
 	        }
 	    };
 	    specialConfig.callbacks.equal_path.push(equalPathJohnsons);
-	    for (var key in nodesDict) {
+	    for (let key in nodesDict) {
 	        $PFS.PFS(graph, nodesDict[key], specialConfig);
 	    }
 	    return [dists, next];
@@ -2572,7 +2468,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var run_config_1 = __webpack_require__(14);
+	const run_config_1 = __webpack_require__(14);
 	var LogColors;
 	(function (LogColors) {
 	    LogColors[LogColors["FgBlack"] = 30] = "FgBlack";
@@ -2592,72 +2488,59 @@
 	    LogColors[LogColors["BgCyan"] = 46] = "BgCyan";
 	    LogColors[LogColors["BgWhite"] = 47] = "BgWhite";
 	})(LogColors = exports.LogColors || (exports.LogColors = {}));
-	var DEFAULT_COLOR = 37; // white
-	var Logger = /** @class */ (function () {
-	    function Logger(config) {
+	const DEFAULT_COLOR = 37; // white
+	class Logger {
+	    constructor(config) {
 	        this.config = null;
 	        this.config = config || run_config_1.RUN_CONFIG;
 	    }
-	    Logger.prototype.log = function (msg, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    log(msg, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.log.call(console, this.colorize(color, msg, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.error = function (err, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    }
+	    error(err, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.error.call(console, this.colorize(color, err, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.dir = function (obj, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    }
+	    dir(obj, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.dir.call(console, this.colorize(color, obj, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.info = function (msg, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    }
+	    info(msg, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.info.call(console, this.colorize(color, msg, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.warn = function (msg, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    }
+	    warn(msg, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            console.warn.call(console, this.colorize(color, msg, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.write = function (msg, color, bright) {
-	        if (color === void 0) { color = DEFAULT_COLOR; }
-	        if (bright === void 0) { bright = false; }
+	    }
+	    write(msg, color = DEFAULT_COLOR, bright = false) {
 	        if (this.config.log_level === run_config_1.LOG_LEVELS.debug) {
 	            process.stdout.write.call(process.stdout, this.colorize(color, msg, bright));
 	            return true;
 	        }
 	        return false;
-	    };
-	    Logger.prototype.colorize = function (color, output, bright) {
-	        var out_bright = bright ? '\x1b[1m' : null;
+	    }
+	    colorize(color, output, bright) {
+	        let out_bright = bright ? '\x1b[1m' : null;
 	        return [out_bright, '\x1b[', color, 'm', output, '\x1b[0m'].join('');
-	    };
-	    return Logger;
-	}());
+	    }
+	}
 	exports.Logger = Logger;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
@@ -2858,12 +2741,12 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var LOG_LEVELS = {
+	const LOG_LEVELS = {
 	    debug: "debug",
 	    production: "production"
 	};
 	exports.LOG_LEVELS = LOG_LEVELS;
-	var RUN_CONFIG = {
+	const RUN_CONFIG = {
 	    log_level: process.env['G_LOG'] // LOG_LEVELS.debug
 	};
 	exports.RUN_CONFIG = RUN_CONFIG;
@@ -2877,37 +2760,33 @@
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var path = __webpack_require__(16);
-	var fs = __webpack_require__(17);
-	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(18);
-	var logger_1 = __webpack_require__(12);
-	var logger = new logger_1.Logger();
-	var DEFAULT_WEIGHT = 1;
-	var CSV_EXTENSION = ".csv";
-	var CSVInput = /** @class */ (function () {
-	    function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
-	        if (_separator === void 0) { _separator = ','; }
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction_mode === void 0) { _direction_mode = false; }
-	        if (_weighted === void 0) { _weighted = false; }
+	const path = __webpack_require__(16);
+	const fs = __webpack_require__(17);
+	const $G = __webpack_require__(4);
+	const $R = __webpack_require__(18);
+	const logger_1 = __webpack_require__(12);
+	let logger = new logger_1.Logger();
+	const DEFAULT_WEIGHT = 1;
+	const CSV_EXTENSION = ".csv";
+	class CSVInput {
+	    constructor(_separator = ',', _explicit_direction = true, _direction_mode = false, _weighted = false) {
 	        this._separator = _separator;
 	        this._explicit_direction = _explicit_direction;
 	        this._direction_mode = _direction_mode;
 	        this._weighted = _weighted;
 	    }
-	    CSVInput.prototype.readFromAdjacencyListURL = function (config, cb) {
+	    readFromAdjacencyListURL(config, cb) {
 	        this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
-	    };
-	    CSVInput.prototype.readFromEdgeListURL = function (config, cb) {
+	    }
+	    readFromEdgeListURL(config, cb) {
 	        this.readGraphFromURL(config, cb, this.readFromEdgeList);
-	    };
-	    CSVInput.prototype.readGraphFromURL = function (config, cb, localFun) {
+	    }
+	    readGraphFromURL(config, cb, localFun) {
 	        var self = this, graph_name = config.file_name, graph, request;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
-	            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
-	            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
+	            let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+	            logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
 	            // Browser...
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
@@ -2929,20 +2808,20 @@
 	                cb(graph, undefined);
 	            });
 	        }
-	    };
-	    CSVInput.prototype.readFromAdjacencyListFile = function (filepath) {
+	    }
+	    readFromAdjacencyListFile(filepath) {
 	        return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
-	    };
-	    CSVInput.prototype.readFromEdgeListFile = function (filepath) {
+	    }
+	    readFromEdgeListFile(filepath) {
 	        return this.readFileAndReturn(filepath, this.readFromEdgeList);
-	    };
-	    CSVInput.prototype.readFileAndReturn = function (filepath, func) {
+	    }
+	    readFileAndReturn(filepath, func) {
 	        this.checkNodeEnvironment();
 	        var graph_name = path.basename(filepath);
 	        var input = fs.readFileSync(filepath).toString().split('\n');
 	        return func.apply(this, [input, graph_name]);
-	    };
-	    CSVInput.prototype.readFromAdjacencyList = function (input, graph_name) {
+	    }
+	    readFromAdjacencyList(input, graph_name) {
 	        var graph = new $G.BaseGraph(graph_name);
 	        for (var idx in input) {
 	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
@@ -2980,9 +2859,8 @@
 	            }
 	        }
 	        return graph;
-	    };
-	    CSVInput.prototype.readFromEdgeList = function (input, graph_name, weighted) {
-	        if (weighted === void 0) { weighted = false; }
+	    }
+	    readFromEdgeList(input, graph_name, weighted = false) {
 	        var graph = new $G.BaseGraph(graph_name);
 	        for (var idx in input) {
 	            var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
@@ -3017,14 +2895,13 @@
 	            }
 	        }
 	        return graph;
-	    };
-	    CSVInput.prototype.checkNodeEnvironment = function () {
+	    }
+	    checkNodeEnvironment() {
 	        if (typeof window !== 'undefined') {
 	            throw new Error('Cannot read file in browser environment.');
 	        }
-	    };
-	    return CSVInput;
-	}());
+	    }
+	}
 	exports.CSVInput = CSVInput;
 
 
@@ -3271,10 +3148,10 @@
 
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var https = __webpack_require__(19);
-	var logger_1 = __webpack_require__(12);
-	var logger = new logger_1.Logger();
-	var SSL_PORT = '443';
+	const https = __webpack_require__(19);
+	const logger_1 = __webpack_require__(12);
+	const logger = new logger_1.Logger();
+	const SSL_PORT = '443';
 	/**
 	 * @TODO: Test it !!!
 	 *
@@ -3286,14 +3163,14 @@
 	    if (typeof cb !== 'function') {
 	        throw new Error('Provided callback is not a function.');
 	    }
-	    logger.log("Requesting file via NodeJS request: " + config.remote_host + config.remote_path + config.file_name);
-	    var options = {
+	    logger.log(`Requesting file via NodeJS request: ${config.remote_host}${config.remote_path}${config.file_name}`);
+	    let options = {
 	        host: config.remote_host,
 	        port: SSL_PORT,
 	        path: config.remote_path + config.file_name,
 	        method: 'GET'
 	    };
-	    var req = https.get(options, function (response) {
+	    let req = https.get(options, response => {
 	        // Continuously update stream with data
 	        var body = '';
 	        response.setEncoding('utf8');
@@ -3305,8 +3182,8 @@
 	            cb(body);
 	        });
 	    });
-	    req.on('error', function (e) {
-	        logger.log("Request error: " + e.message);
+	    req.on('error', e => {
+	        logger.log(`Request error: ${e.message}`);
 	    });
 	    return req;
 	}
@@ -3340,26 +3217,23 @@
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(17);
-	var CSVOutput = /** @class */ (function () {
-	    function CSVOutput(_separator, _explicit_direction, _direction_mode) {
-	        if (_separator === void 0) { _separator = ','; }
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction_mode === void 0) { _direction_mode = false; }
+	const fs = __webpack_require__(17);
+	class CSVOutput {
+	    constructor(_separator = ',', _explicit_direction = true, _direction_mode = false) {
 	        this._separator = _separator;
 	        this._explicit_direction = _explicit_direction;
 	        this._direction_mode = _direction_mode;
 	    }
-	    CSVOutput.prototype.writeToAdjacencyListFile = function (filepath, graph) {
+	    writeToAdjacencyListFile(filepath, graph) {
 	        if (typeof window !== 'undefined' && window !== null) {
 	            throw new Error('cannot write to File inside of Browser');
 	        }
 	        fs.writeFileSync(filepath, this.writeToAdjacencyList(graph));
-	    };
-	    CSVOutput.prototype.writeToAdjacencyList = function (graph) {
+	    }
+	    writeToAdjacencyList(graph) {
 	        var graphString = "";
 	        var nodes = graph.getNodes(), node = null, adj_nodes = null, adj_node = null;
-	        var mergeFunc = function (ne) {
+	        var mergeFunc = (ne) => {
 	            return ne.node.getID();
 	        };
 	        // TODO make generic for graph mode
@@ -3374,17 +3248,16 @@
 	            graphString += "\n";
 	        }
 	        return graphString;
-	    };
-	    CSVOutput.prototype.writeToEdgeListFile = function (filepath, graph) {
+	    }
+	    writeToEdgeListFile(filepath, graph) {
 	        throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
-	    };
-	    CSVOutput.prototype.writeToEdgeList = function (graph) {
+	    }
+	    writeToEdgeList(graph) {
 	        throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
 	        // var graphString = "";
 	        // return graphString;
-	    };
-	    return CSVOutput;
-	}());
+	    }
+	}
 	exports.CSVOutput = CSVOutput;
 
 
@@ -3395,32 +3268,29 @@
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(17);
-	var $G = __webpack_require__(4);
-	var $R = __webpack_require__(18);
-	var DEFAULT_WEIGHT = 1;
-	var JSON_EXTENSION = ".json";
-	var JSONInput = /** @class */ (function () {
-	    function JSONInput(_explicit_direction, _direction, _weighted_mode) {
-	        if (_explicit_direction === void 0) { _explicit_direction = true; }
-	        if (_direction === void 0) { _direction = false; }
-	        if (_weighted_mode === void 0) { _weighted_mode = false; }
+	const fs = __webpack_require__(17);
+	const $G = __webpack_require__(4);
+	const $R = __webpack_require__(18);
+	const DEFAULT_WEIGHT = 1;
+	const JSON_EXTENSION = ".json";
+	class JSONInput {
+	    constructor(_explicit_direction = true, _direction = false, _weighted_mode = false) {
 	        this._explicit_direction = _explicit_direction;
 	        this._direction = _direction;
 	        this._weighted_mode = _weighted_mode;
 	    }
-	    JSONInput.prototype.readFromJSONFile = function (filepath) {
+	    readFromJSONFile(filepath) {
 	        this.checkNodeEnvironment();
 	        // TODO test for existing file...
 	        var json = JSON.parse(fs.readFileSync(filepath).toString());
 	        return this.readFromJSON(json);
-	    };
-	    JSONInput.prototype.readFromJSONURL = function (config, cb) {
+	    }
+	    readFromJSONURL(config, cb) {
 	        var self = this, graph, request, json;
 	        // Node or browser ??
 	        if (typeof window !== 'undefined') {
 	            // Browser...			
-	            var fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
+	            let fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
 	            request = new XMLHttpRequest();
 	            request.onreadystatechange = function () {
 	                // console.log("Ready state: " + request.readyState);
@@ -3445,14 +3315,14 @@
 	                cb(graph, undefined);
 	            });
 	        }
-	    };
+	    }
 	    /**
 	     * In this case, there is one great difference to the CSV edge list cases:
 	     * If you don't explicitly define a directed edge, it will simply
 	     * instantiate an undirected one
 	     * we'll leave that for now, as we will produce apt JSON sources later anyways...
 	     */
-	    JSONInput.prototype.readFromJSON = function (json) {
+	    readFromJSON(json) {
 	        var graph = new $G.BaseGraph(json.name), coords_json, coords, coord_idx, coord_val, features, feature;
 	        for (var node_id in json.data) {
 	            var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
@@ -3502,13 +3372,13 @@
 	            }
 	        }
 	        return graph;
-	    };
+	    }
 	    /**
 	     * Infinity & -Infinity cases are redundant, as JavaScript
 	     * handles them correctly anyways (for now)
 	     * @param edge_input
 	     */
-	    JSONInput.prototype.handleEdgeWeights = function (edge_input) {
+	    handleEdgeWeights(edge_input) {
 	        switch (edge_input.weight) {
 	            case "undefined":
 	                return DEFAULT_WEIGHT;
@@ -3523,14 +3393,13 @@
 	            default:
 	                return parseFloat(edge_input.weight);
 	        }
-	    };
-	    JSONInput.prototype.checkNodeEnvironment = function () {
+	    }
+	    checkNodeEnvironment() {
 	        if (typeof window !== 'undefined') {
 	            throw new Error('Cannot read file in browser environment.');
 	        }
-	    };
-	    return JSONInput;
-	}());
+	    }
+	}
 	exports.JSONInput = JSONInput;
 
 
@@ -3541,18 +3410,17 @@
 	"use strict";
 	/// <reference path="../../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var fs = __webpack_require__(17);
-	var JSONOutput = /** @class */ (function () {
-	    function JSONOutput() {
-	    }
-	    JSONOutput.prototype.writeToJSONFile = function (filepath, graph) {
+	const fs = __webpack_require__(17);
+	class JSONOutput {
+	    constructor() { }
+	    writeToJSONFile(filepath, graph) {
 	        if (typeof window !== 'undefined' && window !== null) {
 	            throw new Error('cannot write to File inside of Browser');
 	        }
 	        fs.writeFileSync(filepath, this.writeToJSONSString(graph));
-	    };
-	    JSONOutput.prototype.writeToJSONSString = function (graph) {
-	        var nodes, node, node_struct, und_edges, dir_edges, edge, edge_struct, features, coords;
+	    }
+	    writeToJSONSString(graph) {
+	        let nodes, node, node_struct, und_edges, dir_edges, edge, edge_struct, features, coords;
 	        var result = {
 	            name: graph._label,
 	            nodes: graph.nrNodes(),
@@ -3562,16 +3430,16 @@
 	        };
 	        // Go through all nodes 
 	        nodes = graph.getNodes();
-	        for (var node_key in nodes) {
+	        for (let node_key in nodes) {
 	            node = nodes[node_key];
 	            node_struct = result.data[node.getID()] = {
 	                edges: []
 	            };
 	            // UNdirected Edges
 	            und_edges = node.undEdges();
-	            for (var edge_key in und_edges) {
+	            for (let edge_key in und_edges) {
 	                edge = und_edges[edge_key];
-	                var connected_nodes = edge.getNodes();
+	                let connected_nodes = edge.getNodes();
 	                node_struct.edges.push({
 	                    to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
 	                    directed: edge.isDirected(),
@@ -3580,9 +3448,9 @@
 	            }
 	            // Directed Edges
 	            dir_edges = node.outEdges();
-	            for (var edge_key in dir_edges) {
+	            for (let edge_key in dir_edges) {
 	                edge = dir_edges[edge_key];
-	                var connected_nodes = edge.getNodes();
+	                let connected_nodes = edge.getNodes();
 	                node_struct.edges.push({
 	                    to: connected_nodes.b.getID(),
 	                    directed: edge.isDirected(),
@@ -3597,8 +3465,8 @@
 	            }
 	        }
 	        return JSON.stringify(result);
-	    };
-	    JSONOutput.prototype.handleEdgeWeight = function (edge) {
+	    }
+	    handleEdgeWeight(edge) {
 	        if (!edge.isWeighted()) {
 	            return undefined;
 	        }
@@ -3614,9 +3482,8 @@
 	            default:
 	                return edge.getWeight();
 	        }
-	    };
-	    return JSONOutput;
-	}());
+	    }
+	}
 	exports.JSONOutput = JSONOutput;
 
 
@@ -3627,7 +3494,7 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $SU = __webpack_require__(3);
+	const $SU = __webpack_require__(3);
 	/**
 	 * Initializes the distance matrix from each node to all other node
 	 * using the edges of the graph
@@ -3637,10 +3504,10 @@
 	 * @constructor
 	 */
 	function initializeDistsWithEdges(graph) {
-	    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-	    for (var edge in edges) {
-	        var a = edges[edge].getNodes().a.getID();
-	        var b = edges[edge].getNodes().b.getID();
+	    let dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+	    for (let edge in edges) {
+	        let a = edges[edge].getNodes().a.getID();
+	        let b = edges[edge].getNodes().b.getID();
 	        if (dists[a] == null)
 	            dists[a] = {};
 	        dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
@@ -3665,9 +3532,9 @@
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
-	    var dists = graph.adjListArray();
-	    var next = graph.nextArray();
-	    var N = dists.length;
+	    let dists = graph.adjListArray();
+	    let next = graph.nextArray();
+	    let N = dists.length;
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
@@ -3701,8 +3568,8 @@
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
-	    var dists = graph.adjListArray();
-	    var N = dists.length;
+	    let dists = graph.adjListArray();
+	    let N = dists.length;
 	    for (var k = 0; k < N; ++k) {
 	        for (var i = 0; i < N; ++i) {
 	            for (var j = 0; j < N; ++j) {
@@ -3728,7 +3595,7 @@
 	    if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 	        throw new Error("Cowardly refusing to traverse graph without edges.");
 	    }
-	    var dists = initializeDistsWithEdges(graph);
+	    let dists = initializeDistsWithEdges(graph);
 	    for (var k in dists) {
 	        for (var i in dists) {
 	            for (var j in dists) {
@@ -3748,16 +3615,16 @@
 	}
 	exports.FloydWarshallDict = FloydWarshallDict;
 	function changeNextToDirectParents(input) {
-	    var output = [];
-	    for (var a = 0; a < input.length; a++) {
+	    let output = [];
+	    for (let a = 0; a < input.length; a++) {
 	        output.push([]);
-	        for (var b = 0; b < input.length; b++) {
+	        for (let b = 0; b < input.length; b++) {
 	            output[a].push([]);
 	            output[a][b] = input[a][b];
 	        }
 	    }
-	    for (var a = 0; a < input.length; a++) {
-	        for (var b = 0; b < input.length; b++) {
+	    for (let a = 0; a < input.length; a++) {
+	        for (let b = 0; b < input.length; b++) {
 	            if (input[a][b][0] == null) {
 	                continue;
 	            }
@@ -3771,15 +3638,15 @@
 	}
 	exports.changeNextToDirectParents = changeNextToDirectParents;
 	function findDirectParents(u, v, inNext, outNext) {
-	    var nodesInTracking = [u];
-	    var counter = 0;
+	    let nodesInTracking = [u];
+	    let counter = 0;
 	    while (nodesInTracking.length > 0) {
-	        var currNode = nodesInTracking.pop();
+	        let currNode = nodesInTracking.pop();
 	        if (currNode == u && counter > 0) {
 	            continue;
 	        }
 	        else {
-	            for (var e = 0; e < inNext[currNode][v].length; e++) {
+	            for (let e = 0; e < inNext[currNode][v].length; e++) {
 	                if (inNext[currNode][v][e] == v && counter == 0) {
 	                    outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
 	                }
@@ -3803,116 +3670,116 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var logger_1 = __webpack_require__(12);
-	var logger = new logger_1.Logger();
-	var SimplePerturber = /** @class */ (function () {
-	    function SimplePerturber(_graph) {
+	const logger_1 = __webpack_require__(12);
+	let logger = new logger_1.Logger();
+	class SimplePerturber {
+	    constructor(_graph) {
 	        this._graph = _graph;
 	    }
 	    /**
 	     *
 	     * @param percentage
 	     */
-	    SimplePerturber.prototype.randomlyDeleteNodesPercentage = function (percentage) {
+	    randomlyDeleteNodesPercentage(percentage) {
 	        if (percentage > 100) {
 	            percentage = 100;
 	        }
-	        var nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage / 100);
+	        let nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage / 100);
 	        this.randomlyDeleteNodesAmount(nr_nodes_to_delete);
-	    };
+	    }
 	    /**
 	     *
 	     * @param percentage
 	     */
-	    SimplePerturber.prototype.randomlyDeleteUndEdgesPercentage = function (percentage) {
+	    randomlyDeleteUndEdgesPercentage(percentage) {
 	        if (percentage > 100) {
 	            percentage = 100;
 	        }
-	        var nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+	        let nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
 	        this.randomlyDeleteUndEdgesAmount(nr_edges_to_delete);
-	    };
+	    }
 	    /**
 	     *
 	     * @param percentage
 	     */
-	    SimplePerturber.prototype.randomlyDeleteDirEdgesPercentage = function (percentage) {
+	    randomlyDeleteDirEdgesPercentage(percentage) {
 	        if (percentage > 100) {
 	            percentage = 100;
 	        }
-	        var nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+	        let nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
 	        this.randomlyDeleteDirEdgesAmount(nr_edges_to_delete);
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyDeleteNodesAmount = function (amount) {
+	    randomlyDeleteNodesAmount(amount) {
 	        if (amount < 0) {
 	            throw 'Cowardly refusing to remove a negative amount of nodes';
 	        }
 	        if (this._graph.nrNodes() === 0) {
 	            return;
 	        }
-	        for (var nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++) {
+	        for (let nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++) {
 	            this._graph.deleteNode(this._graph.getNodes()[randomNodes[nodeID]]);
 	        }
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyDeleteUndEdgesAmount = function (amount) {
+	    randomlyDeleteUndEdgesAmount(amount) {
 	        if (amount < 0) {
 	            throw 'Cowardly refusing to remove a negative amount of edges';
 	        }
 	        if (this._graph.nrUndEdges() === 0) {
 	            return;
 	        }
-	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+	        for (let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++) {
 	            this._graph.deleteEdge(this._graph.getUndEdges()[randomEdges[edgeID]]);
 	        }
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyDeleteDirEdgesAmount = function (amount) {
+	    randomlyDeleteDirEdgesAmount(amount) {
 	        if (amount < 0) {
 	            throw 'Cowardly refusing to remove a negative amount of edges';
 	        }
 	        if (this._graph.nrDirEdges() === 0) {
 	            return;
 	        }
-	        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+	        for (let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++) {
 	            this._graph.deleteEdge(this._graph.getDirEdges()[randomEdges[edgeID]]);
 	        }
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
-	        var nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+	    randomlyAddUndEdgesPercentage(percentage) {
+	        let nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
 	        this.randomlyAddEdgesAmount(nr_und_edges_to_add, { directed: false });
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
-	        var nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+	    randomlyAddDirEdgesPercentage(percentage) {
+	        let nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
 	        this.randomlyAddEdgesAmount(nr_dir_edges_to_add, { directed: true });
-	    };
+	    }
 	    /**
 	     *
 	     * DEFAULT edge direction: UNDIRECTED
 	     */
-	    SimplePerturber.prototype.randomlyAddEdgesAmount = function (amount, config) {
+	    randomlyAddEdgesAmount(amount, config) {
 	        if (amount <= 0) {
 	            throw new Error('Cowardly refusing to add a non-positive amount of edges');
 	        }
-	        var node_a, node_b, nodes;
-	        var direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
+	        let node_a, node_b, nodes;
+	        let direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
 	        // logger.log("DIRECTION of new edges to create: " + direction ? "directed" : "undirected");
 	        while (amount) {
 	            node_a = this._graph.getRandomNode();
 	            while ((node_b = this._graph.getRandomNode()) === node_a) { }
-	            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+	            let edge_id = `${node_a.getID()}_${node_b.getID()}${dir}`;
 	            if (node_a.hasEdgeID(edge_id)) {
 	                // TODO: Check if the whole duplication prevention is really necessary!
 	                // logger.log("Duplicate edge creation, continuing...");
@@ -3927,30 +3794,30 @@
 	            }
 	        }
 	        // logger.log(`Created ${amount} ${direction ? "directed" : "undirected"} edges...`);
-	    };
+	    }
 	    /**
 	     *
 	     */
-	    SimplePerturber.prototype.randomlyAddNodesPercentage = function (percentage, config) {
-	        var nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
+	    randomlyAddNodesPercentage(percentage, config) {
+	        let nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
 	        this.randomlyAddNodesAmount(nr_nodes_to_add, config);
-	    };
+	    }
 	    /**
 	     *
 	     * If the degree configuration is invalid
 	     * (negative or infinite degree amount / percentage)
 	     * the nodes will have been created nevertheless
 	     */
-	    SimplePerturber.prototype.randomlyAddNodesAmount = function (amount, config) {
+	    randomlyAddNodesAmount(amount, config) {
 	        if (amount < 0) {
 	            throw 'Cowardly refusing to add a negative amount of nodes';
 	        }
-	        var new_nodes = {};
+	        let new_nodes = {};
 	        while (amount--) {
 	            /**
 	             * @todo check if this procedure is 'random enough'
 	             */
-	            var new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
+	            let new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
 	            new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
 	        }
 	        if (config == null) {
@@ -3959,13 +3826,13 @@
 	        else {
 	            this.createEdgesByConfig(config, new_nodes);
 	        }
-	    };
+	    }
 	    /**
 	     * Go through the degree_configuration provided and create edges
 	     * as requested by config
 	     */
-	    SimplePerturber.prototype.createEdgesByConfig = function (config, new_nodes) {
-	        var degree, min_degree, max_degree, deg_probability;
+	    createEdgesByConfig(config, new_nodes) {
+	        let degree, min_degree, max_degree, deg_probability;
 	        if (config.und_degree != null ||
 	            config.dir_degree != null ||
 	            config.min_und_degree != null && config.max_und_degree != null ||
@@ -3995,7 +3862,7 @@
 	                this.createRandomEdgesProb(config.probability_und, false, new_nodes);
 	            }
 	        }
-	    };
+	    }
 	    /**
 	     * Simple edge generator:
 	     * Go through all node combinations, and
@@ -4004,13 +3871,13 @@
 	     * @direction true or false
 	     * CAUTION: this algorithm takes quadratic runtime in #nodes
 	     */
-	    SimplePerturber.prototype.createRandomEdgesProb = function (probability, directed, new_nodes) {
+	    createRandomEdgesProb(probability, directed, new_nodes) {
 	        if (0 > probability || 1 < probability) {
 	            throw new Error("Probability out of range.");
 	        }
 	        directed = directed || false;
 	        new_nodes = new_nodes || this._graph.getNodes();
-	        var all_nodes = this._graph.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
+	        let all_nodes = this._graph.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
 	        for (node_a in new_nodes) {
 	            for (node_b in all_nodes) {
 	                if (node_a !== node_b && Math.random() <= probability) {
@@ -4023,7 +3890,7 @@
 	                }
 	            }
 	        }
-	    };
+	    }
 	    /**
 	     * Simple edge generator:
 	     * Go through all nodes, and
@@ -4032,7 +3899,7 @@
 	     * CAUTION: this algorithm could take quadratic runtime in #nodes
 	     * but should be much faster
 	     */
-	    SimplePerturber.prototype.createRandomEdgesSpan = function (min, max, directed, setOfNodes) {
+	    createRandomEdgesSpan(min, max, directed, setOfNodes) {
 	        if (min < 0) {
 	            throw new Error('Minimum degree cannot be negative.');
 	        }
@@ -4066,9 +3933,8 @@
 	                }
 	            }
 	        }
-	    };
-	    return SimplePerturber;
-	}());
+	    }
+	}
 	exports.SimplePerturber = SimplePerturber;
 
 
@@ -4079,14 +3945,14 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $G = __webpack_require__(4);
-	var logger_1 = __webpack_require__(12);
-	var logger = new logger_1.Logger();
+	const $G = __webpack_require__(4);
+	const logger_1 = __webpack_require__(12);
+	const logger = new logger_1.Logger();
 	/**
 	 *
 	 */
-	var MCMFBoykov = /** @class */ (function () {
-	    function MCMFBoykov(_graph, _source, _sink, config) {
+	class MCMFBoykov {
+	    constructor(_graph, _source, _sink, config) {
 	        this._graph = _graph;
 	        this._source = _source;
 	        this._sink = _sink;
@@ -4114,7 +3980,7 @@
 	            this._sink = this._state.residGraph.getNodeById(this._sink.getID());
 	        }
 	    }
-	    MCMFBoykov.prototype.calculateCycle = function () {
+	    calculateCycle() {
 	        var result = {
 	            edges: [],
 	            edgeIDs: [],
@@ -4154,7 +4020,7 @@
 	        var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
 	        var smallTree_size = Object.keys(smallTree).length;
 	        var smallTree_ids = Object.keys(smallTree);
-	        for (var i = 0; i < smallTree_size; i++) {
+	        for (let i = 0; i < smallTree_size; i++) {
 	            // var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
 	            var node_id = smallTree_ids[i];
 	            var node = this._graph.getNodeById(node_id);
@@ -4163,9 +4029,9 @@
 	                var undEdges = node.undEdges();
 	                var undEdges_size = Object.keys(undEdges).length;
 	                var undEdges_ids = Object.keys(undEdges);
-	                for (var i_1 = 0; i_1 < undEdges_size; i_1++) {
+	                for (let i = 0; i < undEdges_size; i++) {
 	                    // var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
-	                    var edge = undEdges[undEdges_ids[i_1]];
+	                    var edge = undEdges[undEdges_ids[i]];
 	                    var neighbor = (edge.getNodes().a.getID() == node.getID()) ? edge.getNodes().b : edge.getNodes().a;
 	                    // if (this.tree(neighbor) != this.tree(node)) {
 	                    if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
@@ -4186,9 +4052,9 @@
 	                var inEdges_ids = Object.keys(node.inEdges());
 	                var inEdges_length = inEdges_ids.length;
 	                // check outEdges
-	                for (var i_2 = 0; i_2 < outEdges_length; i_2++) {
+	                for (let i = 0; i < outEdges_length; i++) {
 	                    // var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
-	                    var edge = this._graph.getEdgeById(outEdges_ids[i_2]);
+	                    var edge = this._graph.getEdgeById(outEdges_ids[i]);
 	                    var neighbor = edge.getNodes().b;
 	                    // if (this.tree(neighbor) != this.tree(node)) {
 	                    if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
@@ -4199,9 +4065,9 @@
 	                    }
 	                }
 	                // check inEdges
-	                for (var i_3 = 0; i_3 < inEdges_length; i_3++) {
+	                for (let i = 0; i < inEdges_length; i++) {
 	                    // var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
-	                    var edge = this._graph.getEdgeById(inEdges_ids[i_3]);
+	                    var edge = this._graph.getEdgeById(inEdges_ids[i]);
 	                    var neighbor = edge.getNodes().a;
 	                    if (this.tree(neighbor) != this.tree(node)) {
 	                        // we found a an edge which is part of the Cut
@@ -4217,12 +4083,12 @@
 	        logger.log("# cycles => " + nrCycles);
 	        // logger.log(result.edges);
 	        return result;
-	    };
-	    MCMFBoykov.prototype.renameEdges = function (graph) {
+	    }
+	    renameEdges(graph) {
 	        var edges = graph.getDirEdges();
 	        var edges_ids = Object.keys(edges);
 	        var edges_length = edges_ids.length;
-	        for (var i = 0; i < edges_length; i++) {
+	        for (let i = 0; i < edges_length; i++) {
 	            var edge = edges[edges_ids[i]];
 	            var weight = edge.getWeight();
 	            graph.deleteEdge(edge);
@@ -4231,15 +4097,15 @@
 	            var options = { directed: true, weighted: true, weight: weight };
 	            var new_edge = graph.addEdgeByID(node_a.getID() + "_" + node_b.getID(), node_a, node_b, options);
 	        }
-	    };
-	    MCMFBoykov.prototype.convertToDirectedGraph = function (uGraph) {
+	    }
+	    convertToDirectedGraph(uGraph) {
 	        var dGraph = new $G.BaseGraph(uGraph._label + "_directed");
 	        // copy all nodes
 	        var nodes = uGraph.getNodes();
 	        var nodes_ids = Object.keys(nodes);
 	        var nodes_length = nodes_ids.length;
 	        // logger.log("#nodes: " + Object.keys(nodes).length);
-	        for (var i = 0; i < nodes_length; i++) {
+	        for (let i = 0; i < nodes_length; i++) {
 	            // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
 	            var node = nodes[nodes_ids[i]];
 	            dGraph.addNodeByID(node.getID());
@@ -4248,7 +4114,7 @@
 	        var edges = uGraph.getUndEdges();
 	        var edges_ids = Object.keys(edges);
 	        var edges_length = edges_ids.length;
-	        for (var i = 0; i < edges_length; i++) {
+	        for (let i = 0; i < edges_length; i++) {
 	            // var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 	            var und_edge = edges[edges_ids[i]];
 	            var node_a_id = und_edge.getNodes().a.getID();
@@ -4259,8 +4125,8 @@
 	        }
 	        // logger.log(dGraph);
 	        return dGraph;
-	    };
-	    MCMFBoykov.prototype.tree = function (node) {
+	    }
+	    tree(node) {
 	        var tree = "";
 	        if (node.getID() in this._state.treeS) {
 	            tree = "S";
@@ -4271,8 +4137,8 @@
 	            return tree;
 	        }
 	        return tree;
-	    };
-	    MCMFBoykov.prototype.getPathToRoot = function (node) {
+	    }
+	    getPathToRoot(node) {
 	        var path_root = [];
 	        var node_id = node.getID();
 	        path_root.push(this._graph.getNodeById(node_id));
@@ -4286,13 +4152,13 @@
 	            path_root.push(this._graph.getNodeById(node_id));
 	        }
 	        return path_root;
-	    };
-	    MCMFBoykov.prototype.getBottleneckCapacity = function () {
+	    }
+	    getBottleneckCapacity() {
 	        var min_capacity = 0;
 	        // set first edge weight
 	        var min_capacity = this._state.residGraph.getEdgeById(this._state.path[0].getID() + "_" + this._state.path[1].getID()).getWeight();
 	        var path_length = this._state.path.length - 1;
-	        for (var i = 0; i < path_length; i++) {
+	        for (let i = 0; i < path_length; i++) {
 	            var node_a = this._state.path[i];
 	            var node_b = this._state.path[i + 1];
 	            // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
@@ -4302,8 +4168,8 @@
 	            }
 	        }
 	        return min_capacity;
-	    };
-	    MCMFBoykov.prototype.grow = function () {
+	    }
+	    grow() {
 	        // as long as there are active nodes
 	        var nr_active_nodes = Object.keys(this._state.activeNodes).length;
 	        var active_nodes_ids = Object.keys(this._state.activeNodes);
@@ -4316,7 +4182,7 @@
 	            var edges_ids = Object.keys(edges);
 	            var edges_length = edges_ids.length;
 	            // for all neighbors
-	            for (var i = 0; i < edges_length; i++) {
+	            for (let i = 0; i < edges_length; i++) {
 	                // var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
 	                var edge = edges[edges_ids[i]];
 	                var neighborNode = (this._state.tree[activeNode.getID()] == "S") ? edge.getNodes().b : edge.getNodes().a;
@@ -4365,10 +4231,10 @@
 	        }
 	        this._state.path = [];
 	        return; //empty path
-	    };
-	    MCMFBoykov.prototype.augmentation = function () {
+	    }
+	    augmentation() {
 	        var min_capacity = this.getBottleneckCapacity();
-	        for (var i = 0; i < this._state.path.length - 1; i++) {
+	        for (let i = 0; i < this._state.path.length - 1; i++) {
 	            var node_a = this._state.path[i], node_b = this._state.path[i + 1];
 	            // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
 	            var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
@@ -4392,8 +4258,8 @@
 	                }
 	            }
 	        }
-	    };
-	    MCMFBoykov.prototype.adoption = function () {
+	    }
+	    adoption() {
 	        var orphans_ids = Object.keys(this._state.orphans);
 	        var orphans_size = orphans_ids.length;
 	        while (orphans_size) {
@@ -4407,7 +4273,7 @@
 	            var edge_ids = Object.keys(edges);
 	            var edge_length = edge_ids.length;
 	            var found = false;
-	            for (var i = 0; i < edge_length; i++) {
+	            for (let i = 0; i < edge_length; i++) {
 	                // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 	                var edge = edges[edge_ids[i]];
 	                var neighbor = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
@@ -4430,7 +4296,7 @@
 	            // var edge_ids: Array<string> = Object.keys(edges);
 	            // var edge_length: number = edge_ids.length;
 	            // we could not find a valid parent
-	            for (var i = 0; i < edge_length; i++) {
+	            for (let i = 0; i < edge_length; i++) {
 	                // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 	                var edge = edges[edge_ids[i]];
 	                var neighbor = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
@@ -4463,14 +4329,13 @@
 	            }
 	            delete this._state.activeNodes[orphan.getID()];
 	        }
-	    };
-	    MCMFBoykov.prototype.prepareMCMFStandardConfig = function () {
+	    }
+	    prepareMCMFStandardConfig() {
 	        return {
 	            directed: true
 	        };
-	    };
-	    return MCMFBoykov;
-	}());
+	    }
+	}
 	exports.MCMFBoykov = MCMFBoykov;
 
 
@@ -4481,7 +4346,7 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $SU = __webpack_require__(3);
+	const $SU = __webpack_require__(3);
 	var DegreeMode;
 	(function (DegreeMode) {
 	    DegreeMode[DegreeMode["in"] = 0] = "in";
@@ -4490,24 +4355,22 @@
 	    DegreeMode[DegreeMode["dir"] = 3] = "dir";
 	    DegreeMode[DegreeMode["all"] = 4] = "all";
 	})(DegreeMode = exports.DegreeMode || (exports.DegreeMode = {}));
-	var DegreeCentrality = /** @class */ (function () {
-	    function DegreeCentrality() {
-	    }
-	    DegreeCentrality.prototype.getCentralityMap = function (graph, weighted, conf) {
+	class DegreeCentrality {
+	    getCentralityMap(graph, weighted, conf) {
 	        weighted = (weighted != null) ? !!weighted : true;
 	        conf = (conf == null) ? DegreeMode.all : conf;
-	        var ret = {}; //Will be a map of [nodeID] = centrality
+	        let ret = {}; //Will be a map of [nodeID] = centrality
 	        switch (conf) { //Switch on the outside for faster loops
 	            case DegreeMode.in:
-	                for (var key in graph.getNodes()) {
-	                    var node = graph.getNodeById(key);
+	                for (let key in graph.getNodes()) {
+	                    let node = graph.getNodeById(key);
 	                    if (node != null) {
 	                        if (!weighted) {
 	                            ret[key] = node.inDegree();
 	                        }
 	                        else {
 	                            ret[key] = ret[key] || 0;
-	                            for (var k in node.inEdges()) {
+	                            for (let k in node.inEdges()) {
 	                                ret[key] += node.inEdges()[k].getWeight();
 	                            }
 	                        }
@@ -4515,15 +4378,15 @@
 	                }
 	                break;
 	            case DegreeMode.out:
-	                for (var key in graph.getNodes()) {
-	                    var node = graph.getNodeById(key);
+	                for (let key in graph.getNodes()) {
+	                    let node = graph.getNodeById(key);
 	                    if (node != null) {
 	                        if (!weighted) {
 	                            ret[key] = node.outDegree();
 	                        }
 	                        else {
 	                            ret[key] = ret[key] || 0;
-	                            for (var k in node.outEdges()) {
+	                            for (let k in node.outEdges()) {
 	                                ret[key] += node.outEdges()[k].getWeight();
 	                            }
 	                        }
@@ -4531,15 +4394,15 @@
 	                }
 	                break;
 	            case DegreeMode.und:
-	                for (var key in graph.getNodes()) {
-	                    var node = graph.getNodeById(key);
+	                for (let key in graph.getNodes()) {
+	                    let node = graph.getNodeById(key);
 	                    if (node != null) {
 	                        if (!weighted) {
 	                            ret[key] = node.degree();
 	                        }
 	                        else {
 	                            ret[key] = ret[key] || 0;
-	                            for (var k in node.undEdges()) {
+	                            for (let k in node.undEdges()) {
 	                                ret[key] += node.undEdges()[k].getWeight();
 	                            }
 	                        }
@@ -4547,16 +4410,16 @@
 	                }
 	                break;
 	            case DegreeMode.dir:
-	                for (var key in graph.getNodes()) {
-	                    var node = graph.getNodeById(key);
+	                for (let key in graph.getNodes()) {
+	                    let node = graph.getNodeById(key);
 	                    if (node != null) {
 	                        if (!weighted) {
 	                            ret[key] = node.inDegree() + node.outDegree();
 	                        }
 	                        else {
 	                            ret[key] = ret[key] || 0;
-	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges()]);
-	                            for (var k in comb) {
+	                            let comb = $SU.mergeObjects([node.inEdges(), node.outEdges()]);
+	                            for (let k in comb) {
 	                                ret[key] += comb[k].getWeight();
 	                            }
 	                        }
@@ -4564,16 +4427,16 @@
 	                }
 	                break;
 	            case DegreeMode.all:
-	                for (var key in graph.getNodes()) {
-	                    var node = graph.getNodeById(key);
+	                for (let key in graph.getNodes()) {
+	                    let node = graph.getNodeById(key);
 	                    if (node != null) {
 	                        if (!weighted) {
 	                            ret[key] = node.degree() + node.inDegree() + node.outDegree();
 	                        }
 	                        else {
 	                            ret[key] = ret[key] || 0;
-	                            var comb = $SU.mergeObjects([node.inEdges(), node.outEdges(), node.undEdges()]);
-	                            for (var k in comb) {
+	                            let comb = $SU.mergeObjects([node.inEdges(), node.outEdges(), node.undEdges()]);
+	                            for (let k in comb) {
 	                                ret[key] += comb[k].getWeight();
 	                            }
 	                        }
@@ -4582,12 +4445,12 @@
 	                break;
 	        }
 	        return ret;
-	    };
+	    }
 	    /**
 	     * @TODO Weighted version !
 	   * @TODO per edge type !
 	     */
-	    DegreeCentrality.prototype.degreeDistribution = function (graph) {
+	    degreeDistribution(graph) {
 	        var max_deg = 0, key, nodes = graph.getNodes(), node, all_deg;
 	        for (key in nodes) {
 	            node = nodes[key];
@@ -4611,9 +4474,8 @@
 	        }
 	        // console.dir(deg_dist);
 	        return deg_dist;
-	    };
-	    return DegreeCentrality;
-	}());
+	    }
+	}
 	exports.DegreeCentrality = DegreeCentrality;
 
 
@@ -4624,33 +4486,31 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $PFS = __webpack_require__(9);
-	var $FW = __webpack_require__(23);
+	const $PFS = __webpack_require__(9);
+	const $FW = __webpack_require__(23);
 	//Calculates all the shortest path's to all other nodes for all given nodes in the graph
 	//Returns a map with every node as key and the average distance to all other nodes as value
-	var closenessCentrality = /** @class */ (function () {
-	    function closenessCentrality() {
-	    }
-	    closenessCentrality.prototype.getCentralityMapFW = function (graph) {
-	        var dists = $FW.FloydWarshallArray(graph);
-	        var ret = [];
-	        var N = dists.length;
-	        for (var a = 0; a < N; ++a) {
-	            var sum = 0;
-	            for (var b = 0; b < N; ++b) {
+	class closenessCentrality {
+	    getCentralityMapFW(graph) {
+	        let dists = $FW.FloydWarshallArray(graph);
+	        let ret = [];
+	        let N = dists.length;
+	        for (let a = 0; a < N; ++a) {
+	            let sum = 0;
+	            for (let b = 0; b < N; ++b) {
 	                if (dists[a][b] != Number.POSITIVE_INFINITY)
 	                    sum += dists[a][b];
 	            }
 	            ret[a] = 1 / sum;
 	        }
 	        return ret;
-	    };
-	    closenessCentrality.prototype.getCentralityMap = function (graph) {
-	        var pfs_config = $PFS.preparePFSStandardConfig();
-	        var accumulated_distance = 0;
+	    }
+	    getCentralityMap(graph) {
+	        let pfs_config = $PFS.preparePFSStandardConfig();
+	        let accumulated_distance = 0;
 	        //set the config (we want the sum of all edges to become a property of result)
 	        //a node is encountered the first time
-	        var not_encountered = function (context) {
+	        let not_encountered = function (context) {
 	            // adding the distance to the accumulated distance
 	            accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());
 	        };
@@ -4659,13 +4519,13 @@
 	            //console.log("correcting distance "+context.current.node.getID()+"->"+context.next.node.getID()+" from " + pfs_config.result[context.next.node.getID()].distance + "to" + context.better_dist);
 	            accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.proposed_dist;
 	        };
-	        var bp = pfs_config.callbacks.better_path.pop(); //change the order, otherwise our betterPathFound would not do anything
+	        let bp = pfs_config.callbacks.better_path.pop(); //change the order, otherwise our betterPathFound would not do anything
 	        pfs_config.callbacks.better_path.push(betterPathFound);
 	        pfs_config.callbacks.better_path.push(bp);
 	        pfs_config.callbacks.not_encountered.push(not_encountered);
-	        var ret = {};
-	        for (var key in graph.getNodes()) {
-	            var node = graph.getNodeById(key);
+	        let ret = {};
+	        for (let key in graph.getNodes()) {
+	            let node = graph.getNodeById(key);
 	            if (node != null) {
 	                accumulated_distance = 0;
 	                $PFS.PFS(graph, node, pfs_config);
@@ -4673,9 +4533,8 @@
 	            }
 	        }
 	        return ret;
-	    };
-	    return closenessCentrality;
-	}());
+	    }
+	}
 	exports.closenessCentrality = closenessCentrality;
 
 
@@ -4686,8 +4545,8 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $FW = __webpack_require__(23);
-	var $JO = __webpack_require__(11);
+	const $FW = __webpack_require__(23);
+	const $JO = __webpack_require__(11);
 	/**
 	 * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
 	 *
@@ -4705,7 +4564,7 @@
 	 * @todo decide if we still need it...
 	 */
 	function betweennessCentrality(graph, directed, sparse) {
-	    var paths;
+	    let paths;
 	    var sparse = sparse || false;
 	    if (sparse) {
 	        paths = $JO.Johnsons(graph)[1];
@@ -4713,32 +4572,32 @@
 	    else {
 	        paths = $FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph)[1]);
 	    }
-	    var nodes = graph.getNodes();
+	    let nodes = graph.getNodes();
 	    //getting the nodeKeys
-	    var nodeKeys = Object.keys(nodes);
-	    var map = {};
-	    for (var key in nodes) {
+	    let nodeKeys = Object.keys(nodes);
+	    let map = {};
+	    for (let key in nodes) {
 	        //initializing the map which will be returned at the end - should it contain the keys (numbers), or the node IDs?
 	        map[key] = 0;
 	    }
-	    var N = paths.length;
+	    let N = paths.length;
 	    for (var a = 0; a < N; ++a) {
 	        for (var b = 0; b < N; ++b) {
 	            //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
 	            if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b) && paths[a][b][0] != null) {
 	                // console.log("called with a and b: "+a+" , "+b);
-	                var tempMap = {};
-	                var leadArray = [];
-	                var pathCount = 0;
+	                let tempMap = {};
+	                let leadArray = [];
+	                let pathCount = 0;
 	                do {
 	                    //ends when all paths are traced back
-	                    var tracer = b;
-	                    var leadCounter = 0;
+	                    let tracer = b;
+	                    let leadCounter = 0;
 	                    pathCount++;
 	                    while (true) {
 	                        //ends when one path is traced back
-	                        var previous = paths[a][tracer];
-	                        var terminate = false;
+	                        let previous = paths[a][tracer];
+	                        let terminate = false;
 	                        //no branching: 
 	                        if (previous.length == 1 && previous[0] == tracer) {
 	                            break;
@@ -4766,7 +4625,7 @@
 	                            }
 	                            //case: branch is covered by the leadArray
 	                            else if (leadCounter < leadArray.length) {
-	                                var choice = leadArray[leadCounter][0];
+	                                let choice = leadArray[leadCounter][0];
 	                                if (previous[choice] == tracer) {
 	                                    terminate = true;
 	                                }
@@ -4811,10 +4670,10 @@
 	                } while (leadArray.length != 0);
 	                //now put the correct scores into the final map
 	                //be careful, the return map uses letters as nodekeys! - one must transform, otherwise one gets rubbish
-	                for (var key in tempMap) {
+	                for (let key in tempMap) {
 	                    // console.log("tempMap element " + key);
 	                    // console.log(tempMap[key]);
-	                    var mapKey = nodeKeys[key];
+	                    let mapKey = nodeKeys[key];
 	                    map[mapKey] += tempMap[key] / pathCount;
 	                }
 	            }
@@ -4832,30 +4691,28 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $SU = __webpack_require__(3);
-	var $GAUSS = __webpack_require__(30);
+	const $SU = __webpack_require__(3);
+	const $GAUSS = __webpack_require__(30);
 	//Calculates the page rank for a given graph
-	var pageRankDetCentrality = /** @class */ (function () {
-	    function pageRankDetCentrality() {
-	    }
-	    pageRankDetCentrality.prototype.getCentralityMap = function (graph, weighted) {
+	class pageRankDetCentrality {
+	    getCentralityMap(graph, weighted) {
 	        //First initialize the values for all nodes
-	        var divideTable = {}; //Tells us how many outgoing edges each node has
-	        var matr = [];
-	        var ctr = 0;
-	        var map = {};
-	        for (var key in graph.getNodes()) {
+	        let divideTable = {}; //Tells us how many outgoing edges each node has
+	        let matr = [];
+	        let ctr = 0;
+	        let map = {};
+	        for (let key in graph.getNodes()) {
 	            divideTable[key] = 0;
 	        }
-	        for (var key in graph.getNodes()) { //Run through all nodes in graph
+	        for (let key in graph.getNodes()) { //Run through all nodes in graph
 	            //pageScores[key] = startVal;
 	            map[key] = ctr;
-	            var node = graph.getNodeById(key);
-	            var node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+	            let node = graph.getNodeById(key);
+	            let node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
 	            matr[ctr] = new Array();
 	            //Find out which other nodes influence the PageRank of this node
-	            for (var edgeKey in node_InEdges) {
-	                var edge = node_InEdges[edgeKey];
+	            for (let edgeKey in node_InEdges) {
+	                let edge = node_InEdges[edgeKey];
 	                if (edge.getNodes().a.getID() == node.getID()) {
 	                    matr[ctr].push(edge.getNodes().b.getID());
 	                    divideTable[edge.getNodes().b.getID()]++; //Count to see how much we have to split the score
@@ -4870,19 +4727,19 @@
 	            ctr++;
 	        }
 	        ctr = 0;
-	        var mapCtr = {};
-	        var numMatr = [[]];
+	        let mapCtr = {};
+	        let numMatr = [[]];
 	        //console.log(matr);
 	        //Bring matrix into correct form
-	        for (var key in matr) { //  |maybe add +1 here
+	        for (let key in matr) { //  |maybe add +1 here
 	            numMatr[key] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0); //Fill array with 0
 	            //set the slot of our variable to -1 (we switch it to the other side)
-	            var p = matr[key].pop();
+	            let p = matr[key].pop();
 	            if (mapCtr[p] == null)
 	                mapCtr[p] = ctr++;
 	            numMatr[key][mapCtr[p]] = -1;
-	            for (var k in matr[key]) {
-	                var a = matr[key][k];
+	            for (let k in matr[key]) {
+	                let a = matr[key][k];
 	                if (mapCtr[a] == null)
 	                    mapCtr[a] = ctr++;
 	                //console.log("mapCtr:"+mapCtr[a] + " " + a);
@@ -4891,17 +4748,16 @@
 	        }
 	        //Now add last equation, everything added together should be 1!  | maybe add +1 here
 	        numMatr[numMatr.length - 1] = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 1);
-	        var x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
+	        let x = Array.apply(null, Array(graph.nrNodes())).map(Number.prototype.valueOf, 0);
 	        x[x.length - 1] = 1;
 	        x = $GAUSS.gauss(numMatr, x);
-	        var y = {};
-	        for (var key in map) {
+	        let y = {};
+	        for (let key in map) {
 	            y[key] = x[ctr];
 	        }
 	        return x;
-	    };
-	    return pageRankDetCentrality;
-	}());
+	    }
+	}
 	exports.pageRankDetCentrality = pageRankDetCentrality;
 
 
@@ -4988,12 +4844,10 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $SU = __webpack_require__(3);
+	const $SU = __webpack_require__(3);
 	//Calculates the page rank for a given graph
-	var pageRankCentrality = /** @class */ (function () {
-	    function pageRankCentrality() {
-	    }
-	    pageRankCentrality.prototype.getCentralityMap = function (graph, weighted, alpha, conv, iterations) {
+	class pageRankCentrality {
+	    getCentralityMap(graph, weighted, alpha, conv, iterations) {
 	        if (alpha == null)
 	            alpha = 0.10;
 	        if (iterations == null)
@@ -5001,40 +4855,40 @@
 	        if (conv == null)
 	            conv = 0.000125;
 	        //First initialize the values for all nodes
-	        var curr = {};
-	        var old = {};
-	        var nrNodes = graph.nrNodes();
-	        var structure = {};
-	        for (var key in graph.getNodes()) {
+	        let curr = {};
+	        let old = {};
+	        let nrNodes = graph.nrNodes();
+	        let structure = {};
+	        for (let key in graph.getNodes()) {
 	            key = String(key);
-	            var node = graph.getNodeById(key);
+	            let node = graph.getNodeById(key);
 	            structure[key] = {};
 	            structure[key]['deg'] = node.outDegree() + node.degree();
 	            structure[key]['inc'] = [];
-	            var incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
-	            for (var edge in incomingEdges) {
-	                var edgeNode = incomingEdges[edge];
-	                var parent_1 = edgeNode.getNodes().a;
+	            let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+	            for (let edge in incomingEdges) {
+	                let edgeNode = incomingEdges[edge];
+	                let parent = edgeNode.getNodes().a;
 	                if (edgeNode.getNodes().a.getID() == node.getID())
-	                    parent_1 = edgeNode.getNodes().b;
-	                structure[key]['inc'].push(parent_1.getID());
+	                    parent = edgeNode.getNodes().b;
+	                structure[key]['inc'].push(parent.getID());
 	            }
 	        }
 	        //console.log(JSON.stringify(structure));
-	        for (var key in graph.getNodes()) {
+	        for (let key in graph.getNodes()) {
 	            key = String(key);
 	            curr[key] = 1 / nrNodes;
 	            old[key] = 1 / nrNodes;
 	        }
-	        for (var i = 0; i < iterations; i++) {
-	            var me = 0.0;
-	            for (var key in graph.getNodes()) { //Run through all nodes in graph
+	        for (let i = 0; i < iterations; i++) {
+	            let me = 0.0;
+	            for (let key in graph.getNodes()) { //Run through all nodes in graph
 	                key = String(key);
 	                //console.log(structure[key]);
-	                var total = 0;
-	                var parents = structure[key]['inc'];
-	                for (var k in parents) {
-	                    var p = String(parents[k]);
+	                let total = 0;
+	                let parents = structure[key]['inc'];
+	                for (let k in parents) {
+	                    let p = String(parents[k]);
 	                    total += old[p] / structure[p]['deg'];
 	                }
 	                //console.log("o:"+old[key] + " n:"+curr[key]);
@@ -5048,9 +4902,8 @@
 	            old = $SU.clone(curr);
 	        }
 	        return curr;
-	    };
-	    return pageRankCentrality;
-	}());
+	    }
+	}
 	exports.pageRankCentrality = pageRankCentrality;
 
 
@@ -5061,9 +4914,9 @@
 	"use strict";
 	/// <reference path="../../typings/tsd.d.ts" />
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var $G = __webpack_require__(4);
-	var KROL = /** @class */ (function () {
-	    function KROL(config) {
+	const $G = __webpack_require__(4);
+	class KROL {
+	    constructor(config) {
 	        this._config = config || this.prepareKROLStandardConfig();
 	        // this._generator = this._config.generator;
 	        // TODO: use the adjacency matrix form the generator graph
@@ -5073,16 +4926,16 @@
 	        this._cycles = this._config.cycles;
 	        this._graph = new $G.BaseGraph('synth');
 	    }
-	    KROL.prototype.generate = function () {
+	    generate() {
 	        // var gen_dims = this._generator.nrNodes();
 	        var gen_dims = this._genMat[0].length;
 	        var res_dims = Math.pow(gen_dims, this._cycles + 1);
-	        for (var index = 0; index < res_dims; index++) {
+	        for (let index = 0; index < res_dims; index++) {
 	            this._graph.addNodeByID(index.toString());
 	        }
 	        var nr_edges = 0;
-	        for (var node1 = 0; node1 < res_dims; node1++) {
-	            for (var node2 = 0; node2 < res_dims; node2++) {
+	        for (let node1 = 0; node1 < res_dims; node1++) {
+	            for (let node2 = 0; node2 < res_dims; node2++) {
 	                if (this.addEdge(node1, node2, gen_dims)) {
 	                    this._graph.addEdgeByNodeIDs(node1 + '_' + node2, node1.toString(), node2.toString());
 	                    ++nr_edges;
@@ -5093,11 +4946,11 @@
 	            graph: this._graph
 	        };
 	        return result;
-	    };
-	    KROL.prototype.addEdge = function (node1, node2, dims) {
+	    }
+	    addEdge(node1, node2, dims) {
 	        var rprob = Math.random();
 	        var prob = 1.0;
-	        for (var level = 0; level < this._cycles; level++) {
+	        for (let level = 0; level < this._cycles; level++) {
 	            var id_1 = Math.floor(node1 / Math.pow(dims, level + 1)) % dims;
 	            var id_2 = Math.floor(node2 / Math.pow(dims, level + 1)) % dims;
 	            prob *= this._genMat[id_1][id_2];
@@ -5106,8 +4959,8 @@
 	            }
 	        }
 	        return true;
-	    };
-	    KROL.prototype.prepareKROLStandardConfig = function () {
+	    }
+	    prepareKROLStandardConfig() {
 	        // var generator: $G.IGraph = new $G.BaseGraph('generator');
 	        // var node_a = generator.addNodeByID('a');
 	        // var node_b = generator.addNodeByID('b');
@@ -5125,9 +4978,8 @@
 	            genMat: genMat,
 	            cycles: 5
 	        };
-	    };
-	    return KROL;
-	}());
+	    }
+	}
 	exports.KROL = KROL;
 
 

@@ -1,8 +1,8 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $G = require("../core/Graph");
-var $CB = require("../utils/callbackUtils");
+const $G = require("../core/Graph");
+const $CB = require("../utils/callbackUtils");
 /**
  * Breadth first search - usually performed to see
  * reachability etc. Therefore we do not want 'segments'

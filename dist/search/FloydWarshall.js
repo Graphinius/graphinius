@@ -1,7 +1,7 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $SU = require("../utils/structUtils");
+const $SU = require("../utils/structUtils");
 /**
  * Initializes the distance matrix from each node to all other node
  * using the edges of the graph
@@ -11,10 +11,10 @@ var $SU = require("../utils/structUtils");
  * @constructor
  */
 function initializeDistsWithEdges(graph) {
-    var dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-    for (var edge in edges) {
-        var a = edges[edge].getNodes().a.getID();
-        var b = edges[edge].getNodes().b.getID();
+    let dists = {}, edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+    for (let edge in edges) {
+        let a = edges[edge].getNodes().a.getID();
+        let b = edges[edge].getNodes().b.getID();
         if (dists[a] == null)
             dists[a] = {};
         dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
@@ -39,9 +39,9 @@ function FloydWarshallAPSP(graph) {
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
-    var dists = graph.adjListArray();
-    var next = graph.nextArray();
-    var N = dists.length;
+    let dists = graph.adjListArray();
+    let next = graph.nextArray();
+    let N = dists.length;
     for (var k = 0; k < N; ++k) {
         for (var i = 0; i < N; ++i) {
             for (var j = 0; j < N; ++j) {
@@ -75,8 +75,8 @@ function FloydWarshallArray(graph) {
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
-    var dists = graph.adjListArray();
-    var N = dists.length;
+    let dists = graph.adjListArray();
+    let N = dists.length;
     for (var k = 0; k < N; ++k) {
         for (var i = 0; i < N; ++i) {
             for (var j = 0; j < N; ++j) {
@@ -102,7 +102,7 @@ function FloydWarshallDict(graph) {
     if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
         throw new Error("Cowardly refusing to traverse graph without edges.");
     }
-    var dists = initializeDistsWithEdges(graph);
+    let dists = initializeDistsWithEdges(graph);
     for (var k in dists) {
         for (var i in dists) {
             for (var j in dists) {
@@ -122,16 +122,16 @@ function FloydWarshallDict(graph) {
 }
 exports.FloydWarshallDict = FloydWarshallDict;
 function changeNextToDirectParents(input) {
-    var output = [];
-    for (var a = 0; a < input.length; a++) {
+    let output = [];
+    for (let a = 0; a < input.length; a++) {
         output.push([]);
-        for (var b = 0; b < input.length; b++) {
+        for (let b = 0; b < input.length; b++) {
             output[a].push([]);
             output[a][b] = input[a][b];
         }
     }
-    for (var a = 0; a < input.length; a++) {
-        for (var b = 0; b < input.length; b++) {
+    for (let a = 0; a < input.length; a++) {
+        for (let b = 0; b < input.length; b++) {
             if (input[a][b][0] == null) {
                 continue;
             }
@@ -145,15 +145,15 @@ function changeNextToDirectParents(input) {
 }
 exports.changeNextToDirectParents = changeNextToDirectParents;
 function findDirectParents(u, v, inNext, outNext) {
-    var nodesInTracking = [u];
-    var counter = 0;
+    let nodesInTracking = [u];
+    let counter = 0;
     while (nodesInTracking.length > 0) {
-        var currNode = nodesInTracking.pop();
+        let currNode = nodesInTracking.pop();
         if (currNode == u && counter > 0) {
             continue;
         }
         else {
-            for (var e = 0; e < inNext[currNode][v].length; e++) {
+            for (let e = 0; e < inNext[currNode][v].length; e++) {
                 if (inNext[currNode][v][e] == v && counter == 0) {
                     outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
                 }

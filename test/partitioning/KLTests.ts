@@ -304,7 +304,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
       expect(heap.pop().gain).to.equal(10);
       expect(heap.pop().gain).to.equal(9);     
       expect(heap.pop().gain).to.equal(5);
-      expect(heap.pop().gain).to.equal(5);
+      expect(heap.pop().gain).to.equal(4);
       expect(heap.pop().gain).to.equal(5);
       expect(heap.pop().gain).to.equal(4);
       expect(heap.pop().gain).to.equal(-2);
