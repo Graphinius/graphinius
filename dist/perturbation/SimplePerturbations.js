@@ -1,116 +1,116 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = require("../utils/logger");
-var logger = new logger_1.Logger();
-var SimplePerturber = /** @class */ (function () {
-    function SimplePerturber(_graph) {
+const logger_1 = require("../utils/logger");
+let logger = new logger_1.Logger();
+class SimplePerturber {
+    constructor(_graph) {
         this._graph = _graph;
     }
     /**
      *
      * @param percentage
      */
-    SimplePerturber.prototype.randomlyDeleteNodesPercentage = function (percentage) {
+    randomlyDeleteNodesPercentage(percentage) {
         if (percentage > 100) {
             percentage = 100;
         }
-        var nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage / 100);
+        let nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage / 100);
         this.randomlyDeleteNodesAmount(nr_nodes_to_delete);
-    };
+    }
     /**
      *
      * @param percentage
      */
-    SimplePerturber.prototype.randomlyDeleteUndEdgesPercentage = function (percentage) {
+    randomlyDeleteUndEdgesPercentage(percentage) {
         if (percentage > 100) {
             percentage = 100;
         }
-        var nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+        let nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
         this.randomlyDeleteUndEdgesAmount(nr_edges_to_delete);
-    };
+    }
     /**
      *
      * @param percentage
      */
-    SimplePerturber.prototype.randomlyDeleteDirEdgesPercentage = function (percentage) {
+    randomlyDeleteDirEdgesPercentage(percentage) {
         if (percentage > 100) {
             percentage = 100;
         }
-        var nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+        let nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
         this.randomlyDeleteDirEdgesAmount(nr_edges_to_delete);
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyDeleteNodesAmount = function (amount) {
+    randomlyDeleteNodesAmount(amount) {
         if (amount < 0) {
             throw 'Cowardly refusing to remove a negative amount of nodes';
         }
         if (this._graph.nrNodes() === 0) {
             return;
         }
-        for (var nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++) {
+        for (let nodeID = 0, randomNodes = this._graph.pickRandomProperties(this._graph.getNodes(), amount); nodeID < randomNodes.length; nodeID++) {
             this._graph.deleteNode(this._graph.getNodes()[randomNodes[nodeID]]);
         }
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyDeleteUndEdgesAmount = function (amount) {
+    randomlyDeleteUndEdgesAmount(amount) {
         if (amount < 0) {
             throw 'Cowardly refusing to remove a negative amount of edges';
         }
         if (this._graph.nrUndEdges() === 0) {
             return;
         }
-        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+        for (let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getUndEdges(), amount); edgeID < randomEdges.length; edgeID++) {
             this._graph.deleteEdge(this._graph.getUndEdges()[randomEdges[edgeID]]);
         }
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyDeleteDirEdgesAmount = function (amount) {
+    randomlyDeleteDirEdgesAmount(amount) {
         if (amount < 0) {
             throw 'Cowardly refusing to remove a negative amount of edges';
         }
         if (this._graph.nrDirEdges() === 0) {
             return;
         }
-        for (var edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++) {
+        for (let edgeID = 0, randomEdges = this._graph.pickRandomProperties(this._graph.getDirEdges(), amount); edgeID < randomEdges.length; edgeID++) {
             this._graph.deleteEdge(this._graph.getDirEdges()[randomEdges[edgeID]]);
         }
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyAddUndEdgesPercentage = function (percentage) {
-        var nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
+    randomlyAddUndEdgesPercentage(percentage) {
+        let nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage / 100);
         this.randomlyAddEdgesAmount(nr_und_edges_to_add, { directed: false });
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyAddDirEdgesPercentage = function (percentage) {
-        var nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
+    randomlyAddDirEdgesPercentage(percentage) {
+        let nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage / 100);
         this.randomlyAddEdgesAmount(nr_dir_edges_to_add, { directed: true });
-    };
+    }
     /**
      *
      * DEFAULT edge direction: UNDIRECTED
      */
-    SimplePerturber.prototype.randomlyAddEdgesAmount = function (amount, config) {
+    randomlyAddEdgesAmount(amount, config) {
         if (amount <= 0) {
             throw new Error('Cowardly refusing to add a non-positive amount of edges');
         }
-        var node_a, node_b, nodes;
-        var direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
+        let node_a, node_b, nodes;
+        let direction = (config && config.directed) ? config.directed : false, dir = direction ? "_d" : "_u";
         // logger.log("DIRECTION of new edges to create: " + direction ? "directed" : "undirected");
         while (amount) {
             node_a = this._graph.getRandomNode();
             while ((node_b = this._graph.getRandomNode()) === node_a) { }
-            var edge_id = node_a.getID() + "_" + node_b.getID() + dir;
+            let edge_id = `${node_a.getID()}_${node_b.getID()}${dir}`;
             if (node_a.hasEdgeID(edge_id)) {
                 // TODO: Check if the whole duplication prevention is really necessary!
                 // logger.log("Duplicate edge creation, continuing...");
@@ -125,30 +125,30 @@ var SimplePerturber = /** @class */ (function () {
             }
         }
         // logger.log(`Created ${amount} ${direction ? "directed" : "undirected"} edges...`);
-    };
+    }
     /**
      *
      */
-    SimplePerturber.prototype.randomlyAddNodesPercentage = function (percentage, config) {
-        var nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
+    randomlyAddNodesPercentage(percentage, config) {
+        let nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage / 100);
         this.randomlyAddNodesAmount(nr_nodes_to_add, config);
-    };
+    }
     /**
      *
      * If the degree configuration is invalid
      * (negative or infinite degree amount / percentage)
      * the nodes will have been created nevertheless
      */
-    SimplePerturber.prototype.randomlyAddNodesAmount = function (amount, config) {
+    randomlyAddNodesAmount(amount, config) {
         if (amount < 0) {
             throw 'Cowardly refusing to add a negative amount of nodes';
         }
-        var new_nodes = {};
+        let new_nodes = {};
         while (amount--) {
             /**
              * @todo check if this procedure is 'random enough'
              */
-            var new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
+            let new_node_id = (Math.random() + 1).toString(36).substr(2, 32) + (Math.random() + 1).toString(36).substr(2, 32);
             new_nodes[new_node_id] = this._graph.addNodeByID(new_node_id);
         }
         if (config == null) {
@@ -157,13 +157,13 @@ var SimplePerturber = /** @class */ (function () {
         else {
             this.createEdgesByConfig(config, new_nodes);
         }
-    };
+    }
     /**
      * Go through the degree_configuration provided and create edges
      * as requested by config
      */
-    SimplePerturber.prototype.createEdgesByConfig = function (config, new_nodes) {
-        var degree, min_degree, max_degree, deg_probability;
+    createEdgesByConfig(config, new_nodes) {
+        let degree, min_degree, max_degree, deg_probability;
         if (config.und_degree != null ||
             config.dir_degree != null ||
             config.min_und_degree != null && config.max_und_degree != null ||
@@ -193,7 +193,7 @@ var SimplePerturber = /** @class */ (function () {
                 this.createRandomEdgesProb(config.probability_und, false, new_nodes);
             }
         }
-    };
+    }
     /**
      * Simple edge generator:
      * Go through all node combinations, and
@@ -202,13 +202,13 @@ var SimplePerturber = /** @class */ (function () {
      * @direction true or false
      * CAUTION: this algorithm takes quadratic runtime in #nodes
      */
-    SimplePerturber.prototype.createRandomEdgesProb = function (probability, directed, new_nodes) {
+    createRandomEdgesProb(probability, directed, new_nodes) {
         if (0 > probability || 1 < probability) {
             throw new Error("Probability out of range.");
         }
         directed = directed || false;
         new_nodes = new_nodes || this._graph.getNodes();
-        var all_nodes = this._graph.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
+        let all_nodes = this._graph.getNodes(), node_a, node_b, edge_id, dir = directed ? '_d' : '_u';
         for (node_a in new_nodes) {
             for (node_b in all_nodes) {
                 if (node_a !== node_b && Math.random() <= probability) {
@@ -221,7 +221,7 @@ var SimplePerturber = /** @class */ (function () {
                 }
             }
         }
-    };
+    }
     /**
      * Simple edge generator:
      * Go through all nodes, and
@@ -230,7 +230,7 @@ var SimplePerturber = /** @class */ (function () {
      * CAUTION: this algorithm could take quadratic runtime in #nodes
      * but should be much faster
      */
-    SimplePerturber.prototype.createRandomEdgesSpan = function (min, max, directed, setOfNodes) {
+    createRandomEdgesSpan(min, max, directed, setOfNodes) {
         if (min < 0) {
             throw new Error('Minimum degree cannot be negative.');
         }
@@ -264,7 +264,6 @@ var SimplePerturber = /** @class */ (function () {
                 }
             }
         }
-    };
-    return SimplePerturber;
-}());
+    }
+}
 exports.SimplePerturber = SimplePerturber;

@@ -1,9 +1,9 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $G = require("../core/Graph");
-var KROL = /** @class */ (function () {
-    function KROL(config) {
+const $G = require("../core/Graph");
+class KROL {
+    constructor(config) {
         this._config = config || this.prepareKROLStandardConfig();
         // this._generator = this._config.generator;
         // TODO: use the adjacency matrix form the generator graph
@@ -13,16 +13,16 @@ var KROL = /** @class */ (function () {
         this._cycles = this._config.cycles;
         this._graph = new $G.BaseGraph('synth');
     }
-    KROL.prototype.generate = function () {
+    generate() {
         // var gen_dims = this._generator.nrNodes();
         var gen_dims = this._genMat[0].length;
         var res_dims = Math.pow(gen_dims, this._cycles + 1);
-        for (var index = 0; index < res_dims; index++) {
+        for (let index = 0; index < res_dims; index++) {
             this._graph.addNodeByID(index.toString());
         }
         var nr_edges = 0;
-        for (var node1 = 0; node1 < res_dims; node1++) {
-            for (var node2 = 0; node2 < res_dims; node2++) {
+        for (let node1 = 0; node1 < res_dims; node1++) {
+            for (let node2 = 0; node2 < res_dims; node2++) {
                 if (this.addEdge(node1, node2, gen_dims)) {
                     this._graph.addEdgeByNodeIDs(node1 + '_' + node2, node1.toString(), node2.toString());
                     ++nr_edges;
@@ -33,11 +33,11 @@ var KROL = /** @class */ (function () {
             graph: this._graph
         };
         return result;
-    };
-    KROL.prototype.addEdge = function (node1, node2, dims) {
+    }
+    addEdge(node1, node2, dims) {
         var rprob = Math.random();
         var prob = 1.0;
-        for (var level = 0; level < this._cycles; level++) {
+        for (let level = 0; level < this._cycles; level++) {
             var id_1 = Math.floor(node1 / Math.pow(dims, level + 1)) % dims;
             var id_2 = Math.floor(node2 / Math.pow(dims, level + 1)) % dims;
             prob *= this._genMat[id_1][id_2];
@@ -46,8 +46,8 @@ var KROL = /** @class */ (function () {
             }
         }
         return true;
-    };
-    KROL.prototype.prepareKROLStandardConfig = function () {
+    }
+    prepareKROLStandardConfig() {
         // var generator: $G.IGraph = new $G.BaseGraph('generator');
         // var node_a = generator.addNodeByID('a');
         // var node_b = generator.addNodeByID('b');
@@ -65,7 +65,6 @@ var KROL = /** @class */ (function () {
             genMat: genMat,
             cycles: 5
         };
-    };
-    return KROL;
-}());
+    }
+}
 exports.KROL = KROL;

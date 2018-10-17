@@ -1,10 +1,10 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $E = require("../core/Edges");
-var $G = require("../core/Graph");
-var $CB = require("../utils/callbackUtils");
-var $BH = require("../datastructs/binaryHeap");
+const $E = require("../core/Edges");
+const $G = require("../core/Graph");
+const $CB = require("../utils/callbackUtils");
+const $BH = require("../datastructs/binaryHeap");
 exports.DEFAULT_WEIGHT = 1;
 /**
  * Priority first search

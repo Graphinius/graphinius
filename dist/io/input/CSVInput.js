@@ -1,37 +1,33 @@
 "use strict";
 /// <reference path="../../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = require("path");
-var fs = require("fs");
-var $G = require("../../core/Graph");
-var $R = require("../../utils/remoteUtils");
-var logger_1 = require("../../utils/logger");
-var logger = new logger_1.Logger();
-var DEFAULT_WEIGHT = 1;
-var CSV_EXTENSION = ".csv";
-var CSVInput = /** @class */ (function () {
-    function CSVInput(_separator, _explicit_direction, _direction_mode, _weighted) {
-        if (_separator === void 0) { _separator = ','; }
-        if (_explicit_direction === void 0) { _explicit_direction = true; }
-        if (_direction_mode === void 0) { _direction_mode = false; }
-        if (_weighted === void 0) { _weighted = false; }
+const path = require("path");
+const fs = require("fs");
+const $G = require("../../core/Graph");
+const $R = require("../../utils/remoteUtils");
+const logger_1 = require("../../utils/logger");
+let logger = new logger_1.Logger();
+const DEFAULT_WEIGHT = 1;
+const CSV_EXTENSION = ".csv";
+class CSVInput {
+    constructor(_separator = ',', _explicit_direction = true, _direction_mode = false, _weighted = false) {
         this._separator = _separator;
         this._explicit_direction = _explicit_direction;
         this._direction_mode = _direction_mode;
         this._weighted = _weighted;
     }
-    CSVInput.prototype.readFromAdjacencyListURL = function (config, cb) {
+    readFromAdjacencyListURL(config, cb) {
         this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
-    };
-    CSVInput.prototype.readFromEdgeListURL = function (config, cb) {
+    }
+    readFromEdgeListURL(config, cb) {
         this.readGraphFromURL(config, cb, this.readFromEdgeList);
-    };
-    CSVInput.prototype.readGraphFromURL = function (config, cb, localFun) {
+    }
+    readGraphFromURL(config, cb, localFun) {
         var self = this, graph_name = config.file_name, graph, request;
         // Node or browser ??
         if (typeof window !== 'undefined') {
-            var fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
-            logger.log("Requesting file via XMLHTTPRequest: " + fileurl);
+            let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+            logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
             // Browser...
             request = new XMLHttpRequest();
             request.onreadystatechange = function () {
@@ -53,20 +49,20 @@ var CSVInput = /** @class */ (function () {
                 cb(graph, undefined);
             });
         }
-    };
-    CSVInput.prototype.readFromAdjacencyListFile = function (filepath) {
+    }
+    readFromAdjacencyListFile(filepath) {
         return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
-    };
-    CSVInput.prototype.readFromEdgeListFile = function (filepath) {
+    }
+    readFromEdgeListFile(filepath) {
         return this.readFileAndReturn(filepath, this.readFromEdgeList);
-    };
-    CSVInput.prototype.readFileAndReturn = function (filepath, func) {
+    }
+    readFileAndReturn(filepath, func) {
         this.checkNodeEnvironment();
         var graph_name = path.basename(filepath);
         var input = fs.readFileSync(filepath).toString().split('\n');
         return func.apply(this, [input, graph_name]);
-    };
-    CSVInput.prototype.readFromAdjacencyList = function (input, graph_name) {
+    }
+    readFromAdjacencyList(input, graph_name) {
         var graph = new $G.BaseGraph(graph_name);
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator), node_id = elements[0], node, edge_array = elements.slice(1), edge, target_node_id, target_node, dir_char, directed, edge_id, edge_id_u2;
@@ -104,9 +100,8 @@ var CSVInput = /** @class */ (function () {
             }
         }
         return graph;
-    };
-    CSVInput.prototype.readFromEdgeList = function (input, graph_name, weighted) {
-        if (weighted === void 0) { weighted = false; }
+    }
+    readFromEdgeList(input, graph_name, weighted = false) {
         var graph = new $G.BaseGraph(graph_name);
         for (var idx in input) {
             var line = input[idx], elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
@@ -141,12 +136,11 @@ var CSVInput = /** @class */ (function () {
             }
         }
         return graph;
-    };
-    CSVInput.prototype.checkNodeEnvironment = function () {
+    }
+    checkNodeEnvironment() {
         if (typeof window !== 'undefined') {
             throw new Error('Cannot read file in browser environment.');
         }
-    };
-    return CSVInput;
-}());
+    }
+}
 exports.CSVInput = CSVInput;

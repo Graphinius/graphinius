@@ -1,8 +1,8 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $G = require("../core/Graph");
-var $CB = require("../utils/callbackUtils");
+const $G = require("../core/Graph");
+const $CB = require("../utils/callbackUtils");
 /**
  * DFS Visit - one run to see what nodes are reachable
  * from a given "current" root node

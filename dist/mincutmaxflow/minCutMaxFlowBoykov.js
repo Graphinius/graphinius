@@ -1,14 +1,14 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $G = require("../core/Graph");
-var logger_1 = require("../utils/logger");
-var logger = new logger_1.Logger();
+const $G = require("../core/Graph");
+const logger_1 = require("../utils/logger");
+const logger = new logger_1.Logger();
 /**
  *
  */
-var MCMFBoykov = /** @class */ (function () {
-    function MCMFBoykov(_graph, _source, _sink, config) {
+class MCMFBoykov {
+    constructor(_graph, _source, _sink, config) {
         this._graph = _graph;
         this._source = _source;
         this._sink = _sink;
@@ -36,7 +36,7 @@ var MCMFBoykov = /** @class */ (function () {
             this._sink = this._state.residGraph.getNodeById(this._sink.getID());
         }
     }
-    MCMFBoykov.prototype.calculateCycle = function () {
+    calculateCycle() {
         var result = {
             edges: [],
             edgeIDs: [],
@@ -76,7 +76,7 @@ var MCMFBoykov = /** @class */ (function () {
         var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
         var smallTree_size = Object.keys(smallTree).length;
         var smallTree_ids = Object.keys(smallTree);
-        for (var i = 0; i < smallTree_size; i++) {
+        for (let i = 0; i < smallTree_size; i++) {
             // var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
             var node_id = smallTree_ids[i];
             var node = this._graph.getNodeById(node_id);
@@ -85,9 +85,9 @@ var MCMFBoykov = /** @class */ (function () {
                 var undEdges = node.undEdges();
                 var undEdges_size = Object.keys(undEdges).length;
                 var undEdges_ids = Object.keys(undEdges);
-                for (var i_1 = 0; i_1 < undEdges_size; i_1++) {
+                for (let i = 0; i < undEdges_size; i++) {
                     // var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
-                    var edge = undEdges[undEdges_ids[i_1]];
+                    var edge = undEdges[undEdges_ids[i]];
                     var neighbor = (edge.getNodes().a.getID() == node.getID()) ? edge.getNodes().b : edge.getNodes().a;
                     // if (this.tree(neighbor) != this.tree(node)) {
                     if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
@@ -108,9 +108,9 @@ var MCMFBoykov = /** @class */ (function () {
                 var inEdges_ids = Object.keys(node.inEdges());
                 var inEdges_length = inEdges_ids.length;
                 // check outEdges
-                for (var i_2 = 0; i_2 < outEdges_length; i_2++) {
+                for (let i = 0; i < outEdges_length; i++) {
                     // var edge: $E.IBaseEdge = outEdges[Object.keys(outEdges)[i]];
-                    var edge = this._graph.getEdgeById(outEdges_ids[i_2]);
+                    var edge = this._graph.getEdgeById(outEdges_ids[i]);
                     var neighbor = edge.getNodes().b;
                     // if (this.tree(neighbor) != this.tree(node)) {
                     if (this._state.tree[neighbor.getID()] != this._state.tree[node.getID()]) {
@@ -121,9 +121,9 @@ var MCMFBoykov = /** @class */ (function () {
                     }
                 }
                 // check inEdges
-                for (var i_3 = 0; i_3 < inEdges_length; i_3++) {
+                for (let i = 0; i < inEdges_length; i++) {
                     // var edge: $E.IBaseEdge = inEdges[Object.keys(inEdges)[i]];
-                    var edge = this._graph.getEdgeById(inEdges_ids[i_3]);
+                    var edge = this._graph.getEdgeById(inEdges_ids[i]);
                     var neighbor = edge.getNodes().a;
                     if (this.tree(neighbor) != this.tree(node)) {
                         // we found a an edge which is part of the Cut
@@ -139,12 +139,12 @@ var MCMFBoykov = /** @class */ (function () {
         logger.log("# cycles => " + nrCycles);
         // logger.log(result.edges);
         return result;
-    };
-    MCMFBoykov.prototype.renameEdges = function (graph) {
+    }
+    renameEdges(graph) {
         var edges = graph.getDirEdges();
         var edges_ids = Object.keys(edges);
         var edges_length = edges_ids.length;
-        for (var i = 0; i < edges_length; i++) {
+        for (let i = 0; i < edges_length; i++) {
             var edge = edges[edges_ids[i]];
             var weight = edge.getWeight();
             graph.deleteEdge(edge);
@@ -153,15 +153,15 @@ var MCMFBoykov = /** @class */ (function () {
             var options = { directed: true, weighted: true, weight: weight };
             var new_edge = graph.addEdgeByID(node_a.getID() + "_" + node_b.getID(), node_a, node_b, options);
         }
-    };
-    MCMFBoykov.prototype.convertToDirectedGraph = function (uGraph) {
+    }
+    convertToDirectedGraph(uGraph) {
         var dGraph = new $G.BaseGraph(uGraph._label + "_directed");
         // copy all nodes
         var nodes = uGraph.getNodes();
         var nodes_ids = Object.keys(nodes);
         var nodes_length = nodes_ids.length;
         // logger.log("#nodes: " + Object.keys(nodes).length);
-        for (var i = 0; i < nodes_length; i++) {
+        for (let i = 0; i < nodes_length; i++) {
             // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
             var node = nodes[nodes_ids[i]];
             dGraph.addNodeByID(node.getID());
@@ -170,7 +170,7 @@ var MCMFBoykov = /** @class */ (function () {
         var edges = uGraph.getUndEdges();
         var edges_ids = Object.keys(edges);
         var edges_length = edges_ids.length;
-        for (var i = 0; i < edges_length; i++) {
+        for (let i = 0; i < edges_length; i++) {
             // var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
             var und_edge = edges[edges_ids[i]];
             var node_a_id = und_edge.getNodes().a.getID();
@@ -181,8 +181,8 @@ var MCMFBoykov = /** @class */ (function () {
         }
         // logger.log(dGraph);
         return dGraph;
-    };
-    MCMFBoykov.prototype.tree = function (node) {
+    }
+    tree(node) {
         var tree = "";
         if (node.getID() in this._state.treeS) {
             tree = "S";
@@ -193,8 +193,8 @@ var MCMFBoykov = /** @class */ (function () {
             return tree;
         }
         return tree;
-    };
-    MCMFBoykov.prototype.getPathToRoot = function (node) {
+    }
+    getPathToRoot(node) {
         var path_root = [];
         var node_id = node.getID();
         path_root.push(this._graph.getNodeById(node_id));
@@ -208,13 +208,13 @@ var MCMFBoykov = /** @class */ (function () {
             path_root.push(this._graph.getNodeById(node_id));
         }
         return path_root;
-    };
-    MCMFBoykov.prototype.getBottleneckCapacity = function () {
+    }
+    getBottleneckCapacity() {
         var min_capacity = 0;
         // set first edge weight
         var min_capacity = this._state.residGraph.getEdgeById(this._state.path[0].getID() + "_" + this._state.path[1].getID()).getWeight();
         var path_length = this._state.path.length - 1;
-        for (var i = 0; i < path_length; i++) {
+        for (let i = 0; i < path_length; i++) {
             var node_a = this._state.path[i];
             var node_b = this._state.path[i + 1];
             // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
@@ -224,8 +224,8 @@ var MCMFBoykov = /** @class */ (function () {
             }
         }
         return min_capacity;
-    };
-    MCMFBoykov.prototype.grow = function () {
+    }
+    grow() {
         // as long as there are active nodes
         var nr_active_nodes = Object.keys(this._state.activeNodes).length;
         var active_nodes_ids = Object.keys(this._state.activeNodes);
@@ -238,7 +238,7 @@ var MCMFBoykov = /** @class */ (function () {
             var edges_ids = Object.keys(edges);
             var edges_length = edges_ids.length;
             // for all neighbors
-            for (var i = 0; i < edges_length; i++) {
+            for (let i = 0; i < edges_length; i++) {
                 // var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
                 var edge = edges[edges_ids[i]];
                 var neighborNode = (this._state.tree[activeNode.getID()] == "S") ? edge.getNodes().b : edge.getNodes().a;
@@ -287,10 +287,10 @@ var MCMFBoykov = /** @class */ (function () {
         }
         this._state.path = [];
         return; //empty path
-    };
-    MCMFBoykov.prototype.augmentation = function () {
+    }
+    augmentation() {
         var min_capacity = this.getBottleneckCapacity();
-        for (var i = 0; i < this._state.path.length - 1; i++) {
+        for (let i = 0; i < this._state.path.length - 1; i++) {
             var node_a = this._state.path[i], node_b = this._state.path[i + 1];
             // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
             var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
@@ -314,8 +314,8 @@ var MCMFBoykov = /** @class */ (function () {
                 }
             }
         }
-    };
-    MCMFBoykov.prototype.adoption = function () {
+    }
+    adoption() {
         var orphans_ids = Object.keys(this._state.orphans);
         var orphans_size = orphans_ids.length;
         while (orphans_size) {
@@ -329,7 +329,7 @@ var MCMFBoykov = /** @class */ (function () {
             var edge_ids = Object.keys(edges);
             var edge_length = edge_ids.length;
             var found = false;
-            for (var i = 0; i < edge_length; i++) {
+            for (let i = 0; i < edge_length; i++) {
                 // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
                 var edge = edges[edge_ids[i]];
                 var neighbor = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
@@ -352,7 +352,7 @@ var MCMFBoykov = /** @class */ (function () {
             // var edge_ids: Array<string> = Object.keys(edges);
             // var edge_length: number = edge_ids.length;
             // we could not find a valid parent
-            for (var i = 0; i < edge_length; i++) {
+            for (let i = 0; i < edge_length; i++) {
                 // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
                 var edge = edges[edge_ids[i]];
                 var neighbor = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
@@ -385,12 +385,11 @@ var MCMFBoykov = /** @class */ (function () {
             }
             delete this._state.activeNodes[orphan.getID()];
         }
-    };
-    MCMFBoykov.prototype.prepareMCMFStandardConfig = function () {
+    }
+    prepareMCMFStandardConfig() {
         return {
             directed: true
         };
-    };
-    return MCMFBoykov;
-}());
+    }
+}
 exports.MCMFBoykov = MCMFBoykov;

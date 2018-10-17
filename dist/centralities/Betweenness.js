@@ -1,8 +1,8 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $FW = require("../search/FloydWarshall");
-var $JO = require("../search/Johnsons");
+const $FW = require("../search/FloydWarshall");
+const $JO = require("../search/Johnsons");
 /**
  * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
  *
@@ -20,7 +20,7 @@ var $JO = require("../search/Johnsons");
  * @todo decide if we still need it...
  */
 function betweennessCentrality(graph, directed, sparse) {
-    var paths;
+    let paths;
     var sparse = sparse || false;
     if (sparse) {
         paths = $JO.Johnsons(graph)[1];
@@ -28,32 +28,32 @@ function betweennessCentrality(graph, directed, sparse) {
     else {
         paths = $FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph)[1]);
     }
-    var nodes = graph.getNodes();
+    let nodes = graph.getNodes();
     //getting the nodeKeys
-    var nodeKeys = Object.keys(nodes);
-    var map = {};
-    for (var key in nodes) {
+    let nodeKeys = Object.keys(nodes);
+    let map = {};
+    for (let key in nodes) {
         //initializing the map which will be returned at the end - should it contain the keys (numbers), or the node IDs?
         map[key] = 0;
     }
-    var N = paths.length;
+    let N = paths.length;
     for (var a = 0; a < N; ++a) {
         for (var b = 0; b < N; ++b) {
             //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
             if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b) && paths[a][b][0] != null) {
                 // console.log("called with a and b: "+a+" , "+b);
-                var tempMap = {};
-                var leadArray = [];
-                var pathCount = 0;
+                let tempMap = {};
+                let leadArray = [];
+                let pathCount = 0;
                 do {
                     //ends when all paths are traced back
-                    var tracer = b;
-                    var leadCounter = 0;
+                    let tracer = b;
+                    let leadCounter = 0;
                     pathCount++;
                     while (true) {
                         //ends when one path is traced back
-                        var previous = paths[a][tracer];
-                        var terminate = false;
+                        let previous = paths[a][tracer];
+                        let terminate = false;
                         //no branching: 
                         if (previous.length == 1 && previous[0] == tracer) {
                             break;
@@ -81,7 +81,7 @@ function betweennessCentrality(graph, directed, sparse) {
                             }
                             //case: branch is covered by the leadArray
                             else if (leadCounter < leadArray.length) {
-                                var choice = leadArray[leadCounter][0];
+                                let choice = leadArray[leadCounter][0];
                                 if (previous[choice] == tracer) {
                                     terminate = true;
                                 }
@@ -126,10 +126,10 @@ function betweennessCentrality(graph, directed, sparse) {
                 } while (leadArray.length != 0);
                 //now put the correct scores into the final map
                 //be careful, the return map uses letters as nodekeys! - one must transform, otherwise one gets rubbish
-                for (var key in tempMap) {
+                for (let key in tempMap) {
                     // console.log("tempMap element " + key);
                     // console.log(tempMap[key]);
-                    var mapKey = nodeKeys[key];
+                    let mapKey = nodeKeys[key];
                     map[mapKey] += tempMap[key] / pathCount;
                 }
             }

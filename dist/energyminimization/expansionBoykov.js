@@ -1,15 +1,15 @@
 "use strict";
 /// <reference path="../../typings/tsd.d.ts" />
 Object.defineProperty(exports, "__esModule", { value: true });
-var $G = require("../core/Graph");
-var $MC = require("../mincutmaxflow/minCutMaxFlowBoykov");
-var logger_1 = require("../utils/logger");
-var logger = new logger_1.Logger();
+const $G = require("../core/Graph");
+const $MC = require("../mincutmaxflow/minCutMaxFlowBoykov");
+const logger_1 = require("../utils/logger");
+const logger = new logger_1.Logger();
 /**
  *
  */
-var EMEBoykov = /** @class */ (function () {
-    function EMEBoykov(_graph, _labels, config) {
+class EMEBoykov {
+    constructor(_graph, _labels, config) {
         this._graph = _graph;
         this._labels = _labels;
         this._state = {
@@ -28,13 +28,13 @@ var EMEBoykov = /** @class */ (function () {
         this._state.labeledGraph = this.deepCopyGraph(this._graph);
         this._state.activeLabel = this._labels[0];
     }
-    EMEBoykov.prototype.calculateCycle = function () {
+    calculateCycle() {
         var success = true;
         var mincut_options = { directed: true };
         while (success) {
             success = false;
             // for each label
-            for (var i = 0; i < this._labels.length; i++) {
+            for (let i = 0; i < this._labels.length; i++) {
                 this._state.activeLabel = this._labels[i];
                 // find a new labeling f'=argminE(f') within one expansion move of f
                 this._state.expansionGraph = this.constructGraph(); // construct new expansion graph
@@ -61,8 +61,8 @@ var EMEBoykov = /** @class */ (function () {
             graph: this._state.labeledGraph
         };
         return result;
-    };
-    EMEBoykov.prototype.constructGraph = function () {
+    }
+    constructGraph() {
         /** TODO: perform a deep copy
     
             TODO: wait for bernd to implement a deep copy ;-)
@@ -80,7 +80,7 @@ var EMEBoykov = /** @class */ (function () {
         var edges_length = edge_ids.length;
         // for all nodes add
         // edge to source and edge to sink
-        for (var i = 0; i < node_ids.length; i++) {
+        for (let i = 0; i < node_ids.length; i++) {
             var node = nodes[node_ids[i]];
             var edge_options = { directed: true, weighted: true, weight: 0 };
             // add edge to source
@@ -97,7 +97,7 @@ var EMEBoykov = /** @class */ (function () {
         // add edge from auxiliary node to sink
         // add edges to auxiliary node (from p and q)
         // remove edge between p and q
-        for (var i = 0; i < edges_length; i++) {
+        for (let i = 0; i < edges_length; i++) {
             // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
             var edge = graph.getEdgeById(edge_ids[i]);
             var node_p = edge.getNodes().a;
@@ -131,12 +131,12 @@ var EMEBoykov = /** @class */ (function () {
             graph.deleteEdge(edge);
         }
         return graph;
-    };
+    }
     // label a graph based on the result of a mincut
-    EMEBoykov.prototype.labelGraph = function (mincut, source) {
+    labelGraph(mincut, source) {
         var graph = this._state.labeledGraph;
         var source = this._state.expansionGraph.getNodeById("SOURCE");
-        for (var i = 0; i < mincut.edges.length; i++) {
+        for (let i = 0; i < mincut.edges.length; i++) {
             var edge = mincut.edges[i];
             var node_a = edge.getNodes().a;
             var node_b = edge.getNodes().b;
@@ -149,17 +149,17 @@ var EMEBoykov = /** @class */ (function () {
             }
         }
         return graph;
-    };
+    }
     // deep copy a graph => only needed until there is a 'real' implementation in graphinius core
     // copy nodes and edges and the labels of the nodes
     // hack!
-    EMEBoykov.prototype.deepCopyGraph = function (graph) {
+    deepCopyGraph(graph) {
         var cGraph = new $G.BaseGraph(graph._label + "_copy");
         // copy all nodes with their labels
         var nodes = graph.getNodes();
         var node_ids = Object.keys(nodes);
         var nodes_length = node_ids.length;
-        for (var i = 0; i < nodes_length; i++) {
+        for (let i = 0; i < nodes_length; i++) {
             // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
             var node = nodes[node_ids[i]];
             var cNode = cGraph.addNodeByID(node.getID());
@@ -169,7 +169,7 @@ var EMEBoykov = /** @class */ (function () {
         var edges = graph.getUndEdges();
         var edge_ids = Object.keys(edges);
         var edge_length = edge_ids.length;
-        for (var i = 0; i < edge_length; i++) {
+        for (let i = 0; i < edge_length; i++) {
             // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
             var edge = edges[edge_ids[i]];
             var options = { directed: false, weighted: true, weight: edge.getWeight() };
@@ -178,19 +178,19 @@ var EMEBoykov = /** @class */ (function () {
             var cEdge = cGraph.addEdgeByID(edge.getID(), node_a, node_b, options);
         }
         return cGraph;
-    };
-    EMEBoykov.prototype.initGraph = function (graph) {
+    }
+    initGraph(graph) {
         var nodes = graph.getNodes();
         var node_ids = Object.keys(nodes);
         var nodes_length = node_ids.length;
-        for (var i = 0; i < nodes_length; i++) {
+        for (let i = 0; i < nodes_length; i++) {
             // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
             var node = nodes[node_ids[i]];
             node.setLabel(node.getFeature('label'));
         }
         return graph;
-    };
-    EMEBoykov.prototype.prepareEMEStandardConfig = function () {
+    }
+    prepareEMEStandardConfig() {
         // we use the potts model as standard interaction term
         var interactionTerm = function (label_a, label_b) {
             return (label_a == label_b) ? 0 : 1;
@@ -213,7 +213,6 @@ var EMEBoykov = /** @class */ (function () {
             interactionTerm: interactionTerm,
             dataTerm: dataTerm
         };
-    };
-    return EMEBoykov;
-}());
+    }
+}
 exports.EMEBoykov = EMEBoykov;
