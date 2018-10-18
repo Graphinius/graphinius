@@ -252,7 +252,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
   });
 
 
-  describe('Kernighan-Lin tests for one iteration of the algorithm', () => {
+  describe('Kernighan-Lin tests for one iteration of the algorithm - ', () => {
 
     it('should correctly perform an optimal swap and eliminate locked connections from heap', () => {      
       kl_part = new KLPartitioning(n8_kl_graph);
@@ -304,7 +304,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
       expect(heap.pop().gain).to.equal(10);
       expect(heap.pop().gain).to.equal(9);     
       expect(heap.pop().gain).to.equal(5);
-      expect(heap.pop().gain).to.equal(4);
+      expect(heap.pop().gain).to.equal(5);
       expect(heap.pop().gain).to.equal(5);
       expect(heap.pop().gain).to.equal(4);
       expect(heap.pop().gain).to.equal(-2);

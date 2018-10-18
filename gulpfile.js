@@ -260,6 +260,11 @@ gulp.task('watch-central', function () {
 });
 
 
+gulp.task('watch-eme', function () {
+	gulp.watch(paths.typescripts, ['test-eme']);
+});
+
+
 gulp.task('watch-all', function () {
 	gulp.watch(paths.typescripts, ['test-all']);
 });
