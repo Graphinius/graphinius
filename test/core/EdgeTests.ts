@@ -4,9 +4,9 @@ import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 
-var expect = chai.expect;
-var Node = $N.BaseNode;
-var Edge = $E.BaseEdge;
+const expect = chai.expect;
+const Node = $N.BaseNode;
+const Edge = $E.BaseEdge;
 
 
 describe('==== EDGE TESTS ====', () => {
@@ -14,8 +14,8 @@ describe('==== EDGE TESTS ====', () => {
 			label = 'New Edge',
 			node_a = new Node("A"),
 			node_b = new Node("B");
-					
-	
+
+
 	describe('A basic edge instantiation', () => {
 
 		/**
@@ -38,7 +38,7 @@ describe('==== EDGE TESTS ====', () => {
 			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
 		});
 
-		it('should correctly set _id', () => {					
+		it('should correctly set _id', () => {
 			var edge = new Edge(id, node_a, node_b);
 			expect(edge.getID()).to.equal(id);
 		});
