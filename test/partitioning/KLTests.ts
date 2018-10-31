@@ -16,7 +16,7 @@ const expect = chai.expect,
     n3_missing_partition_file = "./test/test_data/partitioning/n3_missing_parts.json", 
     n3_3partitions_file = "./test/test_data/partitioning/n3_3partitions.json";
 
-    
+
 
 describe("Kernighan-Lin graph partitioning tests - ", () => {
 

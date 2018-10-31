@@ -51,7 +51,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		});
 		
 		
-		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected', (done) => {
+		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to UNdirected', (done) => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = false; // undirected graph
@@ -65,7 +65,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		});
 		
 		
-		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected', (done) => {
+		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to directed', (done) => {
 			json = new JSON_IN();
 			json._explicit_direction = false;
 			json._direction = true; // undirected graph
