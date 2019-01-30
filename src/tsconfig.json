@@ -1,13 +1,13 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "target": "es5",
-      "declaration": true,
-      "sourceMap": true
-    //   "outDir": "../"
-    },
-    "compileOnSave": false,
-    "include": [
-        "./**/*.ts"
-    ]
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"declaration": false,
+		"sourceMap": false,
+		"removeComments": true
+	},
+	"compileOnSave": false,
+	"include": [
+			"./**/*.ts"
+	]
 }

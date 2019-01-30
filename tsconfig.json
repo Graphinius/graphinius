@@ -1,18 +1,19 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "target": "es2017",
-      "lib": [
-          "es2017",
-          "dom"
-      ],
-      "declaration": true,
-      "sourceMap": true,
-      "outDir": "./dist"
-    },
-    "compileOnSave": false,
-    "include": [
-        "./src/**/*.ts",
-        "./test/**/*.ts"
-    ]
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2017",
+		"lib": [
+				"es2017",
+				"dom"
+		],
+		"declaration": true,
+		"sourceMap": true,
+		"outDir": "./dist",
+		"removeComments": true
+	},
+	"compileOnSave": false,
+	"include": [
+			"./src/**/*.ts",
+			// "./test/**/*.ts"
+	]
 }
