@@ -41,34 +41,6 @@ const paths = {
 var tsProject = ts.createProject('./tsconfig.json');
 
 
-//----------------------------
-// GIT TASKS
-//----------------------------
-
-// Run git add
-// src is the file(s) to add (or ./*)
-gulp.task('git-add', ['bundle'], function () {
-	return gulp.src(paths.git_sources)
-		.pipe(git.add())
-    .pipe(git.add({args: '-u'}));
-});
-
-// Run git commit
-// src are the files to commit (or ./*)
-gulp.task('git-commit', ['git-add'], function () {
-	gulp.src(paths.git_sources)
-		.pipe(prompt.prompt({
-        type: 'input',
-        name: 'commit_msg',
-        message: 'Commit message? \n'
-    }, function(res){
-        //value is in res.task (the name option gives the key)
-				return gulp.src(paths.git_sources)
-				  .pipe(git.commit(res.commit_msg));
-    }));
-});
-
-
 
 //----------------------------
 // TASKS

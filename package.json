@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "gulp build",
-    "test": "./node_modules/.bin/mocha --compilers ts:ts-node/register ./test/**/*.ts",
+    "test": "gulp test-all",
     "postinstall": "node install_dist.js"
   },
   "repository": {
@@ -25,6 +25,9 @@
   },
   "homepage": "https://github.com/cassinius/Graphinius#readme",
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/register": "^7.0.0",
     "@types/chai": "^4.1.6",
     "@types/core-js": "^0.9.46",
     "@types/lodash": "^4.14.108",
@@ -32,15 +35,14 @@
     "@types/node": "^10.1.1",
     "chai": "^4.2.0",
     "dts-generator": "^2.1.0",
-    "gulp": "^3.9.1",
+    "gulp": "github:gulpjs/gulp",
     "gulp-clean": "^0.4.0",
-    "gulp-git": "^2.5.2",
+    "gulp-git": "^2.8.1",
     "gulp-istanbul": "^0.10.4",
     "gulp-mocha": "^6.0.0",
-    "gulp-prompt": "^0.2.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-typedoc": "^2.2.0",
-    "gulp-typescript": "^5.0.0-alpha.3",
+    "gulp-rename": "^1.4.0",
+    "gulp-typedoc": "^2.2.1",
+    "gulp-typescript": "^5.0.0",
     "gulp-uglify-es": "^1.0.4",
     "gulp-watch": "^5.0.1",
     "istanbul": "^0.4.5",
