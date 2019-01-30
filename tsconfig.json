@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		"target": "es6",
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"sourceMap": false,
@@ -12,12 +12,8 @@
 		"removeComments": true
 	},
 	"compileOnSave": false,
-	// "include": [
-	// 		"./src/**/*.ts",
-	// 		"./test/**/*.ts"
-	// ],
-	"exclude": [
-		"node_modules",
-		"typings"
+	"include": [
+			"./src/**/*.ts",
+			"./test/**/*.ts"
 	]
 }

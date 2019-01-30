@@ -1,21 +1,24 @@
 import gulp from 'gulp'
-import clean from 'gulp-clean'
+import gulpClean from 'gulp-clean'
 import ts from 'gulp-typescript'
 import typedoc from 'gulp-typedoc'
 import merge from 'merge2'
 import mocha from 'gulp-mocha'
+import dtsGen from 'dts-generator'
+import webpack from 'webpack-stream'
 
 
 //----------------------------
 // PATHS
 //----------------------------
 const paths = {
-	javascripts: ['src/**/*.js', 'test/**/*.js'],
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async/**/*.ts'],
 	typesources: ['src/**/*.ts'],
-	typedoc_ignore: ['**/node_modules/**/*', '**/typings/**/*'],
-	distsources: ['dist/**/*.js'],
-	clean: ['src/**/*.js', 'src/**/*.map', 'src/**/*.d.ts', 'test/**/*.js', 'test/**/*.map', 'test/**/*.d.ts', 'test_async/**/*Tests.js', 'test_async/**/*.map', 'build', 'dist/**/*.js', 'docs', 'coverage'],
+	distsources: ['dist/**/*.js'], // not sure why we needed this...?
+	clean_docs: ['docs'],
+	clean_dist: ['dist'],
+	clean_dts: ['./graphinius.d.ts'],
+	clean_all: ['build', 'dist', 'docs', 'coverage', 'graphinius.d.ts'], // still need that?
 	tests_core: ['test/core/**/*.ts', 'test/datastructs/**/*.ts', 'test/io/**/*.ts', 'test/mincutmaxflow/**/*.ts', 'test/utils/**/*.ts'],
 	tests_search: ['test/search/**/*.ts'],
 	tests_async: ['test/test_async/**/*.ts'],
@@ -23,49 +26,40 @@ const paths = {
 	tests_central: ['test/centralities/**/*.ts'],
 	tests_eme: ['test/energyminimization/**/*.ts'],
 	tests_generators: ['test/generators/**/*.ts'],	
-	tests_all: ['test/**/*.ts'],
-	git_sources: ['./*', '.gitignore', '.npmignore', '.circleci/*', '!docs', '!node_modules', '!.vscode', '!.idea', '!yarn.lock', '!package-lock.json']
-};
+	tests_all: ['test/**/*.ts']
+}
 
 
 //----------------------------
 // CONFIG
 //----------------------------
-const tsProject = ts.createProject('./tsconfig.json');
+const tsProject = ts.createProject('./tsconfig.json')
 const stdOptions = {
 	read: false,
 	allowEmpty: true
 }
 
-//----------------------------
-// TASKS
-//----------------------------
-export const cleanTask = () => gulp.src(paths.clean, stdOptions)
-	.pipe(clean());
 
-
-const createDoc = () => {
-	return gulp.src(paths.typesources)
-		.pipe(typedoc({
-			module: "commonjs",
-			target: "es6",
-			includeDeclarations: false,
-			exclude: gulp.src(paths.typedoc_ignore, stdOptions),
-			mode: 'file',
-			excludeExternals: true,
-			excludeNotExported: true,
-			excludePrivate: true,
-			out: 'docs/'
-		})
-	);
+//----------------------------
+// TEST CONFIG
+//----------------------------
+const mocha_options = {
+	reporter: 'spec',
+	require: ['ts-node/register'],
+	timeout: 60000
 }
-
-// Documentation (type doc)
-export const docTask = gulp.series(cleanTask, createDoc)
+const mochaRun = mocha(mocha_options)
 
 
-// Packaging - Node / Commonjs
-const dist = () => {
+// CLEAN
+const cleanDist = () => gulp.src(paths.clean_dist, stdOptions).pipe(gulpClean())
+const cleanDocs = () => gulp.src(paths.clean_docs, stdOptions).pipe(gulpClean())
+const cleanDts = () => gulp.src(paths.clean_dts, stdOptions).pipe(gulpClean())
+const cleanAll = () => gulp.src(paths.clean_all, stdOptions).pipe(gulpClean())
+
+
+// DIST
+const compileDist = () => {
 	var tsResult = gulp.src(paths.typesources)
 						 				 .pipe(tsProject());
 	// Merge the two output streams, so this task is finished
@@ -74,30 +68,65 @@ const dist = () => {
 		tsResult.dts //.pipe(concat('graphinius.d.ts'))
 								.pipe(gulp.dest('./dist/')),
 		tsResult.js.pipe(gulp.dest('./dist/'))
-	]);
+	])
 }
 
-export const distTask = gulp.series( cleanTask, dist )
+
+// DOCS
+const createDoc = () => {
+	return gulp.src(paths.typesources)
+		.pipe(typedoc({
+			module: "commonjs",
+			target: "es6",
+			includeDeclarations: false,
+			// exclude: gulp.src(paths.typedoc_ignore, stdOptions),
+			mode: 'file',
+			excludeExternals: true,
+			excludeNotExported: true,
+			excludePrivate: true,
+			out: 'docs/'
+		})
+	)
+}
+
+
+// d.ts HEADERS
+const generateDts = () => dtsGen({
+		name: 'graphinius',
+		baseDir: './',
+		project: './src/',
+		out: 'graphinius.d.ts'
+})
+
+
+// PACK
+const generatePackage = () => gulp.src('./index.js')
+	.pipe(webpack(require('./webpack.config.js')))
+	.pipe(gulp.dest('build/'))
+
+
+
+//----------------------------
+// BUILD TASKS
+//----------------------------
+
+export const clean = cleanAll
+
+export const docs = gulp.series(cleanDocs, createDoc)
+
+export const dist = gulp.series(cleanDist, compileDist)
+
+export const dts = gulp.series(cleanDts, generateDts)
+
+export const pack = gulp.series(dist, docs, dts, generatePackage)
+
 
 
 //----------------------------
 // TEST TASKS
 //----------------------------
 
-const mocha_options = {
-	reporter: 'spec',
-	require: ['ts-node/register'],
-	timeout: 60000
-};
+export const test_core = () => gulp.src(paths.tests_core, stdOptions).pipe(mochaRun)
 
+export const test_all = () => gulp.src(paths.tests_all, stdOptions).pipe(mochaRun)
 
-gulp.task('test-core', function () {
-	return gulp.src(paths.tests_core, {read: false})
-						 .pipe(mocha( mocha_options ));
-});
-
-
-gulp.task('test-all', function () {
-	return gulp.src(paths.tests_all, {read: false})
-						 .pipe(mocha( mocha_options ));
-});

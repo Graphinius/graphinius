@@ -1,9 +1,13 @@
 {
 	"compilerOptions": {
+		"target": "es6",
 		"module": "commonjs",
-		"target": "es5",
-		"declaration": false,
+		"moduleResolution": "node",
 		"sourceMap": false,
+		"lib": [
+				"es2017",
+				"dom"
+		],
 		"removeComments": true
 	},
 	"compileOnSave": false,

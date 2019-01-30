@@ -6,16 +6,13 @@ module.exports = {
     path: __dirname + '/build/',
     filename: 'graphinius.js'
   },
+  mode: 'production',
   target: "web",
   module: {
-    loaders: [
-      // {
-      //   test: /\.css$/,
-      //   loader: 'style!css!'
-      // },
+    rules: [
       {
         test: /\.json$/,
-        loader: 'json!'
+        use: 'json!'
       }
     ]
   },
@@ -26,11 +23,11 @@ module.exports = {
     tls: "empty"
   },
   resolve: {
-    root: [
+    modules: [
       path.join( __dirname, 'node_modules' ),
       path.join( __dirname, 'src' ),
       path.join( __dirname, 'node_modules/har-validator/lib/schemas/')
     ],
-    extensions: [ '', '.js', 'json']
+    extensions: ['*', '.js', 'json']
   }
 };
