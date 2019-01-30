@@ -16,6 +16,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		stats: $G.GraphStats,
 		DEFAULT_SEP: string = ',';
 
+
 	describe('Basic instantiation tests', () => {
 
 		it('should instantiate a default version of CSVInput', () => {
@@ -25,6 +26,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		});
 
 	});
+
 
 	describe('Basic input tests - ', () => {
 
@@ -284,8 +286,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect( graph.getEdgeById('A_C_d').getWeight() ).to.equal(1);
 		});
 
-
-	
 	});
 
 });

@@ -35,7 +35,7 @@ let BFDSpy,
 /*
 describe('Spy section Johnsons', () => {
 
-    let sandbox = sinon.sandbox.create();
+    let sandbox = sinon.createSandbox();
 
     beforeEach(() => {
         BFDSpy = sandbox.spy($BF, "BellmanFordDict");

@@ -15,7 +15,7 @@ var remoteUtils     = require("./dist/utils/remoteUtils.js");
 var callbackUtils   = require("./dist/utils/callbackUtils.js");
 var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
 var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
-var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+// var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
 var DegreeCent		 	= require("./dist/centralities/Degree.js");
 var ClosenessCent	 	= require("./dist/centralities/Closeness.js");
 var BetweennessCent	= require("./dist/centralities/Betweenness.js");
@@ -64,9 +64,9 @@ out.$G = {
 		BellmanFord										 : BellmanFord,
 		FloydWarshall									 : FloydWarshall
 	},
-	mincut: {
-		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
-	},
+	// mincut: {
+	// 	MCMFBoykov										 : MCMFBoykov.MCMFBoykov
+	// },
   utils: {
     struct          : structUtils,
     remote          : remoteUtils,

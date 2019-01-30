@@ -103,7 +103,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		it('should not execute any callback at all', () => {
 			// prepare Spy...
 
-			let sandbox = sinon.sandbox.create();
+			let sandbox = sinon.createSandbox();
 			var execCBSpy = sandbox.spy($CB, 'execCallbacks');
 			
 			// execute test

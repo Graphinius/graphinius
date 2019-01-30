@@ -26,7 +26,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		let prepForDFSVisitSpy,
 				prepForDFSSpy;
 		
-		let sandbox = sinon.sandbox.create();
+		let sandbox = sinon.createSandbox();
 			
 		/**
 		 * TODO we need to replace imported functions with members of an 
