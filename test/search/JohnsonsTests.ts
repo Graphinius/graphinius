@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as chai from 'chai';
 import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';

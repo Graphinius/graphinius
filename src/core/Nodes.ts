@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $E from "./Edges";
 import * as $SU from "../utils/structUtils";
 

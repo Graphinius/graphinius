@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
 import {IBaseEdge} from "../core/Edges";
