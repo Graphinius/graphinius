@@ -1,5 +1,16 @@
+# Changelog
+
+0.8.5 - gulp updated to 4.0, re-worked gulpfile.js, webpack now only producing minified version (production settings)
+
 # Graphinius JS
 Generic graph (analysis) library in Typescript
+
+## Generate Documentation
+
+```bash
+typedoc
+```
+just execute the command in a bash within the root folder - the configuration in *tsconfig.js* should automatically be loaded
 
 ## Demo
 

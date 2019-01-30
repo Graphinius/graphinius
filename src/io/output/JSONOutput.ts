@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-
 import path = require('path');
 import fs = require('fs');
 import http = require('http');

@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $G from '../core/Graph';
 import * as $FW from '../search/FloydWarshall';
 import * as $JO from '../search/Johnsons';

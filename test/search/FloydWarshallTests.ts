@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $J from '../../src/io/input/JSONInput';

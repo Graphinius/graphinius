@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 export enum BinaryHeapMode {
   MIN,
   MAX

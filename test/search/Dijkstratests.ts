@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
@@ -23,7 +21,7 @@ let PFSSpy,
  */
 describe('Dijkstra TESTS - ', () => {
 
-  let sandbox = sinon.sandbox.create();
+  let sandbox = sinon.createSandbox();
 
   before(() => {
     expect(graph).not.to.be.undefined;
@@ -49,6 +47,5 @@ describe('Dijkstra TESTS - ', () => {
    /* console.log(PFSSpy.callCount);
     console.log(PFSPrepareConfigSpy.callCount);*/
   });
-
 
 });

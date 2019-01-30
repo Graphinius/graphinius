@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 /*
     This calculates the shortest path to all others, this is accomplished by using
     the PFS of Graphinius

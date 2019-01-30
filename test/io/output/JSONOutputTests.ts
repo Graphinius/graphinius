@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-
 import * as fs from 'fs';
 import * as chai from 'chai';
 import * as $N from '../../../src/core/Nodes';

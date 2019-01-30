@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as chai from 'chai';
 import { LOG_LEVELS } from '../../src/config/run_config';
 import { Logger, LOG_CONFIG } from '../../src/utils/logger';

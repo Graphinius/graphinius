@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as chai from 'chai';
 import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';
@@ -37,7 +35,7 @@ let BFDSpy,
 /*
 describe('Spy section Johnsons', () => {
 
-    let sandbox = sinon.sandbox.create();
+    let sandbox = sinon.createSandbox();
 
     beforeEach(() => {
         BFDSpy = sandbox.spy($BF, "BellmanFordDict");
