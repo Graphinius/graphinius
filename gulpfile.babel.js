@@ -24,6 +24,7 @@ const paths = {
 	tests_search: ['test/search/**/*.ts'],
 	tests_async: ['test/test_async/**/*.ts'],
   tests_perturb: ['test/perturbation/**/*.ts'],
+  tests_partition: ['test/partitioning/**/*.ts'],
 	tests_central: ['test/centralities/**/*.ts'],
 	tests_eme: ['test/mincutmaxflow/**/*.ts', 'test/energyminimization/**/*.ts'],
 	tests_generators: ['test/generators/**/*.ts'],	
@@ -134,6 +135,8 @@ export const test_async = () => gulp.src(paths.tests_async, src_options).pipe(mo
 export const test_search = () => gulp.src(paths.tests_search, src_options).pipe(mochaRun)
 
 export const test_perturb = () => gulp.src(paths.tests_perturb, src_options).pipe(mochaRun)
+
+export const test_partition = () => gulp.src(paths.tests_partition, src_options).pipe(mochaRun)
 
 export const test_central = () => gulp.src(paths.tests_central, src_options).pipe(mochaRun)
 
