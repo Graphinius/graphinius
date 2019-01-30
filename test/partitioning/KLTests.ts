@@ -23,8 +23,7 @@ describe("Kernighan-Lin graph partitioning tests - ", () => {
 	let n8_kl_graph : $G.IGraph,
       kl_part: KLPartitioning,
       config: KL_Config,
-			partitioning : GraphPartitioning;
-
+      partitioning : GraphPartitioning;
 
 	beforeEach( () => {
     config = {
