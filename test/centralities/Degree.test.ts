@@ -1,11 +1,9 @@
-import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
 import * as $DC from '../../src/centralities/Degree';
 
 
-var expect = chai.expect,
-    json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(deg_cent_graph),
     DC: $DC.DegreeCentrality = new $DC.DegreeCentrality();

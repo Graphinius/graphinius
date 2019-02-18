@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
 import * as $PRG from '../../src/centralities/PageRankGaussian';
@@ -6,8 +5,7 @@ import * as $PRRW from '../../src/centralities/PageRankRandomWalk';
 import * as $CSV from '../../src/io/input/CSVInput';
 
 
-var expect = chai.expect,
-    csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
+let csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
     sn_graph_file = "./test/test_data/social_network_edges.csv",
@@ -92,12 +90,14 @@ describe("PageRank Centrality Tests", () => {
 });
 
 function checkScoresEqual(graph,gauss){
-    let threshold = 0.00000001;
+    let epsilon = 1e-7;
     let last = gauss[0];
     let ctr = 0;
     for(let key in graph.getNodes()) {
-        expect(gauss[ctr]).to.be.closeTo(1/graph.nrNodes(),threshold);
-        expect(gauss[ctr]).to.be.closeTo(last,threshold);
+        expect(gauss[ctr]).toBeGreaterThan(1/graph.nrNodes() - epsilon);
+        expect(gauss[ctr]).toBeLessThan(1/graph.nrNodes() + epsilon);
+        expect(gauss[ctr]).toBeGreaterThan(last - epsilon);
+        expect(gauss[ctr]).toBeLessThan(last + epsilon);
         last = gauss[ctr];
         ctr++;
     }

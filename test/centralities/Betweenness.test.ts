@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
@@ -15,8 +14,7 @@ const logger = new Logger();
 const SN_GRAPH_NODES = 1034,
     SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
-let expect = chai.expect,
-    csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
+let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
     json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
 const PATH_PREFIX = "./test/test_data/",
       PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
@@ -121,9 +119,10 @@ describe('check correctness and runtime of betweenness centrality functions', ()
             logger.log(BPResult);
 
             let epsilon = 1e-4;
-            Object.keys(BUResult).forEach( n => expect(BUResult[n]).to.be.closeTo(mapControl[n], epsilon) );
-            Object.keys(BWResult).forEach( n => expect(BWResult[n]).to.be.closeTo(mapControl[n], epsilon) );
-            Object.keys(BPResult).forEach( n => expect(BPResult[n]).to.be.closeTo(mapControl[n], epsilon) );
+            [BUResult, BWResult, BPResult].forEach( result => {
+                Object.keys(result).forEach( n => expect(result[n]).toBeGreaterThan(mapControl[n] - epsilon));
+                Object.keys(result).forEach( n => expect(result[n]).toBeLessThan(mapControl[n] + epsilon));
+            });
         }
     );
 
@@ -222,7 +221,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
              * Comparing floats to within epsilon precision
              */
             let epsilon = 1e-6;
-            Object.keys(resBP).forEach(n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));
+            Object.keys(resBP).forEach(n => expect(resBP[n]).toBeGreaterThan(resBW[n] - epsilon));
+            Object.keys(resBP).forEach(n => expect(resBP[n]).toBeLessThan(resBW[n] + epsilon));
         }
     );
 
@@ -249,7 +249,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
              * Smaller epsilon due to normalization of scores
              */
             let epsilon = 1e-12;
-            Object.keys(resBP).forEach(n => expect(resBP[n]).to.be.closeTo(resBW[n], epsilon));
+            Object.keys(resBP).forEach(n => expect(resBP[n]).toBeGreaterThan(resBW[n] - epsilon));
+            Object.keys(resBP).forEach(n => expect(resBP[n]).toBeLessThan(resBW[n] + epsilon));
         }
     );
 
@@ -300,7 +301,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
                 expect(Object.keys(resBU).length).toBe(Object.keys(controlMap).length);
                 
                 let epsilon = 1e-12
-                Object.keys(resBU).forEach(n => expect(resBU[n]).to.be.closeTo(controlMap[n], epsilon));
+                Object.keys(resBU).forEach(n => expect(resBU[n]).toBeGreaterThan(controlMap[n] - epsilon));
+                Object.keys(resBU).forEach(n => expect(resBU[n]).toBeLessThan(controlMap[n] + epsilon));
             });
         });
 
@@ -321,7 +323,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
                 expect(Object.keys(resBW).length).toBe(Object.keys(controlMap).length);
 
                 let epsilon = 1e-12
-                Object.keys(resBW).forEach(n => expect(resBW[n]).to.be.closeTo(controlMap[n], epsilon));
+                Object.keys(resBW).forEach(n => expect(resBW[n]).toBeGreaterThan(controlMap[n] - epsilon));
+                Object.keys(resBW).forEach(n => expect(resBW[n]).toBeLessThan(controlMap[n] + epsilon));
             });
         });
     });

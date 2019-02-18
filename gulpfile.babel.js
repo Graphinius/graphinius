@@ -3,7 +3,6 @@ import gulpClean from 'gulp-clean'
 import ts from 'gulp-typescript'
 import typedoc from 'gulp-typedoc'
 import merge from 'merge2'
-import mocha from 'gulp-mocha'
 import dtsGen from 'dts-generator'
 import webpack from 'webpack-stream'
 
@@ -39,17 +38,6 @@ const src_options = {
 	read: false,
 	allowEmpty: true
 }
-
-
-//----------------------------
-// TEST CONFIG
-//----------------------------
-const mocha_options = {
-	reporter: 'spec',
-	require: ['ts-node/register'],
-	timeout: 60000
-}
-const mochaRun = mocha(mocha_options)
 
 
 // CLEAN
