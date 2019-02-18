@@ -23,11 +23,11 @@ describe('Dijkstra TESTS - ', () => {
 
   let sandbox = sinon.createSandbox();
 
-  before(() => {
-    expect(graph).not.to.be.undefined;
-    expect(graph.nrNodes()).to.equal(6);
-    expect(graph.nrUndEdges()).to.equal(2);
-    expect(graph.nrDirEdges()).to.equal(12);
+  beforeAll(() => {
+    expect(graph).not.toBeUndefined();
+    expect(graph.nrNodes()).toBe(6);
+    expect(graph.nrUndEdges()).toBe(2);
+    expect(graph.nrDirEdges()).toBe(12);
   });
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('Dijkstra TESTS - ', () => {
   })
   
   
-  it('should call PFS in the background - ', () => {
+  test('should call PFS in the background - ', () => {
     $Dijkstra.Dijkstra(graph, graph.getRandomNode());
     expect(PFSSpy).to.have.been.calledOnce;
     expect(PFSPrepareConfigSpy).to.have.been.calledOnce;

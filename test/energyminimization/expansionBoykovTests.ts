@@ -26,12 +26,14 @@ describe('EME Boykov Tests - ', () => {
 
   describe("Base Tests - ", () => {
 
-    it('should instantiate a standard config', () => {
-      expect( eme.prepareEMEStandardConfig() ).to.have.all.keys( 'directed', 'labeled', 'interactionTerm', 'dataTerm');
-      expect( eme.prepareEMEStandardConfig().directed ).to.be.false;
-      expect( eme.prepareEMEStandardConfig().labeled ).to.be.false;
-      expect( eme.prepareEMEStandardConfig().interactionTerm ).to.exist;
-      expect( eme.prepareEMEStandardConfig().dataTerm ).to.exist;
+    test('should instantiate a standard config', () => {
+      expect(eme.prepareEMEStandardConfig()).toEqual(
+        expect.arrayContaining(['directed', 'labeled', 'interactionTerm', 'dataTerm'])
+      );
+      expect( eme.prepareEMEStandardConfig().directed ).toBe(false);
+      expect( eme.prepareEMEStandardConfig().labeled ).toBe(false);
+      expect( eme.prepareEMEStandardConfig().interactionTerm ).toBeDefined();
+      expect( eme.prepareEMEStandardConfig().dataTerm ).toBeDefined();
       // expect( eme.prepareEMEStandardConfig() ).to.deep.equal( {directed: true, labeled: false } );
     });
 
@@ -39,42 +41,42 @@ describe('EME Boykov Tests - ', () => {
 
   describe("Helper Functions Tests - ", () => {
 
-    it('should correctly initialize the graph with the correct labels', () => {
+    test('should correctly initialize the graph with the correct labels', () => {
       var lGraph: $G.IGraph = eme.initGraph(graph);
 
       // check that all labels got copied correctly
       var nodes = lGraph.getNodes();
       for (let i = 0; i < Object.keys(nodes).length; i++) {
           var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
-          expect(node.getLabel()).to.equal(node.getFeature('label'));
+          expect(node.getLabel()).toBe(node.getFeature('label'));
       }
     });
 
-    it('should deep copy the graph with all nodes and edges', () => {
+    test('should deep copy the graph with all nodes and edges', () => {
       var cGraph: $G.IGraph = eme.deepCopyGraph(graph);
 
       // check that it has all and only those nodes of the original graph
-      expect(cGraph.getNodes()).to.have.all.keys(graph.getNodes());
+      expect(cGraph.getNodes()).toEqual(expect.arrayContaining(graph.getNodes()));
       // check that it has all and only those edges of the original graph
-      expect(cGraph.getUndEdges()).to.have.all.keys(graph.getUndEdges());
+      expect(cGraph.getUndEdges()).toEqual(expect.arrayContaining(graph.getUndEdges()));
 
       // check that all labels got copied correctly
       var original_nodes = graph.getNodes();
       for (let i = 0; i < Object.keys(original_nodes).length; i++) {
           var original_node: $N.IBaseNode = original_nodes[Object.keys(original_nodes)[i]];
-          expect(cGraph.getNodeById(original_node.getID()).getLabel()).to.equal(original_node.getLabel());
+          expect(cGraph.getNodeById(original_node.getID()).getLabel()).toBe(original_node.getLabel());
       }
 
       // check that all weights got copied correctly
       var original_edges = graph.getUndEdges();
       for (let i = 0; i < Object.keys(original_edges).length; i++) {
           var original_edge: $E.IBaseEdge = original_edges[Object.keys(original_edges)[i]];
-          expect(cGraph.getEdgeById(original_edge.getID()).getWeight()).to.equal(original_edge.getWeight());
+          expect(cGraph.getEdgeById(original_edge.getID()).getWeight()).toBe(original_edge.getWeight());
       }
     });
 
 
-    it('should correctly construct the expansion graph', () => {
+    test('should correctly construct the expansion graph', () => {
       /* TODO think about better way to test this function.. */
       /* TODO write new test case => we build the expansion grpah as a directed graph now */
 
@@ -90,7 +92,7 @@ describe('EME Boykov Tests - ', () => {
 
       // get all node ids
       var pixel_nodes = Object.keys(graph.getNodes());
-      expect(pixel_nodes).to.include.members(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']);
+      expect(pixel_nodes).toEqual(expect.arrayContaining(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']));
       // get all auxiliary nodes ids
       var aux_nodes_ind = Object.keys(nodes).filter(element => pixel_nodes.concat(['SOURCE', 'SINK']).indexOf(element) < 0);
       // all non zero nodes ( labeled with 2 in the graph)
@@ -98,8 +100,8 @@ describe('EME Boykov Tests - ', () => {
       var zero_nodes = ['B', 'E', 'F', 'H', 'I'];
 
       // check for total number of nodes and edges
-      expect(Object.keys(nodes).length).to.equal(16);
-      expect(Object.keys(edges).length).to.equal(80);
+      expect(Object.keys(nodes).length).toBe(16);
+      expect(Object.keys(edges).length).toBe(80);
 
       // // check for number of neighbors for each node + SOURCE + SINK
       // expect(Object.keys(nodes['A'].connNodes()).length).to.equal(4);
@@ -118,39 +120,39 @@ describe('EME Boykov Tests - ', () => {
       // weights should all be zero
       non_zero_nodes.forEach((element) => {
         var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
-        expect(edge.getWeight()).to.equal(0);
+        expect(edge.getWeight()).toBe(0);
       });
       // weights should all be infinity
       zero_nodes.forEach((element) => {
         var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
-        expect(edge.getWeight()).to.equal(Infinity);
+        expect(edge.getWeight()).toBe(Infinity);
       });
       // weights should all be 1
       aux_nodes_ind.forEach((element) => {
         var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SINK');
-        expect(edge.getWeight()).to.equal(1);
+        expect(edge.getWeight()).toBe(1);
       });
 
       // check edges to source
       // weights should all be zero
       non_zero_nodes.forEach((element) => {
         var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SOURCE');
-        expect(edge.getWeight()).to.equal(1.5);
+        expect(edge.getWeight()).toBe(1.5);
       });
       // weights should all be infinity
       zero_nodes.forEach((element) => {
         var edge: $E.IBaseEdge = eGraph.getDirEdgeByNodeIDs(element, 'SOURCE');
-        expect(edge.getWeight()).to.equal(0);
+        expect(edge.getWeight()).toBe(0);
       });
 
       // check inter node edges
-      expect(eGraph.getDirEdgeByNodeIDs('E', 'F').getWeight()).to.equal(0);
-      expect(eGraph.getDirEdgeByNodeIDs('A', 'D').getWeight()).to.equal(1);
-      expect(eGraph.getDirEdgeByNodeIDs('B', 'E').getWeight()).to.equal(0);
-      expect(eGraph.getDirEdgeByNodeIDs('D', 'G').getWeight()).to.equal(1);
-      expect(eGraph.getDirEdgeByNodeIDs('E', 'H').getWeight()).to.equal(0);
-      expect(eGraph.getDirEdgeByNodeIDs('F', 'I').getWeight()).to.equal(0);
-      expect(eGraph.getDirEdgeByNodeIDs('H', 'I').getWeight()).to.equal(0);
+      expect(eGraph.getDirEdgeByNodeIDs('E', 'F').getWeight()).toBe(0);
+      expect(eGraph.getDirEdgeByNodeIDs('A', 'D').getWeight()).toBe(1);
+      expect(eGraph.getDirEdgeByNodeIDs('B', 'E').getWeight()).toBe(0);
+      expect(eGraph.getDirEdgeByNodeIDs('D', 'G').getWeight()).toBe(1);
+      expect(eGraph.getDirEdgeByNodeIDs('E', 'H').getWeight()).toBe(0);
+      expect(eGraph.getDirEdgeByNodeIDs('F', 'I').getWeight()).toBe(0);
+      expect(eGraph.getDirEdgeByNodeIDs('H', 'I').getWeight()).toBe(0);
       // check node -> aux_node edges
 
 
@@ -165,19 +167,19 @@ describe('EME Boykov Tests - ', () => {
 
   describe("Simple Potts Test - ", () => {
 
-    it('should solve the potts model', () => {
+    test('should solve the potts model', () => {
       var pGraph = eme.calculateCycle().graph;
       var nodes = pGraph.getNodes();
 
-      expect(nodes['A'].getLabel()).to.equal('2');
-      expect(nodes['B'].getLabel()).to.equal('1');
-      expect(nodes['C'].getLabel()).to.equal('1');
-      expect(nodes['D'].getLabel()).to.equal('2');
-      expect(nodes['E'].getLabel()).to.equal('1');
-      expect(nodes['F'].getLabel()).to.equal('1');
-      expect(nodes['G'].getLabel()).to.equal('2');
-      expect(nodes['H'].getLabel()).to.equal('1');
-      expect(nodes['I'].getLabel()).to.equal('1');
+      expect(nodes['A'].getLabel()).toBe('2');
+      expect(nodes['B'].getLabel()).toBe('1');
+      expect(nodes['C'].getLabel()).toBe('1');
+      expect(nodes['D'].getLabel()).toBe('2');
+      expect(nodes['E'].getLabel()).toBe('1');
+      expect(nodes['F'].getLabel()).toBe('1');
+      expect(nodes['G'].getLabel()).toBe('2');
+      expect(nodes['H'].getLabel()).toBe('1');
+      expect(nodes['I'].getLabel()).toBe('1');
 
       /* TODO think about better test */
 

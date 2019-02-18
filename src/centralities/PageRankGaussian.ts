@@ -1,7 +1,7 @@
 import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
 import {IBaseEdge} from "../core/Edges";
-import * as $GAUSS from "../centralities/gauss";
+import * as $GAUSS from "./Gauss";
 
 
 //Calculates the page rank for a given graph

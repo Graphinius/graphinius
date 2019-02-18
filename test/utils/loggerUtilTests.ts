@@ -17,33 +17,33 @@ describe('Basic logger tests - (standard) DEBUG config - output expected - ', ()
 
   describe('Basic logger function tests - ', () => {
 
-    before(() => {
+    beforeAll(() => {
       const config : LOG_CONFIG = { log_level: LOG_LEVELS.debug };
       logger = new Logger(config);
     });
 
-    after(() => {
+    afterAll(() => {
       logger = null;
     });
   
-    it('Should successfully output a log message', () => {
-      expect(logger.log("This is a default log message")).to.be.true;
+    test('Should successfully output a log message', () => {
+      expect(logger.log("This is a default log message")).toBe(true);
     });
     
-    it('Should successfully output an error message', () => {
-      expect(logger.error("This is a default error message")).to.be.true;
+    test('Should successfully output an error message', () => {
+      expect(logger.error("This is a default error message")).toBe(true);
     });
     
-    it('Should successfully output an info message', () => {
-      expect(logger.info("This is a default info message")).to.be.true;
+    test('Should successfully output an info message', () => {
+      expect(logger.info("This is a default info message")).toBe(true);
     });
     
-    it('Should successfully output a warning message', () => {
-      expect(logger.warn("This is a default warning message")).to.be.true;
+    test('Should successfully output a warning message', () => {
+      expect(logger.warn("This is a default warning message")).toBe(true);
     });
     
-    it('Should successfully output an object with nested properties', () => {
-      expect(logger.dir(obj_to_log)).to.be.true;
+    test('Should successfully output an object with nested properties', () => {
+      expect(logger.dir(obj_to_log)).toBe(true);
     });
 
   });
@@ -54,33 +54,33 @@ describe('Basic logger tests - (standard) DEBUG config - output expected - ', ()
    */
   describe('basic logger tests - production config - NO output expected - ', () => {
     
-    before(() => {
+    beforeAll(() => {
       const config : LOG_CONFIG = { log_level: LOG_LEVELS.production };
       logger = new Logger(config);
     });
     
-    after(() => {
+    afterAll(() => {
       logger = null;
     });
     
-    it('Should successfully output a log message', () => {
-      expect(logger.log("This is a default log message")).to.be.false;
+    test('Should successfully output a log message', () => {
+      expect(logger.log("This is a default log message")).toBe(false);
     });
     
-    it('Should successfully output an error message', () => {
-      expect(logger.error("This is a default error message")).to.be.false;
+    test('Should successfully output an error message', () => {
+      expect(logger.error("This is a default error message")).toBe(false);
     });
     
-    it('Should successfully output an info message', () => {
-      expect(logger.info("This is a default info message")).to.be.false;
+    test('Should successfully output an info message', () => {
+      expect(logger.info("This is a default info message")).toBe(false);
     });
     
-    it('Should successfully output a warning message', () => {
-      expect(logger.warn("This is a default warning message")).to.be.false;
+    test('Should successfully output a warning message', () => {
+      expect(logger.warn("This is a default warning message")).toBe(false);
     });
     
-    it('Should successfully output an object with nested properties', () => {
-      expect(logger.dir(obj_to_log)).to.be.false;
+    test('Should successfully output an object with nested properties', () => {
+      expect(logger.dir(obj_to_log)).toBe(false);
     });
 
   });

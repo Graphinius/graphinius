@@ -19,22 +19,28 @@ describe('Retrieve remote file tests - ', () => {
 		file_name: SMALL_GRAPH_NAME + JSON_EXTENSION
 	}
 	
-	it('should throw an error if the handed callback is not a function', (done) => {
-		var cb = undefined;
-		expect($RU.retrieveRemoteFile.bind($RU, config, cb)).to.throw('Provided callback is not a function.');
-		done();
-	});
+	test(
+        'should throw an error if the handed callback is not a function',
+        (done) => {
+            var cb = undefined;
+            expect($RU.retrieveRemoteFile.bind($RU, config, cb)).toThrowError('Provided callback is not a function.');
+            done();
+        }
+    );
 	
 	
-	it('should throw an error if the handed callback is not a function', (done) => {
-		var cb = function(graphString) {			
-			var graph = JSON.parse(graphString);
-			expect(graph.name).to.equal("Small graph test scenario");
-			expect(graph.nodes).to.equal(4);
-			expect(graph.edges).to.equal(7);
-			done();
-		};
-		$RU.retrieveRemoteFile(config, cb);
-	});
+	test(
+        'should throw an error if the handed callback is not a function',
+        (done) => {
+            var cb = function(graphString) {			
+                var graph = JSON.parse(graphString);
+                expect(graph.name).toBe("Small graph test scenario");
+                expect(graph.nodes).toBe(4);
+                expect(graph.edges).toBe(7);
+                done();
+            };
+            $RU.retrieveRemoteFile(config, cb);
+        }
+    );
 	
 });

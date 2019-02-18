@@ -31,20 +31,20 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	
 	describe('Basic instantiation tests - ', () => {
 		
-		it('should correctly instantiate a default version of JSONInput', () => {
+		test('should correctly instantiate a default version of JSONInput', () => {
 			json = new JSON_IN();
-			expect(json).to.be.an.instanceof(JSON_IN);
-      expect(json._explicit_direction).to.be.true;
-      expect(json._direction).to.be.false;
-      expect(json._weighted_mode).to.be.false;
+			expect(json).toBeInstanceOf(JSON_IN);
+      expect(json._explicit_direction).toBe(true);
+      expect(json._direction).toBe(false);
+      expect(json._weighted_mode).toBe(false);
 		});
     
-    it('should correclty set modes of JSONInput', () => {
+    test('should correclty set modes of JSONInput', () => {
 			json = new JSON_IN(false, true, true);
-			expect(json).to.be.an.instanceof(JSON_IN);
-      expect(json._explicit_direction).to.be.false;
-      expect(json._direction).to.be.true;
-      expect(json._weighted_mode).to.be.true;
+			expect(json).toBeInstanceOf(JSON_IN);
+      expect(json._explicit_direction).toBe(false);
+      expect(json._direction).toBe(true);
+      expect(json._weighted_mode).toBe(true);
 		});
 		
 	});
@@ -52,33 +52,42 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	
 	describe('Small test graph', () => {
 				
-		it('should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions', () => {
-			json = new JSON_IN();
-			graph = json.readFromJSONFile(small_graph);
-			$C.checkSmallGraphStats(graph);
-		});
+		test(
+            'should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions',
+            () => {
+                json = new JSON_IN();
+                graph = json.readFromJSONFile(small_graph);
+                $C.checkSmallGraphStats(graph);
+            }
+        );
 		
 		
-		it('should correctly generate our small example graph out of a JSON file with direction _mode set to undirected', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(small_graph);
-			expect(graph.nrNodes()).to.equal(4);
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(4);
-		});
+		test(
+            'should correctly generate our small example graph out of a JSON file with direction _mode set to undirected',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(small_graph);
+                expect(graph.nrNodes()).toBe(4);
+                expect(graph.nrDirEdges()).toBe(0);
+                expect(graph.nrUndEdges()).toBe(4);
+            }
+        );
 		
 		
-		it('should correctly generate our small example graph out of a JSON file with direction _mode set to directed', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = true;
-			graph = json.readFromJSONFile(small_graph);
-			expect(graph.nrNodes()).to.equal(4);
-			expect(graph.nrDirEdges()).to.equal(7);
-			expect(graph.nrUndEdges()).to.equal(0);
-		});
+		test(
+            'should correctly generate our small example graph out of a JSON file with direction _mode set to directed',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = true;
+                graph = json.readFromJSONFile(small_graph);
+                expect(graph.nrNodes()).toBe(4);
+                expect(graph.nrDirEdges()).toBe(7);
+                expect(graph.nrUndEdges()).toBe(0);
+            }
+        );
 		
 	});
 	
@@ -89,51 +98,60 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 * Edge list, but with a REAL graph now
 		 * graph should have 5937 undirected nodes.
 		 */ 
-		it('should construct a real sized graph from an edge list with edges set to undirected', () => {
-			json = new JSON_IN();
-			graph = json.readFromJSONFile(real_graph);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
-			expect(stats.nr_dir_edges).to.equal(0);
-			expect(stats.nr_und_edges).to.equal(REAL_GRAPH_NR_EDGES);
-			expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
-		});
+		test(
+            'should construct a real sized graph from an edge list with edges set to undirected',
+            () => {
+                json = new JSON_IN();
+                graph = json.readFromJSONFile(real_graph);
+                stats = graph.getStats();
+                expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
+                expect(stats.nr_dir_edges).toBe(0);
+                expect(stats.nr_und_edges).toBe(REAL_GRAPH_NR_EDGES);
+                expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+            }
+        );
 		
 		
 		/**
 		 * Edge list, but with a REAL graph now
 		 * graph should have 5937 directed nodes.
 		 */ 
-		it('should construct a real sized graph from an edge list with edges set to directed', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = true;
-			graph = json.readFromJSONFile(real_graph);
-			stats = graph.getStats();
-			expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
-			expect(stats.nr_dir_edges).to.equal(REAL_GRAPH_NR_EDGES);
-			expect(stats.nr_und_edges).to.equal(0);
-			expect(stats.mode).to.equal($G.GraphMode.DIRECTED);
-		});
+		test(
+            'should construct a real sized graph from an edge list with edges set to directed',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = true;
+                graph = json.readFromJSONFile(real_graph);
+                stats = graph.getStats();
+                expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
+                expect(stats.nr_dir_edges).toBe(REAL_GRAPH_NR_EDGES);
+                expect(stats.nr_und_edges).toBe(0);
+                expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+            }
+        );
 		
 				
 		/**
 		 * PERFORMANCE test case - see how long it takes to mutilate graph...
 		 */ 
-		it('should mutilate a graph (delte nodes) until it is completely empty - in a performant way', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(real_graph);
-			
-			var nr_nodes = graph.nrNodes();
-			while ( nr_nodes-- ) {
-				graph.deleteNode(graph.getNodeById(String(nr_nodes)));
-			}
-			expect(graph.nrNodes()).to.equal(0);
-			expect(graph.nrDirEdges()).to.equal(0);
-			expect(graph.nrUndEdges()).to.equal(0);
-		});
+		test(
+            'should mutilate a graph (delte nodes) until it is completely empty - in a performant way',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(real_graph);
+                
+                var nr_nodes = graph.nrNodes();
+                while ( nr_nodes-- ) {
+                    graph.deleteNode(graph.getNodeById(String(nr_nodes)));
+                }
+                expect(graph.nrNodes()).toBe(0);
+                expect(graph.nrDirEdges()).toBe(0);
+                expect(graph.nrUndEdges()).toBe(0);
+            }
+        );
 		
   });
   
@@ -145,25 +163,31 @@ describe('GRAPH JSON INPUT TESTS', () => {
    */
   describe('Node coordinates - ', () => {
 		
-		it('should correctly read the node coordinates contained in a json file', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(small_graph);
-			$C.checkSmallGraphCoords(graph);
-		});
+		test(
+            'should correctly read the node coordinates contained in a json file',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(small_graph);
+                $C.checkSmallGraphCoords(graph);
+            }
+        );
 		
 		
-		it('should not assign the coords feature if no coordinates are contained in a json file', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(small_graph_no_features);
-			var nodes = graph.getNodes();
-			for ( var node_idx in nodes ) {
-				expect(nodes[node_idx].getFeature("coords")).to.be.undefined;
-			}
-		});
+		test(
+            'should not assign the coords feature if no coordinates are contained in a json file',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(small_graph_no_features);
+                var nodes = graph.getNodes();
+                for ( var node_idx in nodes ) {
+                    expect(nodes[node_idx].getFeature("coords")).toBeUndefined();
+                }
+            }
+        );
     
   });
 	
@@ -175,25 +199,31 @@ describe('GRAPH JSON INPUT TESTS', () => {
    */
   describe('Node features - ', () => {
 		
-		it('should correctly read the node features contained in a json file', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(small_graph);
-			$C.checkSmallGraphFeatures(graph);
-		});
+		test(
+            'should correctly read the node features contained in a json file',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(small_graph);
+                $C.checkSmallGraphFeatures(graph);
+            }
+        );
 		
 		
-		it('should not assign any features if no features entry is contained in a json file', () => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false;
-			graph = json.readFromJSONFile(small_graph_no_features);
-			var nodes = graph.getNodes();
-			for ( var node_idx in nodes ) {
-				expect(nodes[node_idx].getFeatures()).to.be.empty;
-			}
-		});
+		test(
+            'should not assign any features if no features entry is contained in a json file',
+            () => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false;
+                graph = json.readFromJSONFile(small_graph_no_features);
+                var nodes = graph.getNodes();
+                for ( var node_idx in nodes ) {
+                    expect(nodes[node_idx].getFeatures()).toHaveLength(0);
+                }
+            }
+        );
 		
 	});
   
@@ -211,43 +241,49 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
 
 
-		it('should correctly read the edge weights contained in a json file', () => {
+		test('should correctly read the edge weights contained in a json file', () => {
       json._weighted_mode = true;
 			graph = json.readFromJSONFile(small_graph);			
       $C.checkSmallGraphEdgeWeights(graph);
 		});
     
     
-    it('should correctly set edge weights to undefined if in unweighted _mode', () => {
-      json._weighted_mode = false;
-			graph = json.readFromJSONFile(small_graph);
-			var und_edges = graph.getUndEdges();
-      for (var edge in und_edges) {
-        expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
-        expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
-      }
-      var dir_edges = graph.getDirEdges();
-      for (var edge in dir_edges) {
-        expect(graph.getEdgeById(edge).isWeighted()).to.be.false;
-        expect(graph.getEdgeById(edge).getWeight()).to.be.undefined;
-      }
-		});
+    test(
+        'should correctly set edge weights to undefined if in unweighted _mode',
+        () => {
+          json._weighted_mode = false;
+                graph = json.readFromJSONFile(small_graph);
+                var und_edges = graph.getUndEdges();
+          for (var edge in und_edges) {
+            expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
+            expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
+          }
+          var dir_edges = graph.getDirEdges();
+          for (var edge in dir_edges) {
+            expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
+            expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
+          }
+            }
+    );
 
         
-    it('should correctly set edge weights to default of 1 if info contained in json file is crappy', () => {
-      json._weighted_mode = true;
-			graph = json.readFromJSONFile(small_graph_weights_crap);			
-      var und_edges = graph.getUndEdges();
-      for (var edge in und_edges) {
-        expect(graph.getEdgeById(edge).isWeighted()).to.be.true;
-        expect(graph.getEdgeById(edge).getWeight()).to.equal(1);
-      }
-      var dir_edges = graph.getDirEdges();
-      for (var edge in dir_edges) {
-        expect(graph.getEdgeById(edge).isWeighted()).to.be.true;
-        expect(graph.getEdgeById(edge).getWeight()).to.equal(1);
-      }
-		});
+    test(
+        'should correctly set edge weights to default of 1 if info contained in json file is crappy',
+        () => {
+          json._weighted_mode = true;
+                graph = json.readFromJSONFile(small_graph_weights_crap);			
+          var und_edges = graph.getUndEdges();
+          for (var edge in und_edges) {
+            expect(graph.getEdgeById(edge).isWeighted()).toBe(true);
+            expect(graph.getEdgeById(edge).getWeight()).toBe(1);
+          }
+          var dir_edges = graph.getDirEdges();
+          for (var edge in dir_edges) {
+            expect(graph.getEdgeById(edge).isWeighted()).toBe(true);
+            expect(graph.getEdgeById(edge).getWeight()).toBe(1);
+          }
+            }
+    );
 
 
 		describe('should be able to handle extreme edge weight cases', () => {
@@ -258,28 +294,37 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			})
 
 
-			it('should correctly set edge weight of "undefined" to DEFAULT_WEIGHT of 1', () => {
-				expect(graph.getEdgeById("A_A_d").getWeight()).to.equal(DEFAULT_WEIGHT);
+			test(
+                'should correctly set edge weight of "undefined" to DEFAULT_WEIGHT of 1',
+                () => {
+                    expect(graph.getEdgeById("A_A_d").getWeight()).toBe(DEFAULT_WEIGHT);
+                }
+            );
+
+
+			test(
+                'should correctly set edge weight of "Infinity" to Number.POSITIVE_INFINITY',
+                () => {
+                    expect(graph.getEdgeById("A_B_d").getWeight()).toBe(Number.POSITIVE_INFINITY);
+                }
+            );
+
+
+			test(
+                'should correctly set edge weight of "-Infinity" to Number.NEGATIVE_INFINITY',
+                () => {
+                    expect(graph.getEdgeById("A_C_d").getWeight()).toBe(Number.NEGATIVE_INFINITY);
+                }
+            );
+
+
+			test('should correctly set edge weight of "MAX" to Number.MAX_VALUE', () => {
+				expect(graph.getEdgeById("A_D_d").getWeight()).toBe(Number.MAX_VALUE);
 			});
 
 
-			it('should correctly set edge weight of "Infinity" to Number.POSITIVE_INFINITY', () => {
-				expect(graph.getEdgeById("A_B_d").getWeight()).to.equal(Number.POSITIVE_INFINITY);
-			});
-
-
-			it('should correctly set edge weight of "-Infinity" to Number.NEGATIVE_INFINITY', () => {
-				expect(graph.getEdgeById("A_C_d").getWeight()).to.equal(Number.NEGATIVE_INFINITY);
-			});
-
-
-			it('should correctly set edge weight of "MAX" to Number.MAX_VALUE', () => {
-				expect(graph.getEdgeById("A_D_d").getWeight()).to.equal(Number.MAX_VALUE);
-			});
-
-
-			it('should correctly set edge weight of "MIN" to Number.MIN_VALUE', () => {
-				expect(graph.getEdgeById("A_E_d").getWeight()).to.equal(Number.MIN_VALUE);
+			test('should correctly set edge weight of "MIN" to Number.MIN_VALUE', () => {
+				expect(graph.getEdgeById("A_E_d").getWeight()).toBe(Number.MIN_VALUE);
 			});
 
 		});

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const $SU = require("../utils/structUtils");
-const $GAUSS = require("../centralities/gauss");
+const $GAUSS = require("./Gauss");
 class pageRankDetCentrality {
     getCentralityMap(graph, weighted) {
         let divideTable = {};

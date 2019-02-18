@@ -21,36 +21,36 @@ describe('==== EDGE TESTS ====', () => {
 		 * the edge itself does not check if any of the nodes it connects 
 		 * are part of a graph - this is the job of the BaseGraph class!
 		 */
-		it('should refuse to instantiate an edge without two existing nodes', () => {
+		test('should refuse to instantiate an edge without two existing nodes', () => {
 			var badConst = function() { return new Edge("free-float", null, null) };
-			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
-		it('should refuse to instantiate an edge without two existing nodes', () => {
+		test('should refuse to instantiate an edge without two existing nodes', () => {
 			var badConst = function() { return new Edge("free-float", new Node("A"), null) };
-			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
-		it('should refuse to instantiate an edge without two existing nodes', () => {
+		test('should refuse to instantiate an edge without two existing nodes', () => {
 			var badConst = function() { return new Edge("free-float", null, new Node("A") ) };
-			expect(badConst).to.throw("cannot instantiate edge without two valid node objects");
+			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
-		it('should correctly set _id', () => {
+		test('should correctly set _id', () => {
 			var edge = new Edge(id, node_a, node_b);
-			expect(edge.getID()).to.equal(id);
+			expect(edge.getID()).toBe(id);
 		});
 		
-		it('should correctly set _label upon instantiation', () => {
+		test('should correctly set _label upon instantiation', () => {
 			var edge = new Edge(id, node_a, node_b, {label: label});
-			expect(edge.getLabel()).to.equal(label);
+			expect(edge.getLabel()).toBe(label);
 		});
 		
-		it('should correctly set _label upon renewed setting', () => {
+		test('should correctly set _label upon renewed setting', () => {
 			var edge = new Edge(id, node_a, node_b, {label: label});
-			expect(edge.getLabel()).to.equal(label);
+			expect(edge.getLabel()).toBe(label);
 			edge.setLabel('new Label');
-			expect(edge.getLabel()).to.equal('new Label');
+			expect(edge.getLabel()).toBe('new Label');
 		});
 		
 	});
@@ -59,16 +59,16 @@ describe('==== EDGE TESTS ====', () => {
 	describe('Direction Edge Tests: ', () => {		
 		// Constructor + isDirected()
 		describe('Constructor + isDirected', () => {
-			it('should correctly set default _directed to false', () => {
+			test('should correctly set default _directed to false', () => {
 				var edge = new Edge(id, node_a, node_b);
-				expect(edge.isDirected()).to.equal(false);
+				expect(edge.isDirected()).toBe(false);
 			});
 			
 			[true, false].forEach(function(val) {
-				it('should correctly set _directed to specified value', () => {
+				test('should correctly set _directed to specified value', () => {
 					var opts = {directed: val};
 					var edge = new Edge(id, node_a, node_b, opts);
-					expect(edge.isDirected()).to.equal(val);					
+					expect(edge.isDirected()).toBe(val);					
 				});
 			});
 		});
@@ -84,59 +84,59 @@ describe('==== EDGE TESTS ====', () => {
 	describe('Weight Edge Tests', () => {		
     
 		describe('Constructor + isWeighted', () => {
-			it('should correctly set default _directed to false', () => {
+			test('should correctly set default _directed to false', () => {
 				var edge = new Edge(id, node_a, node_b);
-				expect(edge.isWeighted()).to.equal(false);
+				expect(edge.isWeighted()).toBe(false);
 			});
 			
 			[true, false].forEach(function(val) {
-				it('should correctly set _directed to specified value', () => {
+				test('should correctly set _directed to specified value', () => {
 					var opts = {weighted: val};
 					var edge = new Edge(id, node_a, node_b, opts);
-					expect(edge.isWeighted()).to.equal(val);					
+					expect(edge.isWeighted()).toBe(val);					
 				});
 			});
 		});
 		
     
 		describe('getWeight()', () => {
-			it('should throw an exception when querying weight if unweighted', () => {
+			test('should throw an exception when querying weight if unweighted', () => {
 				var edge = new Edge(id, node_a, node_b);
-				expect(edge.isWeighted()).to.equal(false);
-        expect(edge.getWeight()).to.be.undefined;
+				expect(edge.isWeighted()).toBe(false);
+        expect(edge.getWeight()).toBeUndefined();
 			});
 			
-			it('should correctly set default weight to 1', () => {
+			test('should correctly set default weight to 1', () => {
 				var opts = {weighted: true};
 				var edge = new Edge(id, node_a, node_b, opts);
-				expect(edge.isWeighted()).to.equal(true);					
-				expect(edge.getWeight()).to.equal(1);					
+				expect(edge.isWeighted()).toBe(true);					
+				expect(edge.getWeight()).toBe(1);					
 			});
 			
-			it('should correctly report weight if set & specified', () => {
+			test('should correctly report weight if set & specified', () => {
 				var opts = {weighted: true, weight: 42};
 				var edge = new Edge(id, node_a, node_b, opts);
-				expect(edge.isWeighted()).to.equal(true);					
-				expect(edge.getWeight()).to.equal(42);					
+				expect(edge.isWeighted()).toBe(true);					
+				expect(edge.getWeight()).toBe(42);					
 			});
 		});
     
     
 		describe('setWeight()', () => {
-			it('Should throw an error on trying to set a weight if unweighted', () => {
+			test('Should throw an error on trying to set a weight if unweighted', () => {
 				var opts = {weighted: false};
 				var edge = new Edge(id, node_a, node_b, opts);
-				expect(edge.isWeighted()).to.equal(false);
-				expect(edge.setWeight.bind(edge, 42)).to.throw("Cannot set weight on unweighted edge.");
+				expect(edge.isWeighted()).toBe(false);
+				expect(edge.setWeight.bind(edge, 42)).toThrowError("Cannot set weight on unweighted edge.");
 			});
 			
-			it('Should correctly set weight to a specified value', () => {	
+			test('Should correctly set weight to a specified value', () => {	
 				var opts = {weighted: true};
 				var edge = new Edge(id, node_a, node_b, opts);
-				expect(edge.isWeighted()).to.equal(true);
-				expect(edge.getWeight()).to.equal(1);			
+				expect(edge.isWeighted()).toBe(true);
+				expect(edge.getWeight()).toBe(1);			
 				edge.setWeight(42);
-				expect(edge.getWeight()).to.equal(42);
+				expect(edge.getWeight()).toBe(42);
 			});
 		});		
 	});
@@ -145,16 +145,16 @@ describe('==== EDGE TESTS ====', () => {
 	describe('Node Edge Tests: ', () => {
 		
 		[true, false].forEach(function(direction) {
-			it('all edges should properly return the two connected nodes', () => {
+			test('all edges should properly return the two connected nodes', () => {
 				var opts = {directed: direction};
 				var edge = new Edge(id, node_a, node_b, opts);
-				expect(edge.isDirected()).to.equal(direction);
+				expect(edge.isDirected()).toBe(direction);
 				var nodes = edge.getNodes();
-				expect(nodes).to.be.an.instanceof(Object);			
-				expect(nodes.a).to.be.an.instanceof(Node);
-				expect(nodes.b).to.be.an.instanceof(Node);
-				expect(nodes.a).to.equal(node_a);
-				expect(nodes.b).to.equal(node_b);
+				expect(nodes).toBeInstanceOf(Object);			
+				expect(nodes.a).toBeInstanceOf(Node);
+				expect(nodes.b).toBeInstanceOf(Node);
+				expect(nodes.a).toBe(node_a);
+				expect(nodes.b).toBe(node_b);
 			});
 		});
 				
@@ -176,8 +176,8 @@ describe('==== EDGE TESTS ====', () => {
 
 
 		beforeEach(() => {
-			expect(edge).to.be.null;
-			expect(clone_edge).to.be.null;
+			expect(edge).toBeNull();
+			expect(clone_edge).toBeNull();
 		});
 
 
@@ -187,39 +187,36 @@ describe('==== EDGE TESTS ====', () => {
 		});
 
 
-		it('should refuse to clone if new node A is invalid', () => {
+		test('should refuse to clone if new node A is invalid', () => {
 			edge = new $E.BaseEdge("default", node_a, node_b);
-			expect(edge.clone.bind(edge, null, node_b))
-				.to.throw("refusing to clone edge if any new node is invalid");
+			expect(edge.clone.bind(edge, null, node_b)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
-		it('should refuse to clone if new node B is invalid', () => {
+		test('should refuse to clone if new node B is invalid', () => {
 			edge = new $E.BaseEdge("default", node_a, node_b);
-			expect(edge.clone.bind(edge, node_a, null))
-				.to.throw("refusing to clone edge if any new node is invalid");
+			expect(edge.clone.bind(edge, node_a, null)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
-		it('should refuse to clone if both nodes are invalid', () => {
+		test('should refuse to clone if both nodes are invalid', () => {
 			edge = new $E.BaseEdge("default", node_a, node_b);
-			expect(edge.clone.bind(edge, null, null))
-				.to.throw("refusing to clone edge if any new node is invalid");
+			expect(edge.clone.bind(edge, null, null)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
-		it('should clone a default edge with correct config options', () => {
+		test('should clone a default edge with correct config options', () => {
 			edge = new $E.BaseEdge("default", node_a, node_b);
 			clone_edge = edge.clone(node_a, node_b);
-			expect(clone_edge.getID()).to.equal(edge.getID());
-			expect(clone_edge.getLabel()).to.equal(edge.getLabel());
-			expect(clone_edge.isDirected()).to.equal(edge.isDirected());
-			expect(clone_edge.isWeighted()).to.equal(edge.isWeighted());
-			expect(clone_edge.getWeight()).to.equal(edge.getWeight());
+			expect(clone_edge.getID()).toBe(edge.getID());
+			expect(clone_edge.getLabel()).toBe(edge.getLabel());
+			expect(clone_edge.isDirected()).toBe(edge.isDirected());
+			expect(clone_edge.isWeighted()).toBe(edge.isWeighted());
+			expect(clone_edge.getWeight()).toBe(edge.getWeight());
 		});
 
 
-		it('should clone a default edge with correct config options', () => {
+		test('should clone a default edge with correct config options', () => {
 			edge = new $E.BaseEdge("default", node_a, node_b, {
 				directed: true,
 				weighted: true,
@@ -227,11 +224,11 @@ describe('==== EDGE TESTS ====', () => {
 				label: "different_from_ID"
 			});
 			clone_edge = edge.clone(node_a, node_b);
-			expect(clone_edge.getID()).to.equal(edge.getID());
-			expect(clone_edge.getLabel()).to.equal(edge.getLabel());
-			expect(clone_edge.isDirected()).to.equal(edge.isDirected());
-			expect(clone_edge.isWeighted()).to.equal(edge.isWeighted());
-			expect(clone_edge.getWeight()).to.equal(edge.getWeight());
+			expect(clone_edge.getID()).toBe(edge.getID());
+			expect(clone_edge.getLabel()).toBe(edge.getLabel());
+			expect(clone_edge.isDirected()).toBe(edge.isDirected());
+			expect(clone_edge.isWeighted()).toBe(edge.isWeighted());
+			expect(clone_edge.getWeight()).toBe(edge.getWeight());
 		});
 
 	});

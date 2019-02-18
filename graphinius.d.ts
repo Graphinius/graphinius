@@ -638,7 +638,7 @@ declare module 'graphinius/centralities/Degree' {
 	export { DegreeCentrality };
 
 }
-declare module 'graphinius/centralities/gauss' {
+declare module 'graphinius/centralities/Gauss' {
 	 function gauss(A: any[], x: any[]): any[];
 	export { gauss };
 

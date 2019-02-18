@@ -40,41 +40,50 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 			};
 		});
 				
-		it('should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions', (done) => {
-			json = new JSON_IN();
-			json.readFromJSONURL(config, function(graph, err) {
-				$C.checkSmallGraphStats(graph);
-				done();
-			});
-		});
+		test(
+            'should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions',
+            (done) => {
+                json = new JSON_IN();
+                json.readFromJSONURL(config, function(graph, err) {
+                    $C.checkSmallGraphStats(graph);
+                    done();
+                });
+            }
+        );
 		
 		
-		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected', (done) => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = false; // undirected graph
-			json.readFromJSONURL(config, function(graph, err) {
-				expect(graph.nrNodes()).to.equal(4);
-				expect(graph.nrDirEdges()).to.equal(0);
-				expect(graph.nrUndEdges()).to.equal(4);
-				expect(graph.getMode()).to.equal($G.GraphMode.UNDIRECTED);
-				done();
-			});
-		});
+		test(
+            'should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected',
+            (done) => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = false; // undirected graph
+                json.readFromJSONURL(config, function(graph, err) {
+                    expect(graph.nrNodes()).toBe(4);
+                    expect(graph.nrDirEdges()).toBe(0);
+                    expect(graph.nrUndEdges()).toBe(4);
+                    expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+                    done();
+                });
+            }
+        );
 		
 		
-		it('should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected', (done) => {
-			json = new JSON_IN();
-			json._explicit_direction = false;
-			json._direction = true; // undirected graph
-			json.readFromJSONURL(config, function(graph, err) {
-				expect(graph.nrNodes()).to.equal(4);
-				expect(graph.nrDirEdges()).to.equal(7);
-				expect(graph.nrUndEdges()).to.equal(0);
-				expect(graph.getMode()).to.equal($G.GraphMode.DIRECTED);
-				done();
-			});
-		});
+		test(
+            'should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected',
+            (done) => {
+                json = new JSON_IN();
+                json._explicit_direction = false;
+                json._direction = true; // undirected graph
+                json.readFromJSONURL(config, function(graph, err) {
+                    expect(graph.nrNodes()).toBe(4);
+                    expect(graph.nrDirEdges()).toBe(7);
+                    expect(graph.nrUndEdges()).toBe(0);
+                    expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+                    done();
+                });
+            }
+        );
 		
 	});
 	
@@ -85,19 +94,22 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		 * Edge list, but with a REAL graph now
 		 * graph should have 5937 undirected nodes.
 		 */ 
-		it('should construct a real sized graph from a remotely fetched edge list with edges set to undirected', (done) => {
-			json = new JSON_IN();
-			config.file_name = "real_graph" + JSON_EXTENSION;
-			json.readFromJSONURL(config, function(graph, err) {
-				stats = graph.getStats();
-				expect(stats.nr_nodes).to.equal(REAL_GRAPH_NR_NODES);
-				expect(stats.nr_dir_edges).to.equal(0);
-				expect(stats.nr_und_edges).to.equal(REAL_GRAPH_NR_EDGES);
-				expect(stats.mode).to.equal($G.GraphMode.UNDIRECTED);
-				done();
-			});
-			
-		});
+		test(
+            'should construct a real sized graph from a remotely fetched edge list with edges set to undirected',
+            (done) => {
+                json = new JSON_IN();
+                config.file_name = "real_graph" + JSON_EXTENSION;
+                json.readFromJSONURL(config, function(graph, err) {
+                    stats = graph.getStats();
+                    expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
+                    expect(stats.nr_dir_edges).toBe(0);
+                    expect(stats.nr_und_edges).toBe(REAL_GRAPH_NR_EDGES);
+                    expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+                    done();
+                });
+                
+            }
+        );
 	
 	});
 			

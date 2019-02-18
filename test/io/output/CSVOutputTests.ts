@@ -29,12 +29,12 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 	describe('Basic instantiation tests', () => {
 
-		it('should instantiate a default version of CSVOutput', () => {
+		test('should instantiate a default version of CSVOutput', () => {
 			csvOut = new CSVOutput();
-			expect(csvOut).to.be.an.instanceof(CSVOutput);
-			expect(csvOut._separator).to.equal(DEFAULT_SEP);
-      expect(csvOut._explicit_direction).to.be.true;
-      expect(csvOut._direction_mode).to.be.false;
+			expect(csvOut).toBeInstanceOf(CSVOutput);
+			expect(csvOut._separator).toBe(DEFAULT_SEP);
+      expect(csvOut._explicit_direction).toBe(true);
+      expect(csvOut._direction_mode).toBe(false);
 		});
 
 	});
@@ -64,7 +64,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     });
     
     
-    it('should output test graph as undirected graph', () => {
+    test('should output test graph as undirected graph', () => {
       var expected_graph = "";
       expected_graph += "A,A,B,D,C\n" // directed before undirected
       expected_graph += "B,A\n"
@@ -72,11 +72,11 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
       expected_graph += "D,A\n";
                                   
       out_graph = csvOut.writeToAdjacencyList(graph);      
-      expect(out_graph).to.equal(expected_graph);
+      expect(out_graph).toBe(expected_graph);
     });
     
     
-    it('should output test graph as undirected graph, space separator', () => {
+    test('should output test graph as undirected graph, space separator', () => {
       var expected_graph = "";
       csvOut._separator = " ";
       expected_graph += "A A B D C\n" // directed before undirected
@@ -85,37 +85,37 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
       expected_graph += "D A\n";
                                   
       out_graph = csvOut.writeToAdjacencyList(graph);      
-      expect(out_graph).to.equal(expected_graph);
+      expect(out_graph).toBe(expected_graph);
     });
     
     
-    it('should output test graph as CSV file', () => {
+    test('should output test graph as CSV file', () => {
       var outfile = OUT_DIR + "adj_list_test_graph.csv";
       csvOut.writeToAdjacencyListFile(outfile, graph);
       
       var inGraph = csvIn.readFromAdjacencyListFile(outfile);
-      expect(inGraph.nrNodes()).to.equal(4);
-      expect(inGraph.nrDirEdges()).to.equal(0);
-      expect(inGraph.nrUndEdges()).to.equal(4);      
+      expect(inGraph.nrNodes()).toBe(4);
+      expect(inGraph.nrDirEdges()).toBe(0);
+      expect(inGraph.nrUndEdges()).toBe(4);      
     });
   
   
     describe("Tests with real graph sizes", () => {
       
-      it('should output a real graph as CSV file', () => {
+      test('should output a real graph as CSV file', () => {
         jsonIn = new $J.JSONInput(false, false, false);
         var realGraph = jsonIn.readFromJSONFile(real_graph_file);
         
-        expect(realGraph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
-        expect(realGraph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
+        expect(realGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
+        expect(realGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
         
         var outfile = OUT_DIR + "adj_list_real_graph.csv";        
         csvOut.writeToAdjacencyListFile(outfile, realGraph);
         
         var inGraph = csvIn.readFromAdjacencyListFile(outfile);
-        expect(inGraph.nrNodes()).to.equal(REAL_GRAPH_NR_NODES);
-        expect(inGraph.nrDirEdges()).to.equal(0);
-        expect(inGraph.nrUndEdges()).to.equal(REAL_GRAPH_NR_EDGES);
+        expect(inGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
+        expect(inGraph.nrDirEdges()).toBe(0);
+        expect(inGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
       });
       
     });  

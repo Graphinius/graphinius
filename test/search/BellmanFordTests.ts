@@ -32,7 +32,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			BF_compute_array	: any; // TODO refactor w.r.t union return type
 
 
-	before(() => {
+	beforeAll(() => {
 		json = new JSON_IN(true,false,true);
 		csv = new CSV_IN(' ',false,false);
 		bf_graph = json.readFromJSONFile(bf_graph_file);
@@ -42,51 +42,39 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
   });
 
 
-	it('should correctly instantiate the test BF graph', () => {
+	test('should correctly instantiate the test BF graph', () => {
 		stats = bf_graph.getStats();
-		expect(stats.nr_nodes).to.equal(6);
-		expect(stats.nr_dir_edges).to.equal(8);
-		expect(stats.nr_und_edges).to.equal(0);
+		expect(stats.nr_nodes).toBe(6);
+		expect(stats.nr_dir_edges).toBe(8);
+		expect(stats.nr_und_edges).toBe(0);
 	});
 
 
 	describe('Bellman Ford Sanity Checks Tests - ', () => {
 
-		it('should reject an undefined or null graph', () => {
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, undefined)).to.throw(
-				'Graph as well as start node have to be valid objects.'
-			);
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, null)).to.throw(
-				'Graph as well as start node have to be valid objects.'
-			);
+		test('should reject an undefined or null graph', () => {
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, undefined)).toThrowError('Graph as well as start node have to be valid objects.');
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, null)).toThrowError('Graph as well as start node have to be valid objects.');
 		});
 
 
-		it('should reject an undefined or null start node', () => {
+		test('should reject an undefined or null start node', () => {
 			let graph = new $G.BaseGraph('emptinius');
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, undefined)).to.throw(
-				'Graph as well as start node have to be valid objects.'
-			);
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, null)).to.throw(
-				'Graph as well as start node have to be valid objects.'
-			);
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, undefined)).toThrowError('Graph as well as start node have to be valid objects.');
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, null)).toThrowError('Graph as well as start node have to be valid objects.');
 		});
 
 
-		it('should refuse to search a graph without edges', () => {
+		test('should refuse to search a graph without edges', () => {
 			let graph = new $G.BaseGraph('emptinius');
 			let node = graph.addNodeByID('firstus');
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, node)).to.throw(
-				'Cowardly refusing to traverse a graph without edges.'
-			);
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, graph, node)).toThrowError('Cowardly refusing to traverse a graph without edges.');
 		});
 
 
-		it('should reject an outside node', () => {
+		test('should reject an outside node', () => {
 			let node = new $N.BaseNode('firstus');
-			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, bf_graph, node)).to.throw(
-				'Cannot start from an outside node.'
-			);
+			expect($BF.BellmanFordDict.bind($BF.BellmanFordDict, bf_graph, node)).toThrowError('Cannot start from an outside node.');
 		});
 
 	});
@@ -97,9 +85,9 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	 */
 	describe('BF Dict version tests - ', () => {
 		
-		it('should correctly compute distances from S within BF test graph', () => {
+		test('should correctly compute distances from S within BF test graph', () => {
 			BF_compute = $BF.BellmanFordDict(bf_graph, bf_graph.getNodeById("S")).distances;
-			expect(BF_compute).to.deep.equal(BF_expect);
+			expect(BF_compute).toEqual(BF_expect);
 		});
 
 		/**
@@ -107,13 +95,13 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		 * since they are not even defined in finite time.
 		 */
 
-		it('BF should not detect any negative cycle in the bf graph', () => {
-			expect($BF.BellmanFordDict(bf_graph, bf_graph.getNodeById("S")).neg_cycle).to.be.false;
+		test('BF should not detect any negative cycle in the bf graph', () => {
+			expect($BF.BellmanFordDict(bf_graph, bf_graph.getNodeById("S")).neg_cycle).toBe(false);
 		});
 
 
-		it('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
-			expect($BF.BellmanFordDict(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S")).neg_cycle).to.be.true;
+		test('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
+			expect($BF.BellmanFordDict(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S")).neg_cycle).toBe(true);
 		});
 
 	});
@@ -123,19 +111,19 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	 */
 	describe('BF Array version tests - ', () => {
 
-		it('should correctly compute dists for BF test graph', () => {
+		test('should correctly compute dists for BF test graph', () => {
 			BF_compute_array = $BF.BellmanFordArray(bf_graph, bf_graph.getNodeById("S")).distances;
-			expect(BF_compute_array).to.deep.equal(BF_expect_array);
+			expect(BF_compute_array).toEqual(BF_expect_array);
 		});
 
 
-		it('BF should not detect any negative cycle in the bf graph', () => {
-			expect($BF.BellmanFordArray(bf_graph, bf_graph.getNodeById("S")).neg_cycle).to.be.false;
+		test('BF should not detect any negative cycle in the bf graph', () => {
+			expect($BF.BellmanFordArray(bf_graph, bf_graph.getNodeById("S")).neg_cycle).toBe(false);
 		});
 
 
-		it('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
-			expect($BF.BellmanFordArray(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S")).neg_cycle).to.be.true;
+		test('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
+			expect($BF.BellmanFordArray(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S")).neg_cycle).toBe(true);
 		});
 
 	});
@@ -154,14 +142,14 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 				graph_6k 					: $G.IGraph;
 
 
-		before(() => {
+		beforeAll(() => {
 			sn_300_graph = csv.readFromEdgeListFile(social_300_file);
 			sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
 			graph_6k = json.readFromJSONFile(graph_6k_file);
 		});
 
 
-		it('BF performance test on ~300 node social network graph', () => {
+		test('BF performance test on ~300 node social network graph', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFordDict(sn_300_graph, sn_300_graph.getRandomNode());
 			let e = +new Date();
@@ -173,7 +161,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		});
 
 
-		it('BF performance test on ~1k node social network graph', () => {
+		test('BF performance test on ~1k node social network graph', () => {
 			let d = +new Date();
 			BF_compute = $BF.BellmanFordDict(sn_1k_graph, sn_1k_graph.getRandomNode());
 			let e = +new Date();
@@ -185,7 +173,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		});
 
 
-		it.skip('BF performance test on ~6k graph', () => {
+		test.skip('BF performance test on ~6k graph', () => {
 			logger.log(`Real sized graph has: ${graph_6k.nrNodes()} nodes.`);
 			logger.log(`Real sized graph has ${graph_6k.nrDirEdges() + graph_6k.nrUndEdges()} edges.`);
 
