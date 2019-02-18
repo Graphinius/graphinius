@@ -124,41 +124,5 @@ export const bundle = gulp.series(cleanBuild, dist, docs, dts, generatePackage)
 
 
 //----------------------------
-// TEST TASKS
+// TEST TASKS => CONVERTING ALL TEST CASES TO JEST !!!
 //----------------------------
-
-export const test_core = () => gulp.src(paths.tests_core, src_options).pipe(mochaRun)
-
-export const test_async = () => gulp.src(paths.tests_async, src_options).pipe(mochaRun)
-
-export const test_search = () => gulp.src(paths.tests_search, src_options).pipe(mochaRun)
-
-export const test_perturb = () => gulp.src(paths.tests_perturb, src_options).pipe(mochaRun)
-
-export const test_central = () => gulp.src(paths.tests_central, src_options).pipe(mochaRun)
-
-export const test_eme = () => gulp.src(paths.tests_eme, src_options).pipe(mochaRun)
-
-export const test_generators = () => gulp.src(paths.tests_generators, src_options).pipe(mochaRun)
-
-export const test_all = () => gulp.src(paths.tests_all, src_options).pipe(mochaRun)
-
-
-//----------------------------
-// COVERAGE TASKS
-//----------------------------
-
-/**
- * @comment doesn't work on JS files anymore, since tests are now run directly on TS source files
- * @todo replace with modern testing library like JEST etc.
- */
-
-//----------------------------
-// WATCH TASKS
-//----------------------------
-
-/**
- * @comment strange errors with Node.js streams (streams seem to get close while process doesn't)
- * @comment forums are full of those error reports, and solutions scarse => seems Gulp is just obsolete !!
- * @todo replace with modern testing library like JEST etc.
- */

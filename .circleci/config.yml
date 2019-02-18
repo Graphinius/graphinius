@@ -34,4 +34,4 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: node ./node_modules/gulp/bin/gulp.js test_all
+      - run: jest

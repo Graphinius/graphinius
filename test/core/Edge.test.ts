@@ -1,8 +1,6 @@
-import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 
-const expect = chai.expect;
 const Node = $N.BaseNode;
 const Edge = $E.BaseEdge;
 
