@@ -1,9 +1,7 @@
-import * as chai from 'chai';
 import * as $G from '../../../src/core/Graph';
 import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
 const degCent = new DegreeCentrality();
 
-var expect 	= chai.expect;
 		
 function checkSmallGraphStats(graph : $G.IGraph) {
 	var stats = graph.getStats();

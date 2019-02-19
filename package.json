@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "gulp bundle",
+    "build": "gulp build",
     "test": "jest",
     "postinstall": "node install_dist.js"
   },

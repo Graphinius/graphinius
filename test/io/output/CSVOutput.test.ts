@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
@@ -6,8 +5,7 @@ import * as $O from '../../../src/io/output/CSVOutput';
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
 
-var expect = chai.expect,
-		CSVOutput = $O.CSVOutput,
+let	CSVOutput = $O.CSVOutput,
     CSVInput = $I.CSVInput,
     JSONInput = $J.JSONInput;
 

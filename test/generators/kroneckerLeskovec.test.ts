@@ -1,12 +1,11 @@
-import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import * as $KRON from '../../src/generators/kroneckerLeskovec';
 import { Logger } from '../../src/utils/logger';
+
 const logger = new Logger();
 
-var expect = chai.expect;
 
 describe("Base Tests", () => {
     test('should generate a standard config', () => {

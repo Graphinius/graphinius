@@ -93,4 +93,4 @@ export const dist = gulp.series(cleanDist, compileDist)
 
 export const dts = gulp.series(cleanDts, generateDts)
 
-export const bundle = gulp.series(cleanBuild, dist, docs, dts, generatePackage)
+export const build = gulp.series(cleanBuild, dist, docs, dts, generatePackage)

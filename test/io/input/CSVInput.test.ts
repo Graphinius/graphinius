@@ -1,10 +1,8 @@
-import * as chai from 'chai';
 import * as $G from '../../../src/core/Graph';
 import * as $I from '../../../src/io/input/CSVInput';
-import * as $C from '../../../test/io/input/common';
+import * as $C from './common';
 
-var expect = chai.expect,
-		CSV = $I.CSVInput;
+let CSV = $I.CSVInput;
 
 
 describe('GRAPH CSV INPUT TESTS', () => {
@@ -30,7 +28,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 	describe('Basic input tests - ', () => {
 
-		beforeEach('instantiate the CSV input class', () => {
+		beforeEach( () => {
 			csv = new CSV();
 		});
 
@@ -170,7 +168,8 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			Object.keys(graph.getDirEdges()).forEach( e_id => {
 				let edge = graph.getEdgeById( e_id );
 				expect( edge.isWeighted() ).toBe(true);
-				expect( edge.getWeight() ).toBeInstanceOf('number');
+				expect( typeof edge.getWeight() ).toEqual('number');
+				// expect( typeof edge.getWeight() ).toBeInstanceOf(Number);
 			});
 		});
 
@@ -222,7 +221,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 	describe('Wrong input formats / corrupted files', () => {
 		
-		beforeEach('instantiate the CSV input class', () => {
+		beforeEach( () => {
 			csv = new CSV();
 		});
 		

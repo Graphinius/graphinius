@@ -1,13 +1,11 @@
 import * as fs from 'fs';
-import * as chai from 'chai';
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $JI from '../../../src/io/input/JSONInput';
 import * as $JO from '../../../src/io/output/JSONOutput';
 
-let expect = chai.expect,
-    jsonIn: $JI.IJSONInput,
+let jsonIn: $JI.IJSONInput,
     jsonOut: $JO.IJSONOutput,
     graph: $G.IGraph,
     resultString: string,
