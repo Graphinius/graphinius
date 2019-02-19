@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const $N = require("./Nodes");
 const $E = require("./Edges");
-const $DS = require("../utils/structUtils");
 const $BFS = require("../search/BFS");
 const $DFS = require("../search/DFS");
 const BellmanFord_1 = require("../search/BellmanFord");
@@ -28,7 +27,7 @@ class BaseGraph {
         this._und_edges = {};
     }
     toDirectedGraph(copy = false) {
-        let result_graph = copy ? this.clone() : this;
+        let result_graph = copy ? this.cloneStructure() : this;
         if (this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
             throw new Error("Cowardly refusing to re-interpret an empty graph.");
         }
@@ -167,13 +166,6 @@ class BaseGraph {
         this._nodes[node.getID()] = node;
         this._nr_nodes += 1;
         return true;
-    }
-    cloneAndAddNode(node) {
-        let new_node = new $N.BaseNode(node.getID());
-        new_node.setFeatures($DS.clone(node.getFeatures()));
-        this._nodes[node.getID()] = new_node;
-        this._nr_nodes += 1;
-        return new_node;
     }
     hasNodeID(id) {
         return !!this._nodes[id];
@@ -403,7 +395,7 @@ class BaseGraph {
     getRandomUndEdge() {
         return this.pickRandomProperty(this._und_edges);
     }
-    clone() {
+    cloneStructure() {
         let new_graph = new BaseGraph(this._label), old_nodes = this.getNodes(), old_edge, new_node_a = null, new_node_b = null;
         for (let node_id in old_nodes) {
             new_graph.addNode(old_nodes[node_id].clone());
@@ -418,7 +410,7 @@ class BaseGraph {
         });
         return new_graph;
     }
-    cloneSubGraph(root, cutoff) {
+    cloneSubGraphStructure(root, cutoff) {
         let new_graph = new BaseGraph(this._label);
         let config = $BFS.prepareBFSStandardConfig();
         var bfsNodeUnmarkedTestCallback = function (context) {

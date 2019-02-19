@@ -177,8 +177,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
         () => {
             let graphPath = path_bf_graph;
             let graph = json.readFromJSONFile(graphPath);
-            let workingGraph = graph.clone();
-            let workingGraph2 = graph.clone();
+            let workingGraph = graph.cloneStructure();
+            let workingGraph2 = graph.cloneStructure();
 
             expect(workingGraph.hasNegativeEdge()).toBe(true);
             expect(workingGraph2.hasNegativeEdge()).toBe(true);

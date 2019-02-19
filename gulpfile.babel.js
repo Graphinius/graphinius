@@ -13,20 +13,11 @@ import webpack from 'webpack-stream'
 const paths = {
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async/**/*.ts'],
 	typesources: ['src/**/*.ts'],
-	// distsources: ['dist/**/*.js'], // Used for coverage tests... NAH... rewrite!!
 	clean_build: ['build'],
 	clean_docs: ['docs'],
 	clean_dist: ['dist'],
 	clean_dts: ['./graphinius.d.ts'],
-	clean_all: ['build', 'dist', 'docs', 'coverage', 'graphinius.d.ts'],
-	tests_core: ['test/core/**/*.ts', 'test/datastructs/**/*.ts', 'test/io/**/*.ts', 'test/utils/**/*.ts'],
-	tests_search: ['test/search/**/*.ts'],
-	tests_async: ['test/test_async/**/*.ts'],
-  tests_perturb: ['test/perturbation/**/*.ts'],
-	tests_central: ['test/centralities/**/*.ts'],
-	tests_eme: ['test/mincutmaxflow/**/*.ts', 'test/energyminimization/**/*.ts'],
-	tests_generators: ['test/generators/**/*.ts'],	
-	tests_all: ['test/**/*.ts']
+	clean_all: ['build', 'dist', 'docs', 'coverage', 'graphinius.d.ts']
 }
 
 
@@ -50,13 +41,9 @@ const cleanAll = () => gulp.src(paths.clean_all, src_options).pipe(gulpClean())
 
 // DIST
 const compileDist = () => {
-	var tsResult = gulp.src(paths.typesources)
-						 				 .pipe(tsProject());
-	// Merge the two output streams, so this task is finished
-	// when the IO of both operations are done.
+	let tsResult = gulp.src(paths.typesources).pipe(tsProject())
 	return merge([
-		tsResult.dts //.pipe(concat('graphinius.d.ts'))
-								.pipe(gulp.dest('./dist/')),
+		tsResult.dts.pipe(gulp.dest('./dist/')),
 		tsResult.js.pipe(gulp.dest('./dist/'))
 	])
 }
@@ -69,7 +56,6 @@ const createDoc = () => {
 			module: "commonjs",
 			target: "es6",
 			includeDeclarations: false,
-			// exclude: gulp.src(paths.typedoc_ignore, stdOptions),
 			mode: 'file',
 			excludeExternals: true,
 			excludeNotExported: true,
@@ -95,7 +81,6 @@ const generatePackage = () => gulp.src('./index.js')
 	.pipe(gulp.dest('build/'))
 
 
-
 //----------------------------
 // BUILD TASKS
 //----------------------------
@@ -109,8 +94,3 @@ export const dist = gulp.series(cleanDist, compileDist)
 export const dts = gulp.series(cleanDts, generateDts)
 
 export const bundle = gulp.series(cleanBuild, dist, docs, dts, generatePackage)
-
-
-//----------------------------
-// TEST TASKS => CONVERTING ALL TEST CASES TO JEST !!!
-//----------------------------

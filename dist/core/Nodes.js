@@ -218,11 +218,12 @@ class BaseNode {
     }
     reachNodes(identityFunc) {
         var identity = 0;
-        return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || function (ne) { return identity++; });
+        return $SU.mergeArrays([this.nextNodes(), this.connNodes()], identityFunc || (ne => identity++));
     }
     clone() {
         let new_node = new BaseNode(this._id);
-        new_node.setFeatures(this.getFeatures());
+        new_node._label = this._label;
+        new_node.setFeatures($SU.clone(this.getFeatures()));
         return new_node;
     }
 }

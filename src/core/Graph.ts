@@ -45,7 +45,6 @@ export interface IGraph {
 	// NODE STUFF
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
 	addNode(node: $N.IBaseNode) : boolean;
-	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
 	getNodes() : {[key: string] : $N.IBaseNode};
@@ -96,8 +95,8 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	// CLONING
-	clone() : IGraph;
-	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
+	cloneStructure() : IGraph;
+	cloneSubGraphStructure(start:$N.IBaseNode, cutoff:Number) : IGraph;
 
 	// REPRESENTATIONS
 	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
@@ -115,10 +114,6 @@ class BaseGraph implements IGraph {
 	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {};
 	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};
 
-  // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
-  // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-  // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-
 	constructor (public _label) {	}
 
 	/**
@@ -126,7 +121,7 @@ class BaseGraph implements IGraph {
 	 * Version 2: clone the graph first, return the mutated clone
 	 */
 	toDirectedGraph(copy = false) : IGraph {
-		let result_graph = copy ? this.clone() : this;
+		let result_graph = copy ? this.cloneStructure() : this;
 		// if graph has no edges, we want to throw an exception
 		if ( this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
 			throw new Error("Cowardly refusing to re-interpret an empty graph.")
@@ -136,6 +131,9 @@ class BaseGraph implements IGraph {
 	}
 
 
+	/**
+	 * @todo implement!!!
+	 */
 	toUndirectedGraph() : IGraph {
 
 		return this;
@@ -152,7 +150,6 @@ class BaseGraph implements IGraph {
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
-		//reminder: a return statement breaks out of the for loop and finishes the function
 		
 		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
@@ -362,19 +359,6 @@ class BaseGraph implements IGraph {
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return true;
-	}
-
-	/**
-	 * Instantiates a new node object, copies the features and
-	 * adds the node to the graph, but does NOT clone it's edges
-	 * @param node the node object to clone
-	 */
-	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode {
-		let new_node = new $N.BaseNode(node.getID());
-		new_node.setFeatures($DS.clone(node.getFeatures()));
-		this._nodes[node.getID()] = new_node;
-		this._nr_nodes += 1;
-		return new_node;
 	}
 
 	hasNodeID(id: string) : boolean {
@@ -694,7 +678,7 @@ class BaseGraph implements IGraph {
 	}
 
 
-	clone() : IGraph {
+	cloneStructure() : IGraph {
 		let new_graph = new BaseGraph(this._label),
 				old_nodes = this.getNodes(),
 				old_edge : $E.IBaseEdge,
@@ -717,7 +701,7 @@ class BaseGraph implements IGraph {
 		return new_graph;
 	}
 
-	cloneSubGraph(root:$N.IBaseNode, cutoff:Number) : IGraph{
+	cloneSubGraphStructure(root:$N.IBaseNode, cutoff:Number) : IGraph{
 		let new_graph = new BaseGraph(this._label);
 
 		let config = $BFS.prepareBFSStandardConfig();

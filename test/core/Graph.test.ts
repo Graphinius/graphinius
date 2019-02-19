@@ -100,8 +100,8 @@ describe('GRAPH TESTS: ', () => {
                     expect(graph.getEdgeById("1")).toBeDefined();
                     expect(n_a.getEdge("1")).toBeDefined();
                     expect(n_b.getEdge("1")).toBeDefined();
-                    clone_graph.cloneAndAddNode(n_a);
-                    clone_graph.cloneAndAddNode(n_b);
+                    clone_graph.addNode(n_a.clone());
+                    clone_graph.addNode(n_b.clone());
                     expect(clone_graph.getEdgeById.bind(clone_graph, "1")).toThrowError("cannot retrieve edge with non-existing ID.");
                     expect(Object.keys(clone_graph.getNodeById("A").allEdges())).toHaveLength(0);
                     expect(Object.keys(clone_graph.getNodeById("B").allEdges())).toHaveLength(0);
@@ -276,7 +276,7 @@ describe('GRAPH TESTS: ', () => {
                     node_a = graph.addNodeByID('A');
                     node_b = graph.addNodeByID('B');
                     edge_ab = graph.addEdgeByID('1', node_a, node_b);
-                    clone_graph.cloneAndAddNode(node_a);
+                    clone_graph.addNode(node_a.clone());
                     let new_node_b = clone_graph.addNodeByID('B');
                     expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
                 }
@@ -290,7 +290,7 @@ describe('GRAPH TESTS: ', () => {
                     node_b = graph.addNodeByID('B');
                     edge_ab = graph.addEdgeByID('1', node_a, node_b);
                     let new_node_a = clone_graph.addNodeByID('A');
-                    clone_graph.cloneAndAddNode(node_b);
+                    clone_graph.addNode(node_b.clone());
                     expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
                 }
             );
@@ -987,7 +987,7 @@ describe('GRAPH TESTS: ', () => {
 
 		test('should successfully clone an empty graph', () => {
 			graph = new $G.BaseGraph("empty graph");
-			clone_graph = graph.clone();
+			clone_graph = graph.cloneStructure();
 			expect(clone_graph._label).toBe(graph._label);
 			expect(clone_graph.nrNodes()).toBe(0);
 			expect(clone_graph.nrUndEdges()).toBe(0);
@@ -1013,7 +1013,7 @@ describe('GRAPH TESTS: ', () => {
                         "nested": true
                     }
                 });
-                clone_graph = graph.clone();
+                clone_graph = graph.cloneStructure();
                 expect(clone_graph._label).toBe(graph._label);
                 expect(clone_graph.nrNodes()).toBe(1);
                 expect(clone_graph.nrUndEdges()).toBe(0);
@@ -1032,7 +1032,7 @@ describe('GRAPH TESTS: ', () => {
                 let n_b = graph.addNodeByID("B");
                 let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: false });
 
-                clone_graph = graph.clone();
+                clone_graph = graph.cloneStructure();
                 expect(clone_graph._label).toBe(graph._label);
                 expect(clone_graph.nrNodes()).toBe(2);
                 expect(clone_graph.nrUndEdges()).toBe(1);
@@ -1050,7 +1050,7 @@ describe('GRAPH TESTS: ', () => {
                 let n_b = graph.addNodeByID("B");
                 let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: true });
 
-                clone_graph = graph.clone();
+                clone_graph = graph.cloneStructure();
                 expect(clone_graph._label).toBe(graph._label);
                 expect(clone_graph.nrNodes()).toBe(2);
                 expect(clone_graph.nrUndEdges()).toBe(0);
@@ -1069,7 +1069,7 @@ describe('GRAPH TESTS: ', () => {
                 json_in = new $JSON.JSONInput(true, false, true);
                 graph = json_in.readFromJSONFile(small_graph_file);
                 let deg_dist_all = degCent.degreeDistribution(graph).all;
-                clone_graph = graph.clone();
+                clone_graph = graph.cloneStructure();
                 let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
                 expect(clone_graph.nrNodes()).toBe(SMALL_GRAPH_NR_NODES);
                 expect(clone_graph.nrUndEdges()).toBe(SMALL_GRAPH_NR_UND_EDGES);
@@ -1089,7 +1089,7 @@ describe('GRAPH TESTS: ', () => {
                 json_in = new $JSON.JSONInput(false, false, true);
                 graph = json_in.readFromJSONFile(real_graph_file);
                 let deg_dist_all = degCent.degreeDistribution(graph).all;
-                clone_graph = graph.clone();
+                clone_graph = graph.cloneStructure();
                 let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 
                 expect(clone_graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
@@ -1107,7 +1107,7 @@ describe('GRAPH TESTS: ', () => {
 			json_in = new $JSON.JSONInput(false, false, true);
 			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
 
-			clone_graph = graph.cloneSubGraph(graph.getNodeById("1374"), 300);
+			clone_graph = graph.cloneSubGraphStructure(graph.getNodeById("1374"), 300);
 
 			expect(clone_graph.nrNodes()).toBe(300);
 			expect(clone_graph.nrUndEdges()).toBe(4635); //TODO:: check number?

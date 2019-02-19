@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
@@ -8,8 +7,7 @@ import * as $EME from '../../src/energyminimization/expansionBoykov';
 import * as $JO from '../../src/io/output/JSONOutput';
 
 
-var expect = chai.expect,
-    json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     eme_graph = "./test/test_data/energy_minimization_expansion_graph.json",
     graph : $G.IGraph,
     labels : Array<string> = ["1", "2"],
@@ -27,14 +25,15 @@ describe('EME Boykov Tests - ', () => {
   describe("Base Tests - ", () => {
 
     test('should instantiate a standard config', () => {
-      expect(eme.prepareEMEStandardConfig()).toEqual(
-        expect.arrayContaining(['directed', 'labeled', 'interactionTerm', 'dataTerm'])
-      );
+      expect(eme.prepareEMEStandardConfig()).toHaveProperty('directed');
+      expect(eme.prepareEMEStandardConfig()).toHaveProperty('labeled');
+      expect(eme.prepareEMEStandardConfig()).toHaveProperty('interactionTerm');
+      expect(eme.prepareEMEStandardConfig()).toHaveProperty('dataTerm');
+
       expect( eme.prepareEMEStandardConfig().directed ).toBe(false);
       expect( eme.prepareEMEStandardConfig().labeled ).toBe(false);
-      expect( eme.prepareEMEStandardConfig().interactionTerm ).toBeDefined();
-      expect( eme.prepareEMEStandardConfig().dataTerm ).toBeDefined();
-      // expect( eme.prepareEMEStandardConfig() ).to.deep.equal( {directed: true, labeled: false } );
+      expect( eme.prepareEMEStandardConfig().interactionTerm ).toBeInstanceOf(Function);
+      expect( eme.prepareEMEStandardConfig().dataTerm ).toBeInstanceOf(Function);
     });
 
   });
@@ -53,12 +52,9 @@ describe('EME Boykov Tests - ', () => {
     });
 
     test('should deep copy the graph with all nodes and edges', () => {
-      var cGraph: $G.IGraph = eme.deepCopyGraph(graph);
-
-      // check that it has all and only those nodes of the original graph
-      expect(cGraph.getNodes()).toEqual(expect.arrayContaining(graph.getNodes()));
-      // check that it has all and only those edges of the original graph
-      expect(cGraph.getUndEdges()).toEqual(expect.arrayContaining(graph.getUndEdges()));
+      var cGraph: $G.IGraph = graph.cloneStructure(); 
+      expect(cGraph.getNodes()).toEqual(graph.getNodes());
+      expect(cGraph.getUndEdges()).toEqual(graph.getUndEdges());
 
       // check that all labels got copied correctly
       var original_nodes = graph.getNodes();

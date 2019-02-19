@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const $G = require("../core/Graph");
 const $MC = require("../mincutmaxflow/minCutMaxFlowBoykov");
 const logger_1 = require("../utils/logger");
 const logger = new logger_1.Logger();
@@ -18,7 +17,7 @@ class EMEBoykov {
         this._interactionTerm = this._config.interactionTerm;
         this._dataTerm = this._config.dataTerm;
         this._graph = this.initGraph(_graph);
-        this._state.labeledGraph = this.deepCopyGraph(this._graph);
+        this._state.labeledGraph = this._graph.cloneStructure();
         this._state.activeLabel = this._labels[0];
     }
     calculateCycle() {
@@ -52,7 +51,7 @@ class EMEBoykov {
         return result;
     }
     constructGraph() {
-        var graph = this.deepCopyGraph(this._state.labeledGraph);
+        var graph = this._state.labeledGraph.cloneStructure();
         var nodes = graph.getNodes();
         var node_ids = Object.keys(nodes);
         var source = graph.addNodeByID("SOURCE");
@@ -111,28 +110,6 @@ class EMEBoykov {
             }
         }
         return graph;
-    }
-    deepCopyGraph(graph) {
-        var cGraph = new $G.BaseGraph(graph._label + "_copy");
-        var nodes = graph.getNodes();
-        var node_ids = Object.keys(nodes);
-        var nodes_length = node_ids.length;
-        for (let i = 0; i < nodes_length; i++) {
-            var node = nodes[node_ids[i]];
-            var cNode = cGraph.addNodeByID(node.getID());
-            cNode.setLabel(node.getLabel());
-        }
-        var edges = graph.getUndEdges();
-        var edge_ids = Object.keys(edges);
-        var edge_length = edge_ids.length;
-        for (let i = 0; i < edge_length; i++) {
-            var edge = edges[edge_ids[i]];
-            var options = { directed: false, weighted: true, weight: edge.getWeight() };
-            var node_a = cGraph.getNodeById(edge.getNodes().a.getID());
-            var node_b = cGraph.getNodeById(edge.getNodes().b.getID());
-            var cEdge = cGraph.addEdgeByID(edge.getID(), node_a, node_b, options);
-        }
-        return cGraph;
     }
     initGraph(graph) {
         var nodes = graph.getNodes();

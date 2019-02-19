@@ -1,12 +1,12 @@
 {
   "scripts": {
-    "build": "gulp build",
-    "test": "gulp test-all",
+    "build": "gulp bundle",
+    "test": "jest",
     "postinstall": "node install_dist.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cassinius/Graphinius.git"
+    "url": "git+https://github.com/cassinius/GraphiniusJS.git"
   },
   "keywords": [
     "graphs",
