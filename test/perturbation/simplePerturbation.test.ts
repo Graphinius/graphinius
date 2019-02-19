@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
 import * as $JI from '../../src/io/input/JSONInput';
@@ -7,7 +6,6 @@ import * as $P from '../../src/perturbation/SimplePerturbations';
 
 const degCent = new DegreeCentrality();
 
-let expect = chai.expect;
 let REAL_GRAPH_NR_NODES = 6204,
     REAL_GRAPH_NR_EDGES = 18550,
     graph : $G.IGraph,

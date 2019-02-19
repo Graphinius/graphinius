@@ -1,15 +1,12 @@
-import * as chai from 'chai';
 import * as $G from '../../src/core/Graph';
 import * as $N from '../../src/core/Nodes';
 import * as $J from '../../src/io/input/JSONInput';
 import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
-import * as sinonChai from 'sinon-chai';
 import { Logger } from '../../src/utils/logger';
+
 const logger = new Logger();
 
-chai.use(sinonChai);
-let expect 	= chai.expect;
 let JSON_IN	= $J.JSONInput;
 let CSV_IN	= $C.CSVInput;
 

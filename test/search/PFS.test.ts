@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
@@ -7,8 +6,7 @@ import * as $PFS from '../../src/search/PFS';
 import * as $BH from '../../src/datastructs/binaryHeap';
 
 
-var expect = chai.expect,
-  json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json: $I.IJSONInput = new $I.JSONInput(true, false, true),
   search_graph = "./test/test_data/search_graph_pfs_extended.json",
   equal_dists = "./test/test_data/equal_path_graph.json",
   graph: $G.IGraph,
@@ -160,7 +158,7 @@ describe('PFS TESTS - ', () => {
         var config = $PFS.preparePFSStandardConfig();
         expect(config.callbacks).toBeDefined();
         expect(config.callbacks.init_pfs).toBeDefined();
-        expect(config.callbacks.init_pfs).toHaveLength(0);
+        expect(config.callbacks.init_pfs.length).toBe(1);
         expect(config.callbacks.init_pfs[0]).toBeDefined();
         expect(config.callbacks.init_pfs[0]).toBeInstanceOf(Function);
       }

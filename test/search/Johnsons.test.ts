@@ -1,4 +1,3 @@
-import * as chai from 'chai';
 import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';
 import * as $J from '../../src/io/input/JSONInput';
@@ -12,14 +11,10 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import * as $SU from '../../src/utils/structUtils';
 import * as $BE from '../../src/centralities/Betweenness';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
 
 const logger = new Logger();
 
-chai.use(sinonChai);
-const expect = chai.expect,
-    json: $J.IJSONInput = new $J.JSONInput(true, false, true),
+const json: $J.IJSONInput = new $J.JSONInput(true, false, true),
     csv: $C.ICSVInput = new $C.CSVInput(' ', false, false),
     search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
@@ -117,7 +112,7 @@ describe('Johnsons APSP TEST -', () => {
             // console.log("the same, transformed: ");
             // console.log($FW.changeNextToDirectParents(resultFWB[1]));
 
-            let graph_BF1 = graph_BF.clone();
+            let graph_BF1 = graph_BF.cloneStructure();
             let resultJB = $JO.Johnsons(graph_BF1);
             // console.log("Johnsons next: ");
             // console.log(resultJB[1]);
@@ -185,7 +180,7 @@ describe('Johnsons APSP TEST -', () => {
     test(
         'graph with negative cycle should throw an error message, but only then',
         () => {
-            let graph_BF2 = graph_BF.clone();
+            let graph_BF2 = graph_BF.cloneStructure();
             expect($JO.Johnsons.bind($JO.Johnsons, graph_NC)).toThrowError("The graph contains a negative cycle, thus it can not be processed");
             expect($JO.Johnsons.bind($JO.Johnsons, graph_BF2)).not.toThrowError();
             expect($JO.Johnsons.bind($JO.Johnsons, graph_search)).not.toThrowError();
@@ -195,7 +190,7 @@ describe('Johnsons APSP TEST -', () => {
     test('function addextraNandE should function correctly', () => {
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         //need to clone to be able to make a comparison, but works without cloning, too. I checked. 
-        let graph_extra = graph_search.clone();
+        let graph_extra = graph_search.cloneStructure();
         graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
         expect(graph_search.nrNodes()).toBe((graph_extra.nrNodes()) - 1);
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).toBe(
@@ -205,7 +200,7 @@ describe('Johnsons APSP TEST -', () => {
 
     test('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).toBe(true);
-        let graph_BF3 = graph_BF.clone();
+        let graph_BF3 = graph_BF.cloneStructure();
         var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         graph_BF3 = $JO.addExtraNandE(graph_BF3, extraNode);
         let BFresult = $BF.BellmanFordDict(graph_BF3, extraNode);

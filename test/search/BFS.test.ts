@@ -1,18 +1,9 @@
-import * as chai from 'chai';
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/callbackUtils';
 
-// import { Callbacks } from '../../src/utils/callbackUtils';
-// let callbacks = new Callbacks();
-
-import * as sinon from 'sinon';
-import * as sinonChai from 'sinon-chai';
-
-chai.use(sinonChai);
-var expect 	= chai.expect;
 var JSON_IN	= $I.JSONInput;
 
 var search_graph = "./test/test_data/search_graph.json";
@@ -100,38 +91,33 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		/**
 		 * Spies created and tore down within function...?
 		 */
-		test('should not execute any callback at all', () => {
-			// prepare Spy...
+		// test('should not execute any callback at all', () => {
+		// 	// prepare Spy...
 
-			let sandbox = sinon.createSandbox();
-			var execCBSpy = sandbox.spy($CB, 'execCallbacks');
+		// 	let sandbox = sinon.createSandbox();
+		// 	var execCBSpy = sandbox.spy($CB, 'execCallbacks');
 			
-			// execute test
-			var root = graph.getNodeById('A'),
-					config = $BFS.prepareBFSStandardConfig();
-			// set config.callbacks to emtpy object
-			config.callbacks = {};
-			// manually initialize distance object
-			for (var key in graph.getNodes()) {
-            config.result[key] = {
-                distance: Number.POSITIVE_INFINITY,
-                parent: null,
-                counter: -1
-            };
-        }
-			var bfs_res = $BFS.BFS(graph, root, config);
+		// 	// execute test
+		// 	var root = graph.getNodeById('A'),
+		// 			config = $BFS.prepareBFSStandardConfig();
+		// 	// set config.callbacks to emtpy object
+		// 	config.callbacks = {};
+		// 	// manually initialize distance object
+		// 	for (var key in graph.getNodes()) {
+    //         config.result[key] = {
+    //             distance: Number.POSITIVE_INFINITY,
+    //             parent: null,
+    //             counter: -1
+    //         };
+    //     }
+		// 	var bfs_res = $BFS.BFS(graph, root, config);
 			
-			expect(execCBSpy).to.have.not.been.called;
-			sandbox.restore();
-		});
+		// 	expect(execCBSpy).to.have.not.been.called;
+		// 	sandbox.restore();
+		// });
 
 	});
 
-	/**
-	 * 
-	 */
-
-	
 	
 	describe('BFS on small search graph - ', () => {
 
