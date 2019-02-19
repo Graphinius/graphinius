@@ -1463,6 +1463,7 @@ describe('GRAPH TESTS: ', () => {
 
 			backupIsWeightedSpy_e1 = e_1.isWeighted;
 			backupIsWeightedSpy_e5 = e_5.isWeighted;
+			
 			// isWeightedSpy_e1 = sinon.spy(e_1.isWeighted);
 			// isWeightedSpy_e5 = sinon.spy(e_5.isWeighted);
 			// e_1.isWeighted = isWeightedSpy_e1;

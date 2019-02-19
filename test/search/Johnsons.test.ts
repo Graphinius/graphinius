@@ -118,7 +118,6 @@ describe('Johnsons APSP TEST -', () => {
             let startF = +new Date();
             $FW.FloydWarshallAPSP(graph_midsize);
             let endF = +new Date();
-            //runtimes are always in ms
             let runtimeF = endF - startF;
 
             let startJ = +new Date();
