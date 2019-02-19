@@ -125,7 +125,7 @@ declare module 'graphinius/core/Nodes' {
 	    getFeatures(): {
 	        [k: string]: any;
 	    };
-	    getFeature(key: string): any;
+	    getFeature(key: string): any | undefined;
 	    setFeatures(features: {
 	        [k: string]: any;
 	    }): void;
@@ -484,7 +484,6 @@ declare module 'graphinius/core/Graph' {
 	    getStats(): GraphStats;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
-	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): $N.IBaseNode;
 	    getNodes(): {
@@ -528,8 +527,8 @@ declare module 'graphinius/core/Graph' {
 	    clearAllDirEdges(): void;
 	    clearAllUndEdges(): void;
 	    clearAllEdges(): void;
-	    clone(): IGraph;
-	    cloneSubGraph(start: $N.IBaseNode, cutoff: Number): IGraph;
+	    cloneStructure(): IGraph;
+	    cloneSubGraphStructure(start: $N.IBaseNode, cutoff: Number): IGraph;
 	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
@@ -566,7 +565,6 @@ declare module 'graphinius/core/Graph' {
 	    nrUndEdges(): number;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
-	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): $N.IBaseNode;
 	    getNodes(): {
@@ -601,8 +599,8 @@ declare module 'graphinius/core/Graph' {
 	    clearAllEdges(): void;
 	    getRandomDirEdge(): $E.IBaseEdge;
 	    getRandomUndEdge(): $E.IBaseEdge;
-	    clone(): IGraph;
-	    cloneSubGraph(root: $N.IBaseNode, cutoff: Number): IGraph;
+	    cloneStructure(): IGraph;
+	    cloneSubGraphStructure(root: $N.IBaseNode, cutoff: Number): IGraph;
 	    protected checkConnectedNodeOrThrow(node: $N.IBaseNode): void;
 	    protected updateGraphMode(): void;
 	    pickRandomProperty(propList: any): any;
@@ -664,7 +662,7 @@ declare module 'graphinius/centralities/Degree' {
 	export { DegreeCentrality };
 
 }
-declare module 'graphinius/centralities/gauss' {
+declare module 'graphinius/centralities/Gauss' {
 	 function gauss(A: any[], x: any[]): any[];
 	export { gauss };
 
@@ -763,7 +761,6 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 	export interface IEMEBoykov {
 	    calculateCycle(): EMEResult;
 	    constructGraph(): $G.IGraph;
-	    deepCopyGraph(graph: $G.IGraph): $G.IGraph;
 	    initGraph(graph: $G.IGraph): $G.IGraph;
 	    prepareEMEStandardConfig(): EMEConfig;
 	}
@@ -783,7 +780,6 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 	    calculateCycle(): EMEResult;
 	    constructGraph(): $G.IGraph;
 	    labelGraph(mincut: $MC.MCMFResult, source: $N.IBaseNode): $G.IGraph;
-	    deepCopyGraph(graph: $G.IGraph): $G.IGraph;
 	    initGraph(graph: $G.IGraph): $G.IGraph;
 	    prepareEMEStandardConfig(): EMEConfig;
 	}

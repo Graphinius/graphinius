@@ -1,7 +1,6 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
 import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
 import { Logger } from '../utils/logger';
 const logger = new Logger();
@@ -27,7 +26,6 @@ export interface EMEResult {
 export interface IEMEBoykov {
   calculateCycle(): EMEResult;
   constructGraph(): $G.IGraph;
-  deepCopyGraph(graph: $G.IGraph): $G.IGraph;
   initGraph(graph: $G.IGraph): $G.IGraph;
   prepareEMEStandardConfig(): EMEConfig;
 }
@@ -70,7 +68,7 @@ class EMEBoykov implements IEMEBoykov {
     this._graph = this.initGraph(_graph);
 
     // init state
-    this._state.labeledGraph = this.deepCopyGraph(this._graph);
+    this._state.labeledGraph = this._graph.cloneStructure();
     this._state.activeLabel = this._labels[0];
   }
 
@@ -117,12 +115,9 @@ class EMEBoykov implements IEMEBoykov {
     return result;
   }
 
-  constructGraph(): $G.IGraph {
-    /** TODO: perform a deep copy
 
-        TODO: wait for bernd to implement a deep copy ;-)
-    */
-    var graph: $G.IGraph = this.deepCopyGraph(this._state.labeledGraph); // HACK!
+  constructGraph(): $G.IGraph {
+    var graph: $G.IGraph = this._state.labeledGraph.cloneStructure();
 
     // copy node information
     var nodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
@@ -202,6 +197,7 @@ class EMEBoykov implements IEMEBoykov {
     return graph;
   }
 
+
   // label a graph based on the result of a mincut
   labelGraph(mincut: $MC.MCMFResult, source: $N.IBaseNode) {
     var graph: $G.IGraph = this._state.labeledGraph;
@@ -225,38 +221,6 @@ class EMEBoykov implements IEMEBoykov {
     return graph;
   }
 
-  // deep copy a graph => only needed until there is a 'real' implementation in graphinius core
-  // copy nodes and edges and the labels of the nodes
-  // hack!
-  deepCopyGraph(graph: $G.IGraph) {
-    var cGraph: $G.IGraph = new $G.BaseGraph(graph._label + "_copy");
-
-    // copy all nodes with their labels
-    var nodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
-    var node_ids: Array<string> = Object.keys(nodes);
-    var nodes_length: number = node_ids.length;
-    for (let i = 0; i < nodes_length; i++) {
-      // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
-      var node: $N.IBaseNode = nodes[node_ids[i]];
-      var cNode: $N.IBaseNode = cGraph.addNodeByID(node.getID());
-      cNode.setLabel(node.getLabel());
-    }
-
-    // copy all edges with their weights
-    var edges: { [keys: string]: $E.IBaseEdge } = graph.getUndEdges();
-    var edge_ids: Array<string> = Object.keys(edges);
-    var edge_length: number = edge_ids.length;
-    for (let i = 0; i < edge_length; i++) {
-      // var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
-      var edge: $E.IBaseEdge = edges[edge_ids[i]];
-      var options: $E.EdgeConstructorOptions = { directed: false, weighted: true, weight: edge.getWeight() };
-      var node_a: $N.IBaseNode = cGraph.getNodeById(edge.getNodes().a.getID());
-      var node_b: $N.IBaseNode = cGraph.getNodeById(edge.getNodes().b.getID());
-      var cEdge: $E.IBaseEdge = cGraph.addEdgeByID(edge.getID(), node_a, node_b, options);
-    }
-
-    return cGraph;
-  }
 
   initGraph(graph: $G.IGraph) {
     var nodes = graph.getNodes();
@@ -269,7 +233,6 @@ class EMEBoykov implements IEMEBoykov {
     }
     return graph;
   }
-
 
 
   prepareEMEStandardConfig(): EMEConfig {

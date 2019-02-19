@@ -79,8 +79,10 @@ class BaseNode implements IBaseNode {
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};
 	
-	constructor (protected _id: string,
-							features?: { [k:string] : any }) 
+	constructor (
+								protected _id: string,
+								features?: { [k:string] : any }
+							) 
 	{
 		this._in_edges = {};
 		this._out_edges = {};
@@ -105,7 +107,7 @@ class BaseNode implements IBaseNode {
 		return this._features;
 	}
 	
-	getFeature(key: string) : any {
+	getFeature(key: string) : any | undefined {
 		return this._features[key];
 	}
 	
@@ -374,9 +376,10 @@ class BaseNode implements IBaseNode {
    */
 	reachNodes(identityFunc?: Function) : Array<NeighborEntry> {
 		var identity = 0;
-		// console.log(this.nextNodes());
-    return $SU.mergeArrays([this.nextNodes(), this.connNodes()],
-			identityFunc || function(ne) {return identity++});
+    return $SU.mergeArrays(
+			[ this.nextNodes(), this.connNodes() ],
+			identityFunc || ( ne => identity++ )
+		);
 	}
 
 
@@ -399,7 +402,8 @@ class BaseNode implements IBaseNode {
 
 	clone() : IBaseNode {
 		let new_node = new BaseNode(this._id);
-		new_node.setFeatures( this.getFeatures() );
+		new_node._label = this._label;
+		new_node.setFeatures( $SU.clone( this.getFeatures() ) );
 		return new_node;
 	}
 	

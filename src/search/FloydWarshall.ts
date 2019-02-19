@@ -40,7 +40,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 
 
 /**
- * Floyd-Warshall - we mostly use it to get In-betweenness
+ * Floyd-Warshall - we mostly use it to get the Betweenness
  * of a graph. We use the standard algorithm and save all
  * the shortest paths we find.
  *
