@@ -1,13 +1,4 @@
-import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as sinonChai from 'sinon-chai';
 import * as $SU from '../../src/utils/structUtils';
-import * as $I from '../../src/io/input/JSONInput';
-import * as $G from '../../src/core/Graph';
-
-
-var expect = chai.expect;
-chai.use(sinonChai);
 
 
 describe('Datastructure Utils Tests - ', () => {
@@ -82,38 +73,47 @@ describe('Datastructure Utils Tests - ', () => {
       expect($SU.mergeArrays([a, b, c])).toEqual([]);
     });
 
+
+    /**
+     * @todo extract out all spy / mock tests
+     */
+
     
     test('should take and use a callback on each entry', () => {
-      var merge_spy = sinon.spy($SU.mergeArrays),
-          a = [1, 2, 3],
+      // var merge_spy = sinon.spy($SU.mergeArrays),
+      let a = [1, 2, 3],
           b = [3, 4, 5],
-          r = a.concat(b),
-          cb = function(arg) { return arg },
-          cb_spy = sinon.spy(cb),
-          merge = merge_spy([a, b], cb_spy);
+          r = a.concat( b ),
+          cb = function( arg ) { return arg },
+          merge = $SU.mergeArrays( [a, b], cb );
+
+          // cb_spy = sinon.spy(cb),
+          // merge = merge_spy([a, b], cb_spy);
 
       expect(merge).not.toEqual(r);
       expect(merge.length).toBe(5);
-      expect(merge_spy).to.have.been.calledOnce;
-      expect(cb_spy.callCount).toBe(6);
+      // expect(merge_spy).to.have.been.calledOnce;
+      // expect(cb_spy.callCount).toBe(6);
     });
 
 
     test(
       'should correctly mergeArrays two object arrays given certain IDs',
       () => {
-        var merge_spy = sinon.spy($SU.mergeArrays),
-            a = [{id: 1}, {id: 2}, {id: 3}],
+        // var merge_spy = sinon.spy($SU.mergeArrays),
+        let a = [{id: 1}, {id: 2}, {id: 3}],
             b = [{id: 3}, {id: 4}, {id: 5}],
-            r = a.concat(b),
-            cb = function(arg) { return arg.id },
-            cb_spy = sinon.spy(cb),
-            merge = merge_spy([a, b], cb_spy);
+            r = a.concat( b ),
+            cb = function( arg ) { return arg.id },
+            merge = $SU.mergeArrays( [a, b], cb );
+
+            // cb_spy = sinon.spy(cb),
+            // merge = merge_spy([a, b], cb_spy);
 
         expect(merge).not.toEqual(r);
         expect(merge.length).toBe(5);
-        expect(merge_spy).to.have.been.calledOnce;
-        expect(cb_spy.callCount).toBe(6);
+        // expect(merge_spy).to.have.been.calledOnce;
+        // expect(cb_spy.callCount).toBe(6);
       }
     );
 

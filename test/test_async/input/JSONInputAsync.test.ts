@@ -1,16 +1,14 @@
-import * as chai from 'chai';
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $I from '../../../src/io/input/JSONInput';
-import * as $C from '../../../test/io/input/common';
+import * as $C from '../../io/input/common';
 import * as $R from '../../../src/utils/remoteUtils';
 
-var expect 	= chai.expect;
-var Node 	= $N.BaseNode;
-var Edge 	= $E.BaseEdge;
-var Graph 	= $G.BaseGraph;
-var JSON_IN	= $I.JSONInput;
+let Node 	= $N.BaseNode,
+    Edge 	= $E.BaseEdge,
+    Graph 	= $G.BaseGraph,
+    JSON_IN	= $I.JSONInput;
 
 
 describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {

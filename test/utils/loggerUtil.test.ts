@@ -1,8 +1,6 @@
-import * as chai from 'chai';
 import { LOG_LEVELS } from '../../src/config/run_config';
 import { Logger, LOG_CONFIG } from '../../src/utils/logger';
 
-var expect = chai.expect;
 var logger : Logger = null;
 var obj_to_log = {
   a: true,

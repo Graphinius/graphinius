@@ -1,7 +1,5 @@
-import * as chai from 'chai';
 import * as $CB from '../../src/utils/callbackUtils';
 
-var expect = chai.expect;
 
 describe('general callback util tests - ', () => {
   
