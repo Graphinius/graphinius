@@ -1,16 +1,11 @@
 import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';
 import * as $J from '../../src/io/input/JSONInput';
-import * as $D from '../../src/search/Dijkstra';
-import * as $PFS from '../../src/search/PFS';
-import * as $BH from '../../src/datastructs/binaryHeap';
 import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
-import * as $SU from '../../src/utils/structUtils';
-import * as $BE from '../../src/centralities/Betweenness';
 
 const logger = new Logger();
 
@@ -21,24 +16,6 @@ const json: $J.IJSONInput = new $J.JSONInput(true, false, true),
     graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
     graph_BF: $G.IGraph = json.readFromJSONFile(bf_graph_file);
 
-/*
-describe('Spy section Johnsons', () => {
-
-    let sandbox = sinon.createSandbox();
-
-    beforeEach(() => {
-        BFDSpy = sandbox.spy($BF, "BellmanFordDict");
-        extraNSpy = sandbox.spy($JO, "addExtraNandE");
-        preparePFSSpy = sandbox.spy($PFS, "preparePFSStandardConfig");
-        PFSinJohnsonsSpy = sandbox.spy($JO, "PFSFromAllNodes");
-    });
-
-    afterEach(() => {
-        sandbox.restore();
-    });
-
-});
-*/
 
 describe('Johnsons APSP TEST -', () => {
 

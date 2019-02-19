@@ -80,7 +80,6 @@ describe('Datastructure Utils Tests - ', () => {
 
 
 		test('should take and use a callback on each entry', () => {
-			// var merge_spy = sinon.spy($SU.mergeArrays),
 			let a = [1, 2, 3],
 				b = [3, 4, 5],
 				r = a.concat(b), // not a set...

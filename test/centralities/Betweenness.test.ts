@@ -282,7 +282,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	/**
 	 * Usually, a social network would have undirected (bi-directional) friend relations - nevertheless, for sake of comparison (edge lists are read in a directed manner by networkx) we are switching to directed mode as well.
 	 */
-	describe.only('Brandes Performance tests on small, (un)weighted social networks', () => {
+	describe('Brandes Performance tests on small, (un)weighted social networks', () => {
 
 		[socialNet300].forEach(graph_name => { // socialNet1K, socialNet20K
 			test(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {

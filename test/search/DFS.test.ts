@@ -18,24 +18,21 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 
 	describe('testing config preparation functions - ', () => {
 
-		let prepForDFSVisitSpy,
-				prepForDFSSpy;
-		
-		// let sandbox = sinon.createSandbox();
+		let prepForDFSSpy,
+			prepForDFSVisitSpy;
 			
 		/**
-		 * TODO we need to replace imported functions with members of an 
-		 * instantiated object to make the spies actually call one another
-		 * instead of the original functions inside the other module ...
+		 * @todo extract out mock / spy tests
 		 */
-		// beforeEach(() => {
-		// 	prepForDFSSpy = sandbox.spy($DFS, 'prepareDFSStandardConfig');
-		// 	prepForDFSVisitSpy = sandbox.spy($DFS, 'prepareDFSVisitStandardConfig');
-		// });
+		beforeEach(() => {
+			prepForDFSSpy = jest.spyOn($DFS, 'prepareDFSStandardConfig');
+			prepForDFSVisitSpy = jest.spyOn($DFS, 'prepareDFSVisitStandardConfig');
+		});
 
-		// afterEach(() => {
-		// 	sandbox.restore();
-		// });
+
+		afterEach(() => {
+			jest.restoreAllMocks();
+		});
 
 
 		test(
@@ -43,7 +40,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
             () => {
                 var config = $DFS.prepareDFSVisitStandardConfig();
 
-                // expect(prepForDFSVisitSpy).to.have.been.calledOnce;
+                expect(prepForDFSVisitSpy).toHaveBeenCalledTimes(1);
 
                 expect(config.dir_mode).not.toBeUndefined();
                 expect(config.dir_mode).toBe($G.GraphMode.MIXED);
@@ -70,16 +67,21 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
         );
 
 
-		// test(
-        //     'calling preprareDFSStandardConfig should also call prepareDFSVisitStandardConfig',
-        //     () => {
-        //         var config = $DFS.prepareDFSStandardConfig();
-        //         console.log(prepForDFSSpy.callCount);
-        //         expect(prepForDFSSpy).to.have.been.calledOnce;
-        //         console.log(prepForDFSVisitSpy.callCount);
-        //         expect(prepForDFSVisitSpy).to.have.been.calledOnce;
-        //     }
-        // );
+		/**
+		 * @todo we need to replace imported functions with members of an 
+		 * instantiated object to make the spies actually call one another
+		 * instead of the original functions inside the other module ...
+		 * @todo this is only possible if we make classes out of B/D/PFS
+		 * -> make it so!
+		 */
+		test.skip(
+            'calling preprareDFSStandardConfig should also call prepareDFSVisitStandardConfig',
+            () => {
+                var config = $DFS.prepareDFSStandardConfig();
+                expect(prepForDFSSpy).toHaveBeenCalledTimes(1);
+                expect(prepForDFSVisitSpy).toHaveBeenCalledTimes(1);
+            }
+        );
 
 
 		test(
@@ -114,7 +116,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		});
 
 		/**
-		 * HUGE TODO:
+		 * @todo HUGELY IMPORTANT
 		 * Make sure the callbacks are not only executed, but
 		 * executed at the right stage of the code
 		 * Don't know how yet...

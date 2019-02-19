@@ -47,12 +47,12 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 		test(
-            'should correctly instantiate a graph with GraphMode INIT (no edges added)',
-            () => {
-                graph = new Graph('Test graph');
-                expect(graph.getMode()).toBe($G.GraphMode.INIT);
-            }
-        );
+			'should correctly instantiate a graph with GraphMode INIT (no edges added)',
+			() => {
+				graph = new Graph('Test graph');
+				expect(graph.getMode()).toBe($G.GraphMode.INIT);
+			}
+		);
 
 
 		describe('adding nodes and edges -', () => {
@@ -77,7 +77,7 @@ describe('GRAPH TESTS: ', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(0);
 				expect(graph.addNode(new $N.BaseNode('A'))).toBe(true);
-				expect(graph.addNode.bind(graph, new $N.BaseNode('A') ) ).toThrowError("Won't add node with duplicate ID.");
+				expect(graph.addNode.bind(graph, new $N.BaseNode('A'))).toThrowError("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 			});
@@ -86,54 +86,54 @@ describe('GRAPH TESTS: ', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(0);
 				expect(graph.addNodeByID('A')).toBeInstanceOf(Node);
-				expect(graph.addNodeByID.bind(graph, 'A' ) ).toThrowError("Won't add node with duplicate ID.");
+				expect(graph.addNodeByID.bind(graph, 'A')).toThrowError("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 			});
 
 			test(
-                'should correctly clone and add a node from another graph without adding its edges',
-                () => {
-                    let n_a = graph.addNodeByID("A");
-                    let n_b = graph.addNodeByID("B");
-                    let e_1 = graph.addEdgeByID("1", n_a, n_b);
-                    expect(graph.getEdgeById("1")).toBeDefined();
-                    expect(n_a.getEdge("1")).toBeDefined();
-                    expect(n_b.getEdge("1")).toBeDefined();
-                    clone_graph.addNode(n_a.clone());
-                    clone_graph.addNode(n_b.clone());
-                    expect(clone_graph.getEdgeById.bind(clone_graph, "1")).toThrowError("cannot retrieve edge with non-existing ID.");
-                    expect(Object.keys(clone_graph.getNodeById("A").allEdges())).toHaveLength(0);
-                    expect(Object.keys(clone_graph.getNodeById("B").allEdges())).toHaveLength(0);
-                }
-            );
+				'should correctly clone and add a node from another graph without adding its edges',
+				() => {
+					let n_a = graph.addNodeByID("A");
+					let n_b = graph.addNodeByID("B");
+					let e_1 = graph.addEdgeByID("1", n_a, n_b);
+					expect(graph.getEdgeById("1")).toBeDefined();
+					expect(n_a.getEdge("1")).toBeDefined();
+					expect(n_b.getEdge("1")).toBeDefined();
+					clone_graph.addNode(n_a.clone());
+					clone_graph.addNode(n_b.clone());
+					expect(clone_graph.getEdgeById.bind(clone_graph, "1")).toThrowError("cannot retrieve edge with non-existing ID.");
+					expect(Object.keys(clone_graph.getNodeById("A").allEdges())).toHaveLength(0);
+					expect(Object.keys(clone_graph.getNodeById("B").allEdges())).toHaveLength(0);
+				}
+			);
 
 			test(
-                'should refuse to add an edge if one of the nodes does not exist in the graph',
-                () => {
-                    node_a = new $N.BaseNode("floating_node_a");
-                    node_b = graph.addNodeByID("B_in_graph");
-                    expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should refuse to add an edge if one of the nodes does not exist in the graph',
+				() => {
+					node_a = new $N.BaseNode("floating_node_a");
+					node_b = graph.addNodeByID("B_in_graph");
+					expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 			test(
-                'should refuse to add an edge if one of the nodes does not exist in the graph',
-                () => {
-                    node_b = new $N.BaseNode("floating_node_b");
-                    node_a = graph.addNodeByID("A_in_graph");
-                    expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should refuse to add an edge if one of the nodes does not exist in the graph',
+				() => {
+					node_b = new $N.BaseNode("floating_node_b");
+					node_a = graph.addNodeByID("A_in_graph");
+					expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 			test(
-                'should refuse to add an edge if one of the nodes does not exist in the graph',
-                () => {
-                    node_a = new $N.BaseNode("floating_node_a");
-                    node_b = new $N.BaseNode("floating_node_b");
-                    expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should refuse to add an edge if one of the nodes does not exist in the graph',
+				() => {
+					node_a = new $N.BaseNode("floating_node_a");
+					node_b = new $N.BaseNode("floating_node_b");
+					expect(graph.addEdgeByID.bind(graph, "edge_to_nirvana", node_a, node_b)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 			/**
 			 * edge has to be undirected
@@ -258,42 +258,42 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test(
-                'should check if given node IDs are just coincidentally present in the graph but point to invalid node objects',
-                () => {
-                    node_a = graph.addNodeByID('A');
-                    node_b = graph.addNodeByID('B');
-                    edge_ab = graph.addEdgeByID('1', node_a, node_b);
-                    let new_node_a = clone_graph.addNodeByID('A');
-                    let new_node_b = clone_graph.addNodeByID('B');
-                    expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should check if given node IDs are just coincidentally present in the graph but point to invalid node objects',
+				() => {
+					node_a = graph.addNodeByID('A');
+					node_b = graph.addNodeByID('B');
+					edge_ab = graph.addEdgeByID('1', node_a, node_b);
+					let new_node_a = clone_graph.addNodeByID('A');
+					let new_node_b = clone_graph.addNodeByID('B');
+					expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 
 			test(
-                'should check if just one (A) of the given node IDs is just coincidentally present in the graph but points to an invalid node object',
-                () => {
-                    node_a = graph.addNodeByID('A');
-                    node_b = graph.addNodeByID('B');
-                    edge_ab = graph.addEdgeByID('1', node_a, node_b);
-                    clone_graph.addNode(node_a.clone());
-                    let new_node_b = clone_graph.addNodeByID('B');
-                    expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should check if just one (A) of the given node IDs is just coincidentally present in the graph but points to an invalid node object',
+				() => {
+					node_a = graph.addNodeByID('A');
+					node_b = graph.addNodeByID('B');
+					edge_ab = graph.addEdgeByID('1', node_a, node_b);
+					clone_graph.addNode(node_a.clone());
+					let new_node_b = clone_graph.addNodeByID('B');
+					expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 
 			test(
-                'should check if just one (B) of the given node IDs is just coincidentally present in the graph but points to an invalid node object',
-                () => {
-                    node_a = graph.addNodeByID('A');
-                    node_b = graph.addNodeByID('B');
-                    edge_ab = graph.addEdgeByID('1', node_a, node_b);
-                    let new_node_a = clone_graph.addNodeByID('A');
-                    clone_graph.addNode(node_b.clone());
-                    expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
-                }
-            );
+				'should check if just one (B) of the given node IDs is just coincidentally present in the graph but points to an invalid node object',
+				() => {
+					node_a = graph.addNodeByID('A');
+					node_b = graph.addNodeByID('B');
+					edge_ab = graph.addEdgeByID('1', node_a, node_b);
+					let new_node_a = clone_graph.addNodeByID('A');
+					clone_graph.addNode(node_b.clone());
+					expect(clone_graph.addEdge.bind(clone_graph, edge_ab)).toThrowError("can only add edge between two nodes existing in graph");
+				}
+			);
 
 
 			/**
@@ -359,11 +359,11 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should return undefined when trying to retrieve a non-existing node by ID',
-            () => {
-                expect(graph.getNodeById("idontexist")).toBeUndefined();
-            }
-        );
+			'should return undefined when trying to retrieve a non-existing node by ID',
+			() => {
+				expect(graph.getNodeById("idontexist")).toBeUndefined();
+			}
+		);
 
 
 		test('should return a node by existing ID', () => {
@@ -387,13 +387,13 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should throw an error upon trying to retrieve a non-existing edge by ID',
-            () => {
-                expect(graph.getEdgeById.bind(graph, undefined)).toThrowError("cannot retrieve edge with non-existing ID.");
-                expect(graph.getEdgeById.bind(graph, loose_edge.getID())).toThrowError("cannot retrieve edge with non-existing ID.");
-                expect(graph.getEdgeById.bind(graph, out_edge.getID())).toThrowError("cannot retrieve edge with non-existing ID.");
-            }
-        );
+			'should throw an error upon trying to retrieve a non-existing edge by ID',
+			() => {
+				expect(graph.getEdgeById.bind(graph, undefined)).toThrowError("cannot retrieve edge with non-existing ID.");
+				expect(graph.getEdgeById.bind(graph, loose_edge.getID())).toThrowError("cannot retrieve edge with non-existing ID.");
+				expect(graph.getEdgeById.bind(graph, out_edge.getID())).toThrowError("cannot retrieve edge with non-existing ID.");
+			}
+		);
 
 
 		test('should return an edge by ID', () => {
@@ -402,11 +402,11 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should report the number of directed edges currently in the graph',
-            () => {
-                expect(graph.nrDirEdges()).toBe(1);
-            }
-        );
+			'should report the number of directed edges currently in the graph',
+			() => {
+				expect(graph.nrDirEdges()).toBe(1);
+			}
+		);
 
 
 		test('should report the number of edges currently in the graph', () => {
@@ -422,25 +422,25 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should give you a random directed edge currently existing in the graph',
-            () => {
-                var rand_dir_edge = graph.getRandomDirEdge();
-                expect(rand_dir_edge.isDirected()).toBe(true);
-                expect(rand_dir_edge).toBeInstanceOf(Edge);
-                expect(graph.hasEdgeID(rand_dir_edge.getID())).toBe(true);
-            }
-        );
+			'should give you a random directed edge currently existing in the graph',
+			() => {
+				var rand_dir_edge = graph.getRandomDirEdge();
+				expect(rand_dir_edge.isDirected()).toBe(true);
+				expect(rand_dir_edge).toBeInstanceOf(Edge);
+				expect(graph.hasEdgeID(rand_dir_edge.getID())).toBe(true);
+			}
+		);
 
 
 		test(
-            'should give you a random undirected edge currently existing in the graph',
-            () => {
-                var rand_und_edge = graph.getRandomUndEdge();
-                expect(rand_und_edge.isDirected()).toBe(false);
-                expect(rand_und_edge).toBeInstanceOf(Edge);
-                expect(graph.hasEdgeID(rand_und_edge.getID())).toBe(true);
-            }
-        );
+			'should give you a random undirected edge currently existing in the graph',
+			() => {
+				var rand_und_edge = graph.getRandomUndEdge();
+				expect(rand_und_edge.isDirected()).toBe(false);
+				expect(rand_und_edge).toBeInstanceOf(Edge);
+				expect(graph.hasEdgeID(rand_und_edge.getID())).toBe(true);
+			}
+		);
 
 
 		/**
@@ -448,30 +448,30 @@ describe('GRAPH TESTS: ', () => {
 		 * 
 		 */
 		test(
-            'should throw an error retrieving an edge by Node IDs if node_a does not exist',
-            () => {
-                expect(graph.getDirEdgeByNodeIDs.bind(graph, undefined, node_b.getID())).toThrowError("Cannot find edge. Node A does not exist (in graph).");
-            }
-        );
+			'should throw an error retrieving an edge by Node IDs if node_a does not exist',
+			() => {
+				expect(graph.getDirEdgeByNodeIDs.bind(graph, undefined, node_b.getID())).toThrowError("Cannot find edge. Node A does not exist (in graph).");
+			}
+		);
 
 
 		test(
-            'should throw an error retrieving an edge by Node IDs if node_b does not exist',
-            () => {
-                expect(graph.getDirEdgeByNodeIDs.bind(graph, node_b.getID(), undefined)).toThrowError("Cannot find edge. Node B does not exist (in graph).");
-            }
-        );
+			'should throw an error retrieving an edge by Node IDs if node_b does not exist',
+			() => {
+				expect(graph.getDirEdgeByNodeIDs.bind(graph, node_b.getID(), undefined)).toThrowError("Cannot find edge. Node B does not exist (in graph).");
+			}
+		);
 
 
 		test(
-            'should throw an error retrieving a non-existing edge between two valid graph nodes',
-            () => {
-                const node_extra = graph.addNodeByID("extraaaaaa");
-                expect(graph.getDirEdgeByNodeIDs.bind(graph, node_a.getID(), node_extra.getID())).toThrowError(
-                    `Cannot find edge. There is no edge between Node ${node_a.getID()} and ${node_extra.getID()}.`
-                );
-            }
-        );
+			'should throw an error retrieving a non-existing edge between two valid graph nodes',
+			() => {
+				const node_extra = graph.addNodeByID("extraaaaaa");
+				expect(graph.getDirEdgeByNodeIDs.bind(graph, node_a.getID(), node_extra.getID())).toThrowError(
+					`Cannot find edge. There is no edge between Node ${node_a.getID()} and ${node_extra.getID()}.`
+				);
+			}
+		);
 
 
 		test('should correctly return the UNdirected A->B edge', () => {
@@ -497,7 +497,7 @@ describe('GRAPH TESTS: ', () => {
 			n_a, n_b, n_c, n_d, node_vana,
 			e_1, e_2, e_3, e_4, e_5, e_6, e_7;
 
-		beforeEach( () => {
+		beforeEach(() => {
 			graph = new Graph('Edge and node deletion test graph');
 			n_a = graph.addNodeByID('A');
 			n_b = graph.addNodeByID('B');
@@ -609,32 +609,32 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is still in MIXED _mode
 		 */
 		test(
-            'should remove an existing undirected edge, updating graph and node stats',
-            () => {
-                var graph_nr_nodes = graph.nrNodes(),
-                    graph_nr_dir_edges = graph.nrDirEdges(),
-                    graph_nr_und_edges = graph.nrUndEdges(),
-                    n_a_deg = n_a.degree(),
-                    n_a_in_deg = n_a.inDegree(),
-                    n_a_out_deg = n_a.outDegree(),
-                    n_b_deg = n_b.degree(),
-                    n_b_in_deg = n_b.inDegree(),
-                    n_b_out_deg = n_b.outDegree();
+			'should remove an existing undirected edge, updating graph and node stats',
+			() => {
+				var graph_nr_nodes = graph.nrNodes(),
+					graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges(),
+					n_a_deg = n_a.degree(),
+					n_a_in_deg = n_a.inDegree(),
+					n_a_out_deg = n_a.outDegree(),
+					n_b_deg = n_b.degree(),
+					n_b_in_deg = n_b.inDegree(),
+					n_b_out_deg = n_b.outDegree();
 
-                graph.deleteEdge(e_1);
+				graph.deleteEdge(e_1);
 
-                expect(graph.nrNodes()).toBe(graph_nr_nodes);
-                expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
-                expect(graph.nrUndEdges()).toBe(graph_nr_und_edges - 1);
-                expect(n_a.degree()).toBe(n_a_deg - 1);
-                expect(n_a.outDegree()).toBe(n_a_out_deg);
-                expect(n_a.inDegree()).toBe(n_a_in_deg);
-                expect(n_b.degree()).toBe(n_b_deg - 1);
-                expect(n_b.outDegree()).toBe(n_b_out_deg);
-                expect(n_b.inDegree()).toBe(n_b_in_deg);
-                expect(graph.getMode()).toBe($G.GraphMode.MIXED);
-            }
-        );
+				expect(graph.nrNodes()).toBe(graph_nr_nodes);
+				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
+				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges - 1);
+				expect(n_a.degree()).toBe(n_a_deg - 1);
+				expect(n_a.outDegree()).toBe(n_a_out_deg);
+				expect(n_a.inDegree()).toBe(n_a_in_deg);
+				expect(n_b.degree()).toBe(n_b_deg - 1);
+				expect(n_b.outDegree()).toBe(n_b_out_deg);
+				expect(n_b.inDegree()).toBe(n_b_in_deg);
+				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			}
+		);
 
 
 		/**
@@ -650,32 +650,32 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is still in MIXED _mode
 		 */
 		test(
-            'should remove an existing directed edge, updating graph and node stats',
-            () => {
-                var graph_nr_nodes = graph.nrNodes(),
-                    graph_nr_dir_edges = graph.nrDirEdges(),
-                    graph_nr_und_edges = graph.nrUndEdges(),
-                    n_a_deg = n_a.degree(),
-                    n_a_in_deg = n_a.inDegree(),
-                    n_a_out_deg = n_a.outDegree(),
-                    n_b_deg = n_b.degree(),
-                    n_b_in_deg = n_b.inDegree(),
-                    n_b_out_deg = n_b.outDegree();
+			'should remove an existing directed edge, updating graph and node stats',
+			() => {
+				var graph_nr_nodes = graph.nrNodes(),
+					graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges(),
+					n_a_deg = n_a.degree(),
+					n_a_in_deg = n_a.inDegree(),
+					n_a_out_deg = n_a.outDegree(),
+					n_b_deg = n_b.degree(),
+					n_b_in_deg = n_b.inDegree(),
+					n_b_out_deg = n_b.outDegree();
 
-                graph.deleteEdge(e_4);
+				graph.deleteEdge(e_4);
 
-                expect(graph.nrNodes()).toBe(graph_nr_nodes);
-                expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges - 1);
-                expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
-                expect(n_a.outDegree()).toBe(n_a_out_deg - 1);
-                expect(n_a.inDegree()).toBe(n_a_in_deg);
-                expect(n_a.degree()).toBe(n_a_deg);
-                expect(n_b.outDegree()).toBe(n_b_out_deg);
-                expect(n_b.inDegree()).toBe(n_b_in_deg - 1);
-                expect(n_b.degree()).toBe(n_b_deg);
-                expect(graph.getMode()).toBe($G.GraphMode.MIXED);
-            }
-        );
+				expect(graph.nrNodes()).toBe(graph_nr_nodes);
+				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges - 1);
+				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
+				expect(n_a.outDegree()).toBe(n_a_out_deg - 1);
+				expect(n_a.inDegree()).toBe(n_a_in_deg);
+				expect(n_a.degree()).toBe(n_a_deg);
+				expect(n_b.outDegree()).toBe(n_b_out_deg);
+				expect(n_b.inDegree()).toBe(n_b_in_deg - 1);
+				expect(n_b.degree()).toBe(n_b_deg);
+				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			}
+		);
 
 
 		/**
@@ -688,19 +688,19 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is now in DIRECTED _mode
 		 */
 		test(
-            'should remove ALL undirected edges, bringing the graph into DIRECTED _mode',
-            () => {
-                var graph_nr_dir_edges = graph.nrDirEdges(),
-                    graph_nr_und_edges = graph.nrUndEdges();
+			'should remove ALL undirected edges, bringing the graph into DIRECTED _mode',
+			() => {
+				var graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges();
 
-                graph.deleteEdge(e_1);
-                graph.deleteEdge(e_2);
+				graph.deleteEdge(e_1);
+				graph.deleteEdge(e_2);
 
-                expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
-                expect(graph.nrUndEdges()).toBe(0);
-                expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
-            }
-        );
+				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
+				expect(graph.nrUndEdges()).toBe(0);
+				expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+			}
+		);
 
 
 		/**
@@ -712,22 +712,22 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is now in UNDIRECTED _mode
 		 */
 		test(
-            'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
-            () => {
-                var graph_nr_dir_edges = graph.nrDirEdges(),
-                    graph_nr_und_edges = graph.nrUndEdges();
+			'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
+			() => {
+				var graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges();
 
-                graph.deleteEdge(e_3);
-                graph.deleteEdge(e_4);
-                graph.deleteEdge(e_5);
-                graph.deleteEdge(e_6);
-                graph.deleteEdge(e_7);
+				graph.deleteEdge(e_3);
+				graph.deleteEdge(e_4);
+				graph.deleteEdge(e_5);
+				graph.deleteEdge(e_6);
+				graph.deleteEdge(e_7);
 
-                expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
-                expect(graph.nrDirEdges()).toBe(0);
-                expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
-            }
-        );
+				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
+				expect(graph.nrDirEdges()).toBe(0);
+				expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+			}
+		);
 
 
 		/**
@@ -739,24 +739,24 @@ describe('GRAPH TESTS: ', () => {
 		 * graph is now in INIT _mode
 		 */
 		test(
-            'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
-            () => {
-                var graph_nr_dir_edges = graph.nrDirEdges(),
-                    graph_nr_und_edges = graph.nrUndEdges();
+			'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
+			() => {
+				var graph_nr_dir_edges = graph.nrDirEdges(),
+					graph_nr_und_edges = graph.nrUndEdges();
 
-                graph.deleteEdge(e_1);
-                graph.deleteEdge(e_2);
-                graph.deleteEdge(e_3);
-                graph.deleteEdge(e_4);
-                graph.deleteEdge(e_5);
-                graph.deleteEdge(e_6);
-                graph.deleteEdge(e_7);
+				graph.deleteEdge(e_1);
+				graph.deleteEdge(e_2);
+				graph.deleteEdge(e_3);
+				graph.deleteEdge(e_4);
+				graph.deleteEdge(e_5);
+				graph.deleteEdge(e_6);
+				graph.deleteEdge(e_7);
 
-                expect(graph.nrUndEdges()).toBe(0);
-                expect(graph.nrDirEdges()).toBe(0);
-                expect(graph.getMode()).toBe($G.GraphMode.INIT);
-            }
-        );
+				expect(graph.nrUndEdges()).toBe(0);
+				expect(graph.nrDirEdges()).toBe(0);
+				expect(graph.getMode()).toBe($G.GraphMode.INIT);
+			}
+		);
 
 
 
@@ -783,11 +783,11 @@ describe('GRAPH TESTS: ', () => {
 		 * Node outgoing edge deletion on NODE_VANA
 		 */
 		test(
-            'should throw an error when trying to delete outgoing edges of an un-added node',
-            () => {
-                expect(graph.deleteOutEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
-            }
-        );
+			'should throw an error when trying to delete outgoing edges of an un-added node',
+			() => {
+				expect(graph.deleteOutEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+			}
+		);
 
 
 		/**
@@ -808,11 +808,11 @@ describe('GRAPH TESTS: ', () => {
 		 * Node incoming edge deletion on NODE_VANA
 		 */
 		test(
-            'should throw an error when trying to delete incoming edges of an un-added node',
-            () => {
-                expect(graph.deleteInEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
-            }
-        );
+			'should throw an error when trying to delete incoming edges of an un-added node',
+			() => {
+				expect(graph.deleteInEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+			}
+		);
 
 
 		/**
@@ -833,11 +833,11 @@ describe('GRAPH TESTS: ', () => {
 		 * Node directed edge deletion on NODE_VANA
 		 */
 		test(
-            'should throw an error when trying to delete directed edges of an un-added node',
-            () => {
-                expect(graph.deleteDirEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
-            }
-        );
+			'should throw an error when trying to delete directed edges of an un-added node',
+			() => {
+				expect(graph.deleteDirEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+			}
+		);
 
 
 		/**
@@ -861,11 +861,11 @@ describe('GRAPH TESTS: ', () => {
 		 * Node undirected edge deletion on NODE_VANA
 		 */
 		test(
-            'should throw an error when trying to delete undirected edges of an un-added node',
-            () => {
-                expect(graph.deleteUndEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
-            }
-        );
+			'should throw an error when trying to delete undirected edges of an un-added node',
+			() => {
+				expect(graph.deleteUndEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+			}
+		);
 
 
 		/**
@@ -886,11 +886,11 @@ describe('GRAPH TESTS: ', () => {
 		 * Node ALL edge deletion on NODE_VANA
 		 */
 		test(
-            'should throw an error when trying to delete all edges of an un-added node',
-            () => {
-                expect(graph.deleteAllEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
-            }
-        );
+			'should throw an error when trying to delete all edges of an un-added node',
+			() => {
+				expect(graph.deleteAllEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+			}
+		);
 
 
 		/**
@@ -1000,105 +1000,105 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should successfully clone an graph with a node plus nested feature vector',
-            () => {
-                graph = new $G.BaseGraph("two_node_graph");
-                let n_a = graph.addNodeByID("A");
-                n_a.setFeatures({
-                    "bla": "hoo",
-                    "number": 42,
-                    "true": false,
-                    "array": [1, 2, 3, [4, 5]],
-                    "object": {
-                        "nested": true
-                    }
-                });
-                clone_graph = graph.cloneStructure();
-                expect(clone_graph._label).toBe(graph._label);
-                expect(clone_graph.nrNodes()).toBe(1);
-                expect(clone_graph.nrUndEdges()).toBe(0);
-                expect(clone_graph.nrDirEdges()).toBe(0);
-                expect(clone_graph.getMode()).toBe($G.GraphMode.INIT);
-                expect(clone_graph.getNodeById("A")).toEqual(n_a);
-            }
-        );
+			'should successfully clone an graph with a node plus nested feature vector',
+			() => {
+				graph = new $G.BaseGraph("two_node_graph");
+				let n_a = graph.addNodeByID("A");
+				n_a.setFeatures({
+					"bla": "hoo",
+					"number": 42,
+					"true": false,
+					"array": [1, 2, 3, [4, 5]],
+					"object": {
+						"nested": true
+					}
+				});
+				clone_graph = graph.cloneStructure();
+				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.nrNodes()).toBe(1);
+				expect(clone_graph.nrUndEdges()).toBe(0);
+				expect(clone_graph.nrDirEdges()).toBe(0);
+				expect(clone_graph.getMode()).toBe($G.GraphMode.INIT);
+				expect(clone_graph.getNodeById("A")).toEqual(n_a);
+			}
+		);
 
 
 		test(
-            'should successfully clone an graph with two nodes and one undirected edge',
-            () => {
-                graph = new $G.BaseGraph("two_node_graph");
-                let n_a = graph.addNodeByID("A");
-                let n_b = graph.addNodeByID("B");
-                let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: false });
+			'should successfully clone an graph with two nodes and one undirected edge',
+			() => {
+				graph = new $G.BaseGraph("two_node_graph");
+				let n_a = graph.addNodeByID("A");
+				let n_b = graph.addNodeByID("B");
+				let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: false });
 
-                clone_graph = graph.cloneStructure();
-                expect(clone_graph._label).toBe(graph._label);
-                expect(clone_graph.nrNodes()).toBe(2);
-                expect(clone_graph.nrUndEdges()).toBe(1);
-                expect(clone_graph.nrDirEdges()).toBe(0);
-                expect(clone_graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
-            }
-        );
+				clone_graph = graph.cloneStructure();
+				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.nrNodes()).toBe(2);
+				expect(clone_graph.nrUndEdges()).toBe(1);
+				expect(clone_graph.nrDirEdges()).toBe(0);
+				expect(clone_graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+			}
+		);
 
 
 		test(
-            'should successfully clone an graph with two nodes and one directed edge',
-            () => {
-                graph = new $G.BaseGraph("two_node_graph");
-                let n_a = graph.addNodeByID("A");
-                let n_b = graph.addNodeByID("B");
-                let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: true });
+			'should successfully clone an graph with two nodes and one directed edge',
+			() => {
+				graph = new $G.BaseGraph("two_node_graph");
+				let n_a = graph.addNodeByID("A");
+				let n_b = graph.addNodeByID("B");
+				let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: true });
 
-                clone_graph = graph.cloneStructure();
-                expect(clone_graph._label).toBe(graph._label);
-                expect(clone_graph.nrNodes()).toBe(2);
-                expect(clone_graph.nrUndEdges()).toBe(0);
-                expect(clone_graph.nrDirEdges()).toBe(1);
-                expect(clone_graph.getMode()).toBe($G.GraphMode.DIRECTED);
-            }
-        );
+				clone_graph = graph.cloneStructure();
+				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.nrNodes()).toBe(2);
+				expect(clone_graph.nrUndEdges()).toBe(0);
+				expect(clone_graph.nrDirEdges()).toBe(1);
+				expect(clone_graph.getMode()).toBe($G.GraphMode.DIRECTED);
+			}
+		);
 
 
 		/**
 		 * The toy graph example
 		 */
 		test(
-            'should successfully clone a toy graph in explicit mode including weights',
-            () => {
-                json_in = new $JSON.JSONInput(true, false, true);
-                graph = json_in.readFromJSONFile(small_graph_file);
-                let deg_dist_all = degCent.degreeDistribution(graph).all;
-                clone_graph = graph.cloneStructure();
-                let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
-                expect(clone_graph.nrNodes()).toBe(SMALL_GRAPH_NR_NODES);
-                expect(clone_graph.nrUndEdges()).toBe(SMALL_GRAPH_NR_UND_EDGES);
-                expect(clone_graph.nrDirEdges()).toBe(SMALL_GRAPH_NR_DIR_EDGES);
-                expect(clone_deg_dist_all).toEqual(deg_dist_all);
-                expect(clone_graph).toEqual(graph);
-            }
-        );
+			'should successfully clone a toy graph in explicit mode including weights',
+			() => {
+				json_in = new $JSON.JSONInput(true, false, true);
+				graph = json_in.readFromJSONFile(small_graph_file);
+				let deg_dist_all = degCent.degreeDistribution(graph).all;
+				clone_graph = graph.cloneStructure();
+				let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
+				expect(clone_graph.nrNodes()).toBe(SMALL_GRAPH_NR_NODES);
+				expect(clone_graph.nrUndEdges()).toBe(SMALL_GRAPH_NR_UND_EDGES);
+				expect(clone_graph.nrDirEdges()).toBe(SMALL_GRAPH_NR_DIR_EDGES);
+				expect(clone_deg_dist_all).toEqual(deg_dist_all);
+				expect(clone_graph).toEqual(graph);
+			}
+		);
 
 
 		/**
 		 * JUST FOR FUN - can also be removed - The REAL graph example
 		 */
 		test(
-            'should successfully clone a real-world graph in explicit mode including weights',
-            () => {
-                json_in = new $JSON.JSONInput(false, false, true);
-                graph = json_in.readFromJSONFile(real_graph_file);
-                let deg_dist_all = degCent.degreeDistribution(graph).all;
-                clone_graph = graph.cloneStructure();
-                let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
+			'should successfully clone a real-world graph in explicit mode including weights',
+			() => {
+				json_in = new $JSON.JSONInput(false, false, true);
+				graph = json_in.readFromJSONFile(real_graph_file);
+				let deg_dist_all = degCent.degreeDistribution(graph).all;
+				clone_graph = graph.cloneStructure();
+				let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
 
-                expect(clone_graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
-                expect(clone_graph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
-                expect(clone_graph.nrDirEdges()).toBe(0);
-                expect(clone_deg_dist_all).toEqual(deg_dist_all);
-                // expect(clone_graph).to.deep.equal(graph);
-            }
-        );
+				expect(clone_graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
+				expect(clone_graph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
+				expect(clone_graph.nrDirEdges()).toBe(0);
+				expect(clone_deg_dist_all).toEqual(deg_dist_all);
+				// expect(clone_graph).to.deep.equal(graph);
+			}
+		);
 
 		/**
 		 * Cloning only a part of the graph
@@ -1170,20 +1170,20 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test(
-                'should produce the correct adj.list including incoming edges & implicit self connection',
-                () => {
-                    graph = jsonReader.readFromJSONFile(small_graph_file);
-                    adj_list = graph.adjListDict(true, true);
-                    // console.dir(adj_list);
-                    expected_result = {
-                        'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
-                        'B': { 'A': 1, 'B': 0 },
-                        'C': { 'A': 0, 'C': 0 },
-                        'D': { 'A': -33, 'D': 0 }
-                    };
-                    expect(adj_list).toEqual(expected_result);
-                }
-            );
+				'should produce the correct adj.list including incoming edges & implicit self connection',
+				() => {
+					graph = jsonReader.readFromJSONFile(small_graph_file);
+					adj_list = graph.adjListDict(true, true);
+					// console.dir(adj_list);
+					expected_result = {
+						'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
+						'B': { 'A': 1, 'B': 0 },
+						'C': { 'A': 0, 'C': 0 },
+						'D': { 'A': -33, 'D': 0 }
+					};
+					expect(adj_list).toEqual(expected_result);
+				}
+			);
 
 
 			/**
@@ -1247,20 +1247,20 @@ describe('GRAPH TESTS: ', () => {
 			let csv_in_custom = new $CSV.CSVInput(" ", false, true, true);
 
 			test(
-                'should measure the time it takes to create the adj.list.dict for a 1034 node graph',
-                () => {
+				'should measure the time it takes to create the adj.list.dict for a 1034 node graph',
+				() => {
 
-                    graph = csv_in_custom.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
-                    expect(graph.nrNodes()).toBe(1034);
-                    expect(graph.nrDirEdges()).toBe(53498);
+					graph = csv_in_custom.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
+					expect(graph.nrNodes()).toBe(1034);
+					expect(graph.nrDirEdges()).toBe(53498);
 
-                    let start = +new Date();
-                    let adjListDict = graph.adjListDict(false, false);
-                    let end = +new Date();
-                    console.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end-start} ms.`);
-                    expect(Object.keys(adjListDict).length).toBe(graph.nrNodes());
-                }
-            );
+					let start = +new Date();
+					let adjListDict = graph.adjListDict(false, false);
+					let end = +new Date();
+					console.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end - start} ms.`);
+					expect(Object.keys(adjListDict).length).toBe(graph.nrNodes());
+				}
+			);
 
 		});
 
@@ -1338,14 +1338,14 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test(
-                'performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
-                () => {
-                    sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
-                    adj_list = sn_300_graph.adjListArray(true);
-                    expect(adj_list.length).toBe(sn_300_graph.nrNodes());
-                    adj_list.forEach(adj_entry => expect(adj_entry.length).toBe(sn_300_graph.nrNodes()));
-                }
-            );
+				'performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
+				() => {
+					sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+					adj_list = sn_300_graph.adjListArray(true);
+					expect(adj_list.length).toBe(sn_300_graph.nrNodes());
+					adj_list.forEach(adj_entry => expect(adj_entry.length).toBe(sn_300_graph.nrNodes()));
+				}
+			);
 
 		});
 
@@ -1372,14 +1372,14 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test(
-                'should produce a non-empty next array for the small example graph',
-                () => {
-                    graph = jsonReader.readFromJSONFile(small_graph_file);
-                    next = graph.nextArray();
-                    expect(next).toBeDefined();
-                    expect(next).not.toEqual([]);
-                }
-            );
+				'should produce a non-empty next array for the small example graph',
+				() => {
+					graph = jsonReader.readFromJSONFile(small_graph_file);
+					next = graph.nextArray();
+					expect(next).toBeDefined();
+					expect(next).not.toEqual([]);
+				}
+			);
 
 
 			test('should produce the correct next array without incoming edges', () => {
@@ -1412,14 +1412,13 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			test(
-                'performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
-                () => {
-                    sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
-                    next = sn_300_graph.nextArray(true);
-                    // console.log(next);
-                }
-            );
+			test('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
+				() => {
+					sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
+					next = sn_300_graph.nextArray(true);
+					// console.log(next);
+				}
+			);
 
 		});
 
@@ -1440,11 +1439,10 @@ describe('GRAPH TESTS: ', () => {
 			e_3: $E.IBaseEdge,
 			e_4: $E.IBaseEdge,
 			e_5: $E.IBaseEdge,
-			e_6: $E.IBaseEdge,
-			backupIsWeightedSpy_e1,
-			backupIsWeightedSpy_e5,
-			isWeightedSpy_e1,
-			isWeightedSpy_e5;
+			e_6: $E.IBaseEdge;
+
+		let isWeightedSpy_e1,
+				isWeightedSpy_e5;
 
 
 		beforeEach(() => {
@@ -1461,40 +1459,37 @@ describe('GRAPH TESTS: ', () => {
 			e_5 = graph.addEdgeByID("5", n_a, n_b, { directed: false, weighted: false });
 			e_6 = graph.addEdgeByID("6", n_a, n_c, { directed: true, weighted: false });
 
-			backupIsWeightedSpy_e1 = e_1.isWeighted;
-			backupIsWeightedSpy_e5 = e_5.isWeighted;
-			
-			// isWeightedSpy_e1 = sinon.spy(e_1.isWeighted);
-			// isWeightedSpy_e5 = sinon.spy(e_5.isWeighted);
-			// e_1.isWeighted = isWeightedSpy_e1;
-			// e_5.isWeighted = isWeightedSpy_e5;
+			isWeightedSpy_e1 = jest.spyOn(e_1, 'isWeighted');
+			isWeightedSpy_e5 = jest.spyOn(e_5, 'isWeighted');
 		});
 
 
 		afterEach(() => {
-			// e_1.isWeighted = backupIsWeightedSpy_e1;
-			// e_5.isWeighted = backupIsWeightedSpy_e5;
+			/** This is used to restore the original isWeighted function
+			  *@todo figure out if necessary...
+				*/
+			jest.restoreAllMocks();
 		});
 
 
-		// test(
-        //     'should have called isWeighted on e_1 and e_6 once each and returned true and false, respectively',
-        //     () => {
-        //         graph.hasNegativeEdge();
-        //         expect(isWeightedSpy_e1).to.have.been.calledOnce;
-        //         expect(isWeightedSpy_e1).to.have.returned(true);
-        //         expect(isWeightedSpy_e5).to.have.been.calledOnce;
-        //         expect(isWeightedSpy_e5).to.have.returned(false);
-        //     }
-        // );
+		test(
+		    'should have called isWeighted on e_1 and e_6 once each and returned true and false, respectively',
+		    () => {
+		        graph.hasNegativeEdge();
+		        expect(isWeightedSpy_e1).toHaveBeenCalledTimes(1);
+		        expect(isWeightedSpy_e1).toHaveReturnedWith(true);
+		        expect(isWeightedSpy_e5).toHaveBeenCalledTimes(1);
+		        expect(isWeightedSpy_e5).toHaveReturnedWith(false);
+		    }
+		);
 
 
 		test(
-            'should correclty detect a graph with solely positive edges via hasNegativeEdge method',
-            () => {
-                expect(graph.hasNegativeEdge()).toBe(false);
-            }
-        );
+			'should correclty detect a graph with solely positive edges via hasNegativeEdge method',
+			() => {
+				expect(graph.hasNegativeEdge()).toBe(false);
+			}
+		);
 
 
 		test('should correclty detect a graph with a negative UNdirected edge', () => {
@@ -1510,20 +1505,20 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should correclty detect a graph with solely positive edges via hasNegativeCycle method',
-            () => {
-                expect(graph.hasNegativeCycles(n_a)).toBe(false);
-            }
-        );
+			'should correclty detect a graph with solely positive edges via hasNegativeCycle method',
+			() => {
+				expect(graph.hasNegativeCycles(n_a)).toBe(false);
+			}
+		);
 
 
 		test(
-            'should correctly detect a graph with negative edges but no negative cycle',
-            () => {
-                e_2.setWeight(-2);
-                expect(graph.hasNegativeCycles(n_a)).toBe(false);
-            }
-        );
+			'should correctly detect a graph with negative edges but no negative cycle',
+			() => {
+				e_2.setWeight(-2);
+				expect(graph.hasNegativeCycles(n_a)).toBe(false);
+			}
+		);
 
 
 		test('should correctly detect a graph with negative cycle', () => {
@@ -1533,13 +1528,13 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should correctly detect a negative undirected edge as negative cycle',
-            () => {
-                e_2.setWeight(5);
-                graph.addEdgeByID("Negative Undie", n_a, n_b, { weighted: true, weight: -1 });
-                expect(graph.hasNegativeCycles()).toBe(true);
-            }
-        );
+			'should correctly detect a negative undirected edge as negative cycle',
+			() => {
+				e_2.setWeight(5);
+				graph.addEdgeByID("Negative Undie", n_a, n_b, { weighted: true, weight: -1 });
+				expect(graph.hasNegativeCycles()).toBe(true);
+			}
+		);
 
 
 		test('negative cycle multi-component graph should have 2 components', () => {
@@ -1548,39 +1543,39 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test(
-            'should correctly detect a negative cycle in a multi-component graph',
-            () => {
-                expect(graph_negcycle_multicomp.hasNegativeCycles(graph_negcycle_multicomp.getNodeById("S"))).toBe(true);
-            }
-        );
+			'should correctly detect a negative cycle in a multi-component graph',
+			() => {
+				expect(graph_negcycle_multicomp.hasNegativeCycles(graph_negcycle_multicomp.getNodeById("S"))).toBe(true);
+			}
+		);
 
 
 		test(
-            'performance test on bernd graph (1483 nodes), no negative cycles',
-            () => {
-                json = new $JSON.JSONInput(false, true, false);
-                graph_bernd = json.readFromJSONFile(bernd_graph_file);
-                let start_node = "1040";
-                expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
-                expect(graph_bernd.hasNegativeCycles()).toBe(false);
-            }
-        );
+			'performance test on bernd graph (1483 nodes), no negative cycles',
+			() => {
+				json = new $JSON.JSONInput(false, true, false);
+				graph_bernd = json.readFromJSONFile(bernd_graph_file);
+				let start_node = "1040";
+				expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
+				expect(graph_bernd.hasNegativeCycles()).toBe(false);
+			}
+		);
 
 
 		test(
-            'performance test on bernd graph (1483 nodes), WITH negative cycles',
-            () => {
-                json = new $JSON.JSONInput(false, true, true);
-                graph_bernd = json.readFromJSONFile(bernd_graph_file);
-                let start_node = "1040";
-                let edges = graph_bernd.getDirEdges();
-                for (let edge_idx in edges) {
-                    edges[edge_idx].setWeight(-1);
-                }
-                expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
-                expect(graph_bernd.hasNegativeCycles()).toBe(true);
-            }
-        );
+			'performance test on bernd graph (1483 nodes), WITH negative cycles',
+			() => {
+				json = new $JSON.JSONInput(false, true, true);
+				graph_bernd = json.readFromJSONFile(bernd_graph_file);
+				let start_node = "1040";
+				let edges = graph_bernd.getDirEdges();
+				for (let edge_idx in edges) {
+					edges[edge_idx].setWeight(-1);
+				}
+				expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
+				expect(graph_bernd.hasNegativeCycles()).toBe(true);
+			}
+		);
 
 	});
 
@@ -1608,58 +1603,56 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test(
-                'should return the same directed graph if all edges were directed before',
-                () => {
-                    let digraph_file = "./test/test_data/search_graph_pfs.json";
-                    let json = new $JSON.JSONInput(true, true, false);
-                    let digraph = json.readFromJSONFile(digraph_file);
-                    expect(digraph).toBeDefined();
-                    expect(digraph.nrNodes()).toBe(6);
-                    expect(digraph.nrDirEdges()).toBe(9);
-                    expect(digraph.nrUndEdges()).toBe(0);
-                    expect(digraph.toDirectedGraph()).toBe(digraph);
-                }
-            );
+				'should return the same directed graph if all edges were directed before',
+				() => {
+					let digraph_file = "./test/test_data/search_graph_pfs.json";
+					let json = new $JSON.JSONInput(true, true, false);
+					let digraph = json.readFromJSONFile(digraph_file);
+					expect(digraph).toBeDefined();
+					expect(digraph.nrNodes()).toBe(6);
+					expect(digraph.nrDirEdges()).toBe(9);
+					expect(digraph.nrUndEdges()).toBe(0);
+					expect(digraph.toDirectedGraph()).toBe(digraph);
+				}
+			);
 
 
 			test(
-                'should return a copy of the same directed graph if all edges were directed before',
-                () => {
-                    let digraph_file = "./test/test_data/search_graph_pfs.json";
-                    let json = new $JSON.JSONInput(true, true, false);
-                    let digraph = json.readFromJSONFile(digraph_file);
-                    expect(digraph).toBeDefined();
-                    expect(digraph.nrNodes()).toBe(6);
-                    expect(digraph.nrDirEdges()).toBe(9);
-                    expect(digraph.nrUndEdges()).toBe(0);
+				'should return a copy of the same directed graph if all edges were directed before',
+				() => {
+					let digraph_file = "./test/test_data/search_graph_pfs.json";
+					let json = new $JSON.JSONInput(true, true, false);
+					let digraph = json.readFromJSONFile(digraph_file);
+					expect(digraph).toBeDefined();
+					expect(digraph.nrNodes()).toBe(6);
+					expect(digraph.nrDirEdges()).toBe(9);
+					expect(digraph.nrUndEdges()).toBe(0);
 
-                    let res_graph = digraph.toDirectedGraph(true);
-                    expect(res_graph).not.toBe(digraph); // refs
-                    expect(res_graph).toEqual(digraph); // content
-                }
-            );
+					let res_graph = digraph.toDirectedGraph(true);
+					expect(res_graph).not.toBe(digraph); // refs
+					expect(res_graph).toEqual(digraph); // content
+				}
+			);
 
 
 			test(
-                'should return the same UNdirected graph if all edges were UNdirected before',
-                () => {
+				'should return the same UNdirected graph if all edges were UNdirected before',
+				() => {
 
-                }
-            );
+				}
+			);
 
 
-			// it('should return a directed graph when all edges were UNdirected before', () => {
+			// test('should return a directed graph when all edges were UNdirected before', () => {
 
 			// });
 
 
-			test(
-                'should return an UNdirected graph when all edges were directed before',
-                () => {
+			test('should return an UNdirected graph when all edges were directed before',
+				() => {
 
-                }
-            );
-
+				}
+			);
 
 		});
 

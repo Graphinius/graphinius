@@ -8,15 +8,13 @@ const json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
     search_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
 
-// let PFSSpy,
-//     PFSPrepareConfigSpy;
+let PFSSpy,
+    PFSPrepareConfigSpy;
 
 /**
  * come up with more tests
  */
 describe('Dijkstra TESTS - ', () => {
-
-  // let sandbox = sinon.createSandbox();
 
   beforeAll(() => {
     expect(graph).not.toBeUndefined();
@@ -26,21 +24,19 @@ describe('Dijkstra TESTS - ', () => {
   });
 
   beforeEach(() => {
-    // PFSSpy = sandbox.spy($PFS, "PFS");
-    // PFSPrepareConfigSpy = sandbox.spy($PFS, "preparePFSStandardConfig");
+    PFSSpy = jest.spyOn($PFS, "PFS");
+    PFSPrepareConfigSpy = jest.spyOn($PFS, "preparePFSStandardConfig");
   });
 
   afterEach(() => {
-    // sandbox.restore();
+    jest.restoreAllMocks();
   })
   
   
   test('should call PFS in the background - ', () => {
     $Dijkstra.Dijkstra(graph, graph.getRandomNode());
-    // expect(PFSSpy).to.have.been.calledOnce;
-    // expect(PFSPrepareConfigSpy).to.have.been.calledOnce;
-   /* console.log(PFSSpy.callCount);
-    console.log(PFSPrepareConfigSpy.callCount);*/
+    expect(PFSSpy).toHaveBeenCalledTimes(1);
+    expect(PFSPrepareConfigSpy).toHaveBeenCalledTimes(1);
   });
 
 });

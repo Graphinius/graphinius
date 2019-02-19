@@ -3,7 +3,6 @@ import * as $FW from '../search/FloydWarshall';
 import * as $JO from '../search/Johnsons';
 import * as $PFS from '../search/PFS';
 import * as $N from '../core/Nodes';
-import { ifError } from 'assert';
 
 /**
  * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm

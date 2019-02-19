@@ -18,8 +18,9 @@ let REAL_GRAPH_NR_NODES = 6204,
 const DEGREE_PROBABILITY = 0.002;
 const MAX_EDGES_TO_CREATE = 500;
 
+
 /**
- * TODO introduce sinon & check for methods called
+ * @todo introduce spies & check for methods called
  * depending on the degree configuration obj's state
  */ 
 describe('GRAPH PERTURBATION TESTS: - ', () => {
