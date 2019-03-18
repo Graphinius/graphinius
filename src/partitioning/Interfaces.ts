@@ -6,7 +6,6 @@ export interface GraphPartitioning {
   cut_cost    : number;
 }
 
-
 export interface Partition {
   nodes : Map<string, IBaseNode>;
 }

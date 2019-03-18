@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "es6",
 		"module": "commonjs",
+		"declaration": true,
 		"moduleResolution": "node",
 		"sourceMap": false,
 		"lib": [
@@ -9,11 +10,10 @@
 				"dom"
 		],
 		"outDir": "./dist",
-		"removeComments": true
+		"removeComments": true,
+		"strict": false
 	},
 	"compileOnSave": false,
-	"include": [
-			"./src/**/*.ts",
-			"./test/**/*.ts"
-	]
+	"include": ["src"],
+  "exclude": ["node_modules", "**/test/*"]
 }

@@ -51,5 +51,6 @@
   },
   "dependencies": {
     "ncp": "^2.0.0"
-  }
+  },
+  "files": ["lib/**/*"]
 }
