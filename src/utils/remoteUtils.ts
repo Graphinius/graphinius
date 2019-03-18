@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as https from 'https';
-import {Logger} from '../utils/logger';
+import { Logger } from '../utils/logger';
 
 const logger = new Logger();
 const SSL_PORT = '443';
