@@ -3,7 +3,7 @@ const path = require('path');
 const ncp = require('ncp').ncp;
 
 const cur_dir = ".",
-      dist_dir = "dist",
+      dist_dir = "lib",
       dist_links_lock = "distlinks.lock";
 
 if ( !fs.existsSync( path.join( cur_dir, dist_links_lock ) ) ) {

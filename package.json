@@ -2,7 +2,7 @@
   "scripts": {
     "build": "gulp build",
     "test": "jest",
-    "postinstall": "node install_dist.js"
+    "postinstall": ""
   },
   "repository": {
     "type": "git",
