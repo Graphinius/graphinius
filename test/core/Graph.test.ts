@@ -6,6 +6,9 @@ import * as $DFS from '../../src/search/DFS';
 import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 
+import { Logger } from '../../src/utils/logger'
+const logger = new Logger();
+
 const degCent = new DegreeCentrality();
 
 var Node = $N.BaseNode;
@@ -1144,7 +1147,7 @@ describe('GRAPH TESTS: ', () => {
 			test('should produce the correct adj.list without incoming edges', () => {
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(false);
-				// console.dir(adj_list);
+				// logger.dir(adj_list);
 				expected_result = {
 					'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 					'B': { 'A': 3 },
@@ -1158,7 +1161,7 @@ describe('GRAPH TESTS: ', () => {
 			test('should produce the correct adj.list including incoming edges', () => {
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true);
-				// console.dir(adj_list);
+				// logger.dir(adj_list);
 				expected_result = {
 					'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 					'B': { 'A': 1 },
@@ -1174,7 +1177,7 @@ describe('GRAPH TESTS: ', () => {
 				() => {
 					graph = jsonReader.readFromJSONFile(small_graph_file);
 					adj_list = graph.adjListDict(true, true);
-					// console.dir(adj_list);
+					// logger.dir(adj_list);
 					expected_result = {
 						'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 						'B': { 'A': 1, 'B': 0 },
@@ -1193,7 +1196,7 @@ describe('GRAPH TESTS: ', () => {
 			test('should produce the correct adj.list with specific self-dist', () => {
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true, true, 1);
-				// console.dir(adj_list);
+				// logger.dir(adj_list);
 				expected_result = {
 					'A': { 'A': 1, 'B': 1, 'C': 0, 'D': -33 },
 					'B': { 'A': 1, 'B': 1 },
@@ -1257,7 +1260,7 @@ describe('GRAPH TESTS: ', () => {
 					let start = +new Date();
 					let adjListDict = graph.adjListDict(false, false);
 					let end = +new Date();
-					console.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end - start} ms.`);
+					logger.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end - start} ms.`);
 					expect(Object.keys(adjListDict).length).toBe(graph.nrNodes());
 				}
 			);
@@ -1416,7 +1419,7 @@ describe('GRAPH TESTS: ', () => {
 				() => {
 					sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
 					next = sn_300_graph.nextArray(true);
-					// console.log(next);
+					// logger.log(next);
 				}
 			);
 
