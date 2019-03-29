@@ -1,13 +1,13 @@
 import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
-import {IBaseEdge} from "../core/Edges";
+import { IBaseEdge } from "../core/Edges";
 import * as $GAUSS from "./Gauss";
 
 
 //Calculates the page rank for a given graph
 class pageRankDetCentrality{
 
-  getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number}{
+  getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number} {
 
     //First initialize the values for all nodes
     let divideTable = {}; //Tells us how many outgoing edges each node has
@@ -17,6 +17,7 @@ class pageRankDetCentrality{
     for(let key in graph.getNodes()) {
       divideTable[key] = 0;
     }
+
     for(let key in graph.getNodes()) { //Run through all nodes in graph
       //pageScores[key] = startVal;
       map[key] = ctr;
@@ -45,13 +46,14 @@ class pageRankDetCentrality{
     //Bring matrix into correct form
     for(let key in matr){                               //  |maybe add +1 here
       numMatr[key] = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0); //Fill array with 0
-      //set the slot of our variable to -1 (we switch it to the other side)
+      // set the slot of our variable to -1 (we switch it to the other side)
       let p = matr[key].pop();
-      if(mapCtr[p] == null)
+      if(mapCtr[p] == null) {
         mapCtr[p] = ctr++;
+      }
       numMatr[key][mapCtr[p]] = -1;
 
-      for(let k in matr[key]){
+      for(let k in matr[key]) {
         let a = matr[key][k];
         if(mapCtr[a] == null)
           mapCtr[a] = ctr++;
@@ -59,6 +61,7 @@ class pageRankDetCentrality{
         numMatr[key][mapCtr[a]] += 1/divideTable[a];
       }
     }
+
     //Now add last equation, everything added together should be 1!  | maybe add +1 here
     numMatr[numMatr.length-1] = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,1);
     let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
