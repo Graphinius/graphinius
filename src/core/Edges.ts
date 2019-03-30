@@ -18,7 +18,6 @@ export interface IBaseEdge {
 	setLabel(label : string) : void;
 
 	isDirected()						: boolean;
-
 	isWeighted()						: boolean;
 	getWeight()							: number; // Exception if not weighted
 	setWeight(w:number) 		: void; // Exception if not weighted
@@ -106,15 +105,16 @@ class BaseEdge implements IBaseEdge {
 			throw new Error("refusing to clone edge if any new node is invalid");
 		}
 
-		return new BaseEdge( this._id,
-												 new_node_a,
-												 new_node_b,
-												 {
-													 directed		: this._directed,
-													 weighted		: this._weighted,
-													 weight			: this._weight,
-													 label			: this._label
-												 }													 
+		return new BaseEdge(
+			this._id,
+			new_node_a,
+			new_node_b,
+			{
+				directed	: this._directed,
+				weighted	: this._weighted,
+				weight		: this._weight,
+				label			: this._label
+			}
 		);
 	}
 }

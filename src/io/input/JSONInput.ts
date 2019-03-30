@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-
 import fs				= require('fs');
 import path 		= require('path');
 
@@ -7,6 +5,7 @@ import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
 
 const DEFAULT_WEIGHT : number = 1;
+const JSON_EXTENSION = ".json";
 
 export interface JSONEdge {
   to          : string;
@@ -35,7 +34,7 @@ export interface IJSONInput {
 	
 	readFromJSONFile(file : string) : $G.IGraph;
 	readFromJSON(json : {}) : $G.IGraph;
-	readFromJSONURL(fileurl: string, cb: Function) : void;
+	readFromJSONURL(config: $R.RequestConfig, cb: Function) : void;
 }
 
 
@@ -54,7 +53,7 @@ class JSONInput implements IJSONInput {
 		return this.readFromJSON(json);
 	}
 	
-	readFromJSONURL(fileurl: string, cb: Function) : void {	
+	readFromJSONURL(config: $R.RequestConfig, cb: Function) : void {	
 		var self = this,
 				graph : $G.IGraph,
 				request,
@@ -63,6 +62,7 @@ class JSONInput implements IJSONInput {
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {			
 			// Browser...			
+			let fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
 			request = new XMLHttpRequest();			
 			request.onreadystatechange = function() {
 				// console.log("Ready state: " + request.readyState);
@@ -83,7 +83,7 @@ class JSONInput implements IJSONInput {
 		}
 		else {
 			// Node.js
-			$R.retrieveRemoteFile(fileurl, function(raw_graph) {
+			$R.retrieveRemoteFile(config, function(raw_graph) {
 				graph = self.readFromJSON(JSON.parse(raw_graph));
 				cb(graph, undefined);
 			});

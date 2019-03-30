@@ -1,0 +1,27 @@
+{
+  "name": "3-node graph with three partitions",
+  "nodes": 3,
+  "edges": 0,
+  "data": {
+    "1": {
+      "edges": [
+      ],
+      "features": {
+        "partition": 1
+      }
+    },
+    "2": {
+      "edges": [
+      ],
+      "features": {
+        "partition": 2
+      }
+    }, 
+    "3": {
+      "edges": [
+      ],
+      "features": {
+      }
+    }
+  }
+}

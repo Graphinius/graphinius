@@ -1,10 +1,10 @@
 const LOG_LEVELS = {
-  debug: "DEBUG",
-  production: "PRODUCTION"
+  debug: "debug",
+  production: "production"
 };
 
 const RUN_CONFIG = {
-  log_level: LOG_LEVELS.debug
+  log_level: process.env['G_LOG'] // LOG_LEVELS.debug
 };
 
 export {

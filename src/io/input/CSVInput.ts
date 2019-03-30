@@ -1,5 +1,3 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-
 import path = require('path');
 import fs = require('fs');
 import http = require('http');
@@ -9,48 +7,60 @@ import * as $E from '../../core/Edges';
 import * as $G from '../../core/Graph';
 import * as $R from '../../utils/remoteUtils';
 
+import { Logger } from '../../utils/logger';
+let logger : Logger = new Logger();
+
+const DEFAULT_WEIGHT = 1;
+const CSV_EXTENSION = ".csv";
 
 export interface ICSVInput {
 	_separator					: string;
 	_explicit_direction	: boolean;
 	_direction_mode			: boolean; // true => directed
+	_weighted						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
 	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
-	readFromAdjacencyListURL(fileurl : string, cb : Function);
+	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
 	readFromEdgeList(input : Array<string>, graph_name: string) : $G.IGraph;
-	readFromEdgeListURL(fileurl : string, cb : Function);
+	readFromEdgeListURL(config : $R.RequestConfig, cb : Function);
 }
 
 class CSVInput implements ICSVInput {
 	
 	constructor(public _separator: string = ',',
 							public _explicit_direction: boolean = true,
-							public _direction_mode: boolean = false) {		
+							public _direction_mode: boolean = false,
+							public _weighted: boolean = false
+						) {
 	}
 	
 	
-	readFromAdjacencyListURL(fileurl : string, cb : Function) {
-		this.readGraphFromURL(fileurl, cb, this.readFromAdjacencyList);
+	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function) {
+		this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
 	}
 	
 	
-	readFromEdgeListURL(fileurl : string, cb : Function) {
-		this.readGraphFromURL(fileurl, cb, this.readFromEdgeList);
+	readFromEdgeListURL(config : $R.RequestConfig, cb : Function) {
+		this.readGraphFromURL(config, cb, this.readFromEdgeList);
 	}
 	
 	
-	private readGraphFromURL(fileurl: string, cb: Function, localFun: Function) {	
+	private readGraphFromURL(config: $R.RequestConfig, cb: Function, localFun: Function) {
 		var self = this,
-				graph_name = path.basename(fileurl),
+				graph_name = config.file_name,
 				graph : $G.IGraph,
 				request;
 		// Node or browser ??
 		if ( typeof window !== 'undefined' ) {
+			let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
+
+			logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
+
 			// Browser...
-			request = new XMLHttpRequest();			
+			request = new XMLHttpRequest();	
 			request.onreadystatechange = function() {
 					if (request.readyState == 4 && request.status == 200) {
 						var input = request.responseText.split('\n');
@@ -64,7 +74,7 @@ class CSVInput implements ICSVInput {
 		}
 		else {
 			// Node.js
-			$R.retrieveRemoteFile(fileurl, function(raw_graph) {
+			$R.retrieveRemoteFile(config, function(raw_graph) {
 				var input = raw_graph.toString().split('\n');
 				graph = localFun.apply(self, [input, graph_name]);
 				cb(graph, undefined);
@@ -153,7 +163,7 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	readFromEdgeList(input : Array<string>, graph_name : string) : $G.IGraph {
+	readFromEdgeList(input : Array<string>, graph_name : string, weighted = false) : $G.IGraph {
 		
 		var graph = new $G.BaseGraph(graph_name);
 		
@@ -166,8 +176,10 @@ class CSVInput implements ICSVInput {
 				continue;
 			}
 			
-			if ( elements.length < 2 ) {
-				console.log(elements);
+			if ( elements.length < 2 || elements.length > 3 ) {
+				
+				logger.log(elements);
+
 				throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 			}
 			
@@ -179,7 +191,9 @@ class CSVInput implements ICSVInput {
 					dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u',
 					directed: boolean,
 					edge_id: string,
-					edge_id_u2: string;
+					edge_id_u2: string,
+					parse_weight: number,
+					edge_weight: number;
 			
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 			target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
@@ -190,11 +204,17 @@ class CSVInput implements ICSVInput {
 			directed = dir_char === 'd';
 			
 			edge_id = node_id + "_" + target_node_id + "_" + dir_char;
-			edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;		
+			edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+			
+			parse_weight = parseFloat(elements[2]);
+			edge_weight = this._weighted ? (isNaN(parse_weight) ? DEFAULT_WEIGHT : parse_weight) : null;
 							
 			if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
 				// The completely same edge should only be added once...
 				continue;
+			}
+			else if (this._weighted) {
+				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed, weighted: true, weight: edge_weight});
 			}
 			else {
 				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed});

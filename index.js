@@ -1,27 +1,28 @@
-var Edges			      = require("./dist/core/Edges.js");
-var Nodes 		      = require("./dist/core/Nodes.js");
-var Graph 		      = require("./dist/core/Graph.js");
-var CSVInput 	      = require("./dist/io/input/CSVInput.js");
-var CSVOutput       = require("./dist/io/output/CSVOutput.js");
-var JSONInput       = require("./dist/io/input/JSONInput.js");
-var JSONOutput      = require("./dist/io/output/JSONOutput.js");
-var BFS				      = require("./dist/search/BFS.js");
-var DFS				      = require("./dist/search/DFS.js");
-var PFS             = require("./dist/search/PFS.js");
-var BellmanFord     = require("./dist/search/BellmanFord.js");
-var FloydWarshall		= require("./dist/search/FloydWarshall.js");
-var structUtils     = require("./dist/utils/structUtils.js");
-var remoteUtils     = require("./dist/utils/remoteUtils.js");
-var callbackUtils   = require("./dist/utils/callbackUtils.js");
-var randGen         = require("./dist/utils/randGenUtils.js");
-var binaryHeap      = require("./dist/datastructs/binaryHeap.js");
-var simplePerturbation = require("./dist/perturbation/SimplePerturbations.js");
-var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var DegreeCent		 	= require("./dist/centralities/Degree.js");
-var ClosenessCent	 	= require("./dist/centralities/Closeness.js");
-var BetweennessCent	= require("./dist/centralities/Betweenness.js");
-var PRGauss					= require("./dist/centralities/PageRankGaussian.js");
-var PRRandomWalk		= require("./dist/centralities/PageRankRandomWalk.js");
+var Edges			      = require("./lib/core/Edges.js");
+var Nodes 		      = require("./lib/core/Nodes.js");
+var Graph 		      = require("./lib/core/Graph.js");
+var CSVInput 	      = require("./lib/io/input/CSVInput.js");
+var CSVOutput       = require("./lib/io/output/CSVOutput.js");
+var JSONInput       = require("./lib/io/input/JSONInput.js");
+var JSONOutput      = require("./lib/io/output/JSONOutput.js");
+var BFS				      = require("./lib/search/BFS.js");
+var DFS				      = require("./lib/search/DFS.js");
+var PFS             = require("./lib/search/PFS.js");
+var BellmanFord     = require("./lib/search/BellmanFord.js");
+var FloydWarshall		= require("./lib/search/FloydWarshall.js");
+var structUtils     = require("./lib/utils/structUtils.js");
+var remoteUtils     = require("./lib/utils/remoteUtils.js");
+var callbackUtils   = require("./lib/utils/callbackUtils.js");
+var binaryHeap      = require("./lib/datastructs/binaryHeap.js");
+var simplePerturbation = require("./lib/perturbation/SimplePerturbations.js");
+// var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+var DegreeCent		 	= require("./lib/centralities/Degree.js");
+var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
+var BetweennessCent	= require("./lib/centralities/Betweenness.js");
+var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
+var PRRandomWalk		= require("./lib/centralities/PageRankRandomWalk.js");
+var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
+
 
 // Define global object
 var out = typeof window !== 'undefined' ? window : global;
@@ -63,20 +64,22 @@ out.$G = {
 		BellmanFord										 : BellmanFord,
 		FloydWarshall									 : FloydWarshall
 	},
-	mincut: {
-		MCMFBoykov										 : MCMFBoykov.MCMFBoykov
-	},
+	// mincut: {
+	// 	MCMFBoykov										 : MCMFBoykov.MCMFBoykov
+	// },
   utils: {
     struct          : structUtils,
     remote          : remoteUtils,
-    callback        : callbackUtils,
-    randgen         : randGen
+    callback        : callbackUtils
   },
   datastructs: {
     BinaryHeap  : binaryHeap.BinaryHeap
   },
 	perturbation: {
 		SimplePerturber: simplePerturbation.SimplePerturber
+	},
+	generators: {
+		kronecker: kronLeskovec
 	}
 };
 

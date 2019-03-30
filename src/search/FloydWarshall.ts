@@ -1,12 +1,9 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $G from '../core/Graph';
 import * as $SU from '../utils/structUtils'
 
 interface FWConfig {
 	directed: boolean;
 }
-
 
 /**
  * Initializes the distance matrix from each node to all other node
@@ -16,20 +13,23 @@ interface FWConfig {
  * @returns m*m matrix of values
  * @constructor
  */
+
+
 function initializeDistsWithEdges(graph: $G.IGraph) {
 	let dists = {},
-	edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
+			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
 
 	for (let edge in edges) {
+
 		let a = edges[edge].getNodes().a.getID();
 		let b = edges[edge].getNodes().b.getID();
 
-		if(dists[a]==null)
+		if (dists[a] == null)
 			dists[a] = {};
 
 		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-		if(!edges[edge].isDirected()){
-			if(dists[b]==null)
+		if (!edges[edge].isDirected()) {
+			if (dists[b] == null)
 				dists[b] = {};
 			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
 		}
@@ -40,7 +40,7 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
 
 
 /**
- * Floyd-Warshall - we mostly use it to get In-betweenness
+ * Floyd-Warshall - we mostly use it to get the Betweenness
  * of a graph. We use the standard algorithm and save all
  * the shortest paths we find.
  *
@@ -49,28 +49,31 @@ function initializeDistsWithEdges(graph: $G.IGraph) {
  * @constructor
  */
 function FloydWarshallAPSP(graph: $G.IGraph): {} {
-	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists : $G.MinAdjacencyListArray = graph.adjListArray();
-	let next : $G.NextArray  = graph.nextArray();
+	let dists: $G.MinAdjacencyListArray = graph.adjListArray();
+	let next: $G.NextArray = graph.nextArray();
 
 	let N = dists.length;
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
-				if ( dists[i][j] == (dists[i][k] + dists[k][j]) && k != i && k != j) {
-					next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+				if (k != i && k != j && i != j && dists[i][j] == (dists[i][k] + dists[k][j]) ) {
+					//if a node is unreachable, the corresponding value in next should not be updated, but stay null
+					if (dists[i][j] !== Number.POSITIVE_INFINITY) {
+						next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+					}
 				}
-				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+
+				if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
 					next[i][j] = next[i][k].slice(0);
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
 		}
 	}
-
 	return [dists, next];
 }
 
@@ -84,8 +87,8 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
-	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
+	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
@@ -95,7 +98,7 @@ function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
 	for (var k = 0; k < N; ++k) {
 		for (var i = 0; i < N; ++i) {
 			for (var j = 0; j < N; ++j) {
-				if ( dists[i][j] > dists[i][k] + dists[k][j] ) {
+				if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
@@ -115,8 +118,8 @@ function FloydWarshallArray(graph: $G.IGraph) : $G.MinAdjacencyListArray {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshall(graph: $G.IGraph) : {} {
-	if ( graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0 ) {
+function FloydWarshallDict(graph: $G.IGraph): {} {
+	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 	let dists = initializeDistsWithEdges(graph);
@@ -124,14 +127,13 @@ function FloydWarshall(graph: $G.IGraph) : {} {
 	for (var k in dists) {
 		for (var i in dists) {
 			for (var j in dists) {
-
 				if (i === j) {
 					continue;
 				}
 				if (dists[i][k] == null || dists[k][j] == null) {
 					continue;
 				}
-				if ((!dists[i][j] && dists[i][j] != 0) || ( dists[i][j] > dists[i][k] + dists[k][j] )) {
+				if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
@@ -141,7 +143,66 @@ function FloydWarshall(graph: $G.IGraph) : {} {
 	return dists;
 }
 
-export {FloydWarshallAPSP, 
-				FloydWarshallArray,
-				FloydWarshall
-			};
+function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
+	let output: Array<Array<Array<number>>> = [];
+	
+	for (let a = 0; a < input.length; a++) {
+		output.push([]);
+		for (let b = 0; b < input.length; b++) {
+			output[a].push([]);
+			output[a][b] = input[a][b];
+		}
+	}
+
+	for (let a = 0; a < input.length; a++) {
+		for (let b = 0; b < input.length; b++) {
+			
+			if (input[a][b][0] == null) {
+				continue;
+			}
+
+			else if (a != b && !(input[a][b].length === 1 && input[a][b][0] === b)) {
+				output[a][b] = [];
+				findDirectParents(a, b, input, output);
+			}
+		}
+	}
+	return output;
+}
+
+function findDirectParents(u, v, inNext, outNext): void {
+	
+	let nodesInTracking = [u];
+	let counter = 0;
+
+	while (nodesInTracking.length > 0) {
+		let currNode = nodesInTracking.pop();
+		
+		if (currNode == u && counter > 0) {
+			continue;
+		}
+
+		else {
+			for (let e = 0; e < inNext[currNode][v].length; e++) {
+				if (inNext[currNode][v][e] == v && counter == 0) {
+					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
+				}
+				else if (inNext[currNode][v][e] == v) {
+					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [currNode]);
+				}
+				else {
+					nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, [inNext[currNode][v][e]]);
+				}
+			}
+		}
+		counter++;
+	}
+}
+
+
+export {
+	FloydWarshallAPSP,
+	FloydWarshallArray,
+	FloydWarshallDict,
+	changeNextToDirectParents
+};

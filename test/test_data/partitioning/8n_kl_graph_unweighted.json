@@ -1,0 +1,193 @@
+{
+  "name": "8-node graph with initial 2-partitioning",
+  "nodes": 8,
+  "edges": 13,
+  "data": {
+    "1": {
+      "edges": [
+        {
+          "to": "2",
+          "directed": false,
+          "weight": 3
+        },
+        {
+          "to": "5",
+          "directed": false,
+          "weight": 7
+        },
+        {
+          "to": "6",
+          "directed": false,
+          "weight": 12
+        }        
+      ],
+      "features": {
+        "partition": 1
+      }
+    },
+    "2": {
+      "edges": [
+        {
+          "to": "1",
+          "directed": false,
+          "weight": 3
+        },
+        {
+          "to": "5",
+          "directed": false,
+          "weight": 2
+        },
+        {
+          "to": "6",
+          "directed": false,
+          "weight": 2
+        }
+      ],
+      "features": {
+        "partition": 1
+      }
+    }, 
+    "3": {
+      "edges": [
+        {
+          "to": "4",
+          "directed": false,
+          "weight": 11
+        },
+        {
+          "to": "6",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "7",
+          "directed": false,
+          "weight": 3
+        },
+        {
+          "to": "8",
+          "directed": false,
+          "weight": 4
+        }
+      ],
+      "features": {
+        "partition": 1
+      }
+    }, 
+    "4": {
+      "edges": [
+        {
+          "to": "3",
+          "directed": false,
+          "weight": 11
+        },
+        {
+          "to": "7",
+          "directed": false,
+          "weight": 6
+        },
+        {
+          "to": "8",
+          "directed": false,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "partition": 1
+      }
+    }, 
+    "5": {
+      "edges": [
+        {
+          "to": "1",
+          "directed": false,
+          "weight": 7
+        },
+        {
+          "to": "2",
+          "directed": false,
+          "weight": 2
+        },
+        {
+          "to": "6",
+          "directed": false,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "partition": 2
+      }
+    }, 
+    "6": {
+      "edges": [
+        {
+          "to": "1",
+          "directed": false,
+          "weight": 12
+        },
+        {
+          "to": "2",
+          "directed": false,
+          "weight": 2
+        },
+        {
+          "to": "3",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "5",
+          "directed": false,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "partition": 2
+      }
+    }, 
+    "7": {
+      "edges": [
+        {
+          "to": "3",
+          "directed": false,
+          "weight": 3
+        },
+        {
+          "to": "4",
+          "directed": false,
+          "weight": 6
+        },
+        {
+          "to": "8",
+          "directed": false,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "partition": 2
+      }
+    }, 
+    "8": {
+      "edges": [
+        {
+          "to": "3",
+          "directed": false,
+          "weight": 4
+        },
+        {
+          "to": "4",
+          "directed": false,
+          "weight": 1
+        },
+        {
+          "to": "7",
+          "directed": false,
+          "weight": 1
+        }
+      ],
+      "features": {
+        "partition": 2
+      }
+    }
+  }
+}

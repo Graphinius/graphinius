@@ -1,13 +1,17 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "target": "es5",
-      "declaration": true,
-      "sourceMap": true
-    //   "outDir": "../"
-    },
-    "compileOnSave": false,
-    "include": [
-        "./**/*.ts"
-    ]
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"lib": [
+				"es2017",
+				"dom"
+		],
+		"removeComments": true
+	},
+	"compileOnSave": false,
+	"include": [
+			"./**/*.ts"
+	]
 }

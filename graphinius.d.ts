@@ -4,13 +4,6 @@ declare module 'graphinius/core/Edges' {
 	    a: $N.IBaseNode;
 	    b: $N.IBaseNode;
 	}
-	/**
-	 * Edges are the most basic components in graphinius.
-	 * They control no other elements below them, but hold
-	 * references to the nodes they are connecting...
-	 * @param _id internal id, public
-	 * @param _label edge label, public
-	 */
 	export interface IBaseEdge {
 	    getID(): string;
 	    getLabel(): string;
@@ -50,12 +43,11 @@ declare module 'graphinius/core/Edges' {
 
 }
 declare module 'graphinius/utils/structUtils' {
-	 function clone(obj: any): any; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
-	export { clone, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };
+	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
+	export { clone, shuffleArray, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };
 
 }
 declare module 'graphinius/core/Nodes' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $E from 'graphinius/core/Edges';
 	export interface NeighborEntry {
 	    node: IBaseNode;
@@ -104,6 +96,7 @@ declare module 'graphinius/core/Nodes' {
 	    nextNodes(): Array<NeighborEntry>;
 	    connNodes(): Array<NeighborEntry>;
 	    reachNodes(identityFunc?: Function): Array<NeighborEntry>;
+	    allNeighbors(identityFunc?: Function): Array<NeighborEntry>;
 	    clone(): IBaseNode;
 	} class BaseNode implements IBaseNode {
 	    protected _id: string;
@@ -114,14 +107,6 @@ declare module 'graphinius/core/Nodes' {
 	    protected _features: {
 	        [k: string]: any;
 	    };
-	    /**
-	     * Design decision:
-	     * Do we only use ONE _edges hash - OR -
-	     * separate hashes for _in_edges, _out_edges, _und_edges
-	     * As getting edges based on their type during the
-	     * execution of graph algorithms is pretty common,
-	     * it's logical to separate the structures.
-	     */
 	    protected _in_edges: {
 	        [k: string]: $E.IBaseEdge;
 	    };
@@ -140,7 +125,7 @@ declare module 'graphinius/core/Nodes' {
 	    getFeatures(): {
 	        [k: string]: any;
 	    };
-	    getFeature(key: string): any;
+	    getFeature(key: string): any | undefined;
 	    setFeatures(features: {
 	        [k: string]: any;
 	    }): void;
@@ -150,22 +135,6 @@ declare module 'graphinius/core/Nodes' {
 	    inDegree(): number;
 	    outDegree(): number;
 	    degree(): number;
-	    /**
-	     * We have to:
-	     * 1. throw an error if the edge is already attached
-	     * 2. add it to the edge array
-	     * 3. check type of edge (directed / undirected)
-	     * 4. update our degrees accordingly
-	     * This is a design decision we can defend by pointing out
-	     * that querying degrees will occur much more often
-	     * than modifying the edge structure of a node (??)
-	     * One further point: do we also check for duplicate
-	     * edges not in the sense of duplicate ID's but duplicate
-	     * structure (nodes, direction) ?
-	     * => Not for now, as we would have to check every edge
-	     * instead of simply checking the hash id...
-	     * ALTHOUGH: adding edges will (presumably) not occur often...
-	     */
 	    addEdge(edge: $E.IBaseEdge): void;
 	    hasEdge(edge: $E.IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
@@ -190,47 +159,11 @@ declare module 'graphinius/core/Nodes' {
 	    prevNodes(): Array<NeighborEntry>;
 	    nextNodes(): Array<NeighborEntry>;
 	    connNodes(): Array<NeighborEntry>;
-	    /**
-	     *
-	     * @param identityFunc can be used to remove 'duplicates' from resulting array,
-	     * if necessary
-	     * @returns {Array}
-	     *
-	   */
 	    reachNodes(identityFunc?: Function): Array<NeighborEntry>;
+	    allNeighbors(identityFunc?: Function): Array<NeighborEntry>;
 	    clone(): IBaseNode;
 	}
 	export { BaseNode };
-
-}
-declare module 'graphinius/utils/randGenUtils' {
-	 function randBase36String(): string; function runif(min: any, max: any, discrete: any): any; function rnorm(mean?: any, stdev?: any): any; function rchisq(degreesOfFreedom: any): number; function rpoisson(lambda: any): number; function rcauchy(loc: any, scale: any): any; function rbernoulli(p: any): number; function histogram(data: any, binCount: any): any; function rlist(list: any): any; let rvunif: () => any; let rvnorm: () => any; let rvchisq: () => any; let rvpoisson: () => any; let rvcauchy: () => any; let rvbernoulli: () => any; let rvlist: () => any;
-	export { randBase36String, runif, rnorm, rchisq, rpoisson, rcauchy, rbernoulli, rlist, histogram, rvunif, rvnorm, rvchisq, rvpoisson, rvcauchy, rvbernoulli, rvlist };
-
-}
-declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
-	    debug: string;
-	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
-
-}
-declare module 'graphinius/utils/logger' {
-	export interface CONFIG {
-	    log_level: string;
-	} class Logger {
-	    config: CONFIG;
-	    constructor(config?: any);
-	    log(msg: any): boolean;
-	    error(err: any): boolean;
-	    dir(obj: any): boolean;
-	    info(msg: any): boolean;
-	    warn(msg: any): boolean;
-	}
-	export { Logger };
 
 }
 declare module 'graphinius/utils/callbackUtils' {
@@ -239,7 +172,6 @@ declare module 'graphinius/utils/callbackUtils' {
 
 }
 declare module 'graphinius/search/BFS' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $E from 'graphinius/core/Edges';
 	import * as $G from 'graphinius/core/Graph';
@@ -283,7 +215,6 @@ declare module 'graphinius/search/BFS' {
 
 }
 declare module 'graphinius/search/DFS' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $G from 'graphinius/core/Graph';
 	export interface DFS_Config {
@@ -329,13 +260,12 @@ declare module 'graphinius/search/DFS' {
 
 }
 declare module 'graphinius/datastructs/binaryHeap' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	export enum BinaryHeapMode {
 	    MIN = 0,
-	    MAX = 1,
+	    MAX = 1
 	}
 	export interface PositionHeapEntry {
-	    priority: number;
+	    score: number;
 	    position: number;
 	}
 	export interface IBinaryHeap {
@@ -343,7 +273,7 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    getArray(): Array<any>;
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    insert(obj: any): void;
@@ -356,67 +286,36 @@ declare module 'graphinius/datastructs/binaryHeap' {
 	    private _mode;
 	    private _evalPriority;
 	    private _evalObjID;
+	    _nr_removes: number;
 	    private _array;
 	    private _positions;
-	    /**
-	     * Mode of a min heap should only be set upon
-	     * instantiation and never again afterwards...
-	     * @param _mode MIN or MAX heap
-	     * @param _evalPriority the evaluation function applied to
-	     * all incoming objects to determine it's score
-	     * @param _evalObjID function to determine the identity of
-	     * the object we are looking for at removal etc..
-	     */
 	    constructor(_mode?: BinaryHeapMode, _evalPriority?: (obj: any) => number, _evalObjID?: (obj: any) => any);
 	    getMode(): BinaryHeapMode;
 	    getArray(): Array<any>;
 	    getPositions(): {
 	        [id: string]: PositionHeapEntry;
-	    } | {
-	        [id: string]: PositionHeapEntry[];
 	    };
 	    size(): number;
 	    getEvalPriorityFun(): Function;
-	    evalInputPriority(obj: any): number;
+	    evalInputScore(obj: any): number;
 	    getEvalObjIDFun(): Function;
 	    evalInputObjID(obj: any): any;
 	    peek(): any;
 	    pop(): any;
 	    find(obj: any): any;
-	    /**
-	     * Insert - Adding an object to the heap
-	     * @param obj the obj to add to the heap
-	     * @returns {number} the objects index in the internal array
-	     */
 	    insert(obj: any): void;
-	    /**
-	     *
-	     */
 	    remove(obj: any): any;
-	    private trickleDown(i);
-	    private trickleUp(i);
-	    private orderCorrect(obj_a, obj_b);
-	    /**
-	     * Superstructure to enable search in BinHeap in O(1)
-	     * @param obj
-	     * @param pos
-	     */
-	    private setNodePosition(obj, new_pos, replace?, old_pos?);
-	    /**
-	     *
-	     */
-	    private getNodePosition(obj);
-	    /**
-	     * @param obj
-	     * @returns {number}
-	     */
-	    private unsetNodePosition(obj);
+	    private trickleDown;
+	    private trickleUp;
+	    private orderCorrect;
+	    private setNodePosition;
+	    private getNodePosition;
+	    private removeNodePosition;
 	}
 	export { BinaryHeap };
 
 }
 declare module 'graphinius/search/PFS' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $G from 'graphinius/core/Graph';
 	import * as $BH from 'graphinius/datastructs/binaryHeap';
@@ -440,6 +339,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Callbacks {
 	    init_pfs?: Array<Function>;
+	    new_current?: Array<Function>;
 	    not_encountered?: Array<Function>;
 	    node_open?: Array<Function>;
 	    node_closed?: Array<Function>;
@@ -449,6 +349,7 @@ declare module 'graphinius/search/PFS' {
 	}
 	export interface PFS_Messages {
 	    init_pfs_msgs?: Array<string>;
+	    new_current_msgs?: Array<string>;
 	    not_enc_msgs?: Array<string>;
 	    node_open_msgs?: Array<string>;
 	    node_closed_msgs?: Array<string>;
@@ -471,7 +372,7 @@ declare module 'graphinius/search/PFS' {
 	    current: $N.NeighborEntry;
 	    adj_nodes: Array<$N.NeighborEntry>;
 	    next: $N.NeighborEntry;
-	    better_dist: number;
+	    proposed_dist: number;
 	} function PFS(graph: $G.IGraph, v: $N.IBaseNode, config?: PFS_Config): {
 	    [id: string]: PFS_ResultEntry;
 	}; function preparePFSStandardConfig(): PFS_Config;
@@ -479,28 +380,87 @@ declare module 'graphinius/search/PFS' {
 
 }
 declare module 'graphinius/search/BellmanFord' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
-	import * as $N from 'graphinius/core/Nodes'; function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode, cycle?: boolean): Array<number> | boolean; function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode, cycle?: boolean): {} | boolean;
+	import * as $N from 'graphinius/core/Nodes';
+	export interface BFArrrayResult {
+	    distances: Array<number>;
+	    neg_cycle: boolean;
+	}
+	export interface BFDictResult {
+	    distances: {};
+	    neg_cycle: boolean;
+	} function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult; function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult;
 	export { BellmanFordDict, BellmanFordArray };
 
 }
+declare module 'graphinius/search/Dijkstra' {
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph';
+	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
+	    [id: string]: $PFS.PFS_ResultEntry;
+	};
+	export { Dijkstra };
+
+}
+declare module 'graphinius/search/Johnsons' {
+	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
+	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
+
+}
+declare module 'graphinius/config/run_config' {
+	 const LOG_LEVELS: {
+	    debug: string;
+	    production: string;
+	}; const RUN_CONFIG: {
+	    log_level: string;
+	};
+	export { LOG_LEVELS, RUN_CONFIG };
+
+}
+declare module 'graphinius/utils/logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any, color?: number, bright?: boolean): boolean;
+	    error(err: any, color?: number, bright?: boolean): boolean;
+	    dir(obj: any, color?: number, bright?: boolean): boolean;
+	    info(msg: any, color?: number, bright?: boolean): boolean;
+	    warn(msg: any, color?: number, bright?: boolean): boolean;
+	    write(msg: any, color?: number, bright?: boolean): boolean;
+	    private colorize;
+	}
+	export { Logger };
+
+}
 declare module 'graphinius/core/Graph' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $E from 'graphinius/core/Edges';
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
 	    UNDIRECTED = 2,
-	    MIXED = 3,
-	}
-	export interface DegreeDistribution {
-	    in: Uint16Array;
-	    out: Uint16Array;
-	    dir: Uint16Array;
-	    und: Uint16Array;
-	    all: Uint16Array;
+	    MIXED = 3
 	}
 	export interface GraphStats {
 	    mode: GraphMode;
@@ -510,9 +470,6 @@ declare module 'graphinius/core/Graph' {
 	    density_dir: number;
 	    density_und: number;
 	}
-	/**
-	 * Only gives the best distance to a node in case of multiple direct edges
-	 */
 	export type MinAdjacencyListDict = {
 	    [id: string]: MinAdjacencyListDictEntry;
 	};
@@ -525,10 +482,8 @@ declare module 'graphinius/core/Graph' {
 	    _label: string;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    degreeDistribution(): DegreeDistribution;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
-	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): $N.IBaseNode;
 	    getNodes(): {
@@ -537,6 +492,7 @@ declare module 'graphinius/core/Graph' {
 	    nrNodes(): number;
 	    getRandomNode(): $N.IBaseNode;
 	    deleteNode(node: any): void;
+	    getNodeIterator(): any;
 	    addEdgeByID(label: string, node_a: $N.IBaseNode, node_b: $N.IBaseNode, opts?: {}): $E.IBaseEdge;
 	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): $E.IBaseEdge;
@@ -557,8 +513,9 @@ declare module 'graphinius/core/Graph' {
 	    deleteEdge(edge: $E.IBaseEdge): void;
 	    getRandomDirEdge(): $E.IBaseEdge;
 	    getRandomUndEdge(): $E.IBaseEdge;
+	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
-	    toDirectedGraph(): IGraph;
+	    toDirectedGraph(copy?: any): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    pickRandomProperty(propList: any): any;
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
@@ -570,11 +527,12 @@ declare module 'graphinius/core/Graph' {
 	    clearAllDirEdges(): void;
 	    clearAllUndEdges(): void;
 	    clearAllEdges(): void;
-	    clone(): IGraph;
-	    cloneSubGraph(start: $N.IBaseNode, cutoff: Number): IGraph;
+	    cloneStructure(): IGraph;
+	    cloneSubGraphStructure(start: $N.IBaseNode, cutoff: Number): IGraph;
 	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
+	    reweighIfHasNegativeEdge(clone: boolean): IGraph;
 	} class BaseGraph implements IGraph {
 	    _label: any;
 	    private _nr_nodes;
@@ -591,69 +549,32 @@ declare module 'graphinius/core/Graph' {
 	        [key: string]: $E.IBaseEdge;
 	    };
 	    constructor(_label: any);
-	    toDirectedGraph(): IGraph;
+	    getNodeIterator(): Iterator<$N.IBaseNode>;
+	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
+	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
-	    /**
-	     * Do we want to throw an error if an edge is unweighted?
-	     * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
-	     */
+	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
-	    /**
-	     *
-	     * @param incoming
-	     */
 	    nextArray(incoming?: boolean): NextArray;
-	    /**
-	     * This function iterates over the adjDict in order to use it's advantage
-	     * of being able to override edges if edges with smaller weights exist
-	     *
-	     * However, the order of nodes in the array represents the order of nodes
-	     * at creation time, no other implicit alphabetical or collational sorting.
-	     *
-	     * This has to be considered when further processing the result
-	     *
-	     * @param incoming whether or not to consider incoming edges as well
-	     * @param include_self contains a distance to itself apart?
-	     * @param self_dist default distance to self
-	     */
 	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
-	    /**
-	     *
-	     * @param incoming whether or not to consider incoming edges as well
-	     * @param include_self contains a distance to itself apart?
-	     * @param self_dist default distance to self
-	     */
 	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    /**
-	     * We assume graphs in which no node has higher total degree than 65536
-	     */
-	    degreeDistribution(): DegreeDistribution;
 	    nrNodes(): number;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
 	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
 	    addNode(node: $N.IBaseNode): boolean;
-	    /**
-	     * Instantiates a new node object, copies the features and
-	     * adds the node to the graph, but does NOT clone it's edges
-	     * @param node the node object to clone
-	     */
-	    cloneAndAddNode(node: $N.IBaseNode): $N.IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): $N.IBaseNode;
 	    getNodes(): {
 	        [key: string]: $N.IBaseNode;
 	    };
-	    /**
-	     * CAUTION - This function takes linear time in # nodes
-	     */
 	    getRandomNode(): $N.IBaseNode;
 	    deleteNode(node: any): void;
 	    hasEdgeID(id: string): boolean;
 	    getEdgeById(id: string): $E.IBaseEdge;
-	    private checkExistanceOfEdgeNodes(node_a, node_b);
+	    private checkExistanceOfEdgeNodes;
 	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
 	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
 	    getDirEdges(): {
@@ -665,13 +586,7 @@ declare module 'graphinius/core/Graph' {
 	    getDirEdgesArray(): Array<$E.IBaseEdge>;
 	    getUndEdgesArray(): Array<$E.IBaseEdge>;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): $E.IBaseEdge;
-	    /**
-	     * Now all test cases pertaining addEdge() call this one...
-	     */
 	    addEdgeByID(id: string, node_a: $N.IBaseNode, node_b: $N.IBaseNode, opts?: $E.EdgeConstructorOptions): $E.IBaseEdge;
-	    /**
-	     * Test cases should be reversed / completed
-	     */
 	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    deleteEdge(edge: $E.IBaseEdge): void;
 	    deleteInEdgesOf(node: $N.IBaseNode): void;
@@ -679,76 +594,41 @@ declare module 'graphinius/core/Graph' {
 	    deleteDirEdgesOf(node: $N.IBaseNode): void;
 	    deleteUndEdgesOf(node: $N.IBaseNode): void;
 	    deleteAllEdgesOf(node: $N.IBaseNode): void;
-	    /**
-	     * Remove all the (un)directed edges in the graph
-	     */
 	    clearAllDirEdges(): void;
 	    clearAllUndEdges(): void;
 	    clearAllEdges(): void;
-	    /**
-	     * CAUTION - This function is linear in # directed edges
-	     */
 	    getRandomDirEdge(): $E.IBaseEdge;
-	    /**
-	     * CAUTION - This function is linear in # undirected edges
-	     */
 	    getRandomUndEdge(): $E.IBaseEdge;
-	    clone(): IGraph;
-	    cloneSubGraph(root: $N.IBaseNode, cutoff: Number): IGraph;
+	    cloneStructure(): IGraph;
+	    cloneSubGraphStructure(root: $N.IBaseNode, cutoff: Number): IGraph;
 	    protected checkConnectedNodeOrThrow(node: $N.IBaseNode): void;
 	    protected updateGraphMode(): void;
 	    pickRandomProperty(propList: any): any;
-	    /**
-	     * In some cases we need to give back a large number of objects
-	     * in one swoop, as calls to Object.keys() are really slow
-	     * for large input objects.
-	     *
-	     * In order to do this, we only extract the keys once and then
-	     * iterate over the key list and add them to a result array
-	     * with probability = amount / keys.length
-	     *
-	     * We also mark all used keys in case we haven't picked up
-	     * enough entities for the result array after the first round.
-	     * We then just fill up the rest of the result array linearly
-	     * with as many unused keys as necessary
-	     *
-	     *
-	     * @TODO include general Test Cases
-	     * @TODO check if amount is larger than propList size
-	     * @TODO This seems like a simple hack - filling up remaining objects
-	     * Could be replaced by a better fraction-increasing function above...
-	     *
-	     * @param propList
-	     * @param fraction
-	     * @returns {Array}
-	     */
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
 	}
 	export { BaseGraph };
 
 }
 declare module 'graphinius/search/FloydWarshall' {
-	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshall(graph: $G.IGraph): {};
-	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshall };
+	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshallDict(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshallDict, changeNextToDirectParents };
 
 }
 declare module 'graphinius/centralities/Betweenness' {
-	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $G from 'graphinius/core/Graph'; function inBetweennessCentrality(graph: $G.IGraph, sparse?: boolean): {};
-	export { inBetweennessCentrality };
+	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boolean): {};
+	export { betweennessCentrality };
 
 }
 declare module 'graphinius/centralities/Brandes' {
-	/**
-	 * Created by ru on 14.09.17.
-	 */
-	import * as $G from 'graphinius/core/Graph'; function Brandes(graph: $G.IGraph): {};
-	export { Brandes };
+	import * as $G from 'graphinius/core/Graph'; function BrandesUnweighted(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
+	export interface BrandesHeapEntry {
+	    id: string;
+	    best: number;
+	} function BrandesWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {}; function normalizeScores(CB: any, N: any, directed: any): void;
+	export { BrandesUnweighted, BrandesWeighted, BrandesPFSbased, normalizeScores };
 
 }
 declare module 'graphinius/centralities/Closeness' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph'; class closenessCentrality {
 	    getCentralityMapFW(graph: $G.IGraph): Array<Number>;
 	    getCentralityMap(graph: $G.IGraph): {
@@ -759,30 +639,35 @@ declare module 'graphinius/centralities/Closeness' {
 
 }
 declare module 'graphinius/centralities/Degree' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
 	export enum DegreeMode {
 	    in = 0,
 	    out = 1,
 	    und = 2,
 	    dir = 3,
-	    all = 4,
-	} class degreeCentrality {
+	    all = 4
+	}
+	export interface DegreeDistribution {
+	    in: Uint32Array;
+	    out: Uint32Array;
+	    dir: Uint32Array;
+	    und: Uint32Array;
+	    all: Uint32Array;
+	} class DegreeCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode): {
 	        [id: string]: number;
 	    };
-	    getHistorgram(graph: $G.IGraph): $G.DegreeDistribution;
+	    degreeDistribution(graph: $G.IGraph): DegreeDistribution;
 	}
-	export { degreeCentrality };
+	export { DegreeCentrality };
 
 }
-declare module 'graphinius/centralities/gauss' {
+declare module 'graphinius/centralities/Gauss' {
 	 function gauss(A: any[], x: any[]): any[];
 	export { gauss };
 
 }
 declare module 'graphinius/centralities/PageRankGaussian' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph'; class pageRankDetCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean): {
 	        [id: string]: number;
@@ -792,7 +677,6 @@ declare module 'graphinius/centralities/PageRankGaussian' {
 
 }
 declare module 'graphinius/centralities/PageRankRandomWalk' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph'; class pageRankCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?: number, conv?: number, iterations?: number): {
 	        [id: string]: number;
@@ -801,9 +685,7 @@ declare module 'graphinius/centralities/PageRankRandomWalk' {
 	export { pageRankCentrality };
 
 }
-/// <reference path="../../typings/tsd.d.ts" />
 declare module 'graphinius/mincutmaxflow/minCutMaxFlowBoykov' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $E from 'graphinius/core/Edges';
 	import * as $G from 'graphinius/core/Graph';
@@ -863,7 +745,6 @@ declare module 'graphinius/mincutmaxflow/minCutMaxFlowBoykov' {
 
 }
 declare module 'graphinius/energyminimization/expansionBoykov' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $G from 'graphinius/core/Graph';
 	import * as $MC from 'graphinius/mincutmaxflow/minCutMaxFlowBoykov';
@@ -880,7 +761,6 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 	export interface IEMEBoykov {
 	    calculateCycle(): EMEResult;
 	    constructGraph(): $G.IGraph;
-	    deepCopyGraph(graph: $G.IGraph): $G.IGraph;
 	    initGraph(graph: $G.IGraph): $G.IGraph;
 	    prepareEMEStandardConfig(): EMEConfig;
 	}
@@ -900,7 +780,6 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 	    calculateCycle(): EMEResult;
 	    constructGraph(): $G.IGraph;
 	    labelGraph(mincut: $MC.MCMFResult, source: $N.IBaseNode): $G.IGraph;
-	    deepCopyGraph(graph: $G.IGraph): $G.IGraph;
 	    initGraph(graph: $G.IGraph): $G.IGraph;
 	    prepareEMEStandardConfig(): EMEConfig;
 	}
@@ -908,7 +787,6 @@ declare module 'graphinius/energyminimization/expansionBoykov' {
 
 }
 declare module 'graphinius/generators/kroneckerLeskovec' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
 	export interface KROLConfig {
 	    genMat: Array<Array<number>>;
@@ -934,44 +812,52 @@ declare module 'graphinius/generators/kroneckerLeskovec' {
 
 }
 declare module 'graphinius/utils/remoteUtils' {
-	import http = require('http'); function retrieveRemoteFile(url: string, cb: Function): http.ClientRequest;
+	/// <reference types="node" />
+	import * as http from 'http';
+	export interface RequestConfig {
+	    remote_host: string;
+	    remote_path: string;
+	    file_name: string;
+	} function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
 	export { retrieveRemoteFile };
 
 }
 declare module 'graphinius/io/input/CSVInput' {
-	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
+	import * as $R from 'graphinius/utils/remoteUtils';
 	export interface ICSVInput {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
+	    _weighted: boolean;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromAdjacencyListURL(fileurl: string, cb: Function): any;
+	    readFromAdjacencyListURL(config: $R.RequestConfig, cb: Function): any;
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
 	    readFromEdgeList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromEdgeListURL(fileurl: string, cb: Function): any;
+	    readFromEdgeListURL(config: $R.RequestConfig, cb: Function): any;
 	} class CSVInput implements ICSVInput {
 	    _separator: string;
 	    _explicit_direction: boolean;
 	    _direction_mode: boolean;
-	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
-	    readFromAdjacencyListURL(fileurl: string, cb: Function): void;
-	    readFromEdgeListURL(fileurl: string, cb: Function): void;
-	    private readGraphFromURL(fileurl, cb, localFun);
+	    _weighted: boolean;
+	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean, _weighted?: boolean);
+	    readFromAdjacencyListURL(config: $R.RequestConfig, cb: Function): void;
+	    readFromEdgeListURL(config: $R.RequestConfig, cb: Function): void;
+	    private readGraphFromURL;
 	    readFromAdjacencyListFile(filepath: string): $G.IGraph;
 	    readFromEdgeListFile(filepath: string): $G.IGraph;
-	    private readFileAndReturn(filepath, func);
+	    private readFileAndReturn;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
-	    readFromEdgeList(input: Array<string>, graph_name: string): $G.IGraph;
-	    private checkNodeEnvironment();
+	    readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
+	    private checkNodeEnvironment;
 	}
 	export { CSVInput };
 
 }
 declare module 'graphinius/io/input/JSONInput' {
-	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
+	import * as $R from 'graphinius/utils/remoteUtils';
 	export interface JSONEdge {
 	    to: string;
 	    directed?: string;
@@ -1001,34 +887,22 @@ declare module 'graphinius/io/input/JSONInput' {
 	    _weighted_mode: boolean;
 	    readFromJSONFile(file: string): $G.IGraph;
 	    readFromJSON(json: {}): $G.IGraph;
-	    readFromJSONURL(fileurl: string, cb: Function): void;
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	} class JSONInput implements IJSONInput {
 	    _explicit_direction: boolean;
 	    _direction: boolean;
 	    _weighted_mode: boolean;
 	    constructor(_explicit_direction?: boolean, _direction?: boolean, _weighted_mode?: boolean);
 	    readFromJSONFile(filepath: string): $G.IGraph;
-	    readFromJSONURL(fileurl: string, cb: Function): void;
-	    /**
-	     * In this case, there is one great difference to the CSV edge list cases:
-	     * If you don't explicitly define a directed edge, it will simply
-	     * instantiate an undirected one
-	     * we'll leave that for now, as we will produce apt JSON sources later anyways...
-	     */
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	    readFromJSON(json: JSONGraph): $G.IGraph;
-	    /**
-	     * Infinity & -Infinity cases are redundant, as JavaScript
-	     * handles them correctly anyways (for now)
-	     * @param edge_input
-	     */
-	    private handleEdgeWeights(edge_input);
-	    private checkNodeEnvironment();
+	    private handleEdgeWeights;
+	    private checkNodeEnvironment;
 	}
 	export { JSONInput };
 
 }
 declare module 'graphinius/io/output/CSVOutput' {
-	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
 	export interface ICSVOutput {
 	    _separator: string;
@@ -1052,7 +926,6 @@ declare module 'graphinius/io/output/CSVOutput' {
 
 }
 declare module 'graphinius/io/output/JSONOutput' {
-	/// <reference path="../../../typings/tsd.d.ts" />
 	import * as $G from 'graphinius/core/Graph';
 	export interface IJSONOutput {
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
@@ -1061,21 +934,89 @@ declare module 'graphinius/io/output/JSONOutput' {
 	    constructor();
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONSString(graph: $G.IGraph): string;
-	    private handleEdgeWeight(edge);
+	    private handleEdgeWeight;
 	}
 	export { JSONOutput };
 
 }
+declare module 'graphinius/partitioning/Interfaces' {
+	import { IBaseNode } from 'graphinius/core/Nodes';
+	export interface GraphPartitioning {
+	    partitions: Map<number, Partition>;
+	    nodePartMap: Map<string, number>;
+	    cut_cost: number;
+	}
+	export interface Partition {
+	    nodes: Map<string, IBaseNode>;
+	}
+
+}
+declare module 'graphinius/partitioning/KCut' {
+	import { IGraph } from 'graphinius/core/Graph';
+	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
+	export class KCut {
+	    private _graph;
+	    private _partitioning;
+	    constructor(_graph: IGraph);
+	    cut(k: number, shuffle?: boolean): GraphPartitioning;
+	}
+
+}
+declare module 'graphinius/partitioning/KLPartitioning' {
+	import { IGraph } from 'graphinius/core/Graph';
+	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
+	import { BinaryHeap } from 'graphinius/datastructs/binaryHeap';
+	export type GainEntry = {
+	    id: string;
+	    source: IBaseNode;
+	    target: IBaseNode;
+	    gain: number;
+	};
+	export interface KL_Costs {
+	    internal: {
+	        [key: string]: number;
+	    };
+	    external: {
+	        [key: string]: number;
+	    };
+	}
+	export interface KL_Config {
+	    initShuffle?: boolean;
+	    directed?: boolean;
+	    weighted?: boolean;
+	}
+	export interface KL_Open_Sets {
+	    partition_a: Map<string, boolean>;
+	    partition_b: Map<string, boolean>;
+	}
+	export class KLPartitioning {
+	    private _graph;
+	    _partitionings: Map<number, GraphPartitioning>;
+	    _costs: KL_Costs;
+	    _gainsHeap: BinaryHeap;
+	    _bestPartitioning: number;
+	    _currentPartitioning: number;
+	    _open_sets: KL_Open_Sets;
+	    _adjList: {};
+	    private _keys;
+	    private _config;
+	    private _gainsHash;
+	    constructor(_graph: IGraph, config?: KL_Config);
+	    private initPartitioning;
+	    private initCosts;
+	    initGainsHeap(): void;
+	    performIteration(): void;
+	    updateCosts(swap_ge: GainEntry): void;
+	    doSwapAndDropLockedConnections(): GainEntry;
+	    private removeGainsEntry;
+	}
+
+}
 declare module 'graphinius/perturbation/SimplePerturbations' {
-	/// <reference path="../../typings/tsd.d.ts" />
 	import * as $N from 'graphinius/core/Nodes';
 	import * as $E from 'graphinius/core/Edges';
 	import * as $G from 'graphinius/core/Graph';
-	/**
-	 * EITHER generate new edges via specified degree span
-	 * OR via probability of edge creation from a specified
-	 * set of nodes to all others
-	 */
 	export interface NodeDegreeConfiguration {
 	    und_degree?: number;
 	    dir_degree?: number;
@@ -1107,95 +1048,25 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	} class SimplePerturber implements ISimplePerturber {
 	    private _graph;
 	    constructor(_graph: $G.IGraph);
-	    /**
-	     *
-	     * @param percentage
-	     */
 	    randomlyDeleteNodesPercentage(percentage: number): void;
-	    /**
-	     *
-	     * @param percentage
-	     */
 	    randomlyDeleteUndEdgesPercentage(percentage: number): void;
-	    /**
-	     *
-	     * @param percentage
-	     */
 	    randomlyDeleteDirEdgesPercentage(percentage: number): void;
-	    /**
-	     *
-	     */
 	    randomlyDeleteNodesAmount(amount: number): void;
-	    /**
-	     *
-	     */
 	    randomlyDeleteUndEdgesAmount(amount: number): void;
-	    /**
-	     *
-	     */
 	    randomlyDeleteDirEdgesAmount(amount: number): void;
-	    /**
-	     *
-	     */
 	    randomlyAddUndEdgesPercentage(percentage: number): void;
-	    /**
-	     *
-	     */
 	    randomlyAddDirEdgesPercentage(percentage: number): void;
-	    /**
-	     *
-	     * DEFAULT edge direction: UNDIRECTED
-	     */
 	    randomlyAddEdgesAmount(amount: number, config?: $E.EdgeConstructorOptions): void;
-	    /**
-	     *
-	     */
 	    randomlyAddNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
-	    /**
-	     *
-	     * If the degree configuration is invalid
-	     * (negative or infinite degree amount / percentage)
-	     * the nodes will have been created nevertheless
-	     */
 	    randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
-	    /**
-	     * Go through the degree_configuration provided and create edges
-	     * as requested by config
-	     */
-	    private createEdgesByConfig(config, new_nodes);
-	    /**
-	     * Simple edge generator:
-	     * Go through all node combinations, and
-	     * add an (un)directed edge with
-	     * @param probability and
-	     * @direction true or false
-	     * CAUTION: this algorithm takes quadratic runtime in #nodes
-	     */
+	    private createEdgesByConfig;
 	    createRandomEdgesProb(probability: number, directed?: boolean, new_nodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
-	    /**
-	     * Simple edge generator:
-	     * Go through all nodes, and
-	     * add [min, max] (un)directed edges to
-	     * a randomly chosen node
-	     * CAUTION: this algorithm could take quadratic runtime in #nodes
-	     * but should be much faster
-	     */
 	    createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
 	}
 	export { SimplePerturber };
-
-}
-declare module 'graphinius/search/Dijkstra' {
-	/// <reference path="../../typings/tsd.d.ts" />
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
-	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
-	    [id: string]: $PFS.PFS_ResultEntry;
-	};
-	export { Dijkstra };
 
 }

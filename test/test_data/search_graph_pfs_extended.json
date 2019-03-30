@@ -69,10 +69,10 @@
           "weight": 6
 				},
 				{
-					"to": "E",
-					"directed": true,
+          "to": "E",
+          "directed": true,
           "weight": 17
-				},
+        },
         {
 					"to": "E",
 					"directed": false,

@@ -1,3 +1,9 @@
+# Build
+build
+
+# Docs
+docs
+
 # Logs
 logs
 *.log
@@ -12,6 +18,9 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+
+# Mochawesome output
+mochawesome-report
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -46,3 +55,6 @@ test/test_data/output/**/*.json
 
 # MISC
 yarn.lock
+
+# Test reports
+mochawesome-report

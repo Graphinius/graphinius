@@ -1,5 +1,3 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 
@@ -34,6 +32,25 @@ function clone(obj:any): any {
       }
     }
     return cloneObj;
+}
+
+
+/**
+ * 
+ * @param arr
+ * 
+ * @todo it's obvious, nevertheless needs some testing...
+ */
+function shuffleArray(arr: Array<any>) : Array<any> {
+  for (var i = arr.length-1; i >=0; i--) {
+   
+      var randomIndex = Math.floor(Math.random()*(i+1)); 
+      var itemAtIndex = arr[randomIndex]; 
+       
+      arr[randomIndex] = arr[i]; 
+      arr[i] = itemAtIndex;
+  }
+  return arr;
 }
 
 
@@ -154,4 +171,4 @@ function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>
 }
 
 
-export { clone, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };
+export { clone, shuffleArray, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };

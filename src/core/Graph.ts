@@ -1,14 +1,12 @@
-/// <reference path="../../typings/tsd.d.ts" />
-
 import * as $N from './Nodes';
 import * as $E from './Edges';
-import * as randgen from '../utils/randGenUtils';
 import * as $DS from '../utils/structUtils';
-import { Logger } from '../utils/logger';
 import * as $BFS from '../search/BFS';
 import * as $DFS from '../search/DFS';
-import { BellmanFordArray } from '../search/BellmanFord';
+import * as $BF from '../search/BellmanFord';
+import * as $JO from '../search/Johnsons';
 
+import { Logger } from '../utils/logger';
 let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
@@ -18,14 +16,6 @@ export enum GraphMode {
 	DIRECTED,
 	UNDIRECTED,
 	MIXED
-}
-
-export interface DegreeDistribution {
-	in	: Uint16Array;
-	out	: Uint16Array;
-	dir	: Uint16Array;
-	und	: Uint16Array;
-	all	: Uint16Array;
 }
 
 export interface GraphStats {
@@ -52,19 +42,18 @@ export interface IGraph {
 	_label : string;
 	getMode() : GraphMode;
 	getStats() : GraphStats;
-	degreeDistribution() : DegreeDistribution;
 
 	// NODE STUFF
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode;
 	addNode(node: $N.IBaseNode) : boolean;
-	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode;
 	hasNodeID(id: string) : boolean;
 	getNodeById(id: string) : $N.IBaseNode;
 	getNodes() : {[key: string] : $N.IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : $N.IBaseNode;
 	deleteNode(node) : void;
-
+	getNodeIterator();
+	
 	// EDGE STUFF
 	addEdgeByID(label: string, node_a : $N.IBaseNode, node_b : $N.IBaseNode, opts? : {}) : $E.IBaseEdge;
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
@@ -82,10 +71,13 @@ export interface IGraph {
 	deleteEdge(edge: $E.IBaseEdge) : void;
 	getRandomDirEdge() : $E.IBaseEdge;
 	getRandomUndEdge() : $E.IBaseEdge;
+
+	// NEGATIVE EDGES AND CYCLES
+	hasNegativeEdge(): boolean
 	hasNegativeCycles(node? : $N.IBaseNode) : boolean;
 
 	// REINTERPRETING EDGES
-	toDirectedGraph() : IGraph;
+	toDirectedGraph(copy?) : IGraph;
 	toUndirectedGraph() : IGraph;
 
 	// PROPERTIES
@@ -105,13 +97,16 @@ export interface IGraph {
 	clearAllEdges() : void;
 
 	// CLONING
-	clone() : IGraph;
-	cloneSubGraph(start:$N.IBaseNode, cutoff:Number) : IGraph;
+	cloneStructure() : IGraph;
+	cloneSubGraphStructure(start:$N.IBaseNode, cutoff:Number) : IGraph;
 
 	// REPRESENTATIONS
 	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
 	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
 	nextArray(incoming?:boolean) : NextArray;
+
+	// REWEIGHTING
+	reweighIfHasNegativeEdge(clone: boolean): IGraph;
 }
 
 
@@ -124,51 +119,117 @@ class BaseGraph implements IGraph {
 	protected _dir_edges : { [key: string] : $E.IBaseEdge } = {};
 	protected _und_edges : { [key: string] : $E.IBaseEdge } = {};
 
-  // protected _typed_nodes: { [type: string] : { [key: string] : $N.IBaseNode } };
-  // protected _typed_dir_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-  // protected _typed_und_edges: { [type: string] : { [key: string] : $E.IBaseEdge } };
-
 	constructor (public _label) {	}
 
 
-	toDirectedGraph() : IGraph {
 
-		return this;
+	*getNodeIterator() : Iterator<$N.IBaseNode> {
+		let keys = Object.keys(this.getNodes());
+		for ( let node_id of keys ) {
+			yield this._nodes[node_id];
+		}
+	}
+
+	
+	/**
+	 * 
+	 * @param clone 
+	 * 
+	 * @comment Convenience method -
+	 * Tests to be found in test suites for
+	 * BaseGraph, BellmanFord and Johnsons
+	 */
+  reweighIfHasNegativeEdge(clone: boolean = false): IGraph {
+    if (this.hasNegativeEdge()) {
+      let result_graph : IGraph = clone ? this.cloneStructure() : this;
+
+      var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
+      result_graph = $JO.addExtraNandE(result_graph, extraNode);
+      let BFresult = $BF.BellmanFordDict(result_graph, extraNode);
+
+      if (BFresult.neg_cycle) {
+        throw new Error("The graph contains a negative cycle, thus it can not be processed");
+      }
+      else {
+        let newWeights: {} = BFresult.distances;
+
+        result_graph = $JO.reWeighGraph(result_graph, newWeights, extraNode);
+        result_graph.deleteNode(extraNode);
+      } 
+      return result_graph;
+    }
+	}
+	
+
+	/**
+	 * Version 1: do it in-place (to the object you receive)
+	 * Version 2: clone the graph first, return the mutated clone
+	 */
+	toDirectedGraph(copy = false) : IGraph {
+		let result_graph = copy ? this.cloneStructure() : this;
+		// if graph has no edges, we want to throw an exception
+		if ( this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+			throw new Error("Cowardly refusing to re-interpret an empty graph.")
+		}
+
+		return result_graph;
 	}
 
 
+	/**
+	 * @todo implement!!!
+	 */
 	toUndirectedGraph() : IGraph {
 
 		return this;
 	}
 
 	/**
-	 * Do we want to throw an error if an edge is unweighted?
-	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
+	 * what to do if some edges are not weighted at all?
+	 * Since graph traversal algortihms (and later maybe graphs themselves)
+	 * use default weights anyways, I am simply ignoring them for now...
+	 * @todo figure out how to test this...
 	 */
-	hasNegativeCycles(node? : $N.IBaseNode) : boolean {
-		let negative_edge = false,
-				negative_cycle = false,
-				start = node ? node : this.getRandomNode(),
+	hasNegativeEdge(): boolean {
+		let has_neg_edge = false,
 				edge: $E.IBaseEdge;
 
 		// negative und_edges are always negative cycles
-		for ( let edge_id in this._und_edges ) {
+		
+		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
+			if (!edge.isWeighted()) {
+				continue;
+			}
+			if (edge.getWeight() < 0) {
 				return true;
 			}
 		}
-		for ( let edge_id in this._dir_edges ) {
+		for (let edge_id in this._dir_edges) {
 			edge = this._dir_edges[edge_id];
-			if ( edge.getWeight() < 0 ) {
-				negative_edge = true;
+			if (!edge.isWeighted()) {
+				continue;
+			}
+			if (edge.getWeight() < 0) {
+				has_neg_edge = true;
 				break;
 			}
 		}
-		if ( !negative_edge ) {
+		return has_neg_edge;
+	}
+
+	
+	/**
+	 * Do we want to throw an error if an edge is unweighted?
+	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
+	 */
+	hasNegativeCycles(node?: $N.IBaseNode): boolean {
+		if ( !this.hasNegativeEdge() ) {
 			return false;
 		}
+
+		let	negative_cycle = false,
+				start = node ? node : this.getRandomNode();
 
 		/**
 		 * Now do Bellman Ford over all graph components
@@ -184,7 +245,7 @@ class BaseGraph implements IGraph {
 				}
 			});
 
-			if ( <boolean>BellmanFordArray(this, this._nodes[comp_start_node], true) ) {
+			if ( $BF.BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
 				negative_cycle = true;
 			}
 		});
@@ -201,12 +262,15 @@ class BaseGraph implements IGraph {
 		let next = [],
 				node_keys = Object.keys(this._nodes);
 
+		//?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
+		//I do not understand but it works so it should be okay	
 		const adjDict = this.adjListDict(incoming, true, 0);
 		
 		for ( let i = 0; i < this._nr_nodes; ++i ) {
 			next.push([]);
 			for ( let j = 0; j < this._nr_nodes; ++j ) {
 				next[i].push([]);
+				
 				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
 			}
 		}
@@ -305,41 +369,6 @@ class BaseGraph implements IGraph {
 		}
 	}
 
-	/**
-	 * We assume graphs in which no node has higher total degree than 65536
-	 */
-	degreeDistribution() : DegreeDistribution {
-		var max_deg : number = 0,
-				key			: string,
-				node 		: $N.IBaseNode,
-				all_deg : number;
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
-			max_deg =  all_deg > max_deg ? all_deg : max_deg;
-		}
-
-		var deg_dist : DegreeDistribution = {
-			in:  new Uint16Array(max_deg),
-			out: new Uint16Array(max_deg),
-			dir: new Uint16Array(max_deg),
-			und: new Uint16Array(max_deg),
-			all: new Uint16Array(max_deg)
-		};
-
-		for ( key in this._nodes ) {
-			node = this._nodes[key];
-			deg_dist.in[node.inDegree()]++;
-			deg_dist.out[node.outDegree()]++;
-			deg_dist.dir[node.inDegree() + node.outDegree()]++;
-			deg_dist.und[node.degree()]++;
-			deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
-		}
-		// console.dir(deg_dist);
-		return deg_dist;
-	}
-
 	nrNodes() : number {
 		return this._nr_nodes;
 	}
@@ -352,28 +381,29 @@ class BaseGraph implements IGraph {
 		return this._nr_und_edges;
 	}
 
+
+	/**
+	 * 
+	 * @param id 
+	 * @param opts
+	 * 
+	 * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique... 
+	 */
 	addNodeByID(id: string, opts? : {}) : $N.IBaseNode {
+		if ( this.hasNodeID( id ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		var node = new $N.BaseNode(id, opts);
 		return this.addNode(node) ? node : null;
 	}
 
 	addNode(node: $N.IBaseNode) : boolean {
+		if ( this.hasNodeID( node.getID() ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
 		return true;
-	}
-
-	/**
-	 * Instantiates a new node object, copies the features and
-	 * adds the node to the graph, but does NOT clone it's edges
-	 * @param node the node object to clone
-	 */
-	cloneAndAddNode(node: $N.IBaseNode) : $N.IBaseNode {
-		let new_node = new $N.BaseNode(node.getID());
-		new_node.setFeatures($DS.clone(node.getFeatures()));
-		this._nodes[node.getID()] = new_node;
-		this._nr_nodes += 1;
-		return new_node;
 	}
 
 	hasNodeID(id: string) : boolean {
@@ -693,7 +723,7 @@ class BaseGraph implements IGraph {
 	}
 
 
-	clone() : IGraph {
+	cloneStructure() : IGraph {
 		let new_graph = new BaseGraph(this._label),
 				old_nodes = this.getNodes(),
 				old_edge : $E.IBaseEdge,
@@ -716,7 +746,7 @@ class BaseGraph implements IGraph {
 		return new_graph;
 	}
 
-	cloneSubGraph(root:$N.IBaseNode, cutoff:Number) : IGraph{
+	cloneSubGraphStructure(root:$N.IBaseNode, cutoff:Number) : IGraph{
 		let new_graph = new BaseGraph(this._label);
 
 		let config = $BFS.prepareBFSStandardConfig();
@@ -797,9 +827,9 @@ class BaseGraph implements IGraph {
 	 * with as many unused keys as necessary
 	 * 
 	 * 
-	 * @TODO include general Test Cases
-	 * @TODO check if amount is larger than propList size
-	 * @TODO This seems like a simple hack - filling up remaining objects
+	 * @todo include generic Test Cases
+	 * @todo check if amount is larger than propList size
+	 * @todo This seems like a simple hack - filling up remaining objects
 	 * Could be replaced by a better fraction-increasing function above...
 	 * 
 	 * @param propList
