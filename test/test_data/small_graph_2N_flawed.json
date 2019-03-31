@@ -1,0 +1,25 @@
+{
+  "name": "Small graph duplicate undirected edge with different weights",
+  "nodes": 2,
+  "edges": 2,
+	"data": {
+		"A": {
+			"edges": [
+        {
+          "to": "B",
+          "directed": false,
+          "weight": 3
+        }
+      ]
+    },
+		"B": {
+			"edges": [
+        {
+          "to": "A",
+          "directed": false,
+          "weight": 7
+        }
+			]
+		}
+	}
+}

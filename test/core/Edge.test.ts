@@ -20,18 +20,18 @@ describe('==== EDGE TESTS ====', () => {
 		 * are part of a graph - this is the job of the BaseGraph class!
 		 */
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badConst = function() { return new Edge("free-float", null, null) };
-			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
+			var badCtr = function() { return new Edge("free-float", null, null) };
+			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badConst = function() { return new Edge("free-float", new Node("A"), null) };
-			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
+			var badCtr = function() { return new Edge("free-float", new Node("A"), null) };
+			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badConst = function() { return new Edge("free-float", null, new Node("A") ) };
-			expect(badConst).toThrowError("cannot instantiate edge without two valid node objects");
+			var badCtr = function() { return new Edge("free-float", null, new Node("A") ) };
+			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should correctly set _id', () => {

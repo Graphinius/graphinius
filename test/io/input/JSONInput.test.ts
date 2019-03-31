@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
@@ -9,6 +11,7 @@ let JSON_IN = $I.JSONInput;
 let REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
 	small_graph = "./test/test_data/small_graph.json",
+	small_graph_2N_flawed = "./test/test_data/small_graph_2N_flawed.json",
 	small_graph_no_features = "./test/test_data/small_graph_no_features.json",
 	small_graph_weights_crap = "./test/test_data/small_graph_weights_crap.json",
 	real_graph = "./test/test_data/real_graph.json",
@@ -322,6 +325,17 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				expect(graph.getEdgeById("A_E_d").getWeight()).toBe(Number.MIN_VALUE);
 			});
 
+		});
+
+	});
+
+	describe('FLAWED graphs - ', () => {
+
+		test('should throw an Error if the JSON file contains duplicate undirected edges with different weights', () => {
+			json = new JSON_IN(true, false, true);
+			let flawed_graph_duplicate_und_edge_diff_weights = JSON.parse(fs.readFileSync(small_graph_2N_flawed).toString());
+			expect( json.readFromJSON.bind(json, flawed_graph_duplicate_und_edge_diff_weights) )
+				.toThrow('Input JSON flawed! Found duplicate edge with different weights!');				
 		});
 
 	});
