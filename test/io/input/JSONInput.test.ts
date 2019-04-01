@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
@@ -328,6 +327,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		});
 
 	});
+
 
 	describe('FLAWED graphs - ', () => {
 

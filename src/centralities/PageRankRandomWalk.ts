@@ -1,5 +1,7 @@
 import * as $G from '../core/Graph';
 import * as $SU from "../utils/structUtils";
+import { Logger } from "../utils/logger";
+const logger = new Logger();
 
 /**
  * For now, we just use a node_id -> rank mapping
@@ -28,6 +30,9 @@ const DEFAULT_CONVERGENCE = 1.25e-4;
  * @todo compute a ground truth for our sample social networks (python!)
  */
 export class PageRankRandomWalk {
+  /**
+   * @todo unused as of now ??
+   */
   private _weighted: boolean;
   private _alpha: number;
   private _convergence: number;
@@ -51,16 +56,18 @@ export class PageRankRandomWalk {
      */
     let structure = {};
 
-    for( let key in nodes ) {
-      key = String(key); // ??
 
+    /**
+     * @description
+     */
+    for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
       structure[key] = {};
       structure[key]['deg'] = node.outDegree()+node.degree();
       structure[key]['inc'] = [];
       let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
 
-      for(let edge in incomingEdges){
+      for( let edge in incomingEdges ) {
         let edgeNode = incomingEdges[edge];
         let parent = edgeNode.getNodes().a;
         if(edgeNode.getNodes().a.getID() == node.getID())
@@ -70,7 +77,6 @@ export class PageRankRandomWalk {
     }
     
     for( let key in nodes ) {
-      key = String(key);
       curr[key] = 1/nrNodes;
       old[key] = 1/nrNodes;
     }
@@ -78,15 +84,16 @@ export class PageRankRandomWalk {
     for(let i = 0; i < this._iterations; i++) {
       let me = 0.0;
       for( let key in nodes ) {
-        key = String(key); // ?? again?
 
         let total = 0;
         let parents = structure[key]['inc'];
-        for(let k in parents){
+        for(let k in parents) {
           let p = String(parents[k]);
           total += old[p]/structure[p]['deg'];
         }
-        //console.log("o:"+old[key] + " n:"+curr[key]);
+
+        // logger.log("o:"+old[key] + " n:"+curr[key]);
+
         curr[key] = total*(1-this._alpha) + this._alpha/nrNodes;
         me += Math.abs(curr[key]-old[key]);
 
@@ -94,7 +101,7 @@ export class PageRankRandomWalk {
       if(me <= this._convergence){
         return curr;
       }
-      //console.log("Error:"+me/nrNodes);
+      
       old = $SU.clone(curr);
     }
     return curr;

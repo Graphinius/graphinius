@@ -48,7 +48,7 @@ class JSONInput implements IJSONInput {
 	}
 
 	readFromJSONFile(filepath: string): $G.IGraph {
-		this.checkNodeEnvironment();
+		$R.checkNodeEnvironment();
 
 		// TODO test for existing file...
 		var json = JSON.parse(fs.readFileSync(filepath).toString());
@@ -61,35 +61,14 @@ class JSONInput implements IJSONInput {
 			request,
 			json: JSON;
 
-		// Node or browser ??
-		if (typeof window !== 'undefined') {
-			// Browser...			
-			let fileurl = config.remote_host + config.remote_path + config.file_name + JSON_EXTENSION;
-			request = new XMLHttpRequest();
-			request.onreadystatechange = function () {
-				// console.log("Ready state: " + request.readyState);
-				// console.log("Reqst status: " + request.status);
+		// Assert we are in Node.js environment
+		$R.checkNodeEnvironment();
 
-				if (request.readyState == 4 && request.status == 200) {
-					var json = JSON.parse(request.responseText);
-					graph = self.readFromJSON(json);
-					if (cb) {
-						cb(graph, undefined);
-					}
-				}
-			};
-			request.open("GET", fileurl, true);
-			request.timeout = 60000;
-			request.setRequestHeader('Content-Type', 'application/json');
-			request.send();
-		}
-		else {
-			// Node.js
-			$R.retrieveRemoteFile(config, function (raw_graph) {
-				graph = self.readFromJSON(JSON.parse(raw_graph));
-				cb(graph, undefined);
-			});
-		}
+		// Node.js
+		$R.retrieveRemoteFile(config, function (raw_graph) {
+			graph = self.readFromJSON(JSON.parse(raw_graph));
+			cb(graph, undefined);
+		});	
 	}
 
 	/**
@@ -217,13 +196,6 @@ class JSONInput implements IJSONInput {
 				return Number.MIN_VALUE;
 			default:
 				return parseFloat(edge_input.weight)
-		}
-	}
-
-
-	private checkNodeEnvironment(): void {
-		if (typeof window !== 'undefined') {
-			throw new Error('Cannot read file in browser environment.');
 		}
 	}
 

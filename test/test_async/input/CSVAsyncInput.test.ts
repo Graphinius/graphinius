@@ -9,16 +9,16 @@ const logger = new Logger();
 
 
 let Node = $N.BaseNode,
-	Edge = $E.BaseEdge,
-	Graph = $G.BaseGraph,
-	CSV = $I.CSVInput;
+		Edge = $E.BaseEdge,
+		Graph = $G.BaseGraph,
+		CSV = $I.CSVInput;
 
 const REMOTE_HOST = "raw.githubusercontent.com";
 const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/csv/";
 const CSV_EXTENSION = ".csv";
 
 const REAL_GRAPH_NR_NODES = 5937,
-	REAL_GRAPH_NR_EDGES = 17777;
+			REAL_GRAPH_NR_EDGES = 17777;
 
 
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {

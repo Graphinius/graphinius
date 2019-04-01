@@ -53,33 +53,14 @@ class CSVInput implements ICSVInput {
 				graph_name = config.file_name,
 				graph : $G.IGraph,
 				request;
-		// Node or browser ??
-		if ( typeof window !== 'undefined' ) {
-			let fileurl = config.remote_host + config.remote_path + config.file_name + CSV_EXTENSION;
 
-			logger.log(`Requesting file via XMLHTTPRequest: ${fileurl}`);
-
-			// Browser...
-			request = new XMLHttpRequest();	
-			request.onreadystatechange = function() {
-					if (request.readyState == 4 && request.status == 200) {
-						var input = request.responseText.split('\n');
-						graph = localFun.apply(self, [input, graph_name]);
-						cb(graph, undefined);
-					}
-			};
-			request.open("GET", fileurl, true);
-			request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
-			request.send();
-		}
-		else {
-			// Node.js
-			$R.retrieveRemoteFile(config, function(raw_graph) {
-				var input = raw_graph.toString().split('\n');
-				graph = localFun.apply(self, [input, graph_name]);
-				cb(graph, undefined);
-			});
-		}
+		$R.checkNodeEnvironment()
+		
+		$R.retrieveRemoteFile(config, function(raw_graph) {
+			var input = raw_graph.toString().split('\n');
+			graph = localFun.apply(self, [input, graph_name]);
+			cb(graph, undefined);
+		});
 	}
 	
 	
@@ -94,7 +75,7 @@ class CSVInput implements ICSVInput {
 	
 	
 	private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
-		this.checkNodeEnvironment();
+		$R.checkNodeEnvironment();
 		var graph_name = path.basename(filepath);
 		var input = fs.readFileSync(filepath).toString().split('\n');
 		return func.apply(this, [input, graph_name]);
@@ -225,11 +206,7 @@ class CSVInput implements ICSVInput {
 	}
 	
 	
-	private checkNodeEnvironment() : void {
-		if ( typeof window !== 'undefined' ) {
-			throw new Error('Cannot read file in browser environment.');
-		}
-	}
+	
 	
 }
 

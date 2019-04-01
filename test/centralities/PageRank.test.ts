@@ -48,10 +48,10 @@ describe("PageRank Centrality Tests", () => {
 		'should calculate similar values for random walk and gaussian on undirected unweighted graph',
 		() => {
 			let prd = PrGauss.getCentralityMap(graph_und_unw);
-			logger.log("GAUSS:"+JSON.stringify(prd));
+			logger.log("GAUSS:" + JSON.stringify(prd));
 
 			let prrw = new PageRankRandomWalk(graph).getCentralityMap();
-			logger.log("RANDOM:"+JSON.stringify(prrw));
+			logger.log("RANDOM:" + JSON.stringify(prrw));
 
 			/**
 			 * @todo order matrix
@@ -61,13 +61,13 @@ describe("PageRank Centrality Tests", () => {
 	);
 
 	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
-			let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
-			let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
-			let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
-			checkScoresEqual(graph_2, PrGauss.getCentralityMap(graph_2));
-			checkScoresEqual(graph_3, PrGauss.getCentralityMap(graph_3));
-			checkScoresEqual(graph_6, PrGauss.getCentralityMap(graph_6));
-		}
+		let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
+		let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
+		let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
+		checkRankPrecision(graph_2, PrGauss.getCentralityMap(graph_2));
+		checkRankPrecision(graph_3, PrGauss.getCentralityMap(graph_3));
+		checkRankPrecision(graph_6, PrGauss.getCentralityMap(graph_6));
+	}
 	);
 
 	test('should stop random walk after short time', () => {
@@ -87,18 +87,19 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo test iterations -> best with spy on an iterating method
 	 */
 	test('should not stop random walk with convergence criteria but with iterations', () => {
-			let prrw = new PageRankRandomWalk(graph_und_unw, {
-				weighted: true,
-				alpha: 1e-1,
-				convergence: 1e-13,
-				iterations: 2
-			}).getCentralityMap();
+		const max_rank = 0.2;
 
-			for (let key in prrw) {
-				expect(prrw[key]).toBeLessThan(0.2);
-			}
+		let prrw = new PageRankRandomWalk(graph_und_unw, {
+			weighted: true,
+			alpha: 1e-1,
+			convergence: 1e-13,
+			iterations: 2
+		}).getCentralityMap();
+
+		for (let key in prrw) {
+			expect(prrw[key]).toBeLessThan(max_rank);
 		}
-	);
+	});
 
 
 	/**
@@ -106,7 +107,7 @@ describe("PageRank Centrality Tests", () => {
 	 * 
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe.skip('Page Rank performance tests - ', () => {
+	describe('Page Rank performance tests - ', () => {
 		[sn_1K_graph_file].forEach(graph_file => { //, sn_20K_graph_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
@@ -119,7 +120,7 @@ describe("PageRank Centrality Tests", () => {
 		});
 
 		[sn_1K_graph_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
-			test('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
+			test.skip('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
 				let tic = +new Date;
 				let pr = PrGauss.getCentralityMap(sn_graph);
@@ -127,6 +128,7 @@ describe("PageRank Centrality Tests", () => {
 				logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`)
 				expect(Array.isArray(pr)).toBeTruthy;
 			});
+
 		});
 
 	});
@@ -134,7 +136,7 @@ describe("PageRank Centrality Tests", () => {
 });
 
 
-function checkScoresEqual(graph, gauss) {
+function checkRankPrecision(graph, gauss) {
 	let last = gauss[0];
 	let ctr = 0;
 	for (let key in graph.getNodes()) {
@@ -145,7 +147,6 @@ function checkScoresEqual(graph, gauss) {
 		last = gauss[ctr++];
 	}
 }
-
 
 /**
  * @todo probably useless -> eliminte?
@@ -162,5 +163,5 @@ function checkPageRanks(graph, gauss, rand_walk, threshold) {
  * @todo probably useless -> eliminte?
  */
 function posMin(a: number, b: number): number {
-	return ( a>b ) ? ( a-b ) : ( b-a );
+	return (a > b) ? (a - b) : (b - a);
 }

@@ -18,7 +18,7 @@ export interface RequestConfig {
  * @param cb
  * @returns {ClientRequest}
  */
-function retrieveRemoteFile(config: RequestConfig, cb: Function) {
+export function retrieveRemoteFile(config: RequestConfig, cb: Function) {
   if ( typeof cb !== 'function' ) {
     throw new Error('Provided callback is not a function.');
   }
@@ -53,4 +53,9 @@ function retrieveRemoteFile(config: RequestConfig, cb: Function) {
   return req;
 }
 
-export { retrieveRemoteFile };
+
+export function checkNodeEnvironment(): void {
+  if (typeof window !== 'undefined') {
+    throw new Error('When in Browser, do as the Browsers do! (use fetch and call readFromJSON() directly...) ')
+  }
+}
