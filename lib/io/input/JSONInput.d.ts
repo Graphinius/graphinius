@@ -40,6 +40,5 @@ declare class JSONInput implements IJSONInput {
     readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
     readFromJSON(json: JSONGraph): $G.IGraph;
     private handleEdgeWeights;
-    private checkNodeEnvironment;
 }
 export { JSONInput };

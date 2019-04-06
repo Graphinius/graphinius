@@ -26,6 +26,5 @@ declare class CSVInput implements ICSVInput {
     private readFileAndReturn;
     readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
     readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
-    private checkNodeEnvironment;
 }
 export { CSVInput };

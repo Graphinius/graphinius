@@ -5,5 +5,5 @@ export interface RequestConfig {
     remote_path: string;
     file_name: string;
 }
-declare function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
-export { retrieveRemoteFile };
+export declare function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
+export declare function checkNodeEnvironment(): void;

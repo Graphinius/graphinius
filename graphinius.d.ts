@@ -677,12 +677,25 @@ declare module 'graphinius/centralities/PageRankGaussian' {
 
 }
 declare module 'graphinius/centralities/PageRankRandomWalk' {
-	import * as $G from 'graphinius/core/Graph'; class pageRankCentrality {
-	    getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?: number, conv?: number, iterations?: number): {
-	        [id: string]: number;
-	    };
+	import * as $G from 'graphinius/core/Graph';
+	export type RankMap = {
+	    [id: string]: number;
+	};
+	export interface PrRandomWalkConfig {
+	    weighted?: boolean;
+	    alpha?: number;
+	    convergence?: number;
+	    iterations?: number;
 	}
-	export { pageRankCentrality };
+	export class PageRankRandomWalk {
+	    private _graph;
+	    private _weighted;
+	    private _alpha;
+	    private _convergence;
+	    private _iterations;
+	    constructor(_graph: $G.IGraph, config?: PrRandomWalkConfig);
+	    getCentralityMap(): RankMap;
+	}
 
 }
 declare module 'graphinius/mincutmaxflow/minCutMaxFlowBoykov' {
@@ -818,8 +831,9 @@ declare module 'graphinius/utils/remoteUtils' {
 	    remote_host: string;
 	    remote_path: string;
 	    file_name: string;
-	} function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
-	export { retrieveRemoteFile };
+	}
+	export function retrieveRemoteFile(config: RequestConfig, cb: Function): http.ClientRequest;
+	export function checkNodeEnvironment(): void;
 
 }
 declare module 'graphinius/io/input/CSVInput' {
@@ -850,7 +864,6 @@ declare module 'graphinius/io/input/CSVInput' {
 	    private readFileAndReturn;
 	    readFromAdjacencyList(input: Array<string>, graph_name: string): $G.IGraph;
 	    readFromEdgeList(input: Array<string>, graph_name: string, weighted?: boolean): $G.IGraph;
-	    private checkNodeEnvironment;
 	}
 	export { CSVInput };
 
@@ -897,7 +910,6 @@ declare module 'graphinius/io/input/JSONInput' {
 	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	    readFromJSON(json: JSONGraph): $G.IGraph;
 	    private handleEdgeWeights;
-	    private checkNodeEnvironment;
 	}
 	export { JSONInput };
 

@@ -1,7 +1,19 @@
 import * as $G from '../core/Graph';
-declare class pageRankCentrality {
-    getCentralityMap(graph: $G.IGraph, weighted?: boolean, alpha?: number, conv?: number, iterations?: number): {
-        [id: string]: number;
-    };
+export declare type RankMap = {
+    [id: string]: number;
+};
+export interface PrRandomWalkConfig {
+    weighted?: boolean;
+    alpha?: number;
+    convergence?: number;
+    iterations?: number;
 }
-export { pageRankCentrality };
+export declare class PageRankRandomWalk {
+    private _graph;
+    private _weighted;
+    private _alpha;
+    private _convergence;
+    private _iterations;
+    constructor(_graph: $G.IGraph, config?: PrRandomWalkConfig);
+    getCentralityMap(): RankMap;
+}

@@ -49,9 +49,6 @@
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-stream": "^5.2.1"
   },
-  "dependencies": {
-    "ncp": "^2.0.0"
-  },
   "files": [
     "lib/**/*"
   ]
