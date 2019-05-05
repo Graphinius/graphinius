@@ -11,8 +11,9 @@ const EPSILON = 1e-7;
 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
 	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
-	sn_1K_graph_file = "./test/test_data/social_network_edges_1K.csv",
-	sn_20K_graph_file = "./test/test_data/social_network_edges_20K.csv",
+	sn_300_file = "./test/test_data/social_network_edges_300.csv",
+	sn_1K_file = "./test/test_data/social_network_edges_1K.csv",
+	sn_20K_file = "./test/test_data/social_network_edges_20K.csv",
 	graph_unweighted_undirected = "./test/test_data/network_undirected_unweighted.csv",
 	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
 	graph_und_unw = csv.readFromEdgeListFile(graph_unweighted_undirected),
@@ -35,7 +36,7 @@ describe("PageRank Centrality Tests", () => {
 	test('should calculate similar values for random walk and gaussian', () => {
 		let prd = PrGauss.getCentralityMap(graph);
 		//logger.log("GAUSS:"+JSON.stringify(prd));
-		let prrw = new PageRankRandomWalk(graph).getCentralityMap();
+		let prrw = new PageRankRandomWalk(graph).getPRDict();
 		//logger.log("RANDOM:"+JSON.stringify(prrw));
 		checkPageRanks(graph, prd, prrw, 0.5);
 	});
@@ -50,7 +51,7 @@ describe("PageRank Centrality Tests", () => {
 			let prd = PrGauss.getCentralityMap(graph_und_unw);
 			logger.log("GAUSS:" + JSON.stringify(prd));
 
-			let prrw = new PageRankRandomWalk(graph).getCentralityMap();
+			let prrw = new PageRankRandomWalk(graph).getPRDict();
 			logger.log("RANDOM:" + JSON.stringify(prrw));
 
 			/**
@@ -76,7 +77,7 @@ describe("PageRank Centrality Tests", () => {
 			weighted: true,
 			alpha: 1e-1,
 			convergence: convergence
-		}).getCentralityMap();
+		}).getPRDict();
 
 		for (let key in prrw) {
 			expect(prrw[key]).toBeLessThan(convergence);
@@ -94,7 +95,7 @@ describe("PageRank Centrality Tests", () => {
 			alpha: 1e-1,
 			convergence: 1e-13,
 			iterations: 2
-		}).getCentralityMap();
+		}).getPRDict();
 
 		for (let key in prrw) {
 			expect(prrw[key]).toBeLessThan(max_rank);
@@ -107,19 +108,31 @@ describe("PageRank Centrality Tests", () => {
 	 * 
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe('Page Rank performance tests - ', () => {
-		[sn_1K_graph_file].forEach(graph_file => { //, sn_20K_graph_file
+	describe.only('Page Rank performance tests - ', () => {
+		[sn_300_file].forEach(graph_file => { //, sn_1K_file, sn_20K_graph_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
+				let PR = new PageRankRandomWalk(sn_graph);
+				
 				let tic = +new Date;
-				let pr = new PageRankRandomWalk(sn_graph).getCentralityMap();
+				let result_dict = PR.getPRDict();
 				let toc = +new Date;
-				logger.log(`PageRank Random Walk for ${graph_file} graph took ${toc - tic} ms.`)
-				expect(Array.isArray(pr)).toBeTruthy;
+				logger.log(`PageRank Random Walk DICT version for ${graph_file} graph took ${toc - tic} ms.`)
+
+				tic = +new Date;
+				let result_arr = PR.getPRArray();
+				toc = +new Date;
+				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
+
+				// Length
+				expect(Object.keys(result_dict).length).toEqual(Object.keys(result_arr).length);
+				// Structure
+				expect(Object.keys(result_dict)).toEqual(Object.keys(result_arr));
+				// expect(result_dict).toEqual(result_arr);
 			});
 		});
 
-		[sn_1K_graph_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
+		[sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
 			test.skip('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
 				let tic = +new Date;
