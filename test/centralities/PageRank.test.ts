@@ -133,15 +133,17 @@ describe("PageRank Centrality Tests", () => {
 	/**
 	 * PERFORMANCE TESTS
 	 * 
+	 * UNWEIGHTED
+	 * 
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe('Page Rank performance tests - ', () => {
-		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
+	describe.only('Page Rank performance tests - ', () => {
+		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
-					convergence: 1e-4,
-					alphaDamp: () => 1
+					convergence: 1e-3,
+					// alphaDamp: () => 1
 				});
 				
 				let tic = +new Date;
@@ -162,7 +164,7 @@ describe("PageRank Centrality Tests", () => {
 			});
 		});
 
-		[sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
+		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
 			test.skip('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
 				let tic = +new Date;
