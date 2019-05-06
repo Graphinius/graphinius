@@ -677,24 +677,32 @@ declare module 'graphinius/centralities/PageRankGaussian' {
 
 }
 declare module 'graphinius/centralities/PageRankRandomWalk' {
-	import * as $G from 'graphinius/core/Graph';
+	import { IGraph } from 'graphinius/core/Graph';
 	export type RankMap = {
 	    [id: string]: number;
 	};
 	export interface PrRandomWalkConfig {
 	    weighted?: boolean;
 	    alpha?: number;
+	    alphaDamp?: Function;
 	    convergence?: number;
 	    iterations?: number;
+	    init?: Function;
 	}
 	export class PageRankRandomWalk {
 	    private _graph;
 	    private _weighted;
 	    private _alpha;
+	    private _alphaDamp;
 	    private _convergence;
-	    private _iterations;
-	    constructor(_graph: $G.IGraph, config?: PrRandomWalkConfig);
-	    getCentralityMap(): RankMap;
+	    private _maxIterations;
+	    private _init;
+	    private _PRArrayDS;
+	    constructor(_graph: IGraph, config?: PrRandomWalkConfig);
+	    setPRArrayDataStructs(): void;
+	    getPRArray(): RankMap;
+	    private getRankMapFromArray;
+	    getPRDict(): RankMap;
 	}
 
 }

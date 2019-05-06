@@ -3,12 +3,24 @@ import * as $SU from "../utils/structUtils";
 import { Logger } from "../utils/logger";
 import { pathToFileURL } from 'url';
 import { IBaseNode } from '../core/Nodes';
+import { IBaseEdge } from '../core/Edges';
 const logger = new Logger();
+
+
+const DEFAULT_WEIGHTED = false;
+const DEFAULT_ALPHA = 0.15;
+const DEFAULT_MAX_ITERATIONS = 1e3;
+const DEFAULT_CONVERGENCE = 1e-4;
+const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
+const defaultAlphaDamp = (graph: IGraph) => graph.nrNodes();
+
+
 
 /**
  * For now, we just use a node_id -> rank mapping
  */
 export type RankMap = {[id: string] : number};
+
 
 /**
  * Configuration object for PageRank class
@@ -16,6 +28,7 @@ export type RankMap = {[id: string] : number};
 export interface PrRandomWalkConfig {
   weighted?     : boolean;
   alpha?        : number;
+  alphaDamp?    : Function;
   convergence?  : number;
   iterations?   : number;
   init?         : Function;
@@ -39,11 +52,6 @@ interface PRArrayDS {
   pull    : Array<Array<number>>;
 }
 
-const DEFAULT_WEIGHTED = false;
-const DEFAULT_ALPHA = 1e-1;
-const DEFAULT_MAX_ITERATIONS = 1e3;
-const DEFAULT_CONVERGENCE = 1e-6;
-const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 /**
  * Returns the PageRank for all nodes of a given graph by performing Random Walks
@@ -57,6 +65,7 @@ export class PageRankRandomWalk {
    */
   private _weighted       : boolean;
   private _alpha          : number;
+  private _alphaDamp      : number;
   private _convergence    : number;
   private _maxIterations  : number;
   private _init           : number;
@@ -67,9 +76,11 @@ export class PageRankRandomWalk {
     config = config || {}; // just so we don't get `property of undefined` errors below
     this._weighted = config.weighted || DEFAULT_WEIGHTED;
     this._alpha = config.alpha || DEFAULT_ALPHA;
+    this._alpha
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
+    this._alphaDamp = config.alphaDamp ? config.alphaDamp(this._graph) : defaultAlphaDamp(this._graph);
 
     this._PRArrayDS = {
       curr    : [],
@@ -85,17 +96,17 @@ export class PageRankRandomWalk {
     let tic = +new Date;
 
     let nodes = this._graph.getNodes();
-        // keys = Object.keys(nodes);
     
     let i = 0;
     for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
+
       // set identifier to re-map later..
       node.setFeature('PR_index', i);
 
       this._PRArrayDS.curr[i] = this._init;
-      this._PRArrayDS.curr[i] = this._init;
-      this._PRArrayDS.outDeg[i] = node.outDegree()+node.degree();
+      this._PRArrayDS.old[i] = this._init;
+      this._PRArrayDS.outDeg[i] = node.outDegree() + node.degree();
       ++i;
     }
 
@@ -109,54 +120,98 @@ export class PageRankRandomWalk {
       // set nodes to pull from
       let pull_i = [];
       let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
-      for( let edge in incomingEdges ) {
-        let edgeNode = incomingEdges[edge];
-        let parent: IBaseNode = edgeNode.getNodes().a;
-        if(edgeNode.getNodes().a.getID() == node.getID()) {
-          parent = edgeNode.getNodes().b;
+      for( let edge_key in incomingEdges ) {
+        let edge: IBaseEdge = incomingEdges[edge_key];
+        let source: IBaseNode = edge.getNodes().a;
+        if(edge.getNodes().a.getID() == node.getID()) {
+          source = edge.getNodes().b;
         }
-        let parent_idx = parent.getFeature('PR_index');
+        let parent_idx = source.getFeature('PR_index');
         pull_i.push(parent_idx);
       }
       this._PRArrayDS.pull[node_idx] = pull_i;
     }
 
-    // console.log(this._PRArrayDS.pull);
+    // logger.log(`Node init rank for node 1 (ARRAY): ${this._PRArrayDS.old[0]}`);
+    // logger.log(`Node current rank for node 1 (ARRAY): ${this._PRArrayDS.curr[0]}`);
+    // logger.log(`Node degree for node 1 (ARRAY): ${this._PRArrayDS.outDeg[0]}`);
+    // logger.log(`Incoming nodes for node 1: `);
+    // logger.log(this._PRArrayDS.pull[0]);
+    // logger.log(this._PRArrayDS.curr);
 
     let toc = +new Date;
-    logger.log(`PR Array DS init took ${toc-tic} ms.`)
+    logger.log(`PR Array DS init took ${toc-tic} ms.`);
   }
 
 
   getPRArray() {
-    let result : RankMap = {};
-    let nodes = this._graph.getNodes();
-
     let ds = this._PRArrayDS;
+    // console.log( ds );
+    // console.log( `Alpha dampening: ${this._alphaDamp}`);
+
+    // debug
+    let visits = 0;
+    // let deltas = [];
+
     for(let i = 0; i < this._maxIterations; ++i) {
       let delta_iter = 0.0;
 
       // node is number... !
       for ( let node in ds.curr ) {
-        let total_pull = 0;
-        for ( let source in ds.pull[node] ) {
-          total_pull += ds.old[source] / ds.outDeg[source];
+
+        let pull_rank = 0;
+        visits++;
+
+        /**
+         * @description OF !!! not IN !!!
+         * @todo what about dangling nodes ?
+         */
+        for ( let source of ds.pull[node] ) {
+          visits++;
+          /**
+           * This should never happen....
+           * IF the data structure _PRArrayDS was properly constructed
+           * 
+           * @todo properly test _PRArrayDS as well as this beauty 
+           *       (using a contrived, wrongly constructed pull 2D array)
+           */
+          if ( ds.outDeg[source] === 0 ) {
+            logger.log( `Node: ${node}` );
+            logger.log( `Source: ${source} `);
+            throw('GOT ZERO DIVISOR !!! -------------------------------------');
+          }
+          pull_rank += ds.old[source] / ds.outDeg[source];
         }
-        ds.curr[node] = (1-this._alpha) * total_pull + this._alpha/ds.curr.length;
-        delta_iter += ds.curr[node] - ds.old[node];
+        ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / this._alphaDamp;
+        delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
+
+      // debug
+      // deltas.push(delta_iter);
 
       if ( delta_iter <= this._convergence ) {
-        logger.log(`Converged after ${i} iterations.`);
-        return;
+        // logger.log(`ARRAY deltas: `);
+        // logger.log(deltas);
+
+        logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
+        return this.getRankMapFromArray();
       }
+
+      ds.old = [...ds.curr];
     }
 
+    logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
+    return this.getRankMapFromArray();
+  }
+
+
+  private getRankMapFromArray() {
+    let result : RankMap = {};
+    let nodes = this._graph.getNodes();
     for( let key in nodes ) {
-      result[key] = ds.curr[nodes[key].getFeature('PR_index')];
+      result[key] = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
     }
-    console.log(result);
-    logger.log(`Converged after ${this._maxIterations} iterations.`);
+    // console.log(result);
     return result;
   }
 
@@ -185,7 +240,7 @@ export class PageRankRandomWalk {
       /**
        * Weight that each node can push per iteration
        */
-      structure[key]['deg'] = node.outDegree()+node.degree();
+      structure[key]['deg'] = node.outDegree() + node.degree();
 
       /**
        * Set all incoming edges for each node
@@ -197,12 +252,12 @@ export class PageRankRandomWalk {
        */
       structure[key]['inc'] = [];
       let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
-      for( let edge in incomingEdges ) {
-        let edgeNode = incomingEdges[edge];
-        let parent = edgeNode.getNodes().a;
-        if(edgeNode.getNodes().a.getID() == node.getID())
-          parent = edgeNode.getNodes().b;
-        structure[key]['inc'].push(parent.getID());
+      for( let edge_key in incomingEdges ) {
+        let edge = incomingEdges[edge_key];
+        let source = edge.getNodes().a;
+        if(edge.getNodes().a.getID() == node.getID())
+          source = edge.getNodes().b;
+        structure[key]['inc'].push(source.getID());
       }
 
       /**
@@ -212,42 +267,54 @@ export class PageRankRandomWalk {
        */
       curr[key] = this._init;
       old[key]  = this._init;
-    }    
+    }
+
+    // logger.log(`Node init rank for node 1 (DICT): ${old['1']}`);
+    // logger.log(`Node current rank for node 1 (DICT): ${curr['1']}`);
+    // logger.log(`Node degree for node 1 (DICT): ${structure['1']['deg']}`);
+    
+    // logger.log(Object.keys(nodes));
 
     /**
      * MAIN
      */
     // debug
     let visits = 0;
+    // let deltas = [];
 
-    for(let i = 0; i < this._maxIterations; i++) {
+    for(let i = 0; i < this._maxIterations; ++i) {
       let delta_iter = 0.0;
 
       for( let key in nodes ) {
-        let total = 0;
+
+        let pull_rank = 0;
         visits++;
 
         /**
          * @todo what about dangling nodes ?
          */
-        let parents = structure[key]['inc'];
-        for(let k in parents) {
+        let sources = structure[key]['inc'];
+        for(let k in sources) {
           visits++;
-          let p = String(parents[k]);
-          total += old[p]/structure[p]['deg'];
+          let p = String(sources[k]);
+          pull_rank += old[p] / structure[p]['deg'];
         }
 
-        // logger.log("o:"+old[key] + " n:"+curr[key]);
-
-        curr[key] = total*(1-this._alpha) + this._alpha/nrNodes;
+        curr[key] = (1-this._alpha)*pull_rank + this._alpha / this._alphaDamp;
         delta_iter += Math.abs(curr[key]-old[key]);
       }
+
+      // debug
+      // deltas.push(delta_iter);
 
       /**
        * @description return once the total change <= convergence threshold
        */
       if(delta_iter <= this._convergence) {
-        logger.log(`Converged after ${i} iterations with ${visits} visits.`);
+        // logger.log(`DICT deltas: `);
+        // logger.log(deltas);
+
+        logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
         return curr;
       }
       
@@ -260,7 +327,7 @@ export class PageRankRandomWalk {
       old = $SU.clone(curr);
     }
 
-    logger.log(`Converged after ${this._maxIterations} iterations with ${visits} visits.`);
+    logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
     return curr;
   }
 

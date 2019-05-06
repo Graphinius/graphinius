@@ -11,6 +11,7 @@ const EPSILON = 1e-7;
 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
 	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
+	pr_3nodes_file = "./test/test_data/centralities/3node2SPs1direct.json",
 	sn_300_file = "./test/test_data/social_network_edges_300.csv",
 	sn_1K_file = "./test/test_data/social_network_edges_1K.csv",
 	sn_20K_file = "./test/test_data/social_network_edges_20K.csv",
@@ -22,16 +23,25 @@ let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 
 
 describe("PageRank Centrality Tests", () => {
+	let n3Graph = null;
+
+	beforeAll(() => {
+		n3Graph = new $I.JSONInput(true, false, false).readFromJSONFile(pr_3nodes_file);
+	});
+
 
 	test('should return correct betweenness map', () => {
 		let prd = PrGauss.getCentralityMap(graph);
-		expect(prd).toEqual([0.1332312404287902,
+		expect(prd).toEqual([
+			0.1332312404287902,
 			0.18376722817764174,
 			0.17457886676875956,
 			0.2787136294027564,
 			0.18376722817764166,
-			0.045941807044410435]);
+			0.045941807044410435
+		]);
 	});
+
 
 	test('should calculate similar values for random walk and gaussian', () => {
 		let prd = PrGauss.getCentralityMap(graph);
@@ -61,6 +71,9 @@ describe("PageRank Centrality Tests", () => {
 		}
 	);
 
+	/**
+	 * same === correct !?
+	 */
 	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
 		let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
 		let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
@@ -103,16 +116,33 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
+	test('RW result on dict datastructs should equal RW result on array datastructs', () => {
+		let PR = new PageRankRandomWalk(n3Graph, {
+			convergence: 1e-3,
+			alpha: 0.15,
+			alphaDamp: () => 1,
+			weighted: false
+		});
+		let PRDictResult = PR.getPRDict();
+		let PRArrayResult = PR.getPRArray();
+		logger.log(JSON.stringify(PRDictResult));
+		logger.log(JSON.stringify(PRArrayResult));
+	});
+
+
 	/**
 	 * PERFORMANCE TESTS
 	 * 
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe.only('Page Rank performance tests - ', () => {
-		[sn_300_file].forEach(graph_file => { //, sn_1K_file, sn_20K_graph_file
+	describe('Page Rank performance tests - ', () => {
+		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(graph_file);
-				let PR = new PageRankRandomWalk(sn_graph);
+				let PR = new PageRankRandomWalk(sn_graph, {
+					convergence: 1e-4,
+					alphaDamp: () => 1
+				});
 				
 				let tic = +new Date;
 				let result_dict = PR.getPRDict();
@@ -128,7 +158,7 @@ describe("PageRank Centrality Tests", () => {
 				expect(Object.keys(result_dict).length).toEqual(Object.keys(result_arr).length);
 				// Structure
 				expect(Object.keys(result_dict)).toEqual(Object.keys(result_arr));
-				// expect(result_dict).toEqual(result_arr);
+				expect(result_dict).toEqual(result_arr);
 			});
 		});
 
