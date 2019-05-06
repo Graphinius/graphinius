@@ -282,7 +282,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	/**
 	 * Usually, a social network would have undirected (bi-directional) friend relations - nevertheless, for sake of comparison (edge lists are read in a directed manner by networkx) we are switching to directed mode as well.
 	 */
-	describe('Brandes Performance tests on small, (un)weighted social networks', () => {
+	describe('Brandes Performance tests on (UN)weighted social networks', () => {
 
 		[socialNet300].forEach(graph_name => { // socialNet1K, socialNet20K
 			test(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
@@ -295,7 +295,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				let endBU = +new Date();
 				logger.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBU - startBU} ms.`);
 
-				let controlFileName = `./test/test_data/centralities/betweenness_${graph_name}_results.json`;
+				let controlFileName = `./test/test_data/centralities/betweenness/betweenness_${graph_name}_results.json`;
 				let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				expect(Object.keys(resBU).length).toBe(Object.keys(controlMap).length);
@@ -317,7 +317,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				let endBW = +new Date();
 				logger.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBW - startBW} ms.`);
 
-				let controlFileName = `./test/test_data/centralities/betweenness_${graph_name}_results.json`;
+				let controlFileName = `./test/test_data/centralities/betweenness/betweenness_${graph_name}_results.json`;
 				let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				expect(Object.keys(resBW).length).toBe(Object.keys(controlMap).length);

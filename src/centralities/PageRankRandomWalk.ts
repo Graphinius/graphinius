@@ -12,7 +12,6 @@ const DEFAULT_ALPHA = 0.15;
 const DEFAULT_MAX_ITERATIONS = 1e3;
 const DEFAULT_CONVERGENCE = 1e-4;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
-const defaultAlphaDamp = (graph: IGraph) => graph.nrNodes();
 
 
 
@@ -28,7 +27,6 @@ export type RankMap = {[id: string] : number};
 export interface PrRandomWalkConfig {
   weighted?     : boolean;
   alpha?        : number;
-  alphaDamp?    : Function;
   convergence?  : number;
   iterations?   : number;
   init?         : Function;
@@ -65,7 +63,6 @@ export class PageRankRandomWalk {
    */
   private _weighted       : boolean;
   private _alpha          : number;
-  private _alphaDamp      : number;
   private _convergence    : number;
   private _maxIterations  : number;
   private _init           : number;
@@ -80,7 +77,6 @@ export class PageRankRandomWalk {
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
-    this._alphaDamp = config.alphaDamp ? config.alphaDamp(this._graph) : defaultAlphaDamp(this._graph);
 
     this._PRArrayDS = {
       curr    : [],
@@ -95,8 +91,7 @@ export class PageRankRandomWalk {
   setPRArrayDataStructs() {
     let tic = +new Date;
 
-    let nodes = this._graph.getNodes();
-    
+    let nodes = this._graph.getNodes();    
     let i = 0;
     for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
@@ -132,26 +127,17 @@ export class PageRankRandomWalk {
       this._PRArrayDS.pull[node_idx] = pull_i;
     }
 
-    // logger.log(`Node init rank for node 1 (ARRAY): ${this._PRArrayDS.old[0]}`);
-    // logger.log(`Node current rank for node 1 (ARRAY): ${this._PRArrayDS.curr[0]}`);
-    // logger.log(`Node degree for node 1 (ARRAY): ${this._PRArrayDS.outDeg[0]}`);
-    // logger.log(`Incoming nodes for node 1: `);
-    // logger.log(this._PRArrayDS.pull[0]);
-    // logger.log(this._PRArrayDS.curr);
-
     let toc = +new Date;
     logger.log(`PR Array DS init took ${toc-tic} ms.`);
   }
 
 
   getPRArray() {
-    let ds = this._PRArrayDS;
-    // console.log( ds );
-    // console.log( `Alpha dampening: ${this._alphaDamp}`);
+    const ds = this._PRArrayDS;
+    const N = this._graph.nrNodes();
 
     // debug
     let visits = 0;
-    // let deltas = [];
 
     for(let i = 0; i < this._maxIterations; ++i) {
       let delta_iter = 0.0;
@@ -162,10 +148,6 @@ export class PageRankRandomWalk {
         let pull_rank = 0;
         visits++;
 
-        /**
-         * @description OF !!! not IN !!!
-         * @todo what about dangling nodes ?
-         */
         for ( let source of ds.pull[node] ) {
           visits++;
           /**
@@ -182,17 +164,15 @@ export class PageRankRandomWalk {
           }
           pull_rank += ds.old[source] / ds.outDeg[source];
         }
-        ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / this._alphaDamp;
+        if ( pull_rank > 0 ) {
+          ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / N;
+        } else {
+          ds.curr[node] = 1 / N;
+        }
         delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
 
-      // debug
-      // deltas.push(delta_iter);
-
       if ( delta_iter <= this._convergence ) {
-        // logger.log(`ARRAY deltas: `);
-        // logger.log(deltas);
-
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
         return this.getRankMapFromArray();
       }
@@ -211,7 +191,6 @@ export class PageRankRandomWalk {
     for( let key in nodes ) {
       result[key] = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
     }
-    // console.log(result);
     return result;
   }
 
@@ -221,25 +200,12 @@ export class PageRankRandomWalk {
     let old : RankMap = {};
     let nodes = this._graph.getNodes();
     let nrNodes = this._graph.nrNodes();
-    
-    /**
-     * @description the whole datastructure to operate on
-     * 
-     * @todo replace with faster array versions of substructure that can be
-     *       vectorized into TFjs
-     */
+  
     let structure = {};
-
-    /**
-     * @description
-     */
+    
     for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
       structure[key] = {};
-
-      /**
-       * Weight that each node can push per iteration
-       */
       structure[key]['deg'] = node.outDegree() + node.degree();
 
       /**
@@ -260,27 +226,12 @@ export class PageRankRandomWalk {
         structure[key]['inc'].push(source.getID());
       }
 
-      /**
-       * Initialize starting values (1/n for each node)
-       * 
-       * @todo replace with array versions
-       */
       curr[key] = this._init;
       old[key]  = this._init;
     }
 
-    // logger.log(`Node init rank for node 1 (DICT): ${old['1']}`);
-    // logger.log(`Node current rank for node 1 (DICT): ${curr['1']}`);
-    // logger.log(`Node degree for node 1 (DICT): ${structure['1']['deg']}`);
-    
-    // logger.log(Object.keys(nodes));
-
-    /**
-     * MAIN
-     */
     // debug
     let visits = 0;
-    // let deltas = [];
 
     for(let i = 0; i < this._maxIterations; ++i) {
       let delta_iter = 0.0;
@@ -300,30 +251,15 @@ export class PageRankRandomWalk {
           pull_rank += old[p] / structure[p]['deg'];
         }
 
-        curr[key] = (1-this._alpha)*pull_rank + this._alpha / this._alphaDamp;
+        curr[key] = (1-this._alpha)*pull_rank + this._alpha / nrNodes;
         delta_iter += Math.abs(curr[key]-old[key]);
       }
 
-      // debug
-      // deltas.push(delta_iter);
-
-      /**
-       * @description return once the total change <= convergence threshold
-       */
       if(delta_iter <= this._convergence) {
-        // logger.log(`DICT deltas: `);
-        // logger.log(deltas);
-
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
         return curr;
       }
       
-      /**
-       * OUCH....
-       *
-       * @todo just swap array(s | pointers) !!
-       * @todo figure out how to do that in TFjs
-       */
       old = $SU.clone(curr);
     }
 

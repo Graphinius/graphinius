@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
 import * as $PRGauss from '../../src/centralities/PageRankGaussian';
@@ -8,16 +9,20 @@ import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 const EPSILON = 1e-7;
 
+const TEST_PATH_PREFIX = "./test/test_data/",
+			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
+
 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
-	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
-	pr_3nodes_file = "./test/test_data/centralities/3node2SPs1direct.json",
-	sn_300_file = "./test/test_data/social_network_edges_300.csv",
-	sn_1K_file = "./test/test_data/social_network_edges_1K.csv",
-	sn_20K_file = "./test/test_data/social_network_edges_20K.csv",
-	graph_unweighted_undirected = "./test/test_data/network_undirected_unweighted.csv",
-	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
-	graph_und_unw = csv.readFromEdgeListFile(graph_unweighted_undirected),
+	deg_cent_graph = `search_graph_pfs_extended.json`,
+	pr_3nodes_file = `centralities/3node2SPs1direct.json`,
+	sn_300_file = `social_network_edges_300.csv`,
+	sn_1K_file = `social_network_edges_1K.csv`,
+	sn_20K_file = `social_network_edges_20K.csv`,
+	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
+	pagerank_py_folder = `centralities/pagerank`,
+	graph: $G.IGraph = json.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
+	graph_und_unw = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_unweighted_undirected),
 	// PrRWalk = new $PRRandomWalk.pageRankCentrality(),
 	PrGauss = new $PRGauss.pageRankDetCentrality();
 
@@ -26,7 +31,7 @@ describe("PageRank Centrality Tests", () => {
 	let n3Graph = null;
 
 	beforeAll(() => {
-		n3Graph = new $I.JSONInput(true, false, false).readFromJSONFile(pr_3nodes_file);
+		n3Graph = new $I.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 	});
 
 
@@ -120,7 +125,6 @@ describe("PageRank Centrality Tests", () => {
 		let PR = new PageRankRandomWalk(n3Graph, {
 			convergence: 1e-3,
 			alpha: 0.15,
-			alphaDamp: () => 1,
 			weighted: false
 		});
 		let PRDictResult = PR.getPRDict();
@@ -137,13 +141,12 @@ describe("PageRank Centrality Tests", () => {
 	 * 
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe.only('Page Rank performance tests - ', () => {
+	describe.only('Page Rank Random Walk performance comparison DICT / ARRAY verion - ', () => {
 		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(graph_file);
+				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
-					convergence: 1e-3,
-					// alphaDamp: () => 1
+					convergence: 1e-4
 				});
 				
 				let tic = +new Date;
@@ -161,8 +164,19 @@ describe("PageRank Centrality Tests", () => {
 				// Structure
 				expect(Object.keys(result_dict)).toEqual(Object.keys(result_arr));
 				expect(result_dict).toEqual(result_arr);
+
+				/**
+				 * check against NetworkX results
+				 */
+				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/pagerank_${graph_file}_results.json`;
+				let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
+				expect(Object.keys(result_arr).length).toBe(Object.keys(controlMap).length);
+				let epsilon = 1e-6
+				Object.keys(result_arr).forEach(n => expect(result_arr[n]).toBeGreaterThan(controlMap[n] - epsilon));
+				Object.keys(result_arr).forEach(n => expect(result_arr[n]).toBeLessThan(controlMap[n] + epsilon));
 			});
 		});
+
 
 		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
 			test.skip('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
