@@ -11,6 +11,7 @@ const DEFAULT_WEIGHTED = false;
 const DEFAULT_ALPHA = 0.15;
 const DEFAULT_MAX_ITERATIONS = 1e3;
 const DEFAULT_CONVERGENCE = 1e-4;
+const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 
@@ -29,6 +30,7 @@ export interface PrRandomWalkConfig {
   alpha?        : number;
   convergence?  : number;
   iterations?   : number;
+  normalize?    : boolean;
   init?         : Function;
 }
 
@@ -66,6 +68,7 @@ export class PageRankRandomWalk {
   private _convergence    : number;
   private _maxIterations  : number;
   private _init           : number;
+  private _normalize      : boolean;
 
   private _PRArrayDS      : PRArrayDS;
 
@@ -76,6 +79,7 @@ export class PageRankRandomWalk {
     this._alpha
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
+    this._normalize = config.normalize || DEFAULT_NORMALIZE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
 
     this._PRArrayDS = {
@@ -114,9 +118,9 @@ export class PageRankRandomWalk {
 
       // set nodes to pull from
       let pull_i = [];
-      let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
-      for( let edge_key in incomingEdges ) {
-        let edge: IBaseEdge = incomingEdges[edge_key];
+      let incoming_edges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
+      for( let edge_key in incoming_edges ) {
+        let edge: IBaseEdge = incoming_edges[edge_key];
         let source: IBaseNode = edge.getNodes().a;
         if(edge.getNodes().a.getID() == node.getID()) {
           source = edge.getNodes().b;
@@ -164,11 +168,11 @@ export class PageRankRandomWalk {
           }
           pull_rank += ds.old[source] / ds.outDeg[source];
         }
-        if ( pull_rank > 0 ) {
-          ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / N;
-        } else {
-          ds.curr[node] = 1 / N;
-        }
+        
+        /**
+         * are we already dealing with dangling nodes implicitly !?!?
+         */
+        ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / N;
         delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
 
@@ -188,8 +192,10 @@ export class PageRankRandomWalk {
   private getRankMapFromArray() {
     let result : RankMap = {};
     let nodes = this._graph.getNodes();
+    let pr_sum = this._normalize ? this._PRArrayDS.curr.reduce((i, j) => i + j, 0) : null;
     for( let key in nodes ) {
-      result[key] = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
+      let node_val = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
+      result[key] = pr_sum ? node_val / pr_sum : node_val;
     }
     return result;
   }
@@ -257,14 +263,29 @@ export class PageRankRandomWalk {
 
       if(delta_iter <= this._convergence) {
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
-        return curr;
+        return this.computeResultDict(curr);
       }
       
       old = $SU.clone(curr);
     }
 
     logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
-    return curr;
+    return this.computeResultDict(curr);
+  }
+
+
+  private computeResultDict(res: RankMap) {
+    if ( this._normalize ) {
+      let sum = 0;
+      for ( let key in res ) {
+        let node_rank = res[key];
+        sum += node_rank;
+      }
+      for ( let key in res ) {
+        res[key] /= sum;
+      }
+    }
+    return res;
   }
 
 }
