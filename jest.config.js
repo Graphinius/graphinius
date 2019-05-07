@@ -3,6 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   verbose: true,
   collectCoverage: true,
+
   // collectCoverageFrom: [
   //   "**/*.{ts}",
   //   "!**/node_modules/**",

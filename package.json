@@ -2,7 +2,7 @@
   "scripts": {
     "build": "gulp build",
     "test": "jest",
-    "postinstall": ""
+    "test-pr": "G_LOG=debug jest PageRank --watch"
   },
   "repository": {
     "type": "git",

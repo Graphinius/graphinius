@@ -1,9 +1,9 @@
 import {IGraph, BaseGraph} from '../core/Graph';
-import * as $SU from "../utils/structUtils";
-import { Logger } from "../utils/logger";
-import { pathToFileURL } from 'url';
 import { IBaseNode } from '../core/Nodes';
 import { IBaseEdge } from '../core/Edges';
+import * as $SU from "../utils/structUtils";
+
+import { Logger } from "../utils/logger";
 const logger = new Logger();
 
 
@@ -15,31 +15,17 @@ const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 
-
 /**
- * For now, we just use a node_id -> rank mapping
+ * Return type
  */
 export type RankMap = {[id: string] : number};
 
 
 /**
- * Configuration object for PageRank class
- */
-export interface PrRandomWalkConfig {
-  weighted?     : boolean;
-  alpha?        : number;
-  convergence?  : number;
-  iterations?   : number;
-  normalize?    : boolean;
-  init?         : Function;
-}
-
-
-/**
  * Data structs we need for the array version of pagerank
  * 
- * @description we assume that nodes are always in the same order in the various arrays
- * @description for now, we don't care about mapping the values back to node objects...
+ * @description we assume that nodes are always in the same order in the various arrays, 
+ *              with the exception of the pull sub-arrays, of course (which give the node index as values)
  * 
  * @todo write a method that takes a graph and produces those array in the same order
  * @todo guarantee that the graph doesn't change during that mapping -> unmapping process 
@@ -54,7 +40,26 @@ interface PRArrayDS {
 
 
 /**
- * Returns the PageRank for all nodes of a given graph by performing Random Walks
+ * Configuration object for PageRank class
+ */
+export interface PrRandomWalkConfig {
+  weighted?     : boolean;
+  alpha?        : number;
+  convergence?  : number;
+  iterations?   : number;
+  normalize?    : boolean;
+  init?         : Function;
+  PRArrays?     : PRArrayDS;
+}
+
+
+/**
+ * PageRank for all nodes of a given graph by performing Random Walks
+ * Implemented to give the same results as the NetworkX implementation, just faster!
+ * 
+ * @description We assume that all necessary properties of a node's feature vector
+ *              has been incorporated into it's initial rank or the link structure
+ *              of the graph. This way we can 
  * 
  * @todo find a paper / article detailing this implementation
  * @todo compute a ground truth for our sample social networks (python!)
@@ -70,29 +75,54 @@ export class PageRankRandomWalk {
   private _init           : number;
   private _normalize      : boolean;
 
+  /**
+   * Holds all the data structures necessary to compute PR in LinAlg form
+   */
   private _PRArrayDS      : PRArrayDS;
 
   constructor( private _graph: IGraph, config?: PrRandomWalkConfig ) {
     config = config || {}; // just so we don't get `property of undefined` errors below
     this._weighted = config.weighted || DEFAULT_WEIGHTED;
     this._alpha = config.alpha || DEFAULT_ALPHA;
-    this._alpha
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._normalize = config.normalize || DEFAULT_NORMALIZE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
 
-    this._PRArrayDS = {
+    this._PRArrayDS = config.PRArrays || {
       curr    : [],
       old     : [],
       outDeg  : [],
       pull    : []
     }
-    this.setPRArrayDataStructs();
+
+    /**
+     * Just for the purpose of testing
+     * 
+     * @todo but then the _graph constructor argument is useless - how to handle this??
+     */
+    config.PRArrays || this.constructPRArrayDataStructs();
   }
 
 
-  setPRArrayDataStructs() {
+  getConfig() {
+    return {
+      _weighted: this._weighted,
+      _alpha: this._alpha,
+      _maxIterations: this._maxIterations,
+      _convergence: this._convergence,
+      _normalize: this._normalize,
+      _init: this._init
+    }
+  }
+
+
+  getDSs() {
+
+  }
+
+
+  constructPRArrayDataStructs() {
     let tic = +new Date;
 
     let nodes = this._graph.getNodes();    
@@ -136,8 +166,32 @@ export class PageRankRandomWalk {
   }
 
 
-  getPRArray() {
+  private getRankMapFromArray() {
+    let result : RankMap = {};
+    let nodes = this._graph.getNodes();
+    if ( this._normalize ) {
+      this.normalizePR();
+    }
+    for( let key in nodes ) {
+      let node_val = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
+      result[key] = node_val;
+    }
+    return result;
+  }
+
+
+  private normalizePR() {
+    let pr_sum = this._PRArrayDS.curr.reduce((i, j) => i + j, 0);
+    if (pr_sum !== 1) {
+      this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n / pr_sum);
+    }
+  }
+
+
+  computePR() {
     const ds = this._PRArrayDS;
+    // logger.log( JSON.stringify(ds) );
+
     const N = this._graph.nrNodes();
 
     // debug
@@ -164,7 +218,7 @@ export class PageRankRandomWalk {
           if ( ds.outDeg[source] === 0 ) {
             logger.log( `Node: ${node}` );
             logger.log( `Source: ${source} `);
-            throw('GOT ZERO DIVISOR !!! -------------------------------------');
+            throw('Encountered zero divisor!');
           }
           pull_rank += ds.old[source] / ds.outDeg[source];
         }
@@ -186,106 +240,6 @@ export class PageRankRandomWalk {
 
     logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
     return this.getRankMapFromArray();
-  }
-
-
-  private getRankMapFromArray() {
-    let result : RankMap = {};
-    let nodes = this._graph.getNodes();
-    let pr_sum = this._normalize ? this._PRArrayDS.curr.reduce((i, j) => i + j, 0) : null;
-    for( let key in nodes ) {
-      let node_val = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
-      result[key] = pr_sum ? node_val / pr_sum : node_val;
-    }
-    return result;
-  }
-
-  
-  getPRDict(): RankMap {
-    let curr : RankMap = {};
-    let old : RankMap = {};
-    let nodes = this._graph.getNodes();
-    let nrNodes = this._graph.nrNodes();
-  
-    let structure = {};
-    
-    for( let key in nodes ) {
-      let node = this._graph.getNodeById(key);
-      structure[key] = {};
-      structure[key]['deg'] = node.outDegree() + node.degree();
-
-      /**
-       * Set all incoming edges for each node
-       * 
-       * @description treats undirected edges as incoming edges as well
-       * @todo decide on whether PR should only be defined on directed (sub-)graphs
-       * @todo decide on whether to implicitly transform an undirected (sub-)graph
-       *       into a directed one, as NetworkX does it...
-       */
-      structure[key]['inc'] = [];
-      let incomingEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
-      for( let edge_key in incomingEdges ) {
-        let edge = incomingEdges[edge_key];
-        let source = edge.getNodes().a;
-        if(edge.getNodes().a.getID() == node.getID())
-          source = edge.getNodes().b;
-        structure[key]['inc'].push(source.getID());
-      }
-
-      curr[key] = this._init;
-      old[key]  = this._init;
-    }
-
-    // debug
-    let visits = 0;
-
-    for(let i = 0; i < this._maxIterations; ++i) {
-      let delta_iter = 0.0;
-
-      for( let key in nodes ) {
-
-        let pull_rank = 0;
-        visits++;
-
-        /**
-         * @todo what about dangling nodes ?
-         */
-        let sources = structure[key]['inc'];
-        for(let k in sources) {
-          visits++;
-          let p = String(sources[k]);
-          pull_rank += old[p] / structure[p]['deg'];
-        }
-
-        curr[key] = (1-this._alpha)*pull_rank + this._alpha / nrNodes;
-        delta_iter += Math.abs(curr[key]-old[key]);
-      }
-
-      if(delta_iter <= this._convergence) {
-        logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
-        return this.computeResultDict(curr);
-      }
-      
-      old = $SU.clone(curr);
-    }
-
-    logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
-    return this.computeResultDict(curr);
-  }
-
-
-  private computeResultDict(res: RankMap) {
-    if ( this._normalize ) {
-      let sum = 0;
-      for ( let key in res ) {
-        let node_rank = res[key];
-        sum += node_rank;
-      }
-      for ( let key in res ) {
-        res[key] /= sum;
-      }
-    }
-    return res;
   }
 
 }

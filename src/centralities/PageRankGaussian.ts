@@ -18,7 +18,7 @@ class pageRankDetCentrality{
       divideTable[key] = 0;
     }
 
-    for(let key in graph.getNodes()) { //Run through all nodes in graph
+    for(let key in graph.getNodes()) {
       //pageScores[key] = startVal;
       map[key] = ctr;
       let node = graph.getNodeById(key);
