@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
 import * as $PRGauss from '../../src/centralities/PageRankGaussian';
-import { PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
+import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
 import * as $CSV from '../../src/io/input/CSVInput';
 import { Logger } from '../../src/utils/logger';
 
@@ -27,10 +27,10 @@ let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 
 
 describe("PageRank Centrality Tests", () => {
-	let n3Graph = null;
+	let n3_graph = null;
 
 	beforeAll(() => {
-		n3Graph = new $I.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = new $I.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 	});
 
 
@@ -53,24 +53,75 @@ describe("PageRank Centrality Tests", () => {
 			});
 		});
 
-		test.todo('correctly constructs current array')
 
-		test.todo('correctly constructs old array')
+		test('correctly constructs current & old array', () => {
+			let pr_init = [0.3333333333333333,0.3333333333333333,0.3333333333333333];
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			expect(pageRank.getDSs().curr).toEqual(pr_init);
+		});
 
-		test.todo('correctly constructs out degree array');
 
-		test.todo('correctly constructs `pull` 2D array');
+		test('correctly constructs old array', () => {
+			let pr_init = [0.3333333333333333,0.3333333333333333,0.3333333333333333];
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			expect(pageRank.getDSs().old).toEqual(pr_init);
+		});
+
+
+		test('correctly constructs out degree array', () => {
+			let deg_init = [2,0,1];
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			expect(pageRank.getDSs().out_deg).toEqual(deg_init);
+		});
+
+
+		test('correctly constructs `pull` 2D array', () => {
+			let pull_expect = [[],[0,2],[0]];
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			expect(pageRank.getDSs().pull).toEqual(pull_expect);			
+		});
+
+
+		test('correctly constructs tele_set & tele_size for NON_PPR', () => {
+			let tele_set_expect = [false, false, false],
+					tele_size_expect = 0;
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
+		});
+
+
+		test('correctly constructs tele_set & tele_size for PPR, teleset={A}', () => {
+			let tele_set_expect = [true, false, false],
+					tele_size_expect = 1;
+			let pageRank = new PageRankRandomWalk(n3_graph, {
+				tele_set: {"A": true}
+			});
+			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
+		});
+
+
+		test('correctly constructs tele_set & tele_size for PPR, teleset={A, B}', () => {
+			let tele_set_expect = [true, true, false],
+					tele_size_expect = 2;
+			let pageRank = new PageRankRandomWalk(n3_graph, {
+				tele_set: {"A": true, "B": true}
+			});
+			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
+		});
 
 
 		/**
-		 * If array construction is tested properly there is no reason to test this...
+		 * One array construction is tested properly there is no reason to test this...
 		 */
 		test('throws error when out degree of a given node in the pull array is zero', () => {
 			let erroneousDS = {
-				"curr":[0.3333333333333333,0.3333333333333333,0.3333333333333333],
-				"old":[0.3333333333333333,0.3333333333333333,0.3333333333333333],
-				"outDeg":[2,0,1],
-				"pull":[[1],[0,2],[0]]
+				"curr": [0.3333333333333333,0.3333333333333333,0.3333333333333333],
+				"old": [0.3333333333333333,0.3333333333333333,0.3333333333333333],
+				"out_deg": [2,0,1],
+				"pull": [[1],[0,2],[0]]
 			}
 			let pageRank = new PageRankRandomWalk(graph, {PRArrays: erroneousDS});
 			expect(pageRank.computePR.bind(pageRank)).toThrow('Encountered zero divisor!');
@@ -121,10 +172,10 @@ describe("PageRank Centrality Tests", () => {
 
 
 	/**
-	 * What is this supposed to be doing !?
+	 * What is this supposed to be doing !? Check Gauss against pre-calculated results !?
 	 * same === correct !?
 	 */
-	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
+	test('should return the correct centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
 		let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
 		let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
 		let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
@@ -175,7 +226,7 @@ describe("PageRank Centrality Tests", () => {
 
 
 	test('RW result should equal NetworkX results - simple pr_3node_graph', () => {
-		let PR = new PageRankRandomWalk(n3Graph, {
+		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-3,
 			alpha: 0.15,
 			weighted: false,

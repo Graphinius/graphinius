@@ -15,9 +15,7 @@ const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 
-/**
- * Return type
- */
+export type TeleSet = {[id: string] : any}
 export type RankMap = {[id: string] : number};
 
 
@@ -31,11 +29,13 @@ export type RankMap = {[id: string] : number};
  * @todo guarantee that the graph doesn't change during that mapping -> unmapping process 
  *       already guaranteed by the single-threadedness of JS/Node, unless we build workers into it...
  */
-interface PRArrayDS {
-  curr    : Array<number>;
-  old     : Array<number>;
-  outDeg  : Array<number>;
-  pull    : Array<Array<number>>;
+export interface PRArrayDS {
+  curr        : Array<number>;
+  old         : Array<number>;
+  out_deg     : Array<number>;
+  pull        : Array<Array<number>>;
+  teleport?   : Array<boolean>;
+  tele_size?  : number;
 }
 
 
@@ -50,6 +50,7 @@ export interface PrRandomWalkConfig {
   normalize?    : boolean;
   init?         : Function;
   PRArrays?     : PRArrayDS;
+  tele_set?     : TeleSet;
 }
 
 
@@ -74,6 +75,7 @@ export class PageRankRandomWalk {
   private _maxIterations  : number;
   private _init           : number;
   private _normalize      : boolean;
+  private _teleSet        : TeleSet;
 
   /**
    * Holds all the data structures necessary to compute PR in LinAlg form
@@ -88,12 +90,15 @@ export class PageRankRandomWalk {
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._normalize = config.normalize || DEFAULT_NORMALIZE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
+    this._teleSet = config.tele_set ? config.tele_set : null;
 
     this._PRArrayDS = config.PRArrays || {
-      curr    : [],
-      old     : [],
-      outDeg  : [],
-      pull    : []
+      curr      : [],
+      old       : [],
+      out_deg   : [],
+      pull      : [],
+      teleport  : [],
+      tele_size : 0
     }
 
     /**
@@ -102,6 +107,7 @@ export class PageRankRandomWalk {
      * @todo but then the _graph constructor argument is useless - how to handle this??
      */
     config.PRArrays || this.constructPRArrayDataStructs();
+    // logger.log(JSON.stringify(this._PRArrayDS));
   }
 
 
@@ -118,7 +124,7 @@ export class PageRankRandomWalk {
 
 
   getDSs() {
-
+    return this._PRArrayDS;
   }
 
 
@@ -135,7 +141,13 @@ export class PageRankRandomWalk {
 
       this._PRArrayDS.curr[i] = this._init;
       this._PRArrayDS.old[i] = this._init;
-      this._PRArrayDS.outDeg[i] = node.outDegree() + node.degree();
+      this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
+      /**
+       * PPR
+       */
+      let tele_node = !!(this._teleSet && this._teleSet[node.getID()]);
+      this._PRArrayDS.teleport[i] = tele_node;
+      tele_node && this._PRArrayDS.tele_size++;
       ++i;
     }
 
@@ -215,12 +227,12 @@ export class PageRankRandomWalk {
            * @todo properly test _PRArrayDS as well as this beauty 
            *       (using a contrived, wrongly constructed pull 2D array)
            */
-          if ( ds.outDeg[source] === 0 ) {
+          if ( ds.out_deg[source] === 0 ) {
             logger.log( `Node: ${node}` );
             logger.log( `Source: ${source} `);
             throw('Encountered zero divisor!');
           }
-          pull_rank += ds.old[source] / ds.outDeg[source];
+          pull_rank += ds.old[source] / ds.out_deg[source];
         }
         
         /**
