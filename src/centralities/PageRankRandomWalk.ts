@@ -50,6 +50,7 @@ export interface PrRandomWalkConfig {
   normalize?    : boolean;
   init?         : Function;
   PRArrays?     : PRArrayDS;
+  personalized? : boolean;
   tele_set?     : TeleSet;
 }
 
@@ -75,6 +76,7 @@ export class PageRankRandomWalk {
   private _maxIterations  : number;
   private _init           : number;
   private _normalize      : boolean;
+  private _personalized   : boolean;
   private _teleSet        : TeleSet;
 
   /**
@@ -90,6 +92,7 @@ export class PageRankRandomWalk {
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._normalize = config.normalize || DEFAULT_NORMALIZE;
     this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
+    this._personalized = config.personalized ? config.personalized : false;
     this._teleSet = config.tele_set ? config.tele_set : null;
 
     this._PRArrayDS = config.PRArrays || {
@@ -97,8 +100,8 @@ export class PageRankRandomWalk {
       old       : [],
       out_deg   : [],
       pull      : [],
-      teleport  : [],
-      tele_size : 0
+      teleport  : this._teleSet ? [] : null,
+      tele_size : this._teleSet ? 0 : null
     }
 
     /**
@@ -142,12 +145,17 @@ export class PageRankRandomWalk {
       this._PRArrayDS.curr[i] = this._init;
       this._PRArrayDS.old[i] = this._init;
       this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
+      
       /**
-       * PPR
+       * @todo enhance this to actual weights!?
+       * @todo networkX requires a dict the size of the inputs, which is cumbersome for larger graphs
+       *       let's do this smarter!
        */
-      let tele_node = !!(this._teleSet && this._teleSet[node.getID()]);
-      this._PRArrayDS.teleport[i] = tele_node;
-      tele_node && this._PRArrayDS.tele_size++;
+      if (this._personalized) {
+        let tele_node = !!(this._teleSet && this._teleSet[node.getID()]);
+        this._PRArrayDS.teleport[i] = tele_node;
+        tele_node && this._PRArrayDS.tele_size++;
+      }
       ++i;
     }
 
@@ -236,9 +244,17 @@ export class PageRankRandomWalk {
         }
         
         /**
+         * @description if we are in the tele_set, we get
          * are we already dealing with dangling nodes implicitly !?!?
          */
-        ds.curr[node] = (1-this._alpha)*pull_rank + this._alpha / N;
+        let link_chance = (1-this._alpha) * pull_rank;
+        if (this._personalized) {
+          let jump_chance = ds.teleport[node] ? this._alpha / ds.tele_size : 0;
+          ds.curr[node] = link_chance + jump_chance;
+        }
+        else {
+          ds.curr[node] = link_chance + this._alpha / N;
+        }
         delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
 

@@ -39,7 +39,7 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
-	describe('correctly constructs PageRank RandomWalk data structures - ', () => {
+	describe('constructor correctly initializes PageRank RandomWalk data structures - ', () => {
 
 		test('correctly initialized PageRank configuration from default values', () => {
 			let PR = new PageRankRandomWalk(graph);
@@ -83,32 +83,34 @@ describe("PageRank Centrality Tests", () => {
 
 
 		test('correctly constructs tele_set & tele_size for NON_PPR', () => {
-			let tele_set_expect = [false, false, false],
-					tele_size_expect = 0;
+			let teleport_expect = null,
+					tele_size_expect = null;
 			let pageRank = new PageRankRandomWalk(n3_graph);
-			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
 		});
 
 
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A}', () => {
-			let tele_set_expect = [true, false, false],
+			let teleport_expect = [true, false, false],
 					tele_size_expect = 1;
 			let pageRank = new PageRankRandomWalk(n3_graph, {
+				personalized: true,
 				tele_set: {"A": true}
 			});
-			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
 		});
 
 
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A, B}', () => {
-			let tele_set_expect = [true, true, false],
+			let teleport_expect = [true, true, false],
 					tele_size_expect = 2;
 			let pageRank = new PageRankRandomWalk(n3_graph, {
+				personalized: true,
 				tele_set: {"A": true, "B": true}
 			});
-			expect(pageRank.getDSs().teleport).toEqual(tele_set_expect);
+			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
 		});
 
@@ -242,6 +244,46 @@ describe("PageRank Centrality Tests", () => {
 		Object.keys(PRArrayResult).forEach(n =>
 			expect(checkEpsilonEquality(PRArrayResult[n], nxControl[n], epsilon)).toBe(true)
 		);
+	});
+
+
+	/**
+	 * @todo figure out why the results deviate below 1e-4
+	 */
+	[{
+		teleport_set: {'A': true},
+		nx_control: {'A': 0.4521984139201357, 'B': 0.3555616685302314, 'C': 0.19223991754963288}
+	 },
+	 {
+		teleport_set: {'A': true, 'B': true},
+		nx_control: {'A': 0.31136235851100036, 'B': 0.5562862087697674, 'C': 0.13235143271923222}
+	 }
+	].forEach( teleports => {
+		test('RW result should equal NetworkX results - teleport set', () => {
+			let PR = new PageRankRandomWalk(n3_graph, {
+				convergence: 1e-4,
+				alpha: 0.15,
+				weighted: false,
+				normalize: true,
+				personalized: true,
+				tele_set: teleports.teleport_set
+			});
+			let result = PR.computePR();
+			logger.log(JSON.stringify(result));
+
+			const nxControl = teleports.nx_control
+			logger.log(JSON.stringify(nxControl));
+
+			let epsilon = 1e-4; // does not work with lower values ... !
+			// Object.keys(result).forEach( n => expect(result[n]).toEqual(nxControl[n]) ); // just for direct comparison
+
+			Object.keys(result).forEach( n => expect(result[n]).toBeGreaterThan(nxControl[n] - epsilon));
+			Object.keys(result).forEach( n => expect(result[n]).toBeLessThan(nxControl[n] + epsilon));
+
+			Object.keys(result).forEach(n =>
+				expect(checkEpsilonEquality(result[n], nxControl[n], epsilon)).toBe(true)
+			);
+		});
 	});
 
 
