@@ -82,6 +82,16 @@ describe("PageRank Centrality Tests", () => {
 		});
 
 
+		test('if personalized, checks for existence of tele_set - throws error otherwise', () => {
+			let prConstrWrapper = () => {
+				return new PageRankRandomWalk(n3_graph, {
+					personalized: true
+				});
+			};
+			expect(prConstrWrapper).toThrow('Personalized Pagerank requires tele_set as a config argument');
+		});
+
+
 		test('correctly constructs tele_set & tele_size for NON_PPR', () => {
 			let teleport_expect = null,
 					tele_size_expect = null;
@@ -92,11 +102,11 @@ describe("PageRank Centrality Tests", () => {
 
 
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A}', () => {
-			let teleport_expect = [true, false, false],
+			let teleport_expect = [1, 0, 0],
 					tele_size_expect = 1;
 			let pageRank = new PageRankRandomWalk(n3_graph, {
 				personalized: true,
-				tele_set: {"A": true}
+				tele_set: {"A": 1}
 			});
 			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
@@ -104,11 +114,11 @@ describe("PageRank Centrality Tests", () => {
 
 
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A, B}', () => {
-			let teleport_expect = [true, true, false],
+			let teleport_expect = [0.5, 0.5, 0],
 					tele_size_expect = 2;
 			let pageRank = new PageRankRandomWalk(n3_graph, {
 				personalized: true,
-				tele_set: {"A": true, "B": true}
+				tele_set: {"A": 0.5, "B": 0.5}
 			});
 			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
@@ -130,62 +140,6 @@ describe("PageRank Centrality Tests", () => {
 		});
 
 	});
-
-
-	test('should return correct betweenness map', () => {
-		let prd = PrGauss.getCentralityMap(graph);
-		expect(prd).toEqual([
-			0.1332312404287902,
-			0.18376722817764174,
-			0.17457886676875956,
-			0.2787136294027564,
-			0.18376722817764166,
-			0.045941807044410435
-		]);
-	});
-
-
-
-	// test.skip('should calculate similar values for random walk and gaussian', () => {
-	// 	let prd = PrGauss.getCentralityMap(graph);
-	// 	let prrw = new PageRankRandomWalk(graph, {normalize: true}).computePR();
-
-	// 	logger.log("GAUSS:"+JSON.stringify(prd));
-	// 	logger.log("RANDOM:"+JSON.stringify(prrw));
-	// 	checkPageRanks(graph, prd, prrw, 0.5);
-	// });
-
-
-	// /**
-	//  * @description probably useless test, since Gauss & RW are not supposed to produce identical or even similar results...!?
-	//  */
-	// test.skip(
-	// 	'should calculate similar values for random walk and gaussian on undirected unweighted graph',
-	// 	() => {
-	// 		let result_gauss = PrGauss.getCentralityMap(graph_und_unw);
-	// 		logger.log("GAUSS:" + JSON.stringify(result_gauss));
-
-	// 		let result_rw = new PageRankRandomWalk(graph_und_unw, {normalize: true}).computePR();
-	// 		logger.log("RANDOM:" + JSON.stringify(result_rw));
-
-	// 		checkPageRanks(graph_und_unw, result_rw, result_gauss, 0.5);
-	// 	}
-	// );
-
-
-	/**
-	 * What is this supposed to be doing !? Check Gauss against pre-calculated results !?
-	 * same === correct !?
-	 */
-	test('should return the correct centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
-		let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
-		let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
-		let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
-		checkRankPrecision(graph_2, PrGauss.getCentralityMap(graph_2));
-		checkRankPrecision(graph_3, PrGauss.getCentralityMap(graph_3));
-		checkRankPrecision(graph_6, PrGauss.getCentralityMap(graph_6));
-	}
-	);
 
 
 	/**
@@ -251,11 +205,18 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo figure out why the results deviate below 1e-4
 	 */
 	[{
-		teleport_set: {'A': true},
+		teleport_set: {'A': 1},
 		nx_control: {'A': 0.4521984139201357, 'B': 0.3555616685302314, 'C': 0.19223991754963288}
 	 },
 	 {
-		teleport_set: {'A': true, 'B': true},
+		teleport_set: {'A': 0.5, 'B': 0.5},
+		nx_control: {'A': 0.31136235851100036, 'B': 0.5562862087697674, 'C': 0.13235143271923222}
+	 },
+	 /**
+		* WHY DOES THIS WORK !?!?
+	  */
+	 {
+		teleport_set: {'A': 5, 'B': 5},
 		nx_control: {'A': 0.31136235851100036, 'B': 0.5562862087697674, 'C': 0.13235143271923222}
 	 }
 	].forEach( teleports => {
@@ -327,18 +288,7 @@ describe("PageRank Centrality Tests", () => {
 				Object.keys(result_arr).forEach(n =>
 					expect(checkEpsilonEquality(result_arr[n], controlMap[n], epsilon)).toBe(true)
 				);
-			});
-		});
 
-
-		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
-			test.skip('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(graph_file);
-				let tic = +new Date;
-				let pr = PrGauss.getCentralityMap(sn_graph);
-				let toc = +new Date;
-				logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`)
-				expect(Array.isArray(pr)).toBeTruthy;
 			});
 
 		});

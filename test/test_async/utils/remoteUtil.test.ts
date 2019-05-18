@@ -13,7 +13,8 @@ describe('Retrieve remote file tests - ', () => {
 		remote_host: REMOTE_HOST,
 		remote_path: REMOTE_PATH,
 		file_name: SMALL_GRAPH_NAME + JSON_EXTENSION
-	}
+	};
+	
 
 	test('should throw an error if the handed callback is not a function',
 		(done) => {

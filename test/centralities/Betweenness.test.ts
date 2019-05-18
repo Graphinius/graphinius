@@ -217,10 +217,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			let endBP = +new Date();
 			logger.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
-			/**
-			 * Comparing floats to within epsilon precision
-			 */
-			let epsilon = 1e-6;
+			let epsilon = 1e-12;
 			Object.keys(resBP).forEach(n => expect(resBP[n]).toBeGreaterThan(resBW[n] - epsilon));
 			Object.keys(resBP).forEach(n => expect(resBP[n]).toBeLessThan(resBW[n] + epsilon));
 		}
@@ -244,10 +241,6 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			let endBP = +new Date();
 			logger.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
-			/**
-			 * Comparing floats to within epsilon precision
-			 * Smaller epsilon due to normalization of scores
-			 */
 			let epsilon = 1e-12;
 			Object.keys(resBP).forEach(n => expect(resBP[n]).toBeGreaterThan(resBW[n] - epsilon));
 			Object.keys(resBP).forEach(n => expect(resBP[n]).toBeLessThan(resBW[n] + epsilon));

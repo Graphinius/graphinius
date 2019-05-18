@@ -15,7 +15,7 @@ const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 
-export type TeleSet = {[id: string] : any}
+export type TeleSet = {[id: string] : number}
 export type RankMap = {[id: string] : number};
 
 
@@ -34,7 +34,7 @@ export interface PRArrayDS {
   old         : Array<number>;
   out_deg     : Array<number>;
   pull        : Array<Array<number>>;
-  teleport?   : Array<boolean>;
+  teleport?   : Array<number>;
   tele_size?  : number;
 }
 
@@ -95,6 +95,10 @@ export class PageRankRandomWalk {
     this._personalized = config.personalized ? config.personalized : false;
     this._teleSet = config.tele_set ? config.tele_set : null;
 
+    if (this._personalized && !this._teleSet) {
+      throw Error("Personalized Pagerank requires tele_set as a config argument");
+    }
+
     this._PRArrayDS = config.PRArrays || {
       curr      : [],
       old       : [],
@@ -152,9 +156,9 @@ export class PageRankRandomWalk {
        *       let's do this smarter!
        */
       if (this._personalized) {
-        let tele_node = !!(this._teleSet && this._teleSet[node.getID()]);
-        this._PRArrayDS.teleport[i] = tele_node;
-        tele_node && this._PRArrayDS.tele_size++;
+        let tele_prob_node = this._teleSet[node.getID()] || 0;
+        this._PRArrayDS.teleport[i] = tele_prob_node;
+        tele_prob_node && this._PRArrayDS.tele_size++;
       }
       ++i;
     }
@@ -249,7 +253,7 @@ export class PageRankRandomWalk {
          */
         let link_chance = (1-this._alpha) * pull_rank;
         if (this._personalized) {
-          let jump_chance = ds.teleport[node] ? this._alpha / ds.tele_size : 0;
+          let jump_chance = ds.teleport[node] / ds.tele_size; // 0/x = 0
           ds.curr[node] = link_chance + jump_chance;
         }
         else {
