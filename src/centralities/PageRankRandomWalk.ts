@@ -140,6 +140,8 @@ export class PageRankRandomWalk {
 
     let nodes = this._graph.getNodes();    
     let i = 0;
+    let teleport_prob_sum = 0;
+
     for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
 
@@ -158,9 +160,15 @@ export class PageRankRandomWalk {
       if (this._personalized) {
         let tele_prob_node = this._teleSet[node.getID()] || 0;
         this._PRArrayDS.teleport[i] = tele_prob_node;
+        teleport_prob_sum += tele_prob_node;
         tele_prob_node && this._PRArrayDS.tele_size++;
       }
       ++i;
+    }
+
+    // normalize teleport probs
+    if (this._personalized && teleport_prob_sum !== 1) {
+      this._PRArrayDS.teleport = this._PRArrayDS.teleport.map(n => n /= teleport_prob_sum);
     }
 
     /**
