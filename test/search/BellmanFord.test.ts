@@ -3,8 +3,8 @@ import * as $N from '../../src/core/Nodes';
 import * as $J from '../../src/io/input/JSONInput';
 import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
-import { Logger } from '../../src/utils/logger';
 
+import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
 let JSON_IN	= $J.JSONInput;
@@ -30,8 +30,8 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 
 	beforeAll(() => {
-		json = new JSON_IN(true,false,true);
-		csv = new CSV_IN(' ',false,false);
+		json = new JSON_IN(true, false, true);
+		csv = new CSV_IN(' ', false, false);
 		bf_graph = json.readFromJSONFile(bf_graph_file);
 		bf_neg_cycle_graph = json.readFromJSONFile(bf_graph_neg_cycle_file);
 		BF_expect = { S: 0, A: 5, E: 8, C: 7, B: 5, D: 9 };
@@ -103,6 +103,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 	});
 
+
 	/**
 	 * TODO more test cases (directed, undirected, weighted, unweighted graphs)
 	 */
@@ -133,55 +134,36 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 		let social_300_file = "./test/test_data/social_network_edges_300.csv",
 				social_1k_file = "./test/test_data/social_network_edges_1K.csv",
-				graph_6k_file = "./test/test_data/real_graph.json",
+				social_20k_file = "./test/test_data/social_network_edges_20K.csv",
 				sn_300_graph  		: $G.IGraph,
 				sn_1k_graph				: $G.IGraph,
-				graph_6k 					: $G.IGraph;
+				sn_20k_graph 			: $G.IGraph;
 
 
-		beforeAll(() => {
+		/**
+		 * For some reason, the beforeAll block is not executed before the forEach block
+		 * -> probably some quirk with jest & asynchronous tests...
+		 */
+		// beforeAll(() => {
+			csv = new CSV_IN(' ', false, false);
 			sn_300_graph = csv.readFromEdgeListFile(social_300_file);
 			sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
-			graph_6k = json.readFromJSONFile(graph_6k_file);
-		});
+			sn_20k_graph = csv.readFromEdgeListFile(social_20k_file);
 
+			// logger.log(`Social network graph with ${sn_300_graph.nrNodes()} nodes: ${sn_300_graph}`);
+		// });
 
-		test('BF performance test on ~300 node social network graph', () => {
-			let d = +new Date();
-			BF_compute = $BF.BellmanFordDict(sn_300_graph, sn_300_graph.getRandomNode());
-			let e = +new Date();
-			logger.log("BellmanFord on social network of ~300 nodes took " + (e-d) + " ms. to finish");
-			d = +new Date();
-			BF_compute = $BF.BellmanFordArray(sn_300_graph, sn_300_graph.getRandomNode());
-			e = +new Date();
-			logger.log("BellmanFord (Array) on social network of ~300 nodes took " + (e-d) + " ms. to finish");
-		});
-
-
-		test('BF performance test on ~1k node social network graph', () => {
-			let d = +new Date();
-			BF_compute = $BF.BellmanFordDict(sn_1k_graph, sn_1k_graph.getRandomNode());
-			let e = +new Date();
-			logger.log("BellmanFord on social network of ~1k nodes took " + (e-d) + " ms. to finish");
-			d = +new Date();
-			BF_compute = $BF.BellmanFordArray(sn_1k_graph, sn_1k_graph.getRandomNode());
-			e = +new Date();
-			logger.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
-		});
-
-
-		test.skip('BF performance test on ~6k graph', () => {
-			logger.log(`Real sized graph has: ${graph_6k.nrNodes()} nodes.`);
-			logger.log(`Real sized graph has ${graph_6k.nrDirEdges() + graph_6k.nrUndEdges()} edges.`);
-
-			let d = +new Date();
-			BF_compute = $BF.BellmanFordDict(graph_6k, graph_6k.getRandomNode());
-			let e = +new Date();
-			logger.log("BellmanFord (Dict) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
-			d = +new Date();
-			BF_compute = $BF.BellmanFordArray(graph_6k, graph_6k.getRandomNode());
-			e = +new Date();
-			logger.log("BellmanFord (Array) on social network of ~1k nodes took " + (e-d) + " ms. to finish");
+		[sn_300_graph].forEach( sn_graph => { // , sn_1k_graph , sn_20k_graph
+			test(`BF performance test on social networks of realistic (client-side) size:` , () => {
+				let tic = +new Date();
+				BF_compute = $BF.BellmanFordDict(sn_graph, sn_graph.getRandomNode());
+				let toc = +new Date();
+				logger.log("BellmanFord on social network of ~300 nodes took " + (toc-tic) + " ms. to finish");
+				tic = +new Date();
+				BF_compute = $BF.BellmanFordArray(sn_graph, sn_graph.getRandomNode());
+				toc = +new Date();
+				logger.log("BellmanFord (Array) on social network of ~300 nodes took " + (toc-tic) + " ms. to finish");
+			});
 		});
 
 	});

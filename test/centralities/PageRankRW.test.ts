@@ -11,7 +11,7 @@ const EPSILON = 1e-6;
 const DIGITS = 6; // inverse of epsilon (number of digits after the decimal)
 
 const TEST_PATH_PREFIX = "./test/test_data/",
-	PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
+			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
 
 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
@@ -219,15 +219,16 @@ describe("PageRank Centrality Tests", () => {
 		nx_control: {'A': 0.45223280658663706, 'B': 0.3555684605482446, 'C': 0.19219873286511846}
 	 },
 	 {
-		teleport_set: {'A': 0.5, 'B': 0.5},
+		teleport_set: {'A': .5, 'B': .5},
 		nx_control: {'A': 0.3114049634796294, 'B': 0.5562477948603342, 'C': 0.13234724166003645}
 	 },
-	 /**
-		* WHY DOES THIS WORK !?!?
-	  */
 	 {
 		teleport_set: {'A': 5, 'B': 5},
 		nx_control: {'A': 0.3114049634796294, 'B': 0.5562477948603342, 'C': 0.13234724166003645}
+	 },
+	 {
+		teleport_set: {'A': .1, 'B': .3, 'C': .6},
+		nx_control: {'A': 0.061307327133222844, 'B': 0.5447930310348754, 'C': 0.3938996418319016}
 	 }
 	].forEach( teleports => {
 		test('RW result should equal NetworkX results - teleport set', () => {

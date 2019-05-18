@@ -27,6 +27,11 @@ n3res = pagerank(n3graph, alpha=0.85, personalization=pValues, dangling=None, ma
 print("Pagerank, teleport set {A, B}:")
 print(n3res)
 
+pValues = {'A': .1, 'B': .3, 'C': .6}
+n3res = pagerank(n3graph, alpha=0.85, personalization=pValues, dangling=None, max_iter=1000,nstart=None)
+print("Pagerank, skewed teleport set {A: .1, B: .3, C: .6}:")
+print(n3res)
+
 
 '''
 In case of start values, we need to provide one for each node
