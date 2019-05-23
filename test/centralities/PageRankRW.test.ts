@@ -23,8 +23,7 @@ let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
 	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
 	pagerank_py_folder = `centralities/pagerank`,
 	graph: $G.IGraph = json.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
-	graph_und_unw = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_unweighted_undirected),
-	PrGauss = new $PRGauss.pageRankDetCentrality();
+	graph_und_unw = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_unweighted_undirected);
 
 
 describe("PageRank Centrality Tests", () => {
@@ -36,6 +35,17 @@ describe("PageRank Centrality Tests", () => {
 
 
 	describe('constructor correctly sets class properties', () => {
+
+
+
+		test('if personalized, checks for existence of tele_set - throws error otherwise', () => {
+			let prConstrWrapper = () => {
+				return new PageRankRandomWalk(n3_graph, {
+					personalized: true
+				});
+			};
+			expect(prConstrWrapper).toThrow('Personalized Pagerank requires tele_set as a config argument');
+		});
 
 	});
 
@@ -50,7 +60,7 @@ describe("PageRank Centrality Tests", () => {
 				_maxIterations: 1e3,
 				_convergence: 1e-4,
 				_normalize: false,
-				_init: 1 / graph.nrNodes()
+				// _init: 1 / graph.nrNodes()
 			});
 		});
 
@@ -80,16 +90,6 @@ describe("PageRank Centrality Tests", () => {
 			let pull_expect = [[],[0,2],[0]];
 			let pageRank = new PageRankRandomWalk(n3_graph);
 			expect(pageRank.getDSs().pull).toEqual(pull_expect);			
-		});
-
-
-		test('if personalized, checks for existence of tele_set - throws error otherwise', () => {
-			let prConstrWrapper = () => {
-				return new PageRankRandomWalk(n3_graph, {
-					personalized: true
-				});
-			};
-			expect(prConstrWrapper).toThrow('Personalized Pagerank requires tele_set as a config argument');
 		});
 
 
@@ -135,6 +135,48 @@ describe("PageRank Centrality Tests", () => {
 			});
 			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
+		});
+
+
+		test('throws Error if init_map is given but not of correct size (# nodes)', () => {
+			let prConstrWrapper = () => {
+				return new PageRankRandomWalk(n3_graph, {
+					init_map: {"A": 0.5, "B": 0.5}
+				});
+			};
+			expect(prConstrWrapper).toThrow('init_map config parameter must be of size |nodes|');
+		});
+
+
+		test('throws Error if init_map is given, but does not contain all node IDs', () => {
+			let prConstrWrapper = () => {
+				return new PageRankRandomWalk(n3_graph, {
+					init_map: {"A": 0.5, "B": 0.5, "meNotExists": 17}
+				});
+			};
+			expect(prConstrWrapper).toThrow('initial value must be given for each node in the graph.');
+		});
+
+
+		test('correctly constructs initial values if init_map is given', () => {
+			let init_expect = [0.5, 0.4, 0.1];
+
+			let pageRank = new PageRankRandomWalk(n3_graph, {
+				init_map: {"A": 0.5, "B": 0.4, "C": 0.1}
+			});
+			expect(pageRank.getDSs().curr).toEqual(init_expect);
+			expect(pageRank.getDSs().old).toEqual(init_expect);
+		});
+
+
+		test('correctly normalizes initial values if init_map is given', () => {
+			let init_expect = [0.5, 0.4, 0.1];
+
+			let pageRank = new PageRankRandomWalk(n3_graph, {
+				init_map: {"A": 5, "B": 4, "C": 1}
+			});
+			expect(pageRank.getDSs().curr).toEqual(init_expect);
+			expect(pageRank.getDSs().old).toEqual(init_expect);
 		});
 
 

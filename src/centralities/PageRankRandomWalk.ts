@@ -15,7 +15,8 @@ const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
 
-export type TeleSet = {[id: string] : number}
+export type InitMap = {[id: string] : number};
+export type TeleSet = {[id: string] : number};
 export type RankMap = {[id: string] : number};
 
 
@@ -42,16 +43,17 @@ export interface PRArrayDS {
 /**
  * Configuration object for PageRank class
  */
-export interface PrRandomWalkConfig {
+export interface PagerankRWConfig {
   weighted?     : boolean;
   alpha?        : number;
   convergence?  : number;
   iterations?   : number;
   normalize?    : boolean;
-  init?         : Function;
+  // init?         : Function;
   PRArrays?     : PRArrayDS;
   personalized? : boolean;
   tele_set?     : TeleSet;
+  init_map?     : InitMap;
 }
 
 
@@ -74,29 +76,31 @@ export class PageRankRandomWalk {
   private _alpha          : number;
   private _convergence    : number;
   private _maxIterations  : number;
-  private _init           : number;
+  // private _init           : number;
   private _normalize      : boolean;
   private _personalized   : boolean;
-  private _teleSet        : TeleSet;
 
   /**
    * Holds all the data structures necessary to compute PR in LinAlg form
    */
   private _PRArrayDS      : PRArrayDS;
 
-  constructor( private _graph: IGraph, config?: PrRandomWalkConfig ) {
+  constructor( private _graph: IGraph, config?: PagerankRWConfig ) {
     config = config || {}; // just so we don't get `property of undefined` errors below
     this._weighted = config.weighted || DEFAULT_WEIGHTED;
     this._alpha = config.alpha || DEFAULT_ALPHA;
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
     this._convergence = config.convergence || DEFAULT_CONVERGENCE;
     this._normalize = config.normalize || DEFAULT_NORMALIZE;
-    this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
+    // this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
     this._personalized = config.personalized ? config.personalized : false;
-    this._teleSet = config.tele_set ? config.tele_set : null;
 
-    if (this._personalized && !this._teleSet) {
+    if (this._personalized && !config.tele_set) {
       throw Error("Personalized Pagerank requires tele_set as a config argument");
+    }
+
+    if (config.init_map && Object.keys(config.init_map).length !== this._graph.nrNodes()) {
+      throw Error("init_map config parameter must be of size |nodes|");
     }
 
     this._PRArrayDS = config.PRArrays || {
@@ -104,8 +108,8 @@ export class PageRankRandomWalk {
       old       : [],
       out_deg   : [],
       pull      : [],
-      teleport  : this._teleSet ? [] : null,
-      tele_size : this._teleSet ? 0 : null
+      teleport  : config.tele_set ? [] : null,
+      tele_size : config.tele_set ? 0 : null
     }
 
     /**
@@ -113,7 +117,7 @@ export class PageRankRandomWalk {
      * 
      * @todo but then the _graph constructor argument is useless - how to handle this??
      */
-    config.PRArrays || this.constructPRArrayDataStructs();
+    config.PRArrays || this.constructPRArrayDataStructs(config);
     // logger.log(JSON.stringify(this._PRArrayDS));
   }
 
@@ -125,7 +129,7 @@ export class PageRankRandomWalk {
       _maxIterations: this._maxIterations,
       _convergence: this._convergence,
       _normalize: this._normalize,
-      _init: this._init
+      // _init: this._init
     }
   }
 
@@ -135,12 +139,13 @@ export class PageRankRandomWalk {
   }
 
 
-  constructPRArrayDataStructs() {
+  constructPRArrayDataStructs(config: PagerankRWConfig) {
     let tic = +new Date;
 
     let nodes = this._graph.getNodes();    
     let i = 0;
     let teleport_prob_sum = 0;
+    let init_sum = 0;
 
     for( let key in nodes ) {
       let node = this._graph.getNodeById(key);
@@ -148,8 +153,19 @@ export class PageRankRandomWalk {
       // set identifier to re-map later..
       node.setFeature('PR_index', i);
 
-      this._PRArrayDS.curr[i] = this._init;
-      this._PRArrayDS.old[i] = this._init;
+      if (config.init_map) {
+        if (config.init_map[key] == null) {
+          throw Error("initial value must be given for each node in the graph.");
+        }
+        let val = config.init_map[key];
+        this._PRArrayDS.curr[i] = val;
+        this._PRArrayDS.old[i] = val;
+        init_sum += val;
+      }
+      else {
+        this._PRArrayDS.curr[i] = defaultInit(this._graph);
+        this._PRArrayDS.old[i] = defaultInit(this._graph);
+      }
       this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
       
       /**
@@ -158,18 +174,25 @@ export class PageRankRandomWalk {
        *       let's do this smarter!
        */
       if (this._personalized) {
-        let tele_prob_node = this._teleSet[node.getID()] || 0;
+        let tele_prob_node = config.tele_set[node.getID()] || 0;
         this._PRArrayDS.teleport[i] = tele_prob_node;
         teleport_prob_sum += tele_prob_node;
         tele_prob_node && this._PRArrayDS.tele_size++;
       }
       ++i;
     }
+    
+    // normalize init values
+    if (config.init_map && init_sum !== 1) {
+      this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
+      this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
+    }
 
     // normalize teleport probs
     if (this._personalized && teleport_prob_sum !== 1) {
       this._PRArrayDS.teleport = this._PRArrayDS.teleport.map(n => n /= teleport_prob_sum);
     }
+
 
     /**
      * We can only do this once all the mappings [node_id => arr_idx] have been established!
