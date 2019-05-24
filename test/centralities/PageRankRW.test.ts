@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
-import * as $PRGauss from '../../src/centralities/PageRankGaussian';
-import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
+import * as $JSON from '../../src/io/input/JSONInput';
 import * as $CSV from '../../src/io/input/CSVInput';
-import { Logger } from '../../src/utils/logger';
+import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
 
+import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
+
 const EPSILON = 1e-6;
 const DIGITS = 6; // inverse of epsilon (number of digits after the decimal)
 
@@ -14,7 +14,7 @@ const TEST_PATH_PREFIX = "./test/test_data/",
 			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
 
 let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+	json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
 	deg_cent_graph = `search_graph_pfs_extended.json`,
 	pr_3nodes_file = `centralities/3node2SPs1direct.json`,
 	sn_300_file = `social_network_edges_300.csv`,
@@ -30,7 +30,7 @@ describe("PageRank Centrality Tests", () => {
 	let n3_graph = null;
 
 	beforeAll(() => {
-		n3_graph = new $I.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = new $JSON.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 	});
 
 
