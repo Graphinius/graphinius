@@ -166,6 +166,13 @@ export class PageRankRandomWalk {
         this._PRArrayDS.curr[i] = defaultInit(this._graph);
         this._PRArrayDS.old[i] = defaultInit(this._graph);
       }
+
+      // normalize init values
+      if (config.init_map && init_sum !== 1) {
+        this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
+        this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
+      }
+
       this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
       
       /**
@@ -180,12 +187,6 @@ export class PageRankRandomWalk {
         tele_prob_node && this._PRArrayDS.tele_size++;
       }
       ++i;
-    }
-    
-    // normalize init values
-    if (config.init_map && init_sum !== 1) {
-      this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
-      this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
     }
 
     // normalize teleport probs

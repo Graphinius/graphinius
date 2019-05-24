@@ -8,7 +8,7 @@ import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
 const EPSILON = 1e-6;
-const DIGITS = 6; // inverse of epsilon (number of digits after the decimal)
+const DIGITS = 6; // inverse of epsilon (number of digits after the decimal, for jest)
 
 const TEST_PATH_PREFIX = "./test/test_data/",
 			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
@@ -254,7 +254,7 @@ describe("PageRank Centrality Tests", () => {
 
 
 	/**
-	 * @todo figure out why the results deviate below 1e-4
+	 * TELEPORT SET TESTS
 	 */
 	[{
 		teleport_set: {'A': 1},
@@ -286,6 +286,39 @@ describe("PageRank Centrality Tests", () => {
 			logger.log(JSON.stringify(result));
 
 			const nxControl = teleports.nx_control
+			logger.log(JSON.stringify(nxControl));
+
+			Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
+		});
+	});
+
+
+	/**
+	 * INIT VALUE TESTS
+	 * 
+	 * @todo seem to have no effect at all... NOT EVEN on the number of iterations (on a 3-node graph...)
+	 */
+	[{
+		init_map: {'A': 4, 'B': 3, 'C': 101},
+		nx_control: {'A': 0.1975796534128556, 'B': 0.5208691936886545, 'C': 0.2815511528984896}
+	 },
+	 {
+		init_map: {'A': 404, 'B': 3, 'C': 1e-7},
+		nx_control: {'A': 0.1975796534128556, 'B': 0.5208691936886545, 'C': 0.2815511528984896}
+	 }
+	].forEach( inits => {
+		test.only('RW result should equal NetworkX results - init map', () => {
+			let PR = new PageRankRandomWalk(n3_graph, {
+				convergence: 1e-6,
+				alpha: 0.15,
+				weighted: false,
+				normalize: true,
+				init_map: inits.init_map
+			});
+			let result = PR.computePR();
+			logger.log(JSON.stringify(result));
+
+			const nxControl = inits.nx_control
 			logger.log(JSON.stringify(nxControl));
 
 			Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
