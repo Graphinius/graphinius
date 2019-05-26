@@ -20,6 +20,7 @@ export type TeleSet = {[id: string] : number};
 export type RankMap = {[id: string] : number};
 
 
+
 /**
  * Data structs we need for the array version of pagerank
  * 
@@ -212,7 +213,12 @@ export class PageRankRandomWalk {
           source = edge.getNodes().b;
         }
         let parent_idx = source.getFeature('PR_index');
-        pull_i.push(parent_idx);
+        if ( this._weighted ) {
+          pull_i.push(parent_idx);
+        }
+        else {
+          pull_i.push(parent_idx);
+        }
       }
       this._PRArrayDS.pull[node_idx] = pull_i;
     }

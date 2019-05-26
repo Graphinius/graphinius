@@ -38,8 +38,15 @@ In case of start values, we need to provide one for each node
 nStart values are normalized automatically
 '''
 nValues = {'A': 4, 'B': 3, 'C': 3} # {'A': 5, 'B': 5} -> KeyError: 'C'
-# nValues = {'A': .4, 'B': .3, 'C': .3}
 n3res = pagerank(n3graph, alpha=0.85, nstart=nValues, dangling=None, max_iter=1000)
 print("Pagerank, start values = {'A': 4, 'B': 3, 'C': 3}")
 print(n3res)
 
+
+'''
+Weighted version
+'''
+n3Wgraph = nx.read_weighted_edgelist('../3node2SPs1direct_weighted.csv', create_using=nx.DiGraph())
+n3Wres = pagerank(n3Wgraph, alpha=0.85, weight='weight', max_iter=1000)
+print("Pagerank, weighted version")
+print(n3Wres)

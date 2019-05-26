@@ -1,5 +1,5 @@
 import networkx as nx
-from networkx import pagerank
+from networkx import pagerank, pagerank_numpy, pagerank_scipy
 import time
 import json
 
@@ -40,6 +40,58 @@ print("PageRank on ~20K node social net took " + str(duration) + " ms.")
 file = open('./pagerank_social_network_edges_20K.csv_results.json', 'w')
 file.write( json.dumps(cb_20K) )
 file.close
+
+
+''' 
+NUMPY - Unweighted
+'''
+print("========================================")
+print("========= NUMPY - UNWEIGHTED ===========")
+print("========================================")
+
+start = time.time()
+cb_300 = pagerank_numpy(G_social_300, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank NUMPY on ~300 node social net took " + str(duration) + " ms.")
+
+start = time.time()
+cb_1K = pagerank_numpy(G_social_1K, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank NUMPY on ~1K node social net took " + str(duration) + " ms.")
+
+# start = time.time()
+# cb_20K = pagerank_numpy(G_social_20K, alpha=0.85)
+# end = time.time()
+# duration = (end-start)*1000
+# print("PageRank NUMPY on ~20K node social net took " + str(duration) + " ms.")
+
+
+''' 
+SCIPY - Unweighted
+'''
+print("========================================")
+print("========= SCIPY - UNWEIGHTED ===========")
+print("========================================")
+
+start = time.time()
+cb_300 = pagerank_scipy(G_social_300, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank SCIPY on ~300 node social net took " + str(duration) + " ms.")
+
+start = time.time()
+cb_1K = pagerank_scipy(G_social_1K, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank SCIPY on ~1K node social net took " + str(duration) + " ms.")
+
+start = time.time()
+cb_20K = pagerank_scipy(G_social_20K, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank SCIPY on ~20K node social net took " + str(duration) + " ms.")
 
 
 

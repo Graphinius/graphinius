@@ -236,7 +236,7 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
-	test('RW result should equal NetworkX results - simple pr_3node_graph', () => {
+	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-6,
 			alpha: 0.15,
@@ -247,6 +247,23 @@ describe("PageRank Centrality Tests", () => {
 		logger.log(JSON.stringify(result));
 
 		const nxControl = {'A': 0.19757959373228612, 'B': 0.5208692975273156, 'C': 0.2815511087403978}
+		logger.log(JSON.stringify(nxControl));
+
+		Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
+	});
+
+
+	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
+		let PR = new PageRankRandomWalk(n3_graph, {
+			convergence: 1e-6,
+			alpha: 0.15,
+			weighted: true,
+			normalize: true
+		});
+		let result = PR.computePR();
+		logger.log(JSON.stringify(result));
+
+		const nxControl = {'A': 0.1924769023070071, 'B': 0.502859162757028, 'C': 0.3046639349359649};
 		logger.log(JSON.stringify(nxControl));
 
 		Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
