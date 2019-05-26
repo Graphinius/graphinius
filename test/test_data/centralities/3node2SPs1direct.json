@@ -8,12 +8,12 @@
         {
           "to": "B",
           "directed": true,
-          "weight": 1
+          "weight": 3.3
         },
         {
           "to": "C",
           "directed": true,
-          "weight": 1
+          "weight": 7.2
         }
       ],
       "features": {
@@ -41,7 +41,7 @@
         {
           "to": "B",
           "directed": true,
-          "weight": 1
+          "weight": 1.4
         }
       ],
       "features": {

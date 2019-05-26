@@ -4,6 +4,7 @@ import { IBaseEdge } from '../core/Edges';
 import * as $SU from "../utils/structUtils";
 
 import { Logger } from "../utils/logger";
+import { throwStatement } from '@babel/types';
 const logger = new Logger();
 
 
@@ -36,6 +37,7 @@ export interface PRArrayDS {
   old         : Array<number>;
   out_deg     : Array<number>;
   pull        : Array<Array<number>>;
+  pull_weight?: Array<Array<number>>;
   teleport?   : Array<number>;
   tele_size?  : number;
 }
@@ -105,12 +107,13 @@ export class PageRankRandomWalk {
     }
 
     this._PRArrayDS = config.PRArrays || {
-      curr      : [],
-      old       : [],
-      out_deg   : [],
-      pull      : [],
-      teleport  : config.tele_set ? [] : null,
-      tele_size : config.tele_set ? 0 : null
+      curr        : [],
+      old         : [],
+      out_deg     : [],
+      pull        : [],
+      pull_weight : this._weighted ? [] : null,
+      teleport    : config.tele_set ? [] : null,
+      tele_size   : config.tele_set ? 0 : null
     }
 
     /**
@@ -205,22 +208,29 @@ export class PageRankRandomWalk {
 
       // set nodes to pull from
       let pull_i = [];
+      let pull_weight_i = [];
+      
       let incoming_edges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);      
       for( let edge_key in incoming_edges ) {
         let edge: IBaseEdge = incoming_edges[edge_key];
         let source: IBaseNode = edge.getNodes().a;
-        if(edge.getNodes().a.getID() == node.getID()) {
+        if ( edge.getNodes().a.getID() == node.getID() ) {
           source = edge.getNodes().b;
         }
         let parent_idx = source.getFeature('PR_index');
         if ( this._weighted ) {
-          pull_i.push(parent_idx);
+          pull_weight_i.push(edge.getWeight());
         }
-        else {
-          pull_i.push(parent_idx);
-        }
+        pull_i.push(parent_idx);
       }
       this._PRArrayDS.pull[node_idx] = pull_i;
+
+      /**
+       * @todo test!
+       */
+      if ( this._weighted ) {
+        this._PRArrayDS.pull_weight[node_idx] = pull_weight_i;
+      }
     }
 
     let toc = +new Date;
@@ -268,6 +278,7 @@ export class PageRankRandomWalk {
         let pull_rank = 0;
         visits++;
 
+        let idx = 0;
         for ( let source of ds.pull[node] ) {
           visits++;
           /**
@@ -282,7 +293,9 @@ export class PageRankRandomWalk {
             logger.log( `Source: ${source} `);
             throw('Encountered zero divisor!');
           }
-          pull_rank += ds.old[source] / ds.out_deg[source];
+          let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
+          logger.log(`Weight for ${source}->${node}: ${weight}`);
+          pull_rank += ds.old[source] * weight / ds.out_deg[source];
         }
         
         /**

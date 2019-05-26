@@ -253,13 +253,17 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
-	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
+	test.only('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
+		n3_graph = new $JSON.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-6,
 			alpha: 0.15,
 			weighted: true,
 			normalize: true
 		});
+		
+		logger.log(JSON.stringify(PR.getDSs()));
+
 		let result = PR.computePR();
 		logger.log(JSON.stringify(result));
 
