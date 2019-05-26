@@ -1,4 +1,4 @@
-import {IGraph, BaseGraph} from '../core/Graph';
+import { IGraph, BaseGraph } from '../core/Graph';
 import { IBaseNode } from '../core/Nodes';
 import { IBaseEdge } from '../core/Edges';
 import * as $SU from "../utils/structUtils";
@@ -10,7 +10,7 @@ const logger = new Logger();
 const DEFAULT_WEIGHTED = false;
 const DEFAULT_ALPHA = 0.15;
 const DEFAULT_MAX_ITERATIONS = 1e3;
-const DEFAULT_CONVERGENCE = 1e-4;
+const DEFAULT_CONVERGENCE = 1e-6;
 const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
@@ -167,12 +167,6 @@ export class PageRankRandomWalk {
         this._PRArrayDS.old[i] = defaultInit(this._graph);
       }
 
-      // normalize init values
-      if (config.init_map && init_sum !== 1) {
-        this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
-        this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
-      }
-
       this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
       
       /**
@@ -187,6 +181,12 @@ export class PageRankRandomWalk {
         tele_prob_node && this._PRArrayDS.tele_size++;
       }
       ++i;
+    }
+
+     // normalize init values
+     if (config.init_map && init_sum !== 1) {
+      this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
+      this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
     }
 
     // normalize teleport probs

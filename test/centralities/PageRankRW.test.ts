@@ -58,7 +58,7 @@ describe("PageRank Centrality Tests", () => {
 				_weighted: false,
 				_alpha: 0.15,
 				_maxIterations: 1e3,
-				_convergence: 1e-4,
+				_convergence: 1e-6,
 				_normalize: false,
 				// _init: 1 / graph.nrNodes()
 			});
@@ -307,7 +307,7 @@ describe("PageRank Centrality Tests", () => {
 		nx_control: {'A': 0.1975796534128556, 'B': 0.5208691936886545, 'C': 0.2815511528984896}
 	 }
 	].forEach( inits => {
-		test.only('RW result should equal NetworkX results - init map', () => {
+		test('RW result should equal NetworkX results - init map', () => {
 			let PR = new PageRankRandomWalk(n3_graph, {
 				convergence: 1e-6,
 				alpha: 0.15,
@@ -327,15 +327,39 @@ describe("PageRank Centrality Tests", () => {
 
 
 	/**
+	 * COMPARISON TESTS BETWEEN "DEFAULT INIT" AND "RANDOM INIT MAP" ON 333 NODE GRAPH
+	 * 
+	 * @todo - Check for a mathematically sound explanation of why differently initialized graphs will converge to *about* the same static distribution
+	 * @todo - figure out why they don't converge to the *exact* same solution...
+	 */
+	test('default & random INIT on 333 node graph should give similar results, but in a different number of iterations', () => {
+		let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + sn_300_file);
+		let results = {
+			default_init: {},
+			random_init: {}
+		};
+		let random_init_map = {};
+		Object.keys(sn_graph.getNodes()).forEach(n => random_init_map[n] = Math.random());
+
+		let PR = new PageRankRandomWalk(sn_graph, {normalize: true});
+		results.default_init = PR.computePR();
+		PR = new PageRankRandomWalk(sn_graph, {normalize: true, init_map: random_init_map});
+		results.random_init = PR.computePR();
+
+		Object.keys(results.default_init).forEach(n => expect(results.default_init[n]).toBeCloseTo(results.random_init[n], 4));
+	});
+
+
+	/**
 	 * PERFORMANCE TESTS UNWEIGHTED
 	 * 
 	 * Also checking against the python implementation
 	 * 
 	 * @todo figure out why the 20k graph shows significantly different results 
-	 * while the 300 & 1k graphs are 
+	 * 			 while the 300 & 1k graphs are at least OK with an epsilon = 1e-4
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe('Page Rank Random Walk performance comparison DICT / ARRAY verion - ', () => {
+	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
 		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
@@ -359,7 +383,7 @@ describe("PageRank Centrality Tests", () => {
 				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
 				// Content
 				/**
-				 * @todo problem lies in the fact that before normalization we get ridiculously hight numbers (PR(some_node) = 2.5 !!!)...
+				 * @todo problem lies in the fact that before normalization we get ridiculously heigh numbers (PR(some_node) = 2.5 !!!)...
 				 * @todo also check dangling nodes
 				 */
 				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], 4));
