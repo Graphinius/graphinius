@@ -1,5 +1,5 @@
 import networkx as nx
-from networkx import pagerank
+from networkx import pagerank, pagerank_numpy, pagerank_scipy, google_matrix
 import time
 import json
 
@@ -8,7 +8,12 @@ Small graphs
 '''
 
 n3graph = nx.read_edgelist('../3node2SPs1direct.csv', create_using=nx.DiGraph())
-n3res = pagerank(n3graph, alpha=0.85, personalization=None, dangling=None, max_iter=1000, nstart=None)
+
+'''
+Simplest Pagerank, use defaults (but print google matrix first)
+'''
+print(google_matrix(n3graph, alpha=0.85, weight=None))
+n3res = pagerank(n3graph, alpha=0.85, personalization=None, dangling=None, max_iter=1000, nstart=None, weight=None)
 print("Pagerank, NO teleport set:")
 print(n3res)
 
@@ -45,8 +50,17 @@ print(n3res)
 
 '''
 Weighted version
+
+NetworkX computes the weight into the google matrix by
+1) First calculating the 'raw' coefficient:
+    - (1-alpha)*weight + alpha/|V|
+    - normalize all weighted edges by:
+      + taking their sum
+      + in case of same weights: each weight / sum(weights) * 1-Sum(weight of dead ends)
+      + in case of different weights: doing something weird..... !?
 '''
 n3Wgraph = nx.read_weighted_edgelist('../3node2SPs1direct_weighted.csv', create_using=nx.DiGraph())
-n3Wres = pagerank(n3Wgraph, alpha=0.85, weight='weight', max_iter=1000)
+print(google_matrix(n3Wgraph, alpha=0.85, weight='weight'))
+n3Wres = pagerank(n3Wgraph, alpha=0.85, max_iter=1000)
 print("Pagerank, weighted version")
 print(n3Wres)

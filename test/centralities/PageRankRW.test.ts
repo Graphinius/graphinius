@@ -206,7 +206,6 @@ describe("PageRank Centrality Tests", () => {
 		const convergence = 0.3;
 
 		let pagerank = new PageRankRandomWalk(graph, {
-			// weighted: true,
 			alpha: 1e-1,
 			convergence: convergence
 		}).computePR();
@@ -224,7 +223,6 @@ describe("PageRank Centrality Tests", () => {
 		const max_rank = 0.2;
 
 		let pagerank = new PageRankRandomWalk(graph_und_unw, {
-			// weighted: true,
 			alpha: 1e-1,
 			convergence: 1e-13,
 			iterations: 2

@@ -294,7 +294,7 @@ export class PageRankRandomWalk {
             throw('Encountered zero divisor!');
           }
           let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
-          logger.log(`Weight for ${source}->${node}: ${weight}`);
+          // logger.log(`Weight for ${source}->${node}: ${weight}`);
           pull_rank += ds.old[source] * weight / ds.out_deg[source];
         }
         
