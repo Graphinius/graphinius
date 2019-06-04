@@ -176,7 +176,8 @@ export class PageRankRandomWalk {
       /**
        * @todo enhance this to actual weights!?
        * @todo networkX requires a dict the size of the inputs, which is cumbersome for larger graphs
-       *       let's do this smarter!
+       *       we want to do this smarter, but can we omit large parts of the (pseudo-)sparse matrix?
+       *       - where pseudo-sparse means containing only implicit values (jump chances)
        */
       if (this._personalized) {
         let tele_prob_node = config.tele_set[node.getID()] || 0;
@@ -187,8 +188,8 @@ export class PageRankRandomWalk {
       ++i;
     }
 
-     // normalize init values
-     if (config.init_map && init_sum !== 1) {
+    // normalize init values
+    if (config.init_map && init_sum !== 1) {
       this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n /= init_sum);
       this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
     }
@@ -262,7 +263,7 @@ export class PageRankRandomWalk {
 
   computePR() {
     const ds = this._PRArrayDS;
-    // logger.log( JSON.stringify(ds) );
+    logger.log( JSON.stringify(ds) );
 
     const N = this._graph.nrNodes();
 
@@ -293,10 +294,12 @@ export class PageRankRandomWalk {
             logger.log( `Source: ${source} `);
             throw('Encountered zero divisor!');
           }
-          let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
+          // let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
           // logger.log(`Weight for ${source}->${node}: ${weight}`);
-          pull_rank += ds.old[source] * weight / ds.out_deg[source];
+          pull_rank += ds.old[source] / ds.out_deg[source];
         }
+
+        logger.log(`Pull rank: ${pull_rank}`);
         
         /**
          * @description if we are in the tele_set, we get
@@ -312,6 +315,8 @@ export class PageRankRandomWalk {
         }
         delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
+
+      logger.log( ds.curr );
 
       if ( delta_iter <= this._convergence ) {
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);

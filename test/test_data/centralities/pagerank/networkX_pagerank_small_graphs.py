@@ -12,9 +12,9 @@ n3graph = nx.read_edgelist('../3node2SPs1direct.csv', create_using=nx.DiGraph())
 '''
 Simplest Pagerank, use defaults (but print google matrix first)
 '''
-print(google_matrix(n3graph, alpha=0.85, weight=None))
 n3res = pagerank(n3graph, alpha=0.85, personalization=None, dangling=None, max_iter=1000, nstart=None, weight=None)
 print("Pagerank, NO teleport set:")
+print(google_matrix(n3graph, alpha=0.85, weight=None))
 print(n3res)
 
 

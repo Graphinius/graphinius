@@ -234,7 +234,24 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
-	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
+  /**
+	 * NetworkX / Graphinius => both initialize eigenvector to 1/3
+	 * 
+	 * NetworkX Google Matrix:
+	 * 
+	 * [[0.05       0.475      0.475     ]
+	 *	[0.33333333 0.33333333 0.33333333]
+	 *	[0.05       0.9        0.05      ]]
+	 *
+	 * Graphinius PR data structs:
+	 * 
+	 * {
+	 *	"out_deg": [2,0,1],
+	 *	"pull": [[],[0,2],[0]]
+	 * }
+	 * 
+	 */
+	test.only('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-6,
 			alpha: 0.15,
@@ -251,7 +268,7 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 
-	test.only('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
+	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
 		n3_graph = new $JSON.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-6,
@@ -383,7 +400,7 @@ describe("PageRank Centrality Tests", () => {
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
-					convergence: EPSILON,
+					convergence: 1e-6,
 					normalize: true
 				});
 
@@ -397,7 +414,7 @@ describe("PageRank Centrality Tests", () => {
 
 				// Length
 				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
-				expect(Object.keys(result).length).toBe(Object.keys(nxControl).length);
+				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
 				// Structure
 				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
 				// Content
