@@ -312,7 +312,7 @@ describe("PageRank Centrality Tests", () => {
 		nx_control: {'A': 0.06130737987585244, 'B': 0.544792704421795, 'C': 0.39389991570235267}
 	 }
 	].forEach( teleports => {
-		test.only('RW result should equal NetworkX results - teleport set', () => {
+		test('RW result should equal NetworkX results - teleport set', () => {
 			let PR = new PageRankRandomWalk(n3_graph, {
 				epsilon: 1e-15,
 				alpha: 0.15,
