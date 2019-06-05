@@ -16,15 +16,13 @@ n3res = pagerank(n3graph, alpha=0.85, personalization=None, dangling=None, max_i
 print("Pagerank, NO teleport set:")
 print(google_matrix(n3graph, alpha=0.85, weight=None))
 print(n3res)
-
 print("Numpy version:")
 n3res = pagerank_numpy(n3graph, alpha=0.85)
 print(n3res)
-
 print("Scipy version:")
 n3res = pagerank_scipy(n3graph, alpha=0.85)
 print(n3res)
-
+print("\n=============================\n")
 
 '''
 We only need to provide values for the nodes we want considered (rather than all nodes)
@@ -34,17 +32,37 @@ pValues = {'A': 1}
 n3res = pagerank(n3graph, alpha=0.85, personalization=pValues, dangling=None, max_iter=1000,nstart=None)
 print("Pagerank, teleport set {A}:")
 print(n3res)
+print("Numpy version:")
+n3res = pagerank_numpy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("Scipy version:")
+n3res = pagerank_scipy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("\n=============================\n")
 
 pValues = {'A': 5, 'B': 5} # same as 0.5, 0.5, 0 - or - 0.2, 0.2, 0
 n3res = pagerank(n3graph, alpha=0.85, personalization=pValues, dangling=None, max_iter=1000,nstart=None)
 print("Pagerank, teleport set {A, B}:")
 print(n3res)
+print("Numpy version:")
+n3res = pagerank_numpy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("Scipy version:")
+n3res = pagerank_scipy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("\n=============================\n")
 
 pValues = {'A': .1, 'B': .3, 'C': .6}
 n3res = pagerank(n3graph, alpha=0.85, personalization=pValues, dangling=None, max_iter=1000,nstart=None)
 print("Pagerank, skewed teleport set {A: .1, B: .3, C: .6}:")
 print(n3res)
-
+print("Numpy version:")
+n3res = pagerank_numpy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("Scipy version:")
+n3res = pagerank_scipy(n3graph, alpha=0.85, personalization=pValues)
+print(n3res)
+print("\n=============================\n")
 
 '''
 In case of start values, we need to provide one for each node
@@ -54,6 +72,7 @@ nValues = {'A': 4, 'B': 3, 'C': 3} # {'A': 5, 'B': 5} -> KeyError: 'C'
 n3res = pagerank(n3graph, alpha=0.85, nstart=nValues, dangling=None, max_iter=1000)
 print("Pagerank, start values = {'A': 4, 'B': 3, 'C': 3}")
 print(n3res)
+print("\n=============================\n")
 
 
 '''
@@ -72,11 +91,10 @@ print("Pagerank, weighted version:")
 print(google_matrix(n3Wgraph, alpha=0.85, weight='weight'))
 n3Wres = pagerank(n3Wgraph, alpha=0.85, max_iter=1000)
 print(n3Wres)
-
 print("Numpy version:")
 n3Wres = pagerank_numpy(n3Wgraph, alpha=0.85)
 print(n3Wres)
-
 print("Scipy version:")
 n3Wres = pagerank_scipy(n3Wgraph, alpha=0.85)
 print(n3Wres)
+print("\n=============================\n")

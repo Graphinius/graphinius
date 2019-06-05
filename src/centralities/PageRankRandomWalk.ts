@@ -4,14 +4,13 @@ import { IBaseEdge } from '../core/Edges';
 import * as $SU from "../utils/structUtils";
 
 import { Logger } from "../utils/logger";
-import { throwStatement } from '@babel/types';
 const logger = new Logger();
 
 
 const DEFAULT_WEIGHTED = false;
 const DEFAULT_ALPHA = 0.15;
 const DEFAULT_MAX_ITERATIONS = 1e3;
-const DEFAULT_CONVERGENCE = 1e-6;
+const DEFAULT_EPSILON = 1e-6;
 const DEFAULT_NORMALIZE = false;
 const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 
@@ -49,7 +48,7 @@ export interface PRArrayDS {
 export interface PagerankRWConfig {
   weighted?     : boolean;
   alpha?        : number;
-  convergence?  : number;
+  epsilon?      : number;
   iterations?   : number;
   normalize?    : boolean;
   // init?         : Function;
@@ -77,7 +76,7 @@ export class PageRankRandomWalk {
    */
   private _weighted       : boolean;
   private _alpha          : number;
-  private _convergence    : number;
+  private _epsilon    : number;
   private _maxIterations  : number;
   // private _init           : number;
   private _normalize      : boolean;
@@ -93,7 +92,7 @@ export class PageRankRandomWalk {
     this._weighted = config.weighted || DEFAULT_WEIGHTED;
     this._alpha = config.alpha || DEFAULT_ALPHA;
     this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
-    this._convergence = config.convergence || DEFAULT_CONVERGENCE;
+    this._epsilon = config.epsilon || DEFAULT_EPSILON;
     this._normalize = config.normalize || DEFAULT_NORMALIZE;
     // this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
     this._personalized = config.personalized ? config.personalized : false;
@@ -131,7 +130,7 @@ export class PageRankRandomWalk {
       _weighted: this._weighted,
       _alpha: this._alpha,
       _maxIterations: this._maxIterations,
-      _convergence: this._convergence,
+      _epsilon: this._epsilon,
       _normalize: this._normalize,
       // _init: this._init
     }
@@ -314,7 +313,7 @@ export class PageRankRandomWalk {
 
       // logger.log( ds.curr );
 
-      if ( delta_iter <= this._convergence ) {
+      if ( delta_iter <= this._epsilon ) {
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
         return this.getRankMapFromArray();
       }
