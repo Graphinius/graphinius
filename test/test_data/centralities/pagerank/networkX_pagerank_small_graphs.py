@@ -17,6 +17,14 @@ print("Pagerank, NO teleport set:")
 print(google_matrix(n3graph, alpha=0.85, weight=None))
 print(n3res)
 
+print("Numpy version:")
+n3res = pagerank_numpy(n3graph, alpha=0.85)
+print(n3res)
+
+print("Scipy version:")
+n3res = pagerank_scipy(n3graph, alpha=0.85)
+print(n3res)
+
 
 '''
 We only need to provide values for the nodes we want considered (rather than all nodes)
@@ -60,7 +68,15 @@ NetworkX computes the weight into the google matrix by
       + in case of different weights: doing something weird..... !?
 '''
 n3Wgraph = nx.read_weighted_edgelist('../3node2SPs1direct_weighted.csv', create_using=nx.DiGraph())
+print("Pagerank, weighted version:")
 print(google_matrix(n3Wgraph, alpha=0.85, weight='weight'))
 n3Wres = pagerank(n3Wgraph, alpha=0.85, max_iter=1000)
-print("Pagerank, weighted version")
+print(n3Wres)
+
+print("Numpy version:")
+n3Wres = pagerank_numpy(n3Wgraph, alpha=0.85)
+print(n3Wres)
+
+print("Scipy version:")
+n3Wres = pagerank_scipy(n3Wgraph, alpha=0.85)
 print(n3Wres)

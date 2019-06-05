@@ -263,7 +263,7 @@ export class PageRankRandomWalk {
 
   computePR() {
     const ds = this._PRArrayDS;
-    logger.log( JSON.stringify(ds) );
+    // logger.log( JSON.stringify(ds) );
 
     const N = this._graph.nrNodes();
 
@@ -294,29 +294,25 @@ export class PageRankRandomWalk {
             logger.log( `Source: ${source} `);
             throw('Encountered zero divisor!');
           }
-          // let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
+          let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
           // logger.log(`Weight for ${source}->${node}: ${weight}`);
-          pull_rank += ds.old[source] / ds.out_deg[source];
+          pull_rank += ds.old[source] * weight / ds.out_deg[source];
         }
-
-        logger.log(`Pull rank: ${pull_rank}`);
         
-        /**
-         * @description if we are in the tele_set, we get
-         * are we already dealing with dangling nodes implicitly !?!?
-         */
-        let link_chance = (1-this._alpha) * pull_rank;
+        let link_pr = (1-this._alpha) * pull_rank;
+
         if (this._personalized) {
           let jump_chance = ds.teleport[node] / ds.tele_size; // 0/x = 0
-          ds.curr[node] = link_chance + jump_chance;
+          ds.curr[node] = link_pr + jump_chance;
         }
         else {
-          ds.curr[node] = link_chance + this._alpha / N;
+          // logger.log(`Pulling PR for node ${node}: ${link_pr  + this._alpha / N}`);
+          ds.curr[node] = link_pr + this._alpha / N;
         }
         delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
       }
 
-      logger.log( ds.curr );
+      // logger.log( ds.curr );
 
       if ( delta_iter <= this._convergence ) {
         logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);

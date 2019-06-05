@@ -251,7 +251,7 @@ describe("PageRank Centrality Tests", () => {
 	 * }
 	 * 
 	 */
-	test.only('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
+	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
 			convergence: 1e-6,
 			alpha: 0.15,
@@ -261,10 +261,11 @@ describe("PageRank Centrality Tests", () => {
 		let result = PR.computePR();
 		logger.log(JSON.stringify(result));
 
-		const nxControl = {'A': 0.19757959373228612, 'B': 0.5208692975273156, 'C': 0.2815511087403978}
-		logger.log(JSON.stringify(nxControl));
+		const nxControlNumpy = {'A': 0.19757964929612257, 'B': 0.520869350456903, 'C': 0.2815510002469745}
+		// const nxControl = {'A': 0.19757959373228612, 'B': 0.5208692975273156, 'C': 0.2815511087403978}
+		logger.log(JSON.stringify(nxControlNumpy));
 
-		Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
+		Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControlNumpy[n], 15));
 	});
 
 
@@ -290,7 +291,7 @@ describe("PageRank Centrality Tests", () => {
 
 
 	/**
-	 * TELEPORT SET TESTS
+	 * PERSONALIZED (TELEPORT SET) TESTS
 	 */
 	[{
 		teleport_set: {'A': 1},
@@ -327,6 +328,11 @@ describe("PageRank Centrality Tests", () => {
 			Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
 		});
 	});
+
+
+	/**
+	 * NORMALIZE TELEPORTS...
+	 */
 
 
 	/**
@@ -395,12 +401,12 @@ describe("PageRank Centrality Tests", () => {
 	 * 			 while the 300 & 1k graphs are at least OK with an epsilon = 1e-4
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
+	describe.only('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
 		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
-					convergence: 1e-6,
+					convergence: 1e-6, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
 					normalize: true
 				});
 
@@ -409,7 +415,7 @@ describe("PageRank Centrality Tests", () => {
 				let toc = +new Date;
 				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
 
-				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/pagerank_${graph_file}_results.json`;
+				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/pagerank_numpy_${graph_file}_results.json`;
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				// Length
@@ -422,7 +428,7 @@ describe("PageRank Centrality Tests", () => {
 				 * @todo problem lies in the fact that before normalization we get ridiculously heigh numbers (PR(some_node) = 2.5 !!!)...
 				 * @todo also check dangling nodes
 				 */
-				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], 4));
+				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], 6));
 
 			});
 
