@@ -55,11 +55,11 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly initialized PageRank configuration from default values', () => {
 			let PR = new PageRankRandomWalk(graph);
 			expect(PR.getConfig()).toEqual({
-				_weighted: false,
-				_alpha: 0.15,
-				_maxIterations: 1e3,
-				_convergence: 1e-6,
-				_normalize: false,
+				_weighted				: false,
+				_alpha					: 0.15,
+				_maxIterations	: 1e3,
+				_epsilon				: 1e-6,
+				_normalize			: false,
 				// _init: 1 / graph.nrNodes()
 			});
 		});
@@ -207,7 +207,7 @@ describe("PageRank Centrality Tests", () => {
 
 		let pagerank = new PageRankRandomWalk(graph, {
 			alpha: 1e-1,
-			convergence: convergence
+			epsilon: convergence
 		}).computePR();
 
 		for (let key in pagerank) {
@@ -224,7 +224,7 @@ describe("PageRank Centrality Tests", () => {
 
 		let pagerank = new PageRankRandomWalk(graph_und_unw, {
 			alpha: 1e-1,
-			convergence: 1e-13,
+			epsilon: 1e-13,
 			iterations: 2
 		}).computePR();
 
@@ -250,10 +250,12 @@ describe("PageRank Centrality Tests", () => {
 	 *	"pull": [[],[0,2],[0]]
 	 * }
 	 * 
+	 * WE NEED TO COMPARE TO pagerank_numpy, NOT pagerank ...
+	 * 
 	 */
 	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
-			convergence: 1e-6,
+			epsilon: 1e-6,
 			alpha: 0.15,
 			weighted: false,
 			normalize: true
@@ -272,7 +274,7 @@ describe("PageRank Centrality Tests", () => {
 	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
 		n3_graph = new $JSON.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 		let PR = new PageRankRandomWalk(n3_graph, {
-			convergence: 1e-6,
+			epsilon: 1e-6,
 			alpha: 0.15,
 			weighted: true,
 			normalize: true
@@ -312,7 +314,7 @@ describe("PageRank Centrality Tests", () => {
 	].forEach( teleports => {
 		test('RW result should equal NetworkX results - teleport set', () => {
 			let PR = new PageRankRandomWalk(n3_graph, {
-				convergence: 1e-6,
+				epsilon: 1e-6,
 				alpha: 0.15,
 				weighted: false,
 				normalize: true,
@@ -351,7 +353,7 @@ describe("PageRank Centrality Tests", () => {
 	].forEach( inits => {
 		test('RW result should equal NetworkX results - init map', () => {
 			let PR = new PageRankRandomWalk(n3_graph, {
-				convergence: 1e-6,
+				epsilon: 1e-6,
 				alpha: 0.15,
 				weighted: false,
 				normalize: true,
@@ -402,11 +404,11 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo Extract out into seperate performance test suite !!
 	 */
 	describe.only('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
-		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
+		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
-					convergence: 1e-6, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
+					epsilon: EPSILON, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
 					normalize: true
 				});
 
@@ -425,10 +427,9 @@ describe("PageRank Centrality Tests", () => {
 				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
 				// Content
 				/**
-				 * @todo problem lies in the fact that before normalization we get ridiculously heigh numbers (PR(some_node) = 2.5 !!!)...
-				 * @todo also check dangling nodes
+				 * @todo problem could lie in the fact that before normalization we get ridiculously heigh numbers (PR(some_node) = 2.5 !!!)...
 				 */
-				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], 6));
+				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
 
 			});
 
