@@ -50,8 +50,8 @@ test_async/**/*.js
 .idea/**
 
 # Test outputs
-test/test_data/output/**/*.csv
-test/test_data/output/**/*.json
+# test/test_data/output/**/*.csv
+# test/test_data/output/**/*.json
 
 # MISC
 yarn.lock

@@ -418,9 +418,6 @@ describe("PageRank Centrality Tests", () => {
 				let toc = +new Date;
 				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
 
-				// let pr_outfile = fs.writeFileSync('./test/test_data/output/PageRankRW_20k_unweighted.json', JSON.stringify(result));
-				// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
-
 				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/pagerank_numpy_${graph_file}_results.json`;
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 
@@ -431,7 +428,7 @@ describe("PageRank Centrality Tests", () => {
 				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
 				// Content
 				/**
-				 * @todo problem could lie in the fact that before normalization we get ridiculously heigh numbers (PR(some_node) = 2.5 !!!)...
+				 * @todo the problem (at least with the ~20k graph) could lie in the fact that before normalization we get ridiculously heigh numbers (PR(n_i) ~ 2.5 !!!)
 				 */
 				Object.keys(result).forEach(n => expect(result[n]).toBeCloseTo(nxControl[n], DIGITS));
 
@@ -442,3 +439,8 @@ describe("PageRank Centrality Tests", () => {
 	});
 
 });
+
+
+
+				// let pr_outfile = fs.writeFileSync(`./test/test_data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
+				// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
