@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $JSON from '../../src/io/input/JSONInput';
-import * as $CSV from '../../src/io/input/CSVInput';
+import * as $JSON_IN from '../../src/io/input/JSONInput';
+import {JSONOutput} from '../../src/io/output/JSONOutput';
+import * as $CSV_IN from '../../src/io/input/CSVInput';
 import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
 
 import { Logger } from '../../src/utils/logger';
@@ -13,8 +14,8 @@ const DIGITS = 6; // inverse of epsilon (number of digits after the decimal, for
 const TEST_PATH_PREFIX = "./test/test_data/",
 			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
 
-let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-	json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
+let csv: $CSV_IN.ICSVInput = new $CSV_IN.CSVInput(" ", false, false),
+	json: $JSON_IN.IJSONInput = new $JSON_IN.JSONInput(true, false, true),
 	deg_cent_graph = `search_graph_pfs_extended.json`,
 	pr_3nodes_file = `centralities/3node2SPs1direct.json`,
 	sn_300_file = `social_network_edges_300.csv`,
@@ -30,7 +31,7 @@ describe("PageRank Centrality Tests", () => {
 	let n3_graph = null;
 
 	beforeAll(() => {
-		n3_graph = new $JSON.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = new $JSON_IN.JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 	});
 
 
@@ -272,7 +273,7 @@ describe("PageRank Centrality Tests", () => {
 
 
 	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
-		n3_graph = new $JSON.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = new $JSON_IN.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 		let PR = new PageRankRandomWalk(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,
@@ -404,7 +405,7 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo Extract out into seperate performance test suite !!
 	 */
 	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
-		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
+		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
@@ -416,6 +417,9 @@ describe("PageRank Centrality Tests", () => {
 				let result = PR.computePR();
 				let toc = +new Date;
 				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
+
+				// let pr_outfile = fs.writeFileSync('./test/test_data/output/PageRankRW_20k_unweighted.json', JSON.stringify(result));
+				// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
 
 				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/pagerank_numpy_${graph_file}_results.json`;
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
