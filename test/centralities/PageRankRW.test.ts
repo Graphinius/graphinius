@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import {DFS} from '../../src/search/DFS';
+import { DFS } from '../../src/search/DFS';
 import * as $JSON_IN from '../../src/io/input/JSONInput';
-import {JSONOutput} from '../../src/io/output/JSONOutput';
+import { JSONOutput } from '../../src/io/output/JSONOutput';
 import * as $CSV_IN from '../../src/io/input/CSVInput';
 import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
 
