@@ -454,8 +454,8 @@ declare module 'graphinius/utils/logger' {
 
 }
 declare module 'graphinius/core/Graph' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $E from 'graphinius/core/Edges';
+	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { EdgeConstructorOptions, IBaseEdge } from 'graphinius/core/Edges';
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
@@ -482,53 +482,53 @@ declare module 'graphinius/core/Graph' {
 	    _label: string;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
-	    addNode(node: $N.IBaseNode): boolean;
+	    addNodeByID(id: string, opts?: {}): IBaseNode;
+	    addNode(node: IBaseNode): boolean;
 	    hasNodeID(id: string): boolean;
-	    getNodeById(id: string): $N.IBaseNode;
+	    getNodeById(id: string): IBaseNode;
 	    getNodes(): {
-	        [key: string]: $N.IBaseNode;
+	        [key: string]: IBaseNode;
 	    };
 	    nrNodes(): number;
-	    getRandomNode(): $N.IBaseNode;
+	    getRandomNode(): IBaseNode;
 	    deleteNode(node: any): void;
 	    getNodeIterator(): any;
-	    addEdgeByID(label: string, node_a: $N.IBaseNode, node_b: $N.IBaseNode, opts?: {}): $E.IBaseEdge;
-	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): $E.IBaseEdge;
+	    addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
+	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
 	    hasEdgeID(id: string): boolean;
-	    getEdgeById(id: string): $E.IBaseEdge;
-	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
-	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
+	    getEdgeById(id: string): IBaseEdge;
+	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
+	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
 	    getDirEdges(): {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
 	    getUndEdges(): {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
-	    getDirEdgesArray(): Array<$E.IBaseEdge>;
-	    getUndEdgesArray(): Array<$E.IBaseEdge>;
+	    getDirEdgesArray(): Array<IBaseEdge>;
+	    getUndEdgesArray(): Array<IBaseEdge>;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
-	    deleteEdge(edge: $E.IBaseEdge): void;
-	    getRandomDirEdge(): $E.IBaseEdge;
-	    getRandomUndEdge(): $E.IBaseEdge;
+	    deleteEdge(edge: IBaseEdge): void;
+	    getRandomDirEdge(): IBaseEdge;
+	    getRandomUndEdge(): IBaseEdge;
 	    hasNegativeEdge(): boolean;
-	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
+	    hasNegativeCycles(node?: IBaseNode): boolean;
 	    toDirectedGraph(copy?: any): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    pickRandomProperty(propList: any): any;
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
-	    deleteInEdgesOf(node: $N.IBaseNode): void;
-	    deleteOutEdgesOf(node: $N.IBaseNode): void;
-	    deleteDirEdgesOf(node: $N.IBaseNode): void;
-	    deleteUndEdgesOf(node: $N.IBaseNode): void;
-	    deleteAllEdgesOf(node: $N.IBaseNode): void;
+	    deleteInEdgesOf(node: IBaseNode): void;
+	    deleteOutEdgesOf(node: IBaseNode): void;
+	    deleteDirEdgesOf(node: IBaseNode): void;
+	    deleteUndEdgesOf(node: IBaseNode): void;
+	    deleteAllEdgesOf(node: IBaseNode): void;
 	    clearAllDirEdges(): void;
 	    clearAllUndEdges(): void;
 	    clearAllEdges(): void;
 	    cloneStructure(): IGraph;
-	    cloneSubGraphStructure(start: $N.IBaseNode, cutoff: Number): IGraph;
+	    cloneSubGraphStructure(start: IBaseNode, cutoff: Number): IGraph;
 	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
@@ -540,21 +540,21 @@ declare module 'graphinius/core/Graph' {
 	    private _nr_und_edges;
 	    protected _mode: GraphMode;
 	    protected _nodes: {
-	        [key: string]: $N.IBaseNode;
+	        [key: string]: IBaseNode;
 	    };
 	    protected _dir_edges: {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
 	    protected _und_edges: {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
 	    constructor(_label: any);
-	    getNodeIterator(): Iterator<$N.IBaseNode>;
+	    getNodeIterator(): Iterator<IBaseNode>;
 	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
 	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
 	    hasNegativeEdge(): boolean;
-	    hasNegativeCycles(node?: $N.IBaseNode): boolean;
+	    hasNegativeCycles(node?: IBaseNode): boolean;
 	    nextArray(incoming?: boolean): NextArray;
 	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
 	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
@@ -563,45 +563,45 @@ declare module 'graphinius/core/Graph' {
 	    nrNodes(): number;
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
-	    addNodeByID(id: string, opts?: {}): $N.IBaseNode;
-	    addNode(node: $N.IBaseNode): boolean;
+	    addNodeByID(id: string, opts?: {}): IBaseNode;
+	    addNode(node: IBaseNode): boolean;
 	    hasNodeID(id: string): boolean;
-	    getNodeById(id: string): $N.IBaseNode;
+	    getNodeById(id: string): IBaseNode;
 	    getNodes(): {
-	        [key: string]: $N.IBaseNode;
+	        [key: string]: IBaseNode;
 	    };
-	    getRandomNode(): $N.IBaseNode;
+	    getRandomNode(): IBaseNode;
 	    deleteNode(node: any): void;
 	    hasEdgeID(id: string): boolean;
-	    getEdgeById(id: string): $E.IBaseEdge;
+	    getEdgeById(id: string): IBaseEdge;
 	    private checkExistanceOfEdgeNodes;
-	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
-	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): $E.IBaseEdge;
+	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
+	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
 	    getDirEdges(): {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
 	    getUndEdges(): {
-	        [key: string]: $E.IBaseEdge;
+	        [key: string]: IBaseEdge;
 	    };
-	    getDirEdgesArray(): Array<$E.IBaseEdge>;
-	    getUndEdgesArray(): Array<$E.IBaseEdge>;
-	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): $E.IBaseEdge;
-	    addEdgeByID(id: string, node_a: $N.IBaseNode, node_b: $N.IBaseNode, opts?: $E.EdgeConstructorOptions): $E.IBaseEdge;
-	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-	    deleteEdge(edge: $E.IBaseEdge): void;
-	    deleteInEdgesOf(node: $N.IBaseNode): void;
-	    deleteOutEdgesOf(node: $N.IBaseNode): void;
-	    deleteDirEdgesOf(node: $N.IBaseNode): void;
-	    deleteUndEdgesOf(node: $N.IBaseNode): void;
-	    deleteAllEdgesOf(node: $N.IBaseNode): void;
+	    getDirEdgesArray(): Array<IBaseEdge>;
+	    getUndEdgesArray(): Array<IBaseEdge>;
+	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+	    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
+	    deleteEdge(edge: IBaseEdge): void;
+	    deleteInEdgesOf(node: IBaseNode): void;
+	    deleteOutEdgesOf(node: IBaseNode): void;
+	    deleteDirEdgesOf(node: IBaseNode): void;
+	    deleteUndEdgesOf(node: IBaseNode): void;
+	    deleteAllEdgesOf(node: IBaseNode): void;
 	    clearAllDirEdges(): void;
 	    clearAllUndEdges(): void;
 	    clearAllEdges(): void;
-	    getRandomDirEdge(): $E.IBaseEdge;
-	    getRandomUndEdge(): $E.IBaseEdge;
+	    getRandomDirEdge(): IBaseEdge;
+	    getRandomUndEdge(): IBaseEdge;
 	    cloneStructure(): IGraph;
-	    cloneSubGraphStructure(root: $N.IBaseNode, cutoff: Number): IGraph;
-	    protected checkConnectedNodeOrThrow(node: $N.IBaseNode): void;
+	    cloneSubGraphStructure(root: IBaseNode, cutoff: Number): IGraph;
+	    protected checkConnectedNodeOrThrow(node: IBaseNode): void;
 	    protected updateGraphMode(): void;
 	    pickRandomProperty(propList: any): any;
 	    pickRandomProperties(propList: any, amount: any): Array<string>;
@@ -678,31 +678,57 @@ declare module 'graphinius/centralities/PageRankGaussian' {
 }
 declare module 'graphinius/centralities/PageRankRandomWalk' {
 	import { IGraph } from 'graphinius/core/Graph';
+	export type InitMap = {
+	    [id: string]: number;
+	};
+	export type TeleSet = {
+	    [id: string]: number;
+	};
 	export type RankMap = {
 	    [id: string]: number;
 	};
-	export interface PrRandomWalkConfig {
+	export interface PRArrayDS {
+	    curr: Array<number>;
+	    old: Array<number>;
+	    out_deg: Array<number>;
+	    pull: Array<Array<number>>;
+	    pull_weight?: Array<Array<number>>;
+	    teleport?: Array<number>;
+	    tele_size?: number;
+	}
+	export interface PagerankRWConfig {
 	    weighted?: boolean;
 	    alpha?: number;
-	    alphaDamp?: Function;
-	    convergence?: number;
+	    epsilon?: number;
 	    iterations?: number;
-	    init?: Function;
+	    normalize?: boolean;
+	    PRArrays?: PRArrayDS;
+	    personalized?: boolean;
+	    tele_set?: TeleSet;
+	    init_map?: InitMap;
 	}
 	export class PageRankRandomWalk {
 	    private _graph;
 	    private _weighted;
 	    private _alpha;
-	    private _alphaDamp;
-	    private _convergence;
+	    private _epsilon;
 	    private _maxIterations;
-	    private _init;
+	    private _normalize;
+	    private _personalized;
 	    private _PRArrayDS;
-	    constructor(_graph: IGraph, config?: PrRandomWalkConfig);
-	    setPRArrayDataStructs(): void;
-	    getPRArray(): RankMap;
+	    constructor(_graph: IGraph, config?: PagerankRWConfig);
+	    getConfig(): {
+	        _weighted: boolean;
+	        _alpha: number;
+	        _maxIterations: number;
+	        _epsilon: number;
+	        _normalize: boolean;
+	    };
+	    getDSs(): PRArrayDS;
+	    constructPRArrayDataStructs(config: PagerankRWConfig): void;
 	    private getRankMapFromArray;
-	    getPRDict(): RankMap;
+	    private normalizePR;
+	    computePR(): RankMap;
 	}
 
 }
@@ -930,8 +956,8 @@ declare module 'graphinius/io/output/CSVOutput' {
 	    _direction_mode: boolean;
 	    writeToAdjacencyListFile(filepath: string, graph: $G.IGraph): void;
 	    writeToAdjacencyList(graph: $G.IGraph): string;
-	    writeToEdgeListFile(filepath: string, graph: $G.IGraph): void;
-	    writeToEdgeList(graph: $G.IGraph): string;
+	    writeToEdgeListFile(filepath: string, graph: $G.IGraph, weighted: boolean): void;
+	    writeToEdgeList(graph: $G.IGraph, weighted: boolean): string;
 	} class CSVOutput implements ICSVOutput {
 	    _separator: string;
 	    _explicit_direction: boolean;
@@ -939,8 +965,9 @@ declare module 'graphinius/io/output/CSVOutput' {
 	    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
 	    writeToAdjacencyListFile(filepath: string, graph: $G.IGraph): void;
 	    writeToAdjacencyList(graph: $G.IGraph): string;
-	    writeToEdgeListFile(filepath: string, graph: $G.IGraph): void;
-	    writeToEdgeList(graph: $G.IGraph): string;
+	    writeToEdgeListFile(filepath: string, graph: $G.IGraph, weighted?: boolean): void;
+	    writeToEdgeList(graph: $G.IGraph, weighted?: boolean): string;
+	    private mergeFunc;
 	}
 	export { CSVOutput };
 
