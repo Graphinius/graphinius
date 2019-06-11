@@ -314,14 +314,14 @@ export class PageRankRandomWalk {
       // logger.log( ds.curr );
 
       if ( delta_iter <= this._epsilon ) {
-        logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
+        // logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
         return this.getRankMapFromArray();
       }
 
       ds.old = [...ds.curr];
     }
 
-    logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
+    // logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
     return this.getRankMapFromArray();
   }
 

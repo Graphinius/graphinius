@@ -12,8 +12,7 @@ const logger = new Logger();
 const EPSILON = 1e-6;
 const DIGITS = 6; // inverse of epsilon (number of digits after the decimal, for jest)
 
-const TEST_PATH_PREFIX = "./test/test_data/",
-			PATH_PREFIX_CENTRALITIES = TEST_PATH_PREFIX + "centralities/";
+const TEST_PATH_PREFIX = "./test/test_data/";
 
 let csv: $CSV_IN.ICSVInput = new $CSV_IN.CSVInput(" ", false, false),
 	json: $JSON_IN.IJSONInput = new $JSON_IN.JSONInput(true, false, true),
@@ -440,7 +439,51 @@ describe("PageRank Centrality Tests", () => {
 					if ( result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON ) {
 						within_eps++;
 					}
-					// expect(result[n]).toBeCloseTo(nxControl[n], DIGITS);
+					expect(result[n]).toBeCloseTo(nxControl[n], DIGITS);
+				});
+				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
+			});
+		});
+	});
+
+
+	/**
+	 * EGOS !!!
+	 */
+	describe('Page Rank Random Walk on ego graphs + comparison to networkx - ', () => {
+		const ego_files_dir = './test/test_data/ego_networks/';
+		fs.readdirSync(ego_files_dir).forEach(graph_file => {
+			
+			test('should calculate the PR via Random Walk for EGO graphs of realistic size', () => {
+				let sn_graph = csv.readFromEdgeListFile(ego_files_dir + graph_file);
+				let PR = new PageRankRandomWalk(sn_graph, {
+					epsilon: 1e-15,
+					normalize: true
+				});
+
+				let start_node = sn_graph.getRandomNode();
+				let dfs = DFS(sn_graph, start_node);
+				if ( dfs.length > 1 ) {
+					throw new Error('graph is DISCONNECTED - YMMV');
+				}
+
+				let tic = +new Date;
+				let result = PR.computePR();
+				let toc = +new Date;
+				logger.log(`PageRank for graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`)
+
+				let controlFileName = `${TEST_PATH_PREFIX}centralities/pagerank/comparison_ego_graphs/pagerank_numpy_ego_network_v_${sn_graph.nrNodes()}_e_${sn_graph.nrUndEdges()*2}.json`;
+				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
+
+				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
+				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
+				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
+				let within_eps = 0;
+				Object.keys(result).forEach(n => {
+					if ( result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON ) {
+						within_eps++;
+					}
+					expect(result[n]).toBeCloseTo(nxControl[n], 15);
 				});
 				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
 			});
@@ -450,6 +493,6 @@ describe("PageRank Centrality Tests", () => {
 });
 
 
-
 // let pr_outfile = fs.writeFileSync(`./test/test_data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
 // new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
+
