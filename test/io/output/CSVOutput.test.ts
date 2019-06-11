@@ -1,18 +1,18 @@
+import * as fs from 'fs';
 import * as $N from '../../../src/core/Nodes';
-import * as $E from '../../../src/core/Edges';
+import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import * as $O from '../../../src/io/output/CSVOutput';
+import { CSVOutput } from '../../../src/io/output/CSVOutput'
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
+import { fstat } from 'fs-extra';
 
-let	CSVOutput = $O.CSVOutput,
-    CSVInput = $I.CSVInput,
-    JSONInput = $J.JSONInput;
+let	CSVInput = $I.CSVInput;
 
 
 describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
-	var csvOut: $O.ICSVOutput,
+	var csvOut: CSVOutput,
       csvIn: $I.ICSVInput,
       jsonIn: $J.IJSONInput,
       output_file: string,
@@ -42,7 +42,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     var graph : $G.IGraph;
     var n_a, n_b, n_c, n_d : $N.IBaseNode;
-    var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : $E.IBaseEdge;
+    var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
     
     beforeEach(() => {
       csvOut = new CSVOutput(',', false, false);
@@ -118,6 +118,87 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
       
     });  
   
+  });
+
+
+
+  describe('Adjacency list output tests - ', () => {
+    
+    var graph : $G.IGraph;
+    var n_a, n_b, n_c, n_d : $N.IBaseNode;
+    var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
+    
+    beforeEach(() => {
+      csvOut = new CSVOutput(',', false, false);
+      csvIn = new CSVInput(',', false, false);
+      graph = new $G.BaseGraph("Test graph for CSV output");
+      n_a = graph.addNodeByID('A');
+			n_b = graph.addNodeByID('B');
+			n_c = graph.addNodeByID('C');
+			n_d = graph.addNodeByID('D');
+			e_1 = graph.addEdgeByID('1', n_a, n_b);
+			e_2 = graph.addEdgeByID('2', n_a, n_c);
+			e_3 = graph.addEdgeByID('3', n_a, n_a, {directed: true, weighted: true, weight: 2.2});
+			e_4 = graph.addEdgeByID('4', n_a, n_b, {directed: true, weighted: true, weight: 1.3});
+			e_5 = graph.addEdgeByID('5', n_a, n_d, {directed: true, weighted: true, weight: 0.4});
+			e_6 = graph.addEdgeByID('6', n_c, n_a, {directed: true, weighted: true, weight: 7.7});
+			e_7 = graph.addEdgeByID('7', n_d, n_a, {directed: true, weighted: true, weight: 4.4});
+    });
+
+
+    describe('should ouput test graph as undirected edge list - ', () => {
+
+      let expected_graph = "";
+        expected_graph += "A,A\n";
+        expected_graph += "A,B\n";
+        expected_graph += "A,D\n";
+        expected_graph += "A,C\n";
+        expected_graph += "B,A\n";
+        expected_graph += "C,A\n";
+        expected_graph += "D,A\n";
+
+
+      test('string test', () => {
+        out_graph = csvOut.writeToEdgeList(graph);      
+        expect(out_graph).toEqual(expected_graph);
+      });
+
+
+      test('file test', () => {
+        let outfile = OUT_DIR + "adj_list_test_graph.csv";
+        csvOut.writeToEdgeListFile(outfile, graph);
+        expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
+      });
+
+    });
+
+
+    describe('should ouput test graph as undirected edge list - WEIGHTED - ', () => {
+
+      let expected_graph = "";
+      expected_graph += "A,A,2.2\n";
+      expected_graph += "A,B,1.3\n";
+      expected_graph += "A,D,0.4\n";
+      expected_graph += "A,C,1\n";
+      expected_graph += "B,A,1\n";
+      expected_graph += "C,A,7.7\n";
+      expected_graph += "D,A,4.4\n";
+
+
+      test('string test', () => {
+        out_graph = csvOut.writeToEdgeList(graph, true);      
+        expect(out_graph).toBe(expected_graph);
+      });
+
+
+      test('file test', () => {
+        let outfile = OUT_DIR + "adj_list_test_graph.csv";
+        csvOut.writeToEdgeListFile(outfile, graph, true);
+        expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
+      });
+
+    });
+
   });
   
 });

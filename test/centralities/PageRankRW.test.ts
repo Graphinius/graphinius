@@ -406,7 +406,7 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo Extract out into seperate performance test suite !!
 	 */
 	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
-		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
+		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
 				let PR = new PageRankRandomWalk(sn_graph, {
@@ -445,60 +445,11 @@ describe("PageRank Centrality Tests", () => {
 				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
 			});
 		});
-	});
-
-
-	/**
-	 * Stanford SNAP Ego networks -> networkX comparisons
-	 */
-	describe.only('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
-		[sn_300_file, sn_1K_file, sn_20K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
-			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
-				let PR = new PageRankRandomWalk(sn_graph, {
-					epsilon: EPSILON, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
-					normalize: true
-				});
-
-				let start_node = sn_graph.getRandomNode();
-				let dfs = DFS(sn_graph, start_node);
-				logger.log(`Graph ${graph_file} consists of ${dfs.length} components.`);
-
-				let tic = +new Date;
-				let result = PR.computePR();
-				let toc = +new Date;
-				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
-
-				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/comparison_selected/pagerank_numpy_${graph_file}_results.json`;
-				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
-
-				// Length
-				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
-				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
-				// Structure
-				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
-				// Content
-				/**
-				 * @todo the problem (at least with the ~20k graph) could lie in the fact that before normalization we get ridiculously heigh numbers (PR(n_i) ~ 2.5 !!!)
-				 */
-				let within_eps = 0;
-				Object.keys(result).forEach(n => {
-					if ( result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON ) {
-						within_eps++;
-					}
-					// expect(result[n]).toBeCloseTo(nxControl[n], DIGITS);
-				});
-				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
-
-			});
-
-		});
-
 	});
 
 });
 
 
 
-				// let pr_outfile = fs.writeFileSync(`./test/test_data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
-				// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
+// let pr_outfile = fs.writeFileSync(`./test/test_data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
+// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);

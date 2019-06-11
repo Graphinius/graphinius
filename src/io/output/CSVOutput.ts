@@ -16,8 +16,8 @@ export interface ICSVOutput {
 	writeToAdjacencyListFile(filepath : string, graph : $G.IGraph) : void;
 	writeToAdjacencyList(graph : $G.IGraph) : string;
 
-	writeToEdgeListFile(filepath : string, graph : $G.IGraph) : void;
-	writeToEdgeList(graph : $G.IGraph) : string;
+	writeToEdgeListFile(filepath : string, graph : $G.IGraph, weighted: boolean) : void;
+	writeToEdgeList(graph : $G.IGraph, weighted: boolean) : string;
 }
 
 class CSVOutput implements ICSVOutput {
@@ -36,23 +36,19 @@ class CSVOutput implements ICSVOutput {
   }
   
 	writeToAdjacencyList(graph : $G.IGraph) : string {
-    var graphString = "";
-    var nodes = graph.getNodes(),
+    let graphString = "";
+    let nodes = graph.getNodes(),
         node : $N.IBaseNode = null,
         adj_nodes : Array<$N.NeighborEntry> = null,
         adj_node : $N.IBaseNode = null;
         
-    var mergeFunc = (ne: $N.NeighborEntry) => {
-      return ne.node.getID();
-    };
-        
     // TODO make generic for graph mode
-    for ( var node_key in nodes ) {
+    for ( let node_key in nodes ) {
       node = nodes[node_key];      
       graphString += node.getID();      
-      adj_nodes = node.reachNodes(mergeFunc);
+      adj_nodes = node.reachNodes(this.mergeFunc);
       
-      for ( var adj_idx in adj_nodes ) {
+      for ( let adj_idx in adj_nodes ) {
         adj_node = adj_nodes[adj_idx].node;
         graphString += this._separator + adj_node.getID();
       }
@@ -62,18 +58,56 @@ class CSVOutput implements ICSVOutput {
     return graphString;    
   }
   
-	writeToEdgeListFile(filepath : string, graph : $G.IGraph) : void {
-    throw new Error("CSVOutput.writeToEdgeListFile not implemented yet.");
+
+	writeToEdgeListFile(filepath : string, graph : $G.IGraph, weighted : boolean = false) : void {
+    if ( typeof window !== 'undefined' && window !== null ) {
+      throw new Error('cannot write to File inside of Browser');
+    }
     
+    fs.writeFileSync(filepath, this.writeToEdgeList(graph, weighted));
   }
   
-	writeToEdgeList(graph : $G.IGraph) : string {
-    throw new Error("CSVOutput.writeToEdgeList not implemented yet.");
-    // var graphString = "";
+
+  /**
+   * Directed before undirected
+   * 
+   * @param graph
+   * @param weighted 
+   */
+	writeToEdgeList(graph : $G.IGraph, weighted : boolean = false) : string {
     
-    // return graphString;
+    let graphString = "",
+        nodes = graph.getNodes(),
+        node : $N.IBaseNode = null,
+        adj_nodes : Array<$N.NeighborEntry> = null,
+        adj_entry : $N.NeighborEntry,
+        adj_node : $N.IBaseNode = null,
+        weight_str: string;
+
+    for ( let node_key in nodes ) {
+      node = nodes[node_key];
+      adj_nodes = node.reachNodes(this.mergeFunc);
+      
+      for ( let adj_idx in adj_nodes ) {
+        adj_entry = adj_nodes[adj_idx];
+        adj_node = adj_entry.node;
+        weight_str = '';
+        if ( weighted ) {
+          weight_str = this._separator;
+          weight_str += adj_entry.edge.isWeighted() ? adj_entry.edge.getWeight() : 1;
+        }
+        graphString += node.getID() + this._separator + adj_node.getID() + weight_str + '\n';
+      }
+    }
+    return graphString;
+  }
+
+
+  private mergeFunc(ne: $N.NeighborEntry) {
+    return ne.node.getID();
   }
   
 }
+
 
 export { CSVOutput };
