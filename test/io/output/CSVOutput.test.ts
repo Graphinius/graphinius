@@ -5,10 +5,8 @@ import * as $G from '../../../src/core/Graph';
 import { CSVOutput } from '../../../src/io/output/CSVOutput'
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
-import { fstat } from 'fs-extra';
 
-let	CSVInput = $I.CSVInput;
-
+const	CSVInput = $I.CSVInput;
 
 describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
