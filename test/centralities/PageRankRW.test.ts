@@ -254,7 +254,7 @@ describe("PageRank Centrality Tests", () => {
 	 * WE NEED TO COMPARE TO pagerank_numpy, NOT pagerank ...
 	 * 
 	 */
-	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
+	test.only('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,
@@ -473,11 +473,12 @@ describe("PageRank Centrality Tests", () => {
 				logger.log(`PageRank for graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`)
 
 				let controlFileName = `${TEST_PATH_PREFIX}centralities/pagerank/comparison_ego_graphs/pagerank_numpy_ego_network_v_${sn_graph.nrNodes()}_e_${sn_graph.nrUndEdges()*2}.json`;
-				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 
+				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
 				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
 				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
+
 				let within_eps = 0;
 				Object.keys(result).forEach(n => {
 					if ( result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON ) {

@@ -262,7 +262,7 @@ export class PageRankRandomWalk {
 
   computePR() {
     const ds = this._PRArrayDS;
-    // logger.log( JSON.stringify(ds) );
+    logger.log( JSON.stringify(ds) );
 
     const N = this._graph.nrNodes();
 
