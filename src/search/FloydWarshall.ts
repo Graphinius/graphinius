@@ -77,6 +77,7 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	return [dists, next];
 }
 
+
 /**
  * Floyd-Warshall - we mostly use it for Closeness centrality.
  * This is the array version, which means the returned matrix
@@ -104,7 +105,6 @@ function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
 			}
 		}
 	}
-
 	return dists;
 }
 
