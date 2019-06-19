@@ -69,14 +69,14 @@ file = open(output_folder + '/pagerank_numpy_social_network_edges_1K.csv_results
 file.write( json.dumps(cb_1K) )
 file.close
 
-# start = time.time()
-# cb_20K = pagerank_numpy(G_social_20K, alpha=0.85)
-# end = time.time()
-# duration = (end-start)*1000
-# print("PageRank NUMPY on ~20K node social net took " + str(duration) + " ms.")
-# file = open(output_folder + '/pagerank_numpy_social_network_edges_20K.csv_results.json', 'w')
-# file.write( json.dumps(cb_20K) )
-# file.close
+start = time.time()
+cb_20K = pagerank_numpy(G_social_20K, alpha=0.85)
+end = time.time()
+duration = (end-start)*1000
+print("PageRank NUMPY on ~20K node social net took " + str(duration) + " ms.")
+file = open(output_folder + '/pagerank_numpy_social_network_edges_20K.csv_results.json', 'w')
+file.write( json.dumps(cb_20K) )
+file.close
 
 
 ''' 

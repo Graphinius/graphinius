@@ -254,7 +254,7 @@ describe("PageRank Centrality Tests", () => {
 	 * WE NEED TO COMPARE TO pagerank_numpy, NOT pagerank ...
 	 * 
 	 */
-	test.only('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
+	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
 		let PR = new PageRankRandomWalk(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,
@@ -418,9 +418,12 @@ describe("PageRank Centrality Tests", () => {
 				logger.log(`Graph ${graph_file} consists of ${dfs.length} components.`);
 
 				let tic = +new Date;
-				let result = PR.computePR();
+				let result;
+				// for ( let i = 0; i < 1e2; i++ ) { // incredible speedup when executed 100 times !!
+					result = PR.computePR();
+				// }
 				let toc = +new Date;
-				logger.log(`PageRank Random Walk ARRAY version for ${graph_file} graph took ${toc - tic} ms.`)
+				logger.log(`Single-Thread JS PageRank (Arrays) on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`)
 
 				let controlFileName = `${TEST_PATH_PREFIX}${pagerank_py_folder}/comparison_selected/pagerank_numpy_${graph_file}_results.json`;
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
