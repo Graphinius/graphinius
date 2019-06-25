@@ -238,7 +238,7 @@ export class PageRankRandomWalk {
   }
 
 
-  private getRankMapFromArray() {
+  getRankMapFromArray() {
     let result : RankMap = {};
     let nodes = this._graph.getNodes();
     if ( this._normalize ) {
@@ -257,6 +257,23 @@ export class PageRankRandomWalk {
     if (pr_sum !== 1) {
       this._PRArrayDS.curr = this._PRArrayDS.curr.map(n => n / pr_sum);
     }
+  }
+
+
+  /**
+   * method to produce 1D Array for passing to WASM
+   */
+  pull2DTo1D() : Array<number> {
+    let p1d = [];
+    let p2d = this._PRArrayDS.pull;
+    
+    for ( let n in p2d ) {
+      for ( let i of p2d[n] ) {
+        p1d.push(i);
+      }
+      +n !== p2d.length-1 && p1d.push(-1);
+    }
+    return p1d;
   }
 
 

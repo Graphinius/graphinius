@@ -94,6 +94,14 @@ describe("PageRank Centrality Tests", () => {
 		});
 
 
+		test('correctly constructs `pull` 1D array', () => {
+			let pull_expect = [-1, 0, 2, -1, 0]; // [[],[0,2],[0]];
+			let pageRank = new PageRankRandomWalk(n3_graph);
+			logger.log(JSON.stringify(pageRank.getDSs()));
+			expect(pageRank.pull2DTo1D()).toEqual(pull_expect);			
+		});
+
+
 		test('correctly constructs tele_set & tele_size for NON_PPR', () => {
 			let teleport_expect = null,
 					tele_size_expect = null;
