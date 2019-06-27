@@ -2,7 +2,7 @@
   "scripts": {
     "build": "gulp build",
     "test": "jest",
-    "test-pr": "G_LOG=debug jest PageRank --watch"
+    "publish": "gulp bundle && cp index.js lib/ && npm publish"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "name": "graphinius",
   "version": "0.9.2",
   "description": "Generic graph (analysis) library in Typescript",
-  "main": "./index.js",
+  "main": "lib/index.js",
   "author": "Bernd Malle",
   "license": "Apache-2.0",
   "bugs": {
@@ -50,7 +50,6 @@
     "webpack-stream": "^5.2.1"
   },
   "files": [
-    "./index.js",
     "lib/**/*"
   ]
 }
