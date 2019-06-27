@@ -28,7 +28,7 @@ export interface PagerankRWConfig {
     tele_set?: TeleSet;
     init_map?: InitMap;
 }
-export declare class PageRankRandomWalk {
+declare class Pagerank {
     private _graph;
     private _weighted;
     private _alpha;
@@ -52,3 +52,4 @@ export declare class PageRankRandomWalk {
     pull2DTo1D(): Array<number>;
     computePR(): RankMap;
 }
+export { Pagerank };

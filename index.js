@@ -1,31 +1,30 @@
-var Edges			      = require("./lib/core/Edges.js");
-var Nodes 		      = require("./lib/core/Nodes.js");
-var Graph 		      = require("./lib/core/Graph.js");
-var CSVInput 	      = require("./lib/io/input/CSVInput.js");
-var CSVOutput       = require("./lib/io/output/CSVOutput.js");
-var JSONInput       = require("./lib/io/input/JSONInput.js");
-var JSONOutput      = require("./lib/io/output/JSONOutput.js");
-var BFS				      = require("./lib/search/BFS.js");
-var DFS				      = require("./lib/search/DFS.js");
-var PFS             = require("./lib/search/PFS.js");
-var BellmanFord     = require("./lib/search/BellmanFord.js");
-var FloydWarshall		= require("./lib/search/FloydWarshall.js");
-var structUtils     = require("./lib/utils/structUtils.js");
-var remoteUtils     = require("./lib/utils/remoteUtils.js");
-var callbackUtils   = require("./lib/utils/callbackUtils.js");
-var binaryHeap      = require("./lib/datastructs/binaryHeap.js");
-var simplePerturbation = require("./lib/perturbation/SimplePerturbations.js");
-// var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var DegreeCent		 	= require("./lib/centralities/Degree.js");
-var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
-var BetweennessCent	= require("./lib/centralities/Betweenness.js");
-// var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
-var pagerank		= require("./lib/centralities/PageRankRandomWalk.js");
-var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
+let Edges			      = require("./lib/core/Edges.js");
+let Nodes 		      = require("./lib/core/Nodes.js");
+let Graph 		      = require("./lib/core/Graph.js");
+let CSVInput 	      = require("./lib/io/input/CSVInput.js");
+let CSVOutput       = require("./lib/io/output/CSVOutput.js");
+let JSONInput       = require("./lib/io/input/JSONInput.js");
+let JSONOutput      = require("./lib/io/output/JSONOutput.js");
+let BFS				      = require("./lib/search/BFS.js");
+let DFS				      = require("./lib/search/DFS.js");
+let PFS             = require("./lib/search/PFS.js");
+let BellmanFord     = require("./lib/search/BellmanFord.js");
+let FloydWarshall		= require("./lib/search/FloydWarshall.js");
+let structUtils     = require("./lib/utils/structUtils.js");
+let remoteUtils     = require("./lib/utils/remoteUtils.js");
+let callbackUtils   = require("./lib/utils/callbackUtils.js");
+let binaryHeap      = require("./lib/datastructs/binaryHeap.js");
+let simplePerturbation = require("./lib/perturbation/SimplePerturbations.js");
+// let MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+let DegreeCent		 	= require("./lib/centralities/Degree.js");
+let ClosenessCent	 	= require("./lib/centralities/Closeness.js");
+let BetweennessCent	= require("./lib/centralities/Betweenness.js");
+let PR							= require("./lib/centralities/Pagerank.js");
+let kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
 
 
 // Define global object
-var out = typeof window !== 'undefined' ? window : global;
+let out = typeof window !== 'undefined' ? window : global;
 
 /**
  * Inside Global or Window object
@@ -42,7 +41,7 @@ out.$G = {
 		Closeness: ClosenessCent,
 		Betweenness: BetweennessCent,
 		// PageRankGauss: PRGauss,
-		PageRankRandWalk: pagerank
+		PageRank: PR.Pagerank
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,

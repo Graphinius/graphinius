@@ -70,7 +70,7 @@ export interface PagerankRWConfig {
  * @todo find a paper / article detailing this implementation
  * @todo compute a ground truth for our sample social networks (python!)
  */
-export class PageRankRandomWalk {
+class Pagerank {
   /**
    * @todo unused as of now ??
    */
@@ -343,3 +343,5 @@ export class PageRankRandomWalk {
   }
 
 }
+
+export { Pagerank }

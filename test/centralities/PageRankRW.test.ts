@@ -4,7 +4,7 @@ import { DFS } from '../../src/search/DFS';
 import * as $JSON_IN from '../../src/io/input/JSONInput';
 import { JSONOutput } from '../../src/io/output/JSONOutput';
 import * as $CSV_IN from '../../src/io/input/CSVInput';
-import { PRArrayDS, PageRankRandomWalk } from '../../src/centralities/PageRankRandomWalk';
+import { PRArrayDS, Pagerank } from '../../src/centralities/Pagerank';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
@@ -37,11 +37,9 @@ describe("PageRank Centrality Tests", () => {
 
 	describe('constructor correctly sets class properties', () => {
 
-
-
 		test('if personalized, checks for existence of tele_set - throws error otherwise', () => {
 			let prConstrWrapper = () => {
-				return new PageRankRandomWalk(n3_graph, {
+				return new Pagerank(n3_graph, {
 					personalized: true
 				});
 			};
@@ -54,7 +52,7 @@ describe("PageRank Centrality Tests", () => {
 	describe('constructor correctly initializes PageRank RandomWalk data structures - ', () => {
 
 		test('correctly initialized PageRank configuration from default values', () => {
-			let PR = new PageRankRandomWalk(graph);
+			let PR = new Pagerank(graph);
 			expect(PR.getConfig()).toEqual({
 				_weighted				: false,
 				_alpha					: 0.15,
@@ -68,35 +66,35 @@ describe("PageRank Centrality Tests", () => {
 
 		test('correctly constructs current & old array', () => {
 			let pr_init = [0.3333333333333333,0.3333333333333333,0.3333333333333333];
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			expect(pageRank.getDSs().curr).toEqual(pr_init);
 		});
 
 
 		test('correctly constructs old array', () => {
 			let pr_init = [0.3333333333333333,0.3333333333333333,0.3333333333333333];
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			expect(pageRank.getDSs().old).toEqual(pr_init);
 		});
 
 
 		test('correctly constructs out degree array', () => {
 			let deg_init = [2,0,1];
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			expect(pageRank.getDSs().out_deg).toEqual(deg_init);
 		});
 
 
 		test('correctly constructs `pull` 2D array', () => {
 			let pull_expect = [[],[0,2],[0]];
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			expect(pageRank.getDSs().pull).toEqual(pull_expect);			
 		});
 
 
 		test('correctly constructs `pull` 1D array', () => {
 			let pull_expect = [-1, 0, 2, -1, 0]; // [[],[0,2],[0]];
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			logger.log(JSON.stringify(pageRank.getDSs()));
 			expect(pageRank.pull2DTo1D()).toEqual(pull_expect);			
 		});
@@ -105,7 +103,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly constructs tele_set & tele_size for NON_PPR', () => {
 			let teleport_expect = null,
 					tele_size_expect = null;
-			let pageRank = new PageRankRandomWalk(n3_graph);
+			let pageRank = new Pagerank(n3_graph);
 			expect(pageRank.getDSs().teleport).toEqual(teleport_expect);
 			expect(pageRank.getDSs().tele_size).toEqual(tele_size_expect);
 		});
@@ -114,7 +112,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A}', () => {
 			let teleport_expect = [1, 0, 0],
 					tele_size_expect = 1;
-			let pageRank = new PageRankRandomWalk(n3_graph, {
+			let pageRank = new Pagerank(n3_graph, {
 				personalized: true,
 				tele_set: {"A": 1}
 			});
@@ -126,7 +124,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly constructs tele_set & tele_size for PPR, teleset={A, B}', () => {
 			let teleport_expect = [0.5, 0.5, 0],
 					tele_size_expect = 2;
-			let pageRank = new PageRankRandomWalk(n3_graph, {
+			let pageRank = new Pagerank(n3_graph, {
 				personalized: true,
 				tele_set: {"A": 0.5, "B": 0.5}
 			});
@@ -138,7 +136,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly *normalizes* tele_set={A: 0.5, B: 0.5}', () => {
 			let teleport_expect = [0.5, 0.5, 0],
 					tele_size_expect = 2;
-			let pageRank = new PageRankRandomWalk(n3_graph, {
+			let pageRank = new Pagerank(n3_graph, {
 				personalized: true,
 				tele_set: {"A": 3, "B": 3}
 			});
@@ -149,7 +147,7 @@ describe("PageRank Centrality Tests", () => {
 
 		test('throws Error if init_map is given but not of correct size (# nodes)', () => {
 			let prConstrWrapper = () => {
-				return new PageRankRandomWalk(n3_graph, {
+				return new Pagerank(n3_graph, {
 					init_map: {"A": 0.5, "B": 0.5}
 				});
 			};
@@ -159,7 +157,7 @@ describe("PageRank Centrality Tests", () => {
 
 		test('throws Error if init_map is given, but does not contain all node IDs', () => {
 			let prConstrWrapper = () => {
-				return new PageRankRandomWalk(n3_graph, {
+				return new Pagerank(n3_graph, {
 					init_map: {"A": 0.5, "B": 0.5, "meNotExists": 17}
 				});
 			};
@@ -170,7 +168,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly constructs initial values if init_map is given', () => {
 			let init_expect = [0.5, 0.4, 0.1];
 
-			let pageRank = new PageRankRandomWalk(n3_graph, {
+			let pageRank = new Pagerank(n3_graph, {
 				init_map: {"A": 0.5, "B": 0.4, "C": 0.1}
 			});
 			expect(pageRank.getDSs().curr).toEqual(init_expect);
@@ -181,7 +179,7 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly normalizes initial values if init_map is given', () => {
 			let init_expect = [0.5, 0.4, 0.1];
 
-			let pageRank = new PageRankRandomWalk(n3_graph, {
+			let pageRank = new Pagerank(n3_graph, {
 				init_map: {"A": 5, "B": 4, "C": 1}
 			});
 			expect(pageRank.getDSs().curr).toEqual(init_expect);
@@ -199,7 +197,7 @@ describe("PageRank Centrality Tests", () => {
 				"out_deg": [2,0,1],
 				"pull": [[1],[0,2],[0]]
 			}
-			let pageRank = new PageRankRandomWalk(graph, {PRArrays: erroneousDS});
+			let pageRank = new Pagerank(graph, {PRArrays: erroneousDS});
 			expect(pageRank.computePR.bind(pageRank)).toThrow('Encountered zero divisor!');
 		});
 
@@ -214,7 +212,7 @@ describe("PageRank Centrality Tests", () => {
 	test('should stop random walk after few iterations', () => {
 		const convergence = 0.3;
 
-		let pagerank = new PageRankRandomWalk(graph, {
+		let pagerank = new Pagerank(graph, {
 			alpha: 1e-1,
 			epsilon: convergence
 		}).computePR();
@@ -231,7 +229,7 @@ describe("PageRank Centrality Tests", () => {
 	test('should not stop random walk with convergence criteria but with iterations', () => {
 		const max_rank = 0.2;
 
-		let pagerank = new PageRankRandomWalk(graph_und_unw, {
+		let pagerank = new Pagerank(graph_und_unw, {
 			alpha: 1e-1,
 			epsilon: 1e-13,
 			iterations: 2
@@ -263,7 +261,7 @@ describe("PageRank Centrality Tests", () => {
 	 * 
 	 */
 	test('RW UN-weighted result should equal NetworkX results - simple pr_3node_graph', () => {
-		let PR = new PageRankRandomWalk(n3_graph, {
+		let PR = new Pagerank(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,
 			weighted: false,
@@ -282,7 +280,7 @@ describe("PageRank Centrality Tests", () => {
 
 	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
 		n3_graph = new $JSON_IN.JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
-		let PR = new PageRankRandomWalk(n3_graph, {
+		let PR = new Pagerank(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,
 			weighted: true,
@@ -322,7 +320,7 @@ describe("PageRank Centrality Tests", () => {
 	 }
 	].forEach( teleports => {
 		test('RW result should equal NetworkX results - teleport set', () => {
-			let PR = new PageRankRandomWalk(n3_graph, {
+			let PR = new Pagerank(n3_graph, {
 				epsilon: 1e-15,
 				alpha: 0.15,
 				weighted: false,
@@ -361,7 +359,7 @@ describe("PageRank Centrality Tests", () => {
 	 }
 	].forEach( inits => {
 		test('RW result should equal NetworkX results - init map', () => {
-			let PR = new PageRankRandomWalk(n3_graph, {
+			let PR = new Pagerank(n3_graph, {
 				epsilon: EPSILON,
 				alpha: 0.15,
 				weighted: false,
@@ -394,9 +392,9 @@ describe("PageRank Centrality Tests", () => {
 		let random_init_map = {};
 		Object.keys(sn_graph.getNodes()).forEach(n => random_init_map[n] = Math.random());
 
-		let PR = new PageRankRandomWalk(sn_graph, {normalize: true});
+		let PR = new Pagerank(sn_graph, {normalize: true});
 		results.default_init = PR.computePR();
-		PR = new PageRankRandomWalk(sn_graph, {normalize: true, init_map: random_init_map});
+		PR = new Pagerank(sn_graph, {normalize: true, init_map: random_init_map});
 		results.random_init = PR.computePR();
 
 		Object.keys(results.default_init).forEach(n => expect(results.default_init[n]).toBeCloseTo(results.random_init[n], 4));
@@ -416,7 +414,7 @@ describe("PageRank Centrality Tests", () => {
 		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
-				let PR = new PageRankRandomWalk(sn_graph, {
+				let PR = new Pagerank(sn_graph, {
 					epsilon: EPSILON, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
 					normalize: true
 				});
@@ -467,7 +465,7 @@ describe("PageRank Centrality Tests", () => {
 			
 			test('should calculate the PR via Random Walk for EGO graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(ego_files_dir + graph_file);
-				let PR = new PageRankRandomWalk(sn_graph, {
+				let PR = new Pagerank(sn_graph, {
 					epsilon: 1e-15,
 					normalize: true
 				});

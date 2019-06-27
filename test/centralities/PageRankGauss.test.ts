@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
 import * as $I from '../../src/io/input/JSONInput';
-import * as $PRGauss from '../../src/centralities/PageRankGaussian';
+import * as $PRGauss from '../../src/centralities/PageRankGauss';
 import * as $CSV from '../../src/io/input/CSVInput';
 import { Logger } from '../../src/utils/logger';
 

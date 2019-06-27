@@ -665,16 +665,7 @@ declare module 'graphinius/centralities/Gauss' {
 	export { gauss };
 
 }
-declare module 'graphinius/centralities/PageRankGaussian' {
-	import * as $G from 'graphinius/core/Graph'; class pageRankDetCentrality {
-	    getCentralityMap(graph: $G.IGraph, weighted?: boolean): {
-	        [id: string]: number;
-	    };
-	}
-	export { pageRankDetCentrality };
-
-}
-declare module 'graphinius/centralities/PageRankRandomWalk' {
+declare module 'graphinius/centralities/Pagerank' {
 	import { IGraph } from 'graphinius/core/Graph';
 	export type InitMap = {
 	    [id: string]: number;
@@ -704,8 +695,7 @@ declare module 'graphinius/centralities/PageRankRandomWalk' {
 	    personalized?: boolean;
 	    tele_set?: TeleSet;
 	    init_map?: InitMap;
-	}
-	export class PageRankRandomWalk {
+	} class Pagerank {
 	    private _graph;
 	    private _weighted;
 	    private _alpha;
@@ -729,6 +719,16 @@ declare module 'graphinius/centralities/PageRankRandomWalk' {
 	    pull2DTo1D(): Array<number>;
 	    computePR(): RankMap;
 	}
+	export { Pagerank };
+
+}
+declare module 'graphinius/centralities/PagerankGauss' {
+	import * as $G from 'graphinius/core/Graph'; class pageRankDetCentrality {
+	    getCentralityMap(graph: $G.IGraph, weighted?: boolean): {
+	        [id: string]: number;
+	    };
+	}
+	export { pageRankDetCentrality };
 
 }
 declare module 'graphinius/mincutmaxflow/minCutMaxFlowBoykov' {
