@@ -47,7 +47,8 @@ export declare class PageRankRandomWalk {
     };
     getDSs(): PRArrayDS;
     constructPRArrayDataStructs(config: PagerankRWConfig): void;
-    private getRankMapFromArray;
+    getRankMapFromArray(): RankMap;
     private normalizePR;
+    pull2DTo1D(): Array<number>;
     computePR(): RankMap;
 }

@@ -50,7 +50,7 @@ export interface IGraph {
 	nrNodes() : number;
 	getRandomNode() : IBaseNode;
 	deleteNode(node) : void;
-	getNodeIterator();
+	// getNodeIterator();
 	
 	// EDGE STUFF
 	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
@@ -120,13 +120,12 @@ class BaseGraph implements IGraph {
 	constructor (public _label) {	}
 
 
-
-	*getNodeIterator() : Iterator<IBaseNode> {
-		let keys = Object.keys(this.getNodes());
-		for ( let node_id of keys ) {
-			yield this._nodes[node_id];
-		}
-	}
+	// *getNodeIterator() : Iterator<IBaseNode> {
+	// 	let keys = Object.keys(this.getNodes());
+	// 	for ( let node_id of keys ) {
+	// 		yield this._nodes[node_id];
+	// 	}
+	// }
 
 	
 	/**

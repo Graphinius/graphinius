@@ -36,7 +36,6 @@ export interface IGraph {
     nrNodes(): number;
     getRandomNode(): IBaseNode;
     deleteNode(node: any): void;
-    getNodeIterator(): any;
     addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
     addEdge(edge: IBaseEdge): IBaseEdge;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
@@ -94,7 +93,6 @@ declare class BaseGraph implements IGraph {
         [key: string]: IBaseEdge;
     };
     constructor(_label: any);
-    getNodeIterator(): Iterator<IBaseNode>;
     reweighIfHasNegativeEdge(clone?: boolean): IGraph;
     toDirectedGraph(copy?: boolean): IGraph;
     toUndirectedGraph(): IGraph;

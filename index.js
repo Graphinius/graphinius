@@ -19,8 +19,8 @@ var simplePerturbation = require("./lib/perturbation/SimplePerturbations.js");
 var DegreeCent		 	= require("./lib/centralities/Degree.js");
 var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
 var BetweennessCent	= require("./lib/centralities/Betweenness.js");
-var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
-var PRRandomWalk		= require("./lib/centralities/PageRankRandomWalk.js");
+// var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
+var pagerank		= require("./lib/centralities/PageRankRandomWalk.js");
 var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
 
 
@@ -41,8 +41,8 @@ out.$G = {
 		Degree: DegreeCent,
 		Closeness: ClosenessCent,
 		Betweenness: BetweennessCent,
-		PageRankGauss: PRGauss,
-		PageRankRandWalk: PRRandomWalk
+		// PageRankGauss: PRGauss,
+		PageRankRandWalk: pagerank
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,

@@ -492,7 +492,6 @@ declare module 'graphinius/core/Graph' {
 	    nrNodes(): number;
 	    getRandomNode(): IBaseNode;
 	    deleteNode(node: any): void;
-	    getNodeIterator(): any;
 	    addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
 	    addEdge(edge: IBaseEdge): IBaseEdge;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
@@ -549,7 +548,6 @@ declare module 'graphinius/core/Graph' {
 	        [key: string]: IBaseEdge;
 	    };
 	    constructor(_label: any);
-	    getNodeIterator(): Iterator<IBaseNode>;
 	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
 	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
@@ -726,8 +724,9 @@ declare module 'graphinius/centralities/PageRankRandomWalk' {
 	    };
 	    getDSs(): PRArrayDS;
 	    constructPRArrayDataStructs(config: PagerankRWConfig): void;
-	    private getRankMapFromArray;
+	    getRankMapFromArray(): RankMap;
 	    private normalizePR;
+	    pull2DTo1D(): Array<number>;
 	    computePR(): RankMap;
 	}
 
