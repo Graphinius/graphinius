@@ -14,18 +14,18 @@ var structUtils     = require("./lib/utils/structUtils.js");
 var remoteUtils     = require("./lib/utils/remoteUtils.js");
 var callbackUtils   = require("./lib/utils/callbackUtils.js");
 var binaryHeap      = require("./lib/datastructs/binaryHeap.js");
-var simplePerturbation = require("./lib/perturbation/SimplePerturbations.js");
+var perturb					= require("./lib/perturbation/SimplePerturbations.js");
 // var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
 var DegreeCent		 	= require("./lib/centralities/Degree.js");
 var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
 var BetweennessCent	= require("./lib/centralities/Betweenness.js");
 // var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
-var PR							= require("./lib/centralities/PageRankRandomWalk.js");
+var PR							= require("./lib/centralities/Pagerank.js");
 var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
 
 
 // Define global object
-var out = typeof window !== 'undefined' ? window : global;
+let out = typeof window !== 'undefined' ? window : global;
 
 /**
  * Inside Global or Window object
@@ -42,7 +42,7 @@ out.$G = {
 		Closeness: ClosenessCent,
 		Betweenness: BetweennessCent,
 		// PageRankGauss: PRGauss,
-		Pagerank: PR.PageRankRandomWalk
+		Pagerank: PR.Pagerank
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,
@@ -76,7 +76,7 @@ out.$G = {
     BinaryHeap  : binaryHeap.BinaryHeap
   },
 	perturbation: {
-		SimplePerturber: simplePerturbation.SimplePerturber
+		SimplePerturber: perturb.SimplePerturber
 	},
 	generators: {
 		kronecker: kronLeskovec
