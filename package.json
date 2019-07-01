@@ -52,5 +52,6 @@
   "files": [
     "./index.js",
     "lib/**/*"
-  ]
+  ],
+  "type": "module"
 }

@@ -1,13 +1,20 @@
 import * as $G from '../../src/core/Graph';
-import * as $CSV from '../../src/io/input/CSVInput';
-import * as $JSON from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import * as $CC from '../../src/centralities/Closeness';
 
 const SN_GRAPH_NODES = 1034,
-	SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
+			SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
-let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-	json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true),
+let csv_config: ICSVConfig = {
+	separator: ' ',
+	explicit_direction: false,
+	direction_mode: false,
+	weighted: false
+}
+
+let csv = new CSVInput(csv_config),
+	json = new JSONInput(true, false, true),
 	sn_graph_file_1K = "./test/test_data/social_network_edges_1K.csv",
 	sn_graph_file_300 = "./test/test_data/social_network_edges_300.csv",
 	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",

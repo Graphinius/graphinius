@@ -2,28 +2,33 @@ import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Degree';
-import * as $DFS from '../../src/search/DFS';
-import * as $CSV from '../../src/io/input/CSVInput';
-import * as $JSON from '../../src/io/input/JSONInput';
+import { DFS } from '../../src/search/DFS';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInput } from '../../src/io/input/JSONInput';
 
 import { Logger } from '../../src/utils/logger'
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();
 
-var Node = $N.BaseNode;
-var Edge = $E.BaseEdge;
-var Graph = $G.BaseGraph;
+const Node = $N.BaseNode;
+const Edge = $E.BaseEdge;
+const Graph = $G.BaseGraph;
+let sn_config: ICSVConfig = {
+	separator: ' ',
+	explicit_direction: false,
+	direction_mode: false
+}
 
 const small_graph_file = "./test/test_data/small_graph.json",
-	real_graph_file = "./test/test_data/real_graph.json",
-	bernd_graph_file = "./test/test_data/BerndAres2016.json",
-	neg_cycle_multi_component_file = "./test/test_data/negative_cycle_multi_component.json",
-	SMALL_GRAPH_NR_NODES = 4,
-	SMALL_GRAPH_NR_UND_EDGES = 2,
-	SMALL_GRAPH_NR_DIR_EDGES = 5,
-	REAL_GRAPH_NR_NODES = 6204,
-	REAL_GRAPH_NR_EDGES = 18550;
+			real_graph_file = "./test/test_data/real_graph.json",
+			bernd_graph_file = "./test/test_data/BerndAres2016.json",
+			neg_cycle_multi_component_file = "./test/test_data/negative_cycle_multi_component.json",
+			SMALL_GRAPH_NR_NODES = 4,
+			SMALL_GRAPH_NR_UND_EDGES = 2,
+			SMALL_GRAPH_NR_DIR_EDGES = 5,
+			REAL_GRAPH_NR_NODES = 6204,
+			REAL_GRAPH_NR_EDGES = 18550;
 
 
 describe('GRAPH TESTS: ', () => {
@@ -34,8 +39,8 @@ describe('GRAPH TESTS: ', () => {
 		edge_ab: $E.IBaseEdge,
 		edge_2: $E.IBaseEdge,
 		stats: $G.GraphStats,
-		csv: $CSV.CSVInput = new $CSV.CSVInput(),
-		csv_sn: $CSV.CSVInput = new $CSV.CSVInput(" ", false, false);
+		csv: CSVInput = new CSVInput(),
+		csv_sn: CSVInput = new CSVInput(sn_config);
 
 
 	describe('Basic graph operations - ', () => {
@@ -977,7 +982,7 @@ describe('GRAPH TESTS: ', () => {
 	describe('Graph cloning - ', () => {
 
 		let clone_graph: $G.IGraph = null;
-		let json_in: $JSON.IJSONInput;
+		let json_in: IJSONInput;
 
 		beforeEach(() => {
 			expect(clone_graph).toBeNull();
@@ -1069,7 +1074,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should successfully clone a toy graph in explicit mode including weights',
 			() => {
-				json_in = new $JSON.JSONInput(true, false, true);
+				json_in = new JSONInput(true, false, true);
 				graph = json_in.readFromJSONFile(small_graph_file);
 				let deg_dist_all = degCent.degreeDistribution(graph).all;
 				clone_graph = graph.cloneStructure();
@@ -1089,7 +1094,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should successfully clone a real-world graph in explicit mode including weights',
 			() => {
-				json_in = new $JSON.JSONInput(false, false, true);
+				json_in = new JSONInput(false, false, true);
 				graph = json_in.readFromJSONFile(real_graph_file);
 				let deg_dist_all = degCent.degreeDistribution(graph).all;
 				clone_graph = graph.cloneStructure();
@@ -1107,7 +1112,7 @@ describe('GRAPH TESTS: ', () => {
 		 * Cloning only a part of the graph
 		 */
 		test('should successfully clone a part of a social network', () => {
-			json_in = new $JSON.JSONInput(false, false, true);
+			json_in = new JSONInput(false, false, true);
 			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
 
 			clone_graph = graph.cloneSubGraphStructure(graph.getNodeById("1374"), 300);
@@ -1126,7 +1131,7 @@ describe('GRAPH TESTS: ', () => {
 			let graph: $G.IGraph,
 				adj_list: $G.MinAdjacencyListDict,
 				expected_result: $G.MinAdjacencyListDict,
-				jsonReader = new $JSON.JSONInput(true, false, true);
+				jsonReader = new JSONInput(true, false, true);
 
 
 			test('should output an empty adjacency list for an empty graph', () => {
@@ -1212,7 +1217,7 @@ describe('GRAPH TESTS: ', () => {
 			 */
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new $JSON.JSONInput(true, false, false);
+				jsonReader = new JSONInput(true, false, false);
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true);
 
@@ -1227,7 +1232,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new $JSON.JSONInput(true, false, false);
+				jsonReader = new JSONInput(true, false, false);
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true, true);
 
@@ -1247,7 +1252,12 @@ describe('GRAPH TESTS: ', () => {
 		 * @todo outsource to performance test suite (once instantiated)
 		 */
 		describe("Adjacency List, DICT Version, performance test - ", () => {
-			let csv_in_custom = new $CSV.CSVInput(" ", false, true, true);
+			let csv_in_custom = new CSVInput({
+				separator: ' ',
+				explicit_direction: false,
+				direction_mode: true,
+				weighted: true
+			});
 
 			test(
 				'should measure the time it takes to create the adj.list.dict for a 1034 node graph',
@@ -1277,8 +1287,8 @@ describe('GRAPH TESTS: ', () => {
 				adj_list: $G.MinAdjacencyListArray,
 				sn_300_graph: $G.IGraph,
 				expected_result: $G.MinAdjacencyListArray,
-				jsonReader = new $JSON.JSONInput(true, false, true),
-				csvReader = new $CSV.CSVInput(' ', false, false),
+				jsonReader = new JSONInput(true, false, true),
+				csvReader = new CSVInput(sn_config),
 				inf = Number.POSITIVE_INFINITY;
 
 
@@ -1326,7 +1336,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new $JSON.JSONInput(true, false, false);
+				jsonReader = new JSONInput(true, false, false);
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListArray(true);
 
@@ -1362,8 +1372,8 @@ describe('GRAPH TESTS: ', () => {
 				// TODO invent better name for next/adj_list
 				next: $G.NextArray,
 				expected_result: $G.MinAdjacencyListArray,
-				csvReader = new $CSV.CSVInput(' ', false, false),
-				jsonReader = new $JSON.JSONInput(true, false, true),
+				csvReader = new CSVInput(sn_config),
+				jsonReader = new JSONInput(true, false, true),
 				inf = Number.POSITIVE_INFINITY;
 
 
@@ -1433,7 +1443,7 @@ describe('GRAPH TESTS: ', () => {
 		let graph: $G.IGraph,
 			graph_bernd: $G.IGraph,
 			graph_negcycle_multicomp: $G.IGraph,
-			json: $JSON.IJSONInput,
+			json: IJSONInput,
 			n_a: $N.IBaseNode,
 			n_b: $N.IBaseNode,
 			n_c: $N.IBaseNode,
@@ -1449,7 +1459,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		beforeEach(() => {
-			json = new $JSON.JSONInput(true, false, true);
+			json = new JSONInput(true, false, true);
 			graph = new $G.BaseGraph("positive weight graph");
 			graph_negcycle_multicomp = json.readFromJSONFile(neg_cycle_multi_component_file);
 			n_a = graph.addNodeByID("A");
@@ -1541,7 +1551,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('negative cycle multi-component graph should have 2 components', () => {
-			expect($DFS.DFS(graph_negcycle_multicomp, graph_negcycle_multicomp.getNodeById("S")).length).toBe(2);
+			expect(DFS(graph_negcycle_multicomp, graph_negcycle_multicomp.getNodeById("S")).length).toBe(2);
 		});
 
 
@@ -1556,10 +1566,10 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'performance test on bernd graph (1483 nodes), no negative cycles',
 			() => {
-				json = new $JSON.JSONInput(false, true, false);
+				json = new JSONInput(false, true, false);
 				graph_bernd = json.readFromJSONFile(bernd_graph_file);
 				let start_node = "1040";
-				expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
+				expect(DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
 				expect(graph_bernd.hasNegativeCycles()).toBe(false);
 			}
 		);
@@ -1568,14 +1578,14 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'performance test on bernd graph (1483 nodes), WITH negative cycles',
 			() => {
-				json = new $JSON.JSONInput(false, true, true);
+				json = new JSONInput(false, true, true);
 				graph_bernd = json.readFromJSONFile(bernd_graph_file);
 				let start_node = "1040";
 				let edges = graph_bernd.getDirEdges();
 				for (let edge_idx in edges) {
 					edges[edge_idx].setWeight(-1);
 				}
-				expect($DFS.DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
+				expect(DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
 				expect(graph_bernd.hasNegativeCycles()).toBe(true);
 			}
 		);
@@ -1585,7 +1595,7 @@ describe('GRAPH TESTS: ', () => {
 
 	describe.skip("Edge re-interpretation - ", () => {
 
-		const jsonReader = new $JSON.JSONInput();
+		const jsonReader = new JSONInput();
 
 		describe('empty and trivial graphs - ', () => {
 
@@ -1609,7 +1619,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/test_data/search_graph_pfs.json";
-					let json = new $JSON.JSONInput(true, true, false);
+					let json = new JSONInput(true, true, false);
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);
@@ -1624,7 +1634,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return a copy of the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/test_data/search_graph_pfs.json";
-					let json = new $JSON.JSONInput(true, true, false);
+					let json = new JSONInput(true, true, false);
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);

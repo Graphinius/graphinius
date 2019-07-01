@@ -20,7 +20,7 @@ var DegreeCent		 	= require("./lib/centralities/Degree.js");
 var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
 var BetweennessCent	= require("./lib/centralities/Betweenness.js");
 // var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
-var pagerank		= require("./lib/centralities/PageRankRandomWalk.js");
+var PR							= require("./lib/centralities/PageRankRandomWalk.js");
 var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
 
 
@@ -42,7 +42,7 @@ out.$G = {
 		Closeness: ClosenessCent,
 		Betweenness: BetweennessCent,
 		// PageRankGauss: PRGauss,
-		PageRankRandWalk: pagerank
+		Pagerank: PR.PageRankRandomWalk
 	},
 	input: {
 		CSVInput 		: CSVInput.CSVInput,

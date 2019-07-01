@@ -1,7 +1,7 @@
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import * as $I from '../../../src/io/input/CSVInput';
+import { ICSVInput, ICSVConfig, CSVInput } from '../../../src/io/input/CSVInput';
 import * as $C from '../../io/input/common';
 import * as $R from '../../../src/utils/remoteUtils';
 import { Logger } from '../../../src/utils/logger';
@@ -10,8 +10,7 @@ const logger = new Logger();
 
 let Node = $N.BaseNode,
 		Edge = $E.BaseEdge,
-		Graph = $G.BaseGraph,
-		CSV = $I.CSVInput;
+		Graph = $G.BaseGraph;
 
 const REMOTE_HOST = "raw.githubusercontent.com";
 const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/csv/";
@@ -23,7 +22,7 @@ const REAL_GRAPH_NR_NODES = 5937,
 
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 
-	var csv: $I.ICSVInput,
+	var csv: ICSVInput,
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,
@@ -46,7 +45,7 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 	test(
 		'should construct a very small graph from a REMOTELY FETCHED adjacency list and produce the right stats',
 		(done) => {
-			csv = new $I.CSVInput();
+			csv = new CSVInput();
 			config.file_name = "small_graph_adj_list_def_sep" + CSV_EXTENSION;
 			csv.readFromAdjacencyListURL(config, function (graph, err) {
 				$C.checkSmallGraphStats(graph);
@@ -79,9 +78,9 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 	test(
 		'should construct a real sized graph from a remote URL (edge list)',
 		(done) => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
 			config.file_name = "real_graph_edge_list_no_dir" + CSV_EXTENSION;
 			csv.readFromEdgeListURL(config, function (graph, err) {
 				stats = graph.getStats();

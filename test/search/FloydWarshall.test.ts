@@ -1,13 +1,10 @@
 import * as $G from '../../src/core/Graph';
-import * as $J from '../../src/io/input/JSONInput';
-import * as $C from '../../src/io/input/CSVInput';
 import * as $FW from '../../src/search/FloydWarshall';
+import { JSONInput } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+
 import { Logger } from '../../src/utils/logger';
-
 const logger = new Logger();
-
-let JSON_IN = $J.JSONInput;
-let CSV_IN = $C.CSVInput;
 
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json";
 let bernd_graph = "./test/test_data/bernd_ares_pos.json";
@@ -15,11 +12,18 @@ let intermediate = "./test/test_data/bernd_ares_intermediate_pos.json";
 let social_graph = "./test/test_data/social_network_edges_1K.csv";
 let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
+let csv_config: ICSVConfig = {
+	separator: ' ',
+	explicit_direction: false,
+	direction_mode: false,
+	weighted: false
+}
+
 
 describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
-	let json: $J.IJSONInput,
-		csv: $C.ICSVInput,
+	let json: JSONInput,
+		csv: CSVInput,
 		graph_search: $G.IGraph,
 		graph_nullcycle: $G.IGraph,
 		graph_bernd: $G.IGraph,
@@ -29,8 +33,8 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		FW_res: {};
 
 	beforeAll(() => {
-		json = new JSON_IN(true, false, true);
-		csv = new CSV_IN(' ', false, false);
+		json = new JSONInput(true, false, true);
+		csv = new CSVInput(csv_config);
 		graph_search = json.readFromJSONFile(search_graph_pos);
 		graph_bernd = json.readFromJSONFile(bernd_graph);
 		graph_nullcycle = json.readFromJSONFile(search_graph);

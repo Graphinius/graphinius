@@ -9,7 +9,7 @@
 				"es2017",
 				"dom"
 		],
-		"outDir": "./dist",
+		"outDir": "./lib",
 		"removeComments": true,
 		"strict": false
 	},

@@ -1,12 +1,17 @@
 import * as $G from '../../src/core/Graph';
-import * as $CSV from '../../src/io/input/CSVInput';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
 import { KCut } from '../../src/partitioning/KCut';
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
 
-const csv : $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
+const csv : CSVInput = new CSVInput({
+			separator: " ", 
+			explicit_direction: false, 
+			direction_mode: false,
+			weighted: false
+		}),
 		n6_und_graph_file = "./test/test_data/undirected_unweighted_6nodes.csv",
     n333_und_graph_file = "./test/test_data/social_network_edges_300.csv",
     n1034_und_graph_file = "./test/test_data/social_network_edges_1K.csv";

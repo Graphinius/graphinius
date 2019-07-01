@@ -1,16 +1,23 @@
 import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';
-import * as $J from '../../src/io/input/JSONInput';
-import * as $C from '../../src/io/input/CSVInput';
 import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
+import { JSONInput } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
 
 const logger = new Logger();
 
-const json: $J.IJSONInput = new $J.JSONInput(true, false, true),
-    csv: $C.ICSVInput = new $C.CSVInput(' ', false, false),
+let csv_config: ICSVConfig = {
+    separator: ' ',
+    explicit_direction: false,
+    direction_mode: false,
+    weighted: false
+}
+
+const json = new JSONInput(true, false, true),
+    csv = new CSVInput(csv_config),
     search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",
     graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
@@ -25,14 +32,12 @@ describe('Johnsons APSP TEST -', () => {
         social_graph = "./test/test_data/social_network_edges_1K.csv";
 
     let graph_NC: $G.IGraph,
-        graph_bernd: $G.IGraph,
         graph_midsize: $G.IGraph,
         graph_social: $G.IGraph;
 
 
     beforeEach(() => {
         graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
-        graph_bernd = json.readFromJSONFile(bernd_graph),
         graph_midsize = json.readFromJSONFile(intermediate),
         graph_social = csv.readFromEdgeListFile(social_graph);
     });

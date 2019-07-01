@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
 import * as $PRGauss from '../../src/centralities/PageRankGaussian';
-import * as $CSV from '../../src/io/input/CSVInput';
+import { ICSVConfig, CSVInput,  } from '../../src/io/input/CSVInput';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/logger';
 
 const logger = new Logger();
@@ -10,8 +10,15 @@ const EPSILON = 1e-6;
 
 const TEST_PATH_PREFIX = "./test/test_data/";
 
-let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-	json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+const std_csv_config: ICSVConfig = {
+	separator: ' ',
+	explicit_direction: false,
+	direction_mode: false,
+	weighted: false
+}
+
+let csv = new CSVInput(std_csv_config),
+	json = new JSONInput(true, false, true),
 	deg_cent_graph = `search_graph_pfs_extended.json`,
 	sn_300_file = `social_network_edges_300.csv`,
 	sn_1K_file = `social_network_edges_1K.csv`,

@@ -13,12 +13,18 @@ let logger : Logger = new Logger();
 const DEFAULT_WEIGHT = 1;
 const CSV_EXTENSION = ".csv";
 
-export interface ICSVInput {
-	_separator					: string;
-	_explicit_direction	: boolean;
-	_direction_mode			: boolean; // true => directed
-	_weighted						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
-	
+
+export interface ICSVConfig {
+	separator?					: string;
+	explicit_direction?	: boolean;
+	direction_mode?			: boolean;
+	weighted?						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
+}
+
+
+export interface ICSVInput {	
+	_config : ICSVConfig;
+
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
 	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function);
@@ -28,13 +34,18 @@ export interface ICSVInput {
 	readFromEdgeListURL(config : $R.RequestConfig, cb : Function);
 }
 
+
 class CSVInput implements ICSVInput {
+
+	_config : ICSVConfig;
 	
-	constructor(public _separator: string = ',',
-							public _explicit_direction: boolean = true,
-							public _direction_mode: boolean = false,
-							public _weighted: boolean = false
-						) {
+	constructor( config?: ICSVConfig ) {
+		this._config = config || {
+			separator: config && config.separator || ',',
+			explicit_direction: config && config.explicit_direction || true,
+			direction_mode: config && config.direction_mode || false,
+			weighted: config && config.weighted || false
+		};
 	}
 	
 	
@@ -88,7 +99,7 @@ class CSVInput implements ICSVInput {
 		
 		for ( var idx in input ) {
 			var line = input[idx],
-					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator),
+					elements = this._config.separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._config.separator),
 					node_id = elements[0],
 					node : $N.IBaseNode,
 					edge_array = elements.slice(1),
@@ -108,7 +119,7 @@ class CSVInput implements ICSVInput {
 			
 			for ( var e = 0; e < edge_array.length; ) {
 				
-				if ( this._explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
+				if ( this._config.explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
 					throw new Error('Every edge entry has to contain its direction info in explicit mode.');
 				}
 				target_node_id = edge_array[e++];
@@ -121,7 +132,7 @@ class CSVInput implements ICSVInput {
 				 * Within the CSV module this check is done simply via ID check,
 				 * as we are following a rigorous naming scheme anyways...
 				 */
-				dir_char = this._explicit_direction ? edge_array[e++] : this._direction_mode ? 'd' : 'u';
+				dir_char = this._config.explicit_direction ? edge_array[e++] : this._config.direction_mode ? 'd' : 'u';
 				
 				if ( dir_char !== 'd' && dir_char !== 'u' ) {
 					throw new Error("Specification of edge direction invalid (d and u are valid).");
@@ -150,7 +161,7 @@ class CSVInput implements ICSVInput {
 		
 		for ( var idx in input ) {
 			var line = input[idx],
-					elements = this._separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._separator);
+					elements = this._config.separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._config.separator);
 			
 			if ( ! elements ) {
 				// end of file or empty line, just treat like an empty line...
@@ -169,7 +180,7 @@ class CSVInput implements ICSVInput {
 					target_node : $N.IBaseNode,
 					edge : $E.IBaseEdge,
 					target_node_id = elements[1],
-					dir_char = this._explicit_direction ? elements[2] : this._direction_mode ? 'd' : 'u',
+					dir_char = this._config.explicit_direction ? elements[2] : this._config.direction_mode ? 'd' : 'u',
 					directed: boolean,
 					edge_id: string,
 					edge_id_u2: string,
@@ -188,13 +199,13 @@ class CSVInput implements ICSVInput {
 			edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
 			
 			parse_weight = parseFloat(elements[2]);
-			edge_weight = this._weighted ? (isNaN(parse_weight) ? DEFAULT_WEIGHT : parse_weight) : null;
+			edge_weight = this._config.weighted ? (isNaN(parse_weight) ? DEFAULT_WEIGHT : parse_weight) : null;
 							
 			if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
 				// The completely same edge should only be added once...
 				continue;
 			}
-			else if (this._weighted) {
+			else if (this._config.weighted) {
 				edge = graph.addEdgeByID(edge_id, node, target_node, {directed: directed, weighted: true, weight: edge_weight});
 			}
 			else {

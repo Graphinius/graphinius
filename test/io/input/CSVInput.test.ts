@@ -20,7 +20,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test('should instantiate a default version of CSVInput', () => {
 			csv = new CSV();
 			expect(csv).toBeInstanceOf(CSV);
-			expect(csv._separator).toBe(DEFAULT_SEP);
+			expect(csv._config.separator).toBe(DEFAULT_SEP);
 		});
 
 	});
@@ -49,7 +49,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		
 		
 		test('should be able to use a specified separator', () => {
-			csv._separator = " ";
+			csv._config.separator = " ";
 			input_file = "./test/test_data/small_graph_adj_list_ws_sep.csv";
 			graph = csv.readFromAdjacencyListFile(input_file);
 			$C.checkSmallGraphStats(graph);
@@ -63,7 +63,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a very small graph from an adjacency list with edges set to undirected',
             () => {
-                csv._explicit_direction = false;
+                csv._config.explicit_direction = false;
                 input_file = "./test/test_data/small_graph_adj_list_no_dir.csv";
                 graph = csv.readFromAdjacencyListFile(input_file);
                 stats = graph.getStats();
@@ -82,8 +82,8 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a very small graph from an adjacency list with edges set to directed',
             () => {
-                csv._explicit_direction = false;
-                csv._direction_mode = true;
+                csv._config.explicit_direction = false;
+                csv._config.direction_mode = true;
                 input_file = "./test/test_data/small_graph_adj_list_no_dir.csv";
                 graph = csv.readFromAdjacencyListFile(input_file);
                 stats = graph.getStats();
@@ -103,7 +103,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a very small graph from an edge list and produce the right stats',
             () => {
-                csv._separator = ",";
+                csv._config.separator = ",";
                 input_file = "./test/test_data/small_graph_edge_list.csv";
                 graph = csv.readFromEdgeListFile(input_file);
                 $C.checkSmallGraphStats(graph);
@@ -118,7 +118,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a very small graph from an edge list with edges set to undirected',
             () => {
-                csv._explicit_direction = false;
+                csv._config.explicit_direction = false;
                 input_file = "./test/test_data/small_graph_edge_list_no_dir.csv";
                 graph = csv.readFromEdgeListFile(input_file);
                 stats = graph.getStats();
@@ -137,8 +137,8 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a very small graph from an edge list with edges set to directed',
             () => {
-                csv._explicit_direction = false;
-                csv._direction_mode = true;
+                csv._config.explicit_direction = false;
+                csv._config.direction_mode = true;
                 input_file = "./test/test_data/small_graph_edge_list_no_dir.csv";
                 graph = csv.readFromEdgeListFile(input_file);
                 stats = graph.getStats();
@@ -154,10 +154,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		 * Weighted edge list
 		 */
 		test('small weighted, directed graph from an edge list', () => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			csv._weighted = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
+			csv._config.weighted = true;
 			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph.csv";
 			graph = csv.readFromEdgeListFile(input_file);
 			stats = graph.getStats();
@@ -182,9 +182,9 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a real sized graph from an edge list with edges set to undirected',
             () => {
-                csv._separator = " ";
-                csv._explicit_direction = false;
-                csv._direction_mode = false;
+                csv._config.separator = " ";
+                csv._config.explicit_direction = false;
+                csv._config.direction_mode = false;
                 input_file = "./test/test_data/real_graph_edge_list_no_dir.csv";
                 graph = csv.readFromEdgeListFile(input_file);
                 stats = graph.getStats();
@@ -203,9 +203,9 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		test(
             'should construct a real sized graph from an edge list with edges set to directed',
             () => {
-                csv._separator = " ";
-                csv._explicit_direction = false;
-                csv._direction_mode = true;
+                csv._config.separator = " ";
+                csv._config.explicit_direction = false;
+                csv._config.direction_mode = true;
                 input_file = "./test/test_data/real_graph_edge_list_no_dir.csv";
                 graph = csv.readFromEdgeListFile(input_file);
                 stats = graph.getStats();
@@ -265,10 +265,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 
 		test('weighted graph from edge list, too many params', () => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			csv._weighted = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
+			csv._config.weighted = true;
 			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_four_args.csv";
 			expect(csv.readFromEdgeListFile.bind(csv, input_file)).toThrowError(
                 'Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)'
@@ -277,10 +277,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 
 		test('weighted graph from edge list, too many params', () => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			csv._weighted = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
+			csv._config.weighted = true;
 			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_four_args.csv";
 			expect(csv.readFromEdgeListFile.bind(csv, input_file)).toThrowError(
                 'Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)'
@@ -289,10 +289,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 
 		test('weighted graph from edge list, NaN weight - replaced with 1', () => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			csv._weighted = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
+			csv._config.weighted = true;
 			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_NaN.csv";
 			graph = csv.readFromEdgeListFile(input_file);
 			stats = graph.getStats();
@@ -309,10 +309,10 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 
 		test('weighted graph from edge list, missing weight - replaced with 1', () => {
-			csv._separator = " ";
-			csv._explicit_direction = false;
-			csv._direction_mode = true;
-			csv._weighted = true;
+			csv._config.separator = " ";
+			csv._config.explicit_direction = false;
+			csv._config.direction_mode = true;
+			csv._config.weighted = true;
 			input_file = "./test/test_data/csv_inputs/tiny_weighted_graph_missing.csv";
 			graph = csv.readFromEdgeListFile(input_file);
 			stats = graph.getStats();

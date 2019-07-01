@@ -1,23 +1,30 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $CSV from '../../src/io/input/CSVInput';
 import * as $JSON from '../../src/io/input/JSONInput';
 import * as $IB from '../../src/centralities/Betweenness';
 import * as $B from '../../src/centralities/Brandes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
+import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
-
 const SN_GRAPH_NODES = 1034,
-	SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
+			SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
-let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, false),
-	json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
-const PATH_PREFIX = "./test/test_data/",
-	PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
+let csv_config: ICSVConfig = {
+	separator: ' ',
+	explicit_direction: false,
+	direction_mode: false,
+	weighted: false
+}
+
+let csv = new CSVInput(csv_config),
+		json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
+
+		const PATH_PREFIX = "./test/test_data/",
+			PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
 
 let socialNet300 = "social_network_edges_300",
 	socialNet1K = "social_network_edges_1K",
@@ -279,7 +286,8 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
 		[socialNet300].forEach(graph_name => { // socialNet1K, socialNet20K
 			test(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
-				let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, false);
+				csv_config.direction_mode = true;
+				let csv = new CSVInput(csv_config);
 				let graph_path = PATH_PREFIX + graph_name + ".csv",
 					graph = csv.readFromEdgeListFile(graph_path);
 
@@ -298,10 +306,12 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				Object.keys(resBU).forEach(n => expect(resBU[n]).toBeLessThan(controlMap[n] + epsilon));
 			});
 		});
+		
 
 		[weightedSocialNet300].forEach(graph_name => { // weightedSocialNet1K, weightedSocialNet20K
 			test(`Runtime of Brandes (Weighted) on graph ${graph_name}:`, () => {
-				let csv: $CSV.ICSVInput = new $CSV.CSVInput(" ", false, true, true);
+				csv_config.weighted = true;
+				let csv = new CSVInput(csv_config);
 				let graph_path = PATH_PREFIX + graph_name + ".csv",
 					graph = csv.readFromEdgeListFile(graph_path);
 

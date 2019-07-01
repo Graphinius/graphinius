@@ -3,15 +3,14 @@ import * as $N from '../../../src/core/Nodes';
 import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import { CSVOutput } from '../../../src/io/output/CSVOutput'
-import * as $I from '../../../src/io/input/CSVInput';
+import { CSVInput, ICSVConfig } from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
 
-const	CSVInput = $I.CSVInput;
 
 describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 	var csvOut: CSVOutput,
-      csvIn: $I.ICSVInput,
+      csvIn: CSVInput,
       jsonIn: $J.IJSONInput,
       output_file: string,
       out_graph: string,
@@ -44,7 +43,8 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     beforeEach(() => {
       csvOut = new CSVOutput(',', false, false);
-      csvIn = new CSVInput(',', false, false);
+      csvIn = new CSVInput();
+      csvIn._config.explicit_direction = false;
       graph = new $G.BaseGraph("Test graph for CSV output");
       n_a = graph.addNodeByID('A');
 			n_b = graph.addNodeByID('B');
@@ -128,7 +128,8 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     beforeEach(() => {
       csvOut = new CSVOutput(',', false, false);
-      csvIn = new CSVInput(',', false, false);
+      csvIn = new CSVInput();
+      csvIn._config.explicit_direction = false;
       graph = new $G.BaseGraph("Test graph for CSV output");
       n_a = graph.addNodeByID('A');
 			n_b = graph.addNodeByID('B');
