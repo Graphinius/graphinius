@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
 import { DFS } from '../../src/search/DFS';
-import { JSONInput } from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { JSONOutput } from '../../src/io/output/JSONOutput';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { PRArrayDS, Pagerank } from '../../src/centralities/Pagerank';
 
 import { Logger } from '../../src/utils/logger';
@@ -14,10 +14,16 @@ const DIGITS = 6; // inverse of epsilon (number of digits after the decimal, for
 
 const TEST_PATH_PREFIX = "./test/test_data/";
 
-const std_csv_config: ICSVConfig = {
+const std_csv_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
+	weighted: false
+}
+
+const std_json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
 	weighted: false
 }
 
@@ -29,8 +35,8 @@ let csv: CSVInput = new CSVInput(std_csv_config),
 	sn_20K_file = `social_network_edges_20K.csv`,
 	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
 	pagerank_py_folder = `centralities/pagerank`,
-	json = new JSONInput(true, false, true),
-	graph: $G.IGraph = json.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
+	jsonIn = new JSONInput(std_json_in_config),
+	graph: $G.IGraph = jsonIn.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
 	graph_und_unw = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_unweighted_undirected);
 
 
@@ -38,7 +44,7 @@ describe("PageRank Centrality Tests", () => {
 	let n3_graph = null;
 
 	beforeAll(() => {
-		n3_graph = new JSONInput(true, false, false).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = jsonIn.readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 	});
 
 
@@ -286,7 +292,11 @@ describe("PageRank Centrality Tests", () => {
 
 
 	test.skip('RW WEIGHTED result should equal NetworkX results - simple pr_3node_graph', () => {
-		n3_graph = new JSONInput(true, false, true).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
+		n3_graph = new JSONInput({
+			explicit_direction: true,
+			directed: false,
+			weighted: true
+		}).readFromJSONFile(TEST_PATH_PREFIX + pr_3nodes_file);
 		let PR = new Pagerank(n3_graph, {
 			epsilon: 1e-6,
 			alpha: 0.15,

@@ -9,6 +9,7 @@ const logger = new Logger();
 const DEFAULT_WEIGHT: number = 1;
 const JSON_EXTENSION = ".json";
 
+
 export interface JSONEdge {
 	to: string;
 	directed?: string;
@@ -16,11 +17,13 @@ export interface JSONEdge {
 	type?: string;
 }
 
+
 export interface JSONNode {
 	edges: Array<JSONEdge>;
 	coords?: { [key: string]: Number };
 	features?: { [key: string]: any };
 }
+
 
 export interface JSONGraph {
 	name: string;
@@ -29,10 +32,16 @@ export interface JSONGraph {
 	data: { [key: string]: JSONNode }
 }
 
+
+export interface IJSONInConfig {
+	explicit_direction?: boolean;
+	directed?: boolean; // true => directed
+	weighted?: boolean;
+}
+
+
 export interface IJSONInput {
-	_explicit_direction: boolean;
-	_direction: boolean; // true => directed
-	_weighted_mode: boolean;
+	_config: IJSONInConfig;
 
 	readFromJSONFile(file: string): $G.IGraph;
 	readFromJSON(json: {}): $G.IGraph;
@@ -41,10 +50,14 @@ export interface IJSONInput {
 
 
 class JSONInput implements IJSONInput {
+	_config: IJSONInConfig;	
 
-	constructor(public _explicit_direction: boolean = true,
-		public _direction: boolean = false,
-		public _weighted_mode: boolean = false) {
+	constructor(config?: IJSONInConfig) {
+		this._config = config || {
+			explicit_direction: config && config.explicit_direction || true,
+			directed: config && config.directed || false,
+			weighted: config && config.weighted || false
+		};
 	}
 
 	readFromJSONFile(filepath: string): $G.IGraph {
@@ -121,13 +134,13 @@ class JSONInput implements IJSONInput {
 					target_node_id = edge_input.to,
 
 					// Is there any direction information?            
-					directed = this._explicit_direction ? edge_input.directed : this._direction,
+					directed = this._config.explicit_direction ? edge_input.directed : this._config.directed,
 					dir_char = directed ? 'd' : 'u',
 
 					// Is there any weight information?,
 					weight_float = this.handleEdgeWeights(edge_input),
 					weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
-					edge_weight = this._weighted_mode ? weight_info : undefined,
+					edge_weight = this._config.weighted ? weight_info : undefined,
 					target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
 
 				let edge_id = node_id + "_" + target_node_id + "_" + dir_char,
@@ -155,7 +168,7 @@ class JSONInput implements IJSONInput {
 				}
 
 				if ((!directed && graph.hasEdgeID(edge_id_u2))) {
-					if (this._weighted_mode) {
+					if (this._config.weighted) {
 						let edge = graph.getEdgeById(edge_id_u2);
 						if (edge_weight != edge.getWeight()) {
 							throw new Error('Input JSON flawed! Found duplicate edge with different weights!');
@@ -166,7 +179,7 @@ class JSONInput implements IJSONInput {
 				else {
 					var edge = graph.addEdgeByID(edge_id, node, target_node, {
 						directed: directed,
-						weighted: this._weighted_mode,
+						weighted: this._config.weighted,
 						weight: edge_weight
 					});
 

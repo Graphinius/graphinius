@@ -3,8 +3,8 @@ import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Degree';
 import { DFS } from '../../src/search/DFS';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInput } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 import { Logger } from '../../src/utils/logger'
 const logger = new Logger();
@@ -14,10 +14,17 @@ const degCent = new DegreeCentrality();
 const Node = $N.BaseNode;
 const Edge = $E.BaseEdge;
 const Graph = $G.BaseGraph;
-let sn_config: ICSVConfig = {
+
+let sn_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false
+}
+
+let json_in_config: IJSONInConfig = {
+	explicit_direction: false,
+	directed: false,
+	weighted: true
 }
 
 const small_graph_file = "./test/test_data/small_graph.json",
@@ -982,7 +989,7 @@ describe('GRAPH TESTS: ', () => {
 	describe('Graph cloning - ', () => {
 
 		let clone_graph: $G.IGraph = null;
-		let json_in: IJSONInput;
+		let json_in: JSONInput;
 
 		beforeEach(() => {
 			expect(clone_graph).toBeNull();
@@ -1074,7 +1081,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should successfully clone a toy graph in explicit mode including weights',
 			() => {
-				json_in = new JSONInput(true, false, true);
+				json_in = new JSONInput({explicit_direction: true, directed: false, weighted: true});
 				graph = json_in.readFromJSONFile(small_graph_file);
 				let deg_dist_all = degCent.degreeDistribution(graph).all;
 				clone_graph = graph.cloneStructure();
@@ -1094,7 +1101,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should successfully clone a real-world graph in explicit mode including weights',
 			() => {
-				json_in = new JSONInput(false, false, true);
+				json_in = new JSONInput({explicit_direction: false, directed: false, weighted: true});
 				graph = json_in.readFromJSONFile(real_graph_file);
 				let deg_dist_all = degCent.degreeDistribution(graph).all;
 				clone_graph = graph.cloneStructure();
@@ -1112,7 +1119,7 @@ describe('GRAPH TESTS: ', () => {
 		 * Cloning only a part of the graph
 		 */
 		test('should successfully clone a part of a social network', () => {
-			json_in = new JSONInput(false, false, true);
+			json_in = new JSONInput({explicit_direction: false, directed: false, weighted: true});
 			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
 
 			clone_graph = graph.cloneSubGraphStructure(graph.getNodeById("1374"), 300);
@@ -1131,7 +1138,7 @@ describe('GRAPH TESTS: ', () => {
 			let graph: $G.IGraph,
 				adj_list: $G.MinAdjacencyListDict,
 				expected_result: $G.MinAdjacencyListDict,
-				jsonReader = new JSONInput(true, false, true);
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true});
 
 
 			test('should output an empty adjacency list for an empty graph', () => {
@@ -1217,7 +1224,7 @@ describe('GRAPH TESTS: ', () => {
 			 */
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new JSONInput(true, false, false);
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true);
 
@@ -1232,7 +1239,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new JSONInput(true, false, false);
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListDict(true, true);
 
@@ -1287,7 +1294,7 @@ describe('GRAPH TESTS: ', () => {
 				adj_list: $G.MinAdjacencyListArray,
 				sn_300_graph: $G.IGraph,
 				expected_result: $G.MinAdjacencyListArray,
-				jsonReader = new JSONInput(true, false, true),
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
 				csvReader = new CSVInput(sn_config),
 				inf = Number.POSITIVE_INFINITY;
 
@@ -1336,7 +1343,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 			test('should produce the correct adj.list considering default weights', () => {
-				jsonReader = new JSONInput(true, false, false);
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				adj_list = graph.adjListArray(true);
 
@@ -1373,7 +1380,7 @@ describe('GRAPH TESTS: ', () => {
 				next: $G.NextArray,
 				expected_result: $G.MinAdjacencyListArray,
 				csvReader = new CSVInput(sn_config),
-				jsonReader = new JSONInput(true, false, true),
+				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
 				inf = Number.POSITIVE_INFINITY;
 
 
@@ -1443,7 +1450,7 @@ describe('GRAPH TESTS: ', () => {
 		let graph: $G.IGraph,
 			graph_bernd: $G.IGraph,
 			graph_negcycle_multicomp: $G.IGraph,
-			json: IJSONInput,
+			json: JSONInput,
 			n_a: $N.IBaseNode,
 			n_b: $N.IBaseNode,
 			n_c: $N.IBaseNode,
@@ -1459,7 +1466,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		beforeEach(() => {
-			json = new JSONInput(true, false, true);
+			json = new JSONInput({explicit_direction: true, directed: false, weighted: true});
 			graph = new $G.BaseGraph("positive weight graph");
 			graph_negcycle_multicomp = json.readFromJSONFile(neg_cycle_multi_component_file);
 			n_a = graph.addNodeByID("A");
@@ -1566,7 +1573,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'performance test on bernd graph (1483 nodes), no negative cycles',
 			() => {
-				json = new JSONInput(false, true, false);
+				json = new JSONInput({explicit_direction: false, directed: true, weighted: false});
 				graph_bernd = json.readFromJSONFile(bernd_graph_file);
 				let start_node = "1040";
 				expect(DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
@@ -1578,7 +1585,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'performance test on bernd graph (1483 nodes), WITH negative cycles',
 			() => {
-				json = new JSONInput(false, true, true);
+				json = new JSONInput({explicit_direction: false, directed: true, weighted: true});
 				graph_bernd = json.readFromJSONFile(bernd_graph_file);
 				let start_node = "1040";
 				let edges = graph_bernd.getDirEdges();
@@ -1619,7 +1626,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/test_data/search_graph_pfs.json";
-					let json = new JSONInput(true, true, false);
+					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);
@@ -1634,7 +1641,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return a copy of the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/test_data/search_graph_pfs.json";
-					let json = new JSONInput(true, true, false);
+					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);
@@ -1648,9 +1655,7 @@ describe('GRAPH TESTS: ', () => {
 			);
 
 
-			test(
-				'should return the same UNdirected graph if all edges were UNdirected before',
-				() => {
+			test.skip('should return the same UNdirected graph if all edges were UNdirected before', () => {
 
 				}
 			);
@@ -1661,8 +1666,7 @@ describe('GRAPH TESTS: ', () => {
 			// });
 
 
-			test('should return an UNdirected graph when all edges were directed before',
-				() => {
+			test.skip('should return an UNdirected graph when all edges were directed before', () => {
 
 				}
 			);
@@ -1682,12 +1686,12 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			test("should correctly re-interpret all directed edges as UNdirected", () => {
+			test.skip("should correctly re-interpret all directed edges as UNdirected", () => {
 
 			});
 
 
-			test("should correctly re-interpret all UNdirected edges as directed", () => {
+			test.skip("should correctly re-interpret all UNdirected edges as directed", () => {
 
 			});
 

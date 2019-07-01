@@ -1,12 +1,11 @@
 import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
 import * as $BH from '../../src/datastructs/binaryHeap';
 
 
-let json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
   search_graph = "./test/test_data/search_graph_pfs_extended.json",
   equal_dists = "./test/test_data/equal_path_graph.json",
   graph: $G.IGraph,
@@ -548,7 +547,7 @@ describe('PFS TESTS - ', () => {
     config.dir_mode = $G.GraphMode.MIXED;
 
     beforeEach(() => {
-      json = new $I.JSONInput(true, false, false);
+      json = new JSONInput({explicit_direction: true, directed: false, weighted: false});
       graph = json.readFromJSONFile(search_graph);
       expect(graph).toBeDefined();
       expect(graph.nrNodes()).toBe(6);

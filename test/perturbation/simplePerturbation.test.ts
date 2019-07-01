@@ -1,8 +1,8 @@
 import * as $G from '../../src/core/Graph';
 import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
-import * as $JI from '../../src/io/input/JSONInput';
-import * as $CSV from '../../src/io/input/CSVInput';
-import * as $P from '../../src/perturbation/SimplePerturbations';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { SimplePerturber, NodeDegreeConfiguration } from '../../src/perturbation/SimplePerturbations';
 
 const degCent = new DegreeCentrality();
 
@@ -10,10 +10,10 @@ let REAL_GRAPH_NR_NODES = 6204,
     REAL_GRAPH_NR_EDGES = 18550,
     graph : $G.IGraph,
     real_graph = "./test/test_data/real_graph.json",
-    json : $JI.IJSONInput,
+    json : JSONInput,
     stats : $G.GraphStats,
-    deg_config : $P.NodeDegreeConfiguration,
-    perturber : $P.ISimplePerturber;
+    deg_config : NodeDegreeConfiguration,
+    perturber : SimplePerturber;
 
 const DEGREE_PROBABILITY = 0.002;
 const MAX_EDGES_TO_CREATE = 500;
@@ -28,9 +28,9 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
   describe('UNDIRECTED Graph - ', () => {
 
     beforeEach(() => {
-      json = new $JI.JSONInput();
+      json = new JSONInput();
       graph = json.readFromJSONFile( real_graph );
-      perturber = new $P.SimplePerturber( graph );
+      perturber = new SimplePerturber( graph );
       stats = graph.getStats();
       expect(graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
       expect(graph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
@@ -463,9 +463,9 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
   describe('DIRECTED Graph - ', () => {
 
     beforeEach(() => {
-      json = new $JI.JSONInput(false, true, false);
+      json = new JSONInput({explicit_direction: false, directed: true, weighted: false});
       graph = json.readFromJSONFile(real_graph);
-      perturber = new $P.SimplePerturber( graph );
+      perturber = new SimplePerturber( graph );
       stats = graph.getStats();
       expect(graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
       expect(graph.nrUndEdges()).toBe(0);
@@ -585,13 +585,13 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 				max : number,
 				deg_dist : DegreeDistribution,
         graph : $G.IGraph,
-        perturber: $P.ISimplePerturber,
-			  csv	: $CSV.CSVInput = new $CSV.CSVInput();
+        perturber: SimplePerturber,
+			  csv	: CSVInput = new CSVInput();
 
 
     beforeEach(() => {
 				graph = csv.readFromAdjacencyListFile(test_graph_file),
-        perturber = new $P.SimplePerturber( graph );
+        perturber = new SimplePerturber( graph );
     });
 				
 		

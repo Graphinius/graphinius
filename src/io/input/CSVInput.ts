@@ -14,16 +14,16 @@ const DEFAULT_WEIGHT = 1;
 const CSV_EXTENSION = ".csv";
 
 
-export interface ICSVConfig {
+export interface ICSVInConfig {
 	separator?					: string;
 	explicit_direction?	: boolean;
 	direction_mode?			: boolean;
-	weighted?						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
+	weighted?						: boolean;
 }
 
 
-export interface ICSVInput {	
-	_config : ICSVConfig;
+export interface ICSVInput {
+	_config : ICSVInConfig;
 
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
@@ -36,10 +36,9 @@ export interface ICSVInput {
 
 
 class CSVInput implements ICSVInput {
-
-	_config : ICSVConfig;
+	_config : ICSVInConfig;
 	
-	constructor( config?: ICSVConfig ) {
+	constructor( config?: ICSVInConfig ) {
 		this._config = config || {
 			separator: config && config.separator || ',',
 			explicit_direction: config && config.explicit_direction || true,

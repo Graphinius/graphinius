@@ -2,14 +2,20 @@ import * as fs from 'fs';
 import * as $N from '../../../src/core/Nodes';
 import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import { CSVOutput } from '../../../src/io/output/CSVOutput'
-import { CSVInput, ICSVConfig } from '../../../src/io/input/CSVInput';
+import { CSVOutput, ICSVOutConfig } from '../../../src/io/output/CSVOutput'
+import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
 
 
+let csv_out_config: ICSVOutConfig = {
+  separator: ',',
+  explicit_direction: false,
+  direction_mode: false
+}
+
 describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
-	var csvOut: CSVOutput,
+	let csvOut: CSVOutput,
       csvIn: CSVInput,
       jsonIn: $J.IJSONInput,
       output_file: string,
@@ -27,9 +33,9 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 		test('should instantiate a default version of CSVOutput', () => {
 			csvOut = new CSVOutput();
 			expect(csvOut).toBeInstanceOf(CSVOutput);
-			expect(csvOut._separator).toBe(DEFAULT_SEP);
-      expect(csvOut._explicit_direction).toBe(true);
-      expect(csvOut._direction_mode).toBe(false);
+			expect(csvOut._config.separator).toBe(DEFAULT_SEP);
+      expect(csvOut._config.explicit_direction).toBe(true);
+      expect(csvOut._config.direction_mode).toBe(false);
 		});
 
 	});
@@ -42,7 +48,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
     
     beforeEach(() => {
-      csvOut = new CSVOutput(',', false, false);
+      csvOut = new CSVOutput(csv_out_config);
       csvIn = new CSVInput();
       csvIn._config.explicit_direction = false;
       graph = new $G.BaseGraph("Test graph for CSV output");
@@ -73,14 +79,14 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     
     test('should output test graph as undirected graph, space separator', () => {
-      var expected_graph = "";
-      csvOut._separator = " ";
+      let expected_graph = "";
+      let csvOut2 = new CSVOutput({separator: ' '})
       expected_graph += "A A B D C\n" // directed before undirected
       expected_graph += "B A\n"
       expected_graph += "C A\n"
       expected_graph += "D A\n";
                                   
-      out_graph = csvOut.writeToAdjacencyList(graph);      
+      out_graph = csvOut2.writeToAdjacencyList(graph);      
       expect(out_graph).toBe(expected_graph);
     });
     
@@ -127,7 +133,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
     
     beforeEach(() => {
-      csvOut = new CSVOutput(',', false, false);
+      csvOut = new CSVOutput(csv_out_config);
       csvIn = new CSVInput();
       csvIn._config.explicit_direction = false;
       graph = new $G.BaseGraph("Test graph for CSV output");
@@ -185,7 +191,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 
       test('string test', () => {
-        out_graph = csvOut.writeToEdgeList(graph, true);      
+        out_graph = csvOut.writeToEdgeList(graph, true);
         expect(out_graph).toBe(expected_graph);
       });
 

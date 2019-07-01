@@ -1,12 +1,17 @@
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
-import * as $DC from '../../src/centralities/Degree';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { DegreeCentrality, DegreeMode } from '../../src/centralities/Degree';
 
+let std_json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
+	weighted: true
+}
 
-let json: $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json = new JSONInput(std_json_in_config),
   deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
   graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
-  DC: $DC.DegreeCentrality = new $DC.DegreeCentrality();
+  DC: DegreeCentrality = new DegreeCentrality();
 
 
 describe("Degree Centrality Tests - ", () => {
@@ -58,10 +63,10 @@ describe("Degree Centrality Tests - ", () => {
   describe('Degree tests on weighted edges - ', () => {
 
     let DC_map_allW = DC.getCentralityMap(graph); //, true
-    let DC_map_inW = DC.getCentralityMap(graph, true, $DC.DegreeMode.in);
-    let DC_map_outW = DC.getCentralityMap(graph, true, $DC.DegreeMode.out);
-    let DC_map_dirW = DC.getCentralityMap(graph, true, $DC.DegreeMode.dir);
-    let DC_map_undW = DC.getCentralityMap(graph, true, $DC.DegreeMode.und);
+    let DC_map_inW = DC.getCentralityMap(graph, true, DegreeMode.in);
+    let DC_map_outW = DC.getCentralityMap(graph, true, DegreeMode.out);
+    let DC_map_dirW = DC.getCentralityMap(graph, true, DegreeMode.dir);
+    let DC_map_undW = DC.getCentralityMap(graph, true, DegreeMode.und);
 
     test('Single degree test on node A, weighted', () => {
       expect(DC_map_inW["A"]).toBe(6);
@@ -121,10 +126,10 @@ describe("Degree Centrality Tests - ", () => {
   describe('Degree tests on unweighted edges - ', () => {
     //Now test all of them with UNweighted edges
     let DC_map_all = DC.getCentralityMap(graph, false);
-    let DC_map_in = DC.getCentralityMap(graph, false, $DC.DegreeMode.in);
-    let DC_map_out = DC.getCentralityMap(graph, false, $DC.DegreeMode.out);
-    let DC_map_dir = DC.getCentralityMap(graph, false, $DC.DegreeMode.dir);
-    let DC_map_und = DC.getCentralityMap(graph, false, $DC.DegreeMode.und);
+    let DC_map_in = DC.getCentralityMap(graph, false, DegreeMode.in);
+    let DC_map_out = DC.getCentralityMap(graph, false, DegreeMode.out);
+    let DC_map_dir = DC.getCentralityMap(graph, false, DegreeMode.dir);
+    let DC_map_und = DC.getCentralityMap(graph, false, DegreeMode.und);
 
     test('Single degree test on node A', () => {
       expect(DC_map_in["A"]).toBe(2);
@@ -180,7 +185,7 @@ describe("Degree Centrality Tests - ", () => {
     });
 
     test('Test default configuration', () => {
-      expect(DC_map_all).toEqual(DC.getCentralityMap(graph, false, $DC.DegreeMode.all));
+      expect(DC_map_all).toEqual(DC.getCentralityMap(graph, false, DegreeMode.all));
     });
 
   });

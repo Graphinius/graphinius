@@ -1,5 +1,5 @@
 import * as $G from '../../src/core/Graph';
-import * as $JSON from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
 import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
 
@@ -7,7 +7,7 @@ import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
 
-const json: $JSON.JSONInput = new $JSON.JSONInput(false, false, true), // undirected, weighted
+const json = new JSONInput({explicit_direction: false, directed: false, weighted: true}),
 	n8_kl_file = "./test/test_data/partitioning/8n_kl_graph_unweighted.json",
 	n3_missing_partition_file = "./test/test_data/partitioning/n3_missing_parts.json",
 	n3_3partitions_file = "./test/test_data/partitioning/n3_3partitions.json";

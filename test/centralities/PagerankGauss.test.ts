@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
 import * as $PRGauss from '../../src/centralities/PagerankGauss';
-import { ICSVConfig, CSVInput } from '../../src/io/input/CSVInput';
-import { JSONInput } from '../../src/io/input/JSONInput';
+import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/logger';
 
 const logger = new Logger();
@@ -10,15 +10,22 @@ const EPSILON = 1e-6;
 
 const TEST_PATH_PREFIX = "./test/test_data/";
 
-const std_csv_config: ICSVConfig = {
+const std_csv_in_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 }
 
-let csv = new CSVInput(std_csv_config),
-	json = new JSONInput(true, false, true),
+const std_json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: true,
+	weighted: false
+}
+
+
+let csv = new CSVInput(std_csv_in_config),
+	json = new JSONInput(std_json_in_config),
 	deg_cent_graph = `search_graph_pfs_extended.json`,
 	sn_300_file = `social_network_edges_300.csv`,
 	sn_1K_file = `social_network_edges_1K.csv`,
@@ -31,7 +38,7 @@ let csv = new CSVInput(std_csv_config),
 
 describe("PageRank Gauss Tests", () => {
 
-	test('should return correct betweenness map', () => {
+	test('should return correct betweenness map (directed: true)', () => {
 		let prd = PrGauss.getCentralityMap(graph);
 		expect(prd).toEqual([
 			0.1332312404287902,

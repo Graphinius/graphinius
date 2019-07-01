@@ -2,10 +2,8 @@ import * as fs from 'fs';
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import * as $I from '../../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import * as $C from './common';
-
-let JSON_IN = $I.JSONInput;
 
 let REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
@@ -18,10 +16,16 @@ let REAL_GRAPH_NR_NODES = 6204,
 
 const DEFAULT_WEIGHT: number = 1;
 
+const std_json_input_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
+	weighted: false
+}
+
 
 describe('GRAPH JSON INPUT TESTS', () => {
 
-	var json: $I.IJSONInput,
+	let json: JSONInput,
 		input_file: string,
 		graph: $G.IGraph,
 		stats: $G.GraphStats;
@@ -29,19 +33,11 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	describe('Basic instantiation tests - ', () => {
 
 		test('should correctly instantiate a default version of JSONInput', () => {
-			json = new JSON_IN();
-			expect(json).toBeInstanceOf(JSON_IN);
-			expect(json._explicit_direction).toBe(true);
-			expect(json._direction).toBe(false);
-			expect(json._weighted_mode).toBe(false);
-		});
-
-		test('should correclty set modes of JSONInput', () => {
-			json = new JSON_IN(false, true, true);
-			expect(json).toBeInstanceOf(JSON_IN);
-			expect(json._explicit_direction).toBe(false);
-			expect(json._direction).toBe(true);
-			expect(json._weighted_mode).toBe(true);
+			json = new JSONInput(std_json_input_config);
+			expect(json).toBeInstanceOf(JSONInput);
+			expect(json._config.explicit_direction).toBe(true);
+			expect(json._config.directed).toBe(false);
+			expect(json._config.weighted).toBe(false);
 		});
 
 	});
@@ -52,7 +48,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly generate our small example graph out of a JSON file with explicitly encoded edge directions',
 			() => {
-				json = new JSON_IN();
+				json = new JSONInput();
 				graph = json.readFromJSONFile(small_graph);
 				$C.checkSmallGraphStats(graph);
 			}
@@ -62,9 +58,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly generate our small example graph out of a JSON file with direction _mode set to undirected',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph);
 				expect(graph.nrNodes()).toBe(4);
 				expect(graph.nrDirEdges()).toBe(0);
@@ -76,9 +72,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly generate our small example graph out of a JSON file with direction _mode set to directed',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = true;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = true;
 				graph = json.readFromJSONFile(small_graph);
 				expect(graph.nrNodes()).toBe(4);
 				expect(graph.nrDirEdges()).toBe(7);
@@ -98,7 +94,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should construct a real sized graph from an edge list with edges set to undirected',
 			() => {
-				json = new JSON_IN();
+				json = new JSONInput();
 				graph = json.readFromJSONFile(real_graph);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
@@ -116,9 +112,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should construct a real sized graph from an edge list with edges set to directed',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = true;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = true;
 				graph = json.readFromJSONFile(real_graph);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
@@ -135,9 +131,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should mutilate a graph (delte nodes) until it is completely empty - in a performant way',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(real_graph);
 
 				var nr_nodes = graph.nrNodes();
@@ -163,9 +159,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly read the node coordinates contained in a json file',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph);
 				$C.checkSmallGraphCoords(graph);
 			}
@@ -175,9 +171,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should not assign the coords feature if no coordinates are contained in a json file',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph_no_features);
 				var nodes = graph.getNodes();
 				for (var node_idx in nodes) {
@@ -199,9 +195,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly read the node features contained in a json file',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph);
 				$C.checkSmallGraphFeatures(graph);
 			}
@@ -211,9 +207,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should not assign any features if no features entry is contained in a json file',
 			() => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false;
+				json = new JSONInput();
+				json._config.explicit_direction = false;
+				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph_no_features);
 				var nodes = graph.getNodes();
 				for (var node_idx in nodes) {
@@ -233,13 +229,13 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	describe('Edge weights - ', () => {
 
 		beforeEach(() => {
-			json = new JSON_IN();
-			json._explicit_direction = true;
+			json = new JSONInput();
+			json._config.explicit_direction = true;
 		});
 
 
 		test('should correctly read the edge weights contained in a json file', () => {
-			json._weighted_mode = true;
+			json._config.weighted = true;
 			graph = json.readFromJSONFile(small_graph);
 			$C.checkSmallGraphEdgeWeights(graph);
 		});
@@ -248,7 +244,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly set edge weights to undefined if in unweighted _mode',
 			() => {
-				json._weighted_mode = false;
+				json._config.weighted = false;
 				graph = json.readFromJSONFile(small_graph);
 				var und_edges = graph.getUndEdges();
 				for (var edge in und_edges) {
@@ -267,7 +263,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test(
 			'should correctly set edge weights to default of 1 if info contained in json file is crappy',
 			() => {
-				json._weighted_mode = true;
+				json._config.weighted = true;
 				graph = json.readFromJSONFile(small_graph_weights_crap);
 				var und_edges = graph.getUndEdges();
 				for (var edge in und_edges) {
@@ -286,7 +282,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		describe('should be able to handle extreme edge weight cases', () => {
 
 			beforeEach(() => {
-				json._weighted_mode = true;
+				json._config.weighted = true;
 				graph = json.readFromJSONFile(extreme_weights_graph);
 			})
 
@@ -332,7 +328,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	describe('FLAWED graphs - ', () => {
 
 		test('should throw an Error if the JSON file contains duplicate undirected edges with different weights', () => {
-			json = new JSON_IN(true, false, true);
+			json = new JSONInput({explicit_direction: false, directed: false, weighted: true});
 			let flawed_graph_duplicate_und_edge_diff_weights = JSON.parse(fs.readFileSync(small_graph_2N_flawed).toString());
 			expect( json.readFromJSON.bind(json, flawed_graph_duplicate_und_edge_diff_weights) )
 				.toThrow('Input JSON flawed! Found duplicate edge with different weights!');				

@@ -1,16 +1,15 @@
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $DFS from '../../src/search/DFS';
 
 
-let JSON_IN = $I.JSONInput,
-	search_graph = "./test/test_data/search_graph.json";
+let	search_graph = "./test/test_data/search_graph.json";
 
 
 describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 
-	var jsonReader: $I.IJSONInput = new JSON_IN(),
+	var jsonReader = new JSONInput(),
 		graph: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
 		stats: $G.GraphStats = graph.getStats(),
 		callbacks: $DFS.DFS_Callbacks;
@@ -753,7 +752,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test(
             'should correctly compute lookup distance from node D - MIXED Mode',
             () => {
-                jsonReader._weighted_mode = true;
+                jsonReader._config.weighted = true;
                 var graph = jsonReader.readFromJSONFile(search_graph),
                     root = graph.getNodeById('D'),
                     config = $DFS.prepareDFSStandardConfig();
@@ -776,7 +775,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test(
             'should correctly compute lookup distance from node A - DIRECTED Mode',
             () => {
-                jsonReader._weighted_mode = true;
+                jsonReader._config.weighted = true;
                 var graph = jsonReader.readFromJSONFile(search_graph),
                     root = graph.getNodeById('A'),
                     config = $DFS.prepareDFSStandardConfig();
@@ -800,7 +799,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test(
             'should correctly compute lookup distance from node A - UNDIRECTED Mode',
             () => {
-                jsonReader._weighted_mode = true;
+                jsonReader._config.weighted = true;
                 var graph = jsonReader.readFromJSONFile(search_graph),
                     root = graph.getNodeById('A'),
                     config = $DFS.prepareDFSStandardConfig();
@@ -838,7 +837,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	describe('PFS_DFS graph traversal tests with edge weight ascending sort - ', () => {
 
 		var search_graph_pfs = "./test/test_data/search_graph_pfs.json",
-			json = new $I.JSONInput(true, true, true),
+			json = new JSONInput({explicit_direction: true, weighted: true, directed: true}),
 			graph = json.readFromJSONFile(search_graph_pfs);
 
 		beforeEach(() => {

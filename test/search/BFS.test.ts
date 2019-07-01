@@ -1,24 +1,29 @@
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/callbackUtils';
 
-var JSON_IN = $I.JSONInput;
 
 var search_graph = "./test/test_data/search_graph.json";
+
+let json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
+	weighted: true
+}
 
 
 describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
-	var json: $I.IJSONInput,
+	var json: JSONInput,
 		graph: $G.IGraph,
 		stats: $G.GraphStats,
 		bfs_res: { [id: string]: $BFS.BFS_ResultEntry };
 
 
 	test('should correctly instantiate the search graph', () => {
-		json = new JSON_IN();
+		json = new JSONInput();
 		graph = json.readFromJSONFile(search_graph);
 		stats = graph.getStats();
 		expect(stats.nr_nodes).toBe(7);
@@ -587,7 +592,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		describe('computing distance weight_dists in MIXED _mode - ', () => {
 
 			test('should correctly compute weight_dists from node A', () => {
-				json._weighted_mode = true;
+				json._config.weighted = true;
 				var graph = json.readFromJSONFile(search_graph),
 					root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig(),
@@ -614,7 +619,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute weight_dists from node C', () => {
-				json._weighted_mode = true;
+				json._config.weighted = true;
 				var graph = json.readFromJSONFile(search_graph),
 					root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig(),
@@ -659,7 +664,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	describe('PFS_BFS graph traversal tests with edge weight ascending sort - ', () => {
 
 		var search_graph_pfs = "./test/test_data/search_graph_pfs.json",
-			json = new $I.JSONInput(true, true, true),
+			json = new JSONInput({explicit_direction: true, directed: true, weighted: true}),
 			graph = json.readFromJSONFile(search_graph_pfs);
 
 		beforeEach(() => {

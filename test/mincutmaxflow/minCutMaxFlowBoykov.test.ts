@@ -1,11 +1,11 @@
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import * as $MC from '../../src/mincutmaxflow/minCutMaxFlowBoykov';
 
 
-let json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
     mcmf_graph = "./test/test_data/min_cut_max_flow_graph.json",
     graph : $G.IGraph,
     mcmf : $MC.IMCMFBoykov;

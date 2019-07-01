@@ -1,7 +1,7 @@
 import * as $G from '../../src/core/Graph';
 import * as $FW from '../../src/search/FloydWarshall';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
@@ -12,11 +12,17 @@ let intermediate = "./test/test_data/bernd_ares_intermediate_pos.json";
 let social_graph = "./test/test_data/social_network_edges_1K.csv";
 let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
 
-let csv_config: ICSVConfig = {
+let csv_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
+}
+
+let std_json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
+	weighted: true
 }
 
 
@@ -32,8 +38,9 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		stats: $G.GraphStats,
 		FW_res: {};
 
+	
 	beforeAll(() => {
-		json = new JSONInput(true, false, true);
+		json = new JSONInput(std_json_in_config);
 		csv = new CSVInput(csv_config);
 		graph_search = json.readFromJSONFile(search_graph_pos);
 		graph_bernd = json.readFromJSONFile(bernd_graph);

@@ -4,19 +4,19 @@ import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 
 const logger = new Logger();
 
-let csv_config: ICSVConfig = {
+let csv_config: ICSVInConfig = {
     separator: ' ',
     explicit_direction: false,
     direction_mode: false,
     weighted: false
 }
 
-const json = new JSONInput(true, false, true),
+const json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
     csv = new CSVInput(csv_config),
     search_graph = "./test/test_data/search_graph_multiple_SPs.json",
     bf_graph_file = "./test/test_data/bellman_ford.json",

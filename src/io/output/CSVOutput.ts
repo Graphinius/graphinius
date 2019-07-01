@@ -1,17 +1,18 @@
-import path = require('path');
 import fs = require('fs');
-import http = require('http');
-
 import * as $N from '../../core/Nodes';
-import * as $E from '../../core/Edges';
 import * as $G from '../../core/Graph';
-import * as $R from '../../utils/remoteUtils';
+
+
+export interface ICSVOutConfig {
+	separator?					: string; // default => ','
+	explicit_direction?	: boolean; // default => true
+	direction_mode?			: boolean; // default => false
+	weighted?						: boolean; // true => try to read weights from file, else DEFAULT WEIGHT
+}
 
 
 export interface ICSVOutput {
-	_separator					: string;
-	_explicit_direction	: boolean;
-	_direction_mode			: boolean; // true => directed
+  _config: ICSVOutConfig;
 
 	writeToAdjacencyListFile(filepath : string, graph : $G.IGraph) : void;
 	writeToAdjacencyList(graph : $G.IGraph) : string;
@@ -20,11 +21,17 @@ export interface ICSVOutput {
 	writeToEdgeList(graph : $G.IGraph, weighted: boolean) : string;
 }
 
+
 class CSVOutput implements ICSVOutput {
-	
-	constructor(public _separator: string = ',',
-							public _explicit_direction: boolean = true,
-							public _direction_mode: boolean = false) {
+  _config: ICSVOutConfig;
+  
+	constructor(config?: ICSVOutConfig) {
+    this._config = config || {
+			separator: config && config.separator || ',',
+			explicit_direction: config && config.explicit_direction || true,
+			direction_mode: config && config.direction_mode || false
+			// weighted: config && config.weighted || false
+		};
 	}
   
   writeToAdjacencyListFile(filepath : string, graph : $G.IGraph) : void {
@@ -50,7 +57,7 @@ class CSVOutput implements ICSVOutput {
       
       for ( let adj_idx in adj_nodes ) {
         adj_node = adj_nodes[adj_idx].node;
-        graphString += this._separator + adj_node.getID();
+        graphString += this._config.separator + adj_node.getID();
       }
       graphString += "\n";
     }
@@ -93,10 +100,10 @@ class CSVOutput implements ICSVOutput {
         adj_node = adj_entry.node;
         weight_str = '';
         if ( weighted ) {
-          weight_str = this._separator;
+          weight_str = this._config.separator;
           weight_str += adj_entry.edge.isWeighted() ? adj_entry.edge.getWeight() : 1;
         }
-        graphString += node.getID() + this._separator + adj_node.getID() + weight_str + '\n';
+        graphString += node.getID() + this._config.separator + adj_node.getID() + weight_str + '\n';
       }
     }
     return graphString;

@@ -3,17 +3,17 @@ import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
 import * as $C from '../../io/input/common';
 import * as $R from '../../../src/utils/remoteUtils';
-import * as $JI from '../../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 
-let Node = $N.BaseNode,
-	Edge = $E.BaseEdge,
-	Graph = $G.BaseGraph,
-	JSON_IN = $JI.JSONInput;
-
+const std_json_in_config: IJSONInConfig = {
+	explicit_direction: false,
+	directed: false,
+	weighted: false
+}
 
 describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 
-	let json: $JI.IJSONInput,
+	let json: JSONInput,
 		remote_file: string,
 		graph: $G.IGraph,
 		stats: $G.GraphStats;
@@ -42,7 +42,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		test(
 			'should correctly generate our small example graph from a remotely fetched JSON file with explicitly encoded edge directions',
 			(done) => {
-				json = new JSON_IN();
+				json = new JSONInput();
 				json.readFromJSONURL(config, function (graph, err) {
 					$C.checkSmallGraphStats(graph);
 					done();
@@ -54,9 +54,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		test(
 			'should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected',
 			(done) => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = false; // undirected graph
+				json = new JSONInput(std_json_in_config);
 				json.readFromJSONURL(config, function (graph, err) {
 					expect(graph.nrNodes()).toBe(4);
 					expect(graph.nrDirEdges()).toBe(0);
@@ -71,9 +69,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		test(
 			'should correctly generate our small example graph from a remotely fetched JSON file with direction _mode set to undirected',
 			(done) => {
-				json = new JSON_IN();
-				json._explicit_direction = false;
-				json._direction = true; // undirected graph
+				json = new JSONInput({explicit_direction: false, directed: true});
 				json.readFromJSONURL(config, function (graph, err) {
 					expect(graph.nrNodes()).toBe(4);
 					expect(graph.nrDirEdges()).toBe(7);
@@ -96,7 +92,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 		test(
 			'should construct a real sized graph from a remotely fetched edge list with edges set to undirected',
 			(done) => {
-				json = new JSON_IN();
+				json = new JSONInput();
 				config.file_name = "real_graph" + JSON_EXTENSION;
 				json.readFromJSONURL(config, function (graph, err) {
 					stats = graph.getStats();

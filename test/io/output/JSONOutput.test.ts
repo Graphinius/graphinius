@@ -2,15 +2,21 @@ import * as fs from 'fs';
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import * as $JI from '../../../src/io/input/JSONInput';
-import * as $JO from '../../../src/io/output/JSONOutput';
+import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+import { JSONOutput} from '../../../src/io/output/JSONOutput';
 
-let jsonIn: $JI.IJSONInput,
-    jsonOut: $JO.IJSONOutput,
+let jsonIn: JSONInput,
+    jsonOut: JSONOutput,
     graph: $G.IGraph,
     resultString: string,
     search_graph_in = "./test/test_data/search_graph.json",
     search_graph_out = "./test/test_data/output/search_graph_out.json";
+
+let std_json_in_config: IJSONInConfig = {
+  explicit_direction: true,
+  directed: false,
+  weighted: true
+}
 
 
 describe('GRAPH JSON OUTPUT TESTS - ', () => {
@@ -28,7 +34,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
      */
     test('Should correctly output a graph of just one node', () => {
       graph.addNodeByID("A");
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
 
       let JSONControlStruct = {
@@ -54,7 +60,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         let n_a = graph.addNodeByID("A");
         let n_b = graph.addNodeByID("B");
         graph.addEdgeByID("Test edge", n_a, n_b);
-        jsonOut = new $JO.JSONOutput();
+        jsonOut = new JSONOutput();
         resultString = jsonOut.writeToJSONSString( graph );
 
         let JSONControlStruct = {
@@ -97,7 +103,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         let n_a = graph.addNodeByID("A");
         let n_b = graph.addNodeByID("B");
         graph.addEdgeByID("Single directed edge", n_b, n_a, {directed: true});
-        jsonOut = new $JO.JSONOutput();
+        jsonOut = new JSONOutput();
         resultString = jsonOut.writeToJSONSString( graph );
 
         let JSONControlStruct = {
@@ -138,7 +144,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           weighted: true,
           weight: 5
         });
-        jsonOut = new $JO.JSONOutput();
+        jsonOut = new JSONOutput();
         resultString = jsonOut.writeToJSONSString( graph );
 
         let JSONControlStruct = {
@@ -179,7 +185,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         }
       }
       n_a.setFeatures( features );
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
 
       let JSONControlStruct = {
@@ -222,7 +228,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
   describe('Output small JSON structs from file', () => {
 
     test('Should correctly output search graph after reading it from file', () => {
-      jsonIn = new $JI.JSONInput( true, false, true );
+      jsonIn = new JSONInput(std_json_in_config);
       let in_graph = fs.readFileSync( search_graph_in ).toString().replace(/\s/g, '');
 
       graph = jsonIn.readFromJSONFile( search_graph_in );
@@ -244,7 +250,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     test(
       'Should correctly output search graph file after reading from file',
       () => {
-        jsonIn = new $JI.JSONInput( true, false, true );
+        jsonIn = new JSONInput(std_json_in_config);
         graph = jsonIn.readFromJSONFile( search_graph_in );
         
         jsonOut.writeToJSONFile( search_graph_out, graph );
@@ -302,7 +308,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weighted: true,
         weight: Number.POSITIVE_INFINITY
       });
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
@@ -316,7 +322,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weighted: true,
         weight: Number.NEGATIVE_INFINITY
       });
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = '-Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
@@ -330,7 +336,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weighted: true,
         weight: Number.MAX_VALUE
       });
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MAX';
       let JSONControlString = JSON.stringify( JSONControlStruct );
@@ -344,7 +350,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weighted: true,
         weight: Number.MIN_VALUE
       });
-      jsonOut = new $JO.JSONOutput();
+      jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONSString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MIN';
       let JSONControlString = JSON.stringify( JSONControlStruct );

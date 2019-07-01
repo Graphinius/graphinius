@@ -1,29 +1,32 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $JSON from '../../src/io/input/JSONInput';
-import * as $IB from '../../src/centralities/Betweenness';
 import * as $B from '../../src/centralities/Brandes';
-import * as $JO from '../../src/search/Johnsons';
-import * as $FW from '../../src/search/FloydWarshall';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
+import { betweennessCentrality } from '../../src/centralities/Betweenness';
+
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 import { Logger } from '../../src/utils/logger';
 const logger = new Logger();
 
-const SN_GRAPH_NODES = 1034,
-			SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
-let csv_config: ICSVConfig = {
+let csv_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 }
 
-let csv = new CSVInput(csv_config),
-		json: $JSON.IJSONInput = new $JSON.JSONInput(true, false, true);
+let std_json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: false,
+	weighted: true
+}
 
-		const PATH_PREFIX = "./test/test_data/",
+
+let json = new JSONInput(std_json_in_config);
+
+const PATH_PREFIX = "./test/test_data/",
 			PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
 
 let socialNet300 = "social_network_edges_300",
@@ -137,7 +140,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 		let graphPath = path_search_pos;
 		let graph = json.readFromJSONFile(graphPath);
 
-		let resBCslow = $IB.betweennessCentrality(graph, true, false);
+		let resBCslow = betweennessCentrality(graph, true, false);
 		logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
 		logger.log(resBCslow);
 
@@ -154,7 +157,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			let graphPath = path_search_nullEdge;
 			let graph = json.readFromJSONFile(graphPath);
 
-			let resBCslow = $IB.betweennessCentrality(graph, true, false);
+			let resBCslow = betweennessCentrality(graph, true, false);
 			logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
 			logger.log(resBCslow);
 
@@ -190,7 +193,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			expect(workingGraph.hasNegativeEdge()).toBe(true);
 			expect(workingGraph2.hasNegativeEdge()).toBe(true);
 
-			let resSlow = $IB.betweennessCentrality(workingGraph, true, true);
+			let resSlow = betweennessCentrality(workingGraph, true, true);
 			logger.log("Betweenness with slow but correct algorithm: ");
 			logger.log(resSlow);
 
@@ -262,7 +265,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			let graph = json.readFromJSONFile(graphPath);
 
 			logger.log("Betweenness with slow but good algorithm:");
-			let resultBCOld = $IB.betweennessCentrality(graph, true, true);
+			let resultBCOld = betweennessCentrality(graph, true, true);
 			logger.log(resultBCOld);
 
 			logger.log("Betweenness computed with our BrandesForWeighted function:");

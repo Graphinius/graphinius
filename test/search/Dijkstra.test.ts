@@ -1,10 +1,10 @@
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $Dijkstra from '../../src/search/Dijkstra';
 import * as $PFS from '../../src/search/PFS';
 import * as $BH from '../../src/datastructs/binaryHeap';
 
-const json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+const json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
     search_graph = "./test/test_data/search_graph_pfs_extended.json",
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
 

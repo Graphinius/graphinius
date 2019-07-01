@@ -1,20 +1,25 @@
 import * as $G from '../../src/core/Graph';
-import { CSVInput, ICSVConfig } from '../../src/io/input/CSVInput';
-import { JSONInput } from '../../src/io/input/JSONInput';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $CC from '../../src/centralities/Closeness';
 
-const SN_GRAPH_NODES = 1034,
-			SN_GRAPH_EDGES = 53498 / 2; // edges are specified in directed fashion
 
-let csv_config: ICSVConfig = {
+let csv_in_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 }
 
-let csv = new CSVInput(csv_config),
-	json = new JSONInput(true, false, true),
+let json_in_config: IJSONInConfig = {
+	explicit_direction: true,
+	directed: true,
+	weighted: true
+}
+
+
+let csv = new CSVInput(csv_in_config),
+	json = new JSONInput(json_in_config),
 	sn_graph_file_1K = "./test/test_data/social_network_edges_1K.csv",
 	sn_graph_file_300 = "./test/test_data/social_network_edges_300.csv",
 	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
@@ -47,9 +52,7 @@ describe("Closeness Centrality Tests", () => {
 	});
 
 
-	test(
-		'should return the correct closeness map, PFS on weighted directed graph',
-		() => {
+	test('should return the correct closeness map, PFS on weighted directed graph', () => {
 			let expected_closeness_map = {
 				"A": 0.07692307692307693,
 				"B": 0.08333333333333333,
@@ -64,9 +67,7 @@ describe("Closeness Centrality Tests", () => {
 		}
 	);
 
-	test(
-		'should return the correct closenesses, FW on weighted directed graph',
-		() => {
+	test('should return the correct closenesses, FW on weighted directed graph', () => {
 			let expected_closeness_map = [
 				0.07692307692307693,
 				0.08333333333333333,
@@ -81,9 +82,7 @@ describe("Closeness Centrality Tests", () => {
 		}
 	);
 
-	test(
-		'should return the correct closeness map, PFS/FW on unweighted undirected graph, for normal and FW with next',
-		() => {
+	test('should return the correct closeness map, PFS/FW on unweighted undirected graph, for normal and FW with next', () => {
 			let expected_closeness_map = {
 				"1": 0.14285714285714285,   //1/7
 				"2": 0.16666666666666666,   //1/6
@@ -112,9 +111,7 @@ describe("Closeness Centrality Tests", () => {
 	/**
 	 * @todo same for each node!? (=correct?)
 	 */
-	test(
-		'should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.',
-		() => {
+	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
 			let CCFW = new $CC.closenessCentrality();
 			let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
 			let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
@@ -136,9 +133,7 @@ describe("Closeness Centrality Tests", () => {
 	 * TODO: Outsource to it's own performance test suite
 	 */
 
-	test(
-		'should run the closeness centrality on a 300 nodes social network, FW',
-		() => {
+	test('should run the closeness centrality on a 300 nodes social network, FW', () => {
 			let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
 
 			let CCFW = new $CC.closenessCentrality();

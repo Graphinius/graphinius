@@ -1,13 +1,13 @@
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $I from '../../src/io/input/JSONInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { JSONOutput} from '../../src/io/output/JSONOutput';
+
 import * as $EME from '../../src/energyminimization/expansionBoykov';
 
-import * as $JO from '../../src/io/output/JSONOutput';
 
-
-let json   : $I.IJSONInput = new $I.JSONInput(true, false, true),
+let json = new JSONInput({explicit_direction: false, directed: false, weighted: true}),
     eme_graph = "./test/test_data/energy_minimization_expansion_graph.json",
     graph : $G.IGraph,
     labels : Array<string> = ["1", "2"],
