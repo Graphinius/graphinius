@@ -3,7 +3,7 @@ import * as $G from '../../src/core/Graph';
 import * as $PRGauss from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 
 const logger = new Logger();
 const EPSILON = 1e-6;

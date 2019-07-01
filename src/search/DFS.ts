@@ -1,6 +1,6 @@
 import * as $N from '../core/Nodes';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
+import * as $CB from '../utils/CallbackUtils';
 
 
 export interface DFS_Config {

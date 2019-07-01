@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import path = require('path');
 
 import * as $G from '../../core/Graph';
-import * as $R from '../../utils/remoteUtils';
-import { Logger } from '../../utils/logger';
+import * as $R from '../../utils/RemoteUtils';
+import { Logger } from '../../utils/Logger';
 const logger = new Logger();
 
 const DEFAULT_WEIGHT: number = 1;

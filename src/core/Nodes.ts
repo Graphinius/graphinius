@@ -1,5 +1,5 @@
 import * as $E from "./Edges";
-import * as $SU from "../utils/structUtils";
+import * as $SU from "../utils/StructUtils";
 
 export interface NeighborEntry {
   node  : IBaseNode;

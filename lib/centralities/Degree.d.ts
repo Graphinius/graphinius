@@ -14,6 +14,7 @@ export interface DegreeDistribution {
     all: Uint32Array;
 }
 declare class DegreeCentrality {
+    constructor();
     getCentralityMap(graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode): {
         [id: string]: number;
     };

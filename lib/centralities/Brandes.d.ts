@@ -1,10 +1,14 @@
 import * as $G from '../core/Graph';
-declare function BrandesUnweighted(graph: $G.IGraph, normalize?: boolean, directed?: boolean): {};
 export interface BrandesHeapEntry {
     id: string;
     best: number;
 }
-declare function BrandesWeighted(graph: $G.IGraph, normalize: boolean, directed: boolean): {};
-declare function BrandesPFSbased(graph: $G.IGraph, normalize: boolean, directed: boolean): {};
-declare function normalizeScores(CB: any, N: any, directed: any): void;
-export { BrandesUnweighted, BrandesWeighted, BrandesPFSbased, normalizeScores };
+declare class Brandes {
+    private _graph;
+    constructor(_graph: $G.IGraph);
+    computeUnweighted(normalize?: boolean, directed?: boolean): {};
+    computeWeighted(normalize: boolean, directed: boolean): {};
+    computePFSbased(normalize: boolean, directed: boolean): {};
+    normalizeScores(CB: any, N: any, directed: any): void;
+}
+export { Brandes };

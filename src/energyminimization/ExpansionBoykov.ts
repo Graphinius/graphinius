@@ -1,8 +1,8 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $MC from '../mincutmaxflow/minCutMaxFlowBoykov';
-import { Logger } from '../utils/logger';
+import * as $MC from '../mincutmaxflow/MinCutMaxFlowBoykov';
+import { Logger } from '../utils/Logger';
 const logger = new Logger();
 
 export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;

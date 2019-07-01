@@ -2,7 +2,7 @@ import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
-import * as $CB from '../../src/utils/callbackUtils';
+import * as $CB from '../../src/utils/CallbackUtils';
 
 
 var search_graph = "./test/test_data/search_graph.json";

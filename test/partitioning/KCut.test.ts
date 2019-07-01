@@ -2,7 +2,8 @@ import * as $G from '../../src/core/Graph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
 import { KCut } from '../../src/partitioning/KCut';
-import { Logger } from '../../src/utils/logger';
+
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 

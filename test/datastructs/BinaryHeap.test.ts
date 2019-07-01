@@ -1,6 +1,6 @@
-import * as $CB from '../../src/utils/callbackUtils';
-import * as $BH from '../../src/datastructs/binaryHeap';
-import { Logger } from '../../src/utils/logger';
+import * as $CB from '../../src/utils/CallbackUtils';
+import * as $BH from '../../src/datastructs/BinaryHeap';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 let binHeap : $BH.BinaryHeap = null,

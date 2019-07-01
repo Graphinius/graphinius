@@ -1,7 +1,7 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
+import * as $CB from '../utils/CallbackUtils';
 
 
 export interface BFS_Config {

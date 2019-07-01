@@ -1,6 +1,5 @@
 /*
-    This calculates the shortest path to all others, this is accomplished by using
-    the PFS of Graphinius
+  Calculates the shortest path to all others via PFS (could use Dijkstra as well...)
  */
 import * as $G from '../core/Graph';
 import * as $PFS from '../search/PFS';
@@ -9,8 +8,9 @@ import * as $FW from '../search/FloydWarshall';
 
 //Calculates all the shortest path's to all other nodes for all given nodes in the graph
 //Returns a map with every node as key and the average distance to all other nodes as value
-class closenessCentrality{
+class ClosenessCentrality{
 
+  constructor() {}
 
   getCentralityMapFW(graph: $G.IGraph): Array<Number> {
     let dists = $FW.FloydWarshallArray(graph);
@@ -67,5 +67,5 @@ class closenessCentrality{
 
 
 export {
-  closenessCentrality
+  ClosenessCentrality
 };

@@ -6,7 +6,7 @@ import { JSONOutput } from '../../src/io/output/JSONOutput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { PRArrayDS, Pagerank } from '../../src/centralities/Pagerank';
 
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 const EPSILON = 1e-6;

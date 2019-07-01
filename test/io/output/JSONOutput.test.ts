@@ -35,7 +35,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     test('Should correctly output a graph of just one node', () => {
       graph.addNodeByID("A");
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
 
       let JSONControlStruct = {
         name: "Output Test graph",
@@ -61,7 +61,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         let n_b = graph.addNodeByID("B");
         graph.addEdgeByID("Test edge", n_a, n_b);
         jsonOut = new JSONOutput();
-        resultString = jsonOut.writeToJSONSString( graph );
+        resultString = jsonOut.writeToJSONString( graph );
 
         let JSONControlStruct = {
           name: "Output Test graph",
@@ -104,7 +104,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         let n_b = graph.addNodeByID("B");
         graph.addEdgeByID("Single directed edge", n_b, n_a, {directed: true});
         jsonOut = new JSONOutput();
-        resultString = jsonOut.writeToJSONSString( graph );
+        resultString = jsonOut.writeToJSONString( graph );
 
         let JSONControlStruct = {
           name: "Output Test graph",
@@ -145,7 +145,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           weight: 5
         });
         jsonOut = new JSONOutput();
-        resultString = jsonOut.writeToJSONSString( graph );
+        resultString = jsonOut.writeToJSONString( graph );
 
         let JSONControlStruct = {
           name: "Output Test graph",
@@ -186,7 +186,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       }
       n_a.setFeatures( features );
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
 
       let JSONControlStruct = {
         name: "Output Test graph",
@@ -232,7 +232,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       let in_graph = fs.readFileSync( search_graph_in ).toString().replace(/\s/g, '');
 
       graph = jsonIn.readFromJSONFile( search_graph_in );
-      let JSONControlString = jsonOut.writeToJSONSString( graph );
+      let JSONControlString = jsonOut.writeToJSONString( graph );
 
       expect( JSONControlString ).toBe(in_graph);
     });
@@ -309,7 +309,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weight: Number.POSITIVE_INFINITY
       });
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
@@ -323,7 +323,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weight: Number.NEGATIVE_INFINITY
       });
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = '-Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
@@ -337,7 +337,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weight: Number.MAX_VALUE
       });
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MAX';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
@@ -351,7 +351,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         weight: Number.MIN_VALUE
       });
       jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONSString( graph );
+      resultString = jsonOut.writeToJSONString( graph );
       JSONControlStruct['data']['B']['edges'][0]['weight'] = 'MIN';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      

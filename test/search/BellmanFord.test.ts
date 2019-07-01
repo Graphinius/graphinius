@@ -5,7 +5,7 @@ import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { BellmanFordDict, BellmanFordArray } from '../../src/search/BellmanFord';
 
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 let csv_config: ICSVInConfig = {

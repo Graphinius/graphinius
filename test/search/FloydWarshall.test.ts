@@ -3,7 +3,7 @@ import * as $FW from '../../src/search/FloydWarshall';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 let search_graph = "./test/test_data/search_graph_multiple_SPs.json";

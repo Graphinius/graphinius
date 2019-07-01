@@ -1,4 +1,4 @@
-import * as $SU from '../../src/utils/structUtils';
+import * as $SU from '../../src/utils/StructUtils';
 
 
 describe('Datastructure Utils Tests - ', () => {

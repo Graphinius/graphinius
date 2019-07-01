@@ -3,7 +3,7 @@ import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
 import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
 
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 

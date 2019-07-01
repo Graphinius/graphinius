@@ -1,27 +1,39 @@
-var Edges			      = require("./lib/core/Edges.js");
-var Nodes 		      = require("./lib/core/Nodes.js");
-var Graph 		      = require("./lib/core/Graph.js");
-var CSVInput 	      = require("./lib/io/input/CSVInput.js");
-var CSVOutput       = require("./lib/io/output/CSVOutput.js");
-var JSONInput       = require("./lib/io/input/JSONInput.js");
-var JSONOutput      = require("./lib/io/output/JSONOutput.js");
-var BFS				      = require("./lib/search/BFS.js");
-var DFS				      = require("./lib/search/DFS.js");
-var PFS             = require("./lib/search/PFS.js");
-var BellmanFord     = require("./lib/search/BellmanFord.js");
-var FloydWarshall		= require("./lib/search/FloydWarshall.js");
-var structUtils     = require("./lib/utils/structUtils.js");
-var remoteUtils     = require("./lib/utils/remoteUtils.js");
-var callbackUtils   = require("./lib/utils/callbackUtils.js");
-var binaryHeap      = require("./lib/datastructs/binaryHeap.js");
-var perturb					= require("./lib/perturbation/SimplePerturbations.js");
-// var MCMFBoykov			= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-var DegreeCent		 	= require("./lib/centralities/Degree.js");
-var ClosenessCent	 	= require("./lib/centralities/Closeness.js");
-var BetweennessCent	= require("./lib/centralities/Betweenness.js");
-// var PRGauss					= require("./lib/centralities/PageRankGaussian.js");
-var PR							= require("./lib/centralities/Pagerank.js");
-var kronLeskovec		= require("./lib/generators/kroneckerLeskovec.js");
+// CORE
+const Edges			      				= require("./lib/core/Edges.js");
+const Nodes 		      				= require("./lib/core/Nodes.js");
+const Graph 		      				= require("./lib/core/Graph.js");
+// CENTRALITIES				
+const BetweennessCent					= require("./lib/centralities/Betweenness.js");
+const BrandesCent							= require("./lib/centralities/Brandes");
+const ClosenessCent	 					= require("./lib/centralities/Closeness.js");
+const DegreeCent		 					= require("./lib/centralities/Degree.js");
+const PagerankCent						= require("./lib/centralities/Pagerank.js");
+// IO				
+const CSVInput 	      				= require("./lib/io/input/CSVInput.js");
+const CSVOutput       				= require("./lib/io/output/CSVOutput.js");
+const JSONInput       				= require("./lib/io/input/JSONInput.js");
+const JSONOutput      				= require("./lib/io/output/JSONOutput.js");
+// SEARCH				
+const BFS				      				= require("./lib/search/BFS.js");
+const DFS				      				= require("./lib/search/DFS.js");
+const PFS             				= require("./lib/search/PFS.js");
+const Dijkstra								= require("./lib/search/Dijkstra");
+const BellmanFord     				= require("./lib/search/BellmanFord.js");
+const FloydWarshall						= require("./lib/search/FloydWarshall.js");
+const Johnsons								= require("./lib/search/Johnsons.js");
+// UTILS				
+const StructUtils     				= require("./lib/utils/StructUtils.js");
+const RemoteUtils     				= require("./lib/utils/RemoteUtils.js");
+const CallbackUtils   				= require("./lib/utils/CallbackUtils.js");
+// DATASTRUCTS				
+const BinaryHeap      				= require("./lib/datastructs/BinaryHeap.js");
+// PERTURBATION				
+const Perturb									= require("./lib/perturbation/SimplePerturbations.js");
+// GENERATORS				
+const KronLeskovec						= require("./lib/generators/KroneckerLeskovec.js");
+// MISC
+// var MCMFBoykov							= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
+// var PRGauss								= require("./lib/centralities/PageRankGaussian.js");
 
 
 // Define global object
@@ -32,55 +44,52 @@ let out = typeof window !== 'undefined' ? window : global;
  */
 out.$G = {
 	core: {
-		BaseEdge 				: Edges.BaseEdge,
-		BaseNode 				: Nodes.BaseNode,
-		BaseGraph 			: Graph.BaseGraph,
-		GraphMode		    : Graph.GraphMode
+		BaseEdge 									: Edges.BaseEdge,
+		BaseNode 									: Nodes.BaseNode,
+		BaseGraph 								: Graph.BaseGraph,
+		GraphMode									: Graph.GraphMode
 	},
 	centralities: {
-		Degree: DegreeCent,
-		Closeness: ClosenessCent,
-		Betweenness: BetweennessCent,
-		// PageRankGauss: PRGauss,
-		Pagerank: PR.Pagerank
-	},
-	input: {
-		CSVInput 		: CSVInput.CSVInput,
-		JSONInput 	: JSONInput.JSONInput
-	},
-	output: {
-		CSVOutput		: CSVOutput.CSVOutput,
-		JSONOutput	: JSONOutput.JSONOutput
+		Betweenness								: BetweennessCent.betweennessCentrality,
+		Brandes										: BrandesCent.Brandes,
+		Closeness									: ClosenessCent.ClosenessCentrality,
+		Degree										: DegreeCent.DegreeCentrality,
+		Pagerank									: PagerankCent.Pagerank
+	},							
+	input: {							
+		CSVInput 									: CSVInput.CSVInput,
+		JSONInput 								: JSONInput.JSONInput
+	},							
+	output: {							
+		CSVOutput									: CSVOutput.CSVOutput,
+		JSONOutput								: JSONOutput.JSONOutput
 	},
 	search: {
-		BFS													   : BFS.BFS,
-    prepareBFSStandardConfig       : BFS.prepareBFSStandardConfig,
-		DFS 												   : DFS.DFS,
-		DFSVisit										   : DFS.DFSVisit,
-		prepareDFSStandardConfig			 : DFS.prepareDFSStandardConfig,
-		prepareDFSVisitStandardConfig	 : DFS.prepareDFSVisitStandardConfig,
-    PFS                            : PFS.PFS,
-		preparePFSStandardConfig       : PFS.preparePFSStandardConfig,
-		BellmanFord										 : BellmanFord,
-		FloydWarshall									 : FloydWarshall
-	},
-	// mincut: {
-	// 	MCMFBoykov										 : MCMFBoykov.MCMFBoykov
-	// },
-  utils: {
-    struct          : structUtils,
-    remote          : remoteUtils,
-    callback        : callbackUtils
+		BFS												: BFS,
+		DFS 											: DFS,
+		PFS           						: PFS,
+		Dijkstra									: Dijkstra,
+		BellmanFord								: BellmanFord,
+		FloydWarshall							: FloydWarshall,
+		Johnsons									: Johnsons
+	},						
+  utils: {						
+    Struct        						: StructUtils,
+		Remote        						: RemoteUtils,
+    Callback 									: CallbackUtils
   },
   datastructs: {
-    BinaryHeap  : binaryHeap.BinaryHeap
+    BinaryHeap  							: BinaryHeap.BinaryHeap
   },
 	perturbation: {
-		SimplePerturber: perturb.SimplePerturber
+		SimplePerturber						: Perturb.SimplePerturber
 	},
 	generators: {
-		kronecker: kronLeskovec
-	}
+		Kronecker									: KronLeskovec.KROL
+	},
+	// mincut: {
+	// 	MCMFBoykov							: MCMFBoykov.MCMFBoykov
+	// },
 };
 
 /**

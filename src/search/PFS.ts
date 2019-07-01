@@ -1,8 +1,8 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
-import * as $BH from '../datastructs/binaryHeap';
+import * as $CB from '../utils/CallbackUtils';
+import * as $BH from '../datastructs/BinaryHeap';
 
 
 export const DEFAULT_WEIGHT: number = 1;

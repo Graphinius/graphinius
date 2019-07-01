@@ -1,9 +1,9 @@
 import { IGraph, BaseGraph } from '../core/Graph';
 import { IBaseNode } from '../core/Nodes';
 import { IBaseEdge } from '../core/Edges';
-import * as $SU from "../utils/structUtils";
+import * as $SU from "../utils/StructUtils";
 
-import { Logger } from "../utils/logger";
+import { Logger } from "../utils/Logger";
 const logger = new Logger();
 
 

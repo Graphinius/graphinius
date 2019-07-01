@@ -2,9 +2,9 @@ import { IGraph } from '../core/Graph';
 import { IBaseNode } from '../core/Nodes';
 import { GraphPartitioning, Partition } from './Interfaces';
 import { KCut } from './KCut';
-import { BinaryHeap, BinaryHeapMode } from '../datastructs/binaryHeap';
+import { BinaryHeap, BinaryHeapMode } from '../datastructs/BinaryHeap';
 
-import { Logger, LogColors } from '../utils/logger';
+import { Logger, LogColors } from '../utils/Logger';
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;

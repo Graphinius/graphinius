@@ -1,10 +1,11 @@
 import * as $N from '../../../src/core/Nodes';
 import * as $E from '../../../src/core/Edges';
 import * as $G from '../../../src/core/Graph';
-import { ICSVInput, ICSVConfig, CSVInput } from '../../../src/io/input/CSVInput';
+import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $C from '../../io/input/common';
-import * as $R from '../../../src/utils/remoteUtils';
-import { Logger } from '../../../src/utils/logger';
+import * as $R from '../../../src/utils/RemoteUtils';
+
+import { Logger } from '../../../src/utils/Logger';
 const logger = new Logger();
 
 
@@ -22,7 +23,7 @@ const REAL_GRAPH_NR_NODES = 5937,
 
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 
-	var csv: ICSVInput,
+	var csv: CSVInput,
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,

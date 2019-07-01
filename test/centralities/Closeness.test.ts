@@ -27,7 +27,7 @@ let csv = new CSVInput(csv_in_config),
 	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
 	graph_und_unw: $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
 	closeness_mapFW,
-	CC = new $CC.closenessCentrality();
+	CC = new $CC.ClosenessCentrality();
 
 
 describe("Closeness Centrality Tests", () => {
@@ -44,7 +44,7 @@ describe("Closeness Centrality Tests", () => {
 
 		expect(CC.getCentralityMap.bind(CC.getCentralityMap, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
 
-		let CCFW = new $CC.closenessCentrality();
+		let CCFW = new $CC.ClosenessCentrality();
 		expect(CCFW.getCentralityMapFW.bind(CC.getCentralityMapFW, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
 
 		//This results in an empty map because there are no edges in the graph
@@ -76,7 +76,7 @@ describe("Closeness Centrality Tests", () => {
 				0.045454545454545456,
 				0.041666666666666664
 			];
-			let CCFW = new $CC.closenessCentrality();
+			let CCFW = new $CC.ClosenessCentrality();
 			let closeness_map = CCFW.getCentralityMapFW(graph);
 			expect(closeness_map).toEqual(expected_closeness_map);
 		}
@@ -92,7 +92,7 @@ describe("Closeness Centrality Tests", () => {
 				"6": 0.14285714285714285
 
 			};
-			let CCFW = new $CC.closenessCentrality();
+			let CCFW = new $CC.ClosenessCentrality();
 			let closeness_map_FW = CCFW.getCentralityMapFW(graph_und_unw);
 			let closeness_map = CC.getCentralityMap(graph_und_unw);
 
@@ -112,7 +112,7 @@ describe("Closeness Centrality Tests", () => {
 	 * @todo same for each node!? (=correct?)
 	 */
 	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
-			let CCFW = new $CC.closenessCentrality();
+			let CCFW = new $CC.ClosenessCentrality();
 			let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
 			let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
 			let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
@@ -136,7 +136,7 @@ describe("Closeness Centrality Tests", () => {
 	test('should run the closeness centrality on a 300 nodes social network, FW', () => {
 			let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
 
-			let CCFW = new $CC.closenessCentrality();
+			let CCFW = new $CC.ClosenessCentrality();
 			closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
 		}
 	);
@@ -146,7 +146,7 @@ describe("Closeness Centrality Tests", () => {
 		[sn_graph_file_300].forEach( sn_graph_file => { // , sn_graph_file_1K
 			test('should run the closeness centrality on a 300 nodes social network, should be same as FW', () => {
 				let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
-				let CCFW = new $CC.closenessCentrality();
+				let CCFW = new $CC.ClosenessCentrality();
 
 				let tic = +new Date();
 				closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);

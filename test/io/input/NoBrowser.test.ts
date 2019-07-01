@@ -3,7 +3,7 @@
  */
 import { CSVInput } from '../../../src/io/input/CSVInput';
 import * as $JI from '../../../src/io/input/JSONInput';
-import * as $R from '../../../src/utils/remoteUtils';
+import * as $R from '../../../src/utils/RemoteUtils';
 
 
 const REMOTE_HOST = "raw.githubusercontent.com";

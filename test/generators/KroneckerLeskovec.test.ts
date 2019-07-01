@@ -1,9 +1,9 @@
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
-import * as $KRON from '../../src/generators/kroneckerLeskovec';
-import { Logger } from '../../src/utils/logger';
+import * as $KRON from '../../src/generators/KroneckerLeskovec';
 
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 

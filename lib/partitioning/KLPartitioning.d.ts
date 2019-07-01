@@ -1,7 +1,7 @@
 import { IGraph } from '../core/Graph';
 import { IBaseNode } from '../core/Nodes';
 import { GraphPartitioning } from './Interfaces';
-import { BinaryHeap } from '../datastructs/binaryHeap';
+import { BinaryHeap } from '../datastructs/BinaryHeap';
 export declare type GainEntry = {
     id: string;
     source: IBaseNode;

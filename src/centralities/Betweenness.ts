@@ -19,8 +19,9 @@ import * as $N from '../core/Nodes';
  * !!! DO NOT USE FOR PRODUCTION !!!
  * 
  * @todo decide if we still need it...
+ * @todo in any case, make a CLASS out of it (standardize centrality signatures)
  */
-function betweennessCentrality(graph: $G.IGraph, directed: boolean, sparse?: boolean): {} {
+function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: boolean): {} {
   let paths;
   var sparse = sparse || false;
 

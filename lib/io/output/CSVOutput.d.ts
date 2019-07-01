@@ -1,18 +1,20 @@
 import * as $G from '../../core/Graph';
+export interface ICSVOutConfig {
+    separator?: string;
+    explicit_direction?: boolean;
+    direction_mode?: boolean;
+    weighted?: boolean;
+}
 export interface ICSVOutput {
-    _separator: string;
-    _explicit_direction: boolean;
-    _direction_mode: boolean;
+    _config: ICSVOutConfig;
     writeToAdjacencyListFile(filepath: string, graph: $G.IGraph): void;
     writeToAdjacencyList(graph: $G.IGraph): string;
     writeToEdgeListFile(filepath: string, graph: $G.IGraph, weighted: boolean): void;
     writeToEdgeList(graph: $G.IGraph, weighted: boolean): string;
 }
 declare class CSVOutput implements ICSVOutput {
-    _separator: string;
-    _explicit_direction: boolean;
-    _direction_mode: boolean;
-    constructor(_separator?: string, _explicit_direction?: boolean, _direction_mode?: boolean);
+    _config: ICSVOutConfig;
+    constructor(config?: ICSVOutConfig);
     writeToAdjacencyListFile(filepath: string, graph: $G.IGraph): void;
     writeToAdjacencyList(graph: $G.IGraph): string;
     writeToEdgeListFile(filepath: string, graph: $G.IGraph, weighted?: boolean): void;

@@ -1,7 +1,6 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 
-
 /**
  * Method to deep clone an object
  *
@@ -171,4 +170,10 @@ function mergeOrderedArraysNoDups(a:Array<number>,b:Array<number>):Array<number>
 }
 
 
-export { clone, shuffleArray, mergeArrays, mergeOrderedArraysNoDups, mergeObjects, findKey };
+export { 
+  clone, 
+  shuffleArray, 
+  mergeArrays,
+  mergeObjects, 
+  mergeOrderedArraysNoDups, 
+  findKey };

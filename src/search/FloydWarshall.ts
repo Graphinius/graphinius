@@ -1,5 +1,5 @@
 import * as $G from '../core/Graph';
-import * as $SU from '../utils/structUtils'
+import * as $SU from '../utils/StructUtils'
 
 interface FWConfig {
 	directed: boolean;

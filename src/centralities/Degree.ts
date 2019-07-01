@@ -1,6 +1,6 @@
 import * as $N from '../core/Nodes';
 import * as $G from '../core/Graph';
-import * as $SU from '../utils/structUtils'
+import * as $SU from '../utils/StructUtils'
 
 export enum DegreeMode {
   in,
@@ -11,7 +11,7 @@ export enum DegreeMode {
 }
 
 /**
- * @TODO per edge type ???
+ * @todo per edge type ???
  */
 export interface DegreeDistribution {
 	in	: Uint32Array;
@@ -23,6 +23,8 @@ export interface DegreeDistribution {
 
 
 class DegreeCentrality {
+
+  constructor(){}
 
   getCentralityMap( graph: $G.IGraph, weighted?: boolean, conf?: DegreeMode):{[id:string]: number} {
     weighted = ( weighted != null ) ? !!weighted : true;

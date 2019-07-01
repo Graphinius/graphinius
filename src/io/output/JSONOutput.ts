@@ -7,8 +7,20 @@ import * as $G from '../../core/Graph';
 
 export interface IJSONOutput {
 	writeToJSONFile(filepath: string, graph: $G.IGraph): void;
-	writeToJSONSString(graph: $G.IGraph): string;
+	writeToJSONString(graph: $G.IGraph): string;
 }
+
+
+/**
+ * @description we can leave this out, since we just write ALL
+ * 							information into the file, but then select the
+ * 							ones we want during Input
+ */
+// export interface IJSONInConfig {
+// 	explicit_direction?: boolean;
+// 	directed?: boolean; // true => directed
+// 	weighted?: boolean;
+// }
 
 
 class JSONOutput implements IJSONOutput {
@@ -20,11 +32,11 @@ class JSONOutput implements IJSONOutput {
 			throw new Error('cannot write to File inside of Browser');
 		}
 
-		fs.writeFileSync(filepath, this.writeToJSONSString(graph));
+		fs.writeFileSync(filepath, this.writeToJSONString(graph));
 	}
 
 
-	writeToJSONSString(graph: $G.IGraph): string {
+	writeToJSONString(graph: $G.IGraph): string {
 
 		let nodes			: { [key: string]: $N.IBaseNode },
 			node				: $N.IBaseNode,

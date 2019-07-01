@@ -4,7 +4,7 @@ import * as $G from '../../src/core/Graph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { JSONOutput} from '../../src/io/output/JSONOutput';
 
-import * as $EME from '../../src/energyminimization/expansionBoykov';
+import * as $EME from '../../src/energyminimization/ExpansionBoykov';
 
 
 let json = new JSONInput({explicit_direction: false, directed: false, weighted: true}),

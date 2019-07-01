@@ -3,10 +3,7 @@ import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
 import * as $PFS from '../search/PFS';
 import * as $BF from '../search/BellmanFord';
-import * as $D from '../search/Dijkstra';
-import * as $CB from '../utils/callbackUtils';
-import * as $BH from '../datastructs/binaryHeap';
-import * as $SU from '../utils/structUtils'
+import * as $SU from '../utils/StructUtils'
 
 
 function Johnsons(graph: $G.IGraph): {} {
@@ -160,7 +157,11 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
   return [dists, next];
 }
 
+
 export {
-  Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes
+  Johnsons, 
+  addExtraNandE, 
+  reWeighGraph, 
+  PFSFromAllNodes
 };
 

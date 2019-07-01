@@ -6,7 +6,7 @@ import { DFS } from '../../src/search/DFS';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
-import { Logger } from '../../src/utils/logger'
+import { Logger } from '../../src/utils/Logger'
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();

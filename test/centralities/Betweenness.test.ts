@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/Graph';
-import * as $B from '../../src/centralities/Brandes';
+import { Brandes, BrandesHeapEntry } from '../../src/centralities/Brandes';
 import { betweennessCentrality } from '../../src/centralities/Betweenness';
 
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
-import { Logger } from '../../src/utils/logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 
@@ -90,7 +90,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				mapControl[nodes[key].getID()] = nodes[key].getFeatures()["betweenness"].unnormalized;
 			}
 			logger.log(mapControl);
-			let BResult = $B.BrandesUnweighted(graph, false, false);
+			let BResult = new Brandes(graph).computeUnweighted(false, false);
 			logger.log("Betweenness computed with Brandes: ");
 			logger.log(BResult);
 
@@ -114,17 +114,17 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			}
 
 			logger.log(mapControl);
-			let BUResult = $B.BrandesUnweighted(graph, true, true);
+			let BUResult = new Brandes(graph).computeUnweighted(true, true);
 			logger.log("Betweenness computed with Brandes, normalized: ");
 			logger.log(BUResult);
 
 			logger.log(mapControl);
-			let BWResult = $B.BrandesWeighted(graph, true, true);
+			let BWResult = new Brandes(graph).computeWeighted(true, true);
 			logger.log("Betweenness computed with Brandes, normalized: ");
 			logger.log(BWResult);
 
 			logger.log(mapControl);
-			let BPResult = $B.BrandesWeighted(graph, true, true);
+			let BPResult = new Brandes(graph).computePFSbased(true, true);
 			logger.log("Betweenness computed with Brandes, normalized: ");
 			logger.log(BPResult);
 
@@ -144,7 +144,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 		logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
 		logger.log(resBCslow);
 
-		let resBFW = $B.BrandesWeighted(graph, false, false);
+		let resBFW = new Brandes(graph).computeWeighted(false, true);
 		logger.log("Betweenness computed with BrandesForWeighted2: ");
 		logger.log(resBFW);
 
@@ -161,7 +161,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
 			logger.log(resBCslow);
 
-			let resBFW = $B.BrandesWeighted(graph, false, false);
+			let resBFW = new Brandes(graph).computeWeighted(false, false);
 			logger.log("Betweenness computed with BrandesForWeighted2: ");
 			logger.log(resBFW);
 
@@ -172,14 +172,15 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test('test if BrandesWeighted rejects negative cycle graphs', () => {
 		let graphPath = path_bf_graph_neg_cycle;
 		let graph = json.readFromJSONFile(graphPath);
+		let brandes = new Brandes(graph);
 
-		expect($B.BrandesWeighted.bind($B.BrandesWeighted, graph)).toThrowError("The graph contains a negative cycle, thus it can not be processed");
+		expect(brandes.computeWeighted.bind(brandes, graph)).toThrowError("The graph contains a negative cycle, thus it can not be processed");
 
 		graph = graph_bf_graph;
-		expect($B.BrandesWeighted.bind($B.BrandesWeighted, graph)).not.toThrowError("The graph contains a negative cycle, thus it can not be processed");
+		expect(brandes.computeWeighted.bind(brandes, graph)).not.toThrowError("The graph contains a negative cycle, thus it can not be processed");
 
 		graph = graph_search_pos;
-		expect($B.BrandesWeighted.bind($B.BrandesWeighted, graph)).not.toThrowError("The graph contains a negative cycle, thus it can not be processed");
+		expect(brandes.computeWeighted.bind(brandes, graph)).not.toThrowError("The graph contains a negative cycle, thus it can not be processed");
 	});
 
 	test(
@@ -197,7 +198,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			logger.log("Betweenness with slow but correct algorithm: ");
 			logger.log(resSlow);
 
-			let resBFW = $B.BrandesWeighted(workingGraph2, false, false);
+			let resBFW = new Brandes(workingGraph2).computeWeighted(false, false);
 			logger.log("Betweenness computed with BrandesForWeighted2: ");
 			logger.log(resBFW);
 
@@ -213,17 +214,18 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 		() => {
 			let graphPath = path_midSizeGraph;
 			let graph = json.readFromJSONFile(graphPath);
+			let brandes = new Brandes(graph);
 
 			logger.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, UNnormalized mode:`);
 
 			let startBW = +new Date();
-			let resBW = $B.BrandesWeighted(graph, false, false);
+			let resBW = brandes.computeWeighted(false, false);
 			let endBW = +new Date();
 
 			logger.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
 
 			let startBP = +new Date();
-			let resBP = $B.BrandesPFSbased(graph, false, false);
+			let resBP = brandes.computePFSbased(false, false);
 			let endBP = +new Date();
 			logger.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
@@ -238,16 +240,17 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 		() => {
 			let graphPath = path_midSizeGraph;
 			let graph = json.readFromJSONFile(graphPath);
+			let brandes = new Brandes(graph);
 
 			logger.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
 
 			let startBW = +new Date();
-			let resBW = $B.BrandesWeighted(graph, true, false);
+			let resBW = brandes.computeWeighted(true, false);
 			let endBW = +new Date();
 			logger.log("runtime of Brandes for Weighted, heap based: " + (endBW - startBW));
 
 			let startBP = +new Date();
-			let resBP = $B.BrandesPFSbased(graph, true, false);
+			let resBP = brandes.computePFSbased(true, false);
 			let endBP = +new Date();
 			logger.log("runtime of Brandes, PFS based: " + (endBP - startBP));
 
@@ -263,17 +266,18 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 		() => {
 			let graphPath = path_search_nullEdge;
 			let graph = json.readFromJSONFile(graphPath);
+			let brandes = new Brandes(graph);
 
 			logger.log("Betweenness with slow but good algorithm:");
 			let resultBCOld = betweennessCentrality(graph, true, true);
 			logger.log(resultBCOld);
 
 			logger.log("Betweenness computed with our BrandesForWeighted function:");
-			let resultBCWHeapBased = $B.BrandesWeighted(graph, false, false);
+			let resultBCWHeapBased = brandes.computeWeighted(false, false);
 			logger.log(resultBCWHeapBased);
 
 			logger.log("Betweenness computed with our BrandesPFSBased function:");
-			let resultBrandesPFS = $B.BrandesPFSbased(graph, false, false);
+			let resultBrandesPFS = brandes.computePFSbased(false, false);
 			logger.log(resultBrandesPFS);
 
 			expect(resultBCOld).toEqual(resultBCWHeapBased);
@@ -292,10 +296,11 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				csv_config.direction_mode = true;
 				let csv = new CSVInput(csv_config);
 				let graph_path = PATH_PREFIX + graph_name + ".csv",
-					graph = csv.readFromEdgeListFile(graph_path);
+						graph = csv.readFromEdgeListFile(graph_path),
+						brandes = new Brandes(graph);
 
 				let startBU = +new Date();
-				let resBU = $B.BrandesUnweighted(graph, true, true);
+				let resBU = brandes.computeUnweighted(true, true);
 				let endBU = +new Date();
 				logger.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBU - startBU} ms.`);
 
@@ -316,10 +321,11 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				csv_config.weighted = true;
 				let csv = new CSVInput(csv_config);
 				let graph_path = PATH_PREFIX + graph_name + ".csv",
-					graph = csv.readFromEdgeListFile(graph_path);
+						graph = csv.readFromEdgeListFile(graph_path),
+						brandes = new Brandes(graph);
 
 				let startBW = +new Date();
-				let resBW = $B.BrandesWeighted(graph, true, true);
+				let resBW = brandes.computeWeighted(true, true);
 				let endBW = +new Date();
 				logger.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBW - startBW} ms.`);
 

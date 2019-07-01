@@ -4,7 +4,7 @@ import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../search/BFS';
 import { DFS } from '../search/DFS';
 import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
 import { reWeighGraph, addExtraNandE} from '../search/Johnsons';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/Logger';
 let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;

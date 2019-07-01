@@ -1,8 +1,7 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $CB from '../utils/callbackUtils';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/Logger';
 const logger = new Logger();
 
 
@@ -34,14 +33,9 @@ export interface MCMFState {
 	parents			: {[key:string] : $N.IBaseNode};
   path        : Array<$N.IBaseNode>;
 	tree 				: {[key:string] : string};
-	// undGraph		: $G.IGraph;
 }
 
 
-
-/**
- *
- */
 class MCMFBoykov implements IMCMFBoykov {
 
   private _config : MCMFConfig;

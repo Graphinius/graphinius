@@ -1,5 +1,5 @@
 import * as $G from '../../core/Graph';
-import * as $R from '../../utils/remoteUtils';
+import * as $R from '../../utils/RemoteUtils';
 export interface JSONEdge {
     to: string;
     directed?: string;
@@ -23,19 +23,20 @@ export interface JSONGraph {
         [key: string]: JSONNode;
     };
 }
+export interface IJSONInConfig {
+    explicit_direction?: boolean;
+    directed?: boolean;
+    weighted?: boolean;
+}
 export interface IJSONInput {
-    _explicit_direction: boolean;
-    _direction: boolean;
-    _weighted_mode: boolean;
+    _config: IJSONInConfig;
     readFromJSONFile(file: string): $G.IGraph;
     readFromJSON(json: {}): $G.IGraph;
     readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 }
 declare class JSONInput implements IJSONInput {
-    _explicit_direction: boolean;
-    _direction: boolean;
-    _weighted_mode: boolean;
-    constructor(_explicit_direction?: boolean, _direction?: boolean, _weighted_mode?: boolean);
+    _config: IJSONInConfig;
+    constructor(config?: IJSONInConfig);
     readFromJSONFile(filepath: string): $G.IGraph;
     readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
     readFromJSON(json: JSONGraph): $G.IGraph;

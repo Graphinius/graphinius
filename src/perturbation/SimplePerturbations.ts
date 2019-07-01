@@ -1,8 +1,7 @@
 import * as $N from '../core/Nodes';
 import * as $E from '../core/Edges';
 import * as $G from '../core/Graph';
-import * as $DS from '../utils/structUtils';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/Logger';
 
 let logger : Logger = new Logger();
 
@@ -47,9 +46,7 @@ export interface ISimplePerturber {
 
 class SimplePerturber implements ISimplePerturber {
 
-  constructor(private _graph: $G.IGraph) {
-
-  }
+  constructor(private _graph: $G.IGraph) {}
 
 
 	/**

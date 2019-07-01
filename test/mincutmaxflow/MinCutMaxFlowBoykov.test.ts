@@ -1,8 +1,6 @@
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
 import * as $G from '../../src/core/Graph';
 import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import * as $MC from '../../src/mincutmaxflow/minCutMaxFlowBoykov';
+import * as $MC from '../../src/mincutmaxflow/MinCutMaxFlowBoykov';
 
 
 let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),

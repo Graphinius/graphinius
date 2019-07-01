@@ -1,4 +1,3 @@
-import {Logger} from '../../src/utils/logger';
 import * as $G from '../../src/core/Graph';
 import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
@@ -7,6 +6,7 @@ import * as $FW from '../../src/search/FloydWarshall';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 
+import {Logger} from '../../src/utils/Logger';
 const logger = new Logger();
 
 let csv_config: ICSVInConfig = {

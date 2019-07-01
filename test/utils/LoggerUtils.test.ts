@@ -1,8 +1,9 @@
 import { LOG_LEVELS } from '../../src/config/run_config';
-import { Logger, LOG_CONFIG } from '../../src/utils/logger';
 
-var logger : Logger = null;
-var obj_to_log = {
+import { Logger, LOG_CONFIG } from '../../src/utils/Logger';
+let logger : Logger = null;
+
+let obj_to_log = {
   a: true,
   b: false,
   true: "false",

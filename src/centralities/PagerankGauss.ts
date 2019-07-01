@@ -1,7 +1,7 @@
 import * as $G from '../core/Graph';
-import * as $SU from "../utils/structUtils";
+import * as $SU from "../utils/StructUtils";
 import { IBaseEdge } from "../core/Edges";
-import * as $GAUSS from "./Gauss";
+import { gauss } from "../utils/Gauss";
 
 
 //Calculates the page rank for a given graph
@@ -66,7 +66,7 @@ class pageRankDetCentrality{
     numMatr[numMatr.length-1] = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,1);
     let x = Array.apply(null, Array(graph.nrNodes() )).map(Number.prototype.valueOf,0);
     x[x.length-1] = 1;
-    x = $GAUSS.gauss(numMatr, x);
+    x = gauss(numMatr, x);
     let y:{[id: string]: number} = {};
     for(let key in map){
       y[key] = x[ctr];
