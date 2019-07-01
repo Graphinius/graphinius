@@ -17,7 +17,7 @@
   "name": "graphinius",
   "version": "0.9.4",
   "description": "Generic graph (analysis) library in Typescript",
-  "main": "lib/index.js",
+  "main": "index.js",
   "author": "Bernd Malle",
   "license": "Apache-2.0",
   "bugs": {
