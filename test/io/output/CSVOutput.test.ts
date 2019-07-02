@@ -105,7 +105,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     describe("Tests with real graph sizes", () => {
       
       test('should output a real graph as CSV file', () => {
-        jsonIn = new $J.JSONInput(false, false, false);
+        jsonIn = new $J.JSONInput({explicit_direction: false, directed: false, weighted: false});
         var realGraph = jsonIn.readFromJSONFile(real_graph_file);
         
         expect(realGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);

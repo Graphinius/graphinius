@@ -1,7 +1,7 @@
 import { IGraph, BaseGraph } from '../core/Graph';
 import { IBaseNode } from '../core/Nodes';
 import { IBaseEdge } from '../core/Edges';
-import * as $SU from "../utils/StructUtils";
+import { mergeObjects } from "../utils/StructUtils";
 
 import { Logger } from "../utils/Logger";
 const logger = new Logger();
@@ -18,7 +18,6 @@ const defaultInit = (graph: IGraph) => 1 / graph.nrNodes();
 export type InitMap = { [id: string]: number };
 export type TeleSet = { [id: string]: number };
 export type RankMap = { [id: string]: number };
-
 
 
 /**
@@ -210,7 +209,7 @@ class Pagerank {
 			let pull_i = [];
 			let pull_weight_i = [];
 
-			let incoming_edges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
+			let incoming_edges = mergeObjects([node.inEdges(), node.undEdges()]);
 			for (let edge_key in incoming_edges) {
 				let edge: IBaseEdge = incoming_edges[edge_key];
 				let source: IBaseNode = edge.getNodes().a;

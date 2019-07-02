@@ -1,8 +1,7 @@
 {
   "scripts": {
     "build": "gulp build",
-    "test": "jest",
-    "publish": "gulp bundle && cp index.js lib/ && npm publish"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

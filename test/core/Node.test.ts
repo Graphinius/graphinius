@@ -1,12 +1,11 @@
 import * as $N from '../../src/core/Nodes';
 import * as $E from '../../src/core/Edges';
-import * as $I from '../../src/io/input/JSONInput';
-// import * as $SU from '../../src/utils/structUtils';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 let Edge = $E.BaseEdge;
 
 var small_graph_file = "./test/test_data/small_graph.json",
-	json_in = new $I.JSONInput(false, false, false), // edges don't matter
+	json_in = new JSONInput({explicit_direction: false, directed: false, weighted: false}),
 	small_graph = json_in.readFromJSONFile(small_graph_file);
 
 /**
