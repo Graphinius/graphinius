@@ -276,7 +276,7 @@ function PFS(graph: $G.IGraph,
 
 
 function preparePFSStandardConfig(): PFS_Config {
-  var config: PFS_Config = {
+  let config: PFS_Config = {
     result: {},
     callbacks: {
       init_pfs: [],
@@ -306,8 +306,9 @@ function preparePFSStandardConfig(): PFS_Config {
     evalObjID: function (ne: $N.NeighborEntry) {
       return ne.node.getID();
     }
-  },
-    callbacks = config.callbacks;
+  };
+  
+  let callbacks = config.callbacks;
 
   var count = 0;
   var counter = function () {

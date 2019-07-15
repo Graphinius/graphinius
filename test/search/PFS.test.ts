@@ -1,8 +1,13 @@
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
-import * as $BH from '../../src/datastructs/binaryHeap';
+import * as $BH from '../../src/datastructs/BinaryHeap';
+
+
+import {Logger} from '../../src/utils/Logger';
+const logger = new Logger();
 
 
 let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
@@ -682,27 +687,39 @@ describe('PFS TESTS - ', () => {
 
 describe('PFS TESTS on REAL sized graph - ', () => {
 
-  var real_graph = "./test/test_data/real_graph.json",
-    graph = json.readFromJSONFile(real_graph),
-    NR_NODES = 6204,
-    NR_UND_EDGES = 18550;
+  const csv = new CSVInput({separator: ' '});
+
+  const SN_PATH_PREFIX = './test/test_data';
+
+  let sn_300_file = `${SN_PATH_PREFIX}/social_network_edges_300.csv`,
+	    sn_1K_file = `${SN_PATH_PREFIX}/social_network_edges_1K.csv`,
+	    sn_20K_file = `${SN_PATH_PREFIX}/social_network_edges_20K.csv`;
+  
+  let sn_300_graph = csv.readFromEdgeListFile(sn_300_file),
+      sn_1K_graph = csv.readFromEdgeListFile(sn_1K_file),
+      sn_20K_graph = csv.readFromEdgeListFile(sn_20K_file);
 
 
   beforeEach(() => {
-    expect(graph).toBeDefined();
-    expect(graph.nrNodes()).toBe(NR_NODES);
-    expect(graph.nrUndEdges()).toBe(NR_UND_EDGES);
+    expect(sn_300_graph).toBeDefined();
+    expect(sn_1K_graph).toBeDefined();
+    expect(sn_20K_graph).toBeDefined();
   });
 
 
-  test(
-    'should perform standard PFS without config initialization on real graph',
-    () => {
-      var root = graph.getRandomNode(),
-        result = $PFS.PFS(graph, root);
+  /* Using our standard ~300, ~1k & ~20k `Social network` graphs */
+  [sn_300_graph, sn_1K_graph, sn_20K_graph].forEach(graph => {
+    test('PFS performance test on real graph', () => {
+        const root = graph.getRandomNode();
+        const tic = +new Date;
+        const result = $PFS.PFS(graph, root);
+        const toc = +new Date;
 
-      expect(Object.keys(result).length).toBe(NR_NODES);
-    }
-  );
+        logger.log(`PFS on |V|=${graph.nrNodes()}, |E|=${graph.nrUndEdges() + graph.nrDirEdges()} took ${toc-tic} ms.`);
+        expect(Object.keys(result).length).toBe(graph.nrNodes());
+      }
+    );
+
+  });
 
 });
