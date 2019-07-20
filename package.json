@@ -1,6 +1,7 @@
 {
   "scripts": {
     "build": "gulp build",
+    "bundle": "gulp bundle",
     "test": "jest"
   },
   "repository": {
@@ -33,6 +34,7 @@
     "dts-generator": "^2.1.0",
     "gulp": "github:gulpjs/gulp",
     "gulp-clean": "^0.4.0",
+    "gulp-cli": "^2.2.0",
     "gulp-git": "^2.8.1",
     "gulp-typedoc": "^2.2.1",
     "gulp-typescript": "^5.0.0",

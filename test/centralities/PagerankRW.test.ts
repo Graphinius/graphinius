@@ -427,7 +427,7 @@ describe("PageRank Centrality Tests", () => {
 	 * 			 while the 300 & 1k graphs are at least OK with an epsilon = 1e-4
 	 * @todo Extract out into seperate performance test suite !!
 	 */
-	describe.only('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
+	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
 		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
 				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
