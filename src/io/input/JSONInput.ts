@@ -101,7 +101,10 @@ class JSONInput implements IJSONInput {
 
 		for (var node_id in json.data) {
 			var node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
-
+			let label = json.data[node_id]['label'];
+			if ( label ) {
+				node.setLabel(label);
+			}
 			/**
 			 * Reading and instantiating features
 			 * We are using the shortcut setFeatures here,

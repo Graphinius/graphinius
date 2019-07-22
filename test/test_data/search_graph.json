@@ -5,6 +5,7 @@
 	"und_edges": 2,
 	"data": {
 		"A": {
+			"label": "A",
 			"edges": [
 				{
 					"to": "D",
@@ -30,6 +31,7 @@
 			"features": {}
 		},
 		"D": {
+			"label": "D",
 			"edges": [
 				{
 					"to": "A",
@@ -50,11 +52,13 @@
 			"features": {}
 		},
 		"B": {
+			"label": "B",
 			"edges": [
 			],
 			"features": {}
 		},
 		"C": {
+			"label": "C",
 			"edges": [
 				{
 					"to": "C",
@@ -70,11 +74,13 @@
 			"features": {}
 		},
 		"F": {
+			"label": "F",
 			"edges": [
 			],
 			"features": {}
 		},
 		"E": {
+			"label": "E",
 			"edges": [
 				{
 					"to": "F",
@@ -85,6 +91,7 @@
 			"features": {}
 		},
 		"G": {
+			"label": "G",
 			"edges": [
 			],
 			"features": {}

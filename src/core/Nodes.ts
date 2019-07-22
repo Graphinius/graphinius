@@ -67,14 +67,6 @@ class BaseNode implements IBaseNode {
 	private _und_degree = 0;	
 	protected _features	: { [k:string] : any };
 		
-	/**
-	 * Design decision:
-	 * Do we only use ONE _edges hash - OR -
-	 * separate hashes for _in_edges, _out_edges, _und_edges
-	 * As getting edges based on their type during the
-	 * execution of graph algorithms is pretty common,
-	 * it's logical to separate the structures.
-	 */
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};

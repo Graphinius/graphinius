@@ -59,6 +59,7 @@ class JSONOutput implements IJSONOutput {
 		for (let node_key in nodes) {
 			node = nodes[node_key];
 			node_struct = result.data[node.getID()] = {
+				label: node.getLabel(),
 				edges: []
 			};
 

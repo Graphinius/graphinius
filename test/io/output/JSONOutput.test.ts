@@ -28,10 +28,6 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
   describe('Output toy JSON structs', () => {
 
-    /**
-     * Shall a node without edges still have an 
-     * empty edges array and an empty features object?
-     */
     test('Should correctly output a graph of just one node', () => {
       graph.addNodeByID("A");
       jsonOut = new JSONOutput();
@@ -44,6 +40,31 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_edges: 0,
         data: {
           A: {
+            label: "A",
+            edges: [],
+            features: {}
+          }
+        }
+      };
+      let JSONControlString = JSON.stringify( JSONControlStruct );
+      expect(resultString).toBe(JSONControlString);
+    });
+
+
+    test('Should correctly output a graph of certain Label', () => {
+      let n_a = graph.addNodeByID("A");
+      n_a.setLabel("Labellius");
+      jsonOut = new JSONOutput();
+      resultString = jsonOut.writeToJSONString( graph );
+
+      let JSONControlStruct = {
+        name: "Output Test graph",
+        nodes: 1,
+        dir_edges: 0,
+        und_edges: 0,
+        data: {
+          A: {
+            label: "Labellius",
             edges: [],
             features: {}
           }
@@ -70,6 +91,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_edges: 1,
           data: {
             A: {
+              label: "A",
               edges: [
                 {
                   to: "B",
@@ -80,6 +102,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
               features: { }
             },
             B: {
+              label: "B",
               edges: [
                 {
                   to: "A",
@@ -113,10 +136,12 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_edges: 0,
           data: {
             A: {
+              label: "A",
               edges: [ ],
               features: { }
             },
             B: {
+              label: "B",
               edges: [
                 {
                   to: "A",
@@ -154,10 +179,12 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_edges: 0,
           data: {
             A: {
+              label: "A",
               edges: [ ],
               features: { }
             },
             B: {
+              label: "B",
               edges: [
                 {
                   to: "A",
@@ -195,6 +222,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_edges: 0,
         data: {
           A: {
+            label: "A",
             edges: [ ],
             features: {
               coords: {
@@ -219,11 +247,13 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
 
   /**
-   * Only works with files specifically written to resemble
-   * the internal order of nodes after creation
+   * @description Only works with files specifically written to resemble
+   *              the internal order of nodes after creation
+   *        
+   *              e.g. nodes A -> B -> C would internally become
+   *              A -> C -> B if an edge A -> C existed in file...
    * 
-   * e.g. nodes A -> B -> C would internally become
-   * A -> C -> B if an edge A -> C existed in file...
+   * @todo solution => only check for existence, not order or properties
    */
   describe('Output small JSON structs from file', () => {
 
@@ -284,10 +314,12 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_edges: 0,
         data: {
           A: {
+            label: "A",
             edges: [ ],
             features: { }
           },
           B: {
+            label: "B",
             edges: [
               {
                 to: "A",
