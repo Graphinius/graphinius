@@ -260,7 +260,7 @@ class Pagerank {
 
 
   /**
-   * method to produce 1D Array for passing to WASM
+   * method to produce 1D Array for passing to WASM / TF.js
    */
 	pull2DTo1D(): Array<number> {
 		let p1d = [];

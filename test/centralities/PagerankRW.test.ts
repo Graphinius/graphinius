@@ -34,6 +34,7 @@ let csv: CSVInput = new CSVInput(std_csv_config),
 	sn_1K_file = `social_network_edges_1K.csv`,
 	sn_20K_file = `social_network_edges_20K.csv`,
 	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
+	beerGraphFile = `beerGraph.json`,
 	pagerank_py_folder = `centralities/pagerank`,
 	jsonIn = new JSONInput(std_json_in_config),
 	graph: $G.IGraph = jsonIn.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
@@ -515,6 +516,26 @@ describe("PageRank Centrality Tests", () => {
 				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
 			});
 		});
+	});
+
+
+	/**
+	 * Beer Graph - the only one till now which produced an erroneous PULL datastruct
+	 */
+	describe.only('Neo4j example graphs (converted) - ', () => {
+
+		it('should correctly compute the beer graph', () => {
+			let graph = new JSONInput().readFromJSONFile(TEST_PATH_PREFIX + beerGraphFile);
+			let pagerank = new Pagerank(graph, {
+				epsilon: 1e-3,
+				normalize: true
+			});
+			let tic = +new Date;
+				let result = pagerank.computePR();
+				let toc = +new Date;
+				logger.log(`PageRank for graph of |V|=${graph.nrNodes()} and |E|=${graph.nrDirEdges()} took ${toc - tic} ms.`)
+		});
+
 	});
 
 });
