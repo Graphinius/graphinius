@@ -6,7 +6,8 @@ import * as $PFS from '../search/PFS';
 /**
  * TODO Consider target node callbacks / messages
  * @param graph
- * @param v 
+ * @param source
+ * @param target
  */
 function Dijkstra( graph   : $G.IGraph,
                    source  : $N.IBaseNode,

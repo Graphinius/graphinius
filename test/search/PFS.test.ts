@@ -1,9 +1,8 @@
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSVInput } from '../../src/io/input/CSVInput';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
-import * as $BH from '../../src/datastructs/BinaryHeap';
 
 
 import {Logger} from '../../src/utils/Logger';
@@ -13,8 +12,7 @@ const logger = new Logger();
 let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
   search_graph = "./test/test_data/search_graph_pfs_extended.json",
   equal_dists = "./test/test_data/equal_path_graph.json",
-  graph: $G.IGraph,
-  graph_equal_dist: $G.IGraph;
+  graph: $G.IGraph;
 
 
 describe('PFS TESTS - ', () => {
@@ -31,7 +29,7 @@ describe('PFS TESTS - ', () => {
   describe('Basic Instantiation tests - ', () => {
 
     test('should refuse to traverse a graph without edges', () => {
-      var empty_graph = new $G.BaseGraph('mesebeenempty'),
+      let empty_graph = new $G.BaseGraph('mesebeenempty'),
         start = new $N.BaseNode("IAmNotInGraph");
 
       expect($PFS.PFS.bind($PFS.PFS, empty_graph, start)).toThrowError('Cowardly refusing to traverse graph without edges.');
@@ -44,7 +42,7 @@ describe('PFS TESTS - ', () => {
      * prerequisites are not met ??
      */
     test('should refuse to traverse a graph with DIR mode set to init', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config: $PFS.PFS_Config = {
           result: {},
           callbacks: {},
@@ -65,7 +63,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with correct result structure',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config).toBeDefined();
         expect(config.result).toBeDefined();
       }
@@ -75,7 +73,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with correct DIR mode',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config).toBeDefined();
         expect(config.dir_mode).toBeDefined();
         expect(config.dir_mode).toBe($G.GraphMode.MIXED);
@@ -84,7 +82,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('should instantiate a default config object with callback object', () => {
-      var config = $PFS.preparePFSStandardConfig();
+      let config = $PFS.preparePFSStandardConfig();
       expect(config).toBeDefined();
       expect(config.callbacks).toBeDefined();
       expect(config.callbacks).toBeInstanceOf(Object);
@@ -94,7 +92,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with correctly structured callback object',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config).toBeDefined();
         expect(config.callbacks).toBeDefined();
         expect(config.callbacks.init_pfs).toBeDefined();
@@ -116,7 +114,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('should instantiate a default config object with messages object', () => {
-      var config = $PFS.preparePFSStandardConfig();
+      let config = $PFS.preparePFSStandardConfig();
       expect(config.messages).toBeDefined();
       expect(config.messages).toBeInstanceOf(Object);
     });
@@ -125,7 +123,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with correctly structured messages object',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config).toBeDefined();
         expect(config.messages).toBeDefined();
         expect(config.messages.init_pfs_msgs).toBeDefined();
@@ -149,7 +147,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with goal node set to null',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config).toBeDefined();
         expect(config.goal_node).toBeNull();
       }
@@ -159,7 +157,7 @@ describe('PFS TESTS - ', () => {
     test(
       'should instantiate a default config object with an existing init_pfs callback',
       () => {
-        var config = $PFS.preparePFSStandardConfig();
+        let config = $PFS.preparePFSStandardConfig();
         expect(config.callbacks).toBeDefined();
         expect(config.callbacks.init_pfs).toBeDefined();
         expect(config.callbacks.init_pfs.length).toBe(1);
@@ -174,96 +172,95 @@ describe('PFS TESTS - ', () => {
   describe('Callback execution tests in different stages - ', () => {
 
     test('should execute the initPFS callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsInitTestCallback = function () {
+      let pfsInitTestCallback = function () {
         config.messages.init_pfs_msgs['test_message'] = "PFS INIT callback executed.";
       };
       config.callbacks.init_pfs.push(pfsInitTestCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.init_pfs_msgs['test_message']).toBe("PFS INIT callback executed.");
     });
 
 
     test('should execute the new_current callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsNewCurrentTestCallback = function (scope: $PFS.PFS_Scope) {
-        
+      let pfsNewCurrentTestCallback = function (scope: $PFS.PFS_Scope) {
         config.messages.new_current_msgs['test_message'] = "PFS NEW CURRENT callback executed.";
       };
       config.callbacks.new_current.push(pfsNewCurrentTestCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.new_current_msgs['test_message']).toBe("PFS NEW CURRENT callback executed.");
 
     });
 
 
     test('should execute the goal reached callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
       config.goal_node = root;
 
-      var pfsGoalReachedCallback = function () {
+      let pfsGoalReachedCallback = function () {
         config.messages.goal_reached_msgs['test_message'] = "GOAL REACHED callback executed.";
       };
       config.callbacks.goal_reached.push(pfsGoalReachedCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.goal_reached_msgs['test_message']).toBe("GOAL REACHED callback executed.");
     });
 
 
     test('should execute the not encountered callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsnotEncCallback = function () {
+      let pfsnotEncCallback = function () {
         config.messages.not_enc_msgs['test_message'] = "NOT ENCOUNTERED callback executed.";
       };
       config.callbacks.not_encountered.push(pfsnotEncCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.not_enc_msgs['test_message']).toBe("NOT ENCOUNTERED callback executed.");
     });
 
 
     test('should execute the node open callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsNodeOpenCallback = function () {
+      let pfsNodeOpenCallback = function () {
         config.messages.node_open_msgs['test_message'] = "NODE OPEN callback executed.";
       };
       config.callbacks.node_open.push(pfsNodeOpenCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.node_open_msgs['test_message']).toBe("NODE OPEN callback executed.");
     });
 
 
     test('should execute the node closed callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsNodeClosedCallback = function () {
+      let pfsNodeClosedCallback = function () {
         config.messages.node_closed_msgs['test_message'] = "NODE CLOSED callback executed.";
       };
       config.callbacks.node_closed.push(pfsNodeClosedCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.node_closed_msgs['test_message']).toBe("NODE CLOSED callback executed.");
     });
 
 
     test('should execute the better path (found) callbacks', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsBetterPathFoundCallback = function () {
+      let pfsBetterPathFoundCallback = function () {
         config.messages.better_path_msgs['test_message'] = "BETTER PATH FOUND callback executed.";
       };
       config.callbacks.better_path.push(pfsBetterPathFoundCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.better_path_msgs['test_message']).toBe("BETTER PATH FOUND callback executed.");
     });
 
@@ -271,20 +268,20 @@ describe('PFS TESTS - ', () => {
     test('should execute the equal path (found) callbacks', () => {
       graph = json.readFromJSONFile(equal_dists);
 
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
 
-      var pfsEqualPathFoundCallback = function () {
+      let pfsEqualPathFoundCallback = function () {
         config.messages.equal_path_msgs['equal_test_message'] = "EQUAL PATH FOUND callback executed.";
       };
       config.callbacks.equal_path.push(pfsEqualPathFoundCallback);
-      var result = $PFS.PFS(graph, root, config);
+      $PFS.PFS(graph, root, config);
       expect(config.messages.equal_path_msgs['equal_test_message']).toBe("EQUAL PATH FOUND callback executed.");
     });
 
 
     test('should only accept UN/DIRECTED or MIXED Mode as traversal modes', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         config = $PFS.preparePFSStandardConfig();
       config.dir_mode = -77;
       expect($PFS.PFS.bind($PFS.PFS, graph, root, config)).toThrowError('Unsupported traversal mode. Please use directed, undirected, or mixed');
@@ -297,11 +294,11 @@ describe('PFS TESTS - ', () => {
 
     describe('DIRECTED mode search', () => {
 
-      var config = $PFS.preparePFSStandardConfig();
+      let config = $PFS.preparePFSStandardConfig();
       config.dir_mode = $G.GraphMode.DIRECTED;
 
       test('Should correctly compute best paths from Node A', () => {
-        var root = graph.getNodeById('A'),
+        let root = graph.getNodeById('A'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -322,7 +319,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node B', () => {
-        var root = graph.getNodeById('B'),
+        let root = graph.getNodeById('B'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -343,7 +340,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node D', () => {
-        var root = graph.getNodeById('D'),
+        let root = graph.getNodeById('D'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -364,7 +361,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node F', () => {
-        var root = graph.getNodeById('F'),
+        let root = graph.getNodeById('F'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -388,11 +385,11 @@ describe('PFS TESTS - ', () => {
 
     describe('UNDIRECTED mode search', () => {
 
-      var config = $PFS.preparePFSStandardConfig();
+      let config = $PFS.preparePFSStandardConfig();
       config.dir_mode = $G.GraphMode.UNDIRECTED;
 
       test('Should correctly compute best paths from Node B', () => {
-        var root = graph.getNodeById('B'),
+        let root = graph.getNodeById('B'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -413,7 +410,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node E', () => {
-        var root = graph.getNodeById('E'),
+        let root = graph.getNodeById('E'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -434,7 +431,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node D', () => {
-        var root = graph.getNodeById('D'),
+        let root = graph.getNodeById('D'),
           result = $PFS.PFS(graph, root, config);
 
         expect(Object.keys(result).length).toBe(6);
@@ -459,7 +456,7 @@ describe('PFS TESTS - ', () => {
     describe('MIXED mode search', () => {
 
       test('Should correctly compute best paths from Node A', () => {
-        var root = graph.getNodeById('A'),
+        let root = graph.getNodeById('A'),
           result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).toBe(6);
@@ -480,7 +477,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node B', () => {
-        var root = graph.getNodeById('B'),
+        let root = graph.getNodeById('B'),
           result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).toBe(6);
@@ -501,7 +498,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node D', () => {
-        var root = graph.getNodeById('D'),
+        let root = graph.getNodeById('D'),
           result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).toBe(6);
@@ -522,7 +519,7 @@ describe('PFS TESTS - ', () => {
 
 
       test('Should correctly compute best paths from Node E', () => {
-        var root = graph.getNodeById('E'),
+        let root = graph.getNodeById('E'),
           result = $PFS.PFS(graph, root);
 
         expect(Object.keys(result).length).toBe(6);
@@ -548,7 +545,7 @@ describe('PFS TESTS - ', () => {
 
   describe('PFS search on search graph in UNWEIGHTED, mixed mode', () => {
 
-    var config = $PFS.preparePFSStandardConfig();
+    let config = $PFS.preparePFSStandardConfig();
     config.dir_mode = $G.GraphMode.MIXED;
 
     beforeEach(() => {
@@ -562,7 +559,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node A', () => {
-      var root = graph.getNodeById('A'),
+      let root = graph.getNodeById('A'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);
@@ -582,7 +579,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node B', () => {
-      var root = graph.getNodeById('B'),
+      let root = graph.getNodeById('B'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);
@@ -602,7 +599,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node C', () => {
-      var root = graph.getNodeById('C'),
+      let root = graph.getNodeById('C'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);
@@ -622,7 +619,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node D', () => {
-      var root = graph.getNodeById('D'),
+      let root = graph.getNodeById('D'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);
@@ -642,7 +639,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node E', () => {
-      var root = graph.getNodeById('E'),
+      let root = graph.getNodeById('E'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);
@@ -662,7 +659,7 @@ describe('PFS TESTS - ', () => {
 
 
     test('Should correctly compute best paths from Node F', () => {
-      var root = graph.getNodeById('F'),
+      let root = graph.getNodeById('F'),
         result = $PFS.PFS(graph, root, config);
 
       expect(Object.keys(result).length).toBe(6);

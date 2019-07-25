@@ -3,7 +3,7 @@ import * as $BF from '../../src/search/BellmanFord';
 import * as $N from '../../src/core/Nodes';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 
 import {Logger} from '../../src/utils/Logger';
@@ -14,7 +14,7 @@ let csv_config: ICSVInConfig = {
     explicit_direction: false,
     direction_mode: false,
     weighted: false
-}
+};
 
 const json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
     csv = new CSVInput(csv_config),
@@ -27,7 +27,7 @@ const json = new JSONInput({explicit_direction: true, directed: false, weighted:
 describe('Johnsons APSP TEST -', () => {
 
     let bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
-        bernd_graph = "./test/test_data/bernd_ares_pos.json",
+        // bernd_graph = "./test/test_data/bernd_ares_pos.json",
         intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
         social_graph = "./test/test_data/social_network_edges_1K.csv";
 
@@ -37,8 +37,8 @@ describe('Johnsons APSP TEST -', () => {
 
 
     beforeEach(() => {
-        graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file),
-        graph_midsize = json.readFromJSONFile(intermediate),
+        graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file);
+        graph_midsize = json.readFromJSONFile(intermediate);
         graph_social = csv.readFromEdgeListFile(social_graph);
     });
 
@@ -137,7 +137,7 @@ describe('Johnsons APSP TEST -', () => {
     );
 
     test('should refuse to compute Johnsons on empty graph', () => {
-        var empty_graph = new $G.BaseGraph("iamempty");
+        let empty_graph = new $G.BaseGraph("iamempty");
         expect($JO.Johnsons.bind($JO.Johnsons, empty_graph))
             .toThrowError("Cowardly refusing to traverse graph without edges.");
     });
@@ -158,14 +158,14 @@ describe('Johnsons APSP TEST -', () => {
     );
 
     test('function addextraNandE should correctly add a node', () => {
-        var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
+        let extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         let graph_extra = graph_search.cloneStructure();
         graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
         expect(graph_extra.nrNodes()).toEqual(graph_search.nrNodes() + 1);
     });
 
     test('function addextraNandE should correctly add n edges', () => {
-        var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
+        let extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         let graph_extra = graph_search.cloneStructure();
         graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).toEqual(graph_search.nrDirEdges() + graph_search.nrUndEdges() + graph_search.nrNodes());
@@ -174,7 +174,7 @@ describe('Johnsons APSP TEST -', () => {
     test('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).toBe(true);
         let graph_BF3 = graph_BF.cloneStructure();
-        var extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
+        let extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         graph_BF3 = $JO.addExtraNandE(graph_BF3, extraNode);
         let BFresult = $BF.BellmanFordDict(graph_BF3, extraNode);
         graph_BF3 = $JO.reWeighGraph(graph_BF3, BFresult.distances, extraNode);
