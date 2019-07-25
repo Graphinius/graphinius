@@ -10,12 +10,13 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  collectCoverage: false,
+  collectCoverage: true,
 
-  // collectCoverageFrom: [
-  //   "**/*.{ts}",
-  //   "!**/node_modules/**",
-  //   "!**/vendor/**"
-  // ]
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!**/node_modules/**",
+    "!**/lib/**",
+    "!**/build/**"
+  ]
 };
 

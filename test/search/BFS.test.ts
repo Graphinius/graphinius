@@ -1,22 +1,22 @@
 import * as $N from '../../src/core/Nodes';
 import * as $G from '../../src/core/Graph';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import {JSONInput} from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/CallbackUtils';
 
 
-var search_graph = "./test/test_data/search_graph.json";
+let search_graph = "./test/test_data/search_graph.json";
 
-let json_in_config: IJSONInConfig = {
-	explicit_direction: true,
-	directed: false,
-	weighted: true
-}
+// let json_in_config: IJSONInConfig = {
+// 	explicit_direction: true,
+// 	directed: false,
+// 	weighted: true
+// };
 
 
 describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
-	var json: JSONInput,
+	let json: JSONInput,
 		graph: $G.IGraph,
 		stats: $G.GraphStats,
 		bfs_res: { [id: string]: $BFS.BFS_ResultEntry };
@@ -42,53 +42,52 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		});
 
 		test('should execute the BFS INIT callbacks', () => {
-			var root = graph.getNodeById('A'),
+			let root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			var bfsInitTestCallback = function () {
+			let bfsInitTestCallback = function () {
 				config.messages['test_message'] = "BFS INIT callback executed.";
 			};
 			config.callbacks.init_bfs.push(bfsInitTestCallback);
-			var result = $BFS.BFS(graph, root, config);
+			$BFS.BFS(graph, root, config);
 			expect(config.messages['test_message']).toBe("BFS INIT callback executed.");
 		});
 
 
 		test('should execute the NODE UNMARKED callbacks', () => {
-			var root = graph.getNodeById('A'),
+			let root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			var bfsNodeUnmarkedTestCallback = function () {
+			let bfsNodeUnmarkedTestCallback = function () {
 				config.messages['test_message'] = "NODE UNMARKED callback executed.";
 			};
 			config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
-			var result = $BFS.BFS(graph, root, config);
+			$BFS.BFS(graph, root, config);
 			expect(config.messages['test_message']).toBe("NODE UNMARKED callback executed.");
 		});
 
 
 		test('should execute the NODE MARKED callbacks', () => {
-			var root = graph.getNodeById('A'),
+			let root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			var bfsNodeMarkedTestCallback = function () {
+			let bfsNodeMarkedTestCallback = function () {
 				config.messages['test_message'] = "NODE MARKED callback executed.";
 			};
 			config.callbacks.node_marked.push(bfsNodeMarkedTestCallback);
-			var result = $BFS.BFS(graph, root, config);
+			$BFS.BFS(graph, root, config);
 			expect(config.messages['test_message']).toBe("NODE MARKED callback executed.");
 		});
 
 
 		test('should execute the SORT NODES callback', () => {
-			var root = graph.getNodeById('A'),
+			let root = graph.getNodeById('A'),
 				config = $BFS.prepareBFSStandardConfig();
 
-			var bfsSortNodesTestCallback = function () {
+			config.callbacks.sort_nodes = function () {
 				config.messages['test_message'] = "SORT NODES callback executed.";
 			};
-			config.callbacks.sort_nodes = bfsSortNodesTestCallback;
-			var result = $BFS.BFS(graph, root, config);
+			$BFS.BFS(graph, root, config);
 			expect(config.messages['test_message']).toBe("SORT NODES callback executed.");
 		});
 
@@ -128,16 +127,15 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 	describe('BFS on small search graph - ', () => {
 
-
 		test('should refuse to traverse an empty graph', () => {
-			var empty_graph = new $G.BaseGraph("iamempty"),
+			let empty_graph = new $G.BaseGraph("iamempty"),
 				root = graph.getRandomNode();
 			expect($BFS.BFS.bind($BFS.BFS, empty_graph, root)).toThrowError("Cowardly refusing to traverse graph without edges.");
 		});
 
 
 		test('should refuse to traverse a graph with _mode set to INIT', () => {
-			var root = graph.getRandomNode(),
+			let root = graph.getRandomNode(),
 				config = $BFS.prepareBFSStandardConfig();
 			config.dir_mode = $G.GraphMode.INIT;
 			expect($BFS.BFS.bind($BFS.BFS, graph, root, config)).toThrowError("Cannot traverse a graph with dir_mode set to INIT.");
@@ -147,7 +145,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'should never expand a node when DIR mode is set to a meaningless value',
 			() => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = 9999;
@@ -184,7 +182,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		describe('computing distances in UNDIRECTED _mode - ', () => {
 
 			test('should correctly compute distances from node A', () => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -218,7 +216,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node C', () => {
-				var root = graph.getNodeById('C'),
+				let root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -252,7 +250,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node D', () => {
-				var root = graph.getNodeById('D'),
+				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -286,7 +284,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node G', () => {
-				var root = graph.getNodeById('G'),
+				let root = graph.getNodeById('G'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.UNDIRECTED;
@@ -324,7 +322,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		describe('computing distances in DIRECTED _mode - ', () => {
 
 			test('should correctly compute distances from node A', () => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.DIRECTED;
@@ -358,7 +356,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node D', () => {
-				var root = graph.getNodeById('D'),
+				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.DIRECTED;
@@ -392,7 +390,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node C', () => {
-				var root = graph.getNodeById('C'),
+				let root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.DIRECTED;
@@ -426,7 +424,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 
 			test('should correctly compute distances from node G', () => {
-				var root = graph.getNodeById('G'),
+				let root = graph.getNodeById('G'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.dir_mode = $G.GraphMode.DIRECTED;
@@ -464,7 +462,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		describe('computing distances in MIXED _mode - ', () => {
 
 			test('should correctly compute distances from node A', () => {
-				var root = graph.getNodeById('A');
+				let root = graph.getNodeById('A');
 				bfs_res = $BFS.BFS(graph, root);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -497,7 +495,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			});
 
 			test('should correctly compute distances from node D', () => {
-				var root = graph.getNodeById('D');
+				let root = graph.getNodeById('D');
 				bfs_res = $BFS.BFS(graph, root);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -527,7 +525,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			});
 
 			test('should correctly compute distances from node E', () => {
-				var root = graph.getNodeById('E');
+				let root = graph.getNodeById('E');
 				bfs_res = $BFS.BFS(graph, root);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -557,7 +555,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 			});
 
 			test('should correctly compute distances from node G', () => {
-				var root = graph.getNodeById('G');
+				let root = graph.getNodeById('G');
 				bfs_res = $BFS.BFS(graph, root);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -593,13 +591,13 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 			test('should correctly compute weight_dists from node A', () => {
 				json._config.weighted = true;
-				var graph = json.readFromJSONFile(search_graph),
+				let graph = json.readFromJSONFile(search_graph),
 					root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_idx in nodes) {
+				for (let node_idx in nodes) {
 					weight_dists[node_idx] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
@@ -620,13 +618,13 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 			test('should correctly compute weight_dists from node C', () => {
 				json._config.weighted = true;
-				var graph = json.readFromJSONFile(search_graph),
+				let graph = json.readFromJSONFile(search_graph),
 					root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_idx in nodes) {
+				for (let node_idx in nodes) {
 					weight_dists[node_idx] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
@@ -663,7 +661,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	 */
 	describe('PFS_BFS graph traversal tests with edge weight ascending sort - ', () => {
 
-		var search_graph_pfs = "./test/test_data/search_graph_pfs.json",
+		let search_graph_pfs = "./test/test_data/search_graph_pfs.json",
 			json = new JSONInput({explicit_direction: true, directed: true, weighted: true}),
 			graph = json.readFromJSONFile(search_graph_pfs);
 
@@ -677,11 +675,11 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should traverse search graph in correct order, ascending, root is A',
 			() => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.callbacks.sort_nodes = ascSortBFS;
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -712,11 +710,11 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should traverse search graph in correct order, ascending, root is D',
 			() => {
-				var root = graph.getNodeById('D'),
+				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.callbacks.sort_nodes = ascSortBFS;
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -747,11 +745,11 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should traverse search graph in correct order, DEscending, root is A',
 			() => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.callbacks.sort_nodes = descSortBFS;
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -782,11 +780,11 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should traverse search graph in correct order, DEscending, root is D',
 			() => {
-				var root = graph.getNodeById('D'),
+				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
 				config.callbacks.sort_nodes = descSortBFS;
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -820,18 +818,18 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should correctly compute weight distance with ascending sort function, root is A',
 			() => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_id in nodes) {
+				for (let node_id in nodes) {
 					weight_dists[node_id] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
 				config.callbacks.sort_nodes = ascSortBFS;
 				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -848,18 +846,18 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should correctly compute weight distance with ascending sort function, root is B',
 			() => {
-				var root = graph.getNodeById('B'),
+				let root = graph.getNodeById('B'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_id in nodes) {
+				for (let node_id in nodes) {
 					weight_dists[node_id] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
 				config.callbacks.sort_nodes = ascSortBFS;
 				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -876,18 +874,18 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should correctly compute weight distance with DEscending sort function, root is A',
 			() => {
-				var root = graph.getNodeById('A'),
+				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_id in nodes) {
+				for (let node_id in nodes) {
 					weight_dists[node_id] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
 				config.callbacks.sort_nodes = descSortBFS;
 				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -904,18 +902,18 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test(
 			'Should correctly compute weight distance with DEscending sort function, root is B',
 			() => {
-				var root = graph.getNodeById('B'),
+				let root = graph.getNodeById('B'),
 					config = $BFS.prepareBFSStandardConfig(),
 					weight_dists = {},
 					nodes = graph.getNodes();
 
-				for (var node_id in nodes) {
+				for (let node_id in nodes) {
 					weight_dists[node_id] = Number.POSITIVE_INFINITY;
 				}
 				weight_dists[root.getID()] = 0;
 				config.callbacks.sort_nodes = descSortBFS;
 				config.callbacks.node_unmarked.push(setWeightCostsBFS(weight_dists));
-				var bfs_res = $BFS.BFS(graph, root, config);
+				let bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(6);
 
@@ -932,19 +930,19 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 });
 
-var ascSortBFS = (context: $BFS.BFS_Scope) => {
+let ascSortBFS = (context: $BFS.BFS_Scope) => {
 	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
 		return a.edge.getWeight() - b.edge.getWeight();
 	});
 };
 
-var descSortBFS = (context: $BFS.BFS_Scope) => {
+let descSortBFS = (context: $BFS.BFS_Scope) => {
 	return context.adj_nodes.sort((a: $N.NeighborEntry, b: $N.NeighborEntry) => {
 		return b.edge.getWeight() - a.edge.getWeight();
 	});
 };
 
-var setWeightCostsBFS = (weight_dists) => {
+let setWeightCostsBFS = (weight_dists) => {
 	return (context: $BFS.BFS_Scope) => {
 		weight_dists[context.next_node.getID()] = weight_dists[context.current.getID()] + context.next_edge.getWeight();
 	}
