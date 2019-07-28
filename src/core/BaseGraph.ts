@@ -1,11 +1,11 @@
-import { IBaseNode, BaseNode } from './Nodes';
-import { EdgeConstructorOptions, IBaseEdge, BaseEdge } from './Edges';
+import { IBaseNode, BaseNode } from './BaseNode';
+import { EdgeConstructorOptions, IBaseEdge, BaseEdge } from './BaseEdge';
 import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../search/BFS';
 import { DFS } from '../search/DFS';
 import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
 import { reWeighGraph, addExtraNandE} from '../search/Johnsons';
-import { Logger } from '../utils/Logger';
-let logger : Logger = new Logger();
+// import { Logger } from '../utils/Logger';
+// let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 
@@ -288,7 +288,7 @@ class BaseGraph implements IGraph {
 	 * @param include_self contains a distance to itself apart?
 	 * @param self_dist default distance to self
 	 */
-	adjListArray(incoming:boolean = false) : MinAdjacencyListArray {
+	adjListArray(incoming:boolean = false, include_self = false, self_dist = 0) : MinAdjacencyListArray {
 		let adjList = [],
 				node_keys = Object.keys(this._nodes);
 

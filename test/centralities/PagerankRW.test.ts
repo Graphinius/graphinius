@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../src/core/BaseGraph';
 import { DFS } from '../../src/search/DFS';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { JSONOutput } from '../../src/io/output/JSONOutput';
@@ -522,7 +522,7 @@ describe("PageRank Centrality Tests", () => {
 	/**
 	 * Beer Graph - the only one till now which produced an erroneous PULL datastruct
 	 */
-	describe.only('Neo4j example graphs (converted) - ', () => {
+	describe('Neo4j example graphs (converted) - ', () => {
 
 		it('should correctly compute the beer graph', () => {
 			let graph = new JSONInput().readFromJSONFile(TEST_PATH_PREFIX + beerGraphFile);

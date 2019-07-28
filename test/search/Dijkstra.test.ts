@@ -1,4 +1,4 @@
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $Dijkstra from '../../src/search/Dijkstra';
 import * as $PFS from '../../src/search/PFS';

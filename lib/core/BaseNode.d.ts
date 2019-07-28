@@ -1,4 +1,4 @@
-import * as $E from "./Edges";
+import * as $E from "./BaseEdge";
 export interface NeighborEntry {
     node: IBaseNode;
     edge: $E.IBaseEdge;

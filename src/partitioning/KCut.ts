@@ -1,5 +1,5 @@
-import { IBaseNode } from '../core/Nodes';
-import { IGraph } from '../core/Graph';
+import { IBaseNode } from '../core/BaseNode';
+import { IGraph } from '../core/BaseGraph';
 import * as $SU from '../utils/StructUtils';
 import { GraphPartitioning, Partition } from './Interfaces';
 

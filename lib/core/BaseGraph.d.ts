@@ -1,5 +1,5 @@
-import { IBaseNode } from './Nodes';
-import { EdgeConstructorOptions, IBaseEdge } from './Edges';
+import { IBaseNode } from './BaseNode';
+import { EdgeConstructorOptions, IBaseEdge } from './BaseEdge';
 export declare enum GraphMode {
     INIT = 0,
     DIRECTED = 1,
@@ -99,7 +99,7 @@ declare class BaseGraph implements IGraph {
     hasNegativeEdge(): boolean;
     hasNegativeCycles(node?: IBaseNode): boolean;
     nextArray(incoming?: boolean): NextArray;
-    adjListArray(incoming?: boolean): MinAdjacencyListArray;
+    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
     adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
     getMode(): GraphMode;
     getStats(): GraphStats;

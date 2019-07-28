@@ -1,6 +1,6 @@
-import * as $N from '../core/Nodes';
-import * as $E from '../core/Edges';
-import * as $G from '../core/Graph';
+import * as $N from '../core/BaseNode';
+import * as $E from '../core/BaseEdge';
+import * as $G from '../core/BaseGraph';
 import * as $MC from '../mincutmaxflow/MinCutMaxFlowBoykov';
 import { Logger } from '../utils/Logger';
 const logger = new Logger();

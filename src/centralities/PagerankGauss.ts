@@ -1,6 +1,6 @@
-import * as $G from '../core/Graph';
+import * as $G from '../core/BaseGraph';
 import * as $SU from "../utils/StructUtils";
-import { IBaseEdge } from "../core/Edges";
+import { IBaseEdge } from "../core/BaseEdge";
 import { gauss } from "../utils/Gauss";
 
 

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import path = require('path');
 
-import * as $G from '../../core/Graph';
+import * as $G from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { Logger } from '../../utils/Logger';
 const logger = new Logger();

@@ -1,5 +1,5 @@
-import * as $N from '../core/Nodes';
-import * as $G from '../core/Graph';
+import * as $N from '../core/BaseNode';
+import * as $G from '../core/BaseGraph';
 export interface DFS_Config {
     visit_result: {};
     callbacks: DFS_Callbacks;

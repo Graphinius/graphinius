@@ -1,4 +1,4 @@
-import * as $N from "./Nodes";
+import * as $N from "./BaseNode";
 
 export interface IConnectedNodes {
 	a: $N.IBaseNode;

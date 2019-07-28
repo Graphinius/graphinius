@@ -1,4 +1,4 @@
-import * as $G from '../../../src/core/Graph';
+import * as $G from '../../../src/core/BaseGraph';
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $C from './common';
 

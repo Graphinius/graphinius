@@ -1,4 +1,4 @@
-import * as $G from '../core/Graph';
+import * as $G from '../core/BaseGraph';
 export interface KROLConfig {
     genMat: Array<Array<number>>;
     cycles: number;

@@ -1,4 +1,4 @@
-import * as $E from "./Edges";
+import * as $E from "./BaseEdge";
 import * as $SU from "../utils/StructUtils";
 
 export interface NeighborEntry {

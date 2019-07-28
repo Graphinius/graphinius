@@ -1,6 +1,6 @@
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
-import * as $G from '../../src/core/Graph';
+import * as $N from '../../src/core/BaseNode';
+import * as $E from '../../src/core/BaseEdge';
+import * as $G from '../../src/core/BaseGraph';
 import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Degree';
 import { DFS } from '../../src/search/DFS';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
@@ -19,13 +19,13 @@ let sn_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false
-}
+};
 
-let json_in_config: IJSONInConfig = {
-	explicit_direction: false,
-	directed: false,
-	weighted: true
-}
+// let json_in_config: IJSONInConfig = {
+// 	explicit_direction: false,
+// 	directed: false,
+// 	weighted: true
+// };
 
 const small_graph_file = "./test/test_data/small_graph.json",
 			real_graph_file = "./test/test_data/real_graph.json",
@@ -264,7 +264,7 @@ describe('GRAPH TESTS: ', () => {
 				graph = new Graph('Test graph');
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				var edge = graph.addEdgeByNodeIDs("Edgy", "A", "B");
+				let edge = graph.addEdgeByNodeIDs("Edgy", "A", "B");
 				expect(edge).not.toBeUndefined();
 				expect(edge).toBeInstanceOf($E.BaseEdge);
 				expect(edge.getNodes().a).toBe(node_a);
@@ -430,7 +430,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should give you a random node currently existing in the graph', () => {
-			var rand_node = graph.getRandomNode();
+			let rand_node = graph.getRandomNode();
 			expect(rand_node).toBeInstanceOf(Node);
 			expect(graph.hasNodeID(rand_node.getID())).toBe(true);
 		});
@@ -439,7 +439,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should give you a random directed edge currently existing in the graph',
 			() => {
-				var rand_dir_edge = graph.getRandomDirEdge();
+				let rand_dir_edge = graph.getRandomDirEdge();
 				expect(rand_dir_edge.isDirected()).toBe(true);
 				expect(rand_dir_edge).toBeInstanceOf(Edge);
 				expect(graph.hasEdgeID(rand_dir_edge.getID())).toBe(true);
@@ -450,7 +450,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should give you a random undirected edge currently existing in the graph',
 			() => {
-				var rand_und_edge = graph.getRandomUndEdge();
+				let rand_und_edge = graph.getRandomUndEdge();
 				expect(rand_und_edge.isDirected()).toBe(false);
 				expect(rand_und_edge).toBeInstanceOf(Edge);
 				expect(graph.hasEdgeID(rand_und_edge.getID())).toBe(true);
@@ -508,7 +508,7 @@ describe('GRAPH TESTS: ', () => {
 
 	describe('A little more complex scenario with 4 nodes and 7 edges, mixed _mode', () => {
 
-		var graph,
+		let graph,
 			n_a, n_b, n_c, n_d, node_vana,
 			e_1, e_2, e_3, e_4, e_5, e_6, e_7;
 
@@ -536,7 +536,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the nodes list', () => {
-			var nodes = graph.getNodes();
+			let nodes = graph.getNodes();
 			expect(Object.keys(nodes).length).toBe(4);
 			expect(nodes[n_a.getID()]).toBe(n_a);
 			expect(nodes[n_b.getID()]).toBe(n_b);
@@ -546,7 +546,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the Dict of undirected edges', () => {
-			var edges = graph.getUndEdges();
+			let edges = graph.getUndEdges();
 			expect(Object.keys(edges).length).toBe(2);
 			expect(edges[e_1.getID()]).toBe(e_1);
 			expect(edges[e_2.getID()]).toBe(e_2);
@@ -554,7 +554,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the Dict of directed edges', () => {
-			var edges = graph.getDirEdges();
+			let edges = graph.getDirEdges();
 			expect(Object.keys(edges).length).toBe(5);
 			expect(edges[e_3.getID()]).toBe(e_3);
 			expect(edges[e_4.getID()]).toBe(e_4);
@@ -565,7 +565,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the Array of undirected edges', () => {
-			var edges = graph.getUndEdgesArray();
+			let edges = graph.getUndEdgesArray();
 			expect(edges.length).toBe(2);
 			expect(edges).toEqual(expect.arrayContaining([e_1]));
 			expect(edges).toEqual(expect.arrayContaining([e_2]));
@@ -573,7 +573,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the Array of directed edges', () => {
-			var edges = graph.getDirEdgesArray();
+			let edges = graph.getDirEdgesArray();
 			expect(edges.length).toBe(5);
 			expect(edges).toEqual(expect.arrayContaining([e_3]));
 			expect(edges).toEqual(expect.arrayContaining([e_4]));
@@ -596,7 +596,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should output the correct degree distribution', () => {
-			var deg_dist: DegreeDistribution = degCent.degreeDistribution(graph);
+			let deg_dist: DegreeDistribution = degCent.degreeDistribution(graph);
 			expect(deg_dist.und).toEqual(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
 			expect(deg_dist.in).toEqual(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
 			expect(deg_dist.out).toEqual(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
@@ -606,7 +606,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should throw an error when trying to remove a non-existing edge', () => {
-			var loose_edge = new Edge('IdontExistInGraph', n_a, n_b);
+			let loose_edge = new Edge('IdontExistInGraph', n_a, n_b);
 			expect(graph.deleteEdge.bind(graph, loose_edge)).toThrowError('cannot remove non-existing edge.');
 		});
 
@@ -626,7 +626,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should remove an existing undirected edge, updating graph and node stats',
 			() => {
-				var graph_nr_nodes = graph.nrNodes(),
+				let graph_nr_nodes = graph.nrNodes(),
 					graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges(),
 					n_a_deg = n_a.degree(),
@@ -667,7 +667,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should remove an existing directed edge, updating graph and node stats',
 			() => {
-				var graph_nr_nodes = graph.nrNodes(),
+				let graph_nr_nodes = graph.nrNodes(),
 					graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges(),
 					n_a_deg = n_a.degree(),
@@ -705,8 +705,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should remove ALL undirected edges, bringing the graph into DIRECTED _mode',
 			() => {
-				var graph_nr_dir_edges = graph.nrDirEdges(),
-					graph_nr_und_edges = graph.nrUndEdges();
+				let graph_nr_dir_edges = graph.nrDirEdges();
 
 				graph.deleteEdge(e_1);
 				graph.deleteEdge(e_2);
@@ -729,8 +728,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
 			() => {
-				var graph_nr_dir_edges = graph.nrDirEdges(),
-					graph_nr_und_edges = graph.nrUndEdges();
+				let graph_nr_und_edges = graph.nrUndEdges();
 
 				graph.deleteEdge(e_3);
 				graph.deleteEdge(e_4);
@@ -756,9 +754,6 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should remove ALL directed edges, bringing the graph into UNDIRECTED _mode',
 			() => {
-				var graph_nr_dir_edges = graph.nrDirEdges(),
-					graph_nr_und_edges = graph.nrUndEdges();
-
 				graph.deleteEdge(e_1);
 				graph.deleteEdge(e_2);
 				graph.deleteEdge(e_3);
@@ -787,8 +782,8 @@ describe('GRAPH TESTS: ', () => {
 		 * Node deletion WITHOUT edges
 		 */
 		test('should simply delete an unconnected node', () => {
-			var node = graph.addNodeByID('IAmInGraph');
-			var nr_nodes = graph.nrNodes();
+			let node = graph.addNodeByID('IAmInGraph');
+			let nr_nodes = graph.nrNodes();
 			graph.deleteNode(node);
 			expect(graph.nrNodes()).toBe(nr_nodes - 1);
 		});
@@ -954,7 +949,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 	describe('Clearing ALL (un)directed edges from a graph', () => {
-		var test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv";
+		let test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv";
 
 		test('should delete all directed edges from a graph', () => {
 			graph = csv.readFromAdjacencyListFile(test_graph_file);

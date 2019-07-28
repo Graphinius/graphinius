@@ -1,5 +1,5 @@
-import * as $N from '../../src/core/Nodes';
-import * as $E from '../../src/core/Edges';
+import * as $N from '../../src/core/BaseNode';
+import * as $E from '../../src/core/BaseEdge';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 let Edge = $E.BaseEdge;

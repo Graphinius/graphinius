@@ -1,5 +1,5 @@
-import { IGraph } from '../core/Graph';
-import { IBaseNode } from '../core/Nodes';
+import { IGraph } from '../core/BaseGraph';
+import { IBaseNode } from '../core/BaseNode';
 import { GraphPartitioning } from './Interfaces';
 import { BinaryHeap } from '../datastructs/BinaryHeap';
 export declare type GainEntry = {

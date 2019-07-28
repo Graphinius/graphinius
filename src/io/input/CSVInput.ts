@@ -2,9 +2,9 @@ import path = require('path');
 import fs = require('fs');
 import http = require('http');
 
-import * as $N from '../../core/Nodes';
-import * as $E from '../../core/Edges';
-import * as $G from '../../core/Graph';
+import * as $N from '../../core/BaseNode';
+import * as $E from '../../core/BaseEdge';
+import * as $G from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 
 import { Logger } from '../../utils/Logger';

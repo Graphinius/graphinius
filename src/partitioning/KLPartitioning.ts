@@ -1,5 +1,5 @@
-import { IGraph } from '../core/Graph';
-import { IBaseNode } from '../core/Nodes';
+import { IGraph } from '../core/BaseGraph';
+import { IBaseNode } from '../core/BaseNode';
 import { GraphPartitioning, Partition } from './Interfaces';
 import { KCut } from './KCut';
 import { BinaryHeap, BinaryHeapMode } from '../datastructs/BinaryHeap';

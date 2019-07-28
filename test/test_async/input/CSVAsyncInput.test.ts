@@ -1,6 +1,6 @@
-import * as $N from '../../../src/core/Nodes';
-import * as $E from '../../../src/core/Edges';
-import * as $G from '../../../src/core/Graph';
+import * as $N from '../../../src/core/BaseNode';
+import * as $E from '../../../src/core/BaseEdge';
+import * as $G from '../../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $C from '../../io/input/common';
 import * as $R from '../../../src/utils/RemoteUtils';

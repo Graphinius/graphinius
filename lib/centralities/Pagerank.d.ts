@@ -1,4 +1,4 @@
-import { IGraph } from '../core/Graph';
+import { IGraph } from '../core/BaseGraph';
 export declare type InitMap = {
     [id: string]: number;
 };

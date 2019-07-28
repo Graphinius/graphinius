@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import * as $N from '../../../src/core/Nodes';
-import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/Edges';
-import * as $G from '../../../src/core/Graph';
+import * as $N from '../../../src/core/BaseNode';
+import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/BaseEdge';
+import * as $G from '../../../src/core/BaseGraph';
 import { CSVOutput, ICSVOutConfig } from '../../../src/io/output/CSVOutput'
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';

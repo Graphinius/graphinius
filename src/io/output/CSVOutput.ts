@@ -1,6 +1,6 @@
 import fs = require('fs');
-import * as $N from '../../core/Nodes';
-import * as $G from '../../core/Graph';
+import * as $N from '../../core/BaseNode';
+import * as $G from '../../core/BaseGraph';
 
 
 export interface ICSVOutConfig {

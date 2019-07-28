@@ -1,4 +1,4 @@
-import * as $G from '../core/Graph';
+import * as $G from '../core/BaseGraph';
 import * as $SU from '../utils/StructUtils'
 
 interface FWConfig {

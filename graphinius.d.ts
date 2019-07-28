@@ -1,5 +1,5 @@
-declare module 'graphinius/core/Edges' {
-	import * as $N from 'graphinius/core/Nodes';
+declare module 'graphinius/core/BaseEdge' {
+	import * as $N from 'graphinius/core/BaseNode';
 	export interface IConnectedNodes {
 	    a: $N.IBaseNode;
 	    b: $N.IBaseNode;
@@ -47,8 +47,8 @@ declare module 'graphinius/utils/StructUtils' {
 	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
 
 }
-declare module 'graphinius/core/Nodes' {
-	import * as $E from 'graphinius/core/Edges';
+declare module 'graphinius/core/BaseNode' {
+	import * as $E from 'graphinius/core/BaseEdge';
 	export interface NeighborEntry {
 	    node: IBaseNode;
 	    edge: $E.IBaseEdge;
@@ -172,9 +172,9 @@ declare module 'graphinius/utils/CallbackUtils' {
 
 }
 declare module 'graphinius/search/BFS' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $E from 'graphinius/core/Edges';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $E from 'graphinius/core/BaseEdge';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface BFS_Config {
 	    result: {
 	        [id: string]: BFS_ResultEntry;
@@ -215,8 +215,8 @@ declare module 'graphinius/search/BFS' {
 
 }
 declare module 'graphinius/search/DFS' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface DFS_Config {
 	    visit_result: {};
 	    callbacks: DFS_Callbacks;
@@ -316,8 +316,8 @@ declare module 'graphinius/datastructs/BinaryHeap' {
 
 }
 declare module 'graphinius/search/PFS' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $G from 'graphinius/core/BaseGraph';
 	import * as $BH from 'graphinius/datastructs/BinaryHeap';
 	export const DEFAULT_WEIGHT: number;
 	export interface PFS_Config {
@@ -380,8 +380,8 @@ declare module 'graphinius/search/PFS' {
 
 }
 declare module 'graphinius/search/BellmanFord' {
-	import * as $G from 'graphinius/core/Graph';
-	import * as $N from 'graphinius/core/Nodes';
+	import * as $G from 'graphinius/core/BaseGraph';
+	import * as $N from 'graphinius/core/BaseNode';
 	export interface BFArrrayResult {
 	    distances: Array<number>;
 	    neg_cycle: boolean;
@@ -394,59 +394,14 @@ declare module 'graphinius/search/BellmanFord' {
 
 }
 declare module 'graphinius/search/Johnsons' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $G from 'graphinius/core/BaseGraph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
 	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
 
 }
-declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
-	    debug: string;
-	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
-
-}
-declare module 'graphinius/utils/Logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	}
-	export enum LogColors {
-	    FgBlack = 30,
-	    FgRed = 31,
-	    FgGreen = 32,
-	    FgYellow = 33,
-	    FgBlue = 34,
-	    FgMagenta = 35,
-	    FgCyan = 36,
-	    FgWhite = 37,
-	    BgBlack = 40,
-	    BgRed = 41,
-	    BgGreen = 42,
-	    BgYellow = 43,
-	    BgBlue = 44,
-	    BgMagenta = 45,
-	    BgCyan = 46,
-	    BgWhite = 47
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any, color?: number, bright?: boolean): boolean;
-	    error(err: any, color?: number, bright?: boolean): boolean;
-	    dir(obj: any, color?: number, bright?: boolean): boolean;
-	    info(msg: any, color?: number, bright?: boolean): boolean;
-	    warn(msg: any, color?: number, bright?: boolean): boolean;
-	    write(msg: any, color?: number, bright?: boolean): boolean;
-	    private colorize;
-	}
-	export { Logger };
-
-}
-declare module 'graphinius/core/Graph' {
-	import { IBaseNode } from 'graphinius/core/Nodes';
-	import { EdgeConstructorOptions, IBaseEdge } from 'graphinius/core/Edges';
+declare module 'graphinius/core/BaseGraph' {
+	import { IBaseNode } from 'graphinius/core/BaseNode';
+	import { EdgeConstructorOptions, IBaseEdge } from 'graphinius/core/BaseEdge';
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
@@ -545,7 +500,7 @@ declare module 'graphinius/core/Graph' {
 	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: IBaseNode): boolean;
 	    nextArray(incoming?: boolean): NextArray;
-	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
+	    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
 	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
@@ -599,17 +554,17 @@ declare module 'graphinius/core/Graph' {
 
 }
 declare module 'graphinius/search/FloydWarshall' {
-	import * as $G from 'graphinius/core/Graph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshallDict(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	import * as $G from 'graphinius/core/BaseGraph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function FloydWarshallDict(graph: $G.IGraph): {}; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
 	export { FloydWarshallAPSP, FloydWarshallArray, FloydWarshallDict, changeNextToDirectParents };
 
 }
 declare module 'graphinius/centralities/Betweenness' {
-	import * as $G from 'graphinius/core/Graph'; function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: boolean): {};
+	import * as $G from 'graphinius/core/BaseGraph'; function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: boolean): {};
 	export { betweennessCentrality };
 
 }
 declare module 'graphinius/centralities/Brandes' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface BrandesHeapEntry {
 	    id: string;
 	    best: number;
@@ -625,7 +580,7 @@ declare module 'graphinius/centralities/Brandes' {
 
 }
 declare module 'graphinius/centralities/Closeness' {
-	import * as $G from 'graphinius/core/Graph'; class ClosenessCentrality {
+	import * as $G from 'graphinius/core/BaseGraph'; class ClosenessCentrality {
 	    constructor();
 	    getCentralityMapFW(graph: $G.IGraph): Array<Number>;
 	    getCentralityMap(graph: $G.IGraph): {
@@ -636,7 +591,7 @@ declare module 'graphinius/centralities/Closeness' {
 
 }
 declare module 'graphinius/centralities/Degree' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export enum DegreeMode {
 	    in = 0,
 	    out = 1,
@@ -660,8 +615,53 @@ declare module 'graphinius/centralities/Degree' {
 	export { DegreeCentrality };
 
 }
+declare module 'graphinius/config/run_config' {
+	 const LOG_LEVELS: {
+	    debug: string;
+	    production: string;
+	}; const RUN_CONFIG: {
+	    log_level: string;
+	};
+	export { LOG_LEVELS, RUN_CONFIG };
+
+}
+declare module 'graphinius/utils/Logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any, color?: number, bright?: boolean): boolean;
+	    error(err: any, color?: number, bright?: boolean): boolean;
+	    dir(obj: any, color?: number, bright?: boolean): boolean;
+	    info(msg: any, color?: number, bright?: boolean): boolean;
+	    warn(msg: any, color?: number, bright?: boolean): boolean;
+	    write(msg: any, color?: number, bright?: boolean): boolean;
+	    private colorize;
+	}
+	export { Logger };
+
+}
 declare module 'graphinius/centralities/Pagerank' {
-	import { IGraph } from 'graphinius/core/Graph';
+	import { IGraph } from 'graphinius/core/BaseGraph';
 	export type InitMap = {
 	    [id: string]: number;
 	};
@@ -723,7 +723,7 @@ declare module 'graphinius/utils/Gauss' {
 
 }
 declare module 'graphinius/centralities/PagerankGauss' {
-	import * as $G from 'graphinius/core/Graph'; class pageRankDetCentrality {
+	import * as $G from 'graphinius/core/BaseGraph'; class pageRankDetCentrality {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean): {
 	        [id: string]: number;
 	    };
@@ -732,9 +732,9 @@ declare module 'graphinius/centralities/PagerankGauss' {
 
 }
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $E from 'graphinius/core/Edges';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $E from 'graphinius/core/BaseEdge';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface MCMFConfig {
 	    directed: boolean;
 	}
@@ -791,8 +791,8 @@ declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {
 
 }
 declare module 'graphinius/energyminimization/ExpansionBoykov' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $G from 'graphinius/core/BaseGraph';
 	import * as $MC from 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov';
 	export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
 	export interface EMEConfig {
@@ -833,7 +833,7 @@ declare module 'graphinius/energyminimization/ExpansionBoykov' {
 
 }
 declare module 'graphinius/generators/KroneckerLeskovec' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface KROLConfig {
 	    genMat: Array<Array<number>>;
 	    cycles: number;
@@ -870,7 +870,7 @@ declare module 'graphinius/utils/RemoteUtils' {
 
 }
 declare module 'graphinius/io/input/CSVInput' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
 	export interface ICSVInConfig {
 	    separator?: string;
@@ -902,7 +902,7 @@ declare module 'graphinius/io/input/CSVInput' {
 
 }
 declare module 'graphinius/io/input/JSONInput' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
 	export interface JSONEdge {
 	    to: string;
@@ -949,7 +949,7 @@ declare module 'graphinius/io/input/JSONInput' {
 
 }
 declare module 'graphinius/io/output/CSVOutput' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface ICSVOutConfig {
 	    separator?: string;
 	    explicit_direction?: boolean;
@@ -975,7 +975,7 @@ declare module 'graphinius/io/output/CSVOutput' {
 
 }
 declare module 'graphinius/io/output/JSONOutput' {
-	import * as $G from 'graphinius/core/Graph';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface IJSONOutput {
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONString(graph: $G.IGraph): string;
@@ -989,7 +989,7 @@ declare module 'graphinius/io/output/JSONOutput' {
 
 }
 declare module 'graphinius/partitioning/Interfaces' {
-	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { IBaseNode } from 'graphinius/core/BaseNode';
 	export interface GraphPartitioning {
 	    partitions: Map<number, Partition>;
 	    nodePartMap: Map<string, number>;
@@ -1001,7 +1001,7 @@ declare module 'graphinius/partitioning/Interfaces' {
 
 }
 declare module 'graphinius/partitioning/KCut' {
-	import { IGraph } from 'graphinius/core/Graph';
+	import { IGraph } from 'graphinius/core/BaseGraph';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	export class KCut {
 	    private _graph;
@@ -1012,8 +1012,8 @@ declare module 'graphinius/partitioning/KCut' {
 
 }
 declare module 'graphinius/partitioning/KLPartitioning' {
-	import { IGraph } from 'graphinius/core/Graph';
-	import { IBaseNode } from 'graphinius/core/Nodes';
+	import { IGraph } from 'graphinius/core/BaseGraph';
+	import { IBaseNode } from 'graphinius/core/BaseNode';
 	import { GraphPartitioning } from 'graphinius/partitioning/Interfaces';
 	import { BinaryHeap } from 'graphinius/datastructs/BinaryHeap';
 	export type GainEntry = {
@@ -1063,9 +1063,9 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 
 }
 declare module 'graphinius/perturbation/SimplePerturbations' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $E from 'graphinius/core/Edges';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $E from 'graphinius/core/BaseEdge';
+	import * as $G from 'graphinius/core/BaseGraph';
 	export interface NodeDegreeConfiguration {
 	    und_degree?: number;
 	    dir_degree?: number;
@@ -1120,8 +1120,8 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 
 }
 declare module 'graphinius/search/Dijkstra' {
-	import * as $N from 'graphinius/core/Nodes';
-	import * as $G from 'graphinius/core/Graph';
+	import * as $N from 'graphinius/core/BaseNode';
+	import * as $G from 'graphinius/core/BaseGraph';
 	import * as $PFS from 'graphinius/search/PFS'; function Dijkstra(graph: $G.IGraph, source: $N.IBaseNode, target?: $N.IBaseNode): {
 	    [id: string]: $PFS.PFS_ResultEntry;
 	};

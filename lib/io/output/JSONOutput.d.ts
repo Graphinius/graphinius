@@ -1,4 +1,4 @@
-import * as $G from '../../core/Graph';
+import * as $G from '../../core/BaseGraph';
 export interface IJSONOutput {
     writeToJSONFile(filepath: string, graph: $G.IGraph): void;
     writeToJSONString(graph: $G.IGraph): string;

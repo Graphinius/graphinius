@@ -1,4 +1,4 @@
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../src/core/BaseGraph';
 import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';

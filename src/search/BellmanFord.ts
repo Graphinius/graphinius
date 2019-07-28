@@ -1,6 +1,6 @@
-import * as $G from '../core/Graph';
-import * as $E from '../core/Edges';
-import * as $N from '../core/Nodes';
+import * as $G from '../core/BaseGraph';
+import * as $E from '../core/BaseEdge';
+import * as $N from '../core/BaseNode';
 import { DEFAULT_WEIGHT } from "./PFS";
 
 

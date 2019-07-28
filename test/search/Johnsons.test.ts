@@ -1,6 +1,6 @@
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../src/core/BaseGraph';
 import * as $BF from '../../src/search/BellmanFord';
-import * as $N from '../../src/core/Nodes';
+import * as $N from '../../src/core/BaseNode';
 import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';

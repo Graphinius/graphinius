@@ -1,5 +1,5 @@
-import * as $N from '../core/Nodes';
-import * as $G from '../core/Graph';
+import * as $N from '../core/BaseNode';
+import * as $G from '../core/BaseGraph';
 import * as $MC from '../mincutmaxflow/MinCutMaxFlowBoykov';
 export declare type EnergyFunctionTerm = (arg1: string, arg2: string) => number;
 export interface EMEConfig {

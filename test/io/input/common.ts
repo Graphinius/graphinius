@@ -1,4 +1,4 @@
-import * as $G from '../../../src/core/Graph';
+import * as $G from '../../../src/core/BaseGraph';
 import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
 const degCent = new DegreeCentrality();
 

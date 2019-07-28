@@ -1,6 +1,6 @@
-import { IGraph, BaseGraph } from '../core/Graph';
-import { IBaseNode } from '../core/Nodes';
-import { IBaseEdge } from '../core/Edges';
+import { IGraph, BaseGraph } from '../core/BaseGraph';
+import { IBaseNode } from '../core/BaseNode';
+import { IBaseEdge } from '../core/BaseEdge';
 import { mergeObjects } from "../utils/StructUtils";
 
 import { Logger } from "../utils/Logger";

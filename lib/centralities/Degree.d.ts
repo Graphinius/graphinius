@@ -1,4 +1,4 @@
-import * as $G from '../core/Graph';
+import * as $G from '../core/BaseGraph';
 export declare enum DegreeMode {
     in = 0,
     out = 1,

@@ -1,5 +1,5 @@
-import * as $N from '../../src/core/Nodes';
-import * as $G from '../../src/core/Graph';
+import * as $N from '../../src/core/BaseNode';
+import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';

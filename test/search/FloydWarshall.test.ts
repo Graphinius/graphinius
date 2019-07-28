@@ -1,4 +1,4 @@
-import * as $G from '../../src/core/Graph';
+import * as $G from '../../src/core/BaseGraph';
 import * as $FW from '../../src/search/FloydWarshall';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';

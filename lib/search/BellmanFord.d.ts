@@ -1,5 +1,5 @@
-import * as $G from '../core/Graph';
-import * as $N from '../core/Nodes';
+import * as $G from '../core/BaseGraph';
+import * as $N from '../core/BaseNode';
 export interface BFArrrayResult {
     distances: Array<number>;
     neg_cycle: boolean;

@@ -1,4 +1,4 @@
-import * as $G from '../../core/Graph';
+import * as $G from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 export interface ICSVInConfig {
     separator?: string;

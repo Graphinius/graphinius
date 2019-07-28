@@ -1,4 +1,4 @@
-import * as $G from '../core/Graph';
+import * as $G from '../core/BaseGraph';
 declare function FloydWarshallAPSP(graph: $G.IGraph): {};
 declare function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray;
 declare function FloydWarshallDict(graph: $G.IGraph): {};

@@ -1,4 +1,4 @@
-import { IGraph } from '../core/Graph';
+import { IGraph } from '../core/BaseGraph';
 import { GraphPartitioning } from './Interfaces';
 export declare class KCut {
     private _graph;

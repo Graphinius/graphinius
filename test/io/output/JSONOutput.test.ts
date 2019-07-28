@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import * as $N from '../../../src/core/Nodes';
-import * as $E from '../../../src/core/Edges';
-import * as $G from '../../../src/core/Graph';
+import * as $N from '../../../src/core/BaseNode';
+import * as $E from '../../../src/core/BaseEdge';
+import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput} from '../../../src/io/output/JSONOutput';
 
