@@ -1,5 +1,4 @@
 import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
 import * as $G from '../core/BaseGraph';
 import * as $PFS from '../search/PFS';
 import * as $BF from '../search/BellmanFord';
@@ -14,10 +13,9 @@ function Johnsons(graph: $G.IGraph): {} {
 
   //getting all graph nodes
   let allNodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
-  let nodeKeys = Object.keys(allNodes);
 
   if (graph.hasNegativeEdge()) {
-    var extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
+    let extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
     graph = addExtraNandE(graph, extraNode);
     let BFresult = $BF.BellmanFordDict(graph, extraNode);
 
@@ -68,22 +66,18 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
   //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
   let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
   for (let edge of edges) {
-    var a = edge.getNodes().a.getID();
-    var b = edge.getNodes().b.getID();
+    let a = edge.getNodes().a.getID();
+    let b = edge.getNodes().b.getID();
 
     //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
-    if (a == tempNode.getID()) {
-      continue;
-    }
     //assuming that the node keys in the distDict correspond to the nodeIDs
-    else if (edge.isWeighted) {
+    if (a !== tempNode.getID() && edge.isWeighted) {
       let oldWeight = edge.getWeight();
       let newWeight = oldWeight + distDict[a] - distDict[b];
       edge.setWeight(newWeight);
     }
     else {
-      let oldWeight = $PFS.DEFAULT_WEIGHT; //which is 1
-      let newWeight = oldWeight + distDict[a] - distDict[b];
+      let newWeight = $PFS.DEFAULT_WEIGHT + distDict[a] - distDict[b];
       //collecting edgeID and directedness for later re-use
       let edgeID: string = edge.getID();
       let dirNess: boolean = edge.isDirected();
@@ -109,7 +103,7 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
 
   let specialConfig: $PFS.PFS_Config = $PFS.preparePFSStandardConfig();
 
-  var notEncounteredJohnsons = function (context: $PFS.PFS_Scope) {
+  let notEncounteredJohnsons = function (context: $PFS.PFS_Scope) {
     context.next.best =
       context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
     let i = nodeIDIdxMap[context.root_node.getID()],
@@ -125,7 +119,7 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
   };
   specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
 
-  var betterPathJohnsons = function (context: $PFS.PFS_Scope) {
+  let betterPathJohnsons = function (context: $PFS.PFS_Scope) {
 
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
@@ -139,14 +133,14 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
   
   specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 
-  var equalPathJohnsons = function (context: $PFS.PFS_Scope) {
+  let equalPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
 
     if (context.current.node !== context.root_node) {
       next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
     }
-  }
+  };
   
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
 

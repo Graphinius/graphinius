@@ -68,15 +68,15 @@ export interface PFS_Scope {
  * 
  * @param graph the graph to perform PFS only
  * @param v the node from which to start PFS
- * @config a config object similar to that used
+ * @param config a config object similar to that used
  * in BFS, automatically instantiated if not given..
  */
 
 function PFS(graph: $G.IGraph,
-  v: $N.IBaseNode,
-  config?: PFS_Config): { [id: string]: PFS_ResultEntry } {
-  var config = config || preparePFSStandardConfig(),
-    callbacks = config.callbacks,
+              v: $N.IBaseNode,
+              config?: PFS_Config): { [id: string]: PFS_ResultEntry } {
+  config = config || preparePFSStandardConfig();
+  let callbacks = config.callbacks,
     dir_mode = config.dir_mode,
     evalPriority = config.evalPriority,
     evalObjID = config.evalObjID;
@@ -98,13 +98,13 @@ function PFS(graph: $G.IGraph,
 
   // We need to push NeighborEntries
   // TODO: Virtual edge addition OK?
-  var start_ne: $N.NeighborEntry = {
+  let start_ne: $N.NeighborEntry = {
     node: v,
     edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
     best: 0
   };
 
-  var scope: PFS_Scope = {
+  let scope: PFS_Scope = {
     OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
     OPEN: {},
     CLOSED: {},
@@ -201,7 +201,7 @@ function PFS(graph: $G.IGraph,
      * EXPAND AND EXAMINE NEIGHBORHOOD
      */
 
-    for (var adj_idx in scope.adj_nodes) {
+    for (let adj_idx in scope.adj_nodes) {
 
       scope.next = scope.adj_nodes[adj_idx];
 
@@ -310,15 +310,15 @@ function preparePFSStandardConfig(): PFS_Config {
   
   let callbacks = config.callbacks;
 
-  var count = 0;
-  var counter = function () {
+  let count = 0;
+  let counter = function () {
     return count++;
   };
 
   // Standard INIT callback
-  var initPFS = function (context: PFS_Scope) {
+  let initPFS = function (context: PFS_Scope) {
     // initialize all nodes to infinite distance
-    for (var key in context.nodes) {
+    for (let key in context.nodes) {
       config.result[key] = {
         distance: Number.POSITIVE_INFINITY,
         parent: null,
@@ -337,7 +337,7 @@ function preparePFSStandardConfig(): PFS_Config {
 
 
   // Node not yet encountered callback
-  var notEncountered = function (context: PFS_Scope) {
+  let notEncountered = function (context: PFS_Scope) {
     // setting it's best score to actual distance + edge weight
     // and update result structure
     context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? DEFAULT_WEIGHT : context.next.edge.getWeight());
@@ -352,7 +352,7 @@ function preparePFSStandardConfig(): PFS_Config {
 
 
   // Callback for when we find a better solution
-  var betterPathFound = function (context: PFS_Scope) {
+  let betterPathFound = function (context: PFS_Scope) {
     config.result[context.next.node.getID()].distance = context.proposed_dist;
     config.result[context.next.node.getID()].parent = context.current.node;
   };

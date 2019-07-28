@@ -1,9 +1,12 @@
 import * as $G from '../core/BaseGraph';
 import * as $SU from '../utils/StructUtils'
 
-interface FWConfig {
-	directed: boolean;
-}
+/**
+ * @todo FW directed mode ??
+ */
+// interface FWConfig {
+// 	directed: boolean;
+// }
 
 /**
  * Initializes the distance matrix from each node to all other node
@@ -57,9 +60,9 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 	let next: $G.NextArray = graph.nextArray();
 
 	let N = dists.length;
-	for (var k = 0; k < N; ++k) {
-		for (var i = 0; i < N; ++i) {
-			for (var j = 0; j < N; ++j) {
+	for (let k = 0; k < N; ++k) {
+		for (let i = 0; i < N; ++i) {
+			for (let j = 0; j < N; ++j) {
 				if (k != i && k != j && i != j && dists[i][j] == (dists[i][k] + dists[k][j]) ) {
 					//if a node is unreachable, the corresponding value in next should not be updated, but stay null
 					if (dists[i][j] !== Number.POSITIVE_INFINITY) {
@@ -96,9 +99,9 @@ function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
 	let dists = graph.adjListArray();
 	let N = dists.length;
 
-	for (var k = 0; k < N; ++k) {
-		for (var i = 0; i < N; ++i) {
-			for (var j = 0; j < N; ++j) {
+	for (let k = 0; k < N; ++k) {
+		for (let i = 0; i < N; ++i) {
+			for (let j = 0; j < N; ++j) {
 				if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
@@ -124,9 +127,9 @@ function FloydWarshallDict(graph: $G.IGraph): {} {
 	}
 	let dists = initializeDistsWithEdges(graph);
 
-	for (var k in dists) {
-		for (var i in dists) {
-			for (var j in dists) {
+	for (let k in dists) {
+		for (let i in dists) {
+			for (let j in dists) {
 				if (i === j) {
 					continue;
 				}
@@ -157,11 +160,10 @@ function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
 	for (let a = 0; a < input.length; a++) {
 		for (let b = 0; b < input.length; b++) {
 			
-			if (input[a][b][0] == null) {
-				continue;
-			}
-
-			else if (a != b && !(input[a][b].length === 1 && input[a][b][0] === b)) {
+			if ( input[a][b][0] != null
+					 && a != b && !(input[a][b].length === 1
+					 && input[a][b][0] === b))
+			{
 				output[a][b] = [];
 				findDirectParents(a, b, input, output);
 			}

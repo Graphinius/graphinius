@@ -17,13 +17,13 @@ let csv_config: ICSVInConfig = {
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
-}
+};
 
 let std_json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
-}
+};
 
 
 describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
@@ -59,19 +59,19 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
 
 	test('should refuse to compute FW APSP on empty graph', () => {
-		var empty_graph = new $G.BaseGraph("iamempty");
+		let empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallAPSP.bind($FW.FloydWarshallAPSP, empty_graph)).toThrowError("Cowardly refusing to traverse graph without edges.");
 	});
 
 
 	test('should refuse to compute FW on empty graph', () => {
-		var empty_graph = new $G.BaseGraph("iamempty");
+		let empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallDict.bind($FW.FloydWarshallDict, empty_graph)).toThrowError("Cowardly refusing to traverse graph without edges.");
 	});
 
 
 	test('should refuse to compute FW array on empty graph', () => {
-		var empty_graph = new $G.BaseGraph("iamempty");
+		let empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallArray.bind($FW.FloydWarshallArray, empty_graph)).toThrowError("Cowardly refusing to traverse graph without edges.");
 	});
 
@@ -193,6 +193,14 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 });
 
 
+/**
+ *
+ * @param graph_l
+ * @param FW_res
+ *
+ * @todo make it feeled used again ;-)
+ */
+/*
 function checkFWCentralitiesOnSmallGraph(graph_l, FW_res) {
 	expect(Object.keys(FW_res).length).toBe(graph_l.nrNodes());
 	let nodes = graph_l.getNodes();
@@ -267,3 +275,4 @@ function checkFWCentralitiesOnSmallGraph(graph_l, FW_res) {
 		}
 	}
 }
+*/

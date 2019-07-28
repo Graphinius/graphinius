@@ -54,9 +54,9 @@ function BFS(graph 	 : $G.IGraph,
 						 v 			 : $N.IBaseNode,
 						 config? : BFS_Config) : {[id: string] : BFS_ResultEntry} {
 
-	var config = config || prepareBFSStandardConfig(),
-		callbacks = config.callbacks,
-		dir_mode = config.dir_mode;
+	config = config || prepareBFSStandardConfig();
+	let callbacks = config.callbacks;
+	let dir_mode = config.dir_mode;
 
 	/**
 	 * We are not traversing an empty graph...
@@ -72,7 +72,7 @@ function BFS(graph 	 : $G.IGraph,
 	}
 
 	// scope to pass to callbacks at different stages of execution
-	var bfsScope : BFS_Scope = {
+	let bfsScope : BFS_Scope = {
 		marked: {},
 		nodes: graph.getNodes(),
 		queue: [],
@@ -92,7 +92,7 @@ function BFS(graph 	 : $G.IGraph,
 
 	bfsScope.queue.push(v);
 	
-	var i = 0;
+	let i = 0;
 	while ( i < bfsScope.queue.length ) {
 		bfsScope.current = bfsScope.queue[i++];
 		
@@ -120,7 +120,7 @@ function BFS(graph 	 : $G.IGraph,
 			callbacks.sort_nodes(bfsScope);
 		}
 		
-		for ( var adj_idx in bfsScope.adj_nodes ) {
+		for ( let adj_idx in bfsScope.adj_nodes ) {
 			bfsScope.next_node = bfsScope.adj_nodes[adj_idx].node;
 			bfsScope.next_edge = bfsScope.adj_nodes[adj_idx].edge;
 			/**
@@ -147,7 +147,7 @@ function BFS(graph 	 : $G.IGraph,
 
 
 function prepareBFSStandardConfig() {
-	var config : BFS_Config = {
+	let config : BFS_Config = {
 		result: {},
 		callbacks: {
 			init_bfs: [],
@@ -162,15 +162,17 @@ function prepareBFSStandardConfig() {
 		result = config.result,
 		callbacks = config.callbacks;
 
-	var count = 0;
-	var counter = function() {
+	let count = 0;
+	let counter = function() {
 		return count++;
 	};
 
-	// Standard INIT callback
-	var initBFS = function( context : BFS_Scope ) {
-		// initialize all nodes to infinite distance
-		for ( var key in context.nodes ) {
+
+	/**
+	 * Standard INIT callback
+ 	 */
+	let initBFS = function( context : BFS_Scope ) {
+		for ( let key in context.nodes ) {
 			config.result[key] = {
 				distance : Number.POSITIVE_INFINITY,
 				parent 	 : null,
@@ -188,7 +190,7 @@ function prepareBFSStandardConfig() {
 
 	// Standard Node unmarked callback
 	// have to populate respective result entry
-	var nodeUnmarked = function( context: BFS_Scope ) {
+	let nodeUnmarked = function( context: BFS_Scope ) {
 		config.result[context.next_node.getID()] = {
 			distance : result[context.current.getID()].distance + 1,
 			parent 	 : context.current,

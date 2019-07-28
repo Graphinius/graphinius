@@ -13,17 +13,17 @@ let csv_config: ICSVInConfig = {
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
-}
+};
 
 let json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
-}
+};
 
 
 let bf_graph_file = "./test/test_data/bellman_ford.json",
-		bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
+	bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
 
 
 describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
@@ -33,9 +33,9 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			bf_graph    			: $G.IGraph,
 			bf_neg_cycle_graph: $G.IGraph,
       stats							: $G.GraphStats,
-      BF                : Function = BellmanFordDict,
+      // BF                : Function = BellmanFordDict,
 			BF_expect     		: {} = {},
-			BF_neg_expect			: {} = {},
+			// BF_neg_expect			: {} = {},
 			BF_compute				: {} = {},
 			BF_expect_array		: Array<number>,
 			BF_compute_array	: any; // TODO refactor w.r.t union return type

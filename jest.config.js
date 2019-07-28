@@ -12,10 +12,11 @@ module.exports = {
   verbose: true,
   collectCoverage: true,
 
-  // collectCoverageFrom: [
-  //   "**/*.{ts}",
-  //   "!**/node_modules/**",
-  //   "!**/vendor/**"
-  // ]
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!**/node_modules/**",
+    "!**/lib/**",
+    "!**/build/**"
+  ]
 };
 
