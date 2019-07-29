@@ -109,9 +109,9 @@ export interface IGraph {
 
 
 class BaseGraph implements IGraph {
-	private _nr_nodes = 0;
-	private _nr_dir_edges = 0;
-	private _nr_und_edges = 0;
+	protected _nr_nodes = 0;
+	protected _nr_dir_edges = 0;
+	protected _nr_und_edges = 0;
 	protected _mode : GraphMode = GraphMode.INIT;
 	protected _nodes : { [key: string] : IBaseNode } = {};
 	protected _dir_edges : { [key: string] : IBaseEdge } = {};
@@ -140,7 +140,7 @@ class BaseGraph implements IGraph {
     if (this.hasNegativeEdge()) {
       let result_graph : IGraph = clone ? this.cloneStructure() : this;
 
-      var extraNode: IBaseNode = new BaseNode("extraNode");
+      let extraNode: IBaseNode = new BaseNode("extraNode");
       result_graph = addExtraNandE(result_graph, extraNode);
       let BFresult = BellmanFordDict(result_graph, extraNode);
 
@@ -378,7 +378,6 @@ class BaseGraph implements IGraph {
 		return this._nr_und_edges;
 	}
 
-
 	/**
 	 * 
 	 * @param id 
@@ -390,7 +389,7 @@ class BaseGraph implements IGraph {
 		if ( this.hasNodeID( id ) ) {
 			throw new Error("Won't add node with duplicate ID.");
 		}
-		var node = new BaseNode(id, opts);
+		let node = new BaseNode(id, opts);
 		return this.addNode(node) ? node : null;
 	}
 
@@ -423,14 +422,14 @@ class BaseGraph implements IGraph {
 	}
 
 	deleteNode(node) : void {
-		var rem_node = this._nodes[node.getID()];
+		let rem_node = this._nodes[node.getID()];
 		if ( !rem_node ) {
-			throw new Error('Cannot remove un-added node.');
+			throw new Error('Cannot remove a foreign node.');
 		}
 		// Edges?
-		var in_deg = node.inDegree();
-		var out_deg = node.outDegree();
-		var deg = node.degree();
+		let in_deg = node.inDegree();
+		let out_deg = node.outDegree();
+		let deg = node.degree();
 
 		// Delete all edges brutally...
 		if ( in_deg ) {
@@ -452,15 +451,14 @@ class BaseGraph implements IGraph {
 	}
 
 	getEdgeById(id: string) : IBaseEdge {
-		var edge = this._dir_edges[id] || this._und_edges[id];
+		let edge = this._dir_edges[id] || this._und_edges[id];
 		if ( !edge ) {
 			throw new Error("cannot retrieve edge with non-existing ID.");
 		}
 		return edge;
 	}
 
-
-	private checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode) : void {
+	static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode) : void {
 		if ( !node_a ) {
 			throw new Error("Cannot find edge. Node A does not exist (in graph).");
 		}
@@ -473,14 +471,14 @@ class BaseGraph implements IGraph {
 	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
 		const node_a = this.getNodeById(node_a_id);
 		const node_b = this.getNodeById(node_b_id);
-		this.checkExistanceOfEdgeNodes(node_a, node_b);
+		BaseGraph.checkExistanceOfEdgeNodes(node_a, node_b);
 
 		// check for outgoing directed edges
 		let edges_dir = node_a.outEdges(),
 				edges_dir_keys = Object.keys(edges_dir);
 		
 		for (let i = 0; i < edges_dir_keys.length; i++) {
-		    var edge = edges_dir[edges_dir_keys[i]];
+		    let edge = edges_dir[edges_dir_keys[i]];
 				if (edge.getNodes().b.getID() == node_b_id) {
 				    return edge;
 				}
@@ -490,19 +488,18 @@ class BaseGraph implements IGraph {
 		throw new Error(`Cannot find edge. There is no edge between Node ${node_a_id} and ${node_b_id}.`);
 	}
 
-
 	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) {
 		const node_a = this.getNodeById(node_a_id);
 		const node_b = this.getNodeById(node_b_id);
-		this.checkExistanceOfEdgeNodes(node_a, node_b);
+		BaseGraph.checkExistanceOfEdgeNodes(node_a, node_b);
 
 		// check for undirected edges
 		let edges_und = node_a.undEdges(),
 		edges_und_keys = Object.keys(edges_und);
 
 		for (let i = 0; i < edges_und_keys.length; i++) {
-		    var edge = edges_und[edges_und_keys[i]];
-				var b: string;
+		    let edge = edges_und[edges_und_keys[i]];
+				let b: string;
 				(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
 				if (b == node_b_id) {
 				    return edge;
@@ -535,7 +532,7 @@ class BaseGraph implements IGraph {
 	}
 
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge {
-		var node_a = this.getNodeById(node_a_id),
+		let node_a = this.getNodeById(node_a_id),
 				node_b = this.getNodeById(node_b_id);
 		if ( !node_a ) {
 			throw new Error("Cannot add edge. Node A does not exist");
@@ -592,14 +589,14 @@ class BaseGraph implements IGraph {
 	}
 
 	deleteEdge(edge: IBaseEdge) : void {
-		var dir_edge = this._dir_edges[edge.getID()];
-		var und_edge = this._und_edges[edge.getID()];
+		let dir_edge = this._dir_edges[edge.getID()];
+		let und_edge = this._und_edges[edge.getID()];
 
 		if ( !dir_edge && !und_edge ) {
 			throw new Error('cannot remove non-existing edge.');
 		}
 
-		var nodes = edge.getNodes();
+		let nodes = edge.getNodes();
 		nodes.a.removeEdge(edge);
 		if ( nodes.a !== nodes.b ) {
 				nodes.b.removeEdge(edge);
@@ -620,8 +617,8 @@ class BaseGraph implements IGraph {
 	// Some atomicity / rollback feature would be nice here...
 	deleteInEdgesOf(node: IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
-		var in_edges = node.inEdges();
-		var key 	: string,
+		let in_edges = node.inEdges();
+		let key 	: string,
 				edge	: IBaseEdge;
 
 		for (key in in_edges) {
@@ -637,8 +634,8 @@ class BaseGraph implements IGraph {
 	// Some atomicity / rollback feature would be nice here...
 	deleteOutEdgesOf(node: IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
-		var out_edges = node.outEdges();
-		var key 	: string,
+		let out_edges = node.outEdges();
+		let key 	: string,
 				edge	: IBaseEdge;
 
 		for (key in out_edges) {
@@ -660,13 +657,13 @@ class BaseGraph implements IGraph {
 	// Some atomicity / rollback feature would be nice here...
 	deleteUndEdgesOf(node: IBaseNode) : void {
 		this.checkConnectedNodeOrThrow(node);
-		var und_edges = node.undEdges();
-		var key 	: string,
+		let und_edges = node.undEdges();
+		let key 	: string,
 				edge	: IBaseEdge;
 
 		for (key in und_edges) {
 			edge = und_edges[key];
-			var conns = edge.getNodes();
+			let conns = edge.getNodes();
 			conns.a.removeEdge(edge);
 			if ( conns.a !== conns.b ) {
 				conns.b.removeEdge(edge);
@@ -688,13 +685,13 @@ class BaseGraph implements IGraph {
 	 * Remove all the (un)directed edges in the graph
 	 */
 	clearAllDirEdges() : void {
-		for (var edge in this._dir_edges) {
+		for (let edge in this._dir_edges) {
 			this.deleteEdge(this._dir_edges[edge]);
 		}
 	}
 
 	clearAllUndEdges() : void {
-		for (var edge in this._und_edges) {
+		for (let edge in this._und_edges) {
 			this.deleteEdge(this._und_edges[edge]);
 		}
 	}
@@ -748,7 +745,7 @@ class BaseGraph implements IGraph {
 
 		let config = prepareBFSStandardConfig();
 
-		var bfsNodeUnmarkedTestCallback = function(context: BFS_Scope) {
+		let bfsNodeUnmarkedTestCallback = function(context: BFS_Scope) {
 			if(config.result[context.next_node.getID()].counter>cutoff){
 				context.queue = [];
 			} else { //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
@@ -776,15 +773,15 @@ class BaseGraph implements IGraph {
 
 
 	protected checkConnectedNodeOrThrow(node : IBaseNode) {
-		var node = this._nodes[node.getID()];
-		if ( !node ) {
-			throw new Error('Cowardly refusing to delete edges of un-added node.');
+		let inGraphNode = this._nodes[node.getID()];
+		if ( !inGraphNode ) {
+			throw new Error('Cowardly refusing to delete edges of a foreign node.');
 		}
 	}
 
 
 	protected updateGraphMode() {
-		var nr_dir = this._nr_dir_edges,
+		let nr_dir = this._nr_dir_edges,
 			nr_und = this._nr_und_edges;
 
 		if ( nr_dir && nr_und  ) {

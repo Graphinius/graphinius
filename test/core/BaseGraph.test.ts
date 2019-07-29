@@ -773,8 +773,8 @@ describe('GRAPH TESTS: ', () => {
 		/**
 		 * Node deletion of un-added node
 		 */
-		test('should throw an error when trying to remove an un-added node', () => {
-			expect(graph.deleteNode.bind(graph, node_vana)).toThrowError('Cannot remove un-added node.');
+		test('should throw an error when trying to remove an a foreign node', () => {
+			expect(graph.deleteNode.bind(graph, node_vana)).toThrowError('Cannot remove a foreign node.');
 		});
 
 
@@ -793,9 +793,9 @@ describe('GRAPH TESTS: ', () => {
 		 * Node outgoing edge deletion on NODE_VANA
 		 */
 		test(
-			'should throw an error when trying to delete outgoing edges of an un-added node',
+			'should throw an error when trying to delete outgoing edges of a foreign node',
 			() => {
-				expect(graph.deleteOutEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+				expect(graph.deleteOutEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of a foreign node.');
 			}
 		);
 
@@ -818,9 +818,9 @@ describe('GRAPH TESTS: ', () => {
 		 * Node incoming edge deletion on NODE_VANA
 		 */
 		test(
-			'should throw an error when trying to delete incoming edges of an un-added node',
+			'should throw an error when trying to delete incoming edges of a foreign node',
 			() => {
-				expect(graph.deleteInEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+				expect(graph.deleteInEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of a foreign node.');
 			}
 		);
 
@@ -843,9 +843,9 @@ describe('GRAPH TESTS: ', () => {
 		 * Node directed edge deletion on NODE_VANA
 		 */
 		test(
-			'should throw an error when trying to delete directed edges of an un-added node',
+			'should throw an error when trying to delete directed edges of a foreign node',
 			() => {
-				expect(graph.deleteDirEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+				expect(graph.deleteDirEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of a foreign node.');
 			}
 		);
 
@@ -871,9 +871,9 @@ describe('GRAPH TESTS: ', () => {
 		 * Node undirected edge deletion on NODE_VANA
 		 */
 		test(
-			'should throw an error when trying to delete undirected edges of an un-added node',
+			'should throw an error when trying to delete undirected edges of a foreign node',
 			() => {
-				expect(graph.deleteUndEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+				expect(graph.deleteUndEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of a foreign node.');
 			}
 		);
 
@@ -896,9 +896,9 @@ describe('GRAPH TESTS: ', () => {
 		 * Node ALL edge deletion on NODE_VANA
 		 */
 		test(
-			'should throw an error when trying to delete all edges of an un-added node',
+			'should throw an error when trying to delete all edges of a foreign node',
 			() => {
-				expect(graph.deleteAllEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of un-added node.');
+				expect(graph.deleteAllEdgesOf.bind(graph, node_vana)).toThrowError('Cowardly refusing to delete edges of a foreign node.');
 			}
 		);
 
