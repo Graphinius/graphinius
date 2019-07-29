@@ -14,6 +14,7 @@ export interface TypedGraphStats extends GraphStats {
 	typed_edges: {[key: string]: number};
 }
 
+
 /**
  * @description in the typedGraph setting, we use the label as type
  * @todo introduce extra type property

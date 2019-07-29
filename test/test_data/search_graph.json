@@ -1,100 +1,100 @@
 {
   "name": "SEARCHgraphtestscenario",
   "nodes": 7,
-  "dir_edges": 7,
-	"und_edges": 2,
-	"data": {
-		"A": {
-			"label": "A",
-			"edges": [
-				{
-					"to": "D",
-					"directed": false,
+  "dir_e": 7,
+  "und_e": 2,
+  "data": {
+    "A": {
+      "l": "A",
+      "e": [
+        {
+          "to": "D",
+          "directed": false,
           "weight": 7
-				},
-				{
-					"to": "B",
-					"directed": true,
+        },
+        {
+          "to": "B",
+          "directed": true,
           "weight": 4
-				},
-				{
-					"to": "C",
-					"directed": true,
+        },
+        {
+          "to": "C",
+          "directed": true,
           "weight": 2
-				},
-				{
-					"to": "F",
-					"directed": true,
+        },
+        {
+          "to": "F",
+          "directed": true,
           "weight": 8
-				}
-			],
-			"features": {}
-		},
-		"D": {
-			"label": "D",
-			"edges": [
-				{
-					"to": "A",
-					"directed": false,
+        }
+      ],
+      "f": {}
+    },
+    "D": {
+      "l": "D",
+      "e": [
+        {
+          "to": "A",
+          "directed": false,
           "weight": 7
-				},
-				{
-					"to": "D",
-					"directed": true,
+        },
+        {
+          "to": "D",
+          "directed": true,
           "weight": 11
-				},
-				{
-					"to": "E",
-					"directed": true,
+        },
+        {
+          "to": "E",
+          "directed": true,
           "weight": 5
-				}
-			],
-			"features": {}
-		},
-		"B": {
-			"label": "B",
-			"edges": [
-			],
-			"features": {}
-		},
-		"C": {
-			"label": "C",
-			"edges": [
-				{
-					"to": "C",
-					"directed": false,
+        }
+      ],
+      "f": {}
+    },
+    "B": {
+      "l": "B",
+      "e": [
+      ],
+      "f": {}
+    },
+    "C": {
+      "l": "C",
+      "e": [
+        {
+          "to": "C",
+          "directed": false,
           "weight": 1
-				},
-				{
-					"to": "A",
-					"directed": true,
+        },
+        {
+          "to": "A",
+          "directed": true,
           "weight": 3
-				}
-			],
-			"features": {}
-		},
-		"F": {
-			"label": "F",
-			"edges": [
-			],
-			"features": {}
-		},
-		"E": {
-			"label": "E",
-			"edges": [
-				{
-					"to": "F",
-					"directed": true,
+        }
+      ],
+      "f": {}
+    },
+    "F": {
+      "l": "F",
+      "e": [
+      ],
+      "f": {}
+    },
+    "E": {
+      "l": "E",
+      "e": [
+        {
+          "to": "F",
+          "directed": true,
           "weight": 6
-				}
-			],
-			"features": {}
-		},
-		"G": {
-			"label": "G",
-			"edges": [
-			],
-			"features": {}
-		}
-	}
+        }
+      ],
+      "f": {}
+    },
+    "G": {
+      "l": "G",
+      "e": [
+      ],
+      "f": {}
+    }
+  }
 }

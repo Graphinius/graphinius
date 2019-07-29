@@ -1,63 +1,63 @@
 {
   "name": "MinCutMaxFlowGraph",
   "nodes": 6,
-  "dir_edges": 8,
-	"und_edges": 0,
-	"data": {
-		"A": {
-			"edges": [
-				{
-					"to": "B",
-					"directed": true,
+  "dir_e": 8,
+  "und_e": 0,
+  "data": {
+    "A": {
+      "e": [
+        {
+          "to": "B",
+          "directed": true,
           "weight": 5
-				},
-				{
-					"to": "C",
-					"directed": true,
+        },
+        {
+          "to": "C",
+          "directed": true,
           "weight": 5
-				}
-			]
-		},
+        }
+      ]
+    },
     "B": {
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": true,
           "weight": 5
         },
-				{
-					"to": "D",
-					"directed": true,
+        {
+          "to": "D",
+          "directed": true,
           "weight": 3
-				},
-				{
-					"to": "E",
-					"directed": true,
+        },
+        {
+          "to": "E",
+          "directed": true,
           "weight": 6
-				}
-			]
-		},
+        }
+      ]
+    },
     "C": {
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": true,
           "weight": 5
         },
-				{
-					"to": "E",
-					"directed": true,
+        {
+          "to": "E",
+          "directed": true,
           "weight": 3
-				},
-				{
-					"to": "D",
-					"directed": true,
+        },
+        {
+          "to": "D",
+          "directed": true,
           "weight": 1
-				}
-			]
-		},
+        }
+      ]
+    },
     "E": {
-			"edges": [
+      "e": [
         {
           "to": "B",
           "directed": true,
@@ -68,15 +68,15 @@
           "directed": true,
           "weight": 0
         },
-				{
-					"to": "Z",
-					"directed": true,
+        {
+          "to": "Z",
+          "directed": true,
           "weight": 6
-				}
-			]
-		},
+        }
+      ]
+    },
     "D": {
-			"edges": [
+      "e": [
         {
           "to": "B",
           "directed": true,
@@ -87,15 +87,15 @@
           "directed": true,
           "weight": 0
         },
-				{
-					"to": "Z",
-					"directed": true,
+        {
+          "to": "Z",
+          "directed": true,
           "weight": 6
-				}
-			]
-		},
+        }
+      ]
+    },
     "Z": {
-			"edges": [
+      "e": [
         {
           "to": "D",
           "directed": true,
@@ -106,7 +106,7 @@
           "directed": true,
           "weight": 6
         }
-			]
-		}
+      ]
+    }
   }
 }

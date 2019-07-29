@@ -1,112 +1,112 @@
 {
   "name": "SEARCH graph for Priority First Search / Toposort",
   "nodes": 6,
-  "dir_edges": 12,
-	"und_edges": 4,
-	"data": {
-		"A": {
-			"edges": [
-				{
-					"to": "B",
-					"directed": true,
+  "dir_e": 12,
+  "und_e": 4,
+  "data": {
+    "A": {
+      "e": [
+        {
+          "to": "B",
+          "directed": true,
           "weight": 3
-				},
-				{
-					"to": "C",
-					"directed": true,
+        },
+        {
+          "to": "C",
+          "directed": true,
           "weight": 4
-				},
-				{
-					"to": "D",
-					"directed": true,
-          "weight": 1
-				}
-			]
-		},
-		"B": {
-			"edges": [
-				{
-					"to": "F",
-					"directed": true,
-					"weight": 1
-				},
-				{
-					"to": "C",
-					"directed": true,
-					"weight": 1
-				},
-				{
-					"to": "A",
-					"directed": true,
-					"weight": 5
-				},
+        },
         {
-					"to": "E",
-					"directed": false,
-					"weight": 5
-				}
-			]
-		},
-		"C": {
-			"edges": [
-				{
-					"to": "E",
-					"directed": true,
+          "to": "D",
+          "directed": true,
           "weight": 1
-				},
+        }
+      ]
+    },
+    "B": {
+      "e": [
         {
-					"to": "A",
-					"directed": true,
-					"weight": 1
-				}
-			]
-		},
-		"D": {
-			"edges": [
-				{
-					"to": "C",
-					"directed": true,
+          "to": "F",
+          "directed": true,
+          "weight": 1
+        },
+        {
+          "to": "C",
+          "directed": true,
+          "weight": 1
+        },
+        {
+          "to": "A",
+          "directed": true,
+          "weight": 5
+        },
+        {
+          "to": "E",
+          "directed": false,
+          "weight": 5
+        }
+      ]
+    },
+    "C": {
+      "e": [
+        {
+          "to": "E",
+          "directed": true,
+          "weight": 1
+        },
+        {
+          "to": "A",
+          "directed": true,
+          "weight": 1
+        }
+      ]
+    },
+    "D": {
+      "e": [
+        {
+          "to": "C",
+          "directed": true,
           "weight": 6
-				},
-				{
-					"to": "E",
-					"directed": true,
+        },
+        {
+          "to": "E",
+          "directed": true,
           "weight": 17
-				},
+        },
         {
-					"to": "E",
-					"directed": false,
-					"weight": 0
-				}
-			]
-		},
-		"E": {
-			"edges": [
-				{
-					"to": "D",
-					"directed": false,
-					"weight": 0
-				},
+          "to": "E",
+          "directed": false,
+          "weight": 0
+        }
+      ]
+    },
+    "E": {
+      "e": [
         {
-					"to": "B",
-					"directed": false,
-					"weight": 5
-				}
-			]
-		},
-		"F": {
-			"edges": [
-				{
-					"to": "E",
-					"directed": true,
-					"weight": 5
-				},
-				{
-					"to": "C",
-					"directed": true,
-					"weight": 3
-				}
-			]
-		}
-	}
+          "to": "D",
+          "directed": false,
+          "weight": 0
+        },
+        {
+          "to": "B",
+          "directed": false,
+          "weight": 5
+        }
+      ]
+    },
+    "F": {
+      "e": [
+        {
+          "to": "E",
+          "directed": true,
+          "weight": 5
+        },
+        {
+          "to": "C",
+          "directed": true,
+          "weight": 3
+        }
+      ]
+    }
+  }
 }

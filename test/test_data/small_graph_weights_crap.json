@@ -1,19 +1,19 @@
 {
   "name": "Small graph test scenario",
   "nodes": 4,
-  "edges": 7,
-	"data": {
-		"A": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
+  "e": 7,
+  "data": {
+    "A": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
         "x": 15,
         "y": 2,
         "z": 57
       },
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": false
@@ -23,7 +23,7 @@
           "directed": true,
           "weight": "blahoo"
         }
-			]
-		}
-	}
+      ]
+    }
+  }
 }

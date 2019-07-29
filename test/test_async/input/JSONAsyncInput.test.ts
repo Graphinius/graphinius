@@ -2,20 +2,20 @@ import * as $N from '../../../src/core/BaseNode';
 import * as $E from '../../../src/core/BaseEdge';
 import * as $G from '../../../src/core/BaseGraph';
 import * as $C from '../../io/input/common';
-import * as $R from '../../../src/utils/remoteUtils';
+import * as $R from '../../../src/utils/RemoteUtils';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+
 
 const std_json_in_config: IJSONInConfig = {
 	explicit_direction: false,
 	directed: false,
 	weighted: false
-}
+};
+
 
 describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 
 	let json: JSONInput,
-		remote_file: string,
-		graph: $G.IGraph,
 		stats: $G.GraphStats;
 
 	const REMOTE_HOST = "raw.githubusercontent.com";

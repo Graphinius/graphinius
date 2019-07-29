@@ -1,20 +1,20 @@
 {
   "name": "Small graph test scenario",
   "nodes": 4,
-  "edges": 7,
-	"data": {
-		"A": {
+  "e": 7,
+  "data": {
+    "A": {
       "type": "interneuron",
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
         "x": 15,
         "y": 2,
         "z": 57
       },
-			"edges": [
+      "e": [
         {
           "to": "B",
           "directed": false,
@@ -40,37 +40,37 @@
           "directed": true,
           "weight": -33
         }
-			]
-		},
-		"B": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
+      ]
+    },
+    "B": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
         "x": 55,
         "y": 25,
         "z": 7
       },
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": false,
           "weight": 3
         }
-			]
-		},
-		"C": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
+      ]
+    },
+    "C": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
         "x": 1,
         "y": -12,
         "z": 33
       },
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": true,
@@ -81,25 +81,25 @@
           "directed": false,
           "weight": 0
         }
-			]
-		},
-		"D": {
-			"features": {
-				"foo": "bar",
-				"true": true
-			},
-			"coords": {
+      ]
+    },
+    "D": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
         "x": 17,
         "y": -4,
         "z": -13
       },
-			"edges": [
+      "e": [
         {
           "to": "A",
           "directed": true,
           "weight": 6
         }
-			]
-		}
-	}
+      ]
+    }
+  }
 }

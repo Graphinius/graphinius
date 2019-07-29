@@ -1,24 +1,25 @@
 import * as $G from '../../../src/core/BaseGraph';
 import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
 const degCent = new DegreeCentrality();
+import { abbs } from '../../../src/io/interfaces';
 
 		
 function checkSmallGraphStats(graph : $G.IGraph) {
-	var stats = graph.getStats();
+	let stats = graph.getStats();
 	expect(stats.nr_nodes).toBe(4);
 	expect(stats.nr_dir_edges).toBe(5);
 	expect(stats.nr_und_edges).toBe(2);
 	expect(stats.mode).toBe($G.GraphMode.MIXED);
 	
-	var deg_dist : DegreeDistribution = degCent.degreeDistribution(graph);
+	let deg_dist : DegreeDistribution = degCent.degreeDistribution(graph);
 	expect(deg_dist.und).toEqual(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));
 	expect(deg_dist.in).toEqual(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
 	expect(deg_dist.out).toEqual(new Uint32Array([1, 2, 0, 1, 0, 0, 0, 0, 0]));
 	expect(deg_dist.dir).toEqual(new Uint32Array([0, 2, 1, 0, 0, 0, 1, 0, 0]));
 	expect(deg_dist.all).toEqual(new Uint32Array([0, 0, 3, 0, 0, 0, 0, 0, 1]));
 	
-	var nodes = graph.getNodes();
-	var n_a = nodes["A"],
+	let nodes = graph.getNodes();
+	let n_a = nodes["A"],
 			n_b = nodes["B"],
 			n_c = nodes["C"],
 			n_d = nodes["D"];
@@ -47,12 +48,12 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(n_d.outDegree()).toBe(1);
 	expect(n_d.degree()).toBe(0);
 	
-	var und_edges = graph.getUndEdges();
-  for (var edge in und_edges) {
+	let und_edges = graph.getUndEdges();
+  for (let edge in und_edges) {
     expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
     expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
   }	
-	var e_abu = und_edges["A_B_u"],
+	let e_abu = und_edges["A_B_u"],
 			e_acu = und_edges["A_C_u"];					
 			
 	expect(e_abu).not.toBeUndefined();
@@ -67,12 +68,12 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(e_acu.getNodes().a).toBe(n_a);
 	expect(e_acu.getNodes().b).toBe(n_c);		
 	
-	var dir_edges = graph.getDirEdges();
-  for (var edge in dir_edges) {
+	let dir_edges = graph.getDirEdges();
+  for (let edge in dir_edges) {
     expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
     expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
   }	
-	var e_aad = dir_edges["A_A_d"],
+	let e_aad = dir_edges["A_A_d"],
 			e_abd = dir_edges["A_B_d"],
 			e_add = dir_edges["A_D_d"],
 			e_cad = dir_edges["C_A_d"],
@@ -111,7 +112,7 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 
 
 function checkSmallGraphCoords(graph: $G.IGraph) {
-	var a_coords = graph.getNodeById("A").getFeature("coords");	
+	let a_coords = graph.getNodeById("A").getFeature(abbs.coords);
 	expect(typeof a_coords.x).toBe('number');
 	expect(a_coords.x).toBe(15);
 	expect(typeof a_coords.y).toBe('number');
@@ -119,7 +120,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof a_coords.z).toBe('number');
 	expect(a_coords.z).toBe(57);
 	
-	var b_coords = graph.getNodeById("B").getFeature("coords");
+	let b_coords = graph.getNodeById("B").getFeature(abbs.coords);
 	expect(typeof b_coords.x).toBe('number');
 	expect(b_coords.x).toBe(55);
 	expect(typeof b_coords.y).toBe('number');
@@ -127,7 +128,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof b_coords.z).toBe('number');
 	expect(b_coords.z).toBe(7);
 	
-	var c_coords = graph.getNodeById("C").getFeature("coords");
+	let c_coords = graph.getNodeById("C").getFeature(abbs.coords);
 	expect(typeof c_coords.x).toBe('number');
 	expect(c_coords.x).toBe(1);
 	expect(typeof c_coords.y).toBe('number');
@@ -135,7 +136,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof c_coords.z).toBe('number');
 	expect(c_coords.z).toBe(33);
 	
-	var d_coords = graph.getNodeById("D").getFeature("coords");
+	let d_coords = graph.getNodeById("D").getFeature(abbs.coords);
 	expect(typeof d_coords.x).toBe('number');
 	expect(d_coords.x).toBe(17);
 	expect(typeof d_coords.y).toBe('number');
@@ -147,7 +148,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 
 function checkSmallGraphFeatures(graph: $G.IGraph) {
 	['A', 'B', 'C', 'D'].forEach((id, idx) => {
-		var feats = graph.getNodeById(id).getFeatures();
+		let feats = graph.getNodeById(id).getFeatures();
 		expect(feats['foo']).not.toBeUndefined();
 		expect(feats['foo']).toBe('bar');	
 		expect(feats['true']).not.toBeUndefined();

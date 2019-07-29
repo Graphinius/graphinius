@@ -190,7 +190,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 	describe('Stats - ', () => {
-
 		const nodeType = 'PERSON',
 			edgeType1 = 'FRIENDS_WITH',
 			edgeType2 = 'CO_AUTHORS';
@@ -199,7 +198,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 			['A', 'B'].forEach(id => graph.addNodeByID(id, {label: nodeType}));
 			graph.addEdgeByNodeIDs('1', 'A', 'B', {label: edgeType1});
 			graph.addEdgeByNodeIDs('2', 'B', 'A', {label: edgeType2});
-			// console.log(graph.getStats());
+
+			logger.log(JSON.stringify(graph.getStats()));
+
 			expect(graph.getStats()).toEqual({
 				mode: 2,
 				nr_nodes: 2,
@@ -219,8 +220,10 @@ describe('TYPED GRAPH TESTS: ', () => {
 					[edgeType2]: 1
 				}
 			});
-
 		});
+
+
+		// it('should read in ')
 
 	});
 

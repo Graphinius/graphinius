@@ -26,8 +26,8 @@ export interface IGraph {
     _label: string;
     getMode(): GraphMode;
     getStats(): GraphStats;
-    addNodeByID(id: string, opts?: {}): IBaseNode;
     addNode(node: IBaseNode): boolean;
+    addNodeByID(id: string, opts?: {}): IBaseNode;
     hasNodeID(id: string): boolean;
     getNodeById(id: string): IBaseNode;
     getNodes(): {
@@ -36,8 +36,8 @@ export interface IGraph {
     nrNodes(): number;
     getRandomNode(): IBaseNode;
     deleteNode(node: any): void;
+    addEdge(edge: IBaseEdge): boolean;
     addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
-    addEdge(edge: IBaseEdge): IBaseEdge;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
     hasEdgeID(id: string): boolean;
     getEdgeById(id: string): IBaseEdge;
@@ -79,9 +79,9 @@ export interface IGraph {
 }
 declare class BaseGraph implements IGraph {
     _label: any;
-    private _nr_nodes;
-    private _nr_dir_edges;
-    private _nr_und_edges;
+    protected _nr_nodes: number;
+    protected _nr_dir_edges: number;
+    protected _nr_und_edges: number;
     protected _mode: GraphMode;
     protected _nodes: {
         [key: string]: IBaseNode;
@@ -117,7 +117,7 @@ declare class BaseGraph implements IGraph {
     deleteNode(node: any): void;
     hasEdgeID(id: string): boolean;
     getEdgeById(id: string): IBaseEdge;
-    private checkExistanceOfEdgeNodes;
+    static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode): void;
     getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
     getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
     getDirEdges(): {
@@ -130,7 +130,7 @@ declare class BaseGraph implements IGraph {
     getUndEdgesArray(): Array<IBaseEdge>;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
     addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
-    addEdge(edge: IBaseEdge): IBaseEdge;
+    addEdge(edge: IBaseEdge): boolean;
     deleteEdge(edge: IBaseEdge): void;
     deleteInEdgesOf(node: IBaseNode): void;
     deleteOutEdgesOf(node: IBaseNode): void;

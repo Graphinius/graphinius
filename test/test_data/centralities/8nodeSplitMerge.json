@@ -1,10 +1,10 @@
 {
   "name": "8-node graph, directed, one start split, one end merge: A->C->D->E->B; A->I->J->K->B",
   "nodes": 8,
-  "edges": 8,
+  "e": 8,
   "data": {
     "A": {
-      "edges": [
+      "e": [
         {
           "to": "C",
           "directed": true,
@@ -16,7 +16,7 @@
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0,
           "unnormalized": 0.0,
@@ -26,8 +26,8 @@
       }
     },
     "B": {
-      "edges": [],
-      "features": {
+      "e": [],
+      "f": {
         "betweenness": {
           "default": 0.0,
           "unnormalized": 0.0,
@@ -37,14 +37,14 @@
       }
     },
     "C": {
-      "edges": [
+      "e": [
         {
           "to": "D",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0595,
           "unnormalized": 2.5,
@@ -54,14 +54,14 @@
       }
     },
     "D": {
-      "edges": [
+      "e": [
         {
           "to": "E",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0833,
           "unnormalized": 3.5,
@@ -71,14 +71,14 @@
       }
     },
     "E": {
-      "edges": [
+      "e": [
         {
           "to": "B",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0595,
           "unnormalized": 2.5,
@@ -88,14 +88,14 @@
       }
     },
     "I": {
-      "edges": [
+      "e": [
         {
           "to": "J",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0595,
           "unnormalized": 2.5,
@@ -105,14 +105,14 @@
       }
     },
     "J": {
-      "edges": [
+      "e": [
         {
           "to": "K",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0833,
           "unnormalized": 3.5,
@@ -122,14 +122,14 @@
       }
     },
     "K": {
-      "edges": [
+      "e": [
         {
           "to": "B",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0595,
           "unnormalized": 2.5,

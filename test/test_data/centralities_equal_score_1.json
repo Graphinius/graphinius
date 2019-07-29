@@ -1,8 +1,8 @@
 {
   "name": "SEARCHgraphtestscenario",
   "nodes": 1,
-  "dir_edges": 0,
-  "und_edges": 0,
+  "dir_e": 0,
+  "und_e": 0,
   "data": {
   	"A": {}
   }

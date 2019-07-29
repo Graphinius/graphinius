@@ -3,12 +3,14 @@ import fs = require('fs');
 import * as $N from '../../core/BaseNode';
 import * as $E from '../../core/BaseEdge';
 import * as $G from '../../core/BaseGraph';
+import { abbs } from '../interfaces';
 
 
 export interface IJSONOutput {
 	writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	writeToJSONString(graph: $G.IGraph): string;
 }
+
 
 
 /**
@@ -46,21 +48,21 @@ class JSONOutput implements IJSONOutput {
 			edge				: $E.IBaseEdge,
 			coords;
 
-		var result = {
+		let result = {
 			name: graph._label,
 			nodes: graph.nrNodes(),
-			dir_edges: graph.nrDirEdges(),
-			und_edges: graph.nrUndEdges(),
+			dir_e: graph.nrDirEdges(),
+			und_e: graph.nrUndEdges(),
 			data: {}
-		}
+		};
 
 		// Go through all nodes 
 		nodes = graph.getNodes();
 		for (let node_key in nodes) {
 			node = nodes[node_key];
 			node_struct = result.data[node.getID()] = {
-				label: node.getLabel(),
-				edges: []
+				[abbs.label]: node.getLabel(),
+				[abbs.edges]: []
 			};
 
 			// UNdirected Edges
@@ -69,7 +71,7 @@ class JSONOutput implements IJSONOutput {
 				edge = und_edges[edge_key];
 				let connected_nodes = edge.getNodes();
 
-				node_struct.edges.push({
+				node_struct[abbs.edges].push({
 					to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
 					directed: edge.isDirected(),
 					weight: edge.isWeighted() ? edge.getWeight() : undefined
@@ -82,19 +84,19 @@ class JSONOutput implements IJSONOutput {
 				edge = dir_edges[edge_key];
 				let connected_nodes = edge.getNodes();
 
-				node_struct.edges.push({
+				node_struct[abbs.edges].push({
 					to: connected_nodes.b.getID(),
 					directed: edge.isDirected(),
-					weight: this.handleEdgeWeight(edge)
+					weight: JSONOutput.handleEdgeWeight(edge)
 				});
 			}
 
 			// Features
-			node_struct.features = node.getFeatures();
+			node_struct[abbs.features] = node.getFeatures();
 
 			// Coords (shall we really?)
-			if ((coords = node.getFeature('coords')) != null) {
-				node_struct['coords'] = coords;
+			if ((coords = node.getFeature(abbs.coords)) != null) {
+				node_struct[abbs.coords] = coords;
 			}
 		}
 
@@ -102,7 +104,7 @@ class JSONOutput implements IJSONOutput {
 	}
 
 
-	private handleEdgeWeight(edge: $E.IBaseEdge): string | number {
+	static handleEdgeWeight(edge: $E.IBaseEdge): string | number {
 		if (!edge.isWeighted()) {
 			return undefined;
 		}

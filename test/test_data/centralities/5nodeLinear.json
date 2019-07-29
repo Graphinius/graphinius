@@ -1,17 +1,17 @@
 {
-  "name": "5-node graph with 4 connecting edges, directed: A->B->C->D->E",
+  "name": "5-node graph with 4 connecting e, directed: A->B->C->D->E",
   "nodes": 5,
-  "edges": 4,
+  "e": 4,
   "data": {
     "A": {
-      "edges": [
+      "e": [
         {
           "to": "B",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.0,
           "unnormalized": 0.0,
@@ -21,14 +21,14 @@
       }
     },
     "B": {
-      "edges": [
+      "e": [
         {
           "to": "C",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.5,
           "unnormalized": 3.0,
@@ -38,14 +38,14 @@
       }
     },
     "C": {
-      "edges": [
+      "e": [
         {
           "to": "D",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.6666,
           "unnormalized": 4.0,
@@ -55,14 +55,14 @@
       }
     },
     "D": {
-      "edges": [
+      "e": [
         {
           "to": "E",
           "directed": true,
           "weight": 1
         }
       ],
-      "features": {
+      "f": {
         "betweenness": {
           "default": 0.5,
           "unnormalized": 3.0,
@@ -72,9 +72,8 @@
       }
     },
     "E": {
-      "edges": [],
-       
-      "features": {
+      "e": [],
+      "f": {
         "betweenness": {
           "default": 0.0,
           "unnormalized": 0.0,

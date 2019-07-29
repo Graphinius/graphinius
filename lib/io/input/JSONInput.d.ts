@@ -27,6 +27,7 @@ export interface IJSONInConfig {
     explicit_direction?: boolean;
     directed?: boolean;
     weighted?: boolean;
+    typed?: boolean;
 }
 export interface IJSONInput {
     _config: IJSONInConfig;
@@ -40,6 +41,6 @@ declare class JSONInput implements IJSONInput {
     readFromJSONFile(filepath: string): $G.IGraph;
     readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
     readFromJSON(json: JSONGraph): $G.IGraph;
-    private handleEdgeWeights;
+    static handleEdgeWeights(edge_input: any): number;
 }
 export { JSONInput };

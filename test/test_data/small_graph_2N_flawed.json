@@ -4,7 +4,7 @@
   "edges": 2,
 	"data": {
 		"A": {
-			"edges": [
+			"e": [
         {
           "to": "B",
           "directed": false,
@@ -13,7 +13,7 @@
       ]
     },
 		"B": {
-			"edges": [
+			"e": [
         {
           "to": "A",
           "directed": false,

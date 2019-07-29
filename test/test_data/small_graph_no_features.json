@@ -1,10 +1,10 @@
 {
   "name": "Small graph test scenario",
   "nodes": 4,
-  "edges": 7,
-	"data": {
-		"A": {
-			"edges": [
+  "e": 7,
+  "data": {
+    "A": {
+      "e": [
         {
           "to": "B",
           "directed": false,
@@ -30,19 +30,19 @@
           "directed": true,
           "weight": -33
         }
-			]
-		},
-		"B": {
-			"edges": [
+      ]
+    },
+    "B": {
+      "e": [
         {
           "to": "A",
           "directed": false,
           "weight": 7
         }
-			]
-		},
-		"C": {
-			"edges": [        
+      ]
+    },
+    "C": {
+      "e": [
         {
           "to": "A",
           "directed": true,
@@ -53,16 +53,16 @@
           "directed": false,
           "weight": 0
         }
-			]
-		},
-		"D": {
-			"edges": [
+      ]
+    },
+    "D": {
+      "e": [
         {
           "to": "A",
           "directed": true,
           "weight": 6
         }
-			]
-		}
-	}
+      ]
+    }
+  }
 }

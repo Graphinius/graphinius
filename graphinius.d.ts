@@ -428,8 +428,8 @@ declare module 'graphinius/core/BaseGraph' {
 	    _label: string;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    addNodeByID(id: string, opts?: {}): IBaseNode;
 	    addNode(node: IBaseNode): boolean;
+	    addNodeByID(id: string, opts?: {}): IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): IBaseNode;
 	    getNodes(): {
@@ -438,8 +438,8 @@ declare module 'graphinius/core/BaseGraph' {
 	    nrNodes(): number;
 	    getRandomNode(): IBaseNode;
 	    deleteNode(node: any): void;
+	    addEdge(edge: IBaseEdge): boolean;
 	    addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
-	    addEdge(edge: IBaseEdge): IBaseEdge;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
 	    hasEdgeID(id: string): boolean;
 	    getEdgeById(id: string): IBaseEdge;
@@ -480,9 +480,9 @@ declare module 'graphinius/core/BaseGraph' {
 	    reweighIfHasNegativeEdge(clone: boolean): IGraph;
 	} class BaseGraph implements IGraph {
 	    _label: any;
-	    private _nr_nodes;
-	    private _nr_dir_edges;
-	    private _nr_und_edges;
+	    protected _nr_nodes: number;
+	    protected _nr_dir_edges: number;
+	    protected _nr_und_edges: number;
 	    protected _mode: GraphMode;
 	    protected _nodes: {
 	        [key: string]: IBaseNode;
@@ -518,7 +518,7 @@ declare module 'graphinius/core/BaseGraph' {
 	    deleteNode(node: any): void;
 	    hasEdgeID(id: string): boolean;
 	    getEdgeById(id: string): IBaseEdge;
-	    private checkExistanceOfEdgeNodes;
+	    static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode): void;
 	    getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
 	    getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
 	    getDirEdges(): {
@@ -531,7 +531,7 @@ declare module 'graphinius/core/BaseGraph' {
 	    getUndEdgesArray(): Array<IBaseEdge>;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
 	    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
-	    addEdge(edge: IBaseEdge): IBaseEdge;
+	    addEdge(edge: IBaseEdge): boolean;
 	    deleteEdge(edge: IBaseEdge): void;
 	    deleteInEdgesOf(node: IBaseNode): void;
 	    deleteOutEdgesOf(node: IBaseNode): void;
@@ -731,6 +731,40 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	export { pageRankDetCentrality };
 
 }
+declare module 'graphinius/core/TypedGraph' {
+	import { IBaseNode } from 'graphinius/core/BaseNode';
+	import { IBaseEdge } from 'graphinius/core/BaseEdge';
+	import { BaseGraph, GraphStats } from 'graphinius/core/BaseGraph';
+	export const GENERIC_TYPE = "GENERIC";
+	export type TypedNodes = Map<string, Map<string, IBaseNode>>;
+	export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
+	export interface TypedGraphStats extends GraphStats {
+	    node_types: string[];
+	    edge_types: string[];
+	    typed_nodes: {
+	        [key: string]: number;
+	    };
+	    typed_edges: {
+	        [key: string]: number;
+	    };
+	}
+	export class TypedGraph extends BaseGraph {
+	    _label: any;
+	    protected _typedNodes: TypedNodes;
+	    protected _typedEdges: TypedEdges;
+	    constructor(_label: any);
+	    nodeTypes(): string[];
+	    edgeTypes(): string[];
+	    nrTypedNodes(type: string): number | null;
+	    nrTypedEdges(type: string): number | null;
+	    addNode(node: IBaseNode): boolean;
+	    deleteNode(node: IBaseNode): void;
+	    addEdge(edge: IBaseEdge): boolean;
+	    deleteEdge(edge: IBaseEdge): void;
+	    getStats(): TypedGraphStats;
+	}
+
+}
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {
 	import * as $N from 'graphinius/core/BaseNode';
 	import * as $E from 'graphinius/core/BaseEdge';
@@ -857,6 +891,16 @@ declare module 'graphinius/generators/KroneckerLeskovec' {
 	export { KROL };
 
 }
+declare module 'graphinius/io/interfaces' {
+	export interface Abbreviations {
+	    coords: string;
+	    label: string;
+	    edges: string;
+	    features: string;
+	}
+	export const abbs: Abbreviations;
+
+}
 declare module 'graphinius/utils/RemoteUtils' {
 	/// <reference types="node" />
 	import * as http from 'http';
@@ -931,6 +975,7 @@ declare module 'graphinius/io/input/JSONInput' {
 	    explicit_direction?: boolean;
 	    directed?: boolean;
 	    weighted?: boolean;
+	    typed?: boolean;
 	}
 	export interface IJSONInput {
 	    _config: IJSONInConfig;
@@ -943,7 +988,7 @@ declare module 'graphinius/io/input/JSONInput' {
 	    readFromJSONFile(filepath: string): $G.IGraph;
 	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
 	    readFromJSON(json: JSONGraph): $G.IGraph;
-	    private handleEdgeWeights;
+	    static handleEdgeWeights(edge_input: any): number;
 	}
 	export { JSONInput };
 
@@ -975,6 +1020,7 @@ declare module 'graphinius/io/output/CSVOutput' {
 
 }
 declare module 'graphinius/io/output/JSONOutput' {
+	import * as $E from 'graphinius/core/BaseEdge';
 	import * as $G from 'graphinius/core/BaseGraph';
 	export interface IJSONOutput {
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
@@ -983,7 +1029,7 @@ declare module 'graphinius/io/output/JSONOutput' {
 	    constructor();
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONString(graph: $G.IGraph): string;
-	    private handleEdgeWeight;
+	    static handleEdgeWeight(edge: $E.IBaseEdge): string | number;
 	}
 	export { JSONOutput };
 

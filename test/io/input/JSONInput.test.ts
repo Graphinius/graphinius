@@ -1,9 +1,9 @@
 import * as fs from 'fs';
-import * as $N from '../../../src/core/BaseNode';
-import * as $E from '../../../src/core/BaseEdge';
+import * as $C from './common';
 import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
-import * as $C from './common';
+import { abbs } from '../../../src/io/interfaces';
+
 
 let REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
@@ -20,13 +20,12 @@ const std_json_input_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: false
-}
+};
 
 
 describe('GRAPH JSON INPUT TESTS', () => {
 
 	let json: JSONInput,
-		input_file: string,
 		graph: $G.IGraph,
 		stats: $G.GraphStats;
 
@@ -136,7 +135,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				json._config.directed = false;
 				graph = json.readFromJSONFile(real_graph);
 
-				var nr_nodes = graph.nrNodes();
+				let nr_nodes = graph.nrNodes();
 				while (nr_nodes--) {
 					graph.deleteNode(graph.getNodeById(String(nr_nodes)));
 				}
@@ -175,9 +174,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				json._config.explicit_direction = false;
 				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph_no_features);
-				var nodes = graph.getNodes();
-				for (var node_idx in nodes) {
-					expect(nodes[node_idx].getFeature("coords")).toBeUndefined();
+				let nodes = graph.getNodes();
+				for (let node_idx in nodes) {
+					expect(nodes[node_idx].getFeature(abbs.coords)).toBeUndefined();
 				}
 			}
 		);
@@ -211,8 +210,8 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				json._config.explicit_direction = false;
 				json._config.directed = false;
 				graph = json.readFromJSONFile(small_graph_no_features);
-				var nodes = graph.getNodes();
-				for (var node_idx in nodes) {
+				let nodes = graph.getNodes();
+				for (let node_idx in nodes) {
 					expect( Object.keys( nodes[node_idx].getFeatures() ).length ).toBe(0);
 				}
 			}
@@ -246,13 +245,13 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			() => {
 				json._config.weighted = false;
 				graph = json.readFromJSONFile(small_graph);
-				var und_edges = graph.getUndEdges();
-				for (var edge in und_edges) {
+				let und_edges = graph.getUndEdges();
+				for (let edge in und_edges) {
 					expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
 					expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
 				}
-				var dir_edges = graph.getDirEdges();
-				for (var edge in dir_edges) {
+				let dir_edges = graph.getDirEdges();
+				for (let edge in dir_edges) {
 					expect(graph.getEdgeById(edge).isWeighted()).toBe(false);
 					expect(graph.getEdgeById(edge).getWeight()).toBeUndefined();
 				}
@@ -265,13 +264,13 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			() => {
 				json._config.weighted = true;
 				graph = json.readFromJSONFile(small_graph_weights_crap);
-				var und_edges = graph.getUndEdges();
-				for (var edge in und_edges) {
+				let und_edges = graph.getUndEdges();
+				for (let edge in und_edges) {
 					expect(graph.getEdgeById(edge).isWeighted()).toBe(true);
 					expect(graph.getEdgeById(edge).getWeight()).toBe(1);
 				}
-				var dir_edges = graph.getDirEdges();
-				for (var edge in dir_edges) {
+				let dir_edges = graph.getDirEdges();
+				for (let edge in dir_edges) {
 					expect(graph.getEdgeById(edge).isWeighted()).toBe(true);
 					expect(graph.getEdgeById(edge).getWeight()).toBe(1);
 				}
@@ -284,7 +283,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			beforeEach(() => {
 				json._config.weighted = true;
 				graph = json.readFromJSONFile(extreme_weights_graph);
-			})
+			});
 
 
 			test(
