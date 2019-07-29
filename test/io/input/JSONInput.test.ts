@@ -3,16 +3,18 @@ import * as $C from './common';
 import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { abbs } from '../../../src/io/interfaces';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../../config/config';
+
 
 
 let REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
-	small_graph = "./test/test_data/small_graph.json",
-	small_graph_2N_flawed = "./test/test_data/small_graph_2N_flawed.json",
-	small_graph_no_features = "./test/test_data/small_graph_no_features.json",
-	small_graph_weights_crap = "./test/test_data/small_graph_weights_crap.json",
-	real_graph = "./test/test_data/real_graph.json",
-	extreme_weights_graph = "./test/test_data/extreme_weights_graph.json";
+	small_graph 								= `${JSON_DATA_PATH}/small_graph.json`,
+	small_graph_2N_flawed 			= `${JSON_DATA_PATH}/small_graph_2N_flawed.json`,
+	small_graph_no_features 		= `${JSON_DATA_PATH}/small_graph_no_features.json`,
+	small_graph_weights_crap 		= `${JSON_DATA_PATH}/small_graph_weights_crap.json`,
+	real_graph 									= `${JSON_DATA_PATH}/real_graph.json`,
+	extreme_weights_graph 			= `${JSON_DATA_PATH}/extreme_weights_graph.json`;
 
 const DEFAULT_WEIGHT: number = 1;
 

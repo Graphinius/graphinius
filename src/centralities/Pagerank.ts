@@ -21,7 +21,7 @@ export type RankMap = { [id: string]: number };
 
 
 /**
- * Data structs we need for the array version of pagerank
+ * Data structs we need for the array version of centralities
  * 
  * @description we assume that nodes are always in the same order in the various arrays, 
  *              with the exception of the pull sub-arrays, of course (which give the node index as values)

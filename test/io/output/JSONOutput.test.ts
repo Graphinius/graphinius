@@ -5,15 +5,15 @@ import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from '../../../src/io/output/JSONOutput';
 import { abbs } from '../../../src/io/interfaces';
-
+import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
 
 
 let jsonIn: JSONInput,
     jsonOut: JSONOutput,
     graph: $G.IGraph,
     resultString: string,
-    search_graph_in = "./test/test_data/search_graph.json",
-    search_graph_out = "./test/test_data/output/search_graph_out.json";
+    search_graph_in = `${JSON_DATA_PATH}/search_graph.json`,
+    search_graph_out = `${JSON_OUT_PATH}/search_graph_out.json`;
 
 let std_json_in_config: IJSONInConfig = {
   explicit_direction: true,

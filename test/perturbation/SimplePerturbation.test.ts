@@ -3,13 +3,14 @@ import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degre
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { SimplePerturber, NodeDegreeConfiguration } from '../../src/perturbation/SimplePerturbations';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
 
 const degCent = new DegreeCentrality();
 
 let REAL_GRAPH_NR_NODES = 6204,
     REAL_GRAPH_NR_EDGES = 18550,
     graph : $G.IGraph,
-    real_graph = "./test/test_data/real_graph.json",
+    real_graph = `${JSON_DATA_PATH}/real_graph.json`,
     json : JSONInput,
     stats : $G.GraphStats,
     deg_config : NodeDegreeConfiguration,

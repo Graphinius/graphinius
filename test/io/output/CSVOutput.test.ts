@@ -1,29 +1,27 @@
 import * as fs from 'fs';
 import * as $N from '../../../src/core/BaseNode';
-import { IBaseEdge, EdgeConstructorOptions } from '../../../src/core/BaseEdge';
+import { IBaseEdge } from '../../../src/core/BaseEdge';
 import * as $G from '../../../src/core/BaseGraph';
 import { CSVOutput, ICSVOutConfig } from '../../../src/io/output/CSVOutput'
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
+import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
 
 
 let csv_out_config: ICSVOutConfig = {
   separator: ',',
   explicit_direction: false,
   direction_mode: false
-}
+};
 
 describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 	let csvOut: CSVOutput,
       csvIn: CSVInput,
       jsonIn: $J.IJSONInput,
-      output_file: string,
       out_graph: string,
-      graph: $G.IGraph,
       DEFAULT_SEP: string = ',',
-      OUT_DIR = "./test/test_data/output/", // from src file...
-      real_graph_file = "./test/test_data/real_graph.json";
+      real_graph_file = `${JSON_DATA_PATH}/real_graph.json`;
       
   const REAL_GRAPH_NR_NODES = 6204,
         REAL_GRAPH_NR_EDGES = 18550;
@@ -43,9 +41,9 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
   
   describe('Adjacency list output tests - ', () => {
     
-    var graph : $G.IGraph;
-    var n_a, n_b, n_c, n_d : $N.IBaseNode;
-    var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
+    let graph : $G.IGraph;
+    let n_a, n_b, n_c, n_d : $N.IBaseNode;
+    let e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
     
     beforeEach(() => {
       csvOut = new CSVOutput(csv_out_config);
@@ -67,10 +65,10 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     
     test('should output test graph as undirected graph', () => {
-      var expected_graph = "";
-      expected_graph += "A,A,B,D,C\n" // directed before undirected
-      expected_graph += "B,A\n"
-      expected_graph += "C,A\n"
+      let expected_graph = "";
+      expected_graph += "A,A,B,D,C\n"; // directed before undirected
+      expected_graph += "B,A\n";
+      expected_graph += "C,A\n";
       expected_graph += "D,A\n";
                                   
       out_graph = csvOut.writeToAdjacencyList(graph);      
@@ -80,10 +78,10 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     test('should output test graph as undirected graph, space separator', () => {
       let expected_graph = "";
-      let csvOut2 = new CSVOutput({separator: ' '})
-      expected_graph += "A A B D C\n" // directed before undirected
-      expected_graph += "B A\n"
-      expected_graph += "C A\n"
+      let csvOut2 = new CSVOutput({separator: ' '});
+      expected_graph += "A A B D C\n"; // directed before undirected
+      expected_graph += "B A\n";
+      expected_graph += "C A\n";
       expected_graph += "D A\n";
                                   
       out_graph = csvOut2.writeToAdjacencyList(graph);      
@@ -92,10 +90,10 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     
     test('should output test graph as CSV file', () => {
-      var outfile = OUT_DIR + "adj_list_test_graph.csv";
+      let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
       csvOut.writeToAdjacencyListFile(outfile, graph);
       
-      var inGraph = csvIn.readFromAdjacencyListFile(outfile);
+      let inGraph = csvIn.readFromAdjacencyListFile(outfile);
       expect(inGraph.nrNodes()).toBe(4);
       expect(inGraph.nrDirEdges()).toBe(0);
       expect(inGraph.nrUndEdges()).toBe(4);      
@@ -106,15 +104,15 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
       
       test('should output a real graph as CSV file', () => {
         jsonIn = new $J.JSONInput({explicit_direction: false, directed: false, weighted: false});
-        var realGraph = jsonIn.readFromJSONFile(real_graph_file);
+        let realGraph = jsonIn.readFromJSONFile(real_graph_file);
         
         expect(realGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
         expect(realGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
         
-        var outfile = OUT_DIR + "adj_list_real_graph.csv";        
+        let outfile = JSON_OUT_PATH + "/adj_list_real_graph.csv";
         csvOut.writeToAdjacencyListFile(outfile, realGraph);
         
-        var inGraph = csvIn.readFromAdjacencyListFile(outfile);
+        let inGraph = csvIn.readFromAdjacencyListFile(outfile);
         expect(inGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
         expect(inGraph.nrDirEdges()).toBe(0);
         expect(inGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
@@ -128,9 +126,9 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
   describe('Adjacency list output tests - ', () => {
     
-    var graph : $G.IGraph;
-    var n_a, n_b, n_c, n_d : $N.IBaseNode;
-    var e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
+    let graph : $G.IGraph;
+    let n_a, n_b, n_c, n_d : $N.IBaseNode;
+    let e_1, e_2, e_3, e_4, e_5, e_6, e_7 : IBaseEdge;
     
     beforeEach(() => {
       csvOut = new CSVOutput(csv_out_config);
@@ -170,7 +168,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 
       test('file test', () => {
-        let outfile = OUT_DIR + "adj_list_test_graph.csv";
+        let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
         csvOut.writeToEdgeListFile(outfile, graph);
         expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
       });
@@ -197,7 +195,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 
       test('file test', () => {
-        let outfile = OUT_DIR + "adj_list_test_graph.csv";
+        let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
         csvOut.writeToEdgeListFile(outfile, graph, true);
         expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
       });

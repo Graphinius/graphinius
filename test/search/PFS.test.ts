@@ -3,6 +3,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
 
 
 import {Logger} from '../../src/utils/Logger';
@@ -10,8 +11,8 @@ const logger = new Logger();
 
 
 let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
-  search_graph = "./test/test_data/search_graph_pfs_extended.json",
-  equal_dists = "./test/test_data/equal_path_graph.json",
+  search_graph = `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
+  equal_dists = `${JSON_DATA_PATH}/equal_path_graph.json`,
   graph: $G.IGraph;
 
 

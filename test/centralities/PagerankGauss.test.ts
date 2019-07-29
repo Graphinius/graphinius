@@ -4,35 +4,35 @@ import * as $PRGauss from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/Logger';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+
 
 const logger = new Logger();
 const EPSILON = 1e-6;
 
-const TEST_PATH_PREFIX = "./test/test_data/";
 
 const std_csv_in_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
-}
+};
 
 const std_json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: true,
 	weighted: false
-}
+};
 
 
 let csv = new CSVInput(std_csv_in_config),
 	json = new JSONInput(std_json_in_config),
-	deg_cent_graph = `search_graph_pfs_extended.json`,
-	sn_300_file = `social_network_edges_300.csv`,
-	sn_1K_file = `social_network_edges_1K.csv`,
+	deg_cent_graph 	= `search_graph_pfs_extended.json`,
+	sn_300_file 		= `social_network_edges_300.csv`,
+	sn_1K_file 			= `social_network_edges_1K.csv`,
 	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
-	pagerank_py_folder = `centralities/pagerank`,
-	graph: $G.IGraph = json.readFromJSONFile(TEST_PATH_PREFIX + deg_cent_graph),
-	graph_und_unw = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_unweighted_undirected),
+	graph: $G.IGraph = json.readFromJSONFile(JSON_DATA_PATH + '/' + deg_cent_graph),
+	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_unweighted_undirected),
 	PrGauss = new $PRGauss.pageRankDetCentrality();
 
 
@@ -77,7 +77,7 @@ describe("PageRank Gauss Tests", () => {
 
 		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
 			test('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(TEST_PATH_PREFIX + graph_file);
+				let sn_graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_file);
 				let tic = +new Date;
 				let pr = PrGauss.getCentralityMap(sn_graph);
 				let toc = +new Date;

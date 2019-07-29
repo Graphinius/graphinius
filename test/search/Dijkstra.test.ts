@@ -1,11 +1,12 @@
 import * as $G from '../../src/core/BaseGraph';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import * as $Dijkstra from '../../src/search/Dijkstra';
 import * as $PFS from '../../src/search/PFS';
-import * as $BH from '../../src/datastructs/binaryHeap';
+
+import {JSON_DATA_PATH} from '../config/config';
 
 const json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
-    search_graph = "./test/test_data/search_graph_pfs_extended.json",
+    search_graph = `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
     graph : $G.IGraph = json.readFromJSONFile(search_graph);
 
 let PFSSpy,
@@ -30,7 +31,7 @@ describe('Dijkstra TESTS - ', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-  })
+  });
   
   
   test('should call PFS in the background - ', () => {

@@ -1,15 +1,16 @@
 import * as $G from '../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { DegreeCentrality, DegreeMode } from '../../src/centralities/Degree';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
 
 let std_json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
-}
+};
 
 let json = new JSONInput(std_json_in_config),
-  deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
+  deg_cent_graph = `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
   graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
   DC: DegreeCentrality = new DegreeCentrality();
 

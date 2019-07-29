@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 import * as $G from '../../src/core/BaseGraph';
-import { Brandes, BrandesHeapEntry } from '../../src/centralities/Brandes';
-import { betweennessCentrality } from '../../src/centralities/Betweenness';
+import {Brandes, BrandesHeapEntry} from '../../src/centralities/Brandes';
+import {betweennessCentrality} from '../../src/centralities/Betweenness';
+import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
+import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
+import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_CENT_PATH } from '../config/config';
 
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import {Logger} from '../../src/utils/Logger';
 
-import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 
@@ -15,42 +16,38 @@ let csv_config: ICSVInConfig = {
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
-}
+};
 
 let std_json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
-}
-
+};
 
 let json = new JSONInput(std_json_in_config);
 
-const PATH_PREFIX = "./test/test_data/",
-			PATH_PREFIX_CENTRALITIES = PATH_PREFIX + "centralities/";
+let socialNet300 						= "social_network_edges_300",
+	socialNet1K 							= "social_network_edges_1K",
+	socialNet20K 							= "social_network_edges_20K",
+	weightedSocialNet300 			= "social_network_edges_300_weighted",
+	weightedSocialNet1K 			= "social_network_edges_1K_weighted",
+	weightedSocialNet20K 			= "social_network_edges_20K_weighted";
 
-let socialNet300 = "social_network_edges_300",
-	socialNet1K = "social_network_edges_1K",
-	socialNet20K = "social_network_edges_20K",
-	weightedSocialNet300 = "social_network_edges_300_weighted",
-	weightedSocialNet1K = "social_network_edges_1K_weighted",
-	weightedSocialNet20K = "social_network_edges_20K_weighted";
-
-let path_3nodeUnd = PATH_PREFIX_CENTRALITIES + "3nodeUnd.json",
-	path_3nodeDir = PATH_PREFIX_CENTRALITIES + "3nodeDir.json",
-	path_3node2SPs1direct = PATH_PREFIX_CENTRALITIES + "3node2SPs1direct.json",
-	path_4node2SPs1direct = PATH_PREFIX_CENTRALITIES + "4node2SPs1direct.json",
-	path_5nodeLinear = PATH_PREFIX_CENTRALITIES + "5nodeLinear.json",
-	path_7nodeMerge1beforeGoal = PATH_PREFIX_CENTRALITIES + "7nodeMerge1beforeGoal.json",
-	path_8nodeSplitMerge = PATH_PREFIX_CENTRALITIES + "8nodeSplitMerge.json",
-	path_8nodeSplitAfter1mergeBefore1 = PATH_PREFIX_CENTRALITIES + "8nodeSplitAfter1mergeBefore1.json",
+let path_3nodeUnd 										= JSON_CENT_PATH + '/' + "3nodeUnd.json",
+	path_3nodeDir 											= JSON_CENT_PATH + '/' + "3nodeDir.json",
+	path_3node2SPs1direct 							= JSON_CENT_PATH + '/' + "3node2SPs1direct.json",
+	path_4node2SPs1direct 							= JSON_CENT_PATH + '/' + "4node2SPs1direct.json",
+	path_5nodeLinear 										= JSON_CENT_PATH + '/' + "5nodeLinear.json",
+	path_7nodeMerge1beforeGoal 					= JSON_CENT_PATH + '/' + "7nodeMerge1beforeGoal.json",
+	path_8nodeSplitMerge 								= JSON_CENT_PATH + '/' + "8nodeSplitMerge.json",
+	path_8nodeSplitAfter1mergeBefore1 	= JSON_CENT_PATH + '/' + "8nodeSplitAfter1mergeBefore1.json",
 	//until this point, all graphs have checking values in the features
-	path_search_no1DE = PATH_PREFIX + "search_graph_multiple_SPs_no1DE.json",
-	path_midSizeGraph = PATH_PREFIX + "bernd_ares_intermediate_pos.json",
-	path_search_pos = PATH_PREFIX + "search_graph_multiple_SPs_positive.json",
-	path_search_nullEdge = PATH_PREFIX + "search_graph_multiple_SPs.json",
-	path_bf_graph = PATH_PREFIX + "bellman_ford.json",
-	path_bf_graph_neg_cycle = PATH_PREFIX + "negative_cycle.json";
+	path_search_no1DE 									= JSON_DATA_PATH + '/' + "search_graph_multiple_SPs_no1DE.json",
+	path_midSizeGraph 									= JSON_DATA_PATH + '/' + "bernd_ares_intermediate_pos.json",
+	path_search_pos 										= JSON_DATA_PATH + '/' + "search_graph_multiple_SPs_positive.json",
+	path_search_nullEdge 								= JSON_DATA_PATH + '/' + "search_graph_multiple_SPs.json",
+	path_bf_graph 											= JSON_DATA_PATH + '/' + "bellman_ford.json",
+	path_bf_graph_neg_cycle 						= JSON_DATA_PATH + '/' + "negative_cycle.json";
 
 
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
@@ -78,11 +75,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'test correctness of Brandes WITHOUT normalization - compare to networkx data',
 		() => {
-			//FOR UNWEIGHTED; NON-NEGATIVE GRAPHS! FOR ALL OTHERS, SEE OTHER BRANDES VERSIONS!
-			//the test graph can be changed any time,
-			//but caution! choose only those new Jsons, where we have the networkx data (see above)       
-			let graphPath = path_5nodeLinear;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_5nodeLinear);
 			let nodes = graph.getNodes();
 			let mapControl = {};
 			logger.log("unnormalized betweenness values for the chosen graph (Networkx)");
@@ -101,11 +94,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'test correctness of Brandes WITH normalization - compare to networkx data',
 		() => {
-			// only unweighted graphs
-			// the test graph can be changed any time,
-			// but caution! choose only those new Jsons, where we have the networkx data (see above) 
-			let graphPath = path_7nodeMerge1beforeGoal;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_7nodeMerge1beforeGoal);
 			let nodes = graph.getNodes();
 			let mapControl = {};
 			logger.log("normalized betweenness values for the chosen graph (Networkx)");
@@ -137,8 +126,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	);
 
 	test('test correctness of BrandesForWeighted without normalization', () => {
-		let graphPath = path_search_pos;
-		let graph = json.readFromJSONFile(graphPath);
+		let graph = json.readFromJSONFile(path_search_pos);
 
 		let resBCslow = betweennessCentrality(graph, true, false);
 		logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
@@ -154,8 +142,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'test correctness of BrandesForWeighted without normalization, on a graph containing zero-weight edge',
 		() => {
-			let graphPath = path_search_nullEdge;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_search_nullEdge);
 
 			let resBCslow = betweennessCentrality(graph, true, false);
 			logger.log("Betweenness centrality calculated with slow but correct algorithm: ");
@@ -170,8 +157,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	);
 
 	test('test if BrandesWeighted rejects negative cycle graphs', () => {
-		let graphPath = path_bf_graph_neg_cycle;
-		let graph = json.readFromJSONFile(graphPath);
+		let graph = json.readFromJSONFile(path_bf_graph_neg_cycle);
 		let brandes = new Brandes(graph);
 
 		expect(brandes.computeWeighted.bind(brandes, graph)).toThrowError("The graph contains a negative cycle, thus it can not be processed");
@@ -186,8 +172,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'test if BrandesWeighted can reweigh and traverse negative graphs',
 		() => {
-			let graphPath = path_bf_graph;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_bf_graph);
 			let workingGraph = graph.cloneStructure();
 			let workingGraph2 = graph.cloneStructure();
 
@@ -212,8 +197,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'compare runtime of BrandesForWeighted to PFS based Brandes, UNnormalized',
 		() => {
-			let graphPath = path_midSizeGraph;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_midSizeGraph);
 			let brandes = new Brandes(graph);
 
 			logger.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, UNnormalized mode:`);
@@ -238,8 +222,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'compare runtime of BrandesForWeighted to PFS based Brandes, normalized',
 		() => {
-			let graphPath = path_midSizeGraph;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_midSizeGraph);
 			let brandes = new Brandes(graph);
 
 			logger.log(`Running on graph of ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges, normalized mode:`);
@@ -264,8 +247,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 	test(
 		'compare results of all BrandesForWeighted functions, using the betweennessCentrality2 too',
 		() => {
-			let graphPath = path_search_nullEdge;
-			let graph = json.readFromJSONFile(graphPath);
+			let graph = json.readFromJSONFile(path_search_nullEdge);
 			let brandes = new Brandes(graph);
 
 			logger.log("Betweenness with slow but good algorithm:");
@@ -295,9 +277,9 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			test(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
 				csv_config.direction_mode = true;
 				let csv = new CSVInput(csv_config);
-				let graph_path = PATH_PREFIX + graph_name + ".csv",
-						graph = csv.readFromEdgeListFile(graph_path),
-						brandes = new Brandes(graph);
+				let graph_path = CSV_DATA_PATH + '/' + graph_name + ".csv",
+					graph = csv.readFromEdgeListFile(graph_path),
+					brandes = new Brandes(graph);
 
 				let startBU = +new Date();
 				let resBU = brandes.computeUnweighted(true, true);
@@ -309,20 +291,20 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
 				expect(Object.keys(resBU).length).toBe(Object.keys(controlMap).length);
 
-				let epsilon = 1e-12
+				let epsilon = 1e-12;
 				Object.keys(resBU).forEach(n => expect(resBU[n]).toBeGreaterThan(controlMap[n] - epsilon));
 				Object.keys(resBU).forEach(n => expect(resBU[n]).toBeLessThan(controlMap[n] + epsilon));
 			});
 		});
-		
+
 
 		[weightedSocialNet300].forEach(graph_name => { // weightedSocialNet1K, weightedSocialNet20K
 			test(`Runtime of Brandes (Weighted) on graph ${graph_name}:`, () => {
 				csv_config.weighted = true;
 				let csv = new CSVInput(csv_config);
-				let graph_path = PATH_PREFIX + graph_name + ".csv",
-						graph = csv.readFromEdgeListFile(graph_path),
-						brandes = new Brandes(graph);
+				let graph_path = CSV_DATA_PATH + '/' + graph_name + ".csv",
+					graph = csv.readFromEdgeListFile(graph_path),
+					brandes = new Brandes(graph);
 
 				let startBW = +new Date();
 				let resBW = brandes.computeWeighted(true, true);
@@ -334,7 +316,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 
 				expect(Object.keys(resBW).length).toBe(Object.keys(controlMap).length);
 
-				let epsilon = 1e-12
+				let epsilon = 1e-12;
 				Object.keys(resBW).forEach(n => expect(resBW[n]).toBeGreaterThan(controlMap[n] - epsilon));
 				Object.keys(resBW).forEach(n => expect(resBW[n]).toBeLessThan(controlMap[n] + epsilon));
 			});

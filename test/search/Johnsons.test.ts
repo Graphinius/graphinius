@@ -5,6 +5,7 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import { JSONInput } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
 const logger = new Logger();
@@ -18,18 +19,17 @@ let csv_config: ICSVInConfig = {
 
 const json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
     csv = new CSVInput(csv_config),
-    search_graph = "./test/test_data/search_graph_multiple_SPs.json",
-    bf_graph_file = "./test/test_data/bellman_ford.json",
+    search_graph = `${JSON_DATA_PATH}/search_graph_multiple_SPs.json`,
+    bf_graph_file = `${JSON_DATA_PATH}/bellman_ford.json`,
     graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
     graph_BF: $G.IGraph = json.readFromJSONFile(bf_graph_file);
 
 
 describe('Johnsons APSP TEST -', () => {
 
-    let bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json",
-        // bernd_graph = "./test/test_data/bernd_ares_pos.json",
-        intermediate = "./test/test_data/bernd_ares_intermediate_pos.json",
-        social_graph = "./test/test_data/social_network_edges_1K.csv";
+    let bf_graph_neg_cycle_file = `${JSON_DATA_PATH}/negative_cycle.json`,
+        intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`,
+        social_graph = `${CSV_DATA_PATH}/social_network_edges_1K.csv`;
 
     let graph_NC: $G.IGraph,
         graph_midsize: $G.IGraph,

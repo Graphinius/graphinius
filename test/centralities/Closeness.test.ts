@@ -2,6 +2,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $CC from '../../src/centralities/Closeness';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
 
 
 let csv_in_config: ICSVInConfig = {
@@ -9,21 +10,21 @@ let csv_in_config: ICSVInConfig = {
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
-}
+};
 
 let json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: true,
 	weighted: true
-}
+};
 
 
 let csv = new CSVInput(csv_in_config),
 	json = new JSONInput(json_in_config),
-	sn_graph_file_1K = "./test/test_data/social_network_edges_1K.csv",
-	sn_graph_file_300 = "./test/test_data/social_network_edges_300.csv",
-	deg_cent_graph = "./test/test_data/search_graph_pfs_extended.json",
-	und_unw_graph = "./test/test_data/undirected_unweighted_6nodes.csv",
+	sn_graph_file_1K 		= `${CSV_DATA_PATH}/social_network_edges_1K.csv`,
+	sn_graph_file_300 	= `${CSV_DATA_PATH}/social_network_edges_300.csv`,
+	und_unw_graph 			= `${CSV_DATA_PATH}/undirected_unweighted_6nodes.csv`,
+	deg_cent_graph 			= `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
 	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
 	graph_und_unw: $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
 	closeness_mapFW,
@@ -40,7 +41,7 @@ describe("Closeness Centrality Tests", () => {
 	});
 
 	test('Testing on single node graph', () => {
-		let graph_1: $G.IGraph = json.readFromJSONFile("./test/test_data/centralities_equal_score_1.json");
+		let graph_1: $G.IGraph = json.readFromJSONFile(`${JSON_DATA_PATH}/centralities_equal_score_1.json`);
 
 		expect(CC.getCentralityMap.bind(CC.getCentralityMap, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
 

@@ -2,15 +2,16 @@ import * as $G from '../../src/core/BaseGraph';
 import * as $FW from '../../src/search/FloydWarshall';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
-let search_graph = "./test/test_data/search_graph_multiple_SPs.json";
-let bernd_graph = "./test/test_data/bernd_ares_pos.json";
-let intermediate = "./test/test_data/bernd_ares_intermediate_pos.json";
-let social_graph = "./test/test_data/social_network_edges_1K.csv";
-let search_graph_pos = "./test/test_data/search_graph_multiple_SPs_positive.json";
+let social_graph = `${CSV_DATA_PATH}/social_network_edges_1K.csv`;
+let search_graph = `${JSON_DATA_PATH}/search_graph_multiple_SPs.json`;
+let bernd_graph = `${JSON_DATA_PATH}/bernd_ares_pos.json`;
+let intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`;
+let search_graph_pos = `${JSON_DATA_PATH}/search_graph_multiple_SPs_positive.json`;
 
 let csv_config: ICSVInConfig = {
 	separator: ' ',

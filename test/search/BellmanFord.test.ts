@@ -4,6 +4,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { BellmanFordDict, BellmanFordArray } from '../../src/search/BellmanFord';
+import { JSON_DATA_PATH } from '../config/config';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
@@ -22,8 +23,8 @@ let json_in_config: IJSONInConfig = {
 };
 
 
-let bf_graph_file = "./test/test_data/bellman_ford.json",
-	bf_graph_neg_cycle_file = "./test/test_data/negative_cycle.json";
+let bf_graph_file = `${JSON_DATA_PATH}/bellman_ford.json`,
+	bf_graph_neg_cycle_file = `${JSON_DATA_PATH}/negative_cycle.json`;
 
 
 describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
@@ -144,9 +145,9 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	 */
 	describe('Performance Tests - ', () => {
 
-		let social_300_file = "./test/test_data/social_network_edges_300.csv",
-				social_1k_file = "./test/test_data/social_network_edges_1K.csv",
-				social_20k_file = "./test/test_data/social_network_edges_20K.csv",
+		let social_300_file = `./test/test_data/social_network_edges_300.csv`,
+				social_1k_file = `./test/test_data/social_network_edges_1K.csv`,
+				social_20k_file = `./test/test_data/social_network_edges_20K.csv`,
 				sn_300_graph  		: $G.IGraph,
 				sn_1k_graph				: $G.IGraph,
 				sn_20k_graph 			: $G.IGraph;

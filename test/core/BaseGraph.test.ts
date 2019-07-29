@@ -5,6 +5,7 @@ import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Deg
 import { DFS } from '../../src/search/DFS';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
 
 import { Logger } from '../../src/utils/Logger'
 const logger = new Logger();
@@ -27,10 +28,10 @@ let sn_config: ICSVInConfig = {
 // 	weighted: true
 // };
 
-const small_graph_file = "./test/test_data/small_graph.json",
-			real_graph_file = "./test/test_data/real_graph.json",
-			bernd_graph_file = "./test/test_data/BerndAres2016.json",
-			neg_cycle_multi_component_file = "./test/test_data/negative_cycle_multi_component.json",
+const small_graph_file 								= `${JSON_DATA_PATH}/small_graph.json`,
+			real_graph_file 								= `${JSON_DATA_PATH}/real_graph.json`,
+			bernd_graph_file 								= `${JSON_DATA_PATH}/BerndAres2016.json`,
+			neg_cycle_multi_component_file 	= `${JSON_DATA_PATH}/negative_cycle_multi_component.json`,
 			SMALL_GRAPH_NR_NODES = 4,
 			SMALL_GRAPH_NR_UND_EDGES = 2,
 			SMALL_GRAPH_NR_DIR_EDGES = 5,
@@ -1367,7 +1368,7 @@ describe('GRAPH TESTS: ', () => {
 
 		describe('Next array generation for FW etc.', () => {
 
-			let search_graph_file = "./test/test_data/search_graph_multiple_SPs_positive.json",
+			let search_graph_file = `${JSON_DATA_PATH}/search_graph_multiple_SPs_positive.json`,
 				sn_300_graph_file = './test/test_data/social_network_edges_300.csv',
 				graph: $G.IGraph,
 				sn_300_graph: $G.IGraph,

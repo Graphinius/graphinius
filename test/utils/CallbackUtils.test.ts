@@ -6,18 +6,18 @@ describe('general callback util tests - ', () => {
   test(
     'should throw an error it trying to execute something else than a function',
     () => {
-      var funcArray = [undefined];
+      let funcArray = [undefined];
       expect($CB.execCallbacks.bind($CB, funcArray)).toThrowError('Provided callback is not a function.');
     }
   );
   
 
   test('should execute an array of callback functions', () => {
-    var scope = {
+    let scope = {
       msg_a: "",
       msg_b: ""
     };
-    var funcArray = [];
+    let funcArray = [];
     funcArray.push( function( context ) {
       context["msg_a"] = "Hello from func A.";
     });

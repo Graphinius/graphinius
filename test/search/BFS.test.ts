@@ -3,9 +3,10 @@ import * as $G from '../../src/core/BaseGraph';
 import {JSONInput} from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/CallbackUtils';
+import { JSON_DATA_PATH } from '../config/config';
 
 
-let search_graph = "./test/test_data/search_graph.json";
+let search_graph = `${JSON_DATA_PATH}/search_graph.json`;
 
 // let json_in_config: IJSONInConfig = {
 // 	explicit_direction: true,
@@ -32,9 +33,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	});
 
 
-	/**
-	 * 
-	 */
+
 	describe('should properly execute the different callback stages', () => {
 
 		beforeEach(() => {
@@ -661,7 +660,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	 */
 	describe('PFS_BFS graph traversal tests with edge weight ascending sort - ', () => {
 
-		let search_graph_pfs = "./test/test_data/search_graph_pfs.json",
+		let search_graph_pfs = `${JSON_DATA_PATH}/search_graph_pfs.json`,
 			json = new JSONInput({explicit_direction: true, directed: true, weighted: true}),
 			graph = json.readFromJSONFile(search_graph_pfs);
 

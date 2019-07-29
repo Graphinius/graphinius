@@ -2,6 +2,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
 import { KCut } from '../../src/partitioning/KCut';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
@@ -13,9 +14,9 @@ const csv : CSVInput = new CSVInput({
 			direction_mode: false,
 			weighted: false
 		}),
-		n6_und_graph_file = "./test/test_data/undirected_unweighted_6nodes.csv",
-    n333_und_graph_file = "./test/test_data/social_network_edges_300.csv",
-    n1034_und_graph_file = "./test/test_data/social_network_edges_1K.csv";
+		n6_und_graph_file = `${CSV_DATA_PATH}/undirected_unweighted_6nodes.csv`,
+    n333_und_graph_file = `${CSV_DATA_PATH}/social_network_edges_300.csv`,
+    n1034_und_graph_file = `${CSV_DATA_PATH}/social_network_edges_1K.csv`;
 
 
 /**

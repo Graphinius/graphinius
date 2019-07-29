@@ -1,10 +1,11 @@
 import * as $G from '../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import * as $MC from '../../src/mincutmaxflow/MinCutMaxFlowBoykov';
+import { JSON_DATA_PATH } from '../config/config';
 
 
 let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
-    mcmf_graph = "./test/test_data/min_cut_max_flow_graph.json",
+    mcmf_graph = `${JSON_DATA_PATH}/min_cut_max_flow_graph.json`,
     graph : $G.IGraph,
     mcmf : $MC.IMCMFBoykov;
 

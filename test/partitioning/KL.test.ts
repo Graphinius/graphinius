@@ -2,15 +2,16 @@ import * as $G from '../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
 import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
+import { JSON_PART_PATH} from '../config/config';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 
 const json = new JSONInput({explicit_direction: false, directed: false, weighted: true}),
-	n8_kl_file = "./test/test_data/partitioning/8n_kl_graph_unweighted.json",
-	n3_missing_partition_file = "./test/test_data/partitioning/n3_missing_parts.json",
-	n3_3partitions_file = "./test/test_data/partitioning/n3_3partitions.json";
+	n8_kl_file = `${JSON_PART_PATH}/8n_kl_graph_unweighted.json`,
+	n3_missing_partition_file = `${JSON_PART_PATH}/n3_missing_parts.json`,
+	n3_3partitions_file = `${JSON_PART_PATH}/n3_3partitions.json`;
 
 
 
