@@ -11,7 +11,8 @@
 		],
 		"outDir": "./lib",
 		"removeComments": true,
-		"strict": false
+		"strict": false,
+		"experimentalDecorators": true
 	},
 	"compileOnSave": false,
 	"include": ["src"],

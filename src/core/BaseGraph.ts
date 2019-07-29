@@ -41,20 +41,19 @@ export interface IGraph {
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 
-	// NODE STUFF
-	addNodeByID(id: string, opts? : {}) : IBaseNode;
+	// NODES
 	addNode(node: IBaseNode) : boolean;
+	addNodeByID(id: string, opts? : {}) : IBaseNode;
 	hasNodeID(id: string) : boolean;
 	getNodeById(id: string) : IBaseNode;
 	getNodes() : {[key: string] : IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : IBaseNode;
 	deleteNode(node) : void;
-	// getNodeIterator();
 	
-	// EDGE STUFF
+	// EDGES
+	addEdge(edge: IBaseEdge) : boolean;
 	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
-	addEdge(edge: IBaseEdge) : IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge;
 	hasEdgeID(id: string) : boolean;
 	getEdgeById(id: string) : IBaseEdge;
@@ -546,17 +545,18 @@ class BaseGraph implements IGraph {
 	}
 
 	/**
-	 * Now all test cases pertaining addEdge() call this one...
+	 * @description now all test cases pertaining addEdge() call this one...
 	 */
 	addEdgeByID(id: string, node_a : IBaseNode, node_b : IBaseNode, opts? : EdgeConstructorOptions) : IBaseEdge {
 		let edge = new BaseEdge(id, node_a, node_b, opts || {});
-		return this.addEdge(edge);
+		return this.addEdge(edge) ? edge : null;
 	}
 
 	/**
-	 * Test cases should be reversed / completed
+	 * @todo test cases should be reversed / completed
+	 * @todo make transactional
 	 */
-	addEdge(edge: IBaseEdge) : IBaseEdge {
+	addEdge(edge: IBaseEdge) : boolean {
 		let node_a = edge.getNodes().a,
 				node_b = edge.getNodes().b;
 
@@ -585,7 +585,7 @@ class BaseGraph implements IGraph {
 			this._nr_und_edges += 1;
 			this.updateGraphMode();
 		}
-		return edge;
+		return true;
 	}
 
 	deleteEdge(edge: IBaseEdge) : void {
