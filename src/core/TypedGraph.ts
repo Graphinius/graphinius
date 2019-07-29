@@ -1,12 +1,18 @@
 import { IBaseNode } from './BaseNode';
 import { IBaseEdge } from './BaseEdge';
-import { BaseGraph, GraphMode, IGraph } from './BaseGraph';
+import { BaseGraph, GraphMode, GraphStats } from './BaseGraph';
 
 export const GENERIC_TYPE = "GENERIC";
 
 export type TypedNodes = Map<string, Map<string, IBaseNode>>;
 export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
 
+export interface TypedGraphStats extends GraphStats {
+	node_types: string[];
+	edge_types: string[];
+	typed_nodes: {[key: string]: number};
+	typed_edges: {[key: string]: number};
+}
 
 /**
  * @description in the typedGraph setting, we use the label as type
@@ -96,24 +102,22 @@ export class TypedGraph extends BaseGraph {
 
 
 	deleteNode(node: IBaseNode): void {
-		super.deleteNode(node);
-
-		/**
-		 *  Here we already know that the node was added before
-		 *  and must therefore be in one of our typed sets
-		 *  If not, something strange is happening and we throw an Error
-		 */
 		const id = node.getID(),
 					label = node.getLabel() === id ? GENERIC_TYPE : node.getLabel().toUpperCase();
 
+		if ( !this._typedNodes.get(label) ) {
+			throw Error('Node type does not exist on this TypedGraph.');
+		}
 		const removeNode = this._typedNodes.get(label).get(id);
 		if ( !removeNode ) {
-			throw Error('Successfully removed node is nowhere to be found in _typedNodes... Nosebleed...')
+			throw Error('This particular node is nowhere to be found in its typed set.')
 		}
 		this._typedNodes.get(label).delete(id);
 		if ( this.nrTypedNodes(label) === 0 ) {
 			this._typedNodes.delete(label);
 		}
+
+		super.deleteNode(node);
 	}
 
 
@@ -142,20 +146,37 @@ export class TypedGraph extends BaseGraph {
 
 
 	deleteEdge(edge: IBaseEdge): void {
-		super.deleteEdge(edge);
-
 		const id = edge.getID(),
 			label = edge.getLabel() === id ? GENERIC_TYPE : edge.getLabel().toUpperCase();
 
+		if ( !this._typedEdges.get(label) ) {
+			throw Error('Edge type does not exist on this TypedGraph.');
+		}
 		const removeEdge = this._typedEdges.get(label).get(id);
 		if ( !removeEdge ) {
-			throw Error('Successfully removed node is nowhere to be found in _typedNodes... Nosebleed...')
+			throw Error('This particular edge is nowhere to be found in its typed set.')
 		}
 		this._typedEdges.get(label).delete(id);
 		if ( this.nrTypedEdges(label) === 0 ) {
 			this._typedEdges.delete(label);
 		}
+
+		super.deleteEdge(edge);
 	}
 
+
+	getStats(): TypedGraphStats {
+		let typed_nodes = {},
+				typed_edges = {};
+		this._typedNodes.forEach((k, v) => typed_nodes[v] = k.size);
+		this._typedEdges.forEach((k, v) => typed_edges[v] = k.size);
+		return {
+			...super.getStats(),
+			node_types: this.nodeTypes(),
+			edge_types: this.edgeTypes(),
+			typed_nodes,
+			typed_edges
+		};
+	}
 
 }

@@ -37,8 +37,10 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 	describe('Nodes - ', () => {
 
+		const nodeType = 'PERSON',
+					nodeTypeLower = 'person';
+
 		it('should correctly register a node type `PERSON`', () => {
-			const nodeType = 'PERSON';
 			expect(graph.nrNodes()).toBe(0);
 			expect(graph.nrTypedNodes(nodeType)).toBeNull;
 			graph.addNode(new $N.BaseNode("A", {label: nodeType}));
@@ -52,31 +54,19 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should register a node type in UPPERCASE', () => {
-			const nodeType = 'person';
-			graph.addNode(new $N.BaseNode("A", {label: nodeType}));
-			expect(graph.nodeTypes()).not.toContain(nodeType);
-			expect(graph.nodeTypes()).toContain(nodeType.toUpperCase());
+			graph.addNode(new $N.BaseNode("A", {label: nodeTypeLower}));
+			expect(graph.nodeTypes()).not.toContain(nodeTypeLower);
+			expect(graph.nodeTypes()).toContain(nodeTypeLower.toUpperCase());
 		});
 
 
 		it('should check for node type existence in UPPERCASE', () => {
-			const nodeType = 'person';
-			graph.addNode(new $N.BaseNode("A", {label: nodeType}));
-			expect(graph.nrTypedNodes(nodeType)).toBe(1);
+			graph.addNode(new $N.BaseNode("A", {label: nodeTypeLower}));
+			expect(graph.nrTypedNodes(nodeTypeLower)).toBe(1);
 		});
 
 
-		/**
-		 * This should be handled by the super class already
-		 * @todo can we construct a case (via calling TypecGraph methods)
-		 * 			 in which the node existed in _nodes but not in any
-		 * 			 _typedNodes ??
-		 */
-		it.todo('should throw an error if we try to delete a foreign node');
-
-
 		it('should delete a node instance but still keep a non-empty set of types', () => {
-			const nodeType = 'PERSON';
 			['A', 'B'].forEach(id => graph.addNodeByID(id, {label: nodeType}));
 			expect(graph.nrNodes()).toBe(2);
 			expect(graph.nrTypedNodes(nodeType)).toBe(2);
@@ -87,13 +77,35 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should un-register a node type upon deletion of its last instance', () => {
-			const nodeType = 'PERSON';
 			graph.addNode(new $N.BaseNode("A", {label: nodeType}));
 			expect(graph.nodeTypes()).toContain(nodeType);
 			graph.deleteNode(graph.getNodeById('A'));
 			expect(graph.nrNodes()).toBe(0);
 			expect(graph.nodeTypes()).not.toContain(nodeType);
 			expect(graph.nrTypedNodes(nodeType)).toBe(null);
+		});
+
+
+		/**
+		 * @todo this should actually never happen, except in case
+		 * 			 we change the node label manually...
+		 * 			 -> make label immutable?
+		 */
+		it('should throw error if node to delete has (new) label which does not exist as node type', () => {
+			const node = new $N.BaseNode('A', {label: 'person'});
+			graph.addNode(node);
+			node.setLabel('non-person');
+			expect(() => graph.deleteNode(node)).toThrow('Node type does not exist on this TypedGraph.');
+		});
+
+
+		it('should throw error if node to delete had its label changed to another (registered) type', () => {
+			const n_a = new $N.BaseNode('A', {label: 'person'});
+			const n_b = new $N.BaseNode('B', {label: 'non-person'});
+			graph.addNode(n_a);
+			graph.addNode(n_b);
+			n_a.setLabel('non-person');
+			expect(() => graph.deleteNode(n_a)).toThrow('This particular node is nowhere to be found in its typed set.');
 		});
 
 	});
@@ -155,7 +167,60 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		it.todo('should throw error if edge has (new) label which does not exist as edge type');
+		it('should throw error if edge to delete has (new) label which does not exist as edge type', () => {
+			['A', 'B'].forEach(id => graph.addNodeByID(id, {label: nodeType}));
+			let e_1 = new $E.BaseEdge(edgeID, graph.getNodeById('A'), graph.getNodeById('B'), {label: edgeType});
+			graph.addEdge(e_1);
+			e_1.setLabel('on-the-edge');
+			expect(() => graph.deleteEdge(e_1)).toThrow('Edge type does not exist on this TypedGraph.');
+		});
+
+
+		it('should throw error if edge to delete had its label changed to another (registered) type', () => {
+			['A', 'B'].forEach(id => graph.addNodeByID(id, {label: nodeType}));
+			let e_1 = new $E.BaseEdge(edgeID, graph.getNodeById('A'), graph.getNodeById('B'), {label: edgeType});
+			let e_2 = new $E.BaseEdge(edgeID+"2", graph.getNodeById('A'), graph.getNodeById('B'), {label: 'on-the-edge'});
+			graph.addEdge(e_1);
+			graph.addEdge(e_2);
+			e_1.setLabel('on-the-edge');
+			expect(() => graph.deleteEdge(e_1)).toThrow('This particular edge is nowhere to be found in its typed set.');
+		});
+
+	});
+
+
+	describe('Stats - ', () => {
+
+		const nodeType = 'PERSON',
+			edgeType1 = 'FRIENDS_WITH',
+			edgeType2 = 'CO_AUTHORS';
+
+		it('should produce the correct graphStats', () => {
+			['A', 'B'].forEach(id => graph.addNodeByID(id, {label: nodeType}));
+			graph.addEdgeByNodeIDs('1', 'A', 'B', {label: edgeType1});
+			graph.addEdgeByNodeIDs('2', 'B', 'A', {label: edgeType2});
+			// console.log(graph.getStats());
+			expect(graph.getStats()).toEqual({
+				mode: 2,
+				nr_nodes: 2,
+				nr_und_edges: 2,
+				nr_dir_edges: 0,
+				density_dir: 0,
+				density_und: 2,
+				node_types: [GENERIC_TYPE, 'PERSON'],
+				edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
+				typed_nodes: {
+					[GENERIC_TYPE]: 0,
+					[nodeType]: 2
+				},
+				typed_edges: {
+					[GENERIC_TYPE]: 0,
+					[edgeType1]: 1,
+					[edgeType2]: 1
+				}
+			});
+
+		});
 
 	});
 
