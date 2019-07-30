@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as $C from './common';
 import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
-import { abbs } from '../../../src/io/interfaces';
+import { labelKeys } from '../../../src/io/interfaces';
 import { JSON_DATA_PATH } from '../../config/config';
 
 
@@ -178,7 +178,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				graph = json.readFromJSONFile(small_graph_no_features);
 				let nodes = graph.getNodes();
 				for (let node_idx in nodes) {
-					expect(nodes[node_idx].getFeature(abbs.coords)).toBeUndefined();
+					expect(nodes[node_idx].getFeature(labelKeys.coords)).toBeUndefined();
 				}
 			}
 		);

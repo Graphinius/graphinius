@@ -50,6 +50,10 @@ let path_3nodeUnd 										= JSON_CENT_PATH + '/' + "3nodeUnd.json",
 	path_bf_graph_neg_cycle 						= JSON_DATA_PATH + '/' + "negative_cycle.json";
 
 
+/**
+ * @todo {Bernd} Only read graphs when needed within test...
+ * => Test Isolation !!
+ */
 let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
 	graph_3nodeDir = json.readFromJSONFile(path_3nodeDir),
 	graph_3node2SPs1direct = json.readFromJSONFile(path_3node2SPs1direct),
@@ -66,10 +70,7 @@ let graph_3nodeUnd: $G.IGraph = json.readFromJSONFile(path_3nodeUnd),
 	graph_bf_graph_neg_cycle = json.readFromJSONFile(path_bf_graph_neg_cycle);
 
 
-/**
- * @TODO Rita: Only read graphs when needed within test...
- * => Test Isolation
- */
+
 describe('check correctness and runtime of betweenness centrality functions', () => {
 
 	test(

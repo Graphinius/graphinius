@@ -1,7 +1,7 @@
 import * as $G from '../../../src/core/BaseGraph';
 import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
 const degCent = new DegreeCentrality();
-import { abbs } from '../../../src/io/interfaces';
+import { labelKeys } from '../../../src/io/interfaces';
 
 		
 function checkSmallGraphStats(graph : $G.IGraph) {
@@ -112,7 +112,7 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 
 
 function checkSmallGraphCoords(graph: $G.IGraph) {
-	let a_coords = graph.getNodeById("A").getFeature(abbs.coords);
+	let a_coords = graph.getNodeById("A").getFeature(labelKeys.coords);
 	expect(typeof a_coords.x).toBe('number');
 	expect(a_coords.x).toBe(15);
 	expect(typeof a_coords.y).toBe('number');
@@ -120,7 +120,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof a_coords.z).toBe('number');
 	expect(a_coords.z).toBe(57);
 	
-	let b_coords = graph.getNodeById("B").getFeature(abbs.coords);
+	let b_coords = graph.getNodeById("B").getFeature(labelKeys.coords);
 	expect(typeof b_coords.x).toBe('number');
 	expect(b_coords.x).toBe(55);
 	expect(typeof b_coords.y).toBe('number');
@@ -128,7 +128,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof b_coords.z).toBe('number');
 	expect(b_coords.z).toBe(7);
 	
-	let c_coords = graph.getNodeById("C").getFeature(abbs.coords);
+	let c_coords = graph.getNodeById("C").getFeature(labelKeys.coords);
 	expect(typeof c_coords.x).toBe('number');
 	expect(c_coords.x).toBe(1);
 	expect(typeof c_coords.y).toBe('number');
@@ -136,7 +136,7 @@ function checkSmallGraphCoords(graph: $G.IGraph) {
 	expect(typeof c_coords.z).toBe('number');
 	expect(c_coords.z).toBe(33);
 	
-	let d_coords = graph.getNodeById("D").getFeature(abbs.coords);
+	let d_coords = graph.getNodeById("D").getFeature(labelKeys.coords);
 	expect(typeof d_coords.x).toBe('number');
 	expect(d_coords.x).toBe(17);
 	expect(typeof d_coords.y).toBe('number');

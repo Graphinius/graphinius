@@ -1,1 +1,72 @@
-{"name":"SEARCH graph for testing SSSP with Bellman-Ford","nodes":6,"dir_e":8,"und_e":0,"data":{"S":{"e":[{"t":"A","d":true,"w":10},{"t":"E","d":true,"w":8}]},"A":{"e":[{"t":"C","d":true,"w":-2}]},"B":{"e":[{"t":"A","d":true,"w":1}]},"C":{"e":[{"t":"B","d":true,"w":-2}]},"D":{"e":[{"t":"A","d":true,"w":-4},{"t":"C","d":true,"w":-1}]},"E":{"e":[{"t":"D","d":true,"w":1}]}}}
+{
+	"name": "SEARCH graph for testing SSSP with Bellman-Ford",
+	"nodes": 6,
+	"dir_e": 8,
+	"und_e": 0,
+	"data": {
+		"S": {
+			"e": [
+				{
+					"t": "A",
+					"d": 1,
+					"w": 10
+				},
+				{
+					"t": "E",
+					"d": 1,
+					"w": 8
+				}
+			]
+		},
+		"A": {
+			"e": [
+				{
+					"t": "C",
+					"d": 1,
+					"w": -2
+				}
+			]
+		},
+		"B": {
+			"e": [
+				{
+					"t": "A",
+					"d": 1,
+					"w": 1
+				}
+			]
+		},
+		"C": {
+			"e": [
+				{
+					"t": "B",
+					"d": 1,
+					"w": -2
+				}
+			]
+		},
+		"D": {
+			"e": [
+				{
+					"t": "A",
+					"d": 1,
+					"w": -4
+				},
+				{
+					"t": "C",
+					"d": 1,
+					"w": -1
+				}
+			]
+		},
+		"E": {
+			"e": [
+				{
+					"t": "D",
+					"d": 1,
+					"w": 1
+				}
+			]
+		}
+	}
+}

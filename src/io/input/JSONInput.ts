@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as $G from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
-import { abbs } from '../interfaces';
+import { labelKeys } from '../interfaces';
 
 const DEFAULT_WEIGHT: number = 1;
 
@@ -94,7 +94,7 @@ class JSONInput implements IJSONInput {
 
 		for (let node_id in json.data) {
 			let node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
-			let label = json.data[node_id][abbs.label];
+			let label = json.data[node_id][labelKeys.label];
 			if ( label ) {
 				node.setLabel(label);
 			}
@@ -105,7 +105,7 @@ class JSONInput implements IJSONInput {
 			 *
 			 * @description assignment is intentional
 			 */
-			if ( features = json.data[node_id][abbs.features] ) {
+			if ( features = json.data[node_id][labelKeys.features] ) {
 				/**
 				 * Since we are reading from an 'offline' source, we
 				 * can simply use the reference...
@@ -120,22 +120,22 @@ class JSONInput implements IJSONInput {
 			 *
 			 * @description assignment is intentional
 			 */
-			if ( coords_json = json.data[node_id][abbs.coords] ) {
+			if ( coords_json = json.data[node_id][labelKeys.coords] ) {
 				coords = {};
 				for (coord_idx in coords_json) {
 					coords[coord_idx] = +coords_json[coord_idx];
 				}
-				node.setFeature(abbs.coords, coords);
+				node.setFeature(labelKeys.coords, coords);
 			}
 
 			// Reading and instantiating edges
-			let edges = json.data[node_id][abbs.edges];
+			let edges = json.data[node_id][labelKeys.edges];
 			for (let e in edges) {
 				let edge_input = edges[e],
-					target_node_id = edge_input[abbs.e_to],
+					target_node_id = edge_input[labelKeys.e_to],
 
 					// Is there any direction information?            
-					directed = this._config.explicit_direction ? edge_input[abbs.e_dir] : this._config.directed,
+					directed = this._config.explicit_direction ? !!edge_input[labelKeys.e_dir] : this._config.directed,
 					dir_char = directed ? 'd' : 'u',
 
 					// Is there any weight information?,
@@ -150,28 +150,23 @@ class JSONInput implements IJSONInput {
 
 
 
-
+				/* --------------------------------------------------- */
+				/*							DUPLICATE EDGE HANDLING								 */
+				/* --------------------------------------------------- */
 				/**
-				 * @todo The completely same edge should only be added once...
-				 *
-				 * @comment above: thats true! however with this you are not checking
-				 * for identical edges! consider the case of undirected edges:
-				 * if two undirected edges with ids a_b_u and b_a_u exists that have
-				 * different properties (e.g. edge weights), this would lead to
-				 * ambiguous behaviour! which edge will be kept and which one rejected?
-				 * There should be another way of handeling this!
-				 * Proposed solution: dont allow this kind of input! => Throw Error!
-				 *
-				 * Rules:
-				 *
-				 * 1) duplicate edge ID is forbidden => because of Hash Map !
-				 * 2) several undirected edges between nodes are [ allowed | fobidden ] !?
+				 * The completely same edge should only be added once...
 				 */
 				if (graph.hasEdgeID(edge_id)) {
 					continue;
 				}
 
-				if ((!directed && graph.hasEdgeID(edge_id_u2))) {
+				/**
+				 * However, we allow multiple un/directed edges between same nodes
+				 * even in case of same weight, as long as they have different types
+				 *
+				 * @todo introduce edge types in .json files!
+				 */
+				if (!directed && graph.hasEdgeID(edge_id_u2)) {
 					if (this._config.weighted) {
 						let edge = graph.getEdgeById(edge_id_u2);
 						if (edge_weight != edge.getWeight()) {
@@ -185,6 +180,7 @@ class JSONInput implements IJSONInput {
 						weighted: this._config.weighted,
 						weight: edge_weight
 					});
+
 				}
 			}
 		}
@@ -198,7 +194,7 @@ class JSONInput implements IJSONInput {
 	 * @param edge_input 
 	 */
 	static handleEdgeWeights(edge_input): number {
-		switch (edge_input[abbs.e_weight]) {
+		switch (edge_input[labelKeys.e_weight]) {
 			case "undefined":
 				return DEFAULT_WEIGHT;
 			case "Infinity":
@@ -210,10 +206,9 @@ class JSONInput implements IJSONInput {
 			case "MIN":
 				return Number.MIN_VALUE;
 			default:
-				return parseFloat(edge_input[abbs.e_weight])
+				return parseFloat(edge_input[labelKeys.e_weight])
 		}
 	}
-
 }
 
 export { JSONInput }

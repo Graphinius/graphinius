@@ -1,1 +1,1 @@
-{"name":"Small graph duplicate undirected edge with different weights","nodes":2,"edges":2,"data":{"A":{"e":[{"t":"B","d":false,"w":3}]},"B":{"e":[{"t":"A","d":false,"w":7}]}}}
+{"name":"Small graph duplicate undirected edge with different weights","nodes":2,"edges":2,"data":{"A":{"e":[{"t":"B","d":0,"w":3}]},"B":{"e":[{"t":"A","d":0,"w":7}]}}}

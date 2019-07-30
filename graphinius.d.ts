@@ -900,8 +900,9 @@ declare module 'graphinius/io/interfaces' {
 	    e_to: string;
 	    e_dir: string;
 	    e_weight: string;
+	    e_label: string;
 	}
-	export const abbs: Abbreviations;
+	export const labelKeys: Abbreviations;
 
 }
 declare module 'graphinius/utils/RemoteUtils' {

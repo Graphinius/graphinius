@@ -3,7 +3,7 @@ import fs = require('fs');
 import * as $N from '../../core/BaseNode';
 import * as $E from '../../core/BaseEdge';
 import * as $G from '../../core/BaseGraph';
-import { abbs } from '../interfaces';
+import { labelKeys } from '../interfaces';
 
 
 export interface IJSONOutput {
@@ -61,42 +61,55 @@ class JSONOutput implements IJSONOutput {
 		for (let node_key in nodes) {
 			node = nodes[node_key];
 			node_struct = result.data[node.getID()] = {
-				[abbs.label]: node.getLabel(),
-				[abbs.edges]: []
+				[labelKeys.edges]: []
 			};
+			/**
+			 * only add label if not identical to ID
+			 */
+			if ( node.getID() !== node.getLabel() ) {
+				node_struct[labelKeys.label] = node.getLabel();
+			}
 
 			// UNdirected Edges
 			und_edges = node.undEdges();
 			for (let edge_key in und_edges) {
 				edge = und_edges[edge_key];
-				let connected_nodes = edge.getNodes();
+				let endPoints = edge.getNodes();
 
-				node_struct[abbs.edges].push({
-					[abbs.e_to]: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
-					[abbs.e_dir]: edge.isDirected(),
-					[abbs.e_weight]: edge.isWeighted() ? edge.getWeight() : undefined
-				});
+				let edgeStruct = {
+					[labelKeys.e_to]: endPoints.a.getID() === node.getID() ? endPoints.b.getID() : endPoints.a.getID(),
+					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
+					[labelKeys.e_weight]: edge.isWeighted() ? edge.getWeight() : undefined
+				};
+				if ( edge.getID() !== edge.getLabel() ) {
+					edgeStruct[labelKeys.e_label] = edge.getLabel();
+				}
+				node_struct[labelKeys.edges].push(edgeStruct);
 			}
 
 			// Directed Edges
 			dir_edges = node.outEdges();
 			for (let edge_key in dir_edges) {
 				edge = dir_edges[edge_key];
-				let connected_nodes = edge.getNodes();
+				let endPoints = edge.getNodes();
 
-				node_struct[abbs.edges].push({
-					[abbs.e_to]: connected_nodes.b.getID(),
-					[abbs.e_dir]: edge.isDirected(),
-					[abbs.e_weight]: JSONOutput.handleEdgeWeight(edge)
-				});
+				let edgeStruct = {
+					[labelKeys.e_to]: endPoints.b.getID(),
+					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
+					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
+				};
+				if ( edge.getID() !== edge.getLabel() ) {
+					edgeStruct[labelKeys.e_label] = edge.getLabel();
+				}
+				node_struct[labelKeys.edges].push(edgeStruct);
 			}
 
 			// Features
-			node_struct[abbs.features] = node.getFeatures();
+			node_struct[labelKeys.features] = node.getFeatures();
 
 			// Coords (shall we really?)
-			if ((coords = node.getFeature(abbs.coords)) != null) {
-				node_struct[abbs.coords] = coords;
+			if ((coords = node.getFeature(labelKeys.coords)) != null) {
+				node_struct[labelKeys.coords] = coords;
 			}
 		}
 
@@ -105,11 +118,11 @@ class JSONOutput implements IJSONOutput {
 
 
 	static handleEdgeWeight(edge: $E.IBaseEdge): string | number {
-		if (!edge.isWeighted()) {
+		if ( !edge.isWeighted() ) {
 			return undefined;
 		}
 
-		switch (edge.getWeight()) {
+		switch ( edge.getWeight() ) {
 			case Number.POSITIVE_INFINITY:
 				return 'Infinity';
 			case Number.NEGATIVE_INFINITY:
@@ -121,7 +134,6 @@ class JSONOutput implements IJSONOutput {
 			default:
 				return edge.getWeight();
 		}
-
 	}
 }
 

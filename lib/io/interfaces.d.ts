@@ -6,5 +6,6 @@ export interface Abbreviations {
     e_to: string;
     e_dir: string;
     e_weight: string;
+    e_label: string;
 }
-export declare const abbs: Abbreviations;
+export declare const labelKeys: Abbreviations;

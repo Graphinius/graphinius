@@ -147,7 +147,7 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('should take a custom evalObjID function', () => {
-      var evalObjIDFunc = (obj) => {
+      let evalObjIDFunc = (obj) => {
         return obj._id;
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, undefined, evalObjIDFunc);
@@ -166,7 +166,7 @@ describe('BINARY HEAP TESTS - ', () => {
   describe('Should take a customized eval function, depending on our needs - ', () => {
 
     it('should take a custom eval function', () => {
-      var evalFunc = (obj) => {
+      let evalFunc = (obj) => {
         return NaN;
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, evalFunc);
@@ -176,7 +176,7 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('eval function that evaluates to the second element of an array...', () => {
-      var evalFunc = (obj) => {
+      let evalFunc = (obj) => {
         if ( !Array.isArray((obj)) || obj.length < 2 ) {
           return NaN;
         }
@@ -206,7 +206,7 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('should add a valid element to the internal array', () => {
-      var old_size = binHeap.size();
+      let old_size = binHeap.size();
       binHeap.insert(1);
       expect(binHeap.size()).toEqual(old_size + 1);
     });
@@ -229,20 +229,20 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('valid object removal, this time with custom objID and evalPriority functions', () => {
-      var evalObjID = (obj) => {
+      let evalObjID = (obj) => {
         return obj.__blahoo._id;
       };
-      var evalObjPriority = (obj) => {
+      let evalObjPriority = (obj) => {
         return obj.__priority;
       };
       binHeap = new $BH.BinaryHeap(undefined, evalObjPriority, evalObjID);
-      var obj = {
+      let obj = {
         __blahoo: {
           _id: 'yihaa'
         },
         __priority: 55
       };
-      var old_size = binHeap.size();
+      let old_size = binHeap.size();
       binHeap.insert(obj);
       expect(binHeap.size()).toEqual(old_size + 1);
       expect(binHeap.remove(obj)).toEqual(obj);
@@ -256,10 +256,10 @@ describe('BINARY HEAP TESTS - ', () => {
 
 
     it('should give us the correct object if we peek into a heap', () => {
-      var evalObjID = (obj) => {
+      let evalObjID = (obj) => {
         return obj._id;
       };
-      var evalObjPriority = (obj) => {
+      let evalObjPriority = (obj) => {
         return obj._priority;
       };
       binHeap = new $BH.BinaryHeap(undefined, evalObjPriority, evalObjID);
@@ -274,7 +274,7 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('should produce correct _position maps for a small positive integer sequence', () => {
       binHeap = new $BH.BinaryHeap();
-      let controlMap = {};
+      let controlMap;
       expect( binHeap.getPositions() ).toEqual({});
       
       binHeap.insert(155);
@@ -364,7 +364,7 @@ describe('BINARY HEAP TESTS - ', () => {
       binHeap.insert(5);
       binHeap.insert(1);
       
-      logger.log("\n ##### POPPING ##### \n")
+      logger.log("\n ##### POPPING ##### \n");
       expect(binHeap.pop()).toEqual(0);
       expect(binHeap.pop()).toEqual(1);
       expect(binHeap.pop()).toEqual(5);
@@ -530,7 +530,7 @@ describe('BINARY HEAP TESTS - ', () => {
     
 
     it('tests MIN heap on a slightly larger example and floats', () => {      
-      var evalPriority = (obj:any) => {
+      let evalPriority = (obj:any) => {
         if ( typeof obj !== 'number' && typeof obj !== 'string') {
           return NaN;
         }
@@ -538,17 +538,17 @@ describe('BINARY HEAP TESTS - ', () => {
       };
       binHeap = new $BH.BinaryHeap(Mode.MIN, evalPriority);
       
-      for ( var i = 0; i < 5000; i++ ) {
+      for ( let i = 0; i < 5000; i++ ) {
         binHeap.insert((Math.random()*1000 - 500));
       }
       
-      var binArray = binHeap.getArray(),
+      let binArray = binHeap.getArray(),
           ith = 0,
           left_child_idx = 0,
           right_child_idx = 0;
-      for ( var i = 0; i < binArray.length; i++ ) {
-        ith = binArray[i],
-        left_child_idx = (i+1)*2-1,
+      for ( let i = 0; i < binArray.length; i++ ) {
+        ith = binArray[i];
+        left_child_idx = (i+1)*2-1;
         right_child_idx = (i+1)*2;
         if ( left_child_idx < binArray.length ) {
           expect(ith).toBeLessThanOrEqual(binArray[left_child_idx]);
@@ -558,10 +558,10 @@ describe('BINARY HEAP TESTS - ', () => {
         }
       }
        
-      var last = Number.NEGATIVE_INFINITY,
+      let last = Number.NEGATIVE_INFINITY,
           current,
           heap_size = binHeap.size();
-      for ( var i = 0; i < 5000; i++ ) {
+      for ( let i = 0; i < 5000; i++ ) {
         current = binHeap.pop();
         if ( typeof current !== 'undefined') {
           expect(current).toBeGreaterThanOrEqual(last);
@@ -576,17 +576,17 @@ describe('BINARY HEAP TESTS - ', () => {
 
     it('tests MAX heap on a slightly larger example', () => {
       binHeap = new $BH.BinaryHeap(Mode.MAX);
-      for ( var i = 0; i < 5000; i++ ) {
+      for ( let i = 0; i < 5000; i++ ) {
         binHeap.insert((Math.random()*1000 - 500)|0);
       }
       
-      var binArray = binHeap.getArray(),
+      let binArray = binHeap.getArray(),
           ith = 0,
           left_child_idx = 0,
           right_child_idx = 0;
-      for ( var i = 0; i < binArray.length; i++ ) {
-        ith = binArray[i],
-        left_child_idx = (i+1)*2-1,
+      for ( let i = 0; i < binArray.length; i++ ) {
+        ith = binArray[i];
+        left_child_idx = (i+1)*2-1;
         right_child_idx = (i+1)*2;
         if ( left_child_idx < binArray.length ) {
           expect(ith).toBeGreaterThanOrEqual(binArray[left_child_idx]);
@@ -596,10 +596,10 @@ describe('BINARY HEAP TESTS - ', () => {
         }
       }
       
-      var last = Number.POSITIVE_INFINITY,
+      let last = Number.POSITIVE_INFINITY,
           current,
           heap_size = binHeap.size();
-      for ( var i = 0; i < 5000; i++ ) {
+      for ( let i = 0; i < 5000; i++ ) {
         if ( typeof current !== 'undefined') {
           current = binHeap.pop();
           expect(current).toBeLessThanOrEqual(last);
@@ -615,7 +615,7 @@ describe('BINARY HEAP TESTS - ', () => {
      */
     it('should run 30000 finds in just a few milliseconds', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
-      var i = 0;
+      let i = 0;
       while ( i < 30000 ) {
         binHeap.insert( i++ );
       }      
@@ -627,7 +627,7 @@ describe('BINARY HEAP TESTS - ', () => {
     
     it('should run 30000 removes in just a few milliseconds (if the O(1) algorithm works...)', () => {
       binHeap = new $BH.BinaryHeap(Mode.MIN);
-      var i = 0;
+      let i = 0;
       while ( i < 30000 ) {
         binHeap.insert( i++ );
       }
@@ -665,7 +665,7 @@ describe('BINARY HEAP PRIVATE METHOD TESTS', () => {
   
   it('Checks that every node has at least position 0', () => {
     binHeap = new $BH.BinaryHeap();
-    var i = 0;
+    let i = 0;
     
     while ( i < 5000 ) {
       binHeap.insert( i++ );

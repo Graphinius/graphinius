@@ -4,7 +4,7 @@ import * as $E from '../../../src/core/BaseEdge';
 import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from '../../../src/io/output/JSONOutput';
-import { abbs } from '../../../src/io/interfaces';
+import { labelKeys } from '../../../src/io/interfaces';
 import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
 
 
@@ -43,9 +43,8 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_e: 0,
         data: {
           A: {
-            [abbs.label]: "A",
-            [abbs.edges]: [],
-            [abbs.features]: {}
+            [labelKeys.edges]: [],
+            [labelKeys.features]: {}
           }
         }
       };
@@ -54,7 +53,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     });
 
 
-    test('Should correctly output a graph of certain Label', () => {
+    test('Should correctly output a graph node of certain label', () => {
       let n_a = graph.addNodeByID("A");
       n_a.setLabel("Labellius");
       jsonOut = new JSONOutput();
@@ -67,14 +66,14 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_e: 0,
         data: {
           A: {
-            [abbs.label]: "Labellius",
-            [abbs.edges]: [],
-            [abbs.features]: {}
+            [labelKeys.edges]: [],
+            [labelKeys.label]: "Labellius",
+            [labelKeys.features]: {}
           }
         }
       };
       let JSONControlString = JSON.stringify( JSONControlStruct );
-      expect(resultString).toBe(JSONControlString);
+      expect(resultString).toEqual(JSONControlString);
     });
 
 
@@ -94,26 +93,24 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_e: 1,
           data: {
             A: {
-              [abbs.label]: "A",
-              [abbs.edges]: [
+              [labelKeys.edges]: [
                 {
-                  [abbs.e_to]: "B",
-                  [abbs.e_dir]: false,
-                  [abbs.e_weight]: undefined
+                  [labelKeys.e_to]: "B",
+                  [labelKeys.e_dir]: 0,
+                  [labelKeys.e_weight]: undefined
                 }
               ],
-              [abbs.features]: { }
+              [labelKeys.features]: { }
             },
             B: {
-              [abbs.label]: "B",
-              [abbs.edges]: [
+              [labelKeys.edges]: [
                 {
-                  [abbs.e_to]: "A",
-                  [abbs.e_dir]: false,
-                  [abbs.e_weight]: undefined
+                  [labelKeys.e_to]: "A",
+                  [labelKeys.e_dir]: 0,
+                  [labelKeys.e_weight]: undefined
                 }
               ],
-              [abbs.features]: { }
+              [labelKeys.features]: { }
             }
           }
         };
@@ -128,7 +125,10 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       () => {
         let n_a = graph.addNodeByID("A");
         let n_b = graph.addNodeByID("B");
-        graph.addEdgeByID("Single directed edge", n_b, n_a, {directed: true});
+        graph.addEdgeByID("Single directed edge", n_b, n_a, {
+          directed: true,
+          label: 'FRIENDS_WITH'
+        });
         jsonOut = new JSONOutput();
         resultString = jsonOut.writeToJSONString( graph );
 
@@ -139,20 +139,19 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_e: 0,
           data: {
             A: {
-              [abbs.label]: "A",
-              [abbs.edges]: [ ],
-              [abbs.features]: { }
+              [labelKeys.edges]: [ ],
+              [labelKeys.features]: { }
             },
             B: {
-              [abbs.label]: "B",
-              [abbs.edges]: [
+              [labelKeys.edges]: [
                 {
-                  [abbs.e_to]: "A",
-                  [abbs.e_dir]: true,
-                  [abbs.e_weight]: undefined
+                  [labelKeys.e_to]: "A",
+                  [labelKeys.e_dir]: 1,
+                  [labelKeys.e_weight]: undefined,
+                  [labelKeys.e_label]: 'FRIENDS_WITH'
                 }
               ],
-              [abbs.features]: { }
+              [labelKeys.features]: { }
             }
           }
         };
@@ -182,20 +181,18 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           und_e: 0,
           data: {
             A: {
-              [abbs.label]: "A",
-              [abbs.edges]: [ ],
-              [abbs.features]: { }
+              [labelKeys.edges]: [ ],
+              [labelKeys.features]: { }
             },
             B: {
-              [abbs.label]: "B",
-              [abbs.edges]: [
+              [labelKeys.edges]: [
                 {
-                  [abbs.e_to]: "A",
-                  [abbs.e_dir]: true,
-                  [abbs.e_weight]: 5
+                  [labelKeys.e_to]: "A",
+                  [labelKeys.e_dir]: 1,
+                  [labelKeys.e_weight]: 5
                 }
               ],
-              [abbs.features]: { }
+              [labelKeys.features]: { }
             }
           }
         };
@@ -208,7 +205,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     test('Should correctly output a graph of one node and its features', () => {
       let n_a = graph.addNodeByID("A");
       let features = {
-        [abbs.coords]: {
+        [labelKeys.coords]: {
           x: 1,
           y: 1,
           z: 1
@@ -225,16 +222,15 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_e: 0,
         data: {
           A: {
-            [abbs.label]: "A",
-            [abbs.edges]: [ ],
-            [abbs.features]: {
-              [abbs.coords]: {
+            [labelKeys.edges]: [ ],
+            [labelKeys.features]: {
+              [labelKeys.coords]: {
                 x: 1,
                 y: 1,
                 z: 1
               }
             },
-            [abbs.coords]: {
+            [labelKeys.coords]: {
               x: 1,
               y: 1,
               z: 1
@@ -317,20 +313,18 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         und_e: 0,
         data: {
           A: {
-            [abbs.label]: "A",
-            [abbs.edges]: [ ],
-            [abbs.features]: { }
+            [labelKeys.edges]: [ ],
+            [labelKeys.features]: { }
           },
           B: {
-            [abbs.label]: "B",
-            [abbs.edges]: [
+            [labelKeys.edges]: [
               {
-                [abbs.e_to]: "A",
-                [abbs.e_dir]: true,
-                [abbs.e_weight]: undefined
+                [labelKeys.e_to]: "A",
+                [labelKeys.e_dir]: 1,
+                [labelKeys.e_weight]: undefined
               }
             ],
-            [abbs.features]: { }
+            [labelKeys.features]: { }
           }
         }
       };
@@ -345,7 +339,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'Infinity';
+      JSONControlStruct['data']['B'][labelKeys.edges][0][labelKeys.e_weight] = 'Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -359,7 +353,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = '-Infinity';
+      JSONControlStruct['data']['B'][labelKeys.edges][0][labelKeys.e_weight] = '-Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -373,7 +367,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'MAX';
+      JSONControlStruct['data']['B'][labelKeys.edges][0][labelKeys.e_weight] = 'MAX';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -387,7 +381,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'MIN';
+      JSONControlStruct['data']['B'][labelKeys.edges][0][labelKeys.e_weight] = 'MIN';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
