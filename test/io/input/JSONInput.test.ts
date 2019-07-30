@@ -3,7 +3,7 @@ import * as $C from './common';
 import * as $G from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { abbs } from '../../../src/io/interfaces';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../../config/config';
+import { JSON_DATA_PATH } from '../../config/config';
 
 
 

@@ -5,7 +5,7 @@ import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Deg
 import { DFS } from '../../src/search/DFS';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 
 import { Logger } from '../../src/utils/Logger'
 const logger = new Logger();
@@ -22,11 +22,6 @@ let sn_config: ICSVInConfig = {
 	direction_mode: false
 };
 
-// let json_in_config: IJSONInConfig = {
-// 	explicit_direction: false,
-// 	directed: false,
-// 	weighted: true
-// };
 
 const small_graph_file 								= `${JSON_DATA_PATH}/small_graph.json`,
 			real_graph_file 								= `${JSON_DATA_PATH}/real_graph.json`,
@@ -950,7 +945,7 @@ describe('GRAPH TESTS: ', () => {
 
 
 	describe('Clearing ALL (un)directed edges from a graph', () => {
-		let test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv";
+		let test_graph_file = `${CSV_DATA_PATH}/small_graph_adj_list_def_sep.csv`;
 
 		test('should delete all directed edges from a graph', () => {
 			graph = csv.readFromAdjacencyListFile(test_graph_file);
@@ -1116,7 +1111,7 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should successfully clone a part of a social network', () => {
 			json_in = new JSONInput({explicit_direction: false, directed: false, weighted: true});
-			graph = csv_sn.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
+			graph = csv_sn.readFromEdgeListFile(`${CSV_SN_PATH}/social_network_edges_1K.csv`);
 
 			clone_graph = graph.cloneSubGraphStructure(graph.getNodeById("1374"), 300);
 
@@ -1266,7 +1261,7 @@ describe('GRAPH TESTS: ', () => {
 				'should measure the time it takes to create the adj.list.dict for a 1034 node graph',
 				() => {
 
-					graph = csv_in_custom.readFromEdgeListFile("./test/test_data/social_network_edges_1K.csv");
+					graph = csv_in_custom.readFromEdgeListFile(`${CSV_SN_PATH}/social_network_edges_1K.csv`);
 					expect(graph.nrNodes()).toBe(1034);
 					expect(graph.nrDirEdges()).toBe(53498);
 
@@ -1286,7 +1281,7 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 
-			let sn_300_graph_file = './test/test_data/social_network_edges_300.csv', graph: $G.IGraph,
+			let sn_300_graph_file = `${CSV_SN_PATH}/social_network_edges_300.csv`, graph: $G.IGraph,
 				adj_list: $G.MinAdjacencyListArray,
 				sn_300_graph: $G.IGraph,
 				expected_result: $G.MinAdjacencyListArray,
@@ -1369,7 +1364,7 @@ describe('GRAPH TESTS: ', () => {
 		describe('Next array generation for FW etc.', () => {
 
 			let search_graph_file = `${JSON_DATA_PATH}/search_graph_multiple_SPs_positive.json`,
-				sn_300_graph_file = './test/test_data/social_network_edges_300.csv',
+				sn_300_graph_file = `${CSV_SN_PATH}/social_network_edges_300.csv`,
 				graph: $G.IGraph,
 				sn_300_graph: $G.IGraph,
 				// TODO invent better name for next/adj_list

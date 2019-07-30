@@ -2,7 +2,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $CC from '../../src/centralities/Closeness';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import {CSV_CENT_PATH, CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 
 
 let csv_in_config: ICSVInConfig = {
@@ -21,8 +21,8 @@ let json_in_config: IJSONInConfig = {
 
 let csv = new CSVInput(csv_in_config),
 	json = new JSONInput(json_in_config),
-	sn_graph_file_1K 		= `${CSV_DATA_PATH}/social_network_edges_1K.csv`,
-	sn_graph_file_300 	= `${CSV_DATA_PATH}/social_network_edges_300.csv`,
+	sn_graph_file_1K 		= `${CSV_SN_PATH}/social_network_edges_1K.csv`,
+	sn_graph_file_300 	= `${CSV_SN_PATH}/social_network_edges_300.csv`,
 	und_unw_graph 			= `${CSV_DATA_PATH}/undirected_unweighted_6nodes.csv`,
 	deg_cent_graph 			= `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
 	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
@@ -114,9 +114,9 @@ describe("Closeness Centrality Tests", () => {
 	 */
 	test('should return the same centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
 			let CCFW = new $CC.ClosenessCentrality();
-			let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
-			let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
-			let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
+			let graph_2 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_2.csv`);
+			let graph_3 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_3.csv`);
+			let graph_6 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_6.csv`);
 			checkScoresEqual(graph_2, CC.getCentralityMap(graph_2));
 			checkScoresEqual(graph_3, CC.getCentralityMap(graph_3));
 			checkScoresEqual(graph_6, CC.getCentralityMap(graph_6));

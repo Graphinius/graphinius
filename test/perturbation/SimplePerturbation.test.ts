@@ -79,7 +79,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
       
       test('should reject a node degree greater than the amount of nodes', () => {
         let nr_nodes_to_be_added = Math.floor(Math.random()*REAL_GRAPH_NR_NODES);
-        let one_too_many = REAL_GRAPH_NR_NODES + nr_nodes_to_be_added + 1
+        let one_too_many = REAL_GRAPH_NR_NODES + nr_nodes_to_be_added + 1;
         deg_config = { und_degree: one_too_many };
         
         expect(perturber.randomlyAddNodesAmount.bind(perturber, nr_nodes_to_be_added, deg_config)).toThrowError("Maximum degree exceeds number of reachable nodes.");
@@ -580,7 +580,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 	 * PLUS - how to test for runtime ???
 	 */
 	describe('Randomly generate edges in an existing graph (create a random graph)', () => {
-		var test_graph_file = "./test/test_data/small_graph_adj_list_def_sep.csv",
+		let test_graph_file = `${CSV_DATA_PATH}/small_graph_adj_list_def_sep.csv`,
 				probability : number,
 				min	: number,
 				max : number,
@@ -591,7 +591,7 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
     beforeEach(() => {
-				graph = csv.readFromAdjacencyListFile(test_graph_file),
+				graph = csv.readFromAdjacencyListFile(test_graph_file);
         perturber = new SimplePerturber( graph );
     });
 				

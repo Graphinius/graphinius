@@ -4,7 +4,7 @@ import * as $PRGauss from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/Logger';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import { CSV_DATA_PATH, CSV_CENT_PATH, CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
 
 
 const logger = new Logger();
@@ -30,9 +30,9 @@ let csv = new CSVInput(std_csv_in_config),
 	deg_cent_graph 	= `search_graph_pfs_extended.json`,
 	sn_300_file 		= `social_network_edges_300.csv`,
 	sn_1K_file 			= `social_network_edges_1K.csv`,
-	graph_unweighted_undirected = `network_undirected_unweighted.csv`,
+	graph_uw_ud			= `network_undirected_unweighted.csv`,
 	graph: $G.IGraph = json.readFromJSONFile(JSON_DATA_PATH + '/' + deg_cent_graph),
-	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_unweighted_undirected),
+	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_uw_ud),
 	PrGauss = new $PRGauss.pageRankDetCentrality();
 
 
@@ -50,14 +50,15 @@ describe("PageRank Gauss Tests", () => {
 		]);
 	});
 
+
 	/**
 	 * What is this supposed to be doing !? Check Gauss against pre-calculated results !?
 	 * same === correct !?
 	 */
 	test('should return the correct centrality score for each node. Tested on graphs with 2, 3 and 6 nodes respectively.', () => {
-		let graph_2 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_2.csv");
-		let graph_3 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_3.csv");
-		let graph_6 = csv.readFromEdgeListFile("./test/test_data/centralities_equal_score_6.csv");
+		let graph_2 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_2.csv`);
+		let graph_3 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_3.csv`);
+		let graph_6 = csv.readFromEdgeListFile(`${CSV_CENT_PATH}/centralities_equal_score_6.csv`);
 		checkRankPrecision(graph_2, PrGauss.getCentralityMap(graph_2));
 		checkRankPrecision(graph_3, PrGauss.getCentralityMap(graph_3));
 		checkRankPrecision(graph_6, PrGauss.getCentralityMap(graph_6));
@@ -77,11 +78,11 @@ describe("PageRank Gauss Tests", () => {
 
 		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
 			test('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_file);
+				let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + graph_file);
 				let tic = +new Date;
 				let pr = PrGauss.getCentralityMap(sn_graph);
 				let toc = +new Date;
-				logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`)
+				logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`);
 				expect(Array.isArray(pr)).toBeTruthy;
 			});
 

@@ -5,7 +5,15 @@ import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import {JSONOutput} from '../../src/io/output/JSONOutput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {PRArrayDS, Pagerank} from '../../src/centralities/Pagerank';
-import {CSV_DATA_PATH, JSON_DATA_PATH, MAIN_CENT_PATH, JSON_CENT_PATH, JSON_REC_PATH} from '../config/config';
+import {
+	CSV_DATA_PATH,
+	JSON_DATA_PATH,
+	MAIN_CENT_PATH,
+	JSON_CENT_PATH,
+	JSON_REC_PATH,
+	CSV_EGO_PATH,
+	CSV_SN_PATH
+} from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
 
@@ -403,7 +411,7 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo - figure out why they don't converge to the *exact* same solution...
 	 */
 	test('default & random INIT on 333 node graph should give similar results, but in a different number of iterations', () => {
-		let sn_graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + sn_300_file);
+		let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + sn_300_file);
 		let results = {
 			default_init: {},
 			random_init: {}
@@ -432,7 +440,7 @@ describe("PageRank Centrality Tests", () => {
 	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
 		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
 			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_file);
+				let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + graph_file);
 				let PR = new Pagerank(sn_graph, {
 					epsilon: 1e-6, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
 					normalize: true
@@ -479,11 +487,10 @@ describe("PageRank Centrality Tests", () => {
 	 * EGOS !!!
 	 */
 	describe('Page Rank Random Walk on ego graphs + comparison to networkx - ', () => {
-		const ego_files_dir = './test/test_data/ego_networks/';
-		fs.readdirSync(ego_files_dir).forEach(graph_file => {
+		fs.readdirSync(CSV_EGO_PATH).forEach(graph_file => {
 
 			test('should calculate the PR via Random Walk for EGO graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(ego_files_dir + graph_file);
+				let sn_graph = csv.readFromEdgeListFile(CSV_EGO_PATH + '/' + graph_file);
 				let PR = new Pagerank(sn_graph, {
 					epsilon: 1e-15,
 					normalize: true

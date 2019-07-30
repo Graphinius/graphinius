@@ -3,7 +3,7 @@ import * as $G from '../../src/core/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import * as $PFS from '../../src/search/PFS';
-import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
+import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 
 
 import {Logger} from '../../src/utils/Logger';
@@ -687,11 +687,9 @@ describe('PFS TESTS on REAL sized graph - ', () => {
 
   const csv = new CSVInput({separator: ' '});
 
-  const SN_PATH_PREFIX = './test/test_data';
-
-  let sn_300_file = `${SN_PATH_PREFIX}/social_network_edges_300.csv`,
-	    sn_1K_file = `${SN_PATH_PREFIX}/social_network_edges_1K.csv`,
-	    sn_20K_file = `${SN_PATH_PREFIX}/social_network_edges_20K.csv`;
+  let sn_300_file = `${CSV_SN_PATH}/social_network_edges_300.csv`,
+	    sn_1K_file = `${CSV_SN_PATH}/social_network_edges_1K.csv`,
+	    sn_20K_file = `${CSV_SN_PATH}/social_network_edges_20K.csv`;
   
   let sn_300_graph = csv.readFromEdgeListFile(sn_300_file),
       sn_1K_graph = csv.readFromEdgeListFile(sn_1K_file),

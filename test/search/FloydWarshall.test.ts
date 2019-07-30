@@ -1,13 +1,14 @@
 import * as $G from '../../src/core/BaseGraph';
 import * as $FW from '../../src/search/FloydWarshall';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
+import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
+import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 
-import { Logger } from '../../src/utils/Logger';
+import {Logger} from '../../src/utils/Logger';
+
 const logger = new Logger();
 
-let social_graph = `${CSV_DATA_PATH}/social_network_edges_1K.csv`;
+let social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;
 let search_graph = `${JSON_DATA_PATH}/search_graph_multiple_SPs.json`;
 let bernd_graph = `${JSON_DATA_PATH}/bernd_ares_pos.json`;
 let intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`;
@@ -39,7 +40,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		stats: $G.GraphStats,
 		FW_res: {};
 
-	
+
 	beforeAll(() => {
 		json = new JSONInput(std_json_in_config);
 		csv = new CSVInput(csv_config);
@@ -103,14 +104,14 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 				() => {
 					FW_res = $FW.FloydWarshallDict(graph_search);
 					const expected_result =
-					{
-						A: { B: 3, C: 4, D: 1, F: 4, E: 2 },
-						B: { F: 1, C: 1, A: 2, E: 2, D: 3 },
-						C: { E: 1, A: 1, B: 4, D: 2, F: 5 },
-						D: { C: 6, E: 1, A: 7, B: 6, F: 7 },
-						F: { E: 4, C: 3, A: 4, B: 7, D: 5 },
-						E: { B: 5, D: 1, A: 7, C: 6, F: 6 }
-					};
+						{
+							A: {B: 3, C: 4, D: 1, F: 4, E: 2},
+							B: {F: 1, C: 1, A: 2, E: 2, D: 3},
+							C: {E: 1, A: 1, B: 4, D: 2, F: 5},
+							D: {C: 6, E: 1, A: 7, B: 6, F: 7},
+							F: {E: 4, C: 3, A: 4, B: 7, D: 5},
+							E: {B: 5, D: 1, A: 7, C: 6, F: 6}
+						};
 
 					expect(FW_res).toEqual(expected_result);
 				}

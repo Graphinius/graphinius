@@ -4,7 +4,7 @@ import {Brandes, BrandesHeapEntry} from '../../src/centralities/Brandes';
 import {betweennessCentrality} from '../../src/centralities/Betweenness';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_CENT_PATH } from '../config/config';
+import { CSV_SN_PATH, JSON_DATA_PATH, JSON_CENT_PATH } from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
 
@@ -277,7 +277,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			test(`Runtime of Brandes (UNweighted) on graph ${graph_name}:`, () => {
 				csv_config.direction_mode = true;
 				let csv = new CSVInput(csv_config);
-				let graph_path = CSV_DATA_PATH + '/' + graph_name + ".csv",
+				let graph_path = CSV_SN_PATH + '/' + graph_name + ".csv",
 					graph = csv.readFromEdgeListFile(graph_path),
 					brandes = new Brandes(graph);
 
@@ -302,7 +302,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 			test(`Runtime of Brandes (Weighted) on graph ${graph_name}:`, () => {
 				csv_config.weighted = true;
 				let csv = new CSVInput(csv_config);
-				let graph_path = CSV_DATA_PATH + '/' + graph_name + ".csv",
+				let graph_path = CSV_SN_PATH + '/' + graph_name + ".csv",
 					graph = csv.readFromEdgeListFile(graph_path),
 					brandes = new Brandes(graph);
 

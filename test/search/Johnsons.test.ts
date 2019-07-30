@@ -5,7 +5,7 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import { JSONInput } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
+import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
 const logger = new Logger();
@@ -29,7 +29,7 @@ describe('Johnsons APSP TEST -', () => {
 
     let bf_graph_neg_cycle_file = `${JSON_DATA_PATH}/negative_cycle.json`,
         intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`,
-        social_graph = `${CSV_DATA_PATH}/social_network_edges_1K.csv`;
+        social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;
 
     let graph_NC: $G.IGraph,
         graph_midsize: $G.IGraph,
