@@ -1,20 +1,23 @@
 import * as fs from 'fs';
 import * as $C from './common';
-import * as $G from '../../../src/core/BaseGraph';
+import { BaseGraph, IGraph, GraphStats, GraphMode } from '../../../src/core/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+import { JSONOutput } from "../../../src/io/output/JSONOutput";
 import { labelKeys } from '../../../src/io/interfaces';
 import { JSON_DATA_PATH } from '../../config/config';
 
+import { Logger } from '../../../src/utils/Logger';
+const logger = new Logger();
 
 
 let REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
-	small_graph 								= `${JSON_DATA_PATH}/small_graph.json`,
-	small_graph_2N_flawed 			= `${JSON_DATA_PATH}/small_graph_2N_flawed.json`,
-	small_graph_no_features 		= `${JSON_DATA_PATH}/small_graph_no_features.json`,
-	small_graph_weights_crap 		= `${JSON_DATA_PATH}/small_graph_weights_crap.json`,
-	real_graph 									= `${JSON_DATA_PATH}/real_graph.json`,
-	extreme_weights_graph 			= `${JSON_DATA_PATH}/extreme_weights_graph.json`;
+	small_graph = `${JSON_DATA_PATH}/small_graph.json`,
+	small_graph_2N_flawed = `${JSON_DATA_PATH}/small_graph_2N_flawed.json`,
+	small_graph_no_features = `${JSON_DATA_PATH}/small_graph_no_features.json`,
+	small_graph_weights_crap = `${JSON_DATA_PATH}/small_graph_weights_crap.json`,
+	real_graph = `${JSON_DATA_PATH}/real_graph.json`,
+	extreme_weights_graph = `${JSON_DATA_PATH}/extreme_weights_graph.json`;
 
 const DEFAULT_WEIGHT: number = 1;
 
@@ -28,8 +31,8 @@ const std_json_input_config: IJSONInConfig = {
 describe('GRAPH JSON INPUT TESTS', () => {
 
 	let json: JSONInput,
-		graph: $G.IGraph,
-		stats: $G.GraphStats;
+		graph: IGraph,
+		stats: GraphStats;
 
 	describe('Basic instantiation tests - ', () => {
 
@@ -101,7 +104,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).toBe(0);
 				expect(stats.nr_und_edges).toBe(REAL_GRAPH_NR_EDGES);
-				expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+				expect(stats.mode).toBe(GraphMode.UNDIRECTED);
 			}
 		);
 
@@ -121,7 +124,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).toBe(REAL_GRAPH_NR_EDGES);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+				expect(stats.mode).toBe(GraphMode.DIRECTED);
 			}
 		);
 
@@ -187,10 +190,10 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 
 	/**
-   * Test for features - take the 'small_graph.json'
-   * which contains some feature vectors and check for their
-   * exact values upon instantiation (cloning?)
-   */
+	 * Test for features - take the 'small_graph.json'
+	 * which contains some feature vectors and check for their
+	 * exact values upon instantiation (cloning?)
+	 */
 	describe('Node features - ', () => {
 
 		test(
@@ -214,10 +217,88 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				graph = json.readFromJSONFile(small_graph_no_features);
 				let nodes = graph.getNodes();
 				for (let node_idx in nodes) {
-					expect( Object.keys( nodes[node_idx].getFeatures() ).length ).toBe(0);
+					expect(Object.keys(nodes[node_idx].getFeatures()).length).toBe(0);
 				}
 			}
 		);
+
+	});
+
+
+	/**
+	 * @todo think about how to handle DEFAULT_WEIGHT in this scenario...
+	 */
+	describe('Edge labels (types) - ', () => {
+		const graphFile = `./test/test_data/output/edgeLabelGraph.json`;
+		/**
+		 * This is the ID that will be automatically assigned by JSONInput
+		 *
+		 * @todo make consistent!
+		 */
+		const edgeID = `A_B_u`;
+		const secondID = `B_A_u`;
+		const edgeLabel = `FRIENDS_WITH`;
+		const jsonOut = new JSONOutput();
+		const jsonIn = new JSONInput();
+		let n_a, n_b;
+
+		beforeEach(() => {
+			graph = new BaseGraph("Edgus Labellius");
+			n_a = graph.addNodeByID("A");
+			n_b = graph.addNodeByID("B");
+		});
+
+
+		it('should retrieve correct edge label', () => {
+			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel	});
+			jsonOut.writeToJSONFile(graphFile, graph);
+			const inGraph = jsonIn.readFromJSONFile(graphFile);
+			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
+		});
+
+
+		it( 'should reject duplicate UNdirected edges of same label and unspecified weight', () => {
+			const secondID = edgeID + "2";
+			graph.addEdgeByID(secondID, n_b, n_a, {
+				label: edgeLabel
+			});
+			jsonOut.writeToJSONFile(graphFile, graph);
+			const inGraph = jsonIn.readFromJSONFile(graphFile);
+			// logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
+			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
+			/**
+			 * @todo check for correct error message
+			 */
+			expect(() => inGraph.getEdgeById(secondID)).toThrow();
+		});
+
+
+		it( 'should reject duplicate UNdirected edges of same label and weight', () => {
+			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
+			graph.addEdgeByID(secondID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
+			jsonOut.writeToJSONFile(graphFile, graph);
+			jsonIn._config.weighted = true;
+			const inGraph = jsonIn.readFromJSONFile(graphFile);
+			// logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
+			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
+			/**
+			 * @todo check for correct error message
+			 */
+			expect(() => inGraph.getEdgeById(secondID)).toThrow();
+		});
+
+
+		it.skip( 'should accept duplicate UNdirected edges of different label and same weight', () => {
+			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
+			const secondLabel = edgeLabel + "2";
+			graph.addEdgeByID(secondID, n_b, n_a, { label: secondLabel, weighted: true, weight: 42	});
+			jsonOut.writeToJSONFile(graphFile, graph);
+			jsonIn._config.weighted = true;
+			const inGraph = jsonIn.readFromJSONFile(graphFile);
+			logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
+			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
+			expect(inGraph.getEdgeById(secondID).getLabel()).toBe(secondLabel);
+		});
 
 	});
 
@@ -321,18 +402,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 				expect(graph.getEdgeById("A_E_d").getWeight()).toBe(Number.MIN_VALUE);
 			});
 
-		});
-
-	});
-
-
-	describe('FLAWED graphs - ', () => {
-
-		test('should throw an Error if the JSON file contains duplicate undirected edges with different weights', () => {
-			json = new JSONInput({explicit_direction: false, directed: false, weighted: true});
-			let flawed_graph_duplicate_und_edge_diff_weights = JSON.parse(fs.readFileSync(small_graph_2N_flawed).toString());
-			expect( json.readFromJSON.bind(json, flawed_graph_duplicate_und_edge_diff_weights) )
-				.toThrow('Input JSON flawed! Found duplicate edge with different weights!');				
 		});
 
 	});

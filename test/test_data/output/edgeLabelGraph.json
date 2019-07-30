@@ -1,0 +1,1 @@
+{"name":"Edgus Labellius","nodes":2,"dir_e":0,"und_e":2,"data":{"A":{"e":[{"t":"B","d":0,"w":42,"l":"FRIENDS_WITH"},{"t":"B","d":0,"w":42,"l":"FRIENDS_WITH"}],"f":{}},"B":{"e":[{"t":"A","d":0,"w":42,"l":"FRIENDS_WITH"},{"t":"A","d":0,"w":42,"l":"FRIENDS_WITH"}],"f":{}}}}

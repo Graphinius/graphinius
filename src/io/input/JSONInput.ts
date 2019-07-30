@@ -1,7 +1,11 @@
 import * as fs from 'fs';
+import { IBaseEdge } from '../../core/BaseEdge';
 import * as $G from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { labelKeys } from '../interfaces';
+
+import { Logger } from '../../utils/Logger';
+const logger = new Logger();
 
 const DEFAULT_WEIGHT: number = 1;
 
@@ -132,6 +136,7 @@ class JSONInput implements IJSONInput {
 			let edges = json.data[node_id][labelKeys.edges];
 			for (let e in edges) {
 				let edge_input = edges[e],
+					edge_label = edge_input[labelKeys.e_label],
 					target_node_id = edge_input[labelKeys.e_to],
 
 					// Is there any direction information?            
@@ -164,23 +169,31 @@ class JSONInput implements IJSONInput {
 				 * However, we allow multiple un/directed edges between same nodes
 				 * even in case of same weight, as long as they have different types
 				 *
-				 * @todo introduce edge types in .json files!
+				 * @todo carefully re-design after drawing a proper decision tree
+				 * @todo also re-design BaseGraph & BaseNode classes if necessary
 				 */
-				if (!directed && graph.hasEdgeID(edge_id_u2)) {
-					if (this._config.weighted) {
-						let edge = graph.getEdgeById(edge_id_u2);
-						if (edge_weight != edge.getWeight()) {
-							throw new Error('Input JSON flawed! Found duplicate edge with different weights!');
+				let edge2 : IBaseEdge = null;
+				// let distinctLabel = null;
+				if ( graph.hasEdgeID(edge_id_u2) ) {
+					edge2 = graph.getEdgeById(edge_id_u2);
+					// distinctLabel = edge2.getID() !== edge2.getLabel();
+				}
+				if ( !directed && edge2 ) {
+					if ( this._config.weighted ) {
+						if ( edge_weight != edge2.getWeight() ) {
+							throw new Error('Input JSON flawed! Found duplicate UNdirected edge of different weights!');
 						}
 					}
 				}
 				else {
-					graph.addEdgeByID(edge_id, node, target_node, {
+					const edge = graph.addEdgeByID(edge_id, node, target_node, {
 						directed: directed,
 						weighted: this._config.weighted,
 						weight: edge_weight
 					});
-
+					if ( edge_label ) {
+						edge.setLabel(edge_label);
+					}
 				}
 			}
 		}

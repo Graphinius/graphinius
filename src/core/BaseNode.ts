@@ -155,27 +155,29 @@ class BaseNode implements IBaseNode {
 		if ( nodes.a !== this && nodes.b !== this ) {
 			throw new Error("Cannot add edge that does not connect to this node");
 		}
-		var edge_id = edge.getID();
+		var edgeID = edge.getID();
 		
 		// Is it an undirected or directed edge?
 		if ( edge.isDirected() ) {
 			// is it outgoing or incoming?
-			if ( nodes.a === this && !this._out_edges[edge_id]) {				
-				this._out_edges[edge_id] = edge;
+			if ( nodes.a === this && !this._out_edges[edgeID]) {
+				this._out_edges[edgeID] = edge;
 				this._out_degree += 1;
-				// Is the edge also connecting to ourselves -> loop ?
-				if ( nodes.b === this && !this._in_edges[edge_id]) {				
-					this._in_edges[edge.getID()] = edge;
+				// Is the edge also connecting to ourselves -> SELF_LOOP ?
+				if ( nodes.b === this && !this._in_edges[edgeID]) {
+					this._in_edges[edgeID] = edge;
 					this._in_degree += 1;
 				}
 			}
-			else if ( !this._in_edges[edge_id] ) { // nodes.b === this
-				this._in_edges[edge.getID()] = edge;
+			// Can't be a SELF_LOOP anymore
+			else if ( !this._in_edges[edgeID] ) { // nodes.b === this
+				this._in_edges[edgeID] = edge;
 				this._in_degree += 1;
 			}
 		}
+		// UNdirected
 		else {
-			// Is the edge also connecting to ourselves -> loop
+			// Is the edge also connecting to ourselves -> SELF_LOOP
 			if (this._und_edges[ edge.getID() ]) {
 				throw new Error("Cannot add same undirected edge multiple times.");
 			}

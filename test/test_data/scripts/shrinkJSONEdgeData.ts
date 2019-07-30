@@ -2,7 +2,7 @@
  * Transforms old-style .json property keys (spelled-out words) to 1-digit keys
  * Also replaces earlier boolean value for edge->directed? with 0/1
  *
- * HANDLE WITH CARE !!! This script has only manually been tested at 5 a.m. ;-)
+ * HANDLE WITH CARE !!! This script has only been tested manually at 5 a.m. ;-)
  */
 
 import * as fs from 'fs';
