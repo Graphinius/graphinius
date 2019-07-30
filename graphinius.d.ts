@@ -950,7 +950,7 @@ declare module 'graphinius/io/input/CSVInput' {
 
 }
 declare module 'graphinius/io/input/JSONInput' {
-	import * as $G from 'graphinius/core/BaseGraph';
+	import { IGraph } from 'graphinius/core/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
 	export interface JSONEdge {
 	    to: string;
@@ -983,15 +983,15 @@ declare module 'graphinius/io/input/JSONInput' {
 	}
 	export interface IJSONInput {
 	    _config: IJSONInConfig;
-	    readFromJSONFile(file: string): $G.IGraph;
-	    readFromJSON(json: {}): $G.IGraph;
-	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
+	    readFromJSONFile(file: string, graph?: IGraph): IGraph;
+	    readFromJSON(json: {}, graph?: IGraph): IGraph;
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
 	} class JSONInput implements IJSONInput {
 	    _config: IJSONInConfig;
 	    constructor(config?: IJSONInConfig);
-	    readFromJSONFile(filepath: string): $G.IGraph;
-	    readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
-	    readFromJSON(json: JSONGraph): $G.IGraph;
+	    readFromJSONFile(filepath: string, graph?: IGraph): IGraph;
+	    readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
+	    readFromJSON(json: JSONGraph, graph?: IGraph): IGraph;
 	    static handleEdgeWeights(edge_input: any): number;
 	}
 	export { JSONInput };

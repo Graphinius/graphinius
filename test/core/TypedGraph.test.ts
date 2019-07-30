@@ -3,6 +3,9 @@ import * as $E from '../../src/core/BaseEdge';
 import * as $G from '../../src/core/BaseGraph';
 import { TypedGraph, GENERIC_TYPE } from '../../src/core/TypedGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { JSON_REC_PATH } from '../config/config';
+
+
 import { Logger } from '../../src/utils/Logger'
 const logger = new Logger();
 
@@ -186,6 +189,11 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(() => graph.deleteEdge(e_1)).toThrow('This particular edge is nowhere to be found in its typed set.');
 		});
 
+
+		it.todo('SET node label tests');
+
+		it.todo('SET edge label tests');
+
 	});
 
 
@@ -223,7 +231,43 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		// it('should read in ')
+		/**
+		 * @todo TypeError: node.getLabel(...).toUpperCase is not a function
+		 * 			 -> see `split procedure` todo @ JSONInput->readFromJSON()
+		 */
+		it.skip('should read beerGraph from neo4j example and give the correct stats', () => {
+			const controlStats = {
+				"mode": 1,
+				"nr_nodes": 577,
+				"nr_und_edges": 0,
+				"nr_dir_edges": 870,
+				"density_dir": 0.0026177065280184866,
+				"density_und": 0,
+				"node_types": ["GENERIC", "BREWERY", "CATEGORY", "STYLE", "CITY", "STATE"],
+				"edge_types": ["GENERIC", "BREWED_AT", "BEER_CATEGORY", "BEER_STYLE", "LOC_CITY", "LOC_STATE", "LOC_COUNTRY"],
+				"typed_nodes": {
+					"GENERIC": 402,
+					"BREWERY": 45,
+					"CATEGORY": 8,
+					"STYLE": 49,
+					"CITY": 47,
+					"STATE": 26},
+				"typed_edges": {
+					"GENERIC": 0,
+					"BREWED_AT": 292,
+					"BEER_CATEGORY": 231,
+					"BEER_STYLE": 231,
+					"LOC_CITY": 49,
+					"LOC_STATE": 41,
+					"LOC_COUNTRY": 26
+				}
+			};
+
+			const graphFile = JSON_REC_PATH + '/beerGraph.json';
+			graph = new JSONInput().readFromJSONFile(graphFile, graph) as TypedGraph;
+
+			logger.log(JSON.stringify(graph.getStats()));
+		});
 
 	});
 

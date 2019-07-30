@@ -1,6 +1,6 @@
-import { IBaseNode } from './BaseNode';
-import { IBaseEdge } from './BaseEdge';
-import { BaseGraph, GraphMode, GraphStats } from './BaseGraph';
+import {IBaseNode} from './BaseNode';
+import {IBaseEdge} from './BaseEdge';
+import {BaseGraph, GraphMode, GraphStats} from './BaseGraph';
 
 export const GENERIC_TYPE = "GENERIC";
 
@@ -10,8 +10,8 @@ export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
 export interface TypedGraphStats extends GraphStats {
 	node_types: string[];
 	edge_types: string[];
-	typed_nodes: {[key: string]: number};
-	typed_edges: {[key: string]: number};
+	typed_nodes: { [key: string]: number };
+	typed_edges: { [key: string]: number };
 }
 
 
@@ -28,9 +28,9 @@ export interface TypedGraphStats extends GraphStats {
  * @solution for now, leave the type / direction combination to the
  * programmer & just assume internal consistency
  * @todo how to handle traversal when direction given goes against
- * 			 direction information in the edge object ?
+ *       direction information in the edge object ?
  * @todo just don't specify direction in traversal / expand and only
- * 			 follow the direction specified in edge !?
+ *       follow the direction specified in edge !?
  * @todo in the last case, how to handle undirected edges ?
  * @todo allow 'GENERIC' edge types ?
  */
@@ -42,8 +42,8 @@ export class TypedGraph extends BaseGraph {
 	 * up to a few dozen different types, which are quickly obtained
 	 * via Object.keys()
 	 */
-	protected _typedNodes : TypedNodes = new Map();
-	protected _typedEdges : TypedEdges = new Map();
+	protected _typedNodes: TypedNodes = new Map();
+	protected _typedEdges: TypedEdges = new Map();
 
 
 	constructor(public _label) {
@@ -53,47 +53,46 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	nodeTypes() : string[] {
+	nodeTypes(): string[] {
 		return Array.from(this._typedNodes.keys());
 	}
 
 
-	edgeTypes() : string[] {
+	edgeTypes(): string[] {
 		return Array.from(this._typedEdges.keys());
 	}
 
 
-	nrTypedNodes(type: string) : number | null {
+	nrTypedNodes(type: string): number | null {
 		type = type.toUpperCase();
 		return this._typedNodes.get(type) ? this._typedNodes.get(type).size : null;
 	}
 
 
-	nrTypedEdges(type: string) : number | null {
+	nrTypedEdges(type: string): number | null {
 		type = type.toUpperCase();
 		return this._typedEdges.get(type) ? this._typedEdges.get(type).size : null;
 	}
 
 
-	addNode(node: IBaseNode) : boolean {
-		if ( !super.addNode(node) ) {
+	addNode(node: IBaseNode): boolean {
+		if (!super.addNode(node)) {
 			return false;
 		}
 
 		const id = node.getID(),
-					label = node.getLabel().toUpperCase();
+			label = node.getLabel().toUpperCase();
 
 		/**
 		 *  Untyped nodes will be treated as `generic` type
 		 *
 		 *  @todo make sure node IDs don't match labels
-		 *  			if you don't want that behavior
+		 *        if you don't want that behavior
 		 */
-		if ( id === label ) {
+		if (id === label) {
 			this._typedNodes.get(GENERIC_TYPE).set(id, node);
-		}
-		else {
-			if ( !this._typedNodes.get(label) ) {
+		} else {
+			if (!this._typedNodes.get(label)) {
 				this._typedNodes.set(label, new Map());
 			}
 			this._typedNodes.get(label).set(id, node);
@@ -104,17 +103,17 @@ export class TypedGraph extends BaseGraph {
 
 	deleteNode(node: IBaseNode): void {
 		const id = node.getID(),
-					label = node.getLabel() === id ? GENERIC_TYPE : node.getLabel().toUpperCase();
+			label = node.getLabel() === id ? GENERIC_TYPE : node.getLabel().toUpperCase();
 
-		if ( !this._typedNodes.get(label) ) {
+		if (!this._typedNodes.get(label)) {
 			throw Error('Node type does not exist on this TypedGraph.');
 		}
 		const removeNode = this._typedNodes.get(label).get(id);
-		if ( !removeNode ) {
+		if (!removeNode) {
 			throw Error('This particular node is nowhere to be found in its typed set.')
 		}
 		this._typedNodes.get(label).delete(id);
-		if ( this.nrTypedNodes(label) === 0 ) {
+		if (this.nrTypedNodes(label) === 0) {
 			this._typedNodes.delete(label);
 		}
 
@@ -122,8 +121,8 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	addEdge(edge: IBaseEdge) : boolean {
-		if ( !super.addEdge(edge) ) {
+	addEdge(edge: IBaseEdge): boolean {
+		if (!super.addEdge(edge)) {
 			return false;
 		}
 
@@ -133,11 +132,10 @@ export class TypedGraph extends BaseGraph {
 		/**
 		 *  Same procedure as every node...
 		 */
-		if ( id === label ) {
+		if (id === label) {
 			this._typedEdges.get(GENERIC_TYPE).set(id, edge);
-		}
-		else {
-			if ( !this._typedEdges.get(label) ) {
+		} else {
+			if (!this._typedEdges.get(label)) {
 				this._typedEdges.set(label, new Map());
 			}
 			this._typedEdges.get(label).set(id, edge);
@@ -150,15 +148,15 @@ export class TypedGraph extends BaseGraph {
 		const id = edge.getID(),
 			label = edge.getLabel() === id ? GENERIC_TYPE : edge.getLabel().toUpperCase();
 
-		if ( !this._typedEdges.get(label) ) {
+		if (!this._typedEdges.get(label)) {
 			throw Error('Edge type does not exist on this TypedGraph.');
 		}
 		const removeEdge = this._typedEdges.get(label).get(id);
-		if ( !removeEdge ) {
+		if (!removeEdge) {
 			throw Error('This particular edge is nowhere to be found in its typed set.')
 		}
 		this._typedEdges.get(label).delete(id);
-		if ( this.nrTypedEdges(label) === 0 ) {
+		if (this.nrTypedEdges(label) === 0) {
 			this._typedEdges.delete(label);
 		}
 
@@ -168,7 +166,7 @@ export class TypedGraph extends BaseGraph {
 
 	getStats(): TypedGraphStats {
 		let typed_nodes = {},
-				typed_edges = {};
+			typed_edges = {};
 		this._typedNodes.forEach((k, v) => typed_nodes[v] = k.size);
 		this._typedEdges.forEach((k, v) => typed_edges[v] = k.size);
 		return {

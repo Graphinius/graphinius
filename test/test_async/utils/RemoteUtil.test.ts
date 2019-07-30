@@ -18,7 +18,7 @@ describe('Retrieve remote file tests - ', () => {
 
 	test('should throw an error if the handed callback is not a function',
 		(done) => {
-			var cb = undefined;
+			let cb = undefined;
 			expect($RU.retrieveRemoteFile.bind($RU, config, cb)).toThrowError('Provided callback is not a function.');
 			done();
 		}
@@ -27,8 +27,8 @@ describe('Retrieve remote file tests - ', () => {
 
 	test('should successfully retrieve a small graph from a remote origin',
 		(done) => {
-			var cb = function (graphString) {
-				var graph = JSON.parse(graphString);
+			let cb = function (graphString) {
+				let graph = JSON.parse(graphString);
 				expect(graph.name).toBe("Small graph test scenario");
 				expect(graph.nodes).toBe(4);
 				expect(graph.e).toBe(7);

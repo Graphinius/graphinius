@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { IBaseEdge } from '../../core/BaseEdge';
-import * as $G from '../../core/BaseGraph';
+import { IGraph, BaseGraph } from '../../core/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { labelKeys } from '../interfaces';
 
@@ -44,9 +44,9 @@ export interface IJSONInConfig {
 export interface IJSONInput {
 	_config: IJSONInConfig;
 
-	readFromJSONFile(file: string): $G.IGraph;
-	readFromJSON(json: {}): $G.IGraph;
-	readFromJSONURL(config: $R.RequestConfig, cb: Function): void;
+	readFromJSONFile(file: string, graph?: IGraph): IGraph;
+	readFromJSON(json: {}, graph?: IGraph): IGraph;
+	readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
 }
 
 
@@ -61,37 +61,37 @@ class JSONInput implements IJSONInput {
 		};
 	}
 
-	readFromJSONFile(filepath: string): $G.IGraph {
+	readFromJSONFile(filepath: string, graph?: IGraph): IGraph {
 		$R.checkNodeEnvironment();
 
 		// TODO test for existing file...
 		let json = JSON.parse(fs.readFileSync(filepath).toString());
-		return this.readFromJSON(json);
+		return this.readFromJSON(json, graph);
 	}
 
-	readFromJSONURL(config: $R.RequestConfig, cb: Function): void {
-		let self = this,
-			graph: $G.IGraph;
+	readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void {
+		const self = this;
 
 		// Assert we are in Node.js environment
 		$R.checkNodeEnvironment();
 
 		// Node.js
 		$R.retrieveRemoteFile(config, function (raw_graph) {
-			graph = self.readFromJSON(JSON.parse(raw_graph));
+			graph = self.readFromJSON(JSON.parse(raw_graph), graph);
 			cb(graph, undefined);
-		});	
+		});
 	}
 
 	/**
-	 * In this case, there is one great difference to the CSV edge list cases:
-	 * If you don't explicitly define a directed edge, it will simply 
-	 * instantiate an undirected one
-	 * we'll leave that for now, as we will produce apt JSON sources later anyways...
+	 * @todo split procedure into 2 parts: node & edge creation
+	 * 			 creating nodes just by ID on the fly and 'filling them in'
+	 * 			 later doesn't properly work with TypedGraphs, which
+	 * 			 immediately need a valid node / edge label !
 	 */
-	readFromJSON(json: JSONGraph): $G.IGraph {
-		let graph: $G.IGraph = new $G.BaseGraph(json.name),
-			coords_json: { [key: string]: any },
+	readFromJSON(json: JSONGraph, graph?: IGraph): IGraph {
+		graph = graph || new BaseGraph(json.name);
+
+		let coords_json: { [key: string]: any },
 			coords: { [key: string]: Number },
 			coord_idx: string,
 			features: { [key: string]: any };

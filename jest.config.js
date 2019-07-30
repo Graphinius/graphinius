@@ -10,8 +10,10 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  collectCoverage: false,
-
+  watchPathIgnorePatterns: [
+    "/test/test_data"
+  ],
+  collectCoverage: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!**/node_modules/**",
