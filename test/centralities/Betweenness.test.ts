@@ -4,7 +4,7 @@ import {Brandes, BrandesHeapEntry} from '../../src/centralities/Brandes';
 import {betweennessCentrality} from '../../src/centralities/Betweenness';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import { CSV_SN_PATH, JSON_DATA_PATH, JSON_CENT_PATH } from '../config/config';
+import { CSV_SN_PATH, JSON_DATA_PATH, JSON_CENT_PATH, RES_CENT_PATH } from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
 
@@ -286,7 +286,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				let endBU = +new Date();
 				logger.log(`runtime of Brandes, UNweighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBU - startBU} ms.`);
 
-				let controlFileName = `./test/test_data/centralities/betweenness/betweenness_${graph_name}_results.json`;
+				let controlFileName = `${RES_CENT_PATH}/betweenness/betweenness_${graph_name}_results.json`;
 				let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				expect(Object.keys(resBU).length).toBe(Object.keys(controlMap).length);
@@ -311,7 +311,7 @@ describe('check correctness and runtime of betweenness centrality functions', ()
 				let endBW = +new Date();
 				logger.log(`runtime of Brandes, weighted, on a ${graph.nrNodes()} nodes and ${graph.nrDirEdges() + graph.nrUndEdges()} edges social network: ${endBW - startBW} ms.`);
 
-				let controlFileName = `./test/test_data/centralities/betweenness/betweenness_${graph_name}_results.json`;
+				let controlFileName = `${RES_CENT_PATH}//betweenness/betweenness_${graph_name}_results.json`;
 				let controlMap = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				expect(Object.keys(resBW).length).toBe(Object.keys(controlMap).length);

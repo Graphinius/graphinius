@@ -1,7 +1,7 @@
 /**
- * MISC files paths
+ * Result files paths
  */
-export const MAIN_CENT_PATH = `./test/test_data/centralities`;
+export const RES_CENT_PATH = `./test/test_data/results/centralities`;
 
 /**
  * CSV files paths

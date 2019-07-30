@@ -8,7 +8,7 @@ import {PRArrayDS, Pagerank} from '../../src/centralities/Pagerank';
 import {
 	CSV_DATA_PATH,
 	JSON_DATA_PATH,
-	MAIN_CENT_PATH,
+	RES_CENT_PATH,
 	JSON_CENT_PATH,
 	JSON_REC_PATH,
 	CSV_EGO_PATH,
@@ -44,7 +44,6 @@ let csv: CSVInput = new CSVInput(std_csv_config),
 	deg_cent_graph 				= `search_graph_pfs_extended.json`,
 	pr_3nodes_file 				= `3node2SPs1direct.json`,
 	beerGraphFile 				= `beerGraph.json`,
-	pagerank_py_folder 		= `./test/test_data/centralities/pagerank`,
 	jsonIn = new JSONInput(std_json_in_config),
 	graph: $G.IGraph = jsonIn.readFromJSONFile(JSON_DATA_PATH + '/' + deg_cent_graph),
 	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_uw_ud_file);
@@ -458,7 +457,7 @@ describe("PageRank Centrality Tests", () => {
 				let toc = +new Date;
 				logger.log(`Single-Thread JS PageRank (Arrays) on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
 
-				let controlFileName = `${pagerank_py_folder}/comparison_selected/pagerank_numpy_${graph_file}_results.json`;
+				let controlFileName = `${RES_CENT_PATH}/pagerank/comparison_selected/pagerank_numpy_${graph_file}_results.json`;
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 
 				// Length
@@ -507,7 +506,7 @@ describe("PageRank Centrality Tests", () => {
 				let toc = +new Date;
 				logger.log(`PageRank for graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
 
-				let controlFileName = `${MAIN_CENT_PATH}/pagerank/comparison_ego_graphs/pagerank_numpy_ego_network_v_${sn_graph.nrNodes()}_e_${sn_graph.nrUndEdges() * 2}.json`;
+				let controlFileName = `${RES_CENT_PATH}/pagerank/comparison_ego_graphs/pagerank_numpy_ego_network_v_${sn_graph.nrNodes()}_e_${sn_graph.nrUndEdges() * 2}.json`;
 
 				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
 				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
