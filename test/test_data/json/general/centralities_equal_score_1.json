@@ -1,9 +1,1 @@
-{
-  "name": "SEARCHgraphtestscenario",
-  "nodes": 1,
-  "dir_e": 0,
-  "und_e": 0,
-  "data": {
-  	"A": {}
-  }
-}
+{"name":"SEARCHgraphtestscenario","nodes":1,"dir_e":0,"und_e":0,"data":{"A":{}}}

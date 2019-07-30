@@ -72,9 +72,9 @@ class JSONOutput implements IJSONOutput {
 				let connected_nodes = edge.getNodes();
 
 				node_struct[abbs.edges].push({
-					to: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
-					directed: edge.isDirected(),
-					weight: edge.isWeighted() ? edge.getWeight() : undefined
+					[abbs.e_to]: connected_nodes.a.getID() === node.getID() ? connected_nodes.b.getID() : connected_nodes.a.getID(),
+					[abbs.e_dir]: edge.isDirected(),
+					[abbs.e_weight]: edge.isWeighted() ? edge.getWeight() : undefined
 				});
 			}
 
@@ -85,9 +85,9 @@ class JSONOutput implements IJSONOutput {
 				let connected_nodes = edge.getNodes();
 
 				node_struct[abbs.edges].push({
-					to: connected_nodes.b.getID(),
-					directed: edge.isDirected(),
-					weight: JSONOutput.handleEdgeWeight(edge)
+					[abbs.e_to]: connected_nodes.b.getID(),
+					[abbs.e_dir]: edge.isDirected(),
+					[abbs.e_weight]: JSONOutput.handleEdgeWeight(edge)
 				});
 			}
 

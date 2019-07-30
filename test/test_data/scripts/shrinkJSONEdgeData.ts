@@ -1,3 +1,12 @@
+/**
+ * HANDLE WITH EXTREME CARE !!!
+ *
+ * THIS FILE WAS WRITTEN AT 5 A.M. WITHOUT **ANY**
+ * DESIGN OR SECURITY CONSIDERATIONS...
+ *
+ * @todo refactor
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { JSONInput } from '../../../src/io/input/JSONInput';
@@ -5,7 +14,7 @@ import { JSONOutput } from '../../../src/io/output/JSONOutput';
 const jsonIn = new JSONInput();
 const jsonOut = new JSONOutput();
 
-const transformDir = path.join(__dirname, '../json/partitioning/');
+const transformDir = path.join(__dirname, '../json/general/');
 
 const fileList = fs.readdirSync(transformDir);
 
@@ -14,6 +23,12 @@ fileList.forEach(file => {
 	const graphJSON = JSON.parse(fs.readFileSync(transformDir + file).toString());
 
 	Object.values(graphJSON['data']).forEach(node => {
+		if ( !node['e'] ) {
+			return;
+		}
+		/**
+		 * This deletes data in files that were already transformed
+		 */
 		node['e'].forEach(edge => {
 			delete Object.assign(edge, {'t': edge['to'] })['to'];
 			delete Object.assign(edge, {'d': edge['directed'] })['directed'];
@@ -21,6 +36,7 @@ fileList.forEach(file => {
 		});
 		// console.log(node['e']);
 	});
+
 
 	fs.writeFileSync(transformDir + file, JSON.stringify(graphJSON));
 

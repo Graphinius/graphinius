@@ -6,29 +6,29 @@
     "A": {
       "e": [
         {
-          "to": "A",
-          "directed": true,
-          "weight": "undefined"
+          "t": "A",
+          "d": true,
+          "w": "undefined"
         },
         {
-          "to": "B",
-          "directed": true,
-          "weight": "Infinity"
+          "t": "B",
+          "d": true,
+          "w": "Infinity"
         },
         {
-          "to": "C",
-          "directed": true,
-          "weight": "-Infinity"
+          "t": "C",
+          "d": true,
+          "w": "-Infinity"
         },
         {
-          "to": "D",
-          "directed": true,
-          "weight": "MAX"
+          "t": "D",
+          "d": true,
+          "w": "MAX"
         },
         {
-          "to": "E",
-          "directed": true,
-          "weight": "MIN"
+          "t": "E",
+          "d": true,
+          "w": "MIN"
         }
       ]
     },

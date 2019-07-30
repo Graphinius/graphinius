@@ -3,12 +3,18 @@ export interface Abbreviations {
 	label				: string;
 	edges				: string;
 	features		: string;
+	e_to				: string;
+	e_dir				: string;
+	e_weight		: string;
 }
 
 
 export const abbs: Abbreviations = {
 	coords			: 'c',
 	label				: 'l',
+	features		: 'f',
 	edges				: 'e',
-	features		: 'f'
+	e_to				: 't',
+	e_dir				: 'd',
+	e_weight		: 'w'
 };

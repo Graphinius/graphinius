@@ -97,9 +97,9 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
               [abbs.label]: "A",
               [abbs.edges]: [
                 {
-                  to: "B",
-                  directed: false,
-                  weight: undefined
+                  [abbs.e_to]: "B",
+                  [abbs.e_dir]: false,
+                  [abbs.e_weight]: undefined
                 }
               ],
               [abbs.features]: { }
@@ -108,9 +108,9 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
               [abbs.label]: "B",
               [abbs.edges]: [
                 {
-                  to: "A",
-                  directed: false,
-                  weight: undefined
+                  [abbs.e_to]: "A",
+                  [abbs.e_dir]: false,
+                  [abbs.e_weight]: undefined
                 }
               ],
               [abbs.features]: { }
@@ -147,9 +147,9 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
               [abbs.label]: "B",
               [abbs.edges]: [
                 {
-                  to: "A",
-                  directed: true,
-                  weight: undefined
+                  [abbs.e_to]: "A",
+                  [abbs.e_dir]: true,
+                  [abbs.e_weight]: undefined
                 }
               ],
               [abbs.features]: { }
@@ -190,9 +190,9 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
               [abbs.label]: "B",
               [abbs.edges]: [
                 {
-                  to: "A",
-                  directed: true,
-                  weight: 5
+                  [abbs.e_to]: "A",
+                  [abbs.e_dir]: true,
+                  [abbs.e_weight]: 5
                 }
               ],
               [abbs.features]: { }
@@ -325,9 +325,9 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
             [abbs.label]: "B",
             [abbs.edges]: [
               {
-                to: "A",
-                directed: true,
-                weight: undefined
+                [abbs.e_to]: "A",
+                [abbs.e_dir]: true,
+                [abbs.e_weight]: undefined
               }
             ],
             [abbs.features]: { }
@@ -345,7 +345,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0]['weight'] = 'Infinity';
+      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -359,7 +359,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0]['weight'] = '-Infinity';
+      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = '-Infinity';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -373,7 +373,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0]['weight'] = 'MAX';
+      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'MAX';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });
@@ -387,7 +387,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       });
       jsonOut = new JSONOutput();
       resultString = jsonOut.writeToJSONString( graph );
-      JSONControlStruct['data']['B'][abbs.edges][0]['weight'] = 'MIN';
+      JSONControlStruct['data']['B'][abbs.edges][0][abbs.e_weight] = 'MIN';
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);      
     });

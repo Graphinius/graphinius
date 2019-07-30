@@ -31,7 +31,7 @@ describe('Retrieve remote file tests - ', () => {
 				var graph = JSON.parse(graphString);
 				expect(graph.name).toBe("Small graph test scenario");
 				expect(graph.nodes).toBe(4);
-				expect(graph.edges).toBe(7);
+				expect(graph.e).toBe(7);
 				done();
 			};
 			$RU.retrieveRemoteFile(config, cb);

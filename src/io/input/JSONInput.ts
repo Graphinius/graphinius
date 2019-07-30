@@ -132,10 +132,10 @@ class JSONInput implements IJSONInput {
 			let edges = json.data[node_id][abbs.edges];
 			for (let e in edges) {
 				let edge_input = edges[e],
-					target_node_id = edge_input.to,
+					target_node_id = edge_input[abbs.e_to],
 
 					// Is there any direction information?            
-					directed = this._config.explicit_direction ? edge_input.directed : this._config.directed,
+					directed = this._config.explicit_direction ? edge_input[abbs.e_dir] : this._config.directed,
 					dir_char = directed ? 'd' : 'u',
 
 					// Is there any weight information?,
@@ -198,7 +198,7 @@ class JSONInput implements IJSONInput {
 	 * @param edge_input 
 	 */
 	static handleEdgeWeights(edge_input): number {
-		switch (edge_input.weight) {
+		switch (edge_input[abbs.e_weight]) {
 			case "undefined":
 				return DEFAULT_WEIGHT;
 			case "Infinity":
@@ -210,7 +210,7 @@ class JSONInput implements IJSONInput {
 			case "MIN":
 				return Number.MIN_VALUE;
 			default:
-				return parseFloat(edge_input.weight)
+				return parseFloat(edge_input[abbs.e_weight])
 		}
 	}
 
