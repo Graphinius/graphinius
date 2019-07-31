@@ -10,9 +10,11 @@ describe('Checking index.js structure - ', () => {
 
 
   describe('checking core...', () => {
-    
+
+    const base = index.core.base;
+
     it('checks for the existence of the core object', () => {
-      expect(typeof index.core).toBe("object");
+      expect(typeof base).toBe("object");
     });
 
 
@@ -20,32 +22,32 @@ describe('Checking index.js structure - ', () => {
      * @todo only test one of the API methods !?
      */
     it('core should contain Nodes', () => {
-      expect(typeof index.core.BaseNode).toBe("function");
-      node_a = new index.core.BaseNode("A");
+      expect(typeof base.BaseNode).toBe("function");
+      node_a = new base.BaseNode("A");
       // only Nodes have degree(s)
       expect(typeof node_a.inDegree).toBe("function");
     });
 
 
     it('core should contain Edges', () => {
-      expect(typeof index.core.BaseEdge).toBe("function");
-      node_b = new index.core.BaseNode("B");
-      edge = new index.core.BaseEdge("edgy", node_a, node_b);
+      expect(typeof base.BaseEdge).toBe("function");
+      node_b = new base.BaseNode("B");
+      edge = new base.BaseEdge("edgy", node_a, node_b);
       // only Edges can be directed
       expect(typeof edge.isDirected).toBe("function");
     });
 
 
     it('core should contain Graphs', () => {
-      expect(typeof index.core.BaseGraph).toBe("function");
-      graph = new index.core.BaseGraph("Graphinius Maximus");
+      expect(typeof base.BaseGraph).toBe("function");
+      graph = new base.BaseGraph("Graphinius Maximus");
       // only graphs can give you random nodes
       expect(typeof graph.getRandomNode).toBe("function");
     });
 
 
     it('core should contain GraphMode', () => {
-      let GM = index.core.GraphMode;
+      let GM = base.GraphMode;
       expect(GM.INIT).toBe(0);
       expect(GM.DIRECTED).toBe(1);
       expect(GM.UNDIRECTED).toBe(2);

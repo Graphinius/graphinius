@@ -1,4 +1,4 @@
-import * as $G from '../../src/core/BaseGraph';
+import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import * as $MC from '../../src/mincutmaxflow/MinCutMaxFlowBoykov';
 import { JSON_DATA_PATH } from '../config/config';

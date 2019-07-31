@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as $G from '../../src/core/BaseGraph';
+import * as $G from '../../src/core/base/BaseGraph';
 import {Brandes, BrandesHeapEntry} from '../../src/centralities/Brandes';
 import {betweennessCentrality} from '../../src/centralities/Betweenness';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';

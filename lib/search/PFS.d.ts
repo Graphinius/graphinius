@@ -1,5 +1,5 @@
-import * as $N from '../core/BaseNode';
-import * as $G from '../core/BaseGraph';
+import * as $N from '../core/base/BaseNode';
+import * as $G from '../core/base/BaseGraph';
 import * as $BH from '../datastructs/BinaryHeap';
 export declare const DEFAULT_WEIGHT: number;
 export interface PFS_Config {

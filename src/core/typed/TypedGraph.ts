@@ -1,8 +1,8 @@
-import { IBaseEdge } from './BaseEdge';
+import { IBaseEdge } from '../base/BaseEdge';
 import { ITypedNode } from './TypedNode';
-import { BaseGraph, GraphMode, GraphStats } from './BaseGraph';
+import { BaseGraph, GraphMode, GraphStats } from '../base/BaseGraph';
 
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../utils/Logger';
 const logger = new Logger();
 
 export const GENERIC_TYPE = "GENERIC";

@@ -1,9 +1,9 @@
 /*
   Calculates the shortest path to all others via PFS (could use Dijkstra as well...)
  */
-import * as $G from '../core/BaseGraph';
+import * as $G from '../core/base/BaseGraph';
 import * as $PFS from '../search/PFS';
-import * as $N from '../core/BaseNode';
+import * as $N from '../core/base/BaseNode';
 import * as $FW from '../search/FloydWarshall';
 
 //Calculates all the shortest path's to all other nodes for all given nodes in the graph

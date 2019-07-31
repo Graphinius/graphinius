@@ -1,4 +1,4 @@
-import { IGraph } from '../../core/BaseGraph';
+import { IGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 export interface JSONEdge {
     to: string;

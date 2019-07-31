@@ -1,4 +1,4 @@
-import * as $G from '../../../src/core/BaseGraph';
+import * as $G from '../../../src/core/base/BaseGraph';
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $C from './common';
 import {CSV_DATA_PATH, CSV_ERR_PATH} from "../../config/config";

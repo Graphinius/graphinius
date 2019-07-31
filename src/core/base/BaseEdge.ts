@@ -35,7 +35,7 @@ export interface IBaseEdge {
 	// setWeighted(w:boolean)	: void;
 }
 
-export interface EdgeConstructorOptions {
+export interface BaseEdgeConfig {
 	directed?		: boolean;
 	weighted?		: boolean;
 	weight?			: number;
@@ -51,18 +51,18 @@ class BaseEdge implements IBaseEdge {
 	constructor (protected _id: string,
 							protected _node_a: $N.IBaseNode,
 							protected _node_b: $N.IBaseNode,
-							options?: EdgeConstructorOptions)
-	{
-		if( !( _node_a instanceof $N.BaseNode ) || !( _node_b instanceof $N.BaseNode ) ) {
-			throw new Error("cannot instantiate edge without two valid node objects");
+							config?: BaseEdgeConfig)
+		{
+			if( !( _node_a instanceof $N.BaseNode ) || !( _node_b instanceof $N.BaseNode ) ) {
+				throw new Error("cannot instantiate edge without two valid node objects");
 		}
 
-		options = options || {};
-		this._directed = options.directed || false;
-		this._weighted = options.weighted || false;
+		config = config || {};
+		this._directed = config.directed || false;
+		this._weighted = config.weighted || false;
     // @NOTE isNaN and Number.isNaN confusion...
-		this._weight = this._weighted ? ( isNaN(options.weight) ? 1 : options.weight ) : undefined;
-		this._label = options.label || this._id;
+		this._weight = this._weighted ? ( isNaN(config.weight) ? 1 : config.weight ) : undefined;
+		this._label = config.label || this._id;
 	}
 
 	getID() : string {

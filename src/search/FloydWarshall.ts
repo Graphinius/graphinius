@@ -1,4 +1,4 @@
-import * as $G from '../core/BaseGraph';
+import * as $G from '../core/base/BaseGraph';
 import * as $SU from '../utils/StructUtils'
 
 /**

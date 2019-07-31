@@ -1,5 +1,5 @@
-import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
+import * as $N from '../core/base/BaseNode';
+import * as $E from '../core/base/BaseEdge';
 
 /**
  * Method to deep clone an object

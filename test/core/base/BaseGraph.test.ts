@@ -1,13 +1,13 @@
-import * as $N from '../../src/core/BaseNode';
-import * as $E from '../../src/core/BaseEdge';
-import * as $G from '../../src/core/BaseGraph';
-import { DegreeDistribution, DegreeCentrality } from '../../src/centralities/Degree';
-import { DFS } from '../../src/search/DFS';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
+import * as $N from '../../../src/core/base/BaseNode';
+import * as $E from '../../../src/core/base/BaseEdge';
+import * as $G from '../../../src/core/base/BaseGraph';
+import { DegreeDistribution, DegreeCentrality } from '../../../src/centralities/Degree';
+import { DFS } from '../../../src/search/DFS';
+import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../../config/config';
 
-import { Logger } from '../../src/utils/Logger'
+import { Logger } from '../../../src/utils/Logger'
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();

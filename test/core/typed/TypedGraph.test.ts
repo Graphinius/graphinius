@@ -1,13 +1,13 @@
-import * as $E from '../../src/core/BaseEdge';
-import * as $G from '../../src/core/BaseGraph';
+import * as $E from '../../../src/core/base/BaseEdge';
+import * as $G from '../../../src/core/base/BaseGraph';
 
-import { TypedNode } from "../../src/core/TypedNode";
-import { TypedGraph, GENERIC_TYPE } from '../../src/core/TypedGraph';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { JSON_REC_PATH } from '../config/config';
+import { TypedNode } from "../../../src/core/typed/TypedNode";
+import { TypedGraph, GENERIC_TYPE } from '../../../src/core/typed/TypedGraph';
+import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+import { JSON_REC_PATH } from '../../config/config';
 
 
-import { Logger } from '../../src/utils/Logger';
+import { Logger } from '../../../src/utils/Logger';
 const logger = new Logger();
 
 

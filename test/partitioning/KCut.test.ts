@@ -1,4 +1,4 @@
-import * as $G from '../../src/core/BaseGraph';
+import * as $G from '../../src/core/base/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
 import { KCut } from '../../src/partitioning/KCut';

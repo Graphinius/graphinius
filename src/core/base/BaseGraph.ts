@@ -1,9 +1,9 @@
 import { IBaseNode, BaseNode } from './BaseNode';
-import { EdgeConstructorOptions, IBaseEdge, BaseEdge } from './BaseEdge';
-import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../search/BFS';
-import { DFS } from '../search/DFS';
-import { BellmanFordDict, BellmanFordArray } from '../search/BellmanFord';
-import { reWeighGraph, addExtraNandE} from '../search/Johnsons';
+import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
+import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../../search/BFS';
+import { DFS } from '../../search/DFS';
+import { BellmanFordDict, BellmanFordArray } from '../../search/BellmanFord';
+import { reWeighGraph, addExtraNandE} from '../../search/Johnsons';
 // import { Logger } from '../utils/Logger';
 // let logger : Logger = new Logger();
 
@@ -547,7 +547,7 @@ class BaseGraph implements IGraph {
 	/**
 	 * @description now all test cases pertaining addEdge() call this one...
 	 */
-	addEdgeByID(id: string, node_a : IBaseNode, node_b : IBaseNode, opts? : EdgeConstructorOptions) : IBaseEdge {
+	addEdgeByID(id: string, node_a : IBaseNode, node_b : IBaseNode, opts? : BaseEdgeConfig) : IBaseEdge {
 		let edge = new BaseEdge(id, node_a, node_b, opts || {});
 		return this.addEdge(edge) ? edge : null;
 	}

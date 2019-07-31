@@ -1,7 +1,7 @@
-import * as $N from '../../src/core/BaseNode';
-import * as $E from '../../src/core/BaseEdge';
-import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
+import * as $N from '../../../src/core/base/BaseNode';
+import * as $E from '../../../src/core/base/BaseEdge';
+import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/config';
 
 let Edge = $E.BaseEdge;
 

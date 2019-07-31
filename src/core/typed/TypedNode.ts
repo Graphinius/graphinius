@@ -1,6 +1,6 @@
-import {IBaseNode, BaseNode, BaseNodeConfig} from './BaseNode';
+import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
 
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../utils/Logger';
 const logger = new Logger();
 
 /**

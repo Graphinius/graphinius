@@ -1,5 +1,5 @@
-import * as $N from '../../src/core/BaseNode';
-import * as $E from '../../src/core/BaseEdge';
+import * as $N from '../../../src/core/base/BaseNode';
+import * as $E from '../../../src/core/base/BaseEdge';
 
 const Node = $N.BaseNode;
 const Edge = $E.BaseEdge;

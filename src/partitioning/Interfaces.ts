@@ -1,4 +1,4 @@
-import { IBaseNode } from '../core/BaseNode';
+import { IBaseNode } from '../core/base/BaseNode';
 
 export interface GraphPartitioning {
   partitions  : Map<number, Partition>

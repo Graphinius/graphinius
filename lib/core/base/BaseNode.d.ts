@@ -4,6 +4,12 @@ export interface NeighborEntry {
     edge: $E.IBaseEdge;
     best?: number;
 }
+export interface BaseNodeConfig {
+    label?: string;
+    features?: {
+        [key: string]: any;
+    };
+}
 export interface IBaseNode {
     getID(): string;
     getLabel(): string;
@@ -52,9 +58,9 @@ export interface IBaseNode {
 declare class BaseNode implements IBaseNode {
     protected _id: string;
     protected _label: string;
-    private _in_degree;
-    private _out_degree;
-    private _und_degree;
+    protected _in_degree: number;
+    protected _out_degree: number;
+    protected _und_degree: number;
     protected _features: {
         [k: string]: any;
     };
@@ -67,9 +73,7 @@ declare class BaseNode implements IBaseNode {
     protected _und_edges: {
         [k: string]: $E.IBaseEdge;
     };
-    constructor(_id: string, features?: {
-        [k: string]: any;
-    });
+    constructor(_id: string, config?: BaseNodeConfig);
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;

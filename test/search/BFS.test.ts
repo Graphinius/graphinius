@@ -1,5 +1,5 @@
-import * as $N from '../../src/core/BaseNode';
-import * as $G from '../../src/core/BaseGraph';
+import * as $N from '../../src/core/base/BaseNode';
+import * as $G from '../../src/core/base/BaseGraph';
 import {JSONInput} from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/CallbackUtils';

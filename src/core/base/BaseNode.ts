@@ -1,5 +1,5 @@
 import * as $E from "./BaseEdge";
-import * as $SU from "../utils/StructUtils";
+import * as $SU from "../../utils/StructUtils";
 
 
 export interface NeighborEntry {

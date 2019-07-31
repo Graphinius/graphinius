@@ -1,6 +1,6 @@
-import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
-import * as $G from '../core/BaseGraph';
+import * as $N from '../core/base/BaseNode';
+import * as $E from '../core/base/BaseEdge';
+import * as $G from '../core/base/BaseGraph';
 import * as $MC from '../mincutmaxflow/MinCutMaxFlowBoykov';
 import { Logger } from '../utils/Logger';
 const logger = new Logger();
@@ -137,7 +137,7 @@ class EMEBoykov implements IEMEBoykov {
     for (let i = 0; i < node_ids.length; i++) {
       var node: $N.IBaseNode = nodes[node_ids[i]];
 
-      var edge_options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: 0 };
+      var edge_options: $E.BaseEdgeConfig = { directed: true, weighted: true, weight: 0 };
       // add edge to source
       edge_options.weight = this._dataTerm(this._state.activeLabel, this._graph.getNodeById(node.getID()).getLabel());
       var edge_source: $E.IBaseEdge = graph.addEdgeByID(node.getID() + "_" + source.getID(), node, source, edge_options);
@@ -160,7 +160,7 @@ class EMEBoykov implements IEMEBoykov {
       var node_p: $N.IBaseNode = edge.getNodes().a;
       var node_q: $N.IBaseNode = edge.getNodes().b;
 
-      var edge_options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: 0 };
+      var edge_options: $E.BaseEdgeConfig = { directed: true, weighted: true, weight: 0 };
 
       // we don't care further for nodes of same labels
       if (node_p.getLabel() == node_q.getLabel()) {

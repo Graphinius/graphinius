@@ -1,4 +1,4 @@
-import { TypedNode, TypedNodeConfig } from "../../src/core/TypedNode";
+import { TypedNode, TypedNodeConfig } from "../../../src/core/typed/TypedNode";
 
 
 describe('==== NODE TESTS ====', () => {
@@ -6,7 +6,7 @@ describe('==== NODE TESTS ====', () => {
 
 	describe('Basic node instantiation', () => {
 
-		test('should set NO default type', () => {
+		test('should set a default type of `undefined`', () => {
 			const node = new TypedNode(id);
 			expect(node.type).toBeUndefined();
 		});

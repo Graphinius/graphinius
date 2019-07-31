@@ -1,6 +1,6 @@
-import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
-import * as $G from '../core/BaseGraph';
+import * as $N from '../core/base/BaseNode';
+import * as $E from '../core/base/BaseEdge';
+import * as $G from '../core/base/BaseGraph';
 import { Logger } from '../utils/Logger';
 const logger = new Logger();
 
@@ -228,7 +228,7 @@ class MCMFBoykov implements IMCMFBoykov {
 				var node_a_id: string = und_edge.getNodes().a.getID();
 				var node_b_id: string = und_edge.getNodes().b.getID();
 
-				var options: $E.EdgeConstructorOptions = { directed: true, weighted: true, weight: und_edge.getWeight()};
+				var options: $E.BaseEdgeConfig = { directed: true, weighted: true, weight: und_edge.getWeight()};
 
 				dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
 				dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);

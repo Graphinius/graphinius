@@ -1,5 +1,5 @@
-import * as $E from '../../core/BaseEdge';
-import * as $G from '../../core/BaseGraph';
+import * as $E from '../../core/base/BaseEdge';
+import * as $G from '../../core/base/BaseGraph';
 export interface IJSONOutput {
     writeToJSONFile(filepath: string, graph: $G.IGraph): void;
     writeToJSONString(graph: $G.IGraph): string;

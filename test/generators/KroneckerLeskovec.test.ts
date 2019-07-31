@@ -1,6 +1,6 @@
-import * as $N from '../../src/core/BaseNode';
-import * as $E from '../../src/core/BaseEdge';
-import * as $G from '../../src/core/BaseGraph';
+import * as $N from '../../src/core/base/BaseNode';
+import * as $E from '../../src/core/base/BaseEdge';
+import * as $G from '../../src/core/base/BaseGraph';
 import * as $KRON from '../../src/generators/KroneckerLeskovec';
 
 import { Logger } from '../../src/utils/Logger';

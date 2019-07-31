@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as $G from '../../src/core/BaseGraph';
+import * as $G from '../../src/core/base/BaseGraph';
 import * as $PRGauss from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';

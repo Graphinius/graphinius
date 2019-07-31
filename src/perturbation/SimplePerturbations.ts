@@ -1,6 +1,6 @@
-import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
-import * as $G from '../core/BaseGraph';
+import * as $N from '../core/base/BaseNode';
+import * as $E from '../core/base/BaseEdge';
+import * as $G from '../core/base/BaseGraph';
 import { Logger } from '../utils/Logger';
 
 let logger : Logger = new Logger();
@@ -40,7 +40,7 @@ export interface ISimplePerturber {
 	randomlyAddUndEdgesPercentage( percentage: number ) : void;
 	randomlyAddDirEdgesPercentage( percentage: number ) : void;
 	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void;
-	randomlyAddEdgesAmount( amount: number, config?: $E.EdgeConstructorOptions ) : void;
+	randomlyAddEdgesAmount( amount: number, config?: $E.BaseEdgeConfig ) : void;
 }
 
 
@@ -161,7 +161,7 @@ class SimplePerturber implements ISimplePerturber {
 	 * 
 	 * DEFAULT edge direction: UNDIRECTED
 	 */
-	randomlyAddEdgesAmount( amount: number, config?: $E.EdgeConstructorOptions ) : void {
+	randomlyAddEdgesAmount( amount: number, config?: $E.BaseEdgeConfig ) : void {
 		if ( amount <= 0 ) {
 			throw new Error('Cowardly refusing to add a non-positive amount of edges')
 		}

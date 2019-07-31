@@ -1,6 +1,6 @@
 
-import * as $N from '../../src/core/BaseNode';
-import * as $G from '../../src/core/BaseGraph';
+import * as $N from '../../src/core/base/BaseNode';
+import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { BellmanFordDict, BellmanFordArray } from '../../src/search/BellmanFord';

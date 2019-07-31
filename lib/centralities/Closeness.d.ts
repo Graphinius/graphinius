@@ -1,4 +1,4 @@
-import * as $G from '../core/BaseGraph';
+import * as $G from '../core/base/BaseGraph';
 declare class ClosenessCentrality {
     constructor();
     getCentralityMapFW(graph: $G.IGraph): Array<Number>;

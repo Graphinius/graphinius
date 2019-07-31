@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import { IBaseEdge } from '../../core/BaseEdge';
-import { IGraph, BaseGraph } from '../../core/BaseGraph';
+import { IBaseEdge } from '../../core/base/BaseEdge';
+import { IGraph, BaseGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { labelKeys } from '../interfaces';
 
@@ -176,7 +176,7 @@ class JSONInput implements IJSONInput {
 				 * @todo also re-design BaseGraph & BaseNode classes if necessary
 				 */
 				let edge2 : IBaseEdge = null;
-				// let distinctLabel = null;
+
 				if ( graph.hasEdgeID(edge_id_u2) ) {
 					edge2 = graph.getEdgeById(edge_id_u2);
 					// distinctLabel = edge2.getID() !== edge2.getLabel();

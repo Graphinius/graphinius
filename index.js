@@ -1,7 +1,7 @@
 // CORE
-const BaseEdge	      				= require("./lib/core/BaseEdge.js").BaseEdge;
-const BaseNode 	      				= require("./lib/core/BaseNode.js").BaseNode;
-const BaseGraph	      				= require("./lib/core/BaseGraph.js");
+const BaseEdge	      				= require("./lib/core/base/BaseEdge.js").BaseEdge;
+const BaseNode 	      				= require("./lib/core/base/BaseNode.js").BaseNode;
+const BaseGraph	      				= require("./lib/core/base/BaseGraph.js");
 // CENTRALITIES
 const BetweennessCent					= require("./lib/centralities/Betweenness.js");
 const BrandesCent							= require("./lib/centralities/Brandes");
@@ -44,10 +44,12 @@ let out = typeof window !== 'undefined' ? window : global;
  */
 out.$G = {
 	core: {
-		BaseEdge 									: BaseEdge,
-		BaseNode 									: BaseNode,
-		BaseGraph 								: BaseGraph.BaseGraph,
-		GraphMode									: BaseGraph.GraphMode
+		base: {
+			BaseEdge 									: BaseEdge,
+			BaseNode 									: BaseNode,
+			BaseGraph 								: BaseGraph.BaseGraph,
+			GraphMode									: BaseGraph.GraphMode
+		}
 	},
 	centralities: {
 		Betweenness								: BetweennessCent.betweennessCentrality,
@@ -55,11 +57,11 @@ out.$G = {
 		Closeness									: ClosenessCent.ClosenessCentrality,
 		Degree										: DegreeCent.DegreeCentrality,
 		Pagerank									: PagerankCent.Pagerank
-	},							
-	input: {							
+	},
+	input: {
 		CSVInput 									: CSVInput.CSVInput,
 		JSONInput 								: JSONInput.JSONInput
-	},							
+	},
 	output: {							
 		CSVOutput									: CSVOutput.CSVOutput,
 		JSONOutput								: JSONOutput.JSONOutput
@@ -72,7 +74,7 @@ out.$G = {
 		BellmanFord								: BellmanFord,
 		FloydWarshall							: FloydWarshall,
 		Johnsons									: Johnsons
-	},						
+	},
   utils: {						
     Struct        						: StructUtils,
 		Remote        						: RemoteUtils,

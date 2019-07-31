@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as $G from '../../src/core/BaseGraph';
+import * as $G from '../../src/core/base/BaseGraph';
 import {DFS} from '../../src/search/DFS';
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import {JSONOutput} from '../../src/io/output/JSONOutput';

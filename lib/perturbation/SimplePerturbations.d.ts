@@ -1,6 +1,6 @@
-import * as $N from '../core/BaseNode';
-import * as $E from '../core/BaseEdge';
-import * as $G from '../core/BaseGraph';
+import * as $N from '../core/base/BaseNode';
+import * as $E from '../core/base/BaseEdge';
+import * as $G from '../core/base/BaseGraph';
 export interface NodeDegreeConfiguration {
     und_degree?: number;
     dir_degree?: number;
