@@ -1,10 +1,13 @@
-import {IBaseNode} from './BaseNode';
-import {IBaseEdge} from './BaseEdge';
-import {BaseGraph, GraphMode, GraphStats} from './BaseGraph';
+import { IBaseEdge } from './BaseEdge';
+import { ITypedNode } from './TypedNode';
+import { BaseGraph, GraphMode, GraphStats } from './BaseGraph';
+
+import { Logger } from '../utils/Logger';
+const logger = new Logger();
 
 export const GENERIC_TYPE = "GENERIC";
 
-export type TypedNodes = Map<string, Map<string, IBaseNode>>;
+export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
 
 export interface TypedGraphStats extends GraphStats {
@@ -75,46 +78,46 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	addNode(node: IBaseNode): boolean {
+	addNode(node: ITypedNode): boolean {
 		if (!super.addNode(node)) {
 			return false;
 		}
+		// logger.log(JSON.stringify(node));
 
 		const id = node.getID(),
-			label = node.getLabel().toUpperCase();
+			type = node.type ? node.type.toUpperCase() : null;
 
 		/**
 		 *  Untyped nodes will be treated as `generic` type
-		 *
-		 *  @todo make sure node IDs don't match labels
-		 *        if you don't want that behavior
 		 */
-		if (id === label) {
+		if ( !type ) {
+			// logger.log(`Received node type: ${type}`);
+
 			this._typedNodes.get(GENERIC_TYPE).set(id, node);
 		} else {
-			if (!this._typedNodes.get(label)) {
-				this._typedNodes.set(label, new Map());
+			if ( !this._typedNodes.get(type) ) {
+				this._typedNodes.set(type, new Map());
 			}
-			this._typedNodes.get(label).set(id, node);
+			this._typedNodes.get(type).set(id, node);
 		}
 		return true;
 	}
 
 
-	deleteNode(node: IBaseNode): void {
+	deleteNode(node: ITypedNode): void {
 		const id = node.getID(),
-			label = node.getLabel() === id ? GENERIC_TYPE : node.getLabel().toUpperCase();
+			type = node.type ? node.type.toUpperCase() : GENERIC_TYPE;
 
-		if (!this._typedNodes.get(label)) {
+		if (!this._typedNodes.get(type)) {
 			throw Error('Node type does not exist on this TypedGraph.');
 		}
-		const removeNode = this._typedNodes.get(label).get(id);
+		const removeNode = this._typedNodes.get(type).get(id);
 		if (!removeNode) {
 			throw Error('This particular node is nowhere to be found in its typed set.')
 		}
-		this._typedNodes.get(label).delete(id);
-		if (this.nrTypedNodes(label) === 0) {
-			this._typedNodes.delete(label);
+		this._typedNodes.get(type).delete(id);
+		if (this.nrTypedNodes(type) === 0) {
+			this._typedNodes.delete(type);
 		}
 
 		super.deleteNode(node);

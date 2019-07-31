@@ -87,6 +87,9 @@ class JSONInput implements IJSONInput {
 	 * 			 creating nodes just by ID on the fly and 'filling them in'
 	 * 			 later doesn't properly work with TypedGraphs, which
 	 * 			 immediately need a valid node / edge label !
+	 *
+	 * @todo take order of node instantiation into account
+	 * 			 -> this affects the ARRAY version of several algorithms...
 	 */
 	readFromJSON(json: JSONGraph, graph?: IGraph): IGraph {
 		graph = graph || new BaseGraph(json.name);

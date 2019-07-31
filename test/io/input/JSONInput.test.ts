@@ -209,7 +209,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 
 		test(
-			'should not assign any features if no features entry is contained in a json file',
+			'should not assign any features if no `features` entry is contained in a json file',
 			() => {
 				json = new JSONInput();
 				json._config.explicit_direction = false;

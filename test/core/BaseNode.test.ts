@@ -62,8 +62,8 @@ describe('==== NODE TESTS ====', () => {
 
 
 	describe('Node FEATURE vector tests', () => {
-		let feats = {name: 'Bernie', age: 36, future: 'Billionaire'};
-		let node = new $N.BaseNode(id, feats);
+		let features = {name: 'Bernie', age: 36, future: 'Billionaire'};
+		let node = new $N.BaseNode(id, {features});
 
 		test('should correctly set default features to an empty hash object', () => {
 			expect(node.getFeatures()).toBeInstanceOf(Object);
@@ -94,7 +94,7 @@ describe('==== NODE TESTS ====', () => {
 		test(
 			'should automatically overwrite an existing feature upon renewed setting',
 			() => {
-				node.setFeatures(feats);
+				node.setFeatures(features);
 				expect(Object.keys(node.getFeatures()).length).toBe(3);
 				node.setFeature('future', 'Bazillionaire');
 				expect(Object.keys(node.getFeatures()).length).toBe(3);
@@ -113,16 +113,16 @@ describe('==== NODE TESTS ====', () => {
 		});
 
 		test('should allow to replace the whole feature vector', () => {
-			let feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			let node = new $N.BaseNode(id, feats);
+			let features = {name: 'Bernie', age: '36', future: 'Billionaire'};
+			let node = new $N.BaseNode(id, {features});
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
 			node.setFeatures({});
 			expect(Object.keys(node.getFeatures()).length).toBe(0);
 		});
 
 		test('should allow to clear the whole feature vector', () => {
-			let feats = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			let node = new $N.BaseNode(id, feats);
+			let features = {name: 'Bernie', age: '36', future: 'Billionaire'};
+			let node = new $N.BaseNode(id, {features});
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
 			node.clearFeatures();
 			expect(Object.keys(node.getFeatures()).length).toBe(0);

@@ -1,12 +1,20 @@
 import * as $E from "./BaseEdge";
 import * as $SU from "../utils/StructUtils";
 
+
 export interface NeighborEntry {
   node  : IBaseNode;
   edge  : $E.IBaseEdge;
   // only used (and tested) in PFS
   best? : number;
 }
+
+
+export interface BaseNodeConfig {
+	label?			: string;
+	features?		: {[key: string]: any};
+}
+
 
 export interface IBaseNode {
 	getID()	: string;
@@ -60,27 +68,32 @@ export interface IBaseNode {
 
 
 class BaseNode implements IBaseNode {
-
 	protected _label : string;
-	private _in_degree = 0;
-	private _out_degree = 0;
-	private _und_degree = 0;	
+	protected _in_degree = 0;
+	protected _out_degree = 0;
+	protected _und_degree = 0;
 	protected _features	: { [k:string] : any };
 		
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};
-	
+
+	/**
+	 * @param _id
+	 * @param config
+	 *
+	 * @todo rename features to options? -> not really the same...
+	 */
 	constructor (
 								protected _id: string,
-								features?: { [k:string] : any }
-							) 
+								config: BaseNodeConfig = {}
+							)
 	{
 		this._in_edges = {};
 		this._out_edges = {};
 		this._und_edges = {};
-		this._features = typeof features !== 'undefined' ? $SU.clone(features) : {};
-		this._label = this._features["label"] || this._id;
+		this._label = config.label || _id;
+		this._features = config.features != null ? $SU.clone(config.features) : {};
 	}
 	
 	getID()	: string {
@@ -90,7 +103,7 @@ class BaseNode implements IBaseNode {
 	getLabel() : string {
 		return this._label;
 	}
-	
+
 	setLabel(label : string) : void {
 		this._label = label;
 	}
