@@ -15,7 +15,7 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    getNodes(): IConnectedNodes;
 	    clone(node_a: $N.BaseNode, node_b: $N.BaseNode): IBaseEdge;
 	}
-	export interface EdgeConstructorOptions {
+	export interface BaseEdgeConfig {
 	    directed?: boolean;
 	    weighted?: boolean;
 	    weight?: number;
@@ -28,7 +28,7 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    protected _weighted: boolean;
 	    protected _weight: number;
 	    protected _label: string;
-	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, options?: EdgeConstructorOptions);
+	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -405,7 +405,7 @@ declare module 'graphinius/search/Johnsons' {
 }
 declare module 'graphinius/core/base/BaseGraph' {
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
-	import { EdgeConstructorOptions, IBaseEdge } from 'graphinius/core/base/BaseEdge';
+	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
@@ -534,7 +534,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    getDirEdgesArray(): Array<IBaseEdge>;
 	    getUndEdgesArray(): Array<IBaseEdge>;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
-	    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
+	    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: BaseEdgeConfig): IBaseEdge;
 	    addEdge(edge: IBaseEdge): boolean;
 	    deleteEdge(edge: IBaseEdge): void;
 	    deleteInEdgesOf(node: IBaseNode): void;
@@ -735,7 +735,26 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	export { pageRankDetCentrality };
 
 }
-declare module 'graphinius/core/TypedNode' {
+declare module 'graphinius/core/typed/TypedEdge' {
+	import { IBaseEdge, BaseEdge, BaseEdgeConfig } from 'graphinius/core/base/BaseEdge';
+	import * as $N from 'graphinius/core/base/BaseNode';
+	export interface ITypedEdge extends IBaseEdge {
+	    readonly type: string;
+	}
+	export interface TypedEdgeConfig extends BaseEdgeConfig {
+	    type?: string;
+	} class TypedEdge extends BaseEdge implements ITypedEdge {
+	    protected _id: string;
+	    protected _node_a: $N.IBaseNode;
+	    protected _node_b: $N.IBaseNode;
+	    protected _type: string;
+	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
+	    readonly type: string;
+	}
+	export { TypedEdge };
+
+}
+declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
 	export interface ITypedNode extends IBaseNode {
 	    readonly type: string;
@@ -751,9 +770,9 @@ declare module 'graphinius/core/TypedNode' {
 	export { TypedNode };
 
 }
-declare module 'graphinius/core/TypedGraph' {
+declare module 'graphinius/core/typed/TypedGraph' {
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
-	import { ITypedNode } from 'graphinius/core/TypedNode';
+	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
 	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
 	export const GENERIC_TYPE = "GENERIC";
 	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
@@ -923,6 +942,13 @@ declare module 'graphinius/io/interfaces' {
 	    e_label: string;
 	}
 	export const labelKeys: Abbreviations;
+
+}
+declare module 'graphinius/io/common/Dupes' {
+	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
+	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	export function isDupe(e1: IBaseEdge | ITypedEdge, e2: IBaseEdge | ITypedEdge): boolean;
+	export function gotSameEndpoints(e1: IBaseEdge | ITypedEdge, e2: IBaseEdge | ITypedEdge): boolean;
 
 }
 declare module 'graphinius/utils/RemoteUtils' {
@@ -1163,7 +1189,7 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    randomlyAddUndEdgesPercentage(percentage: number): void;
 	    randomlyAddDirEdgesPercentage(percentage: number): void;
 	    randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
-	    randomlyAddEdgesAmount(amount: number, config?: $E.EdgeConstructorOptions): void;
+	    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
 	} class SimplePerturber implements ISimplePerturber {
 	    private _graph;
 	    constructor(_graph: $G.IGraph);
@@ -1175,7 +1201,7 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    randomlyDeleteDirEdgesAmount(amount: number): void;
 	    randomlyAddUndEdgesPercentage(percentage: number): void;
 	    randomlyAddDirEdgesPercentage(percentage: number): void;
-	    randomlyAddEdgesAmount(amount: number, config?: $E.EdgeConstructorOptions): void;
+	    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
 	    randomlyAddNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
 	    randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
 	    private createEdgesByConfig;

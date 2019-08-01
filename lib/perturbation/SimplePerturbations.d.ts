@@ -28,7 +28,7 @@ export interface ISimplePerturber {
     randomlyAddUndEdgesPercentage(percentage: number): void;
     randomlyAddDirEdgesPercentage(percentage: number): void;
     randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
-    randomlyAddEdgesAmount(amount: number, config?: $E.EdgeConstructorOptions): void;
+    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
 }
 declare class SimplePerturber implements ISimplePerturber {
     private _graph;
@@ -41,7 +41,7 @@ declare class SimplePerturber implements ISimplePerturber {
     randomlyDeleteDirEdgesAmount(amount: number): void;
     randomlyAddUndEdgesPercentage(percentage: number): void;
     randomlyAddDirEdgesPercentage(percentage: number): void;
-    randomlyAddEdgesAmount(amount: number, config?: $E.EdgeConstructorOptions): void;
+    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
     randomlyAddNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
     randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
     private createEdgesByConfig;

@@ -14,7 +14,7 @@ export interface IBaseEdge {
     getNodes(): IConnectedNodes;
     clone(node_a: $N.BaseNode, node_b: $N.BaseNode): IBaseEdge;
 }
-export interface EdgeConstructorOptions {
+export interface BaseEdgeConfig {
     directed?: boolean;
     weighted?: boolean;
     weight?: number;
@@ -28,7 +28,7 @@ declare class BaseEdge implements IBaseEdge {
     protected _weighted: boolean;
     protected _weight: number;
     protected _label: string;
-    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, options?: EdgeConstructorOptions);
+    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;

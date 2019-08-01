@@ -1,5 +1,5 @@
 import { IBaseNode } from './BaseNode';
-import { EdgeConstructorOptions, IBaseEdge } from './BaseEdge';
+import { BaseEdgeConfig, IBaseEdge } from './BaseEdge';
 export declare enum GraphMode {
     INIT = 0,
     DIRECTED = 1,
@@ -129,7 +129,7 @@ declare class BaseGraph implements IGraph {
     getDirEdgesArray(): Array<IBaseEdge>;
     getUndEdgesArray(): Array<IBaseEdge>;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
-    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: EdgeConstructorOptions): IBaseEdge;
+    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: BaseEdgeConfig): IBaseEdge;
     addEdge(edge: IBaseEdge): boolean;
     deleteEdge(edge: IBaseEdge): void;
     deleteInEdgesOf(node: IBaseNode): void;

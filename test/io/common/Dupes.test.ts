@@ -4,6 +4,10 @@ import {ITypedEdge, TypedEdge} from '../../../src/core/typed/TypedEdge';
 import {TypedNode} from "../../../src/core/typed/TypedNode";
 
 
+/**
+ * @todo Can we use instantiated edges at all?
+ * 			 -> Guess NO, since we
+ */
 describe('Edge DUPE tests', function () {
 
 	// const scenarios = {

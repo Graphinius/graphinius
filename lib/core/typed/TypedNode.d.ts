@@ -1,4 +1,4 @@
-import { IBaseNode, BaseNode, BaseNodeConfig } from './base/BaseNode';
+import { IBaseNode, BaseNode, BaseNodeConfig } from '../base/BaseNode';
 export interface ITypedNode extends IBaseNode {
     readonly type: string;
 }
