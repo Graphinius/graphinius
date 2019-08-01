@@ -49,7 +49,7 @@ export class TypedGraph extends BaseGraph {
 	protected _typedEdges: TypedEdges = new Map();
 
 
-	constructor(public _label) {
+	constructor(public _label: string) {
 		super(_label);
 		this._typedNodes.set(GENERIC_TYPE, new Map());
 		this._typedEdges.set(GENERIC_TYPE, new Map());

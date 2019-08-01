@@ -1,45 +1,81 @@
 import { BaseEdge, IBaseEdge } from '../../core/base/BaseEdge';
 import { TypedEdge, ITypedEdge } from '../../core/typed/TypedEdge';
-import { IBaseNode } from '../../core/base/BaseNode';
+import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
+import {ITypedNode} from "../../../lib/core/typed/TypedNode";
+import { IGraph } from '../../core/base/BaseGraph';
+import { TypedGraph } from '../../core/typed/TypedGraph';
 
 
 export interface PotentialEdgeInfo {
-	n_a						: IBaseNode;
-	n_b						: IBaseNode;
+	a							: IBaseNode;
+	b							: IBaseNode;
 	dir						: boolean;
 	weighted			: boolean;
-	weight				: number;
+	weight?				: number;
 	typed					: boolean;
-	type					: string;
+	type?					: string;
 }
 
 
-export function isDupe(e: PotentialEdgeInfo): boolean {
+class EdgeDupeChecker {
 
+	constructor( private _graph: IGraph | TypedGraph ) {}
 
-	// if ( e1.isDirected() !== e2.isDirected()
-	// 		 || e1.isWeighted() !== e2.isWeighted() ) {
-	// 	return false;
-	// }
-	//
-	// if ( !gotSameEndpoints(e1, e2) ) {
-	// 	return false;
-	// }
+	isDupe(e: PotentialEdgeInfo): boolean {
 
-	return true;
-}
-
-
-export function gotSameEndpoints(e1: IBaseEdge | ITypedEdge, e2: IBaseEdge | ITypedEdge): boolean {
-	const e1_nodes = e1.getNodes(),
-		e2_nodes = e2.getNodes();
-
-	// we only need to check first edge
-	if ( e1.isDirected() ) {
-		return e1_nodes.a === e2_nodes.a && e1_nodes.b === e2_nodes.b;
+		return true;
 	}
-	else {
-		return ( e1_nodes.a === e2_nodes.a && e1_nodes.b === e2_nodes.b
-					|| e1_nodes.a === e2_nodes.b && e1_nodes.b === e2_nodes.a )
+
+
+	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseNode | ITypedNode> {
+		const result = new Set();
+
+		if ( e.dir ) {
+			e.a.nextNodes().forEach(ne => {
+				(ne.node === e.b) && result.add(ne.edge);
+			});
+		}
+		else {
+			/**
+			 * node.connNodes() already takes care of a-b <-> b-a reversal
+			 * which means ne.node will always be the "other" node
+			 */
+			e.a.connNodes().forEach(ne => {
+				(ne.node === e.b) && result.add(ne.edge);
+			});
+		}
+		return result;
 	}
+
 }
+
+
+export {
+	EdgeDupeChecker
+}
+
+
+
+/**
+ * Type alias to express dependency of one property on another
+ *
+ * @todo doesn't produce `missing property` errors like interface does
+ */
+// type BasicPotentialEdgeInfo = {
+// 	a							: IBaseNode,
+// 	b							: IBaseNode,
+// 	dir						: boolean,
+// }
+// type EdgeWeightInfo = {
+// 	weighted			: true,
+// 	weight				: number
+// } | {
+// 	weighted			: false
+// }
+// type EdgeTypeInfo = {
+// 	typed					: true,
+// 	type					: string
+// } | {
+// 	typed					: false
+// }
+// export type PotentialEdgeInfo = BasicPotentialEdgeInfo | EdgeWeightInfo | EdgeTypeInfo;

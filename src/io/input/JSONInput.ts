@@ -4,8 +4,8 @@ import { IGraph, BaseGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { labelKeys } from '../interfaces';
 import { PotentialEdgeInfo} from '../common/Dupes';
-// Use as `uuid.v4()`
 import * as uuid from 'uuid'
+const v4 = uuid.v4;
 
 import { Logger } from '../../utils/Logger';
 const logger = new Logger();
