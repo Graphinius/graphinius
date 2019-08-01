@@ -5,9 +5,9 @@ import { gauss } from "../utils/Gauss";
 
 
 //Calculates the page rank for a given graph
-class pageRankDetCentrality{
+class pageRankDetCentrality {
 
-  getCentralityMap(graph: $G.IGraph, weighted?: boolean):{[id:string]: number} {
+  getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id:string]: number} {
 
     //First initialize the values for all nodes
     let divideTable = {}; //Tells us how many outgoing edges each node has

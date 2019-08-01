@@ -47,8 +47,8 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		csv = new CSVInput(csv_config);
 		bf_graph = json.readFromJSONFile(bf_graph_file);
 		bf_neg_cycle_graph = json.readFromJSONFile(bf_graph_neg_cycle_file);
-		BF_expect = { S: 0, A: 5, E: 8, C: 7, B: 5, D: 9 };
-		BF_expect_array = [ 0, 5, 8, 7, 5, 9 ];
+		BF_expect = { S: 0, A: 5, B: 5, C: 7, D: 9, E: 8 };
+		BF_expect_array = [ 0, 5, 5, 7, 9, 8 ];
   });
 
 

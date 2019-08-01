@@ -7,6 +7,7 @@ export interface Abbreviations {
 	e_dir				: string;
 	e_weight		: string;
 	e_label			: string;
+	e_type			: string;
 }
 
 
@@ -15,9 +16,9 @@ export const labelKeys: Abbreviations = {
 	label				: 'l',
 	features		: 'f',
 	edges				: 'e',
-	e_to				: 't',
+	e_to				: 't', // a->b
 	e_dir				: 'd',
 	e_weight		: 'w',
-	e_label			: 'l'
+	e_label			: 'l',
+	e_type			: 'y'
 };
-

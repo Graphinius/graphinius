@@ -100,9 +100,9 @@ class JSONInput implements IJSONInput {
 			features: { [key: string]: any };
 
 		for (let node_id in json.data) {
-			let node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
+			let node = graph.addNodeByID(node_id);
 			let label = json.data[node_id][labelKeys.label];
-			if ( label ) {
+			if (label) {
 				node.setLabel(label);
 			}
 			/**
@@ -112,7 +112,7 @@ class JSONInput implements IJSONInput {
 			 *
 			 * @description assignment is intentional
 			 */
-			if ( features = json.data[node_id][labelKeys.features] ) {
+			if (features = json.data[node_id][labelKeys.features]) {
 				/**
 				 * Since we are reading from an 'offline' source, we
 				 * can simply use the reference...
@@ -127,13 +127,18 @@ class JSONInput implements IJSONInput {
 			 *
 			 * @description assignment is intentional
 			 */
-			if ( coords_json = json.data[node_id][labelKeys.coords] ) {
+			if (coords_json = json.data[node_id][labelKeys.coords]) {
 				coords = {};
 				for (coord_idx in coords_json) {
 					coords[coord_idx] = +coords_json[coord_idx];
 				}
 				node.setFeature(labelKeys.coords, coords);
 			}
+		}
+
+
+		for (let node_id in json.data) {
+			let node = graph.getNodeById(node_id);
 
 			// Reading and instantiating edges
 			let edges = json.data[node_id][labelKeys.edges];
@@ -147,22 +152,49 @@ class JSONInput implements IJSONInput {
 					dir_char = directed ? 'd' : 'u',
 
 					// Is there any weight information?,
+					/**
+					 * @todo reverse this
+					 */
 					weight_float = JSONInput.handleEdgeWeights(edge_input),
 					weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT,
 					edge_weight = this._config.weighted ? weight_info : undefined,
 					target_node = graph.hasNodeID(target_node_id) ? graph.getNodeById(target_node_id) : graph.addNodeByID(target_node_id);
-
-				let edge_id = node_id + "_" + target_node_id + "_" + dir_char,
-					edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
-				// logger.log(`Edge ID: ${edge_id}, edge ID 2: ${edge_id_u2} `)
-
 
 
 				/* --------------------------------------------------- */
 				/*							DUPLICATE EDGE HANDLING								 */
 				/* --------------------------------------------------- */
 				/**
+				 * @todo we can NOT check for duplicates by ID anymore,
+				 * 			 since 1) IDs will be uuid's henceforth &
+				 * 			 2) A_B_u will not be sufficiently unique anyways
+				 * 			 (since type and weight would have to be added)
+				 * 			 3) even if we systematically build such a
+				 * 			 uniquely identifiable ID in JSONInput, a user
+				 * 			 of our library might manually assign completely
+				 * 			 different IDs which do not conform to this schema.
+				 * @todo First complete node input, so that we already have
+				 */
+				let edge_id = node_id + "_" + target_node_id + "_" + dir_char,
+					edge_id_u2 = target_node_id + "_" + node_id + "_" + dir_char;
+				// logger.log(`Edge ID: ${edge_id}, edge ID 2: ${edge_id_u2} `)
+
+				/**
+				 * since all the nodes are already
+				 */
+				// const edgeInfo = {
+				// 	a: node,
+				// 	b: target_node,
+				// 	dir: directed,
+				// 	weight: edge_weight,
+				// 	type: edge_type
+				// };
+
+
+				/**
 				 * The completely same edge should only be added once...
+				 *
+				 * @todo generate uuid - make this obsolete !!!
 				 */
 				if (graph.hasEdgeID(edge_id)) {
 					continue;

@@ -1,1 +1,57 @@
-{"name":"3-node graph, directed, weighted: A->B; A->C->B","nodes":3,"e":3,"data":{"A":{"e":[{"t":"B","d":1,"w":3.3},{"t":"C","d":1,"w":7.2}],"f":{"betweenness":{"default":0,"unnormalized":0,"endpoints":1,"endpointsUnnormalized":2}}},"B":{"e":[],"f":{"betweenness":{"default":0,"unnormalized":0,"endpoints":1,"endpointsUnnormalized":2}}},"C":{"e":[{"t":"B","d":1,"w":1.4}],"f":{"betweenness":{"default":0.25,"unnormalized":0.5,"endpoints":1.25,"endpointsUnnormalized":2.5}}}}}
+{
+	"name": "3-node graph, directed, weighted: A->B; A->C->B",
+	"nodes": 3,
+	"e": 3,
+	"data": {
+		"A": {
+			"e": [
+				{
+					"t": "B",
+					"d": 1,
+					"w": 3.3
+				},
+				{
+					"t": "C",
+					"d": 1,
+					"w": 7.2
+				}
+			],
+			"f": {
+				"betweenness": {
+					"default": 0,
+					"unnormalized": 0,
+					"endpoints": 1,
+					"endpointsUnnormalized": 2
+				}
+			}
+		},
+		"B": {
+			"e": [],
+			"f": {
+				"betweenness": {
+					"default": 0,
+					"unnormalized": 0,
+					"endpoints": 1,
+					"endpointsUnnormalized": 2
+				}
+			}
+		},
+		"C": {
+			"e": [
+				{
+					"t": "B",
+					"d": 1,
+					"w": 1.4
+				}
+			],
+			"f": {
+				"betweenness": {
+					"default": 0.25,
+					"unnormalized": 0.5,
+					"endpoints": 1.25,
+					"endpointsUnnormalized": 2.5
+				}
+			}
+		}
+	}
+}

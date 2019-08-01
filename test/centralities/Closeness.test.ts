@@ -44,9 +44,7 @@ describe("Closeness Centrality Tests", () => {
 		let graph_1: $G.IGraph = json.readFromJSONFile(`${JSON_DATA_PATH}/centralities_equal_score_1.json`);
 
 		expect(CC.getCentralityMap.bind(CC.getCentralityMap, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
-
-		let CCFW = new $CC.ClosenessCentrality();
-		expect(CCFW.getCentralityMapFW.bind(CC.getCentralityMapFW, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
+		expect(CC.getCentralityMapFW.bind(CC.getCentralityMapFW, graph_1)).toThrowError("Cowardly refusing to traverse graph without edges.");
 
 		//This results in an empty map because there are no edges in the graph
 		//expect( Object.keys( closeness_map ).length ).to.equal(0);
@@ -74,8 +72,8 @@ describe("Closeness Centrality Tests", () => {
 				0.08333333333333333,
 				0.08333333333333333,
 				0.041666666666666664,
-				0.045454545454545456,
-				0.041666666666666664
+				0.041666666666666664,
+				0.045454545454545456
 			];
 			let CCFW = new $CC.ClosenessCentrality();
 			let closeness_map = CCFW.getCentralityMapFW(graph);

@@ -56,6 +56,7 @@ export interface IGraph {
 	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge;
 	hasEdgeID(id: string) : boolean;
+
 	getEdgeById(id: string) : IBaseEdge;
 	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;
 	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;

@@ -8,7 +8,7 @@ import { CSV_DATA_PATH, CSV_CENT_PATH, CSV_SN_PATH, JSON_DATA_PATH } from '../co
 
 
 const logger = new Logger();
-const EPSILON = 1e-6;
+const EPSILON = 1e-12;
 
 
 const std_csv_in_config: ICSVInConfig = {
@@ -39,15 +39,22 @@ let csv = new CSVInput(std_csv_in_config),
 describe("PageRank Gauss Tests", () => {
 
 	test('should return correct betweenness map (directed: true)', () => {
-		let prd = PrGauss.getCentralityMap(graph);
-		expect(prd).toEqual([
+		const controlResult = [
 			0.1332312404287902,
 			0.18376722817764174,
 			0.17457886676875956,
 			0.2787136294027564,
 			0.18376722817764166,
 			0.045941807044410435
-		]);
+		];
+		let prd = PrGauss.getCentralityMap(graph);
+		logger.log('PR Gauss result: ');
+
+		const prdArr = Object.values(prd);
+		for ( let i = 0; i < prdArr.length; i++ ) {
+			expect(prdArr[i]).toBeGreaterThan(controlResult[i] - EPSILON);
+			expect(prdArr[i]).toBeLessThan(controlResult[i] + EPSILON);
+		}
 	});
 
 
@@ -93,6 +100,13 @@ describe("PageRank Gauss Tests", () => {
 });
 
 
+/**
+ *
+ * @param graph
+ * @param gauss
+ *
+ * @todo WTF !?!?
+ */
 function checkRankPrecision(graph, gauss) {
 	let last = gauss[0];
 	let ctr = 0;
