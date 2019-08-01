@@ -25,6 +25,7 @@ describe('==== NODE TESTS ====', () => {
 	let id = "New Node";
 
 	describe('Basic node instantiation', () => {
+
 		test('should correclty instantiate a node with id', () => {
 			let node = new $N.BaseNode(id);
 			expect(node.getID()).toBe(id);
@@ -33,6 +34,16 @@ describe('==== NODE TESTS ====', () => {
 		test('should set default label to ID', () => {
 			let node = new $N.BaseNode(id);
 			expect(node.getLabel()).toBe(id);
+		});
+
+		test('should get ID via getter', () => {
+			let node = new $N.BaseNode(id);
+			expect(node.id).toBe(id);
+		});
+
+		test('should get label via getter', () => {
+			let node = new $N.BaseNode(id);
+			expect(node.label).toBe(id);
 		});
 
 		test('should correclty instantiate a node with label', () => {
@@ -68,6 +79,11 @@ describe('==== NODE TESTS ====', () => {
 		test('should correctly set default features to an empty hash object', () => {
 			expect(node.getFeatures()).toBeInstanceOf(Object);
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
+		});
+
+		test('should get features via getter', () => {
+			expect(node.features).toBeInstanceOf(Object);
+			expect(Object.keys(node.features).length).toBe(3);
 		});
 
 		test('should correctly set features to specified object', () => {

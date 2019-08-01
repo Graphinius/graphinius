@@ -13,7 +13,7 @@ module.exports = {
   watchPathIgnorePatterns: [
     "/test/test_data"
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!**/node_modules/**",

@@ -37,12 +37,18 @@ export type MinAdjacencyListArray = Array<Array<number>>;
 export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
-	_label : string;
+	/**
+	 * Getters
+	 */
+	readonly label: string;
+	readonly mode: GraphMode;
+	readonly stats: GraphStats;
+
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 
 	// NODES
-	addNode(node: IBaseNode) : boolean;
+	addNode(node: IBaseNode) : IBaseNode;
 	addNodeByID(id: string, opts? : {}) : IBaseNode;
 	hasNodeID(id: string) : boolean;
 	getNodeById(id: string) : IBaseNode;
@@ -117,16 +123,20 @@ class BaseGraph implements IGraph {
 	protected _dir_edges : { [key: string] : IBaseEdge } = {};
 	protected _und_edges : { [key: string] : IBaseEdge } = {};
 
-	constructor (public _label) {	}
+	constructor (protected _label) {	}
 
 
-	// *getNodeIterator() : Iterator<IBaseNode> {
-	// 	let keys = Object.keys(this.getNodes());
-	// 	for ( let node_id of keys ) {
-	// 		yield this._nodes[node_id];
-	// 	}
-	// }
+	get label(): string {
+		return this._label;
+	}
 
+	get mode(): GraphMode {
+		return this._mode;
+	}
+
+	get stats(): GraphStats {
+		return this.getStats();
+	}
 	
 	/**
 	 * 
@@ -393,13 +403,13 @@ class BaseGraph implements IGraph {
 		return this.addNode(node) ? node : null;
 	}
 
-	addNode(node: IBaseNode) : boolean {
+	addNode(node: IBaseNode) : IBaseNode {
 		if ( this.hasNodeID( node.getID() ) ) {
 			throw new Error("Won't add node with duplicate ID.");
 		}
 		this._nodes[node.getID()] = node;
 		this._nr_nodes += 1;
-		return true;
+		return node;
 	}
 
 	hasNodeID(id: string) : boolean {

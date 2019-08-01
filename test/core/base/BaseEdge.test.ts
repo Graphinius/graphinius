@@ -6,7 +6,7 @@ const Edge = $E.BaseEdge;
 
 
 describe('==== EDGE TESTS ====', () => {
-	var id = 'New Edge',
+	let id = 'New Edge',
 			label = 'New Edge',
 			node_a = new Node("A"),
 			node_b = new Node("B");
@@ -20,32 +20,42 @@ describe('==== EDGE TESTS ====', () => {
 		 * are part of a graph - this is the job of the BaseGraph class!
 		 */
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badCtr = function() { return new Edge("free-float", null, null) };
+			let badCtr = function() { return new Edge("free-float", null, null) };
 			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badCtr = function() { return new Edge("free-float", new Node("A"), null) };
+			let badCtr = function() { return new Edge("free-float", new Node("A"), null) };
 			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should refuse to instantiate an edge without two existing nodes', () => {
-			var badCtr = function() { return new Edge("free-float", null, new Node("A") ) };
+			let badCtr = function() { return new Edge("free-float", null, new Node("A") ) };
 			expect(badCtr).toThrowError("cannot instantiate edge without two valid node objects");
 		});
 
 		test('should correctly set _id', () => {
-			var edge = new Edge(id, node_a, node_b);
+			let edge = new Edge(id, node_a, node_b);
 			expect(edge.getID()).toBe(id);
 		});
 		
 		test('should correctly set _label upon instantiation', () => {
-			var edge = new Edge(id, node_a, node_b, {label: label});
+			let edge = new Edge(id, node_a, node_b, {label: label});
 			expect(edge.getLabel()).toBe(label);
+		});
+
+		test('should get id via getter', () => {
+			let edge = new Edge(id, node_a, node_b);
+			expect(edge.id).toBe(id);
+		});
+
+		test('should get label via getter', () => {
+			let edge = new Edge(id, node_a, node_b, {label: label});
+			expect(edge.label).toBe(label);
 		});
 		
 		test('should correctly set _label upon renewed setting', () => {
-			var edge = new Edge(id, node_a, node_b, {label: label});
+			let edge = new Edge(id, node_a, node_b, {label: label});
 			expect(edge.getLabel()).toBe(label);
 			edge.setLabel('new Label');
 			expect(edge.getLabel()).toBe('new Label');
@@ -58,14 +68,14 @@ describe('==== EDGE TESTS ====', () => {
 		// Constructor + isDirected()
 		describe('Constructor + isDirected', () => {
 			test('should correctly set default _directed to false', () => {
-				var edge = new Edge(id, node_a, node_b);
+				let edge = new Edge(id, node_a, node_b);
 				expect(edge.isDirected()).toBe(false);
 			});
 			
 			[true, false].forEach(function(val) {
 				test('should correctly set _directed to specified value', () => {
-					var opts = {directed: val};
-					var edge = new Edge(id, node_a, node_b, opts);
+					let opts = {directed: val};
+					let edge = new Edge(id, node_a, node_b, opts);
 					expect(edge.isDirected()).toBe(val);					
 				});
 			});
@@ -83,14 +93,14 @@ describe('==== EDGE TESTS ====', () => {
     
 		describe('Constructor + isWeighted', () => {
 			test('should correctly set default _directed to false', () => {
-				var edge = new Edge(id, node_a, node_b);
+				let edge = new Edge(id, node_a, node_b);
 				expect(edge.isWeighted()).toBe(false);
 			});
 			
 			[true, false].forEach(function(val) {
 				test('should correctly set _directed to specified value', () => {
-					var opts = {weighted: val};
-					var edge = new Edge(id, node_a, node_b, opts);
+					let opts = {weighted: val};
+					let edge = new Edge(id, node_a, node_b, opts);
 					expect(edge.isWeighted()).toBe(val);					
 				});
 			});
@@ -99,21 +109,21 @@ describe('==== EDGE TESTS ====', () => {
     
 		describe('getWeight()', () => {
 			test('should throw an exception when querying weight if unweighted', () => {
-				var edge = new Edge(id, node_a, node_b);
+				let edge = new Edge(id, node_a, node_b);
 				expect(edge.isWeighted()).toBe(false);
         expect(edge.getWeight()).toBeUndefined();
 			});
 			
 			test('should correctly set default weight to 1', () => {
-				var opts = {weighted: true};
-				var edge = new Edge(id, node_a, node_b, opts);
+				let opts = {weighted: true};
+				let edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).toBe(true);					
 				expect(edge.getWeight()).toBe(1);					
 			});
 			
 			test('should correctly report weight if set & specified', () => {
-				var opts = {weighted: true, weight: 42};
-				var edge = new Edge(id, node_a, node_b, opts);
+				let opts = {weighted: true, weight: 42};
+				let edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).toBe(true);					
 				expect(edge.getWeight()).toBe(42);					
 			});
@@ -122,15 +132,15 @@ describe('==== EDGE TESTS ====', () => {
     
 		describe('setWeight()', () => {
 			test('Should throw an error on trying to set a weight if unweighted', () => {
-				var opts = {weighted: false};
-				var edge = new Edge(id, node_a, node_b, opts);
+				let opts = {weighted: false};
+				let edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).toBe(false);
 				expect(edge.setWeight.bind(edge, 42)).toThrowError("Cannot set weight on unweighted edge.");
 			});
 			
 			test('Should correctly set weight to a specified value', () => {	
-				var opts = {weighted: true};
-				var edge = new Edge(id, node_a, node_b, opts);
+				let opts = {weighted: true};
+				let edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isWeighted()).toBe(true);
 				expect(edge.getWeight()).toBe(1);			
 				edge.setWeight(42);
@@ -144,10 +154,10 @@ describe('==== EDGE TESTS ====', () => {
 		
 		[true, false].forEach(function(direction) {
 			test('all edges should properly return the two connected nodes', () => {
-				var opts = {directed: direction};
-				var edge = new Edge(id, node_a, node_b, opts);
+				let opts = {directed: direction};
+				let edge = new Edge(id, node_a, node_b, opts);
 				expect(edge.isDirected()).toBe(direction);
-				var nodes = edge.getNodes();
+				let nodes = edge.getNodes();
 				expect(nodes).toBeInstanceOf(Object);			
 				expect(nodes.a).toBeInstanceOf(Node);
 				expect(nodes.b).toBeInstanceOf(Node);

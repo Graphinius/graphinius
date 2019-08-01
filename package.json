@@ -53,5 +53,8 @@
   "files": [
     "lib/**/*"
   ],
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "uuid": "^3.3.2"
+  }
 }

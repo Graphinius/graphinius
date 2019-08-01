@@ -78,9 +78,9 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	addNode(node: ITypedNode): boolean {
+	addNode(node: ITypedNode): ITypedNode {
 		if (!super.addNode(node)) {
-			return false;
+			return null;
 		}
 		// logger.log(JSON.stringify(node));
 
@@ -100,7 +100,7 @@ export class TypedGraph extends BaseGraph {
 			}
 			this._typedNodes.get(type).set(id, node);
 		}
-		return true;
+		return node;
 	}
 
 

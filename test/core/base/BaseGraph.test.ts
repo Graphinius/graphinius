@@ -66,12 +66,25 @@ describe('GRAPH TESTS: ', () => {
 		);
 
 
+		test('should get mode via getter',() => {
+				graph = new Graph('Test graph');
+				expect(graph.mode).toBe($G.GraphMode.INIT);
+			}
+		);
+
+
+		test('should get stats either via getStats() or stats getter', () => {
+			expect(graph.getStats()).toEqual(graph.stats);
+		});
+
+
 		describe('adding nodes and edges -', () => {
 
 			test('should correctly add a node', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(0);
-				expect(graph.addNode(new $N.BaseNode('A'))).toBe(true);
+				const addNode = new $N.BaseNode('A');
+				expect(graph.addNode(addNode)).toBe(addNode);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 			});
@@ -87,8 +100,9 @@ describe('GRAPH TESTS: ', () => {
 			test('should refuse to add a node with same ID as existing node', () => {
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(0);
-				expect(graph.addNode(new $N.BaseNode('A'))).toBe(true);
-				expect(graph.addNode.bind(graph, new $N.BaseNode('A'))).toThrowError("Won't add node with duplicate ID.");
+				const addNode = new $N.BaseNode('A');
+				expect(graph.addNode(addNode)).toBe(addNode);
+				expect(graph.addNode.bind(graph, addNode)).toThrowError("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 			});
@@ -992,9 +1006,10 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should successfully clone an empty graph', () => {
-			graph = new $G.BaseGraph("empty graph");
+			const label = 'attackOfTheCloneGraph';
+			graph = new $G.BaseGraph(label);
 			clone_graph = graph.cloneStructure();
-			expect(clone_graph._label).toBe(graph._label);
+			expect(clone_graph.label).toBe(label);
 			expect(clone_graph.nrNodes()).toBe(0);
 			expect(clone_graph.nrUndEdges()).toBe(0);
 			expect(clone_graph.nrDirEdges()).toBe(0);
@@ -1020,7 +1035,7 @@ describe('GRAPH TESTS: ', () => {
 					}
 				});
 				clone_graph = graph.cloneStructure();
-				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.label).toBe(graph.label);
 				expect(clone_graph.nrNodes()).toBe(1);
 				expect(clone_graph.nrUndEdges()).toBe(0);
 				expect(clone_graph.nrDirEdges()).toBe(0);
@@ -1039,7 +1054,7 @@ describe('GRAPH TESTS: ', () => {
 				let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: false });
 
 				clone_graph = graph.cloneStructure();
-				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.label).toBe(graph.label);
 				expect(clone_graph.nrNodes()).toBe(2);
 				expect(clone_graph.nrUndEdges()).toBe(1);
 				expect(clone_graph.nrDirEdges()).toBe(0);
@@ -1057,7 +1072,7 @@ describe('GRAPH TESTS: ', () => {
 				let edgy = graph.addEdgeByID("edgy", n_a, n_b, { directed: true });
 
 				clone_graph = graph.cloneStructure();
-				expect(clone_graph._label).toBe(graph._label);
+				expect(clone_graph.label).toBe(graph.label);
 				expect(clone_graph.nrNodes()).toBe(2);
 				expect(clone_graph.nrUndEdges()).toBe(0);
 				expect(clone_graph.nrDirEdges()).toBe(1);

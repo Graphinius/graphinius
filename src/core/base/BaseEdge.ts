@@ -13,6 +13,12 @@ export interface IConnectedNodes {
  * @param _label edge label, public
  */
 export interface IBaseEdge {
+	/**
+	 * Getters
+	 */
+	readonly id: string;
+	readonly label: string;
+
 	getID() : string;
 	getLabel() : string;
 	setLabel(label : string) : void;
@@ -63,6 +69,14 @@ class BaseEdge implements IBaseEdge {
     // @NOTE isNaN and Number.isNaN confusion...
 		this._weight = this._weighted ? ( isNaN(config.weight) ? 1 : config.weight ) : undefined;
 		this._label = config.label || this._id;
+	}
+
+	get id(): string {
+		return this._id;
+	}
+
+	get label(): string {
+		return this._label;
 	}
 
 	getID() : string {

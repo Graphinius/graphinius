@@ -16,15 +16,26 @@ export interface BaseNodeConfig {
 }
 
 
+type NodeFeatures = { [k:string]: any };
+
+
 export interface IBaseNode {
+	/**
+	 * Getters
+	 */
+	readonly id: string;
+	readonly label: string;
+	readonly features: NodeFeatures;
+
+
 	getID()	: string;
 	getLabel() : string;
 	setLabel(label : string) : void;
 	
 	// FEATURES methods
-	getFeatures() : { [k:string] : any };
+	getFeatures() : NodeFeatures;
 	getFeature(key: string) : any;
-	setFeatures( features: { [k:string]: any } ) : void;	
+	setFeatures( features: NodeFeatures ) : void;
 	setFeature(key: string, value: any) : void;
 	deleteFeature(key: string) : any;
 	clearFeatures() : void;
@@ -94,6 +105,18 @@ class BaseNode implements IBaseNode {
 		this._und_edges = {};
 		this._label = config.label || _id;
 		this._features = config.features != null ? $SU.clone(config.features) : {};
+	}
+
+	get id(): string {
+		return this._id;
+	}
+
+	get label(): string {
+		return this._label;
+	}
+
+	get features(): NodeFeatures {
+		return this._features;
 	}
 	
 	getID()	: string {

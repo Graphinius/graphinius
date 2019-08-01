@@ -3,9 +3,13 @@ import { IBaseEdge } from '../../core/base/BaseEdge';
 import { IGraph, BaseGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import { labelKeys } from '../interfaces';
+import { PotentialEdgeInfo} from '../common/Dupes';
+// Use as `uuid.v4()`
+import * as uuid from 'uuid'
 
 import { Logger } from '../../utils/Logger';
 const logger = new Logger();
+
 
 const DEFAULT_WEIGHT: number = 1;
 
@@ -136,7 +140,9 @@ class JSONInput implements IJSONInput {
 			}
 		}
 
-
+		/**
+		 * ROUND 2 - Add edges if no dupes
+		 */
 		for (let node_id in json.data) {
 			let node = graph.getNodeById(node_id);
 
@@ -180,15 +186,17 @@ class JSONInput implements IJSONInput {
 				// logger.log(`Edge ID: ${edge_id}, edge ID 2: ${edge_id_u2} `)
 
 				/**
-				 * since all the nodes are already
+				 * since all the nodes are already in the graph at this point, we can
 				 */
-				// const edgeInfo = {
-				// 	a: node,
-				// 	b: target_node,
-				// 	dir: directed,
-				// 	weight: edge_weight,
-				// 	type: edge_type
-				// };
+				const edgeInfo: PotentialEdgeInfo = {
+					n_a: node,
+					n_b: target_node,
+					dir: directed,
+					weighted: !!edge_weight,
+					weight: edge_weight,
+					typed: true,
+					type: 'BLAHOO'
+				};
 
 
 				/**
