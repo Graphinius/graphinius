@@ -1,15 +1,15 @@
-import {BaseEdge, IBaseEdge} from '../base/BaseEdge';
 import { ITypedNode } from './TypedNode';
+import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
+import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import { BaseGraph, GraphMode, GraphStats } from '../base/BaseGraph';
 
 import { Logger } from '../../utils/Logger';
-import {ITypedEdge} from "./TypedEdge";
 const logger = new Logger();
 
 export const GENERIC_TYPE = "GENERIC";
 
 export type TypedNodes = Map<string, Map<string, ITypedNode>>;
-export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
+export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 
 export interface TypedGraphStats extends GraphStats {
 	node_types: string[];
@@ -18,10 +18,8 @@ export interface TypedGraphStats extends GraphStats {
 	typed_edges: { [key: string]: number };
 }
 
-
 /**
- * @description in the typedGraph setting, we use the label as type
- * @todo introduce extra type property
+ * @description TypedGraph only takes TypedNodes & TypedEdges
  * @description coding standard: following Neo4j / Cypher standard,
  * node types should be in capital letters & edge types expressive
  * two-pieces separated by underscore (except 'GENERIC')
@@ -36,7 +34,7 @@ export interface TypedGraphStats extends GraphStats {
  * @todo just don't specify direction in traversal / expand and only
  *       follow the direction specified in edge !?
  * @todo in the last case, how to handle undirected edges ?
- * @todo allow 'GENERIC' edge types ?
+ * @todo allow 'GENERIC' edge types ? => yes!
  */
 export class TypedGraph extends BaseGraph {
 
@@ -125,35 +123,45 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	addEdge(edge: IBaseEdge | ITypedEdge): IBaseEdge {
+	addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge {
+		let edge = new TypedEdge(id, a, b, opts || {});
+		return this.addEdge(edge);
+	}
+
+
+	addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge {
 		if (!super.addEdge(edge)) {
 			return undefined;
 		}
 
 		const id = edge.getID();
-		let type = undefined;
+		let type = GENERIC_TYPE;
 		if ( BaseEdge.isTyped(edge) ) {
-			edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
+			type = edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
 		}
+		// logger.log('Got edge type: ' + type);
 
 		/**
 		 *  Same procedure as every node...
 		 */
 		if (id === type) {
-			this._typedEdges.get(GENERIC_TYPE).set(id, edge);
+			this._typedEdges.get(GENERIC_TYPE).set(id, edge as ITypedEdge);
 		} else {
 			if (!this._typedEdges.get(type)) {
 				this._typedEdges.set(type, new Map());
 			}
-			this._typedEdges.get(type).set(id, edge);
+			this._typedEdges.get(type).set(id, edge as ITypedEdge);
 		}
-		return edge;
+		return edge as ITypedEdge;
 	}
 
 
-	deleteEdge(edge: ITypedEdge): void {
-		const id = edge.getID(),
-			type = edge.type === id ? GENERIC_TYPE : edge.type.toUpperCase();
+	deleteEdge(edge: ITypedEdge | IBaseEdge): void {
+		const id = edge.getID();
+		let type = GENERIC_TYPE;
+		if ( BaseEdge.isTyped(edge) ) {
+			type = edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
+		}
 
 		if (!this._typedEdges.get(type)) {
 			throw Error('Edge type does not exist on this TypedGraph.');

@@ -45,14 +45,14 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		json = new JSONInput(std_json_in_config);
 		csv = new CSVInput(csv_config);
 		graph_search = json.readFromJSONFile(search_graph_pos);
-		graph_bernd = json.readFromJSONFile(bernd_graph);
-		graph_nullcycle = json.readFromJSONFile(search_graph);
-		graph_midsize = json.readFromJSONFile(intermediate);
-		graph_social = csv.readFromEdgeListFile(social_graph);
+		// graph_bernd = json.readFromJSONFile(bernd_graph);
+		// graph_nullcycle = json.readFromJSONFile(search_graph);
+		// graph_midsize = json.readFromJSONFile(intermediate);
+		// graph_social = csv.readFromEdgeListFile(social_graph);
 	});
 
 
-	test('should correctly instantiate the search graph', () => {
+	test.only('should correctly instantiate the search graph', () => {
 		stats = graph_search.getStats();
 		expect(stats.nr_nodes).toBe(6);
 		expect(stats.nr_dir_edges).toBe(12);

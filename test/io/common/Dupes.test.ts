@@ -199,6 +199,41 @@ describe('Edge DUPE tests', function () {
 
 
 	/**
+	 * Same endpoints - check sets
+	 */
+	it('same endpoints, both directed & same direction', () => {
+		e_1 = graph.addEdgeByNodeIDs(v4(), a.id, b.id, {directed: true});
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: false, typed: false
+		};
+		expect(edc.potentialEndpoints(newEdgeInfo)).toEqual(new Set([e_1]));
+	});
+
+
+	it('same endpoints, both UNdirected', () => {
+		e_1 = graph.addEdgeByNodeIDs(v4(), a.id, b.id, );
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: false, weighted: false, typed: false
+		};
+		expect(edc.potentialEndpoints(newEdgeInfo)).toEqual(new Set([e_1]));
+	});
+
+
+	/**
+	 * @todo graph shouldn't even have that...
+	 */
+	it('same endpoints, both UNdirected', () => {
+		e_1 = graph.addEdgeByNodeIDs(v4(), b.id, a.id, );
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: false, weighted: false, typed: false
+		};
+		expect(edc.potentialEndpoints(newEdgeInfo)).toEqual(new Set([e_1]));
+	});
+
+
+
+
+	/**
 	 * Same endpoints - are edges (pairwise) both typed and weighted?
 	 * If yes, we have edges in our potential DUPE set
 	 *
@@ -226,6 +261,9 @@ describe('Edge DUPE tests', function () {
 		});
 
 
+		/**
+		 * @description BaseEdges are automatically untyped...
+		 */
 		it('typed & untyped cannot be dupes (both weighted)', () => {
 			e_1 = graph.addEdge(new BaseEdge(v4(), a, b, {weighted: true}));
 			logger.log(BaseEdge.isTyped(e_1));
@@ -257,12 +295,58 @@ describe('Edge DUPE tests', function () {
 	});
 
 
+	it('NO Type & no weight to distinguish -> DUPES - ', () => {
+		e_1 = graph.addEdge(new BaseEdge(v4(), a, b, {directed: true, weighted: false}));
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: false, typed: false
+		};
+		expect(edc.isDupe(newEdgeInfo)).toBe(true);
+	});
 
 
+	it('NO Type & same weight -> DUPES - ', () => {
+		e_1 = graph.addEdge(new BaseEdge(v4(), a, b, {directed: true, weighted: true, weight: 42}));
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: true, weight: 42, typed: false
+		};
+		expect(edc.isDupe(newEdgeInfo)).toBe(true);
+	});
 
 
-	describe('Whole duplicates workflow examples - ', () => {
+	it('NO Type & NOT same weight -> NO DUPES - ', () => {
+		e_1 = graph.addEdge(new BaseEdge(v4(), a, b, {directed: true, weighted: true, weight: 41}));
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: true, weight: 42, typed: false
+		};
+		expect(edc.isDupe(newEdgeInfo)).toBe(false);
+	});
 
+
+	it('Typed & SAME type -> DUPES - ', () => {
+		e_1 = graph.addEdge(new TypedEdge(v4(), a, b, {
+			directed: true,
+			type: relations.LIKES,
+			weighted: true,
+			weight: 42
+		}));
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: true, weight: 42, typed: true, type: relations.LIKES
+		};
+		expect(edc.isDupe(newEdgeInfo)).toBe(true);
+	});
+
+
+	it('Typed & NOT same type -> NO DUPES - ', () => {
+		e_1 = graph.addEdge(new TypedEdge(v4(), a, b, {
+			directed: true,
+			type: relations.LIKES,
+			weighted: true,
+			weight: 42
+		}));
+		const newEdgeInfo: PotentialEdgeInfo = {
+			a, b, dir: true, weighted: true, weight: 42, typed: true, type: relations.WORKS_AT
+		};
+		expect(edc.isDupe(newEdgeInfo)).toBe(false);
 	});
 
 });

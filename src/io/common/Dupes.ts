@@ -30,15 +30,31 @@ class EdgeDupeChecker {
 			return false;
 		}
 
-		// for ( let pd of pds.values() ) {
-		// 	logger.log(pd);
-		//
-		// 	if ( this.checkTypeWeightEquality(e, pd) ) {
-		// 		pds.delete(pd);
-		// 	}
-		// }
-		//
-		// return !!pds.size;
+		for ( let pd of pds.values() ) {
+
+			if ( !this.checkTypeWeightEquality(e, pd) ) {
+				pds.delete(pd);
+				continue;
+			}
+
+			// UNtyped & not weighted
+			if ( !e.typed && !e.weighted ) {
+				continue;
+			}
+
+			if ( !e.typed && e.weighted ) {
+				if ( e.weight !== pd.getWeight() ) {
+					pds.delete(pd);
+				}
+				continue;
+			}
+
+			if ( e.typed && BaseEdge.isTyped(pd) && e.type !== pd.type ) {
+				pds.delete(pd);
+			}
+
+		}
+		return !!pds.size;
 	}
 
 
