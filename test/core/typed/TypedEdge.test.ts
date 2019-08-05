@@ -1,3 +1,4 @@
+import { BaseEdge } from '../../../src/core/base/BaseEdge';
 import { ITypedNode, TypedNode } from '../../../src/core/typed/TypedNode';
 import { ITypedEdge, TypedEdge } from '../../../src/core/typed/TypedEdge';
 
@@ -29,6 +30,23 @@ describe('==== TYPED EDGE TESTS ====', () => {
 		beforeEach(() => {
 			node_a = new TypedNode('Bernd', {type: nodeTypeA});
 			node_b = new TypedNode('Roesti', {type: nodeTypeB});
+		});
+
+
+		it('should return isTyped() of true', () => {
+			const edge = new TypedEdge(id, node_a, node_b);
+			expect(edge.isTyped()).toBe(true);
+		});
+
+
+		/**
+		 * @description checking for correct class
+		 *
+		 * @todo no better way to write this !?
+		 */
+		it('should return canHaveType of true', () => {
+			const edge = new TypedEdge(id, node_a, node_b);
+			expect(BaseEdge.isTyped(edge)).toBe(true);
 		});
 
 

@@ -4,6 +4,8 @@ import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
 import {ITypedNode} from "../../../lib/core/typed/TypedNode";
 import { IGraph } from '../../core/base/BaseGraph';
 import { TypedGraph } from '../../core/typed/TypedGraph';
+import { Logger } from "../../utils/Logger";
+const logger = new Logger();
 
 
 export interface PotentialEdgeInfo {
@@ -22,12 +24,30 @@ class EdgeDupeChecker {
 	constructor( private _graph: IGraph | TypedGraph ) {}
 
 	isDupe(e: PotentialEdgeInfo): boolean {
+		// Potential Dupe Set
+		let pds = this.potentialEndpoints(e);
+		if ( !pds.size ) {
+			return false;
+		}
 
-		return true;
+		// for ( let pd of pds.values() ) {
+		// 	logger.log(pd);
+		//
+		// 	if ( this.checkTypeWeightEquality(e, pd) ) {
+		// 		pds.delete(pd);
+		// 	}
+		// }
+		//
+		// return !!pds.size;
 	}
 
 
-	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseNode | ITypedNode> {
+	checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean {
+		return BaseEdge.isTyped(oe) === e.typed && e.weighted === oe.isWeighted();
+	}
+
+
+	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge> {
 		const result = new Set();
 
 		if ( e.dir ) {
@@ -53,29 +73,3 @@ class EdgeDupeChecker {
 export {
 	EdgeDupeChecker
 }
-
-
-
-/**
- * Type alias to express dependency of one property on another
- *
- * @todo doesn't produce `missing property` errors like interface does
- */
-// type BasicPotentialEdgeInfo = {
-// 	a							: IBaseNode,
-// 	b							: IBaseNode,
-// 	dir						: boolean,
-// }
-// type EdgeWeightInfo = {
-// 	weighted			: true,
-// 	weight				: number
-// } | {
-// 	weighted			: false
-// }
-// type EdgeTypeInfo = {
-// 	typed					: true,
-// 	type					: string
-// } | {
-// 	typed					: false
-// }
-// export type PotentialEdgeInfo = BasicPotentialEdgeInfo | EdgeWeightInfo | EdgeTypeInfo;

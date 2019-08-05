@@ -7,6 +7,8 @@ const logger = new Logger();
 
 export interface ITypedEdge extends IBaseEdge {
 	readonly type: string;
+
+	isTyped(): boolean;
 }
 
 
@@ -26,8 +28,14 @@ class TypedEdge extends BaseEdge implements ITypedEdge {
 		this._type = config.type;
 	}
 
+
 	get type() {
 		return this._type;
+	}
+
+
+	isTyped() : true {
+		return true;
 	}
 
 }

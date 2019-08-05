@@ -1,8 +1,9 @@
-import { IBaseEdge } from '../base/BaseEdge';
+import {BaseEdge, IBaseEdge} from '../base/BaseEdge';
 import { ITypedNode } from './TypedNode';
 import { BaseGraph, GraphMode, GraphStats } from '../base/BaseGraph';
 
 import { Logger } from '../../utils/Logger';
+import {ITypedEdge} from "./TypedEdge";
 const logger = new Logger();
 
 export const GENERIC_TYPE = "GENERIC";
@@ -124,43 +125,46 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	addEdge(edge: IBaseEdge): boolean {
+	addEdge(edge: IBaseEdge | ITypedEdge): IBaseEdge {
 		if (!super.addEdge(edge)) {
-			return false;
+			return undefined;
 		}
 
-		const id = edge.getID(),
-			label = edge.getLabel().toUpperCase();
+		const id = edge.getID();
+		let type = undefined;
+		if ( BaseEdge.isTyped(edge) ) {
+			edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
+		}
 
 		/**
 		 *  Same procedure as every node...
 		 */
-		if (id === label) {
+		if (id === type) {
 			this._typedEdges.get(GENERIC_TYPE).set(id, edge);
 		} else {
-			if (!this._typedEdges.get(label)) {
-				this._typedEdges.set(label, new Map());
+			if (!this._typedEdges.get(type)) {
+				this._typedEdges.set(type, new Map());
 			}
-			this._typedEdges.get(label).set(id, edge);
+			this._typedEdges.get(type).set(id, edge);
 		}
-		return true;
+		return edge;
 	}
 
 
-	deleteEdge(edge: IBaseEdge): void {
+	deleteEdge(edge: ITypedEdge): void {
 		const id = edge.getID(),
-			label = edge.getLabel() === id ? GENERIC_TYPE : edge.getLabel().toUpperCase();
+			type = edge.type === id ? GENERIC_TYPE : edge.type.toUpperCase();
 
-		if (!this._typedEdges.get(label)) {
+		if (!this._typedEdges.get(type)) {
 			throw Error('Edge type does not exist on this TypedGraph.');
 		}
-		const removeEdge = this._typedEdges.get(label).get(id);
+		const removeEdge = this._typedEdges.get(type).get(id);
 		if (!removeEdge) {
 			throw Error('This particular edge is nowhere to be found in its typed set.')
 		}
-		this._typedEdges.get(label).delete(id);
-		if (this.nrTypedEdges(label) === 0) {
-			this._typedEdges.delete(label);
+		this._typedEdges.get(type).delete(id);
+		if (this.nrTypedEdges(type) === 0) {
+			this._typedEdges.delete(type);
 		}
 
 		super.deleteEdge(edge);

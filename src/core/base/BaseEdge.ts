@@ -1,4 +1,5 @@
 import * as $N from "./BaseNode";
+import { TypedEdge } from '../typed/TypedEdge';
 
 export interface IConnectedNodes {
 	a: $N.IBaseNode;
@@ -130,6 +131,10 @@ class BaseEdge implements IBaseEdge {
 				label			: this._label
 			}
 		);
+	}
+
+	static isTyped(arg: any): arg is TypedEdge {
+		return arg.isTyped !== undefined;
 	}
 }
 

@@ -58,7 +58,7 @@ export interface IGraph {
 	deleteNode(node) : void;
 	
 	// EDGES
-	addEdge(edge: IBaseEdge) : boolean;
+	addEdge(edge: IBaseEdge) : IBaseEdge;
 	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge;
 	hasEdgeID(id: string) : boolean;
@@ -567,7 +567,7 @@ class BaseGraph implements IGraph {
 	 * @todo test cases should be reversed / completed
 	 * @todo make transactional
 	 */
-	addEdge(edge: IBaseEdge) : boolean {
+	addEdge(edge: IBaseEdge) : IBaseEdge {
 		let node_a = edge.getNodes().a,
 				node_b = edge.getNodes().b;
 
@@ -596,7 +596,7 @@ class BaseGraph implements IGraph {
 			this._nr_und_edges += 1;
 			this.updateGraphMode();
 		}
-		return true;
+		return edge;
 	}
 
 	deleteEdge(edge: IBaseEdge) : void {
