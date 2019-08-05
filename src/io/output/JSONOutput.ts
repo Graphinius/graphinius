@@ -49,7 +49,7 @@ class JSONOutput implements IJSONOutput {
 			coords;
 
 		let result = {
-			name: graph._label,
+			name: graph.label,
 			nodes: graph.nrNodes(),
 			dir_e: graph.nrDirEdges(),
 			und_e: graph.nrUndEdges(),

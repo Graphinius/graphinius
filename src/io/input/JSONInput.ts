@@ -189,8 +189,8 @@ class JSONInput implements IJSONInput {
 				 * since all the nodes are already in the graph at this point, we can
 				 */
 				const edgeInfo: PotentialEdgeInfo = {
-					n_a: node,
-					n_b: target_node,
+					a: node,
+					b: target_node,
 					dir: directed,
 					weighted: !!edge_weight,
 					weight: edge_weight,

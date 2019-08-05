@@ -75,11 +75,11 @@ class MCMFBoykov implements IMCMFBoykov {
 
 
   calculateCycle() {
-    var result: MCMFResult = {
-      edges: [],
+		const result: MCMFResult = {
+			edges: [],
 			edgeIDs: [],
-      cost: 0
-    }
+			cost: 0
+		};
 
 		// init
 		this._state.treeS[this._source.getID()] = this._source;
@@ -89,8 +89,8 @@ class MCMFBoykov implements IMCMFBoykov {
 		this._state.activeNodes[this._source.getID()] = this._source;
 		this._state.activeNodes[this._sink.getID()] = this._sink;
 
-		 var nrCycles= 0;
-		 
+		let nrCycles = 0;
+
 		while(true) {
 			// logger.log("grow");
 			this.grow();
@@ -116,20 +116,20 @@ class MCMFBoykov implements IMCMFBoykov {
 		//     }
 		// }
 		logger.log("computing result");
-		var smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
-		var smallTree_size:number = Object.keys(smallTree).length;
-		var smallTree_ids: Array<string> = Object.keys(smallTree);
+		const smallTree = (Object.keys(this._state.treeS).length < Object.keys(this._state.treeT).length) ? this._state.treeS : this._state.treeT;
+		const smallTree_size: number = Object.keys(smallTree).length;
+		const smallTree_ids: Array<string> = Object.keys(smallTree);
 		for (let i = 0; i < smallTree_size; i++) {
 		    // var node_id: string = smallTree[Object.keys(smallTree)[i]].getID();
-				var node_id: string = smallTree_ids[i];
-				var node: $N.IBaseNode = this._graph.getNodeById(node_id);
+			const node_id: string = smallTree_ids[i];
+			const node: $N.IBaseNode = this._graph.getNodeById(node_id);
 
-				// if undirected
+			// if undirected
 				if (!this._config.directed) {
-				    var undEdges: {[keys: string] : $E.IBaseEdge} = node.undEdges();
-						var undEdges_size: number = Object.keys(undEdges).length;
-						var undEdges_ids: Array<string> = Object.keys(undEdges);
-						for (let i = 0; i < undEdges_size; i++) {
+					const undEdges: { [keys: string]: $E.IBaseEdge } = node.undEdges();
+					const undEdges_size: number = Object.keys(undEdges).length;
+					const undEdges_ids: Array<string> = Object.keys(undEdges);
+					for (let i = 0; i < undEdges_size; i++) {
 						    // var edge: $E.IBaseEdge = undEdges[Object.keys(undEdges)[i]];
 								var edge: $E.IBaseEdge = undEdges[undEdges_ids[i]];
 								var neighbor: $N.IBaseNode = (edge.getNodes().a.getID() == node.getID()) ? edge.getNodes().b : edge.getNodes().a;
@@ -147,10 +147,10 @@ class MCMFBoykov implements IMCMFBoykov {
 					*/
 					/* if directed
 						*/
-					var outEdges_ids: Array<string> = Object.keys(node.outEdges());
-					var outEdges_length: number = outEdges_ids.length;
-					var inEdges_ids: Array<string> = Object.keys(node.inEdges());
-					var inEdges_length: number = inEdges_ids.length;
+					const outEdges_ids: Array<string> = Object.keys(node.outEdges());
+					const outEdges_length: number = outEdges_ids.length;
+					const inEdges_ids: Array<string> = Object.keys(node.inEdges());
+					const inEdges_length: number = inEdges_ids.length;
 
 					// check outEdges
 					for (let i = 0; i < outEdges_length; i++) {
@@ -188,49 +188,49 @@ class MCMFBoykov implements IMCMFBoykov {
   }
 
 	renameEdges(graph: $G.IGraph) {
-		var edges = graph.getDirEdges();
-		var edges_ids: Array<string> = Object.keys(edges);
-		var edges_length = edges_ids.length;
+		const edges = graph.getDirEdges();
+		const edges_ids: Array<string> = Object.keys(edges);
+		const edges_length = edges_ids.length;
 		for (let i = 0; i < edges_length; i++) {
-		    var edge: $E.IBaseEdge = edges[edges_ids[i]];
-				var weight: number = edge.getWeight();
-				graph.deleteEdge(edge);
+			const edge: $E.IBaseEdge = edges[edges_ids[i]];
+			const weight: number = edge.getWeight();
+			graph.deleteEdge(edge);
 
-				var node_a: $N.IBaseNode = edge.getNodes().a;
-				var node_b: $N.IBaseNode = edge.getNodes().b;
-				var options = {directed:true, weighted:true, weight: weight};
-				var new_edge = graph.addEdgeByID(node_a.getID() + "_" + node_b.getID(), node_a, node_b, options);
+			const node_a: $N.IBaseNode = edge.getNodes().a;
+			const node_b: $N.IBaseNode = edge.getNodes().b;
+			const options = {directed: true, weighted: true, weight: weight};
+			const new_edge = graph.addEdgeByID(node_a.getID() + "_" + node_b.getID(), node_a, node_b, options);
 		}
 	}
 
 	convertToDirectedGraph(uGraph: $G.IGraph) : $G.IGraph {
-		var dGraph: $G.IGraph = new $G.BaseGraph(uGraph._label + "_directed");
+		const dGraph: $G.IGraph = new $G.BaseGraph(uGraph.label + "_directed");
 
 		// copy all nodes
-		var nodes: {[keys: string] : $N.IBaseNode} = uGraph.getNodes();
-		var nodes_ids: Array<string> = Object.keys(nodes);
-		var nodes_length: number = nodes_ids.length;
+		const nodes: { [keys: string]: $N.IBaseNode } = uGraph.getNodes();
+		const nodes_ids: Array<string> = Object.keys(nodes);
+		const nodes_length: number = nodes_ids.length;
 		// logger.log("#nodes: " + Object.keys(nodes).length);
 		for (let i = 0; i < nodes_length; i++) {
 		    // var node: $N.IBaseNode = nodes[Object.keys(nodes)[i]];
-				var node: $N.IBaseNode = nodes[nodes_ids[i]];
-				dGraph.addNodeByID(node.getID());
+			const node: $N.IBaseNode = nodes[nodes_ids[i]];
+			dGraph.addNodeByID(node.getID());
 		}
 
 		// create one in and one out edge for each undirected edge
-		var edges: {[keys: string] : $E.IBaseEdge} = uGraph.getUndEdges();
-		var edges_ids: Array<string> = Object.keys(edges);
-		var edges_length: number = edges_ids.length;
+		const edges: { [keys: string]: $E.IBaseEdge } = uGraph.getUndEdges();
+		const edges_ids: Array<string> = Object.keys(edges);
+		const edges_length: number = edges_ids.length;
 		for (let i = 0; i < edges_length; i++) {
 		    // var und_edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
-				var und_edge: $E.IBaseEdge = edges[edges_ids[i]];
+			const und_edge: $E.IBaseEdge = edges[edges_ids[i]];
 
-				var node_a_id: string = und_edge.getNodes().a.getID();
-				var node_b_id: string = und_edge.getNodes().b.getID();
+			const node_a_id: string = und_edge.getNodes().a.getID();
+			const node_b_id: string = und_edge.getNodes().b.getID();
 
-				var options: $E.BaseEdgeConfig = { directed: true, weighted: true, weight: und_edge.getWeight()};
+			const options: $E.BaseEdgeConfig = {directed: true, weighted: true, weight: und_edge.getWeight()};
 
-				dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
+			dGraph.addEdgeByID(node_a_id + "_" + node_b_id, dGraph.getNodeById(node_a_id), dGraph.getNodeById(node_b_id), options);
 				dGraph.addEdgeByID(node_b_id + "_" + node_a_id, dGraph.getNodeById(node_b_id), dGraph.getNodeById(node_a_id), options);
 
 		}
@@ -239,7 +239,7 @@ class MCMFBoykov implements IMCMFBoykov {
 	}
 
 	tree(node: $N.IBaseNode) {
-		var tree: string = "";
+		let tree: string = "";
 		if (node.getID() in this._state.treeS) {
 		    tree = "S";
 				return tree;
@@ -252,13 +252,13 @@ class MCMFBoykov implements IMCMFBoykov {
 	}
 
 	getPathToRoot(node: $N.IBaseNode) {
-		var path_root: Array<$N.IBaseNode> = [];
+		const path_root: Array<$N.IBaseNode> = [];
 
-		var node_id = node.getID();
+		let node_id = node.getID();
 		path_root.push(this._graph.getNodeById(node_id));
 
-		var sink_id: string = this._sink.getID();
-		var source_id: string = this._source.getID();
+		const sink_id: string = this._sink.getID();
+		const source_id: string = this._source.getID();
 		while ((node_id != sink_id) && (node_id != source_id)) {
 			if (this._state.parents[node_id] == null) { // this happens when the root of this path is a free node
 					return path_root;
@@ -275,13 +275,13 @@ class MCMFBoykov implements IMCMFBoykov {
 		// set first edge weight
 		var min_capacity = this._state.residGraph.getEdgeById(this._state.path[0].getID() + "_" + this._state.path[1].getID()).getWeight();
 
-		var path_length = this._state.path.length -1;
+		const path_length = this._state.path.length - 1;
 		for (let i = 0; i < path_length; i++) {
-			var node_a: $N.IBaseNode = this._state.path[i];
-			var node_b = this._state.path[i+1];
+			const node_a: $N.IBaseNode = this._state.path[i];
+			const node_b = this._state.path[i + 1];
 
-		  // var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
-			var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
+			// var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+			const edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
 
 			if (edge.getWeight() < min_capacity) {
 			    min_capacity = edge.getWeight();
@@ -292,24 +292,24 @@ class MCMFBoykov implements IMCMFBoykov {
 
 	grow() {
 		// as long as there are active nodes
-		var nr_active_nodes: number = Object.keys(this._state.activeNodes).length;
-		var active_nodes_ids: Array<string> = Object.keys(this._state.activeNodes);
+		let nr_active_nodes: number = Object.keys(this._state.activeNodes).length;
+		const active_nodes_ids: Array<string> = Object.keys(this._state.activeNodes);
 
 		while (nr_active_nodes) {
 			// take an active node
 			// var activeNode: $N.IBaseNode = this._state.activeNodes[Object.keys(this._state.activeNodes)[0]];
-			var activeNode: $N.IBaseNode = this._state.activeNodes[active_nodes_ids[0]];
+			const activeNode: $N.IBaseNode = this._state.activeNodes[active_nodes_ids[0]];
 			// var edges: {[k: string] : $E.IBaseEdge} = (this.tree(activeNode) == "S") ? activeNode.outEdges() : activeNode.inEdges();
-			var edges: {[k: string] : $E.IBaseEdge} = (this._state.tree[activeNode.getID()] == "S") ? activeNode.outEdges() : activeNode.inEdges();
-			var edges_ids: Array<string> = Object.keys(edges);
-			var edges_length: number = edges_ids.length;
+			const edges: { [k: string]: $E.IBaseEdge } = (this._state.tree[activeNode.getID()] == "S") ? activeNode.outEdges() : activeNode.inEdges();
+			const edges_ids: Array<string> = Object.keys(edges);
+			const edges_length: number = edges_ids.length;
 			// for all neighbors
 			for (let i = 0; i < edges_length; i++) {
 					// var edge: $E.IBaseEdge = edges[(Object.keys(edges)[i])];
-					var edge: $E.IBaseEdge = edges[edges_ids[i]];
-					var neighborNode: $N.IBaseNode = (this._state.tree[activeNode.getID()] == "S") ? edge.getNodes().b : edge.getNodes().a;
+				const edge: $E.IBaseEdge = edges[edges_ids[i]];
+				const neighborNode: $N.IBaseNode = (this._state.tree[activeNode.getID()] == "S") ? edge.getNodes().b : edge.getNodes().a;
 
-					if (edge.getWeight() <= 0) {
+				if (edge.getWeight() <= 0) {
 						continue;
 					}
 					if (!(this._state.tree[neighborNode.getID()])) {
@@ -331,12 +331,12 @@ class MCMFBoykov implements IMCMFBoykov {
 					}
 					else if(this._state.tree[neighborNode.getID()] != this._state.tree[activeNode.getID()]) {
 						// constructing path
-						var complete_path: Array<$N.IBaseNode>;
+						let complete_path: Array<$N.IBaseNode>;
 
-						var nPath: Array<$N.IBaseNode> = this.getPathToRoot(neighborNode);
-						var aPath: Array<$N.IBaseNode> = this.getPathToRoot(activeNode);
+						let nPath: Array<$N.IBaseNode> = this.getPathToRoot(neighborNode);
+						let aPath: Array<$N.IBaseNode> = this.getPathToRoot(activeNode);
 
-						var root_node_npath: $N.IBaseNode = nPath[nPath.length-1];
+						const root_node_npath: $N.IBaseNode = nPath[nPath.length - 1];
 						if (this._state.tree[root_node_npath.getID()] == "S") {
 						    nPath = nPath.reverse();
 								complete_path = nPath.concat(aPath);
@@ -361,15 +361,15 @@ class MCMFBoykov implements IMCMFBoykov {
 
 
 	augmentation() {
-		var min_capacity = this.getBottleneckCapacity();
+		const min_capacity = this.getBottleneckCapacity();
 		for (let i = 0; i < this._state.path.length - 1; i++) {
-		    var node_a = this._state.path[i], node_b = this._state.path[i+1];
-				// var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
-				var edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
-				// var reverse_edge = this._state.residGraph.getEdgeByNodeIDs(node_b.getID(), node_a.getID());
-				var reverse_edge = this._state.residGraph.getEdgeById(node_b.getID() + "_" + node_a.getID());
+			const node_a = this._state.path[i], node_b = this._state.path[i + 1];
+			// var edge = this._state.residGraph.getEdgeByNodeIDs(node_a.getID(), node_b.getID());
+			let edge = this._state.residGraph.getEdgeById(node_a.getID() + "_" + node_b.getID());
+			// var reverse_edge = this._state.residGraph.getEdgeByNodeIDs(node_b.getID(), node_a.getID());
+			const reverse_edge = this._state.residGraph.getEdgeById(node_b.getID() + "_" + node_a.getID());
 
-				// update the residual capacity in the graph
+			// update the residual capacity in the graph
 				this._state.residGraph.getEdgeById(edge.getID()).setWeight(edge.getWeight() - min_capacity);
 				this._state.residGraph.getEdgeById(reverse_edge.getID()).setWeight(reverse_edge.getWeight() + min_capacity);
 				// for all saturated edges
@@ -390,30 +390,30 @@ class MCMFBoykov implements IMCMFBoykov {
 	}
 
 	adoption() {
-		var orphans_ids = Object.keys(this._state.orphans);
-		var orphans_size = orphans_ids.length;
+		const orphans_ids = Object.keys(this._state.orphans);
+		let orphans_size = orphans_ids.length;
 		while (orphans_size) {
 		    // var orphan: $N.IBaseNode = this._state.orphans[Object.keys(this._state.orphans)[0]];
-				var orphan: $N.IBaseNode = this._state.orphans[orphans_ids[0]];
-				delete this._state.orphans[orphan.getID()];
+			const orphan: $N.IBaseNode = this._state.orphans[orphans_ids[0]];
+			delete this._state.orphans[orphan.getID()];
 				orphans_ids.shift();
 				--orphans_size;
 				// try to find a new valid parent for the orphan
-				var edges: {[k: string] : $E.IBaseEdge} = (this._state.tree[orphan.getID()] == "S") ? orphan.inEdges() : orphan.outEdges();
-				var edge_ids: Array<string> = Object.keys(edges);
-				var edge_length: number = edge_ids.length;
+			const edges: { [k: string]: $E.IBaseEdge } = (this._state.tree[orphan.getID()] == "S") ? orphan.inEdges() : orphan.outEdges();
+			const edge_ids: Array<string> = Object.keys(edges);
+			const edge_length: number = edge_ids.length;
 
-				var found = false;
-				for (let i = 0; i < edge_length; i++) {
+			let found = false;
+			for (let i = 0; i < edge_length; i++) {
 						// var edge: $E.IBaseEdge = edges[Object.keys(edges)[i]];
 						var edge: $E.IBaseEdge = edges[edge_ids[i]];
 				    var neighbor: $N.IBaseNode = (this._state.tree[orphan.getID()] == "S") ? edge.getNodes().a : edge.getNodes().b;
 
 						// check for same tree and weight > 0
 						if ((this._state.tree[orphan.getID()] == this._state.tree[neighbor.getID()]) && edge.getWeight()) {
-						    var neighbor_root_path: Array<$N.IBaseNode> = this.getPathToRoot(neighbor);
-								var neighbor_root: $N.IBaseNode = neighbor_root_path[neighbor_root_path.length -1];
-								// check for root either source or sink
+							const neighbor_root_path: Array<$N.IBaseNode> = this.getPathToRoot(neighbor);
+							const neighbor_root: $N.IBaseNode = neighbor_root_path[neighbor_root_path.length - 1];
+							// check for root either source or sink
 								if ((neighbor_root.getID() == this._sink.getID()) || (neighbor_root.getID() == this._source.getID())) {
 									// we found a valid parent
 									this._state.parents[orphan.getID()] = neighbor;
@@ -452,8 +452,8 @@ class MCMFBoykov implements IMCMFBoykov {
 				}
 
 				// remove from current tree and from activeNodes
-				var orphan_tree = this._state.tree[orphan.getID()];
-				if (orphan_tree == "S") {
+			const orphan_tree = this._state.tree[orphan.getID()];
+			if (orphan_tree == "S") {
 				    delete this._state.treeS[orphan.getID()];
 						delete this._state.tree[orphan.getID()];
 				}
