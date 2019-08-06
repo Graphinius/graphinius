@@ -140,8 +140,8 @@ export class TypedGraph extends BaseGraph {
 			type = edge.type.toUpperCase();
 		}
 
-		logger.log('Got edge label: ' + edge.label);
-		logger.log('Got edge type: ' + type);
+		// logger.log('Got edge label: ' + edge.label);
+		// logger.log('Got edge type: ' + type);
 
 		/**
 		 *  Same procedure as every node...

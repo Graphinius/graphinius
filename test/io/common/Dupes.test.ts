@@ -9,8 +9,6 @@ import {Logger} from "../../../src/utils/Logger";
 const logger = new Logger();
 
 import * as uuid from 'uuid'
-import getOwnPropertyDescriptor = Reflect.getOwnPropertyDescriptor;
-
 const v4 = uuid.v4;
 
 
@@ -20,21 +18,6 @@ const v4 = uuid.v4;
  *       -> Guess NO, since we
  */
 describe('Edge DUPE tests', function () {
-
-	// const scenarios = {
-	// 	dupes: [
-	// 		{}
-	// 	]
-	// };
-	//
-	// const typeDirCombos = [
-	// 	{type: 'USES', dir: true},
-	// 	{type: 'LIKES', dir: true},
-	// 	{type: 'PRODUCES', dir: true},
-	// 	{type: 'SELLS', dir: true},
-	// 	{type: 'KILLED_BY', dir: true},
-	// 	{type: 'CO_LOCATED', dir: false}
-	// ];
 
 	enum relations {
 		LIKES = "likes",

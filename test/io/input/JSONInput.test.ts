@@ -297,7 +297,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 
 		test('should correctly read the edge weights contained in a json file', () => {
-			json._config.weighted = true;
+			json._config.weighted = true; // set all to weighted: true (weight will be set to 0)
 			graph = json.readFromJSONFile(small_graph);
 			logger.log(JSON.stringify(graph.getEdgeById('A_C_u').isWeighted()));
 			$C.checkSmallGraphEdgeWeights(graph);

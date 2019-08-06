@@ -160,8 +160,8 @@ function checkSmallGraphFeatures(graph: $G.IGraph) {
 function checkSmallGraphEdgeWeights(graph: $G.IGraph) {
   expect(graph.getEdgeById("A_B_u").isWeighted()).toBe(true);
   expect(graph.getEdgeById("A_B_u").getWeight()).toBe(3);
-  expect(graph.getEdgeById("A_C_u").isWeighted()).toBe(false);
-  // expect(graph.getEdgeById("A_C_u").getWeight()).toBe(0);
+  expect(graph.getEdgeById("A_C_u").isWeighted()).toBe(true);
+  expect(graph.getEdgeById("A_C_u").getWeight()).toBe(0);
   expect(graph.getEdgeById("A_A_d").isWeighted()).toBe(true);
   expect(graph.getEdgeById("A_A_d").getWeight()).toBe(7);
   expect(graph.getEdgeById("A_B_d").isWeighted()).toBe(true);

@@ -243,7 +243,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			});
 
 
-			it.skip('should read meetupGraph from neo4j example and give the correct stats - in reasonable time', () => {
+			it('should read meetupGraph from neo4j example and give the correct stats - in reasonable time', () => {
 				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
 
 				const tic = +new Date;
