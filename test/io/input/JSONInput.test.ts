@@ -5,12 +5,11 @@ import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from "../../../src/io/output/JSONOutput";
 import { labelKeys } from '../../../src/io/interfaces';
 import { JSON_DATA_PATH } from '../../config/config';
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
-import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
+import { TypedNode } from "../../../src/core/typed/TypedNode";
+import { TypedGraph } from "../../../src/core/typed/TypedGraph";
+import { ITypedEdge, TypedEdge } from "../../../src/core/typed/TypedEdge";
 
 import { Logger } from '../../../src/utils/Logger';
-import {BaseEdge} from "../../../src/core/base/BaseEdge";
-import {TypedNode} from "../../../src/core/typed/TypedNode";
 const logger = new Logger();
 
 
@@ -46,6 +45,14 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			expect(json._config.explicit_direction).toBe(true);
 			expect(json._config.directed).toBe(false);
 			expect(json._config.weighted).toBe(false);
+		});
+
+
+		it('should throw an error in case of non-existing referenced node', function () {
+			graph = new BaseGraph("emptinius");
+			json = new JSONInput(std_json_input_config);
+			expect(() => json.getTargetNode(graph, {[labelKeys.e_to]: "meNonExists"}))
+				.toThrow('Node referenced by edge does not exist');
 		});
 
 	});

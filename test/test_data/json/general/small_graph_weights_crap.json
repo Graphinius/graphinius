@@ -1,1 +1,30 @@
-{"name":"Small graph test scenario","nodes":4,"e":7,"data":{"A":{"f":{"foo":"bar","true":true},"c":{"x":15,"y":2,"z":57},"e":[{"t":"A","d":0},{"t":"B","d":1,"w":"blahoo"}]}}}
+{
+  "name": "Small graph test scenario",
+  "nodes": 4,
+  "e": 7,
+  "data": {
+    "A": {
+      "f": {
+        "foo": "bar",
+        "true": true
+      },
+      "c": {
+        "x": 15,
+        "y": 2,
+        "z": 57
+      },
+      "e": [
+        {
+          "t": "A",
+          "d": 0
+        },
+        {
+          "t": "B",
+          "d": 1,
+          "w": "blahoo"
+        }
+      ]
+    },
+    "B": {}
+  }
+}
