@@ -1,7 +1,6 @@
 import { BaseEdge, IBaseEdge } from '../../core/base/BaseEdge';
 import { TypedEdge, ITypedEdge } from '../../core/typed/TypedEdge';
 import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
-import {ITypedNode} from "../../../lib/core/typed/TypedNode";
 import { IGraph } from '../../core/base/BaseGraph';
 import { TypedGraph } from '../../core/typed/TypedGraph';
 

@@ -11,6 +11,11 @@ module.exports = {
   testEnvironment: 'node',
   verbose: true,
   watchPathIgnorePatterns: [
+    "/graphinius.d.ts",
+    "/build",
+    "/coverage",
+    "/docs",
+    "/lib",
     "/test/test_data"
   ],
   collectCoverage: false,

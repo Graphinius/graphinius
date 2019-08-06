@@ -1,10 +1,79 @@
+declare module 'graphinius/config/run_config' {
+	 const LOG_LEVELS: {
+	    debug: string;
+	    production: string;
+	}; const RUN_CONFIG: {
+	    log_level: string;
+	};
+	export { LOG_LEVELS, RUN_CONFIG };
+
+}
+declare module 'graphinius/utils/Logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any, color?: number, bright?: boolean): boolean;
+	    error(err: any, color?: number, bright?: boolean): boolean;
+	    dir(obj: any, color?: number, bright?: boolean): boolean;
+	    info(msg: any, color?: number, bright?: boolean): boolean;
+	    warn(msg: any, color?: number, bright?: boolean): boolean;
+	    write(msg: any, color?: number, bright?: boolean): boolean;
+	    private colorize;
+	}
+	export { Logger };
+
+}
+declare module 'graphinius/core/typed/TypedEdge' {
+	import { IBaseEdge, BaseEdge, BaseEdgeConfig } from 'graphinius/core/base/BaseEdge';
+	import * as $N from 'graphinius/core/base/BaseNode';
+	export interface ITypedEdge extends IBaseEdge {
+	    readonly type: string;
+	    isTyped(): boolean;
+	}
+	export interface TypedEdgeConfig extends BaseEdgeConfig {
+	    type?: string;
+	} class TypedEdge extends BaseEdge implements ITypedEdge {
+	    protected _id: string;
+	    protected _node_a: $N.IBaseNode;
+	    protected _node_b: $N.IBaseNode;
+	    protected _type: string;
+	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
+	    readonly type: string;
+	    isTyped(): true;
+	}
+	export { TypedEdge };
+
+}
 declare module 'graphinius/core/base/BaseEdge' {
 	import * as $N from 'graphinius/core/base/BaseNode';
+	import { TypedEdge } from 'graphinius/core/typed/TypedEdge';
 	export interface IConnectedNodes {
 	    a: $N.IBaseNode;
 	    b: $N.IBaseNode;
 	}
 	export interface IBaseEdge {
+	    readonly id: string;
+	    readonly label: string;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -29,6 +98,8 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    protected _weight: number;
 	    protected _label: string;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
+	    readonly id: string;
+	    readonly label: string;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -38,6 +109,7 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    setWeight(w: number): void;
 	    getNodes(): IConnectedNodes;
 	    clone(new_node_a: $N.BaseNode, new_node_b: $N.BaseNode): BaseEdge;
+	    static isTyped(arg: any): arg is TypedEdge;
 	}
 	export { BaseEdge };
 
@@ -59,18 +131,19 @@ declare module 'graphinius/core/base/BaseNode' {
 	    features?: {
 	        [key: string]: any;
 	    };
-	}
+	} type NodeFeatures = {
+	    [k: string]: any;
+	};
 	export interface IBaseNode {
+	    readonly id: string;
+	    readonly label: string;
+	    readonly features: NodeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
-	    getFeatures(): {
-	        [k: string]: any;
-	    };
+	    getFeatures(): NodeFeatures;
 	    getFeature(key: string): any;
-	    setFeatures(features: {
-	        [k: string]: any;
-	    }): void;
+	    setFeatures(features: NodeFeatures): void;
 	    setFeature(key: string, value: any): void;
 	    deleteFeature(key: string): any;
 	    clearFeatures(): void;
@@ -123,6 +196,9 @@ declare module 'graphinius/core/base/BaseNode' {
 	        [k: string]: $E.IBaseEdge;
 	    };
 	    constructor(_id: string, config?: BaseNodeConfig);
+	    readonly id: string;
+	    readonly label: string;
+	    readonly features: NodeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -429,10 +505,12 @@ declare module 'graphinius/core/base/BaseGraph' {
 	export type MinAdjacencyListArray = Array<Array<number>>;
 	export type NextArray = Array<Array<Array<number>>>;
 	export interface IGraph {
-	    _label: string;
+	    readonly label: string;
+	    readonly mode: GraphMode;
+	    readonly stats: GraphStats;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
-	    addNode(node: IBaseNode): boolean;
+	    addNode(node: IBaseNode): IBaseNode;
 	    addNodeByID(id: string, opts?: {}): IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): IBaseNode;
@@ -442,7 +520,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    nrNodes(): number;
 	    getRandomNode(): IBaseNode;
 	    deleteNode(node: any): void;
-	    addEdge(edge: IBaseEdge): boolean;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
 	    addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
 	    hasEdgeID(id: string): boolean;
@@ -483,7 +561,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    nextArray(incoming?: boolean): NextArray;
 	    reweighIfHasNegativeEdge(clone: boolean): IGraph;
 	} class BaseGraph implements IGraph {
-	    _label: any;
+	    protected _label: any;
 	    protected _nr_nodes: number;
 	    protected _nr_dir_edges: number;
 	    protected _nr_und_edges: number;
@@ -498,6 +576,9 @@ declare module 'graphinius/core/base/BaseGraph' {
 	        [key: string]: IBaseEdge;
 	    };
 	    constructor(_label: any);
+	    readonly label: string;
+	    readonly mode: GraphMode;
+	    readonly stats: GraphStats;
 	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
 	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;
@@ -512,7 +593,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    nrDirEdges(): number;
 	    nrUndEdges(): number;
 	    addNodeByID(id: string, opts?: {}): IBaseNode;
-	    addNode(node: IBaseNode): boolean;
+	    addNode(node: IBaseNode): IBaseNode;
 	    hasNodeID(id: string): boolean;
 	    getNodeById(id: string): IBaseNode;
 	    getNodes(): {
@@ -535,7 +616,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    getUndEdgesArray(): Array<IBaseEdge>;
 	    addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
 	    addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: BaseEdgeConfig): IBaseEdge;
-	    addEdge(edge: IBaseEdge): boolean;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
 	    deleteEdge(edge: IBaseEdge): void;
 	    deleteInEdgesOf(node: IBaseNode): void;
 	    deleteOutEdgesOf(node: IBaseNode): void;
@@ -619,51 +700,6 @@ declare module 'graphinius/centralities/Degree' {
 	export { DegreeCentrality };
 
 }
-declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
-	    debug: string;
-	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
-
-}
-declare module 'graphinius/utils/Logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	}
-	export enum LogColors {
-	    FgBlack = 30,
-	    FgRed = 31,
-	    FgGreen = 32,
-	    FgYellow = 33,
-	    FgBlue = 34,
-	    FgMagenta = 35,
-	    FgCyan = 36,
-	    FgWhite = 37,
-	    BgBlack = 40,
-	    BgRed = 41,
-	    BgGreen = 42,
-	    BgYellow = 43,
-	    BgBlue = 44,
-	    BgMagenta = 45,
-	    BgCyan = 46,
-	    BgWhite = 47
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any, color?: number, bright?: boolean): boolean;
-	    error(err: any, color?: number, bright?: boolean): boolean;
-	    dir(obj: any, color?: number, bright?: boolean): boolean;
-	    info(msg: any, color?: number, bright?: boolean): boolean;
-	    warn(msg: any, color?: number, bright?: boolean): boolean;
-	    write(msg: any, color?: number, bright?: boolean): boolean;
-	    private colorize;
-	}
-	export { Logger };
-
-}
 declare module 'graphinius/centralities/Pagerank' {
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	export type InitMap = {
@@ -735,25 +771,6 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	export { pageRankDetCentrality };
 
 }
-declare module 'graphinius/core/typed/TypedEdge' {
-	import { IBaseEdge, BaseEdge, BaseEdgeConfig } from 'graphinius/core/base/BaseEdge';
-	import * as $N from 'graphinius/core/base/BaseNode';
-	export interface ITypedEdge extends IBaseEdge {
-	    readonly type: string;
-	}
-	export interface TypedEdgeConfig extends BaseEdgeConfig {
-	    type?: string;
-	} class TypedEdge extends BaseEdge implements ITypedEdge {
-	    protected _id: string;
-	    protected _node_a: $N.IBaseNode;
-	    protected _node_b: $N.IBaseNode;
-	    protected _type: string;
-	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
-	    readonly type: string;
-	}
-	export { TypedEdge };
-
-}
 declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
 	export interface ITypedNode extends IBaseNode {
@@ -771,12 +788,13 @@ declare module 'graphinius/core/typed/TypedNode' {
 
 }
 declare module 'graphinius/core/typed/TypedGraph' {
-	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
+	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
 	export const GENERIC_TYPE = "GENERIC";
 	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
-	export type TypedEdges = Map<string, Map<string, IBaseEdge>>;
+	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 	export interface TypedGraphStats extends GraphStats {
 	    node_types: string[];
 	    edge_types: string[];
@@ -788,18 +806,19 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    };
 	}
 	export class TypedGraph extends BaseGraph {
-	    _label: any;
+	    _label: string;
 	    protected _typedNodes: TypedNodes;
 	    protected _typedEdges: TypedEdges;
-	    constructor(_label: any);
+	    constructor(_label: string);
 	    nodeTypes(): string[];
 	    edgeTypes(): string[];
 	    nrTypedNodes(type: string): number | null;
 	    nrTypedEdges(type: string): number | null;
-	    addNode(node: ITypedNode): boolean;
+	    addNode(node: ITypedNode): ITypedNode;
 	    deleteNode(node: ITypedNode): void;
-	    addEdge(edge: IBaseEdge): boolean;
-	    deleteEdge(edge: IBaseEdge): void;
+	    addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
+	    addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;
+	    deleteEdge(edge: ITypedEdge | IBaseEdge): void;
 	    getStats(): TypedGraphStats;
 	}
 
@@ -940,6 +959,7 @@ declare module 'graphinius/io/interfaces' {
 	    e_dir: string;
 	    e_weight: string;
 	    e_label: string;
+	    e_type: string;
 	}
 	export const labelKeys: Abbreviations;
 
@@ -947,8 +967,26 @@ declare module 'graphinius/io/interfaces' {
 declare module 'graphinius/io/common/Dupes' {
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
-	export function isDupe(e1: IBaseEdge | ITypedEdge, e2: IBaseEdge | ITypedEdge): boolean;
-	export function gotSameEndpoints(e1: IBaseEdge | ITypedEdge, e2: IBaseEdge | ITypedEdge): boolean;
+	import { IBaseNode } from 'graphinius/core/base/BaseNode';
+	import { IGraph } from 'graphinius/core/base/BaseGraph';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
+	export interface PotentialEdgeInfo {
+	    a: IBaseNode;
+	    b: IBaseNode;
+	    label?: string;
+	    dir: boolean;
+	    weighted: boolean;
+	    weight?: number;
+	    typed: boolean;
+	    type?: string;
+	} class EdgeDupeChecker {
+	    private _graph;
+	    constructor(_graph: IGraph | TypedGraph);
+	    isDupe(e: PotentialEdgeInfo): boolean;
+	    checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+	    potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge>;
+	}
+	export { EdgeDupeChecker };
 
 }
 declare module 'graphinius/utils/RemoteUtils' {

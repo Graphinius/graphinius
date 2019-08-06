@@ -23,10 +23,12 @@ export declare type MinAdjacencyListDictEntry = {
 export declare type MinAdjacencyListArray = Array<Array<number>>;
 export declare type NextArray = Array<Array<Array<number>>>;
 export interface IGraph {
-    _label: string;
+    readonly label: string;
+    readonly mode: GraphMode;
+    readonly stats: GraphStats;
     getMode(): GraphMode;
     getStats(): GraphStats;
-    addNode(node: IBaseNode): boolean;
+    addNode(node: IBaseNode): IBaseNode;
     addNodeByID(id: string, opts?: {}): IBaseNode;
     hasNodeID(id: string): boolean;
     getNodeById(id: string): IBaseNode;
@@ -36,7 +38,7 @@ export interface IGraph {
     nrNodes(): number;
     getRandomNode(): IBaseNode;
     deleteNode(node: any): void;
-    addEdge(edge: IBaseEdge): boolean;
+    addEdge(edge: IBaseEdge): IBaseEdge;
     addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
     hasEdgeID(id: string): boolean;
@@ -78,7 +80,7 @@ export interface IGraph {
     reweighIfHasNegativeEdge(clone: boolean): IGraph;
 }
 declare class BaseGraph implements IGraph {
-    _label: any;
+    protected _label: any;
     protected _nr_nodes: number;
     protected _nr_dir_edges: number;
     protected _nr_und_edges: number;
@@ -93,6 +95,9 @@ declare class BaseGraph implements IGraph {
         [key: string]: IBaseEdge;
     };
     constructor(_label: any);
+    readonly label: string;
+    readonly mode: GraphMode;
+    readonly stats: GraphStats;
     reweighIfHasNegativeEdge(clone?: boolean): IGraph;
     toDirectedGraph(copy?: boolean): IGraph;
     toUndirectedGraph(): IGraph;
@@ -107,7 +112,7 @@ declare class BaseGraph implements IGraph {
     nrDirEdges(): number;
     nrUndEdges(): number;
     addNodeByID(id: string, opts?: {}): IBaseNode;
-    addNode(node: IBaseNode): boolean;
+    addNode(node: IBaseNode): IBaseNode;
     hasNodeID(id: string): boolean;
     getNodeById(id: string): IBaseNode;
     getNodes(): {
@@ -130,7 +135,7 @@ declare class BaseGraph implements IGraph {
     getUndEdgesArray(): Array<IBaseEdge>;
     addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
     addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: BaseEdgeConfig): IBaseEdge;
-    addEdge(edge: IBaseEdge): boolean;
+    addEdge(edge: IBaseEdge): IBaseEdge;
     deleteEdge(edge: IBaseEdge): void;
     deleteInEdgesOf(node: IBaseNode): void;
     deleteOutEdgesOf(node: IBaseNode): void;

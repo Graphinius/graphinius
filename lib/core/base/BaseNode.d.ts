@@ -10,17 +10,19 @@ export interface BaseNodeConfig {
         [key: string]: any;
     };
 }
+declare type NodeFeatures = {
+    [k: string]: any;
+};
 export interface IBaseNode {
+    readonly id: string;
+    readonly label: string;
+    readonly features: NodeFeatures;
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;
-    getFeatures(): {
-        [k: string]: any;
-    };
+    getFeatures(): NodeFeatures;
     getFeature(key: string): any;
-    setFeatures(features: {
-        [k: string]: any;
-    }): void;
+    setFeatures(features: NodeFeatures): void;
     setFeature(key: string, value: any): void;
     deleteFeature(key: string): any;
     clearFeatures(): void;
@@ -74,6 +76,9 @@ declare class BaseNode implements IBaseNode {
         [k: string]: $E.IBaseEdge;
     };
     constructor(_id: string, config?: BaseNodeConfig);
+    readonly id: string;
+    readonly label: string;
+    readonly features: NodeFeatures;
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;
