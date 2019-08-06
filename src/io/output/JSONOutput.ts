@@ -60,7 +60,6 @@ class JSONOutput implements IJSONOutput {
 				node_struct[labelKeys.n_label] = node.label;
 			}
 			if ( BaseNode.isTyped(node) ) {
-				logger.log(`Got TYPED node`);
 				node_struct[labelKeys.n_type] = node.type;
 			}
 
