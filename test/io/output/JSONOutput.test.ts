@@ -6,6 +6,10 @@ import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from '../../../src/io/output/JSONOutput';
 import { labelKeys } from '../../../src/io/interfaces';
 import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
+import {TypedGraph} from "../../../src/core/typed/TypedGraph";
+
+import {Logger} from "../../../src/utils/Logger";
+const logger = new Logger();
 
 
 let jsonIn: JSONInput,
@@ -24,12 +28,13 @@ let std_json_in_config: IJSONInConfig = {
 
 describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
-  beforeEach(() => {
-    graph = new $G.BaseGraph("Output Test graph");
-  });
-
 
   describe('Output toy JSON structs', () => {
+
+    beforeEach(() => {
+      graph = new $G.BaseGraph("Output Test graph");
+    });
+
 
     test('Should correctly output a graph of just one node', () => {
       graph.addNodeByID("A");
@@ -240,6 +245,31 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
       };
       let JSONControlString = JSON.stringify( JSONControlStruct );
       expect(resultString).toBe(JSONControlString);
+    });
+
+  });
+
+
+  describe('Output toy JSON structs - TYPED graph', () => {
+
+    const edgeID = 'TypedEdge';
+    const edgeType = 'FRIENDS_WITH';
+
+
+    beforeEach(() => {
+      graph = new TypedGraph("Output Test graph");
+    });
+
+
+    it('should correctly output the edge type', () => {
+      let n_a = graph.addNodeByID("A");
+      let n_b = graph.addNodeByID("B");
+      graph.addEdgeByID(edgeID, n_b, n_a, {
+        type: edgeType
+      });
+      jsonOut = new JSONOutput();
+      resultString = jsonOut.writeToJSONString( graph );
+      expect(resultString).toContain(`"e":[{"t":"B","d":0,"y":"FRIENDS_WITH"}`);
     });
 
   });

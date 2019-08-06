@@ -4,6 +4,7 @@ import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
 import { labelKeys } from '../interfaces';
+import {BaseEdge} from "../../core/base/BaseEdge";
 
 
 export interface IJSONOutput {
@@ -70,7 +71,9 @@ class JSONOutput implements IJSONOutput {
 				node_struct[labelKeys.label] = node.getLabel();
 			}
 
-			// UNdirected Edges
+			/* -------------------------------------- */
+			/*					 UNDIRECTED edges							*/
+			/* -------------------------------------- */
 			und_edges = node.undEdges();
 			for (let edge_key in und_edges) {
 				edge = und_edges[edge_key];
@@ -79,15 +82,21 @@ class JSONOutput implements IJSONOutput {
 				let edgeStruct = {
 					[labelKeys.e_to]: endPoints.a.getID() === node.getID() ? endPoints.b.getID() : endPoints.a.getID(),
 					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
-					[labelKeys.e_weight]: edge.isWeighted() ? edge.getWeight() : undefined
+					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
 				};
 				if ( edge.getID() !== edge.getLabel() ) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
+				if ( BaseEdge.isTyped(edge) ) {
+					edgeStruct[labelKeys.e_type] = edge.type;
+				}
 				node_struct[labelKeys.edges].push(edgeStruct);
 			}
 
-			// Directed Edges
+
+			/* -------------------------------------- */
+			/*						DIRECTED edges							*/
+			/* -------------------------------------- */
 			dir_edges = node.outEdges();
 			for (let edge_key in dir_edges) {
 				edge = dir_edges[edge_key];
@@ -100,6 +109,9 @@ class JSONOutput implements IJSONOutput {
 				};
 				if ( edge.getID() !== edge.getLabel() ) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
+				}
+				if ( BaseEdge.isTyped(edge) ) {
+					edgeStruct[labelKeys.e_type] = edge.type;
 				}
 				node_struct[labelKeys.edges].push(edgeStruct);
 			}

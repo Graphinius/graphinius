@@ -5,8 +5,11 @@ import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from "../../../src/io/output/JSONOutput";
 import { labelKeys } from '../../../src/io/interfaces';
 import { JSON_DATA_PATH } from '../../config/config';
+import {TypedGraph} from "../../../src/core/typed/TypedGraph";
+import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 
 import { Logger } from '../../../src/utils/Logger';
+import {BaseEdge} from "../../../src/core/base/BaseEdge";
 const logger = new Logger();
 
 
@@ -228,8 +231,8 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	/**
 	 * @todo think about how to handle DEFAULT_WEIGHT in this scenario...
 	 */
-	describe('Edge labels (types) - ', () => {
-		const graphFile = `./test/test_data/output/edgeLabelGraph.json`;
+	describe('Edge labels & types (TYPED graph) - ', () => {
+		const graphFile = `./test/test_data/output/edgeLabelTypeGraph.json`;
 		/**
 		 * This is the ID that will be automatically assigned by JSONInput
 		 *
@@ -237,67 +240,44 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 */
 		const edgeID = `A_B_u`;
 		const secondID = `B_A_u`;
-		const edgeLabel = `FRIENDS_WITH`;
+		const edgeLabel = `food friends`;
+		const edgeType = `FRIENDS_WITH`;
 		const jsonOut = new JSONOutput();
 		const jsonIn = new JSONInput();
 		let n_a, n_b;
 
 		beforeEach(() => {
-			graph = new BaseGraph("Edgus Labellius");
+			graph = new TypedGraph("Edgus Labellius");
 			n_a = graph.addNodeByID("A");
 			n_b = graph.addNodeByID("B");
 		});
 
 
+		it('should retrieve edge ID as label', () => {
+			graph.addEdgeByID(edgeID, n_b, n_a);
+			jsonOut.writeToJSONFile(graphFile, graph);
+			const inGraph = jsonIn.readFromJSONFile(graphFile, new TypedGraph('in'));
+			const inEdge = inGraph.getEdgeById(edgeID) as TypedEdge;
+			expect(inEdge.label).toBe(edgeID);
+		});
+
+
 		it('should retrieve correct edge label', () => {
-			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel	});
+			graph.addEdgeByID(edgeID, n_b, n_a, {label: edgeLabel});
 			jsonOut.writeToJSONFile(graphFile, graph);
-			const inGraph = jsonIn.readFromJSONFile(graphFile);
-			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
+			const inGraph = jsonIn.readFromJSONFile(graphFile, new TypedGraph('in'));
+			const inEdge = inGraph.getEdgeById(edgeID) as TypedEdge;
+			expect(inEdge.label).toBe(edgeLabel);
+			expect(inEdge.type).toBeUndefined();
 		});
 
 
-		it( 'should reject duplicate UNdirected edges of same label and unspecified weight', () => {
-			const secondID = edgeID + "2";
-			graph.addEdgeByID(secondID, n_b, n_a, {
-				label: edgeLabel
-			});
+		it('should retrieve correct edge type', () => {
+			graph.addEdgeByID(edgeID, n_b, n_a, {type: edgeType	});
 			jsonOut.writeToJSONFile(graphFile, graph);
-			const inGraph = jsonIn.readFromJSONFile(graphFile);
-			// logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
-			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
-			/**
-			 * @todo check for correct error message
-			 */
-			expect(() => inGraph.getEdgeById(secondID)).toThrow();
-		});
-
-
-		it( 'should reject duplicate UNdirected edges of same label and weight', () => {
-			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
-			graph.addEdgeByID(secondID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
-			jsonOut.writeToJSONFile(graphFile, graph);
-			jsonIn._config.weighted = true;
-			const inGraph = jsonIn.readFromJSONFile(graphFile);
-			// logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
-			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
-			/**
-			 * @todo check for correct error message
-			 */
-			expect(() => inGraph.getEdgeById(secondID)).toThrow();
-		});
-
-
-		it.skip( 'should accept duplicate UNdirected edges of different label and same weight', () => {
-			graph.addEdgeByID(edgeID, n_b, n_a, { label: edgeLabel, weighted: true, weight: 42	});
-			const secondLabel = edgeLabel + "2";
-			graph.addEdgeByID(secondID, n_b, n_a, { label: secondLabel, weighted: true, weight: 42	});
-			jsonOut.writeToJSONFile(graphFile, graph);
-			jsonIn._config.weighted = true;
-			const inGraph = jsonIn.readFromJSONFile(graphFile);
-			logger.log('Edge weight: ' + inGraph.getEdgeById(edgeID).getWeight());
-			expect(inGraph.getEdgeById(edgeID).getLabel()).toBe(edgeLabel);
-			expect(inGraph.getEdgeById(secondID).getLabel()).toBe(secondLabel);
+			const inGraph = jsonIn.readFromJSONFile(graphFile, new TypedGraph('in'));
+			const inEdge = inGraph.getEdgeById(edgeID) as TypedEdge;
+			expect(inEdge.type).toBe(edgeType);
 		});
 
 	});
@@ -319,6 +299,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		test('should correctly read the edge weights contained in a json file', () => {
 			json._config.weighted = true;
 			graph = json.readFromJSONFile(small_graph);
+			logger.log(JSON.stringify(graph.getEdgeById('A_C_u').isWeighted()));
 			$C.checkSmallGraphEdgeWeights(graph);
 		});
 

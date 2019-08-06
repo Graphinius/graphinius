@@ -6,7 +6,6 @@ import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 
 import {Logger} from "../../../src/utils/Logger";
-
 const logger = new Logger();
 
 import * as uuid from 'uuid'

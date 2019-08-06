@@ -470,7 +470,7 @@ class BaseGraph implements IGraph {
 
 	static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode) : void {
 		if ( !node_a ) {
-			throw new Error("Cannot find edge. Node A does not exist (in graph).");
+			throw new Error(`Cannot find edge. Node A does not exist (in graph).`);
 		}
 		if ( !node_b ) {
 			throw new Error("Cannot find edge. Node B does not exist (in graph).");

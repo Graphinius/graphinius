@@ -144,13 +144,10 @@ class JSONInput implements IJSONInput {
 			}
 		}
 
-
-
 		/**
 		 * ROUND 2 - Add edges if no dupes
 		 */
 		for (let node_id in json.data) {
-			logger.log(node_id);
 			let node = graph.getNodeById(node_id);
 
 			// Reading and instantiating edges
@@ -158,6 +155,7 @@ class JSONInput implements IJSONInput {
 			for (let e in edges) {
 				let edge_input = edges[e],
 					edge_label = edge_input[labelKeys.e_label],
+					edge_type = edge_input[labelKeys.e_type],
 					target_node_id = edge_input[labelKeys.e_to],
 
 					// Is there any direction information?            
@@ -177,19 +175,30 @@ class JSONInput implements IJSONInput {
 				/* --------------------------------------------------- */
 				/*							DUPLICATE EDGE HANDLING								 */
 				/* --------------------------------------------------- */
+				/**
+				 * OLD edge ID handling... just leave if it would otherwise
+				 * fuck up too many test cases
+				 */
+				let edge_id = node_id + "_" + target_node_id + "_" + dir_char;
+				if ( graph.hasEdgeID(edge_id) ) {
+					continue;
+				}
+
 				const ne: PotentialEdgeInfo = {
 					a: node,
 					b: target_node,
+					label: edge_label,
 					dir: directed,
 					weighted: !!edge_weight,
 					weight: edge_weight,
 					typed: true,
-					type: edge_label // label OR type
+					type: edge_type
 				};
-				logger.log(`${ne.a.id} | ${ne.b.id} | ${ne.dir}`);
+				// logger.log(`${ne.a.id} | ${ne.b.id} | ${ne.dir}` );
 
 				if ( !edc.isDupe(ne) ) {
-					graph.addEdgeByID(v4(), ne.a, ne.b, {
+					graph.addEdgeByID(edge_id, ne.a, ne.b, {
+						label: ne.label,
 						directed: ne.dir,
 						weighted: ne.weighted,
 						weight: ne.weight,

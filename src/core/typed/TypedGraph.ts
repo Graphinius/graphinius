@@ -136,10 +136,12 @@ export class TypedGraph extends BaseGraph {
 
 		const id = edge.getID();
 		let type = GENERIC_TYPE;
-		if ( BaseEdge.isTyped(edge) ) {
-			type = edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
+		if ( BaseEdge.isTyped(edge) && edge.type ) {
+			type = edge.type.toUpperCase();
 		}
-		// logger.log('Got edge type: ' + type);
+
+		logger.log('Got edge label: ' + edge.label);
+		logger.log('Got edge type: ' + type);
 
 		/**
 		 *  Same procedure as every node...
@@ -159,8 +161,8 @@ export class TypedGraph extends BaseGraph {
 	deleteEdge(edge: ITypedEdge | IBaseEdge): void {
 		const id = edge.getID();
 		let type = GENERIC_TYPE;
-		if ( BaseEdge.isTyped(edge) ) {
-			type = edge.type ? edge.type.toUpperCase() : GENERIC_TYPE;
+		if ( BaseEdge.isTyped(edge) && edge.type ) {
+			type = edge.type.toUpperCase();
 		}
 
 		if (!this._typedEdges.get(type)) {

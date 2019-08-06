@@ -4,6 +4,7 @@ import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
 import {ITypedNode} from "../../../lib/core/typed/TypedNode";
 import { IGraph } from '../../core/base/BaseGraph';
 import { TypedGraph } from '../../core/typed/TypedGraph';
+
 import { Logger } from "../../utils/Logger";
 const logger = new Logger();
 
@@ -11,6 +12,7 @@ const logger = new Logger();
 export interface PotentialEdgeInfo {
 	a							: IBaseNode;
 	b							: IBaseNode;
+	label?				: string;
 	dir						: boolean;
 	weighted			: boolean;
 	weight?				: number;
@@ -30,12 +32,16 @@ class EdgeDupeChecker {
 			return false;
 		}
 
+		// logger.log(`Got ${pds.size} potential edge dupe`);
+
 		for ( let pd of pds.values() ) {
 
-			if ( !this.checkTypeWeightEquality(e, pd) ) {
-				pds.delete(pd);
-				continue;
-			}
+			// if ( !this.checkTypeWeightEquality(e, pd) ) {
+			// 	logger.log(`Deleting edge dupe`);
+			//
+			// 	pds.delete(pd);
+			// 	continue;
+			// }
 
 			// UNtyped & not weighted
 			if ( !e.typed && !e.weighted ) {
