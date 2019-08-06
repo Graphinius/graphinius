@@ -39,6 +39,10 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(graph.edgeTypes()).toContain(GENERIC_TYPE);
 		});
 
+		it('should report TypedGraph to be typed', function () {
+			expect(graph.typed).toBe(true);
+		});
+
 	});
 
 
@@ -76,7 +80,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 		it('should delete a node instance but still keep a non-empty set of types', () => {
 			['A', 'B'].forEach(id => graph.addNode(new TypedNode(id, {type: nodeType})));
 			expect(graph.nrNodes()).toBe(2);
-			logger.log(JSON.stringify(graph.getStats()));
 			expect(graph.nrTypedNodes(nodeType)).toBe(2);
 			graph.deleteNode(graph.getNodeById('A') as TypedNode);
 			expect(graph.nrNodes()).toBe(1);
@@ -91,6 +94,15 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(graph.nrNodes()).toBe(0);
 			expect(graph.nodeTypes()).not.toContain(nodeType);
 			expect(graph.nrTypedNodes(nodeType)).toBe(null);
+		});
+
+
+		it('should add a TypedNode by ID', () => {
+			expect(graph.nodeTypes()).not.toContain(nodeType);
+			expect(graph.nrTypedNodes(nodeType)).toBe(null);
+			graph.addNodeByID("A", {type: nodeType});
+			expect(graph.nodeTypes()).toContain(nodeType);
+			expect(graph.nrTypedNodes(nodeType)).toBe(1);
 		});
 
 	});
@@ -177,8 +189,8 @@ describe('TYPED GRAPH TESTS: ', () => {
 				nr_dir_edges: 2,
 				density_dir: 1,
 				density_und: 0,
-				node_types: [GENERIC_TYPE, 'PERSON'],
-				edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
+				// node_types: [GENERIC_TYPE, 'PERSON'],
+				// edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
 				typed_nodes: {
 					[GENERIC_TYPE]: 0,
 					[nodeType]: 2
@@ -199,10 +211,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 			});
 
 
-			/**
-			 * @todo TypeError: node.getLabel(...).toUpperCase is not a function
-			 *       -> see `split procedure` todo @ JSONInput->readFromJSON()
-			 */
 			it('should read beerGraph from neo4j example and give the correct stats', () => {
 				const controlStats = {
 					"mode": 1,
@@ -237,20 +245,20 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const tic = +new Date;
 				graph = new JSONInput().readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
-				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
 
+				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
 				logger.log(JSON.stringify(graph.getStats()));
 			});
 
 
-			it('should read meetupGraph from neo4j example and give the correct stats - in reasonable time', () => {
+			it.skip('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
 				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
 
 				const tic = +new Date;
 				graph = new JSONInput().readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
-				logger.log(`Reading in TypedGraph from Neo4j meetup example took: ${toc - tic} ms.`);
 
+				logger.log(`Reading in TypedGraph from Neo4j meetup example took: ${toc - tic} ms.`);
 				logger.log(JSON.stringify(graph.getStats()));
 			});
 

@@ -1,5 +1,6 @@
 import { IBaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge } from './BaseEdge';
+import { TypedGraph } from "../typed/TypedGraph";
 export declare enum GraphMode {
     INIT = 0,
     DIRECTED = 1,
@@ -95,6 +96,7 @@ declare class BaseGraph implements IGraph {
         [key: string]: IBaseEdge;
     };
     constructor(_label: any);
+    static isTyped(arg: any): arg is TypedGraph;
     readonly label: string;
     readonly mode: GraphMode;
     readonly stats: GraphStats;

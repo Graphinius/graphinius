@@ -8,6 +8,7 @@ import * as uuid from 'uuid'
 const v4 = uuid.v4;
 
 import { Logger } from '../../utils/Logger';
+import {BaseNode} from "../../core/base/BaseNode";
 const logger = new Logger();
 
 
@@ -97,41 +98,26 @@ class JSONInput implements IJSONInput {
 	 */
 	readFromJSON(json: JSONGraph, graph?: IGraph): IGraph {
 		graph = graph || new BaseGraph(json.name);
+		const typedGraph = BaseGraph.isTyped(graph);
 
-		let coords_json: { [key: string]: any },
+		let
+			coords_json: { [key: string]: any },
 			coords: { [key: string]: Number },
 			coord_idx: string,
 			features: { [key: string]: any };
 
 		for (let node_id in json.data) {
-			let node = graph.addNodeByID(node_id);
-			let label = json.data[node_id][labelKeys.label];
-			if (label) {
-				node.setLabel(label);
-			}
-			/**
-			 * Reading and instantiating features
-			 * We are using the shortcut setFeatures here,
-			 * so we have to read them before any special features
-			 *
-			 * @description assignment is intentional
-			 */
-			if (features = json.data[node_id][labelKeys.features]) {
-				/**
-				 * Since we are reading from an 'offline' source, we
-				 * can simply use the reference...
-				 */
+			const type = typedGraph ? json.data[node_id][labelKeys.n_type] : null;
+			const label = json.data[node_id][labelKeys.n_label];
+			const node = graph.addNodeByID(node_id, {label, type});
+			// Here we set the reference...?
+			features = json.data[node_id][labelKeys.n_features];
+			if ( features ) {
 				node.setFeatures(features);
 			}
-
-			/**
-			 * Reading and instantiating coordinates
-			 * Coordinates are treated as special features,
-			 * and are therefore added after general features
-			 *
-			 * @description assignment is intentional
-			 */
-			if (coords_json = json.data[node_id][labelKeys.coords]) {
+			// Here we copy...?
+			coords_json = json.data[node_id][labelKeys.coords];
+			if ( coords_json ) {
 				coords = {};
 				for (coord_idx in coords_json) {
 					coords[coord_idx] = +coords_json[coord_idx];
@@ -139,6 +125,8 @@ class JSONInput implements IJSONInput {
 				node.setFeature(labelKeys.coords, coords);
 			}
 		}
+
+
 
 		/**
 		 * ROUND 2 - Add edges if no dupes

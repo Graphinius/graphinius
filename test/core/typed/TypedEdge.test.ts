@@ -35,7 +35,7 @@ describe('==== TYPED EDGE TESTS ====', () => {
 
 		it('should return isTyped() of true', () => {
 			const edge = new TypedEdge(id, node_a, node_b);
-			expect(edge.isTyped()).toBe(true);
+			expect(edge.typed).toBe(true);
 		});
 
 
@@ -44,7 +44,7 @@ describe('==== TYPED EDGE TESTS ====', () => {
 		 *
 		 * @todo no better way to write this !?
 		 */
-		it('should return canHaveType of true', () => {
+		it('should return isTyped on BaseEdge of true', () => {
 			const edge = new TypedEdge(id, node_a, node_b);
 			expect(BaseEdge.isTyped(edge)).toBe(true);
 		});

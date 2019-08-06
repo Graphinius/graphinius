@@ -1,4 +1,5 @@
 import * as $E from "./BaseEdge";
+import { TypedNode } from "../typed/TypedNode";
 export interface NeighborEntry {
     node: IBaseNode;
     edge: $E.IBaseEdge;
@@ -76,6 +77,7 @@ declare class BaseNode implements IBaseNode {
         [k: string]: $E.IBaseEdge;
     };
     constructor(_id: string, config?: BaseNodeConfig);
+    static isTyped(arg: any): arg is TypedNode;
     readonly id: string;
     readonly label: string;
     readonly features: NodeFeatures;

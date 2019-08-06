@@ -1,9 +1,10 @@
-import { ITypedNode } from './TypedNode';
+import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import { BaseGraph, GraphMode, GraphStats } from '../base/BaseGraph';
 
 import { Logger } from '../../utils/Logger';
+import {BaseNode} from "../base/BaseNode";
 const logger = new Logger();
 
 export const GENERIC_TYPE = "GENERIC";
@@ -12,8 +13,8 @@ export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 
 export interface TypedGraphStats extends GraphStats {
-	node_types: string[];
-	edge_types: string[];
+	// node_types: string[];
+	// edge_types: string[];
 	typed_nodes: { [key: string]: number };
 	typed_edges: { [key: string]: number };
 }
@@ -55,6 +56,11 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
+	get typed(): true {
+		return true;
+	}
+
+
 	nodeTypes(): string[] {
 		return Array.from(this._typedNodes.keys());
 	}
@@ -74,6 +80,20 @@ export class TypedGraph extends BaseGraph {
 	nrTypedEdges(type: string): number | null {
 		type = type.toUpperCase();
 		return this._typedEdges.get(type) ? this._typedEdges.get(type).size : null;
+	}
+
+
+	/**
+	 * @todo copied from super ??
+	 * @param id
+	 * @param opts
+	 */
+	addNodeByID(id: string, opts?: {}): ITypedNode {
+		if ( this.hasNodeID( id ) ) {
+			throw new Error("Won't add node with duplicate ID.");
+		}
+		let node = new TypedNode(id, opts);
+		return this.addNode(node) ? node : null;
 	}
 
 
@@ -188,8 +208,8 @@ export class TypedGraph extends BaseGraph {
 		this._typedEdges.forEach((k, v) => typed_edges[v] = k.size);
 		return {
 			...super.getStats(),
-			node_types: this.nodeTypes(),
-			edge_types: this.edgeTypes(),
+			// node_types: this.nodeTypes(),
+			// edge_types: this.edgeTypes(),
 			typed_nodes,
 			typed_edges
 		};

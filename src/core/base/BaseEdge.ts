@@ -134,7 +134,7 @@ class BaseEdge implements IBaseEdge {
 	}
 
 	static isTyped(arg: any): arg is TypedEdge {
-		return arg.isTyped !== undefined;
+		return !!arg.typed;
 	}
 }
 

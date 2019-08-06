@@ -1,4 +1,5 @@
 import * as $N from '../../../src/core/base/BaseNode';
+import { TypedNode } from "../../../src/core/typed/TypedNode";
 import * as $E from '../../../src/core/base/BaseEdge';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/config';
@@ -69,6 +70,15 @@ describe('==== NODE TESTS ====', () => {
 				expect(node.degree()).toBe(0);
 			}
 		);
+
+		it('should report BaseNode to be NOT typed', function () {
+			expect($N.BaseNode.isTyped(new $N.BaseNode('blah'))).toBe(false);
+		});
+
+		it('should report TypedNode to be TYPED', function () {
+			expect($N.BaseNode.isTyped(new TypedNode('blah'))).toBe(true);
+		});
+
 	});
 
 

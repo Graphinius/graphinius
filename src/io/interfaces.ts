@@ -1,8 +1,9 @@
 export interface Abbreviations {
 	coords			: string;
-	label				: string;
+	n_label				: string;
+	n_type				: string;
 	edges				: string;
-	features		: string;
+	n_features		: string;
 	e_to				: string;
 	e_dir				: string;
 	e_weight		: string;
@@ -13,8 +14,9 @@ export interface Abbreviations {
 
 export const labelKeys: Abbreviations = {
 	coords			: 'c',
-	label				: 'l',
-	features		: 'f',
+	n_label			: 'l',
+	n_type			: 'x',
+	n_features	: 'f',
 	edges				: 'e',
 	e_to				: 't', // a->b
 	e_dir				: 'd',

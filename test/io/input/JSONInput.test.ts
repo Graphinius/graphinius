@@ -10,6 +10,7 @@ import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 
 import { Logger } from '../../../src/utils/Logger';
 import {BaseEdge} from "../../../src/core/base/BaseEdge";
+import {TypedNode} from "../../../src/core/typed/TypedNode";
 const logger = new Logger();
 
 
@@ -238,6 +239,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		 *
 		 * @todo make consistent!
 		 */
+		const nodeType = `PERSON`;
 		const edgeID = `A_B_u`;
 		const secondID = `B_A_u`;
 		const edgeLabel = `food friends`;
@@ -248,8 +250,16 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 		beforeEach(() => {
 			graph = new TypedGraph("Edgus Labellius");
-			n_a = graph.addNodeByID("A");
-			n_b = graph.addNodeByID("B");
+			n_a = graph.addNodeByID("A", {type: nodeType});
+			n_b = graph.addNodeByID("B", {type: nodeType});
+		});
+
+
+		it('should retrieve correct node type', function () {
+			jsonOut.writeToJSONFile(graphFile, graph);
+			const inGraph = jsonIn.readFromJSONFile(graphFile, new TypedGraph('in'));
+			const inNode = inGraph.getNodeById('A') as TypedNode;
+			expect(inNode.type).toBe(nodeType);
 		});
 
 
@@ -297,9 +307,9 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 
 		test('should correctly read the edge weights contained in a json file', () => {
-			json._config.weighted = true; // set all to weighted: true (weight will be set to 0)
+			// set all to weighted: true (weight will be set to 0)
+			json._config.weighted = true;
 			graph = json.readFromJSONFile(small_graph);
-			logger.log(JSON.stringify(graph.getEdgeById('A_C_u').isWeighted()));
 			$C.checkSmallGraphEdgeWeights(graph);
 		});
 

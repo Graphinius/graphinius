@@ -48,7 +48,7 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	export interface ITypedEdge extends IBaseEdge {
 	    readonly type: string;
-	    isTyped(): boolean;
+	    readonly typed: true;
 	}
 	export interface TypedEdgeConfig extends BaseEdgeConfig {
 	    type?: string;
@@ -59,7 +59,7 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	    protected _type: string;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
 	    readonly type: string;
-	    isTyped(): true;
+	    readonly typed: true;
 	}
 	export { TypedEdge };
 
@@ -119,8 +119,27 @@ declare module 'graphinius/utils/StructUtils' {
 	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
 
 }
+declare module 'graphinius/core/typed/TypedNode' {
+	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
+	export interface ITypedNode extends IBaseNode {
+	    readonly type: string;
+	    readonly typed: true;
+	}
+	export interface TypedNodeConfig extends BaseNodeConfig {
+	    type?: string;
+	} class TypedNode extends BaseNode implements ITypedNode {
+	    protected _id: string;
+	    protected _type: string;
+	    constructor(_id: string, config?: TypedNodeConfig);
+	    readonly type: string;
+	    readonly typed: true;
+	}
+	export { TypedNode };
+
+}
 declare module 'graphinius/core/base/BaseNode' {
 	import * as $E from 'graphinius/core/base/BaseEdge';
+	import { TypedNode } from 'graphinius/core/typed/TypedNode';
 	export interface NeighborEntry {
 	    node: IBaseNode;
 	    edge: $E.IBaseEdge;
@@ -196,6 +215,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	        [k: string]: $E.IBaseEdge;
 	    };
 	    constructor(_id: string, config?: BaseNodeConfig);
+	    static isTyped(arg: any): arg is TypedNode;
 	    readonly id: string;
 	    readonly label: string;
 	    readonly features: NodeFeatures;
@@ -479,9 +499,46 @@ declare module 'graphinius/search/Johnsons' {
 	export { Johnsons, addExtraNandE, reWeighGraph, PFSFromAllNodes };
 
 }
+declare module 'graphinius/core/typed/TypedGraph' {
+	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
+	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
+	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
+	export const GENERIC_TYPE = "GENERIC";
+	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
+	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
+	export interface TypedGraphStats extends GraphStats {
+	    typed_nodes: {
+	        [key: string]: number;
+	    };
+	    typed_edges: {
+	        [key: string]: number;
+	    };
+	}
+	export class TypedGraph extends BaseGraph {
+	    _label: string;
+	    protected _typedNodes: TypedNodes;
+	    protected _typedEdges: TypedEdges;
+	    constructor(_label: string);
+	    readonly typed: true;
+	    nodeTypes(): string[];
+	    edgeTypes(): string[];
+	    nrTypedNodes(type: string): number | null;
+	    nrTypedEdges(type: string): number | null;
+	    addNodeByID(id: string, opts?: {}): ITypedNode;
+	    addNode(node: ITypedNode): ITypedNode;
+	    deleteNode(node: ITypedNode): void;
+	    addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
+	    addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;
+	    deleteEdge(edge: ITypedEdge | IBaseEdge): void;
+	    getStats(): TypedGraphStats;
+	}
+
+}
 declare module 'graphinius/core/base/BaseGraph' {
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
 	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
@@ -576,6 +633,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 	        [key: string]: IBaseEdge;
 	    };
 	    constructor(_label: any);
+	    static isTyped(arg: any): arg is TypedGraph;
 	    readonly label: string;
 	    readonly mode: GraphMode;
 	    readonly stats: GraphStats;
@@ -771,58 +829,6 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	export { pageRankDetCentrality };
 
 }
-declare module 'graphinius/core/typed/TypedNode' {
-	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
-	export interface ITypedNode extends IBaseNode {
-	    readonly type: string;
-	}
-	export interface TypedNodeConfig extends BaseNodeConfig {
-	    type?: string;
-	} class TypedNode extends BaseNode implements ITypedNode {
-	    protected _id: string;
-	    protected _type: string;
-	    constructor(_id: string, config?: TypedNodeConfig);
-	    readonly type: string;
-	}
-	export { TypedNode };
-
-}
-declare module 'graphinius/core/typed/TypedGraph' {
-	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
-	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
-	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
-	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
-	export const GENERIC_TYPE = "GENERIC";
-	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
-	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
-	export interface TypedGraphStats extends GraphStats {
-	    node_types: string[];
-	    edge_types: string[];
-	    typed_nodes: {
-	        [key: string]: number;
-	    };
-	    typed_edges: {
-	        [key: string]: number;
-	    };
-	}
-	export class TypedGraph extends BaseGraph {
-	    _label: string;
-	    protected _typedNodes: TypedNodes;
-	    protected _typedEdges: TypedEdges;
-	    constructor(_label: string);
-	    nodeTypes(): string[];
-	    edgeTypes(): string[];
-	    nrTypedNodes(type: string): number | null;
-	    nrTypedEdges(type: string): number | null;
-	    addNode(node: ITypedNode): ITypedNode;
-	    deleteNode(node: ITypedNode): void;
-	    addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
-	    addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;
-	    deleteEdge(edge: ITypedEdge | IBaseEdge): void;
-	    getStats(): TypedGraphStats;
-	}
-
-}
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $E from 'graphinius/core/base/BaseEdge';
@@ -952,9 +958,10 @@ declare module 'graphinius/generators/KroneckerLeskovec' {
 declare module 'graphinius/io/interfaces' {
 	export interface Abbreviations {
 	    coords: string;
-	    label: string;
+	    n_label: string;
+	    n_type: string;
 	    edges: string;
-	    features: string;
+	    n_features: string;
 	    e_to: string;
 	    e_dir: string;
 	    e_weight: string;

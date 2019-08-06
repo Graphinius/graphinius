@@ -30,6 +30,7 @@ const typedAdjList = {
 
 export interface ITypedNode extends IBaseNode {
 	readonly type: string;
+	readonly typed: true;
 }
 
 
@@ -50,6 +51,9 @@ class TypedNode extends BaseNode implements ITypedNode {
 		return this._type;
 	}
 
+	get typed() : true {
+		return true;
+	}
 }
 
 

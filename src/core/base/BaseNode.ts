@@ -1,5 +1,7 @@
 import * as $E from "./BaseEdge";
 import * as $SU from "../../utils/StructUtils";
+import {TypedEdge} from "../typed/TypedEdge";
+import {TypedNode} from "../typed/TypedNode";
 
 
 export interface NeighborEntry {
@@ -8,7 +10,6 @@ export interface NeighborEntry {
   // only used (and tested) in PFS
   best? : number;
 }
-
 
 export interface BaseNodeConfig {
 	label?			: string;
@@ -26,7 +27,6 @@ export interface IBaseNode {
 	readonly id: string;
 	readonly label: string;
 	readonly features: NodeFeatures;
-
 
 	getID()	: string;
 	getLabel() : string;
@@ -106,6 +106,11 @@ class BaseNode implements IBaseNode {
 		this._label = config.label || _id;
 		this._features = config.features != null ? $SU.clone(config.features) : {};
 	}
+
+	static isTyped(arg: any): arg is TypedNode {
+		return !!arg.typed;
+	}
+
 
 	get id(): string {
 		return this._id;

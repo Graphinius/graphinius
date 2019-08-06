@@ -1,8 +1,9 @@
 export interface Abbreviations {
     coords: string;
-    label: string;
+    n_label: string;
+    n_type: string;
     edges: string;
-    features: string;
+    n_features: string;
     e_to: string;
     e_dir: string;
     e_weight: string;

@@ -8,6 +8,7 @@ import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../../config/config';
 
 import { Logger } from '../../../src/utils/Logger'
+import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();
@@ -46,7 +47,7 @@ describe('GRAPH TESTS: ', () => {
 		csv_sn: CSVInput = new CSVInput(sn_config);
 
 
-	describe('Basic graph operations - ', () => {
+	describe('Basic graph instantiation - ', () => {
 
 		beforeEach(() => {
 			graph = new Graph('Test graph');
@@ -56,6 +57,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrDirEdges()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(0);
 		});
+
 
 		test(
 			'should correctly instantiate a graph with GraphMode INIT (no edges added)',
@@ -76,6 +78,17 @@ describe('GRAPH TESTS: ', () => {
 		test('should get stats either via getStats() or stats getter', () => {
 			expect(graph.getStats()).toEqual(graph.stats);
 		});
+
+
+		it('should report a BaseGraph to be NOT typed', function () {
+			expect($G.BaseGraph.isTyped(graph)).toBe(false);
+		});
+
+
+		it('should report a TypedGraph to be TYPED', function () {
+			expect($G.BaseGraph.isTyped(new TypedGraph('typeee'))).toBe(true);
+		});
+
 
 
 		describe('adding nodes and edges -', () => {
@@ -170,7 +183,7 @@ describe('GRAPH TESTS: ', () => {
 			test('should correctly add an undirected edge between two nodes', () => {
 				node_a = graph.addNodeByID('A');
 				node_b = graph.addNodeByID('B');
-				edge_ab = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge	
+				edge_ab = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge
 				expect(edge_ab.isDirected()).toBe(false);
 				expect(node_a.inDegree()).toBe(0);
 				expect(node_a.outDegree()).toBe(0);
@@ -470,7 +483,7 @@ describe('GRAPH TESTS: ', () => {
 
 		/**
 		 * @todo We're just checking for 1st edge right now - what about multiple edges?
-		 * 
+		 *
 		 */
 		test(
 			'should throw an error retrieving an edge by Node IDs if node_a does not exist',

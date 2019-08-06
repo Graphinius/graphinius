@@ -6,16 +6,21 @@ describe('==== NODE TESTS ====', () => {
 
 	describe('Basic node instantiation', () => {
 
-		test('should set a default type of `undefined`', () => {
+		it('should set a default type of `undefined`', () => {
 			const node = new TypedNode(id);
 			expect(node.type).toBeUndefined();
 		});
 
-		test('should set correct type', () => {
+		it('should set correct type', () => {
 			const type = 'POLAR_STATION';
 			const node = new TypedNode(id, {type});
 			expect(node.type).toBe(type);
 		});
+
+		it('should tell you it\'s typed', function () {
+			expect(new TypedNode('blah').typed).toBe(true);
+		});
+
 
 	});
 

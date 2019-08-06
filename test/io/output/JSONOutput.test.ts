@@ -9,6 +9,7 @@ import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/confi
 import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 
 import {Logger} from "../../../src/utils/Logger";
+import {TypedNode} from "../../../src/core/typed/TypedNode";
 const logger = new Logger();
 
 
@@ -49,7 +50,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         data: {
           A: {
             [labelKeys.edges]: [],
-            [labelKeys.features]: {}
+            [labelKeys.n_features]: {}
           }
         }
       };
@@ -72,8 +73,8 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         data: {
           A: {
             [labelKeys.edges]: [],
-            [labelKeys.label]: "Labellius",
-            [labelKeys.features]: {}
+            [labelKeys.n_label]: "Labellius",
+            [labelKeys.n_features]: {}
           }
         }
       };
@@ -105,7 +106,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
                   [labelKeys.e_weight]: undefined
                 }
               ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             },
             B: {
               [labelKeys.edges]: [
@@ -115,7 +116,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
                   [labelKeys.e_weight]: undefined
                 }
               ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             }
           }
         };
@@ -145,7 +146,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           data: {
             A: {
               [labelKeys.edges]: [ ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             },
             B: {
               [labelKeys.edges]: [
@@ -156,7 +157,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
                   [labelKeys.e_label]: 'FRIENDS_WITH'
                 }
               ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             }
           }
         };
@@ -187,7 +188,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
           data: {
             A: {
               [labelKeys.edges]: [ ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             },
             B: {
               [labelKeys.edges]: [
@@ -197,7 +198,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
                   [labelKeys.e_weight]: 5
                 }
               ],
-              [labelKeys.features]: { }
+              [labelKeys.n_features]: { }
             }
           }
         };
@@ -228,7 +229,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         data: {
           A: {
             [labelKeys.edges]: [ ],
-            [labelKeys.features]: {
+            [labelKeys.n_features]: {
               [labelKeys.coords]: {
                 x: 1,
                 y: 1,
@@ -252,23 +253,32 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
   describe('Output toy JSON structs - TYPED graph', () => {
 
+    let typedGraph : TypedGraph;
+    const nodeType1 = 'PERSON';
+    const nodeType2 = 'COFFEE';
     const edgeID = 'TypedEdge';
     const edgeType = 'FRIENDS_WITH';
 
 
     beforeEach(() => {
-      graph = new TypedGraph("Output Test graph");
+      typedGraph = new TypedGraph("Output Test graph");
+    });
+
+
+    it('should correctly output the node type', function () {
+      let n_a = typedGraph.addNodeByID("A", {type: nodeType1});
+      let n_b = typedGraph.addNodeByID("B", {type: nodeType2});
+      resultString = new JSONOutput().writeToJSONString(typedGraph);
+      expect(resultString).toContain(`"x":"PERSON"`);
+      expect(resultString).toContain(`"x":"COFFEE"`);
     });
 
 
     it('should correctly output the edge type', () => {
-      let n_a = graph.addNodeByID("A");
-      let n_b = graph.addNodeByID("B");
-      graph.addEdgeByID(edgeID, n_b, n_a, {
-        type: edgeType
-      });
-      jsonOut = new JSONOutput();
-      resultString = jsonOut.writeToJSONString( graph );
+      let n_a = typedGraph.addNodeByID("A");
+      let n_b = typedGraph.addNodeByID("B");
+      typedGraph.addEdgeByID(edgeID, n_b, n_a, {type: edgeType});
+      resultString =  new JSONOutput().writeToJSONString(typedGraph);
       expect(resultString).toContain(`"e":[{"t":"B","d":0,"y":"FRIENDS_WITH"}`);
     });
 
@@ -344,7 +354,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
         data: {
           A: {
             [labelKeys.edges]: [ ],
-            [labelKeys.features]: { }
+            [labelKeys.n_features]: { }
           },
           B: {
             [labelKeys.edges]: [
@@ -354,7 +364,7 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
                 [labelKeys.e_weight]: undefined
               }
             ],
-            [labelKeys.features]: { }
+            [labelKeys.n_features]: { }
           }
         }
       };

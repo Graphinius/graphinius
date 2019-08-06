@@ -4,7 +4,11 @@ import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
 import { labelKeys } from '../interfaces';
-import {BaseEdge} from "../../core/base/BaseEdge";
+import { BaseEdge } from "../../core/base/BaseEdge";
+import { BaseNode } from "../../core/base/BaseNode";
+
+import {Logger} from "../../utils/Logger";
+const logger = new Logger();
 
 
 export interface IJSONOutput {
@@ -12,18 +16,6 @@ export interface IJSONOutput {
 	writeToJSONString(graph: $G.IGraph): string;
 }
 
-
-
-/**
- * @description we can leave this out, since we just write ALL
- * 							information into the file, but then select the
- * 							ones we want during Input
- */
-// export interface IJSONInConfig {
-// 	explicit_direction?: boolean;
-// 	directed?: boolean; // true => directed
-// 	weighted?: boolean;
-// }
 
 
 class JSONOutput implements IJSONOutput {
@@ -64,12 +56,14 @@ class JSONOutput implements IJSONOutput {
 			node_struct = result.data[node.getID()] = {
 				[labelKeys.edges]: []
 			};
-			/**
-			 * only add label if not identical to ID
-			 */
 			if ( node.getID() !== node.getLabel() ) {
-				node_struct[labelKeys.label] = node.getLabel();
+				node_struct[labelKeys.n_label] = node.label;
 			}
+			if ( BaseNode.isTyped(node) ) {
+				logger.log(`Got TYPED node`);
+				node_struct[labelKeys.n_type] = node.type;
+			}
+
 
 			/* -------------------------------------- */
 			/*					 UNDIRECTED edges							*/
@@ -117,7 +111,7 @@ class JSONOutput implements IJSONOutput {
 			}
 
 			// Features
-			node_struct[labelKeys.features] = node.getFeatures();
+			node_struct[labelKeys.n_features] = node.getFeatures();
 
 			// Coords (shall we really?)
 			if ((coords = node.getFeature(labelKeys.coords)) != null) {
