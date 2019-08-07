@@ -64,7 +64,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should omit duplicate edges by default', () => {
 			graph = new JSONInput().readFromJSONFile(small_graph);
 			logger.log(graph.stats);
-			console.log(graph.stats);
 			expect(graph.nrUndEdges()).toBe(2);
 		});
 
@@ -72,7 +71,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 		it('should be able to switch off dupe checking', () => {
 			graph = new JSONInput({dupeCheck: false}).readFromJSONFile(small_graph);
 			logger.log(graph.stats);
-			console.log(graph.stats);
 			expect(graph.nrUndEdges()).toBe(4);
 		});
 

@@ -29,7 +29,7 @@ describe('==== NODE TESTS ====', () => {
 	});
 
 
-	describe.only('Unique Neighbor ID builder tests - ', () => {
+	describe('Unique Neighbor ID builder tests - ', () => {
 		let
 			graph: TypedGraph,
 			a: ITypedNode,
@@ -84,7 +84,33 @@ describe('==== NODE TESTS ====', () => {
 	 *       -) direction
 	 */
 	describe('Edge addition / deletion tests - ', () => {
+		const
+			nodeTypeA = 'PERSON',
+			nodeTypeB = 'COFFEE',
+			edgeType1 = 'FRIENDS_WITH',
+			edgeType2 = 'LIKES',
+			edgeType3 = 'DRINKS';
 
+		let
+			graph: TypedGraph,
+			a: ITypedNode,
+			b: ITypedNode,
+			c: ITypedNode,
+			e1: ITypedEdge,
+			e2: ITypedEdge,
+			e3: ITypedEdge;
+
+
+		beforeEach(() => {
+			graph = new TypedGraph('uniqus testus');
+			a = graph.addNodeByID('A', {type: nodeTypeA});
+			b = graph.addNodeByID('A', {type: nodeTypeA});
+			c = graph.addNodeByID('B', {type: nodeTypeB});
+		});
+
+		it('should ', () => {
+
+		});
 	});
 
 
