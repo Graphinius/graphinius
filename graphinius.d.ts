@@ -1041,6 +1041,8 @@ declare module 'graphinius/io/input/CSVInput' {
 
 }
 declare module 'graphinius/io/input/JSONInput' {
+	import { IBaseNode } from 'graphinius/core/base/BaseNode';
+	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
 	export interface JSONEdge {
@@ -1071,6 +1073,7 @@ declare module 'graphinius/io/input/JSONInput' {
 	    directed?: boolean;
 	    weighted?: boolean;
 	    typed?: boolean;
+	    dupeCheck?: boolean;
 	}
 	export interface IJSONInput {
 	    _config: IJSONInConfig;
@@ -1083,6 +1086,8 @@ declare module 'graphinius/io/input/JSONInput' {
 	    readFromJSONFile(filepath: string, graph?: IGraph): IGraph;
 	    readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
 	    readFromJSON(json: JSONGraph, graph?: IGraph): IGraph;
+	    addNodesToGraph(json: JSONGraph, graph: IGraph): void;
+	    getTargetNode(graph: any, edge_input: any): IBaseNode | ITypedNode;
 	    static handleEdgeWeights(edge_input: any): number;
 	}
 	export { JSONInput };

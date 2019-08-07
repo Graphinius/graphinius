@@ -1,3 +1,5 @@
+import { IBaseNode } from "../../core/base/BaseNode";
+import { ITypedNode } from "../../core/typed/TypedNode";
 import { IGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 export interface JSONEdge {
@@ -28,6 +30,7 @@ export interface IJSONInConfig {
     directed?: boolean;
     weighted?: boolean;
     typed?: boolean;
+    dupeCheck?: boolean;
 }
 export interface IJSONInput {
     _config: IJSONInConfig;
@@ -41,6 +44,8 @@ declare class JSONInput implements IJSONInput {
     readFromJSONFile(filepath: string, graph?: IGraph): IGraph;
     readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
     readFromJSON(json: JSONGraph, graph?: IGraph): IGraph;
+    addNodesToGraph(json: JSONGraph, graph: IGraph): void;
+    getTargetNode(graph: any, edge_input: any): IBaseNode | ITypedNode;
     static handleEdgeWeights(edge_input: any): number;
 }
 export { JSONInput };

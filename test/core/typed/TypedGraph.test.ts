@@ -204,7 +204,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		describe.only('real-world graph (beer example)', () => {
+		describe('real-world graph (beer example)', () => {
 
 			beforeEach(() => {
 				graph = new TypedGraph('beerius testus');
@@ -247,11 +247,11 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
-				logger.log(JSON.stringify(graph.getStats()));
+				logger.log(graph.stats);
 			});
 
 
-			it('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
+			it.skip('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
 				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
 
 				const tic = +new Date;
@@ -259,7 +259,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j meetup example took: ${toc - tic} ms.`);
-				logger.log(JSON.stringify(graph.getStats()));
+				logger.log(graph.stats);
 			});
 
 		});
