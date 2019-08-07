@@ -21,7 +21,17 @@ describe('==== NODE TESTS ====', () => {
 			expect(new TypedNode('blah').typed).toBe(true);
 		});
 
+	});
+	
+	
+	describe('Edge addition / deletion tests - ', () => {
+		
+	});
+
+
+	describe('Edge traversal tests - ', () => {
 
 	});
+
 
 });

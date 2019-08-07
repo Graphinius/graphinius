@@ -24,12 +24,6 @@ let REAL_GRAPH_NR_NODES = 6204,
 
 const DEFAULT_WEIGHT: number = 1;
 
-const std_json_input_config: IJSONInConfig = {
-	explicit_direction: true,
-	directed: false,
-	weighted: false
-};
-
 
 describe('GRAPH JSON INPUT TESTS', () => {
 
@@ -39,20 +33,47 @@ describe('GRAPH JSON INPUT TESTS', () => {
 
 	describe('Basic instantiation tests - ', () => {
 
-		test('should correctly instantiate a default version of JSONInput', () => {
-			json = new JSONInput(std_json_input_config);
+		it('should correctly instantiate a default version of JSONInput', () => {
+			json = new JSONInput();
 			expect(json).toBeInstanceOf(JSONInput);
 			expect(json._config.explicit_direction).toBe(true);
 			expect(json._config.directed).toBe(false);
 			expect(json._config.weighted).toBe(false);
+			expect(json._config.dupeCheck).toBe(true);
+		});
+
+
+		it('should take a custom configuration', () => {
+			json = new JSONInput({explicit_direction: false, directed: true, weighted: true, dupeCheck: false});
+			expect(json).toBeInstanceOf(JSONInput);
+			expect(json._config.explicit_direction).toBe(false);
+			expect(json._config.directed).toBe(true);
+			expect(json._config.weighted).toBe(true);
+			expect(json._config.dupeCheck).toBe(false);
 		});
 
 
 		it('should throw an error in case of non-existing referenced node', function () {
 			graph = new BaseGraph("emptinius");
-			json = new JSONInput(std_json_input_config);
+			json = new JSONInput();
 			expect(() => json.getTargetNode(graph, {[labelKeys.e_to]: "meNonExists"}))
 				.toThrow('Node referenced by edge does not exist');
+		});
+
+
+		it('should omit duplicate edges by default', () => {
+			graph = new JSONInput().readFromJSONFile(small_graph);
+			logger.log(graph.stats);
+			console.log(graph.stats);
+			expect(graph.nrUndEdges()).toBe(2);
+		});
+
+
+		it('should be able to switch off dupe checking', () => {
+			graph = new JSONInput({dupeCheck: false}).readFromJSONFile(small_graph);
+			logger.log(graph.stats);
+			console.log(graph.stats);
+			expect(graph.nrUndEdges()).toBe(4);
 		});
 
 	});

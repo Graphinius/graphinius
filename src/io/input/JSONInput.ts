@@ -43,10 +43,11 @@ export interface JSONGraph {
 
 
 export interface IJSONInConfig {
-	explicit_direction?: boolean;
-	directed?: boolean;
-	weighted?: boolean;
-	typed?: boolean;
+	explicit_direction?		: boolean;
+	directed?							: boolean;
+	weighted?							: boolean;
+	typed?								: boolean;
+	dupeCheck? 						: boolean;
 }
 
 
@@ -64,11 +65,12 @@ export interface IJSONInput {
 class JSONInput implements IJSONInput {
 	_config: IJSONInConfig;
 
-	constructor(config?: IJSONInConfig) {
-		this._config = config || {
-			explicit_direction: config && config.explicit_direction || true,
-			directed: config && config.directed || false,
-			weighted: config && config.weighted || false
+	constructor(config: IJSONInConfig = {}) {
+		this._config = {
+			explicit_direction: config.explicit_direction != null ? config.explicit_direction : true,
+			directed: config.directed != null ? config.directed : false,
+			weighted: config.weighted != null ? config.weighted : false,
+			dupeCheck: config.dupeCheck != null ? config.dupeCheck : true
 		};
 	}
 
@@ -141,16 +143,19 @@ class JSONInput implements IJSONInput {
 					typed: !!edge_type,
 					type: edge_type
 				};
-				if ( !edc.isDupe(newEdge) ) {
-					graph.addEdgeByID(edge_id, node, target_node, {
-						label: edge_label,
-						directed: directed,
-						weighted: this._config.weighted,
-						weight: edge_weight,
-						typed: !!edge_type,
-						type: edge_type
-					});
+				if ( this._config.dupeCheck && edc.isDupe(newEdge) ) {
+					// Don't throw, just log
+					logger.log(`Edge ${edge_label} is a duplicate according to assumptions... omitting.`);
+					continue;
 				}
+				graph.addEdgeByID(edge_id, node, target_node, {
+					label: edge_label,
+					directed: directed,
+					weighted: this._config.weighted,
+					weight: edge_weight,
+					typed: !!edge_type,
+					type: edge_type
+				});
 			}
 		}
 		return graph;

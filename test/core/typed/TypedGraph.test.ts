@@ -204,7 +204,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		describe('real-world graph (beer example)', () => {
+		describe.only('real-world graph (beer example)', () => {
 
 			beforeEach(() => {
 				graph = new TypedGraph('beerius testus');
@@ -243,7 +243,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const graphFile = JSON_REC_PATH + '/beerGraph.json';
 
 				const tic = +new Date;
-				graph = new JSONInput().readFromJSONFile(graphFile, graph) as TypedGraph;
+				graph = new JSONInput({dupeCheck: false}).readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
@@ -251,11 +251,11 @@ describe('TYPED GRAPH TESTS: ', () => {
 			});
 
 
-			it.skip('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
+			it('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
 				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
 
 				const tic = +new Date;
-				graph = new JSONInput().readFromJSONFile(graphFile, graph) as TypedGraph;
+				graph = new JSONInput({dupeCheck: false}).readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j meetup example took: ${toc - tic} ms.`);
