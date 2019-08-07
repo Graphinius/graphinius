@@ -1,36 +1,27 @@
 import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
+import {ITypedEdge, TypedEdge} from "./TypedEdge";
 
 import { Logger } from '../../utils/Logger';
 const logger = new Logger();
 
-/**
- * @describe a `typed adjacency list` will allow us to
- * reduce the `expansion` step in a recommender pipeline
- * to a O(1) lookup operation...
- *
- * @todo split UNdirected edges up into in & out ??
- *
- * @todo check for type of node IDs we use ??
- *       -> that would mean we tell
- */
-const typedAdjList = {
-	FRIENDS_WITH: {
-		und: new Set([0, 3]),
-		// in: [0, 3],
-		// out: [0, 3]
-	},
-	MEMBER_OF: {
-		out: new Set([1, 4])
-	},
-	LIKED_BY: {
-		in: new Set([2, 5])
-	}
-};
 
+export type NeighborEntries = Set<string>;
+
+/**
+ * @todo use?
+ */
+export interface typedAdjListEntry {
+	type	: string;
+	in		: NeighborEntries;
+	out		: NeighborEntries;
+	und		: NeighborEntries;
+}
 
 export interface ITypedNode extends IBaseNode {
 	readonly type: string;
 	readonly typed: true;
+
+	uniqueNID(e: ITypedEdge) : string;
 }
 
 
@@ -47,12 +38,23 @@ class TypedNode extends BaseNode implements ITypedNode {
 		this._type = config.type;
 	}
 
-	get type() {
+	get type() : string {
 		return this._type;
 	}
 
 	get typed() : true {
 		return true;
+	}
+
+	/**
+	 * Unique ID for Neighbor (traversal)
+	 * @param e ITypedEdge
+	 * @returns unique neighbor entry ID
+	 */
+	uniqueNID(e: ITypedEdge) : string {
+		const conn = e.getNodes();
+		const other = conn.a === this ? conn.b : conn.a;
+		return `${other.id}#${e.id}#${e.isWeighted()?'w':'u'}`;
 	}
 }
 

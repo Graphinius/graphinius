@@ -18,8 +18,8 @@ function clone(obj:any): any {
       return;
     }
 
-    var cloneObj = obj.constructor ? obj.constructor() : {};
-    for (var attribute in obj) {
+    let cloneObj = obj.constructor ? obj.constructor() : {};
+    for (let attribute in obj) {
       if ( !obj.hasOwnProperty( attribute ) ) {
         continue;
       }
@@ -41,10 +41,10 @@ function clone(obj:any): any {
  * @todo it's obvious, nevertheless needs some testing...
  */
 function shuffleArray(arr: Array<any>) : Array<any> {
-  for (var i = arr.length-1; i >=0; i--) {
+  for (let i = arr.length-1; i >=0; i--) {
    
-      var randomIndex = Math.floor(Math.random()*(i+1)); 
-      var itemAtIndex = arr[randomIndex]; 
+      let randomIndex = Math.floor(Math.random()*(i+1));
+      let itemAtIndex = arr[randomIndex];
        
       arr[randomIndex] = arr[i]; 
       arr[i] = itemAtIndex;
@@ -58,20 +58,22 @@ function shuffleArray(arr: Array<any>) : Array<any> {
  * @cb callback to return a unique identifier;
  * if this is duplicate, the object will not be stored in result.
  * @returns {Array}
+ *
+ * @todo
  */
 function mergeArrays(args: Array<Array<any>>, cb: Function = undefined ) {
-  for ( var arg_idx in args ) {
+  for ( let arg_idx in args ) {
     if ( !Array.isArray(args[arg_idx]) ) {
       throw new Error('Will only mergeArrays arrays');
     }
   }
   
-  var seen = {},
+  let seen = {},
       result = [],
       identity;
 
-  for (var i = 0; i < args.length; i++) {
-    for (var j = 0; j < args[i].length; j++) {
+  for (let i = 0; i < args.length; i++) {
+    for (let j = 0; j < args[i].length; j++) {
       identity = typeof cb !== 'undefined' ? cb(args[i][j]) : args[i][j];
 
       if (seen[identity] !== true) {
@@ -90,14 +92,14 @@ function mergeArrays(args: Array<Array<any>>, cb: Function = undefined ) {
  * @returns result object
  */
 function mergeObjects(args: Array<Object>) {
-  for (var i = 0; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     if ( Object.prototype.toString.call(args[i]) !== '[object Object]' ) {
       throw new Error('Will only take objects as inputs');
     }
   }
-  var result = {};
-  for (var i = 0; i < args.length; i++) {
-    for ( var key in args[i] ) {
+  let result = {};
+  for (let i = 0; i < args.length; i++) {
+    for ( let key in args[i] ) {
       if ( args[i].hasOwnProperty(key) ) {
         result[key] = args[i][key];
       }
@@ -110,17 +112,18 @@ function mergeObjects(args: Array<Object>) {
 /**
  * @TODO Test !!!
  *
- * @param object
+ * @param obj
  * @param cb
  */
 function findKey( obj: Object, cb: Function ) : string {
-  for (var key in obj) {
+  for (let key in obj) {
     if (obj.hasOwnProperty(key) && cb(obj[key])) {
       return key;
     }
   }
   return undefined;
 }
+
 
 /**
  * Takes two ordered number arrays and merges them. The returned array is
