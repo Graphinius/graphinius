@@ -121,18 +121,43 @@ declare module 'graphinius/utils/StructUtils' {
 }
 declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
+	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	export type NeighborEntries = Set<string>;
+	export interface TypedAdjListsEntry {
+	    ins?: NeighborEntries;
+	    outs?: NeighborEntries;
+	    conns?: NeighborEntries;
+	}
+	export type TypedAdjLists = {
+	    [type: string]: TypedAdjListsEntry;
+	};
 	export interface ITypedNode extends IBaseNode {
 	    readonly type: string;
 	    readonly typed: true;
+	    uniqueNID(e: ITypedEdge): string;
+	    addEdge(edge: ITypedEdge): ITypedEdge;
+	    removeEdge(edge: ITypedEdge): void;
+	    removeEdgeByID(id: string): void;
+	    ins(type: string): NeighborEntries;
+	    outs(type: string): NeighborEntries;
+	    conns(type: string): NeighborEntries;
 	}
 	export interface TypedNodeConfig extends BaseNodeConfig {
 	    type?: string;
 	} class TypedNode extends BaseNode implements ITypedNode {
 	    protected _id: string;
 	    protected _type: string;
+	    protected _typedAdjSets: TypedAdjLists;
 	    constructor(_id: string, config?: TypedNodeConfig);
 	    readonly type: string;
 	    readonly typed: true;
+	    uniqueNID(e: ITypedEdge): string;
+	    addEdge(edge: ITypedEdge): ITypedEdge;
+	    removeEdge(edge: ITypedEdge): void;
+	    removeEdgeByID(id: string): void;
+	    ins(type: string): NeighborEntries;
+	    outs(type: string): NeighborEntries;
+	    conns(type: string): NeighborEntries;
 	}
 	export { TypedNode };
 
@@ -169,7 +194,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    inDegree(): number;
 	    outDegree(): number;
 	    degree(): number;
-	    addEdge(edge: $E.IBaseEdge): void;
+	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    hasEdge(edge: $E.IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
 	    getEdge(id: string): $E.IBaseEdge;
@@ -182,10 +207,14 @@ declare module 'graphinius/core/base/BaseNode' {
 	    undEdges(): {
 	        [k: string]: $E.IBaseEdge;
 	    };
-	    dirEdges(): {};
-	    allEdges(): {};
+	    dirEdges(): {
+	        [k: string]: $E.IBaseEdge;
+	    };
+	    allEdges(): {
+	        [k: string]: $E.IBaseEdge;
+	    };
 	    removeEdge(edge: $E.IBaseEdge): void;
-	    removeEdgeID(id: string): void;
+	    removeEdgeByID(id: string): void;
 	    clearOutEdges(): void;
 	    clearInEdges(): void;
 	    clearUndEdges(): void;
@@ -235,7 +264,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    inDegree(): number;
 	    outDegree(): number;
 	    degree(): number;
-	    addEdge(edge: $E.IBaseEdge): void;
+	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    hasEdge(edge: $E.IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
 	    getEdge(id: string): $E.IBaseEdge;
@@ -248,10 +277,14 @@ declare module 'graphinius/core/base/BaseNode' {
 	    undEdges(): {
 	        [k: string]: $E.IBaseEdge;
 	    };
-	    dirEdges(): {};
-	    allEdges(): {};
+	    dirEdges(): {
+	        [k: string]: $E.IBaseEdge;
+	    };
+	    allEdges(): {
+	        [k: string]: $E.IBaseEdge;
+	    };
 	    removeEdge(edge: $E.IBaseEdge): void;
-	    removeEdgeID(id: string): void;
+	    removeEdgeByID(id: string): void;
 	    clearOutEdges(): void;
 	    clearInEdges(): void;
 	    clearUndEdges(): void;
@@ -1045,6 +1078,7 @@ declare module 'graphinius/io/input/JSONInput' {
 	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	export interface JSONEdge {
 	    to: string;
 	    directed?: string;
@@ -1085,7 +1119,7 @@ declare module 'graphinius/io/input/JSONInput' {
 	    constructor(config?: IJSONInConfig);
 	    readFromJSONFile(filepath: string, graph?: IGraph): IGraph;
 	    readFromJSONURL(config: $R.RequestConfig, cb: Function, graph?: IGraph): void;
-	    readFromJSON(json: JSONGraph, graph?: IGraph): IGraph;
+	    readFromJSON(json: JSONGraph, graph?: IGraph | TypedGraph): IGraph | TypedGraph;
 	    addNodesToGraph(json: JSONGraph, graph: IGraph): void;
 	    getTargetNode(graph: any, edge_input: any): IBaseNode | ITypedNode;
 	    static handleEdgeWeights(edge_input: any): number;

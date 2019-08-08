@@ -53,12 +53,12 @@ export interface IBaseNode {
 	inEdges() : {[k: string] : $E.IBaseEdge};
 	outEdges() : {[k: string] : $E.IBaseEdge};
 	undEdges() : {[k: string] : $E.IBaseEdge};
-	// TODO hack!! figure out how to appease type system
-	dirEdges() : {};
-	allEdges() : {};
-	
+	dirEdges() : {[k: string] : $E.IBaseEdge};
+	allEdges() : {[k: string] : $E.IBaseEdge};
+
 	removeEdge(edge: $E.IBaseEdge) : void;
-	removeEdgeID(id: string) : void;
+	/* @todo removeEdgeByID... */
+	removeEdgeByID(id: string) : void;
 	
 	// Clear different types of edges
 	clearOutEdges() : void;
@@ -109,7 +109,6 @@ class BaseNode implements IBaseNode {
 	static isTyped(arg: any): arg is TypedNode {
 		return !!arg.typed;
 	}
-
 
 	get id(): string {
 		return this._id;
@@ -255,11 +254,11 @@ class BaseNode implements IBaseNode {
 		return this._und_edges;
 	}
 
-	dirEdges() : {} {
+	dirEdges() : {[k: string] : $E.IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges]);
 	}
 
-	allEdges() : {} {
+	allEdges() : {[k: string] : $E.IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
 	}
 	
@@ -284,8 +283,8 @@ class BaseNode implements IBaseNode {
 			this._out_degree -= 1;
 		}
 	}
-	
-	removeEdgeID(id: string) : void {
+
+	removeEdgeByID(id: string) : void {
 		if ( !this.hasEdgeID(id) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}

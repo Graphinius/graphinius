@@ -506,7 +506,7 @@ describe('==== NODE TESTS ====', () => {
 
 
 				test('should throw an error upon trying to remove an unconnected edge', () => {
-					expect(n_a.removeEdgeID.bind(n_a, 'menotexists')).toThrowError('Cannot remove unconnected edge.');
+					expect(n_a.removeEdgeByID.bind(n_a, 'menotexists')).toThrowError('Cannot remove unconnected edge.');
 				});
 
 
@@ -536,7 +536,7 @@ describe('==== NODE TESTS ====', () => {
 
 
 				test('should correctly delete an undirected edge by ID', () => {
-					n_a.removeEdgeID(e_2.getID());
+					n_a.removeEdgeByID(e_2.getID());
 					let unds = n_a.undEdges();
 					expect(Object.keys(unds).length).toBe(2);
 					expect(unds[1]).toBe(e_1);
@@ -579,7 +579,7 @@ describe('==== NODE TESTS ====', () => {
 
 
 				test('should correctly delete an outgoing edge by ID', () => {
-					n_a.removeEdgeID(e_5.getID());
+					n_a.removeEdgeByID(e_5.getID());
 					let outs = n_a.outEdges();
 					expect(Object.keys(outs).length).toBe(2);
 					expect(outs[3]).toBe(e_3);
@@ -599,7 +599,7 @@ describe('==== NODE TESTS ====', () => {
 
 
 				test('should correctly delete an incoming edge by ID', () => {
-					n_a.removeEdgeID(e_7.getID());
+					n_a.removeEdgeByID(e_7.getID());
 					let ins = n_a.inEdges();
 					expect(Object.keys(ins).length).toBe(2);
 					expect(ins[3]).toBe(e_3);

@@ -30,7 +30,7 @@ export interface IBaseNode {
     inDegree(): number;
     outDegree(): number;
     degree(): number;
-    addEdge(edge: $E.IBaseEdge): void;
+    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
     hasEdge(edge: $E.IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;
     getEdge(id: string): $E.IBaseEdge;
@@ -43,10 +43,14 @@ export interface IBaseNode {
     undEdges(): {
         [k: string]: $E.IBaseEdge;
     };
-    dirEdges(): {};
-    allEdges(): {};
+    dirEdges(): {
+        [k: string]: $E.IBaseEdge;
+    };
+    allEdges(): {
+        [k: string]: $E.IBaseEdge;
+    };
     removeEdge(edge: $E.IBaseEdge): void;
-    removeEdgeID(id: string): void;
+    removeEdgeByID(id: string): void;
     clearOutEdges(): void;
     clearInEdges(): void;
     clearUndEdges(): void;
@@ -97,7 +101,7 @@ declare class BaseNode implements IBaseNode {
     inDegree(): number;
     outDegree(): number;
     degree(): number;
-    addEdge(edge: $E.IBaseEdge): void;
+    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
     hasEdge(edge: $E.IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;
     getEdge(id: string): $E.IBaseEdge;
@@ -110,10 +114,14 @@ declare class BaseNode implements IBaseNode {
     undEdges(): {
         [k: string]: $E.IBaseEdge;
     };
-    dirEdges(): {};
-    allEdges(): {};
+    dirEdges(): {
+        [k: string]: $E.IBaseEdge;
+    };
+    allEdges(): {
+        [k: string]: $E.IBaseEdge;
+    };
     removeEdge(edge: $E.IBaseEdge): void;
-    removeEdgeID(id: string): void;
+    removeEdgeByID(id: string): void;
     clearOutEdges(): void;
     clearInEdges(): void;
     clearUndEdges(): void;

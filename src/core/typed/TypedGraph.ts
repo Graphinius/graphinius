@@ -151,7 +151,7 @@ export class TypedGraph extends BaseGraph {
 
 	addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge {
 		if (!super.addEdge(edge)) {
-			return undefined;
+			return null;
 		}
 
 		const id = edge.getID();

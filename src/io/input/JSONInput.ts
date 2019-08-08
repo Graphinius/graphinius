@@ -12,6 +12,7 @@ import * as uuid from 'uuid'
 const v4 = uuid.v4;
 
 import {Logger} from '../../utils/Logger';
+import {TypedGraph} from "../../core/typed/TypedGraph";
 
 const logger = new Logger();
 
@@ -98,7 +99,7 @@ class JSONInput implements IJSONInput {
 	}
 
 
-	readFromJSON(json: JSONGraph, graph?: IGraph): IGraph {
+	readFromJSON(json: JSONGraph, graph?: IGraph | TypedGraph): IGraph | TypedGraph {
 		graph = graph || new BaseGraph(json.name);
 		const edc = new EdgeDupeChecker(graph);
 

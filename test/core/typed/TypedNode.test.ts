@@ -84,12 +84,16 @@ describe('==== NODE TESTS ====', () => {
 	 *       -) direction
 	 */
 	describe('Edge addition / deletion tests - ', () => {
-		const
-			nodeTypeA = 'PERSON',
-			nodeTypeB = 'COFFEE',
-			edgeType1 = 'FRIENDS_WITH',
-			edgeType2 = 'LIKES',
-			edgeType3 = 'DRINKS';
+		enum TYPES {
+			'GENERIC_TYPE' = 'GENERIC',
+			'PERSON' = 'PERSON',
+			'COFFEE' = 'COFFEE',
+			'FRIENDS_WITH' = 'FRIENDS_WITH',
+			'LIKES' = 'LIKES',
+			'DRINKS' = 'DRINKS',
+			'KILLED_BY' = 'KILLED_BY'
+		}
+
 
 		let
 			graph: TypedGraph,
@@ -103,14 +107,34 @@ describe('==== NODE TESTS ====', () => {
 
 		beforeEach(() => {
 			graph = new TypedGraph('uniqus testus');
-			a = graph.addNodeByID('A', {type: nodeTypeA});
-			b = graph.addNodeByID('A', {type: nodeTypeA});
-			c = graph.addNodeByID('B', {type: nodeTypeB});
+			a = graph.addNodeByID('A', {type: TYPES.PERSON});
+			b = graph.addNodeByID('B', {type: TYPES.PERSON});
+			c = graph.addNodeByID('C', {type: TYPES.COFFEE});
 		});
 
-		it('should ', () => {
 
+		it('should have only GENERIC type upon instantiation', () => {
+			expect(a.ins(TYPES.FRIENDS_WITH)).toBeUndefined;
 		});
+
+
+		it.todo('Generic type');
+
+
+		it.todo('Generic type can never be deleted');
+
+
+		it('should correctly add a FRIENDSHIP (undirected)', () => {
+			e1 = a.addEdge(new TypedEdge('bff', a, b, {type: TYPES.FRIENDS_WITH}));
+			expect(a.conns(TYPES.FRIENDS_WITH).has(a.uniqueNID(e1))).toBe(true);
+		});
+
+
+		it.todo('directed -> OUT');
+
+
+		it.todo('directed -> IN');
+
 	});
 
 
