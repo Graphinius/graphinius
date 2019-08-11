@@ -42,7 +42,6 @@ class EdgeDupeChecker {
 			// 	continue;
 			// }
 
-			// UNtyped & not weighted
 			if ( !e.typed && !e.weighted ) {
 				continue;
 			}

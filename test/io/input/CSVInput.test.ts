@@ -8,7 +8,7 @@ let CSV = $I.CSVInput;
 
 describe('GRAPH CSV INPUT TESTS', () => {
 
-	var csv: $I.ICSVInput,
+	let csv: $I.ICSVInput,
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,
@@ -18,12 +18,29 @@ describe('GRAPH CSV INPUT TESTS', () => {
 
 	describe('Basic instantiation tests', () => {
 
-		test('should instantiate a default version of CSVInput', () => {
+		beforeEach(() => {
 			csv = new CSV();
+		});
+
+
+		test('should instantiate a default version of CSVInput', () => {
 			expect(csv).toBeInstanceOf(CSV);
 			expect(csv._config.separator).toBe(DEFAULT_SEP);
 		});
 
+
+		it('should set the correct configureation options', () => {
+			csv = new CSV({
+				weighted: true,
+				direction_mode: true,
+				explicit_direction: false,
+				separator: " "
+			});
+			expect(csv._config.separator).toBe(' ');
+			expect(csv._config.weighted).toBe(true);
+			expect(csv._config.direction_mode).toBe(true);
+			expect(csv._config.explicit_direction).toBe(false);
+		});
 	});
 
 

@@ -1,6 +1,5 @@
 import * as $E from "./BaseEdge";
 import * as $SU from "../../utils/StructUtils";
-import {TypedEdge} from "../typed/TypedEdge";
 import {TypedNode} from "../typed/TypedNode";
 
 
@@ -46,7 +45,7 @@ export interface IBaseNode {
 	degree() : number;
 	
 	// EDGE methods
-	addEdge(edge: $E.IBaseEdge) : void;
+	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
 	hasEdge(edge: $E.IBaseEdge) : boolean;	
 	hasEdgeID(id: string) : boolean;	
 	getEdge(id: string) : $E.IBaseEdge;
@@ -54,12 +53,12 @@ export interface IBaseNode {
 	inEdges() : {[k: string] : $E.IBaseEdge};
 	outEdges() : {[k: string] : $E.IBaseEdge};
 	undEdges() : {[k: string] : $E.IBaseEdge};
-	// TODO hack!! figure out how to appease type system
-	dirEdges() : {};
-	allEdges() : {};
-	
+	dirEdges() : {[k: string] : $E.IBaseEdge};
+	allEdges() : {[k: string] : $E.IBaseEdge};
+
 	removeEdge(edge: $E.IBaseEdge) : void;
-	removeEdgeID(id: string) : void;
+	/* @todo removeEdgeByID... */
+	removeEdgeByID(id: string) : void;
 	
 	// Clear different types of edges
 	clearOutEdges() : void;
@@ -111,7 +110,6 @@ class BaseNode implements IBaseNode {
 		return !!arg.typed;
 	}
 
-
 	get id(): string {
 		return this._id;
 	}
@@ -153,7 +151,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	deleteFeature(key: string) : any {
-		var feat = this._features[key];
+		let feat = this._features[key];
 		delete this._features[key];
 		return feat;
 	}
@@ -190,13 +188,13 @@ class BaseNode implements IBaseNode {
 	 * instead of simply checking the hash id...
 	 * ALTHOUGH: adding edges will (presumably) not occur often...
 	 */
-	addEdge(edge: $E.IBaseEdge) : void {
+	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge {
 		// is this edge connected to us at all?
-		var nodes = edge.getNodes();
+		let nodes = edge.getNodes();
 		if ( nodes.a !== this && nodes.b !== this ) {
 			throw new Error("Cannot add edge that does not connect to this node");
 		}
-		var edgeID = edge.getID();
+		let edgeID = edge.getID();
 		
 		// Is it an undirected or directed edge?
 		if ( edge.isDirected() ) {
@@ -225,6 +223,7 @@ class BaseNode implements IBaseNode {
 			this._und_edges[edge.getID()] = edge;
 			this._und_degree += 1;
 		}
+		return edge;
 	}
 	
 	hasEdge(edge: $E.IBaseEdge) : boolean {
@@ -236,7 +235,7 @@ class BaseNode implements IBaseNode {
 	}
 	
 	getEdge(id: string) : $E.IBaseEdge {
-		var edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
+		let edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
 		if ( !edge ) {
 			throw new Error("Cannot retrieve non-existing edge.");
 		}
@@ -255,11 +254,11 @@ class BaseNode implements IBaseNode {
 		return this._und_edges;
 	}
 
-	dirEdges() : {} {
+	dirEdges() : {[k: string] : $E.IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges]);
 	}
 
-	allEdges() : {} {
+	allEdges() : {[k: string] : $E.IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
 	}
 	
@@ -267,8 +266,8 @@ class BaseNode implements IBaseNode {
 		if ( !this.hasEdge(edge) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		var id = edge.getID();		
-		var e = this._und_edges[id];
+		let id = edge.getID();
+		let e = this._und_edges[id];
 		if ( e ) {
 			delete this._und_edges[id];
 			this._und_degree -= 1;
@@ -284,12 +283,12 @@ class BaseNode implements IBaseNode {
 			this._out_degree -= 1;
 		}
 	}
-	
-	removeEdgeID(id: string) : void {
+
+	removeEdgeByID(id: string) : void {
 		if ( !this.hasEdgeID(id) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		var e = this._und_edges[id];
+		let e = this._und_edges[id];
 		if ( e ) { 
 			delete this._und_edges[id];
 			this._und_degree -= 1;
@@ -332,8 +331,8 @@ class BaseNode implements IBaseNode {
 	 * directed edges coming into this node
 	 */
 	prevNodes() : Array<NeighborEntry> {
-		var prevs : Array<NeighborEntry> = [];
-		var key 	: string,
+		let prevs : Array<NeighborEntry> = [];
+		let key 	: string,
 				edge 	: $E.IBaseEdge;
 				
 		for ( key in this._in_edges ) {
@@ -353,8 +352,8 @@ class BaseNode implements IBaseNode {
 	 * directed edges going out from this node
 	 */
 	nextNodes() : Array<NeighborEntry> {
-		var nexts : Array<NeighborEntry> = [];
-		var key 	: string,
+		let nexts : Array<NeighborEntry> = [];
+		let key 	: string,
 				edge 	: $E.IBaseEdge;
 		
 		for ( key in this._out_edges ) {
@@ -374,14 +373,14 @@ class BaseNode implements IBaseNode {
 	 * connected to this node via undirected edges
 	 */
 	connNodes() : Array<NeighborEntry> {
-		var conns : Array<NeighborEntry> = [];
-		var key 	: string,
+		let conns : Array<NeighborEntry> = [];
+		let key 	: string,
 				edge 	: $E.IBaseEdge;
 		
 		for ( key in this._und_edges ) {
 			if ( this._und_edges.hasOwnProperty(key) ) {
         edge = this._und_edges[key];
-				var nodes = edge.getNodes();
+				let nodes = edge.getNodes();
 				if ( nodes.a === this ) {
 					conns.push({
             node: edge.getNodes().b,
@@ -410,7 +409,7 @@ class BaseNode implements IBaseNode {
 	 *
    */
 	reachNodes(identityFunc?: Function) : Array<NeighborEntry> {
-		var identity = 0;
+		let identity = 0;
     return $SU.mergeArrays(
 			[ this.nextNodes(), this.connNodes() ],
 			identityFunc || ( ne => identity++ )
@@ -427,12 +426,11 @@ class BaseNode implements IBaseNode {
 	 *
    */
 	allNeighbors(identityFunc?: Function) : Array<NeighborEntry> {
-		var identity = 0;
+		let identity = 0;
 		// console.log(this.nextNodes());
     return $SU.mergeArrays([this.prevNodes(), this.nextNodes(), this.connNodes()],
 			identityFunc || function(ne) {return identity++});
 	}
-
 
 
 	clone() : IBaseNode {

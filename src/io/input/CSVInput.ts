@@ -38,12 +38,12 @@ export interface ICSVInput {
 class CSVInput implements ICSVInput {
 	_config : ICSVInConfig;
 	
-	constructor( config?: ICSVInConfig ) {
-		this._config = config || {
-			separator: config && config.separator || ',',
-			explicit_direction: config && config.explicit_direction || true,
-			direction_mode: config && config.direction_mode || false,
-			weighted: config && config.weighted || false
+	constructor( config: ICSVInConfig = {} ) {
+		this._config = {
+			separator: config.separator != null ? config.separator : ',',
+			explicit_direction: config.explicit_direction != null ? config.explicit_direction : true,
+			direction_mode: config.direction_mode != null ? config.direction_mode : false,
+			weighted: config.weighted != null ? config.weighted : false
 		};
 	}
 	
@@ -59,7 +59,7 @@ class CSVInput implements ICSVInput {
 	
 	
 	private readGraphFromURL(config: $R.RequestConfig, cb: Function, localFun: Function) {
-		var self = this,
+		let self = this,
 				graph_name = config.file_name,
 				graph : $G.IGraph,
 				request;
@@ -67,7 +67,7 @@ class CSVInput implements ICSVInput {
 		$R.checkNodeEnvironment()
 		
 		$R.retrieveRemoteFile(config, function(raw_graph) {
-			var input = raw_graph.toString().split('\n');
+			let input = raw_graph.toString().split('\n');
 			graph = localFun.apply(self, [input, graph_name]);
 			cb(graph, undefined);
 		});
@@ -86,18 +86,17 @@ class CSVInput implements ICSVInput {
 	
 	private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
 		$R.checkNodeEnvironment();
-		var graph_name = path.basename(filepath);
-		var input = fs.readFileSync(filepath).toString().split('\n');
+		let graph_name = path.basename(filepath);
+		let input = fs.readFileSync(filepath).toString().split('\n');
 		return func.apply(this, [input, graph_name]);
 	}
 			
 	
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph {
+		let graph = new $G.BaseGraph(graph_name);
 		
-		var graph = new $G.BaseGraph(graph_name);
-		
-		for ( var idx in input ) {
-			var line = input[idx],
+		for ( let idx in input ) {
+			let line = input[idx],
 					elements = this._config.separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._config.separator),
 					node_id = elements[0],
 					node : $N.IBaseNode,
@@ -116,7 +115,7 @@ class CSVInput implements ICSVInput {
 			}
 			node = graph.hasNodeID(node_id) ? graph.getNodeById(node_id) : graph.addNodeByID(node_id);
 			
-			for ( var e = 0; e < edge_array.length; ) {
+			for ( let e = 0; e < edge_array.length; ) {
 				
 				if ( this._config.explicit_direction && ( !edge_array || edge_array.length % 2 ) ) {
 					throw new Error('Every edge entry has to contain its direction info in explicit mode.');
@@ -156,10 +155,10 @@ class CSVInput implements ICSVInput {
 	
 	readFromEdgeList(input : Array<string>, graph_name : string, weighted = false) : $G.IGraph {
 		
-		var graph = new $G.BaseGraph(graph_name);
+		let graph = new $G.BaseGraph(graph_name);
 		
-		for ( var idx in input ) {
-			var line = input[idx],
+		for ( let idx in input ) {
+			let line = input[idx],
 					elements = this._config.separator.match(/\s+/g) ? line.match(/\S+/g) : line.replace(/\s+/g, '').split(this._config.separator);
 			
 			if ( ! elements ) {
@@ -174,7 +173,7 @@ class CSVInput implements ICSVInput {
 				throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 			}
 			
-			var	node_id = elements[0],
+			let	node_id = elements[0],
 					node : $N.IBaseNode,
 					target_node : $N.IBaseNode,
 					edge : $E.IBaseEdge,
@@ -199,9 +198,12 @@ class CSVInput implements ICSVInput {
 			
 			parse_weight = parseFloat(elements[2]);
 			edge_weight = this._config.weighted ? (isNaN(parse_weight) ? DEFAULT_WEIGHT : parse_weight) : null;
-							
+
+
+			/**
+			 * @todo introduce Edge Dupe Checker and replace this logic
+			 */
 			if ( graph.hasEdgeID(edge_id) || ( !directed && graph.hasEdgeID(edge_id_u2) ) ) {
-				// The completely same edge should only be added once...
 				continue;
 			}
 			else if (this._config.weighted) {

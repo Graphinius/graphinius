@@ -22,12 +22,12 @@ export declare enum LogColors {
 declare class Logger {
     config: LOG_CONFIG;
     constructor(config?: any);
-    log(msg: any, color?: number, bright?: boolean): boolean;
-    error(err: any, color?: number, bright?: boolean): boolean;
-    dir(obj: any, color?: number, bright?: boolean): boolean;
-    info(msg: any, color?: number, bright?: boolean): boolean;
-    warn(msg: any, color?: number, bright?: boolean): boolean;
-    write(msg: any, color?: number, bright?: boolean): boolean;
-    private colorize;
+    log(msg: any, color?: any, bright?: boolean): boolean;
+    error(err: any, color?: any, bright?: boolean): boolean;
+    dir(obj: any, color?: any, bright?: boolean): boolean;
+    info(msg: any, color?: any, bright?: boolean): boolean;
+    warn(msg: any, color?: any, bright?: boolean): boolean;
+    write(msg: any, color?: any, bright?: boolean): boolean;
+    static colorize(color: any, output: any, bright: any): string;
 }
 export { Logger };
