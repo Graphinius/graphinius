@@ -1,45 +1,13 @@
 import * as $G from '../core/base/BaseGraph';
 import * as $SU from '../utils/StructUtils'
 
+
+const DEFAULT_WEIGHT = 1;
+
 /**
  * @todo FW directed mode ??
  */
-// interface FWConfig {
-// 	directed: boolean;
-// }
 
-/**
- * Initializes the distance matrix from each node to all other node
- * using the edges of the graph
- *
- * @param graph the graph for which to calculate the distances
- * @returns m*m matrix of values
- * @constructor
- */
-
-
-function initializeDistsWithEdges(graph: $G.IGraph) {
-	let dists = {},
-			edges = $SU.mergeObjects([graph.getDirEdges(), graph.getUndEdges()]);
-
-	for (let edge in edges) {
-
-		let a = edges[edge].getNodes().a.getID();
-		let b = edges[edge].getNodes().b.getID();
-
-		if (dists[a] == null)
-			dists[a] = {};
-
-		dists[a][b] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-		if (!edges[edge].isDirected()) {
-			if (dists[b] == null)
-				dists[b] = {};
-			dists[b][a] = (isNaN(edges[edge].getWeight()) ? 1 : edges[edge].getWeight());
-		}
-	}
-
-	return dists;
-}
 
 
 /**
@@ -112,40 +80,6 @@ function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
 }
 
 
-/**
- * Floyd-Warshall - we mostly use it for Closeness centrality.
- * This is the dict version, which means the returned matrix
- * is accessible with node IDs
- *
- * @param graph the graph to perform Floyd-Warshall on
- * @returns m*m matrix of values
- * @constructor
- */
-function FloydWarshallDict(graph: $G.IGraph): {} {
-	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-		throw new Error("Cowardly refusing to traverse graph without edges.");
-	}
-	let dists = initializeDistsWithEdges(graph);
-
-	for (let k in dists) {
-		for (let i in dists) {
-			for (let j in dists) {
-				if (i === j) {
-					continue;
-				}
-				if (dists[i][k] == null || dists[k][j] == null) {
-					continue;
-				}
-				if ((!dists[i][j] && dists[i][j] != 0) || (dists[i][j] > dists[i][k] + dists[k][j])) {
-					dists[i][j] = dists[i][k] + dists[k][j];
-				}
-			}
-		}
-	}
-
-	return dists;
-}
-
 function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
 	let output: Array<Array<Array<number>>> = [];
 	
@@ -172,8 +106,8 @@ function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
 	return output;
 }
 
+
 function findDirectParents(u, v, inNext, outNext): void {
-	
 	let nodesInTracking = [u];
 	let counter = 0;
 
@@ -205,6 +139,5 @@ function findDirectParents(u, v, inNext, outNext): void {
 export {
 	FloydWarshallAPSP,
 	FloydWarshallArray,
-	FloydWarshallDict,
 	changeNextToDirectParents
 };

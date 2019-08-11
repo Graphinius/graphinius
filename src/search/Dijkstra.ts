@@ -4,7 +4,7 @@ import * as $PFS from '../search/PFS';
 
 
 /**
- * TODO Consider target node callbacks / messages
+ * @todo Consider target node callbacks / messages
  * @param graph
  * @param source
  * @param target

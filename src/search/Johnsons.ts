@@ -62,6 +62,7 @@ function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph {
   return target;
 }
 
+
 function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph {
   //reminder: w(e)'=w(e)+dist(a)-dist(b), a and b the start and end nodes of the edge
   let edges = target.getDirEdgesArray().concat(target.getUndEdgesArray());
@@ -69,8 +70,10 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
     let a = edge.getNodes().a.getID();
     let b = edge.getNodes().b.getID();
 
-    //no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
-    //assuming that the node keys in the distDict correspond to the nodeIDs
+    /**
+     * no need to re-weigh the temporary edges starting from the extraNode, they will be deleted anyway
+     * assuming that the node keys in the distDict correspond to the nodeIDs
+     */
     if (a !== tempNode.getID() && edge.isWeighted) {
       let oldWeight = edge.getWeight();
       let newWeight = oldWeight + distDict[a] - distDict[b];
@@ -82,13 +85,14 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
       let edgeID: string = edge.getID();
       let dirNess: boolean = edge.isDirected();
 
-      //one does not simply make an edge weighted, but needs to delete and re-create it
+      // one does not simply change an edge to being weighted
       target.deleteEdge(edge);
       target.addEdgeByNodeIDs(edgeID, a, b, { directed: dirNess, weighted: true, weight: newWeight });
     }
   }
   return target;
 }
+
 
 function PFSFromAllNodes(graph: $G.IGraph): {} {
   let dists: Array<Array<number>> = graph.adjListArray();
@@ -103,9 +107,13 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
 
   let specialConfig: $PFS.PFS_Config = $PFS.preparePFSStandardConfig();
 
+  /**
+   * @todo should we just assume that edges at this point are all weighted?
+   */
   let notEncounteredJohnsons = function (context: $PFS.PFS_Scope) {
-    context.next.best =
-      context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
+    context.next.best = context.current.best + context.next.edge.getWeight();
+    // context.current.best + (isNaN(context.next.edge.getWeight()) ? $PFS.DEFAULT_WEIGHT : context.next.edge.getWeight());
+
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
     if (context.current.node == context.root_node) {
@@ -134,7 +142,8 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
   specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
 
   let equalPathJohnsons = function (context: $PFS.PFS_Scope) {
-    let i = nodeIDIdxMap[context.root_node.getID()],
+    let
+      i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
 
     if (context.current.node !== context.root_node) {

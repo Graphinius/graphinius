@@ -9,7 +9,7 @@ if ( typeof window === 'undefined' && typeof process !== 'undefined' && process.
 }
 
 const RUN_CONFIG = {
-  log_level
+  log_level: LOG_LEVELS.production
 };
 
 export {

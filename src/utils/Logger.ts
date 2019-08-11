@@ -30,58 +30,84 @@ class Logger {
 	public config: LOG_CONFIG = null;
 
 	constructor(config?) {
-		this.config = config || RUN_CONFIG;
+		this.config = config || {
+			log_level: RUN_CONFIG.log_level
+		};
 	}
 
-	log(msg, color = DEFAULT_COLOR, bright = false): boolean {
+	log(msg, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// console.log.call(console, this.colorize(color, msg, bright));
-			console.log.call(console, msg);
+			if ( color ) {
+				console.log.call(console, Logger.colorize(DEFAULT_COLOR, msg, bright));
+			}
+			else {
+				console.log.call(console, msg);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	error(err, color = DEFAULT_COLOR, bright = false): boolean {
+	error(err, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// console.error.call(console, this.colorize(color, err, bright));
-			console.error.call(console, err);
+			if ( color ) {
+				console.error.call(console, Logger.colorize(color, err, bright));
+			}
+			else {
+				console.error.call(console, err);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	dir(obj, color = DEFAULT_COLOR, bright = false): boolean {
+	dir(obj, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// console.dir.call(console, this.colorize(color, obj, bright));
-			console.dir.call(console, obj);
+			if ( color ) {
+				console.dir.call(console, Logger.colorize(DEFAULT_COLOR, obj, bright));
+			}
+			else {
+				console.dir.call(console, obj);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	info(msg, color = DEFAULT_COLOR, bright = false): boolean {
+	info(msg, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// console.info.call(console, this.colorize(color, msg, bright));
-			console.info.call(console, msg);
+			if ( color ) {
+				console.info.call(console, Logger.colorize(DEFAULT_COLOR, msg, bright));
+			}
+			else {
+				console.info.call(console, msg);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	warn(msg, color = DEFAULT_COLOR, bright = false): boolean {
+	warn(msg, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// console.warn.call(console, this.colorize(color, msg, bright));
-      console.warn.call(console, msg);
+			if ( color ) {
+				console.warn.call(console, Logger.colorize(DEFAULT_COLOR, msg, bright));
+			}
+			else {
+				console.warn.call(console, msg);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	write(msg, color = DEFAULT_COLOR, bright = false): boolean {
+	write(msg, color?, bright = false): boolean {
 		if (this.config.log_level === LOG_LEVELS.debug) {
-			// process.stdout.write.call(process.stdout, this.colorize(color, msg, bright));
-			process.stdout.write.call(process.stdout, msg);
+			if ( color ) {
+				process.stdout.write.call(process.stdout, Logger.colorize(DEFAULT_COLOR, msg, bright));
+			}
+			else {
+				process.stdout.write.call(process.stdout, msg);
+			}
 			return true;
 		}
 		return false;
@@ -93,7 +119,7 @@ class Logger {
    * @param output
    * @param bright
    */
-	private colorize(color, output, bright) {
+	static colorize(color, output, bright) {
 		let out_bright = bright ? '\x1b[1m' : null;
 		return [out_bright, '\x1b[', color, 'm', output, '\x1b[0m'].join('');
 	}

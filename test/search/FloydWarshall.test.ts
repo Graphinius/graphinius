@@ -1,11 +1,10 @@
 import * as $G from '../../src/core/base/BaseGraph';
 import * as $FW from '../../src/search/FloydWarshall';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
-
 const logger = new Logger();
 
 let social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;
@@ -30,7 +29,8 @@ let std_json_in_config: IJSONInConfig = {
 
 describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 
-	let json: JSONInput,
+	let
+		json: JSONInput,
 		csv: CSVInput,
 		graph_search: $G.IGraph,
 		graph_nullcycle: $G.IGraph,
@@ -66,12 +66,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 	});
 
 
-	test('should refuse to compute FW on empty graph', () => {
-		let empty_graph = new $G.BaseGraph("iamempty");
-		expect($FW.FloydWarshallDict.bind($FW.FloydWarshallDict, empty_graph)).toThrowError("Cowardly refusing to traverse graph without edges.");
-	});
-
-
 	test('should refuse to compute FW array on empty graph', () => {
 		let empty_graph = new $G.BaseGraph("iamempty");
 		expect($FW.FloydWarshallArray.bind($FW.FloydWarshallArray, empty_graph)).toThrowError("Cowardly refusing to traverse graph without edges.");
@@ -99,23 +93,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 				expect(FW_res[0]).toEqual(expected_result);
 			});
 
-			test(
-				'should correctly compute distance matrix for graph with normal FW',
-				() => {
-					FW_res = $FW.FloydWarshallDict(graph_search);
-					const expected_result =
-						{
-							A: {B: 3, C: 4, D: 1, F: 4, E: 2},
-							B: {F: 1, C: 1, A: 2, E: 2, D: 3},
-							C: {E: 1, A: 1, B: 4, D: 2, F: 5},
-							D: {C: 6, E: 1, A: 7, B: 6, F: 7},
-							F: {E: 4, C: 3, A: 4, B: 7, D: 5},
-							E: {B: 5, D: 1, A: 7, C: 6, F: 6}
-						};
-
-					expect(FW_res).toEqual(expected_result);
-				}
-			);
 
 			test(
 				'should correctly compute distance matrix for graph, Array version',
@@ -162,10 +139,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			let e = +new Date();
 			logger.log("Floyd on intermediate graph (246 nodes) with SPs took " + (e - d) + "ms to finish");
 			d = +new Date();
-			FW_res = $FW.FloydWarshallDict(graph_midsize);
-			e = +new Date();
-			logger.log("Floyd on intermediate graph(246 nodes, DICT version) took " + (e - d) + "ms to finish");
-			d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_midsize);
 			// logger.log(FW_res);
 			e = +new Date();
@@ -186,7 +159,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		test.skip('performance test of ~1k nodes and ~50k edges', () => {
 			let d = +new Date();
 			FW_res = $FW.FloydWarshallArray(graph_social);
-			// FW_res = $FW.FloydWarshallAPSP(graph_social);
 			let e = +new Date();
 			logger.log("Floyd on social network ~1k (Array version) took " + (e - d) + "ms to finish");
 		});
@@ -200,7 +172,8 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
  * @param graph_l
  * @param FW_res
  *
- * @todo make it feeled used again ;-)
+ * @todo make it feel used again ;-)
+ * @todo first adapt FW to re-map Array weights to a dict - then invoke this again
  */
 /*
 function checkFWCentralitiesOnSmallGraph(graph_l, FW_res) {
