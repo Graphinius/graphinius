@@ -232,7 +232,6 @@ describe('Checking index.js structure - ', () => {
     it('should have Floyd-Warshall methods', () => {
       const FloydWarshall = index.search.FloydWarshall;
       expect(typeof FloydWarshall).toBe("object");
-      expect(typeof FloydWarshall.FloydWarshallDict).toBe("function");
       expect(typeof FloydWarshall.FloydWarshallArray).toBe("function");
       expect(typeof FloydWarshall.FloydWarshallAPSP).toBe("function");
     });

@@ -41,27 +41,28 @@ describe('Basic logger tests - ', () => {
 				test('Should successfully output a log message', () => {
 					expect(logger.log("This is a default log message", color, bright)).toBe(true);
 				});
-
-				test('Should successfully output an error message', () => {
-					expect(logger.error("This is a default error message", color, bright)).toBe(true);
-				});
-
-				test('Should successfully output an info message', () => {
-					expect(logger.info("This is a default info message", color, bright)).toBe(true);
-				});
-
-				test('Should successfully output a warning message', () => {
-					expect(logger.warn("This is a default warning message", color, bright)).toBe(true);
-				});
-
-				test('Should successfully output an object with nested properties', () => {
-					expect(logger.dir(obj_to_log, color, bright)).toBe(true);
-				});
-
-				test('Should successfully output a message via process.stdout', () => {
-					expect(logger.write("This is a default stdout.write message", color, bright)).toBe(true);
-				});
 			});
+		});
+
+
+		test('Should successfully output an error message', () => {
+			expect(logger.error("This is a default error message")).toBe(true);
+		});
+
+		test('Should successfully output an info message', () => {
+			expect(logger.info("This is a default info message")).toBe(true);
+		});
+
+		test('Should successfully output a warning message', () => {
+			expect(logger.warn("This is a default warning message")).toBe(true);
+		});
+
+		test('Should successfully output an object with nested properties', () => {
+			expect(logger.dir(obj_to_log)).toBe(true);
+		});
+
+		test('Should successfully output a message via process.stdout', () => {
+			expect(logger.write("This is a default stdout.write message")).toBe(true);
 		});
 	});
 
