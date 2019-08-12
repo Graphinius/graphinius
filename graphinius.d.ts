@@ -1,8 +1,8 @@
 declare module 'graphinius/config/run_config' {
 	 const GENERIC_TYPES: {
-	    NODE: string;
-	    EDGE: string;
-	    GRAPH: string;
+	    Node: string;
+	    Edge: string;
+	    Graph: string;
 	}; const LOG_LEVELS: {
 	    debug: string;
 	    production: string;
@@ -1021,7 +1021,8 @@ declare module 'graphinius/io/common/Dupes' {
 	    private _graph;
 	    constructor(_graph: IGraph | TypedGraph);
 	    isDupe(e: PotentialEdgeInfo): boolean;
-	    checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+	    static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+	    static checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
 	    potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge>;
 	}
 	export { EdgeDupeChecker };

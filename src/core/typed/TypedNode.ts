@@ -99,7 +99,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 			this._typedAdjSets[type].ins.add(uid);
 		}
 
-		logger.log(this._typedAdjSets);
+		// logger.log(this._typedAdjSets);
 		return edge;
 	}
 

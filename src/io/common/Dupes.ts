@@ -30,39 +30,37 @@ class EdgeDupeChecker {
 		if ( !pds.size ) {
 			return false;
 		}
-
 		// logger.log(`Got ${pds.size} potential edge dupe`);
 
 		for ( let pd of pds.values() ) {
 
-			// if ( !this.checkTypeWeightEquality(e, pd) ) {
-			// 	logger.log(`Deleting edge dupe`);
-			//
-			// 	pds.delete(pd);
-			// 	continue;
-			// }
-
-			if ( !e.typed && !e.weighted ) {
-				continue;
-			}
-
-			if ( !e.typed && e.weighted ) {
-				if ( e.weight !== pd.getWeight() ) {
-					pds.delete(pd);
-				}
-				continue;
-			}
-
-			if ( e.typed && BaseEdge.isTyped(pd) && e.type !== pd.type ) {
+			if ( !EdgeDupeChecker.checkTypeWeightEquality(e, pd)
+				|| !EdgeDupeChecker.typeWeightDupe(e, pd) ) {
 				pds.delete(pd);
 			}
-
 		}
 		return !!pds.size;
 	}
 
 
-	checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean {
+	static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge) : boolean {
+		const neitherTypedNorWeighted = !e.typed && !e.weighted;
+		const notTypedButWeighted = !e.typed && e.weighted;
+		const weightEqual = e.weight === oe.getWeight();
+		const typeEqual = e.typed && BaseEdge.isTyped(oe) && e.type === oe.type;
+
+		return ( neitherTypedNorWeighted || notTypedButWeighted && weightEqual || typeEqual );
+	}
+
+
+	/**
+	 * @todo has no effect on test cases - either
+	 * 			 -) test cases are not granular enough
+	 * 			 -) typed-weighted-equality is irrelevant
+	 * @param e struct with potential edge info
+	 * @param oe other edge: IBaseEdge
+	 */
+	static checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean {
 		return BaseEdge.isTyped(oe) === e.typed && e.weighted === oe.isWeighted();
 	}
 
@@ -86,7 +84,6 @@ class EdgeDupeChecker {
 		}
 		return result;
 	}
-
 }
 
 

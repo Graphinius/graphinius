@@ -1,7 +1,7 @@
 declare const GENERIC_TYPES: {
-    NODE: string;
-    EDGE: string;
-    GRAPH: string;
+    Node: string;
+    Edge: string;
+    Graph: string;
 };
 declare const LOG_LEVELS: {
     debug: string;

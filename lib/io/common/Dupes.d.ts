@@ -17,7 +17,8 @@ declare class EdgeDupeChecker {
     private _graph;
     constructor(_graph: IGraph | TypedGraph);
     isDupe(e: PotentialEdgeInfo): boolean;
-    checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+    static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+    static checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
     potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge>;
 }
 export { EdgeDupeChecker };
