@@ -548,6 +548,6 @@ describe("PageRank Centrality Tests", () => {
 });
 
 
-// let pr_outfile = fs.writeFileSync(`./test/test_data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
-// new JSONOutput().writeToJSONFile(`./test/test_data/social_network_${graph_file}.json`, sn_graph);
+// let pr_outfile = fs.writeFileSync(`./test/data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
+// new JSONOutput().writeToJSONFile(`./test/data/social_network_${graph_file}.json`, sn_graph);
 

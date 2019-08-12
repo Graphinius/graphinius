@@ -23,7 +23,7 @@ const REAL_GRAPH_NR_NODES = 5937,
 
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 
-	var csv: CSVInput,
+	let csv: CSVInput,
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,
@@ -84,7 +84,9 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 			csv._config.direction_mode = true;
 			config.file_name = "real_graph_edge_list_no_dir" + CSV_EXTENSION;
 			csv.readFromEdgeListURL(config, function (graph, err) {
-				stats = graph.getStats();
+				logger.log(graph.stats);
+
+				stats = graph.stats;
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).toBe(REAL_GRAPH_NR_EDGES);
 				expect(stats.nr_und_edges).toBe(0);

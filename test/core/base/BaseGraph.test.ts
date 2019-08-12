@@ -1644,7 +1644,7 @@ describe('GRAPH TESTS: ', () => {
 			test(
 				'should return the same directed graph if all edges were directed before',
 				() => {
-					let digraph_file = "./test/test_data/search_graph_pfs.json";
+					let digraph_file = "./test/data/search_graph_pfs.json";
 					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
@@ -1659,7 +1659,7 @@ describe('GRAPH TESTS: ', () => {
 			test(
 				'should return a copy of the same directed graph if all edges were directed before',
 				() => {
-					let digraph_file = "./test/test_data/search_graph_pfs.json";
+					let digraph_file = "./test/data/search_graph_pfs.json";
 					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();

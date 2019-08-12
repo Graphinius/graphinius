@@ -17,7 +17,7 @@ module.exports = {
     "/lib",
     "/data"
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!**/node_modules/**",
@@ -28,6 +28,8 @@ module.exports = {
     '**/test/**/*.ts'
   ],
   testPathIgnorePatterns: [
+    '_async',
+    '_performance',
     'config.ts',
     'common.ts'
   ]

@@ -301,7 +301,7 @@ class Pagerank {
            * This should never happen....
            * IF the data structure _PRArrayDS was properly constructed
            * 
-           * @todo properly test _PRArrayDS as well as this beauty 
+           * @todo properly test _PRArrayDS as well as this beauty
            *       (using a contrived, wrongly constructed pull 2D array)
            */
 					if (ds.out_deg[source] === 0) {

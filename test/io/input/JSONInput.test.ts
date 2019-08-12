@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as $C from './common';
 import { BaseGraph, IGraph, GraphStats, GraphMode } from '../../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
@@ -13,7 +12,8 @@ import { Logger } from '../../../src/utils/Logger';
 const logger = new Logger();
 
 
-let REAL_GRAPH_NR_NODES = 6204,
+let
+	REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
 	small_graph = `${JSON_DATA_PATH}/small_graph.json`,
 	small_graph_2N_flawed = `${JSON_DATA_PATH}/small_graph_2N_flawed.json`,
@@ -259,7 +259,7 @@ describe('GRAPH JSON INPUT TESTS', () => {
 	 * @todo think about how to handle DEFAULT_WEIGHT in this scenario...
 	 */
 	describe('Edge labels & types (TYPED graph) - ', () => {
-		const graphFile = `./test/test_data/output/edgeLabelTypeGraph.json`;
+		const graphFile = `./data/output/edgeLabelTypeGraph.json`;
 		/**
 		 * This is the ID that will be automatically assigned by JSONInput
 		 *

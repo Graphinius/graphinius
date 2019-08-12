@@ -532,7 +532,7 @@ declare module 'graphinius/search/Johnsons' {
 
 }
 declare module 'graphinius/core/typed/TypedGraph' {
-	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	import { ITypedNode, TypedNode } from 'graphinius/core/typed/TypedNode';
 	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
@@ -559,6 +559,7 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    nrTypedEdges(type: string): number | null;
 	    addNodeByID(id: string, opts?: {}): ITypedNode;
 	    addNode(node: ITypedNode): ITypedNode;
+	    getNodeById(id: string): TypedNode;
 	    deleteNode(node: ITypedNode): void;
 	    addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
 	    addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;

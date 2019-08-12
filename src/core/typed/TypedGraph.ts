@@ -126,6 +126,11 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
+	getNodeById(id: string): TypedNode {
+		return super.getNodeById(id) as TypedNode;
+	}
+
+
 	deleteNode(node: ITypedNode): void {
 		const id = node.getID(),
 			type = node.type ? node.type.toUpperCase() : GENERIC_TYPES.Node;

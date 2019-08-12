@@ -1,4 +1,4 @@
-import { ITypedNode } from './TypedNode';
+import { ITypedNode, TypedNode } from './TypedNode';
 import { ITypedEdge, TypedEdgeConfig } from "./TypedEdge";
 import { IBaseEdge } from "../base/BaseEdge";
 import { BaseGraph, GraphStats } from '../base/BaseGraph';
@@ -25,6 +25,7 @@ export declare class TypedGraph extends BaseGraph {
     nrTypedEdges(type: string): number | null;
     addNodeByID(id: string, opts?: {}): ITypedNode;
     addNode(node: ITypedNode): ITypedNode;
+    getNodeById(id: string): TypedNode;
     deleteNode(node: ITypedNode): void;
     addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
     addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;

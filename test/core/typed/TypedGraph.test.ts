@@ -1,6 +1,4 @@
-import * as $E from '../../../src/core/base/BaseEdge';
-import * as $G from '../../../src/core/base/BaseGraph';
-
+import {BaseNode} from "../../../src/core/base/BaseNode";
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
@@ -51,6 +49,14 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		const nodeType = 'PERSON',
 			nodeTypeLower = 'person';
+
+
+		it('receives a TypedNode from graph.getNodeByID', () => {
+			let a = graph.addNodeByID('A');
+			expect(BaseNode.isTyped(a)).toBe(true);
+			expect(BaseNode.isTyped(graph.getNodeById('A'))).toBe(true);
+		});
+
 
 		it('should correctly register a node type `PERSON`', () => {
 			expect(graph.nrNodes()).toBe(0);
@@ -207,7 +213,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		describe('real-world graph (beer example)', () => {
 
 			beforeEach(() => {
-				graph = new TypedGraph('beerius testus');
+				graph = new TypedGraph('Bier her!');
 			});
 
 
@@ -251,6 +257,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 			});
 
 
+			/**
+			 * @todo refactor out into performance test suite
+			 */
 			it.skip('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
 				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
 

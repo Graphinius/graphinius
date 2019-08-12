@@ -7,7 +7,7 @@ import * as $R from '../../../src/utils/RemoteUtils';
 
 
 const REMOTE_HOST = "raw.githubusercontent.com";
-const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/json/";
+const REMOTE_PATH = "/cassinius/graphinius-demo/master/data/json/";
 const JSON_EXTENSION = ".json";
 
 let JSON_IN = $JI.JSONInput;

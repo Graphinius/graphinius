@@ -41,17 +41,17 @@ npm-debug.log
 # VS Code local files
 .vscode/**
 
-# All Javascript files under src, test and test_async
+# All Javascript files under src, test and _async
 src/**/*.js
 test/**/*.js
-test_async/**/*.js
+test/_async/**/*.js
 
 # IDEA project directory
 .idea/**
 
 # Test outputs
-# test/test_data/output/**/*.csv
-# test/test_data/output/**/*.json
+# test/data/output/**/*.csv
+# test/data/output/**/*.json
 
 # MISC
 yarn.lock

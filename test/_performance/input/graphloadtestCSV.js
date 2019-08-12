@@ -5,7 +5,7 @@
  * (NodeJS standard heap size is limited to 1.7 GB)
  */
 
-var $G = require('../../index.js');
+var $G = require('../../../index.js');
 var yargs = require('yargs').argv;
 
 var Logger = require('../../dist/utils/logger.js').Logger,

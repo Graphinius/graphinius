@@ -146,9 +146,7 @@ describe('==== NODE TESTS ====', () => {
 			expect(a.outs(EDGE_TYPES.Friends)).toBeUndefined();
 		});
 
-		/**
-		 * Checking that no entries in OTHER directions are present (INS)
-		 */
+
 		it('should correctly (and only) add an OUT', () => {
 			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.conns(EDGE_TYPES.Likes)).toBeUndefined();
@@ -156,9 +154,7 @@ describe('==== NODE TESTS ====', () => {
 			expect(a.outs(EDGE_TYPES.Likes).has(a.uniqueNID(e1))).toBe(true);
 		});
 
-		/**
-		 * Checking that no entries in OTHER directions are present (OUTS)
-		 */
+
 		it('should correctly (and only) add an IN', () => {
 			e1 = a.addEdge(new TypedEdge('bff', b, a, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.conns(EDGE_TYPES.Likes)).toBeUndefined();
@@ -315,21 +311,9 @@ describe('==== NODE TESTS ====', () => {
 			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(2);
 			a.removeEdge(e1);
 			a.removeEdge(e2);
+			expect(a.conns(GENERIC_TYPES.Edge)).toBeDefined();
 			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(0);
 		});
-	});
-
-
-	/**
-	 * @todo shall we give the node a callback which
-	 * 			 filters / reduces neighbors to return ?
-	 *
-	 * @todo MOVE this to the graphinius-recommenders project ?
-	 * 			 - can / should nodes be filtered on a node-level
-	 * 			 - or only later when other (parallel) type-traversals
-	 * 			 	 have already taken place? -> check with n4j examples
-	 */
-	describe('Edge traversal tests - ', () => {
 
 	});
 
