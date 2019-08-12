@@ -151,6 +151,7 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    outs(type: string): NeighborEntries;
 	    conns(type: string): NeighborEntries;
 	    uniqueNID(e: ITypedEdge): string;
+	    private noEdgesOfTypeLeft;
 	}
 	export { TypedNode };
 
@@ -1021,9 +1022,9 @@ declare module 'graphinius/io/common/Dupes' {
 	    private _graph;
 	    constructor(_graph: IGraph | TypedGraph);
 	    isDupe(e: PotentialEdgeInfo): boolean;
-	    static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
-	    static checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
 	    potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge>;
+	    static checkTypeWeightEquality(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
+	    static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge): boolean;
 	}
 	export { EdgeDupeChecker };
 

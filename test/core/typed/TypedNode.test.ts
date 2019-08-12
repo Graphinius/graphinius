@@ -175,57 +175,159 @@ describe('==== NODE TESTS ====', () => {
 			expect(b.ins(EDGE_TYPES.Likes).has(b.uniqueNID(e1))).toBe(true);
 		});
 
+
+		it('directed -> OUTS -> several', () => {
+			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
+			e2 = a.addEdge(new TypedEdge('bff', a, c, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.outs(EDGE_TYPES.Likes).size).toBe(2);
+		});
+
+
 		/**
 		 * DUPLICATES
 		 *
-		 * @todo official duplicate check - OR - just UID
+		 * @describe we check for duplicate edges on a graph level, but not on a node level
+		 * 					 -) when systematically (batch) instantiationg from an input source,
+		 * 					 		our input classes check for duplicate edges
+		 * 					 -) when programmatically building a graph manually, the graph class
+		 * 					 		will reject duplicates, whereas the node classes used internally
+		 * 					 		will not -> don't use <node>.addEdge...() manually!
+		 *
+		 * @todo this is still a bit of a mess -> should we transfer Dupe checks into the graph
+		 * 			 instead of handling this in the JSON / CSV inputs -> probably !
+		 * @todo make a proper note of this in the (future) documentation !!!
+		 * @todo use ID for faster lookup -> but NEVER for duplicate checking !!!
 		 */
-		it('directed -> OUTS -> several -> Rejects (ignores) duplicates', () => {
+
+		/**
+		 * @todo make sure this behavior is consistent with the BaseNode class
+		 */
+		it('directed -> OUTS -> several -> Overwrites duplicate ID', () => {
 			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
-			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
 		});
 
 
-		it('directed -> OUTS -> several -> Rejects (ignores) duplicates', () => {
-			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
-			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
-			e1 = a.addEdge(new TypedEdge('bff', a, c, {directed: true, type: EDGE_TYPES.Likes}));
-			expect(a.outs(EDGE_TYPES.Likes).size).toBe(2);
-		});
-
-
-		/* different ID -> also duplicate? */
-		it('directed -> OUTS -> several -> Rejects (ignores) duplicates', () => {
+		/* Node does not check for duplicates itself */
+		it('directed -> OUTS -> several -> Accepts structureal duplicates of differenct ID', () => {
 			e1 = a.addEdge(new TypedEdge('bffff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
-			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
 			expect(a.outs(EDGE_TYPES.Likes).size).toBe(2);
 		});
 
 
+		it('directed -> OUTS -> delete one -> preserve type', () => {
+			e1 = a.addEdge(new TypedEdge('bffff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.outs(EDGE_TYPES.Likes).size).toBe(2);
+			a.removeEdge(e1);
+			expect(a.outs(EDGE_TYPES.Likes).size).toBe(1);
+		});
 
 
+		it('directed -> OUTS -> delete all -> lose type', () => {
+			e1 = a.addEdge(new TypedEdge('bffff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.outs(EDGE_TYPES.Likes).size).toBe(2);
+			a.removeEdge(e1);
+			a.removeEdge(e2);
+			expect(a.outs(EDGE_TYPES.Likes)).toBeUndefined();
+		});
 
 
-		it.todo('directed -> OUTS -> delete one -> preserve type');
+		it('directed -> INS -> several', () => {
+			e1 = a.addEdge(new TypedEdge('bff', b, a, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.ins(EDGE_TYPES.Likes).size).toBe(1);
+			e2 = a.addEdge(new TypedEdge('bff', c, a, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.ins(EDGE_TYPES.Likes).size).toBe(2);
+		});
 
-		it.todo('directed -> OUTS -> delete all -> lose type');
 
-		it.todo('directed -> INS -> several');
+		it('directed -> INS -> delete one -> preserve type', () => {
+			e1 = a.addEdge(new TypedEdge('bff', b, a, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('bff', c, a, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.ins(EDGE_TYPES.Likes).size).toBe(2);
+			a.removeEdge(e1);
+			expect(a.ins(EDGE_TYPES.Likes).size).toBe(1);
+		});
 
-		it.todo('directed -> INS -> delete one -> preserve type');
 
-		it.todo('directed -> INS -> delete all -> lose type');
+		/**
+		 * @todo something wrong with BaseClass if we pass it same edge ID's
+		 * 			 - it seems to override the edge implicitly (if directed)
+		 * 			 - but then we try to remove it again via TypedNode... aaargh
+		 */
+		it('directed -> INS -> delete all -> lose type', () => {
+			e1 = a.addEdge(new TypedEdge('e1', b, a, {directed: true, type: EDGE_TYPES.Likes}));
+			e2 = a.addEdge(new TypedEdge('e2', c, a, {directed: true, type: EDGE_TYPES.Likes}));
+			expect(a.ins(EDGE_TYPES.Likes).size).toBe(2);
+			a.removeEdge(e1);
+			a.removeEdge(e2);
+			expect(a.ins(EDGE_TYPES.Likes)).toBeUndefined();
+		});
 
-		it.todo('Generic type can never be deleted');
+
+		it('directed -> CONNS -> several', () => {
+			e1 = a.addEdge(new TypedEdge('bffff', a, b, {type: EDGE_TYPES.Friends}));
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+			e2 = a.addEdge(new TypedEdge('bff', a, b, {type: EDGE_TYPES.Friends}));
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+		});
+
+
+		it('directed -> CONNS -> delete one -> preserve type', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
+			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+			a.removeEdge(e1);
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+		});
+
+
+		it('directed -> CONNS -> delete all of certain direction -> preserve type', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
+			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
+			e3 = a.addEdge(new TypedEdge('e3', c, a, {type: EDGE_TYPES.Friends}));
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(3);
+			a.removeEdge(e1);
+			a.removeEdge(e2);
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+		});
+
+
+		it('directed -> CONNS -> delete all -> lose type', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
+			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
+			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+			a.removeEdge(e1);
+			a.removeEdge(e2);
+			expect(a.conns(EDGE_TYPES.Friends)).toBeUndefined();
+		});
+
+
+		it('GENERIC type can never be lost', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b));
+			e2 = a.addEdge(new TypedEdge('e2', a, c));
+			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(2);
+			a.removeEdge(e1);
+			a.removeEdge(e2);
+			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(0);
+		});
 	});
 
 
 	/**
 	 * @todo shall we give the node a callback which
 	 * 			 filters / reduces neighbors to return ?
+	 *
+	 * @todo MOVE this to the graphinius-recommenders project ?
+	 * 			 - can / should nodes be filtered on a node-level
+	 * 			 - or only later when other (parallel) type-traversals
+	 * 			 	 have already taken place? -> check with n4j examples
 	 */
 	describe('Edge traversal tests - ', () => {
 

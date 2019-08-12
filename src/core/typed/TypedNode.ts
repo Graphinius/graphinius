@@ -1,10 +1,9 @@
 import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
 import {ITypedEdge, TypedEdge} from "./TypedEdge";
+import {GENERIC_TYPES} from "../../config/run_config";
 
 import {Logger} from '../../utils/Logger';
 const logger = new Logger();
-
-const GENERIC_TYPE = 'GENERIC';
 
 
 export type NeighborEntries = Set<string>;
@@ -54,9 +53,9 @@ class TypedNode extends BaseNode implements ITypedNode {
 
 	constructor(protected _id: string, config: TypedNodeConfig = {}) {
 		super(_id, config);
-		this._type = config.type || GENERIC_TYPE;
+		this._type = config.type || GENERIC_TYPES.Node;
 		this._typedAdjSets = {
-			[GENERIC_TYPE]: {
+			[GENERIC_TYPES.Edge]: {
 				ins: new Set<string>(),
 				outs: new Set<string>(),
 				conns: new Set<string>()
@@ -73,7 +72,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 		if (!super.addEdge(edge)) {
 			return null;
 		}
-		const type = edge.type || GENERIC_TYPE;
+		const type = edge.type || GENERIC_TYPES.Edge;
 		const dir = edge.isDirected();
 		const uid = this.uniqueNID(edge);
 
@@ -103,14 +102,38 @@ class TypedNode extends BaseNode implements ITypedNode {
 		return edge;
 	}
 
-	removeEdge(edge: ITypedEdge): void {
 
-		return super.removeEdge(edge);
+	/**
+	 * @description we assume
+	 * 							- type is present if super removes edge without throwing
+	 * @param edge
+	 */
+	removeEdge(edge: ITypedEdge): void {
+		// Throws when something happens...
+		super.removeEdge(edge);
+
+		const type = edge.type || GENERIC_TYPES.Edge;
+		const dir = edge.isDirected();
+		const uid = this.uniqueNID(edge);
+
+		if ( !dir ) {
+			this._typedAdjSets[type].conns.delete(uid);
+		}
+		else if ( edge.getNodes().a === this ) {
+			this._typedAdjSets[type].outs.delete(uid);
+		}
+		else {
+			this._typedAdjSets[type].ins.delete(uid);
+		}
+		if ( type !== GENERIC_TYPES.Edge && this.noEdgesOfTypeLeft(type) ) {
+			delete this._typedAdjSets[type];
+		}
 	}
 
 	removeEdgeByID(id: string): void {
 
 	}
+
 
 	ins(type: string): NeighborEntries {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].ins : undefined;
@@ -135,6 +158,14 @@ class TypedNode extends BaseNode implements ITypedNode {
 		const node = conn.a === this ? conn.b : conn.a;
 		return `${node.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
 	}
+
+
+	private noEdgesOfTypeLeft(type: string): boolean {
+		return (!this._typedAdjSets[type].ins || !this._typedAdjSets[type].ins.size)
+			&& (!this._typedAdjSets[type].outs || !this._typedAdjSets[type].outs.size)
+			&& (!this._typedAdjSets[type].conns || !this._typedAdjSets[type].conns.size);
+	}
+
 }
 
 

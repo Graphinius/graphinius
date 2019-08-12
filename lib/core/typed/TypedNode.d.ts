@@ -35,5 +35,6 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     outs(type: string): NeighborEntries;
     conns(type: string): NeighborEntries;
     uniqueNID(e: ITypedEdge): string;
+    private noEdgesOfTypeLeft;
 }
 export { TypedNode };

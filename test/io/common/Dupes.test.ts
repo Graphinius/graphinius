@@ -295,7 +295,7 @@ describe('Edge DUPE tests', function () {
 	});
 
 
-	it.skip('NO Type & NOT same weight -> NO DUPES - ', () => {
+	it('NO Type & NOT same weight -> NO DUPES - ', () => {
 		e_1 = graph.addEdge(new BaseEdge(v4(), a, b, {directed: true, weighted: true, weight: 41}));
 		const newEdgeInfo: PotentialEdgeInfo = {
 			a, b, dir: true, weighted: true, weight: 42, typed: false

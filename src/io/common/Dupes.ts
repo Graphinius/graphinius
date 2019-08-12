@@ -25,7 +25,6 @@ class EdgeDupeChecker {
 	constructor( private _graph: IGraph | TypedGraph ) {}
 
 	isDupe(e: PotentialEdgeInfo): boolean {
-		// Potential Dupe Set
 		let pds = this.potentialEndpoints(e);
 		if ( !pds.size ) {
 			return false;
@@ -43,13 +42,20 @@ class EdgeDupeChecker {
 	}
 
 
-	static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge) : boolean {
-		const neitherTypedNorWeighted = !e.typed && !e.weighted;
-		const notTypedButWeighted = !e.typed && e.weighted;
-		const weightEqual = e.weight === oe.getWeight();
-		const typeEqual = e.typed && BaseEdge.isTyped(oe) && e.type === oe.type;
+	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge> {
+		const result = new Set();
 
-		return ( neitherTypedNorWeighted || notTypedButWeighted && weightEqual || typeEqual );
+		if ( e.dir ) {
+			e.a.nextNodes().forEach(ne => {
+				(ne.node === e.b) && result.add(ne.edge);
+			});
+		}
+		else {
+			e.a.connNodes().forEach(ne => {
+				(ne.node === e.b) && result.add(ne.edge);
+			});
+		}
+		return result;
 	}
 
 
@@ -65,24 +71,13 @@ class EdgeDupeChecker {
 	}
 
 
-	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge> {
-		const result = new Set();
+	static typeWeightDupe(e: PotentialEdgeInfo, oe: IBaseEdge) : boolean {
+		const neitherTypedNorWeighted = !e.typed && !e.weighted;
+		const notTypedButWeighted = !e.typed && e.weighted;
+		const weightEqual = e.weight === oe.getWeight();
+		const typeEqual = e.typed && BaseEdge.isTyped(oe) && e.type === oe.type;
 
-		if ( e.dir ) {
-			e.a.nextNodes().forEach(ne => {
-				(ne.node === e.b) && result.add(ne.edge);
-			});
-		}
-		else {
-			/**
-			 * node.connNodes() already takes care of a-b <-> b-a reversal
-			 * which means ne.node will always be the "other" node
-			 */
-			e.a.connNodes().forEach(ne => {
-				(ne.node === e.b) && result.add(ne.edge);
-			});
-		}
-		return result;
+		return ( neitherTypedNorWeighted || notTypedButWeighted && weightEqual || typeEqual );
 	}
 }
 
