@@ -99,7 +99,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 			this._typedAdjSets[type].ins.add(uid);
 		}
 
-		// logger.log(this._typedAdjSets);
+		logger.log(this._typedAdjSets);
 		return edge;
 	}
 
@@ -132,8 +132,8 @@ class TypedNode extends BaseNode implements ITypedNode {
 	 */
 	uniqueNID(e: ITypedEdge): string {
 		const conn = e.getNodes();
-		const other = conn.a === this ? conn.b : conn.a;
-		return `${other.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
+		const node = conn.a === this ? conn.b : conn.a;
+		return `${node.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
 	}
 }
 

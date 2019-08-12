@@ -24,7 +24,7 @@ class TypedEdge extends BaseEdge implements ITypedEdge {
 							protected _node_b: $N.IBaseNode,
 							config: TypedEdgeConfig = {}) {
 		super(_id, _node_a, _node_b, config);
-		this._type = config.type || GENERIC_TYPES.EDGE;
+		this._type = config.type || GENERIC_TYPES.Edge;
 	}
 
 	get type() {

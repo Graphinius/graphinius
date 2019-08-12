@@ -53,9 +53,9 @@ export class TypedGraph extends BaseGraph {
 
 	constructor(public _label: string) {
 		super(_label);
-		this._type = GENERIC_TYPES.GRAPH;
-		this._typedNodes.set(GENERIC_TYPES.NODE, new Map());
-		this._typedEdges.set(GENERIC_TYPES.EDGE, new Map());
+		this._type = GENERIC_TYPES.Graph;
+		this._typedNodes.set(GENERIC_TYPES.Node, new Map());
+		this._typedEdges.set(GENERIC_TYPES.Edge, new Map());
 	}
 
 
@@ -115,7 +115,7 @@ export class TypedGraph extends BaseGraph {
 		if (!type) {
 			// logger.log(`Received node type: ${type}`);
 
-			this._typedNodes.get(GENERIC_TYPES.NODE).set(id, node);
+			this._typedNodes.get(GENERIC_TYPES.Node).set(id, node);
 		} else {
 			if (!this._typedNodes.get(type)) {
 				this._typedNodes.set(type, new Map());
@@ -128,7 +128,7 @@ export class TypedGraph extends BaseGraph {
 
 	deleteNode(node: ITypedNode): void {
 		const id = node.getID(),
-			type = node.type ? node.type.toUpperCase() : GENERIC_TYPES.NODE;
+			type = node.type ? node.type.toUpperCase() : GENERIC_TYPES.Node;
 
 		if (!this._typedNodes.get(type)) {
 			throw Error('Node type does not exist on this TypedGraph.');
@@ -158,7 +158,7 @@ export class TypedGraph extends BaseGraph {
 		}
 
 		const id = edge.getID();
-		let type = GENERIC_TYPES.EDGE;
+		let type = GENERIC_TYPES.Edge;
 		if (BaseEdge.isTyped(edge) && edge.type) {
 			type = edge.type.toUpperCase();
 		}
@@ -170,7 +170,7 @@ export class TypedGraph extends BaseGraph {
 		 *  Same procedure as every node...
 		 */
 		if (id === type) {
-			this._typedEdges.get(GENERIC_TYPES.EDGE).set(id, edge as ITypedEdge);
+			this._typedEdges.get(GENERIC_TYPES.Edge).set(id, edge as ITypedEdge);
 		} else {
 			if (!this._typedEdges.get(type)) {
 				this._typedEdges.set(type, new Map());
@@ -183,7 +183,7 @@ export class TypedGraph extends BaseGraph {
 
 	deleteEdge(edge: ITypedEdge | IBaseEdge): void {
 		const id = edge.getID();
-		let type = GENERIC_TYPES.EDGE;
+		let type = GENERIC_TYPES.Edge;
 		if (BaseEdge.isTyped(edge) && edge.type) {
 			type = edge.type.toUpperCase();
 		}

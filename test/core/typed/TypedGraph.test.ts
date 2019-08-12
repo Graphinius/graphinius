@@ -30,18 +30,18 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should construct a typed graph with a pre-set "generic" NODE type', () => {
 			expect(graph.nodeTypes().length).toBe(1);
-			expect(graph.nodeTypes()).toContain(GENERIC_TYPES.NODE);
+			expect(graph.nodeTypes()).toContain(GENERIC_TYPES.Node);
 		});
 
 
 		it('should construct a typed graph with a pre-set "generic" EDGE type', () => {
 			expect(graph.edgeTypes().length).toBe(1);
-			expect(graph.edgeTypes()).toContain(GENERIC_TYPES.NODE);
+			expect(graph.edgeTypes()).toContain(GENERIC_TYPES.Node);
 		});
 
 
 		it('should report TypedGraph to be typed', function () {
-			expect(graph.type).toBe(GENERIC_TYPES.GRAPH);
+			expect(graph.type).toBe(GENERIC_TYPES.Graph);
 		});
 
 	});
@@ -192,11 +192,11 @@ describe('TYPED GRAPH TESTS: ', () => {
 				// node_types: [GENERIC_TYPE, 'PERSON'],
 				// edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
 				typed_nodes: {
-					[GENERIC_TYPES.NODE]: 0,
+					[GENERIC_TYPES.Node]: 0,
 					[nodeType]: 2
 				},
 				typed_edges: {
-					[GENERIC_TYPES.EDGE]: 0,
+					[GENERIC_TYPES.Edge]: 0,
 					[edgeType1]: 1,
 					[edgeType2]: 1
 				}

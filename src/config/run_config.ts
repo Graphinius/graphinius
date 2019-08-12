@@ -1,9 +1,9 @@
 const CMD_ENV_LOG = 'G_LOG';
 
 const GENERIC_TYPES = {
-  NODE    : 'GENERIC',
-  EDGE    : 'GENERIC',
-  GRAPH   : 'GENERIC'
+  Node    : 'GENERIC',
+  Edge    : 'GENERIC',
+  Graph   : 'GENERIC'
 };
 
 const LOG_LEVELS = {

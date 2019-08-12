@@ -42,7 +42,7 @@ describe('==== TYPED EDGE TESTS ====', () => {
 
 		it('should set a default type of GENERIC', () => {
 			const edge = new TypedEdge(id, node_a, node_b);
-			expect(edge.type).toBe(GENERIC_TYPES.EDGE);
+			expect(edge.type).toBe(GENERIC_TYPES.Edge);
 		});
 
 
