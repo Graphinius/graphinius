@@ -1,19 +1,30 @@
+const CMD_ENV_LOG = 'G_LOG';
+
+const GENERIC_TYPES = {
+  NODE    : 'GENERIC',
+  EDGE    : 'GENERIC',
+  GRAPH   : 'GENERIC'
+};
+
 const LOG_LEVELS = {
   debug: 'debug',
   production: 'production'
 };
 
-let log_level = LOG_LEVELS.production;
-if ( typeof window === 'undefined' && typeof process !== 'undefined' && process.env) {
-  log_level = process.env['G_LOG']
+/**
+ * Also checking if CMD line argument is given, which might not be the case
+ * when running automated test cases.
+ */
+function runLevel() {
+  let log_level = LOG_LEVELS.production;
+  if ( typeof window === 'undefined' && typeof process !== 'undefined' && process.env && process.env[CMD_ENV_LOG]) {
+    log_level = process.env[CMD_ENV_LOG]
+  }
+  return log_level;
 }
-
-const RUN_CONFIG = {
-  log_level: LOG_LEVELS.production
-};
 
 export {
   LOG_LEVELS,
-  RUN_CONFIG
+  GENERIC_TYPES,
+  runLevel
 };
-

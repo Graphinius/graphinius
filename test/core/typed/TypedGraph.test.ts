@@ -2,10 +2,10 @@ import * as $E from '../../../src/core/base/BaseEdge';
 import * as $G from '../../../src/core/base/BaseGraph';
 
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
-import {TypedGraph, GENERIC_TYPE} from '../../../src/core/typed/TypedGraph';
+import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
 import {JSON_REC_PATH} from '../../config/config';
-
+import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
 import {TypedEdge} from "../../../src/core/typed/TypedEdge";
@@ -30,17 +30,18 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should construct a typed graph with a pre-set "generic" NODE type', () => {
 			expect(graph.nodeTypes().length).toBe(1);
-			expect(graph.nodeTypes()).toContain(GENERIC_TYPE);
+			expect(graph.nodeTypes()).toContain(GENERIC_TYPES.NODE);
 		});
 
 
 		it('should construct a typed graph with a pre-set "generic" EDGE type', () => {
 			expect(graph.edgeTypes().length).toBe(1);
-			expect(graph.edgeTypes()).toContain(GENERIC_TYPE);
+			expect(graph.edgeTypes()).toContain(GENERIC_TYPES.NODE);
 		});
 
+
 		it('should report TypedGraph to be typed', function () {
-			expect(graph.typed).toBe(true);
+			expect(graph.type).toBe(GENERIC_TYPES.GRAPH);
 		});
 
 	});
@@ -114,7 +115,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 			edgeType = 'FRIENDS_WITH',
 			edgeTypeLower = 'friends_with',
 			edgeID = 'a_b_friends';
-
 
 		let graph: TypedGraph,
 			a: ITypedNode,
@@ -192,11 +192,11 @@ describe('TYPED GRAPH TESTS: ', () => {
 				// node_types: [GENERIC_TYPE, 'PERSON'],
 				// edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
 				typed_nodes: {
-					[GENERIC_TYPE]: 0,
+					[GENERIC_TYPES.NODE]: 0,
 					[nodeType]: 2
 				},
 				typed_edges: {
-					[GENERIC_TYPE]: 0,
+					[GENERIC_TYPES.EDGE]: 0,
 					[edgeType1]: 1,
 					[edgeType2]: 1
 				}
@@ -213,33 +213,32 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 			it('should read beerGraph from neo4j example and give the correct stats', () => {
 				const controlStats = {
-					"mode": 1,
-					"nr_nodes": 577,
-					"nr_und_edges": 0,
-					"nr_dir_edges": 870,
-					"density_dir": 0.0026177065280184866,
-					"density_und": 0,
-					"node_types": ["GENERIC", "BREWERY", "CATEGORY", "STYLE", "CITY", "STATE"],
-					"edge_types": ["GENERIC", "BREWED_AT", "BEER_CATEGORY", "BEER_STYLE", "LOC_CITY", "LOC_STATE", "LOC_COUNTRY"],
-					"typed_nodes": {
-						"GENERIC": 402,
-						"BREWERY": 45,
-						"CATEGORY": 8,
-						"STYLE": 49,
-						"CITY": 47,
-						"STATE": 26
+					mode: 1,
+					nr_nodes: 577,
+					nr_und_edges: 0,
+					nr_dir_edges: 870,
+					density_dir: 0.0026177065280184866,
+					density_und: 0,
+					typed_nodes: {
+						GENERIC: 0,
+						BEER: 292,
+						BREWERY: 49,
+						CATEGORY: 11,
+						CITY: 47,
+						STATE: 26,
+						COUNTRY: 11,
+						STYLE: 141
 					},
-					"typed_edges": {
-						"GENERIC": 0,
-						"BREWED_AT": 292,
-						"BEER_CATEGORY": 231,
-						"BEER_STYLE": 231,
-						"LOC_CITY": 49,
-						"LOC_STATE": 41,
-						"LOC_COUNTRY": 26
+					typed_edges: {
+						GENERIC: 0,
+						BREWED_AT: 292,
+						BEER_CATEGORY: 231,
+						BEER_STYLE: 231,
+						LOC_CITY: 49,
+						LOC_STATE: 41,
+						LOC_COUNTRY: 26
 					}
 				};
-
 				const graphFile = JSON_REC_PATH + '/beerGraph.json';
 
 				const tic = +new Date;
@@ -248,6 +247,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
 				logger.log(graph.stats);
+				expect(graph.stats).toEqual(controlStats);
 			});
 
 

@@ -1,13 +1,14 @@
 import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
-import { BaseGraph, GraphMode, GraphStats } from '../base/BaseGraph';
+import {BaseGraph, GraphMode, GraphStats} from '../base/BaseGraph';
+import {GENERIC_TYPES} from "../../config/run_config";
 
-import { Logger } from '../../utils/Logger';
+import {Logger} from '../../utils/Logger';
 import {BaseNode} from "../base/BaseNode";
+
 const logger = new Logger();
 
-export const GENERIC_TYPE = "GENERIC";
 
 export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
@@ -38,6 +39,7 @@ export interface TypedGraphStats extends GraphStats {
  * @todo allow 'GENERIC' edge types ? => yes!
  */
 export class TypedGraph extends BaseGraph {
+	protected _type: string;
 
 	/**
 	 * We don't need an extra array of registered types, since an
@@ -51,13 +53,14 @@ export class TypedGraph extends BaseGraph {
 
 	constructor(public _label: string) {
 		super(_label);
-		this._typedNodes.set(GENERIC_TYPE, new Map());
-		this._typedEdges.set(GENERIC_TYPE, new Map());
+		this._type = GENERIC_TYPES.GRAPH;
+		this._typedNodes.set(GENERIC_TYPES.NODE, new Map());
+		this._typedEdges.set(GENERIC_TYPES.EDGE, new Map());
 	}
 
 
-	get typed(): true {
-		return true;
+	get type(): string {
+		return this._type;
 	}
 
 
@@ -89,7 +92,7 @@ export class TypedGraph extends BaseGraph {
 	 * @param opts
 	 */
 	addNodeByID(id: string, opts?: {}): ITypedNode {
-		if ( this.hasNodeID( id ) ) {
+		if (this.hasNodeID(id)) {
 			throw new Error("Won't add node with duplicate ID.");
 		}
 		let node = new TypedNode(id, opts);
@@ -109,12 +112,12 @@ export class TypedGraph extends BaseGraph {
 		/**
 		 *  Untyped nodes will be treated as `generic` type
 		 */
-		if ( !type ) {
+		if (!type) {
 			// logger.log(`Received node type: ${type}`);
 
-			this._typedNodes.get(GENERIC_TYPE).set(id, node);
+			this._typedNodes.get(GENERIC_TYPES.NODE).set(id, node);
 		} else {
-			if ( !this._typedNodes.get(type) ) {
+			if (!this._typedNodes.get(type)) {
 				this._typedNodes.set(type, new Map());
 			}
 			this._typedNodes.get(type).set(id, node);
@@ -125,7 +128,7 @@ export class TypedGraph extends BaseGraph {
 
 	deleteNode(node: ITypedNode): void {
 		const id = node.getID(),
-			type = node.type ? node.type.toUpperCase() : GENERIC_TYPE;
+			type = node.type ? node.type.toUpperCase() : GENERIC_TYPES.NODE;
 
 		if (!this._typedNodes.get(type)) {
 			throw Error('Node type does not exist on this TypedGraph.');
@@ -155,8 +158,8 @@ export class TypedGraph extends BaseGraph {
 		}
 
 		const id = edge.getID();
-		let type = GENERIC_TYPE;
-		if ( BaseEdge.isTyped(edge) && edge.type ) {
+		let type = GENERIC_TYPES.EDGE;
+		if (BaseEdge.isTyped(edge) && edge.type) {
 			type = edge.type.toUpperCase();
 		}
 
@@ -167,7 +170,7 @@ export class TypedGraph extends BaseGraph {
 		 *  Same procedure as every node...
 		 */
 		if (id === type) {
-			this._typedEdges.get(GENERIC_TYPE).set(id, edge as ITypedEdge);
+			this._typedEdges.get(GENERIC_TYPES.EDGE).set(id, edge as ITypedEdge);
 		} else {
 			if (!this._typedEdges.get(type)) {
 				this._typedEdges.set(type, new Map());
@@ -180,8 +183,8 @@ export class TypedGraph extends BaseGraph {
 
 	deleteEdge(edge: ITypedEdge | IBaseEdge): void {
 		const id = edge.getID();
-		let type = GENERIC_TYPE;
-		if ( BaseEdge.isTyped(edge) && edge.type ) {
+		let type = GENERIC_TYPES.EDGE;
+		if (BaseEdge.isTyped(edge) && edge.type) {
 			type = edge.type.toUpperCase();
 		}
 

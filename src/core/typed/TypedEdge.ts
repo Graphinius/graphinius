@@ -1,4 +1,5 @@
 import { IBaseEdge, BaseEdge, BaseEdgeConfig } from '../base/BaseEdge';
+import { GENERIC_TYPES } from '../../config/run_config';
 
 import { Logger } from '../../utils/Logger';
 import * as $N from "../base/BaseNode";
@@ -7,7 +8,6 @@ const logger = new Logger();
 
 export interface ITypedEdge extends IBaseEdge {
 	readonly type: string;
-	readonly typed: true;
 }
 
 
@@ -24,15 +24,11 @@ class TypedEdge extends BaseEdge implements ITypedEdge {
 							protected _node_b: $N.IBaseNode,
 							config: TypedEdgeConfig = {}) {
 		super(_id, _node_a, _node_b, config);
-		this._type = config.type;
+		this._type = config.type || GENERIC_TYPES.EDGE;
 	}
 
 	get type() {
 		return this._type;
-	}
-
-	get typed() : true {
-		return true;
 	}
 
 }

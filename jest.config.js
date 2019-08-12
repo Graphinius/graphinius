@@ -18,7 +18,7 @@ module.exports = {
     "/lib",
     "/test/test_data"
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!**/node_modules/**",

@@ -1,11 +1,13 @@
 declare module 'graphinius/config/run_config' {
-	 const LOG_LEVELS: {
+	 const GENERIC_TYPES: {
+	    NODE: string;
+	    EDGE: string;
+	    GRAPH: string;
+	}; const LOG_LEVELS: {
 	    debug: string;
 	    production: string;
-	}; const RUN_CONFIG: {
-	    log_level: string;
-	};
-	export { LOG_LEVELS, RUN_CONFIG };
+	}; function runLevel(): string;
+	export { LOG_LEVELS, GENERIC_TYPES, runLevel };
 
 }
 declare module 'graphinius/utils/Logger' {
@@ -48,7 +50,6 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	export interface ITypedEdge extends IBaseEdge {
 	    readonly type: string;
-	    readonly typed: true;
 	}
 	export interface TypedEdgeConfig extends BaseEdgeConfig {
 	    type?: string;
@@ -59,7 +60,6 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	    protected _type: string;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
 	    readonly type: string;
-	    readonly typed: true;
 	}
 	export { TypedEdge };
 
@@ -114,11 +114,6 @@ declare module 'graphinius/core/base/BaseEdge' {
 	export { BaseEdge };
 
 }
-declare module 'graphinius/utils/StructUtils' {
-	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
-	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
-
-}
 declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
 	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
@@ -133,7 +128,6 @@ declare module 'graphinius/core/typed/TypedNode' {
 	};
 	export interface ITypedNode extends IBaseNode {
 	    readonly type: string;
-	    readonly typed: true;
 	    uniqueNID(e: ITypedEdge): string;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
@@ -150,16 +144,20 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    protected _typedAdjSets: TypedAdjLists;
 	    constructor(_id: string, config?: TypedNodeConfig);
 	    readonly type: string;
-	    readonly typed: true;
-	    uniqueNID(e: ITypedEdge): string;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
 	    removeEdgeByID(id: string): void;
 	    ins(type: string): NeighborEntries;
 	    outs(type: string): NeighborEntries;
 	    conns(type: string): NeighborEntries;
+	    uniqueNID(e: ITypedEdge): string;
 	}
 	export { TypedNode };
+
+}
+declare module 'graphinius/utils/StructUtils' {
+	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
+	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
 
 }
 declare module 'graphinius/core/base/BaseNode' {
@@ -537,7 +535,6 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
-	export const GENERIC_TYPE = "GENERIC";
 	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 	export interface TypedGraphStats extends GraphStats {
@@ -550,10 +547,11 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	}
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
+	    protected _type: string;
 	    protected _typedNodes: TypedNodes;
 	    protected _typedEdges: TypedEdges;
 	    constructor(_label: string);
-	    readonly typed: true;
+	    readonly type: string;
 	    nodeTypes(): string[];
 	    edgeTypes(): string[];
 	    nrTypedNodes(type: string): number | null;

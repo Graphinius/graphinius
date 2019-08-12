@@ -11,7 +11,6 @@ export declare type TypedAdjLists = {
 };
 export interface ITypedNode extends IBaseNode {
     readonly type: string;
-    readonly typed: true;
     uniqueNID(e: ITypedEdge): string;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
@@ -29,13 +28,12 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     protected _typedAdjSets: TypedAdjLists;
     constructor(_id: string, config?: TypedNodeConfig);
     readonly type: string;
-    readonly typed: true;
-    uniqueNID(e: ITypedEdge): string;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
     removeEdgeByID(id: string): void;
     ins(type: string): NeighborEntries;
     outs(type: string): NeighborEntries;
     conns(type: string): NeighborEntries;
+    uniqueNID(e: ITypedEdge): string;
 }
 export { TypedNode };

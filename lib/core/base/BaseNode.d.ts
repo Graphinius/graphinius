@@ -1,5 +1,5 @@
-import * as $E from "./BaseEdge";
-import { TypedNode } from "../typed/TypedNode";
+import * as $E from './BaseEdge';
+import { TypedNode } from '../typed/TypedNode';
 export interface NeighborEntry {
     node: IBaseNode;
     edge: $E.IBaseEdge;

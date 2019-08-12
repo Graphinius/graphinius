@@ -304,7 +304,6 @@ describe('GRAPH JSON INPUT TESTS', () => {
 			const inGraph = jsonIn.readFromJSONFile(graphFile, new TypedGraph('in'));
 			const inEdge = inGraph.getEdgeById(edgeID) as TypedEdge;
 			expect(inEdge.label).toBe(edgeLabel);
-			expect(inEdge.type).toBeUndefined();
 		});
 
 

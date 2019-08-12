@@ -1,8 +1,11 @@
+declare const GENERIC_TYPES: {
+    NODE: string;
+    EDGE: string;
+    GRAPH: string;
+};
 declare const LOG_LEVELS: {
     debug: string;
     production: string;
 };
-declare const RUN_CONFIG: {
-    log_level: string;
-};
-export { LOG_LEVELS, RUN_CONFIG };
+declare function runLevel(): string;
+export { LOG_LEVELS, GENERIC_TYPES, runLevel };

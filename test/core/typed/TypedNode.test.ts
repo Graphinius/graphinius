@@ -1,9 +1,9 @@
 import {ITypedNode, TypedNode, TypedNodeConfig} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
+import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
-
 const logger = new Logger();
 
 describe('==== NODE TESTS ====', () => {
@@ -13,7 +13,7 @@ describe('==== NODE TESTS ====', () => {
 
 		it('should set a default type of `undefined`', () => {
 			const node = new TypedNode(id);
-			expect(node.type).toBeUndefined();
+			expect(node.type).toBe(GENERIC_TYPES.NODE);
 		});
 
 		it('should set correct type', () => {
@@ -23,7 +23,7 @@ describe('==== NODE TESTS ====', () => {
 		});
 
 		it('should tell you it\'s typed', function () {
-			expect(new TypedNode('blah').typed).toBe(true);
+			expect(new TypedNode('blah').type).toBeTruthy();
 		});
 
 	});

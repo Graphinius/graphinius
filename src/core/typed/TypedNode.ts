@@ -2,8 +2,6 @@ import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
 import {ITypedEdge, TypedEdge} from "./TypedEdge";
 
 import {Logger} from '../../utils/Logger';
-import * as $E from "../base/BaseEdge";
-
 const logger = new Logger();
 
 const GENERIC_TYPE = 'GENERIC';
@@ -22,7 +20,6 @@ export type TypedAdjLists = { [type: string]: TypedAdjListsEntry };
 
 export interface ITypedNode extends IBaseNode {
 	readonly type: string;
-	readonly typed: true;
 
 	uniqueNID(e: ITypedEdge): string;
 
@@ -57,7 +54,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 
 	constructor(protected _id: string, config: TypedNodeConfig = {}) {
 		super(_id, config);
-		this._type = config.type;
+		this._type = config.type || GENERIC_TYPE;
 		this._typedAdjSets = {
 			[GENERIC_TYPE]: {
 				ins: new Set<string>(),
@@ -71,20 +68,6 @@ class TypedNode extends BaseNode implements ITypedNode {
 		return this._type;
 	}
 
-	get typed(): true {
-		return true;
-	}
-
-	/**
-	 * Unique ID for Neighbor (traversal)
-	 * @param e ITypedEdge
-	 * @returns unique neighbor entry ID
-	 */
-	uniqueNID(e: ITypedEdge): string {
-		const conn = e.getNodes();
-		const other = conn.a === this ? conn.b : conn.a;
-		return `${other.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
-	}
 
 	addEdge(edge: ITypedEdge): ITypedEdge {
 		if (!super.addEdge(edge)) {
@@ -116,7 +99,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 			this._typedAdjSets[type].ins.add(uid);
 		}
 
-		logger.log(this._typedAdjSets);
+		// logger.log(this._typedAdjSets);
 		return edge;
 	}
 
@@ -141,6 +124,17 @@ class TypedNode extends BaseNode implements ITypedNode {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].conns : undefined;
 	}
 
+
+	/**
+	 * Unique ID for Neighbor (traversal)
+	 * @param e ITypedEdge
+	 * @returns unique neighbor entry ID
+	 */
+	uniqueNID(e: ITypedEdge): string {
+		const conn = e.getNodes();
+		const other = conn.a === this ? conn.b : conn.a;
+		return `${other.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
+	}
 }
 
 

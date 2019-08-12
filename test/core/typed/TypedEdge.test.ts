@@ -1,6 +1,7 @@
-import { BaseEdge } from '../../../src/core/base/BaseEdge';
-import { ITypedNode, TypedNode } from '../../../src/core/typed/TypedNode';
-import { ITypedEdge, TypedEdge } from '../../../src/core/typed/TypedEdge';
+import {BaseEdge} from '../../../src/core/base/BaseEdge';
+import {ITypedNode, TypedNode} from '../../../src/core/typed/TypedNode';
+import {ITypedEdge, TypedEdge} from '../../../src/core/typed/TypedEdge';
+import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 describe('==== TYPED EDGE TESTS ====', () => {
 
@@ -19,7 +20,7 @@ describe('==== TYPED EDGE TESTS ====', () => {
 		nodeTypeA = 'PERSON',
 		nodeTypeB = 'COFFEE';
 
-	let	node_a: TypedNode,
+	let node_a: TypedNode,
 		node_b: TypedNode;
 
 	/**
@@ -33,26 +34,15 @@ describe('==== TYPED EDGE TESTS ====', () => {
 		});
 
 
-		it('should return isTyped() of true', () => {
-			const edge = new TypedEdge(id, node_a, node_b);
-			expect(edge.typed).toBe(true);
-		});
-
-
-		/**
-		 * @description checking for correct class
-		 *
-		 * @todo no better way to write this !?
-		 */
 		it('should return isTyped on BaseEdge of true', () => {
 			const edge = new TypedEdge(id, node_a, node_b);
 			expect(BaseEdge.isTyped(edge)).toBe(true);
 		});
 
 
-		it('should set a default type of NULL', () => {
+		it('should set a default type of GENERIC', () => {
 			const edge = new TypedEdge(id, node_a, node_b);
-			expect(edge.type).toBeUndefined();
+			expect(edge.type).toBe(GENERIC_TYPES.EDGE);
 		});
 
 

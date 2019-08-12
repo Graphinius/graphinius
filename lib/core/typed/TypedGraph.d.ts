@@ -2,7 +2,6 @@ import { ITypedNode } from './TypedNode';
 import { ITypedEdge, TypedEdgeConfig } from "./TypedEdge";
 import { IBaseEdge } from "../base/BaseEdge";
 import { BaseGraph, GraphStats } from '../base/BaseGraph';
-export declare const GENERIC_TYPE = "GENERIC";
 export declare type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export declare type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 export interface TypedGraphStats extends GraphStats {
@@ -15,10 +14,11 @@ export interface TypedGraphStats extends GraphStats {
 }
 export declare class TypedGraph extends BaseGraph {
     _label: string;
+    protected _type: string;
     protected _typedNodes: TypedNodes;
     protected _typedEdges: TypedEdges;
     constructor(_label: string);
-    readonly typed: true;
+    readonly type: string;
     nodeTypes(): string[];
     edgeTypes(): string[];
     nrTypedNodes(type: string): number | null;

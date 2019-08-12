@@ -12,14 +12,16 @@ let obj_to_log = {
 	hash: {"nest": "ed!", "is": true}
 };
 
-/**
- * @todo write color tests...
- */
 
 describe('Basic logger tests - ', () => {
 
 	it('should automatically set config if not passed', () => {
-		expect(new Logger().config.log_level).toBe(LOG_LEVELS.production);
+		expect(new Logger().config.log_level).toBeTruthy();
+	});
+
+
+	[LOG_LEVELS.debug, LOG_LEVELS.production].forEach(ll => {
+		expect(new Logger({log_level: ll}).config.log_level).toBe(ll);
 	});
 
 
@@ -103,28 +105,6 @@ describe('Basic logger tests - ', () => {
 
 		it('Should not output a message via process.stdout', () => {
 			expect(logger.write(obj_to_log)).toBe(false);
-		});
-
-	});
-
-
-	describe.skip('funny countdown function', () => {
-
-		beforeAll(() => {
-			const config: LOG_CONFIG = {log_level: LOG_LEVELS.debug};
-			logger = new Logger(config);
-		});
-
-		afterAll(() => {
-			logger = null;
-		});
-
-
-		it('should display the FINAL countdown...', () => {
-			let countdown = 1e6;
-			while (countdown--) {
-				logger.write(`It's the final countdown: ${countdown} \r`);
-			}
 		});
 
 	});

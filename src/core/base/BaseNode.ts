@@ -1,6 +1,9 @@
-import * as $E from "./BaseEdge";
-import * as $SU from "../../utils/StructUtils";
-import {TypedNode} from "../typed/TypedNode";
+import * as $E from './BaseEdge';
+import {TypedNode} from '../typed/TypedNode';
+import * as $SU from '../../utils/StructUtils';
+
+import {Logger} from '../../utils/Logger';
+const logger = new Logger();
 
 
 export interface NeighborEntry {
@@ -14,7 +17,6 @@ export interface BaseNodeConfig {
 	label?			: string;
 	features?		: {[key: string]: any};
 }
-
 
 type NodeFeatures = { [k:string]: any };
 
@@ -107,7 +109,7 @@ class BaseNode implements IBaseNode {
 	}
 
 	static isTyped(arg: any): arg is TypedNode {
-		return !!arg.typed;
+		return !!arg.type;
 	}
 
 	get id(): string {

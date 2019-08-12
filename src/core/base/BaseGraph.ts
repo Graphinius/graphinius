@@ -128,7 +128,7 @@ class BaseGraph implements IGraph {
 	constructor (protected _label) {	}
 
 	static isTyped(arg: any) : arg is TypedGraph {
-		return !!arg.typed;
+		return !!arg.type;
 	}
 
 	get label(): string {

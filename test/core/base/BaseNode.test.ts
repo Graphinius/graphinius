@@ -4,6 +4,9 @@ import * as $E from '../../../src/core/base/BaseEdge';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/config';
 
+import {Logger} from '../../../src/utils/Logger';
+const logger = new Logger();
+
 let Edge = $E.BaseEdge;
 
 let small_graph_file = `${JSON_DATA_PATH}/small_graph.json`,

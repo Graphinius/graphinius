@@ -1,4 +1,4 @@
-import {LOG_LEVELS, RUN_CONFIG} from '../config/run_config';
+import {LOG_LEVELS, runLevel} from '../config/run_config';
 
 export interface LOG_CONFIG {
 	log_level: string;
@@ -27,11 +27,11 @@ export enum LogColors {
 const DEFAULT_COLOR = 37; // white
 
 class Logger {
-	public config: LOG_CONFIG = null;
+	public config: LOG_CONFIG;
 
 	constructor(config?) {
 		this.config = config || {
-			log_level: RUN_CONFIG.log_level
+			log_level: runLevel()
 		};
 	}
 
