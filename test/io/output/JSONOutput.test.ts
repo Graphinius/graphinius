@@ -5,7 +5,7 @@ import * as $G from '../../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from '../../../src/io/output/JSONOutput';
 import { labelKeys } from '../../../src/io/interfaces';
-import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
+import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/config';
 import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 
 import {Logger} from "../../../src/utils/Logger";
@@ -18,7 +18,7 @@ let jsonIn: JSONInput,
     graph: $G.IGraph,
     resultString: string,
     search_graph_in = `${JSON_DATA_PATH}/search_graph.json`,
-    search_graph_out = `${JSON_OUT_PATH}/search_graph_out.json`;
+    search_graph_out = `${OUTPUT_PATH}/search_graph_out.json`;
 
 let std_json_in_config: IJSONInConfig = {
   explicit_direction: true,

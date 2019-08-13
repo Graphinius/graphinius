@@ -38,16 +38,10 @@ node_modules
 # NPM debug output
 npm-debug.log
 
-# VS Code local files
-.vscode/**
-
-# All Javascript files under src, test and _async
-src/**/*.js
-test/**/*.js
-test/_async/**/*.js
-
-# IDEA project directory
-.idea/**
+# IDEs
+.vs
+.vscode
+.idea
 
 # Test outputs
 # test/data/output/**/*.csv

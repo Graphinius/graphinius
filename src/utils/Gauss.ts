@@ -4,13 +4,12 @@
  * Licence: GPL-3.0
  *
  * Small changes were made to comply with typescript
- * TODO: Check licence compliance with authors
  */
 
-var abs = Math.abs;
+let abs = Math.abs;
 
 function array_fill(i, n, v) {
-	var a = [];
+	let a = [];
 	for (; i < n; i++) {
 		a.push(v);
 	}
@@ -19,23 +18,23 @@ function array_fill(i, n, v) {
 
 /**
  * Gaussian elimination
- * @param  array A matrix
- * @param  array x vector
- * @return array x solution vector
+ * @param  A[] matrix
+ * @param  x[] vector
+ * @return x[] solution vector
  */
 function gauss(A: any[], x: any[]) {
 
-	var i, k, j;
+	let i, k, j;
 
 	// Just make a single matrix
 	for (i = 0; i < A.length; i++) {
 		A[i].push(x[i]);
 	}
-	var n = A.length;
+	let n = A.length;
 
 	for (i = 0; i < n; i++) {
 		// Search for maximum in this column
-		var maxEl = abs(A[i][i]),
+		let maxEl = abs(A[i][i]),
 			maxRow = i;
 		for (k = i + 1; k < n; k++) {
 			if (abs(A[k][i]) > maxEl) {
@@ -47,14 +46,14 @@ function gauss(A: any[], x: any[]) {
 
 		// Swap maximum row with current row (column by column)
 		for (k = i; k < n + 1; k++) {
-			var tmp = A[maxRow][k];
+			let tmp = A[maxRow][k];
 			A[maxRow][k] = A[i][k];
 			A[i][k] = tmp;
 		}
 
 		// Make all rows below this one 0 in current column
 		for (k = i + 1; k < n; k++) {
-			var c = -A[k][i] / A[i][i];
+			let c = -A[k][i] / A[i][i];
 			for (j = i; j < n + 1; j++) {
 				if (i === j) {
 					A[k][j] = 0;

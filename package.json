@@ -15,7 +15,9 @@
     "graphs",
     "graph library",
     "graph theory",
-    "graph analysis"
+    "graph analysis",
+    "social networks",
+    "recommender"
   ],
   "name": "graphinius",
   "version": "0.9.6",

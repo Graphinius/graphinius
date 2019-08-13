@@ -5,7 +5,7 @@ import * as $G from '../../../src/core/base/BaseGraph';
 import { CSVOutput, ICSVOutConfig } from '../../../src/io/output/CSVOutput'
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
 import * as $J from '../../../src/io/input/JSONInput';
-import { CSV_DATA_PATH, JSON_DATA_PATH, JSON_OUT_PATH } from '../../config/config';
+import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/config';
 
 
 let csv_out_config: ICSVOutConfig = {
@@ -90,7 +90,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
     
     
     test('should output test graph as CSV file', () => {
-      let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
+      let outfile = OUTPUT_PATH + "/adj_list_test_graph.csv";
       csvOut.writeToAdjacencyListFile(outfile, graph);
       
       let inGraph = csvIn.readFromAdjacencyListFile(outfile);
@@ -109,7 +109,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
         expect(realGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
         expect(realGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
         
-        let outfile = JSON_OUT_PATH + "/adj_list_real_graph.csv";
+        let outfile = OUTPUT_PATH + "/adj_list_real_graph.csv";
         csvOut.writeToAdjacencyListFile(outfile, realGraph);
         
         let inGraph = csvIn.readFromAdjacencyListFile(outfile);
@@ -168,7 +168,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 
       test('file test', () => {
-        let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
+        let outfile = OUTPUT_PATH + "/adj_list_test_graph.csv";
         csvOut.writeToEdgeListFile(outfile, graph);
         expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
       });
@@ -195,7 +195,7 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
 
 
       test('file test', () => {
-        let outfile = JSON_OUT_PATH + "/adj_list_test_graph.csv";
+        let outfile = OUTPUT_PATH + "/adj_list_test_graph.csv";
         csvOut.writeToEdgeListFile(outfile, graph, true);
         expect(fs.readFileSync(outfile).toString()).toEqual(expected_graph);
       });
