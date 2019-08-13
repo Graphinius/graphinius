@@ -7,10 +7,16 @@ import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
 
 const degCent = new DegreeCentrality();
 
-let REAL_GRAPH_NR_NODES = 6204,
+const
+	SMALL_GRAPH_NR_NODES = 4,
+	SMALL_GRAPH_NR_EDGES = 7,
+	REAL_GRAPH_NR_NODES = 6204,
 	REAL_GRAPH_NR_EDGES = 18550,
+	small_graph = `${JSON_DATA_PATH}/small_graph.json`,
+	real_graph = `${JSON_DATA_PATH}/real_graph.json`;
+
+let
 	graph: $G.IGraph,
-	real_graph = `${JSON_DATA_PATH}/real_graph.json`,
 	json: JSONInput,
 	stats: $G.GraphStats,
 	deg_config: NodeDegreeConfiguration,
@@ -37,6 +43,17 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 			expect(graph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
 			expect(graph.nrDirEdges()).toBe(0);
 		});
+
+
+		// beforeEach(() => {
+		// 	json = new JSONInput({explicit_direction: false, directed: true});
+		// 	graph = json.readFromJSONFile(small_graph);
+		// 	perturber = new SimplePerturber(graph);
+		// 	stats = graph.getStats();
+		// 	expect(graph.nrNodes()).toBe(SMALL_GRAPH_NR_NODES);
+		// 	expect(graph.nrUndEdges()).toBe(0);
+		// 	expect(graph.nrDirEdges()).toBe(SMALL_GRAPH_NR_EDGES);
+		// });
 
 
 		describe('Randomly ADD different amounts / percentages of NODES - ', () => {
