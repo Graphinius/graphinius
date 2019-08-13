@@ -1258,42 +1258,42 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	    probability_und?: number;
 	}
 	export interface ISimplePerturber {
-	    createRandomEdgesProb(probability: number, directed?: boolean, setOfNodes?: {
+	    createEdgesProb(probability: number, directed?: boolean, setOfNodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
-	    createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: {
+	    createEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
-	    randomlyDeleteNodesPercentage(percentage: number): void;
-	    randomlyDeleteUndEdgesPercentage(percentage: number): void;
-	    randomlyDeleteDirEdgesPercentage(percentage: number): void;
-	    randomlyDeleteNodesAmount(amount: number): void;
-	    randomlyDeleteUndEdgesAmount(amount: number): void;
-	    randomlyDeleteDirEdgesAmount(amount: number): void;
-	    randomlyAddNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
-	    randomlyAddUndEdgesPercentage(percentage: number): void;
-	    randomlyAddDirEdgesPercentage(percentage: number): void;
-	    randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
-	    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
+	    addNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
+	    addNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
+	    addUndEdgesPercentage(percentage: number): void;
+	    addDirEdgesPercentage(percentage: number): void;
+	    addEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
+	    deleteNodesPercentage(percentage: number): void;
+	    deleteUndEdgesPercentage(percentage: number): void;
+	    deleteDirEdgesPercentage(percentage: number): void;
+	    deleteNodesAmount(amount: number): void;
+	    deleteUndEdgesAmount(amount: number): void;
+	    deleteDirEdgesAmount(amount: number): void;
 	} class SimplePerturber implements ISimplePerturber {
 	    private _graph;
 	    constructor(_graph: $G.IGraph);
-	    randomlyDeleteNodesPercentage(percentage: number): void;
-	    randomlyDeleteUndEdgesPercentage(percentage: number): void;
-	    randomlyDeleteDirEdgesPercentage(percentage: number): void;
-	    randomlyDeleteNodesAmount(amount: number): void;
-	    randomlyDeleteUndEdgesAmount(amount: number): void;
-	    randomlyDeleteDirEdgesAmount(amount: number): void;
-	    randomlyAddUndEdgesPercentage(percentage: number): void;
-	    randomlyAddDirEdgesPercentage(percentage: number): void;
-	    randomlyAddEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
-	    randomlyAddNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
-	    randomlyAddNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
+	    deleteNodesPercentage(percentage: number): void;
+	    deleteUndEdgesPercentage(percentage: number): void;
+	    deleteDirEdgesPercentage(percentage: number): void;
+	    deleteNodesAmount(amount: number): void;
+	    deleteUndEdgesAmount(amount: number): void;
+	    deleteDirEdgesAmount(amount: number): void;
+	    addUndEdgesPercentage(percentage: number): void;
+	    addDirEdgesPercentage(percentage: number): void;
+	    addEdgesAmount(amount: number, config?: $E.BaseEdgeConfig): void;
+	    addNodesPercentage(percentage: number, config?: NodeDegreeConfiguration): void;
+	    addNodesAmount(amount: number, config?: NodeDegreeConfiguration): void;
 	    private createEdgesByConfig;
-	    createRandomEdgesProb(probability: number, directed?: boolean, new_nodes?: {
+	    createEdgesProb(probability: number, directed?: boolean, new_nodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
-	    createRandomEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: {
+	    createEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: {
 	        [key: string]: $N.IBaseNode;
 	    }): void;
 	}

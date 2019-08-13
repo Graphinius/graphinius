@@ -26,24 +26,26 @@ export interface NodeDegreeConfiguration {
 
 
 export interface ISimplePerturber {	
-	// CREATE RANDOM EDGES PER NODE
-	createRandomEdgesProb( probability: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
-	createRandomEdgesSpan( min: number, max: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
+	// CREATE EDGES PER NODE
+	createEdgesProb(probability: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
+	createEdgesSpan(min: number, max: number, directed?: boolean, setOfNodes?: { [key: string] : $N.IBaseNode} ) : void;
 
-	// RANDOMLY DELETE NODES AND EDGES
-	randomlyDeleteNodesPercentage( percentage: number ) : void;
-	randomlyDeleteUndEdgesPercentage( percentage: number ) : void;
-	randomlyDeleteDirEdgesPercentage( percentage: number ) : void;
-	randomlyDeleteNodesAmount( amount: number ) : void;
-	randomlyDeleteUndEdgesAmount( amount: number ) : void;
-	randomlyDeleteDirEdgesAmount( amount: number ) : void;
-	
-	// RANDOMLY ADD NODES AND EDGES
-	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void;
-	randomlyAddUndEdgesPercentage( percentage: number ) : void;
-	randomlyAddDirEdgesPercentage( percentage: number ) : void;
-	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void;
-	randomlyAddEdgesAmount( amount: number, config?: $E.BaseEdgeConfig ) : void;
+	// ADD NODES
+	addNodesPercentage(percentage: number, config?: NodeDegreeConfiguration ) : void;
+	addNodesAmount(amount: number, config?: NodeDegreeConfiguration ) : void;
+
+	// ADD EDGES
+	addUndEdgesPercentage(percentage: number ) : void;
+	addDirEdgesPercentage(percentage: number ) : void;
+	addEdgesAmount(amount: number, config?: $E.BaseEdgeConfig ) : void;
+
+	// DELETE NODES AND EDGES
+	deleteNodesPercentage(percentage: number ) : void;
+	deleteUndEdgesPercentage(percentage: number ) : void;
+	deleteDirEdgesPercentage(percentage: number ) : void;
+	deleteNodesAmount(amount: number ) : void;
+	deleteUndEdgesAmount(amount: number ) : void;
+	deleteDirEdgesAmount(amount: number ) : void;
 }
 
 
@@ -55,7 +57,7 @@ class SimplePerturber implements ISimplePerturber {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteNodesPercentage( percentage: number ) : void {
+	deleteNodesPercentage(percentage: number ) : void {
 		if ( percentage < 0 ) {
 			throw new Error('Cowardly refusing to remove a negative amount of nodes');
 		}
@@ -63,7 +65,7 @@ class SimplePerturber implements ISimplePerturber {
 			percentage = 100;
 		}
 		let nr_nodes_to_delete = Math.ceil(this._graph.nrNodes() * percentage/100);
-		this.randomlyDeleteNodesAmount( nr_nodes_to_delete );
+		this.deleteNodesAmount( nr_nodes_to_delete );
 	}
 
 
@@ -71,12 +73,12 @@ class SimplePerturber implements ISimplePerturber {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteUndEdgesPercentage( percentage: number ) : void {
+	deleteUndEdgesPercentage(percentage: number ) : void {
 		if ( percentage > 100 ) {
 			percentage = 100;
 		}
 		let nr_edges_to_delete = Math.ceil(this._graph.nrUndEdges() * percentage/100);
-		this.randomlyDeleteUndEdgesAmount( nr_edges_to_delete );
+		this.deleteUndEdgesAmount( nr_edges_to_delete );
 	}
 
 
@@ -84,19 +86,19 @@ class SimplePerturber implements ISimplePerturber {
 	 *
 	 * @param percentage
 	 */
-	randomlyDeleteDirEdgesPercentage( percentage: number ) : void {
+	deleteDirEdgesPercentage(percentage: number ) : void {
 		if ( percentage > 100 ) {
 			percentage = 100;
 		}
 		let nr_edges_to_delete = Math.ceil(this._graph.nrDirEdges() * percentage/100);
-		this.randomlyDeleteDirEdgesAmount( nr_edges_to_delete );
+		this.deleteDirEdgesAmount( nr_edges_to_delete );
 	}
 
 
 	/**
 	 * 
 	 */
-	randomlyDeleteNodesAmount( amount: number ) : void {
+	deleteNodesAmount(amount: number ) : void {
 		if ( amount < 0 ) {
 			throw 'Cowardly refusing to remove a negative amount of nodes';
 		}
@@ -113,7 +115,7 @@ class SimplePerturber implements ISimplePerturber {
 	/**
 	 * 
 	 */
-	randomlyDeleteUndEdgesAmount( amount: number ) : void {
+	deleteUndEdgesAmount(amount: number ) : void {
 		if ( amount < 0 ) {
 			throw 'Cowardly refusing to remove a negative amount of edges';
 		}
@@ -130,7 +132,7 @@ class SimplePerturber implements ISimplePerturber {
 	/**
 	 * 
 	 */
-	randomlyDeleteDirEdgesAmount( amount: number ) : void {
+	deleteDirEdgesAmount(amount: number ) : void {
 		if ( amount < 0 ) {
 			throw 'Cowardly refusing to remove a negative amount of edges';
 		}
@@ -147,18 +149,18 @@ class SimplePerturber implements ISimplePerturber {
 	/**
 	 *  
 	 */
-	randomlyAddUndEdgesPercentage( percentage: number ) : void {
+	addUndEdgesPercentage(percentage: number ) : void {
 		let nr_und_edges_to_add = Math.ceil(this._graph.nrUndEdges() * percentage/100);		
-		this.randomlyAddEdgesAmount( nr_und_edges_to_add, {directed: false} );
+		this.addEdgesAmount( nr_und_edges_to_add, {directed: false} );
 	}
 
 
 	/**
 	 * 
 	 */
-	randomlyAddDirEdgesPercentage( percentage: number ) : void {
+	addDirEdgesPercentage(percentage: number ) : void {
 		let nr_dir_edges_to_add = Math.ceil(this._graph.nrDirEdges() * percentage/100);
-		this.randomlyAddEdgesAmount( nr_dir_edges_to_add, {directed: true} );
+		this.addEdgesAmount( nr_dir_edges_to_add, {directed: true} );
 	}
 	
 	
@@ -166,7 +168,7 @@ class SimplePerturber implements ISimplePerturber {
 	 * 
 	 * DEFAULT edge direction: UNDIRECTED
 	 */
-	randomlyAddEdgesAmount( amount: number, config?: $E.BaseEdgeConfig ) : void {
+	addEdgesAmount(amount: number, config?: $E.BaseEdgeConfig ) : void {
 		if ( amount <= 0 ) {
 			throw new Error('Cowardly refusing to add a non-positive amount of edges')
 		}
@@ -180,7 +182,7 @@ class SimplePerturber implements ISimplePerturber {
 
 		// logger.log("DIRECTION of new edges to create: " + direction ? "directed" : "undirected");
 
-		while ( amount ) {
+		while ( amount > 0 ) {
 			node_a = this._graph.getRandomNode();
 			while ( ( node_b = this._graph.getRandomNode() ) === node_a ) {}
 
@@ -206,12 +208,12 @@ class SimplePerturber implements ISimplePerturber {
 	/**
 	 * 
 	 */
-	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void {
+	addNodesPercentage(percentage: number, config?: NodeDegreeConfiguration ) : void {
 		if ( percentage < 0 ) {
 			throw 'Cowardly refusing to add a negative amount of nodes';
 		}
 		let nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage/100);
-		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
+		this.addNodesAmount( nr_nodes_to_add, config );
 	}
 
 
@@ -219,17 +221,16 @@ class SimplePerturber implements ISimplePerturber {
 	 * If the degree configuration is invalid
 	 * (negative or infinite degree amount / percentage)
 	 * the nodes will have been created nevertheless
+	 *
+	 * @todo is this `perturbation` since it is not `random` ?
 	 */
-	randomlyAddNodesAmount( amount: number, config?: NodeDegreeConfiguration ) : void {
+	addNodesAmount(amount: number, config?: NodeDegreeConfiguration ) : void {
 		if ( amount < 0 ) {
 			throw 'Cowardly refusing to add a negative amount of nodes';
 		}
 		let new_nodes : { [key: string] : $N.IBaseNode } = {};
 		
-		while ( amount-- ) {
-			/**
-			 * @todo check if this procedure is 'random enough'
-			 */
+		while ( --amount >= 0 ) {
 			let new_node_id = v4();
 			new_nodes[new_node_id] = this._graph.addNodeByID( new_node_id );
 		}
@@ -260,27 +261,27 @@ class SimplePerturber implements ISimplePerturber {
 		{
 			// Ignore min / max undirected degree if specific amount is given
 			if ( ( degree = config.und_degree ) != null ) {			
-				this.createRandomEdgesSpan(degree, degree, false, new_nodes);
+				this.createEdgesSpan(degree, degree, false, new_nodes);
 			}
 			else if ( ( min_degree = config.min_und_degree) != null 
 						&& ( max_degree = config.max_und_degree ) != null ) {
-				this.createRandomEdgesSpan(min_degree, max_degree, false, new_nodes);
+				this.createEdgesSpan(min_degree, max_degree, false, new_nodes);
 			}
 			// Ignore min / max directed degree if specific amount is given
 			if ( degree = config.dir_degree ) {			
-				this.createRandomEdgesSpan(degree, degree, true, new_nodes);
+				this.createEdgesSpan(degree, degree, true, new_nodes);
 			}
 			else if ( ( min_degree = config.min_dir_degree) != null 
 						&& ( max_degree = config.max_dir_degree ) != null ) {
-				this.createRandomEdgesSpan(min_degree, max_degree, true, new_nodes);
+				this.createEdgesSpan(min_degree, max_degree, true, new_nodes);
 			}
 		}
 		else {
 			if ( config.probability_dir != null ) {
-				this.createRandomEdgesProb( config.probability_dir, true, new_nodes );
+				this.createEdgesProb( config.probability_dir, true, new_nodes );
 			}
 			if ( config.probability_und != null ) {
-				this.createRandomEdgesProb( config.probability_und, false, new_nodes );
+				this.createEdgesProb( config.probability_und, false, new_nodes );
 			}
 		}
 	}
@@ -295,8 +296,8 @@ class SimplePerturber implements ISimplePerturber {
 	 * @param new_nodes set of nodes that were added
 	 * CAUTION: this algorithm takes quadratic runtime in #nodes
 	 */
-	createRandomEdgesProb( probability: number, directed?: boolean,
-												 new_nodes?: { [key: string] : $N.IBaseNode} ) : void {
+	createEdgesProb(probability: number, directed?: boolean,
+									new_nodes?: { [key: string] : $N.IBaseNode} ) : void {
 		if (0 > probability || 1 < probability) {
 			throw new Error("Probability out of range.");
 		}
@@ -328,8 +329,8 @@ class SimplePerturber implements ISimplePerturber {
 	 * CAUTION: this algorithm could take quadratic runtime in #nodes
 	 * but should be much faster
 	 */
-	createRandomEdgesSpan( min: number, max: number, directed?: boolean,
-												 setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
+	createEdgesSpan(min: number, max: number, directed?: boolean,
+									setOfNodes?: { [key: string] : $N.IBaseNode} ) : void {
 		if (min < 0) {
 			throw new Error('Minimum degree cannot be negative.');
 		}

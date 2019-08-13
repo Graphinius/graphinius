@@ -321,17 +321,17 @@ describe('Checking index.js structure - ', () => {
       expect(typeof SP).toBe("function");
       const sp = new SP();
       expect(typeof sp).toBe("object");
-      expect(typeof sp.randomlyDeleteNodesPercentage).toBe("function");
-      expect(typeof sp.randomlyDeleteUndEdgesPercentage).toBe("function");      
-      expect(typeof sp.randomlyDeleteDirEdgesPercentage).toBe("function");
-      expect(typeof sp.randomlyDeleteNodesAmount).toBe("function");
-      expect(typeof sp.randomlyDeleteUndEdgesAmount).toBe("function");
-      expect(typeof sp.randomlyDeleteDirEdgesAmount).toBe("function");
-      expect(typeof sp.randomlyAddNodesPercentage).toBe("function");      
-      expect(typeof sp.randomlyAddUndEdgesPercentage).toBe("function");
-      expect(typeof sp.randomlyAddDirEdgesPercentage).toBe("function");
-      expect(typeof sp.randomlyAddNodesAmount).toBe("function");
-      expect(typeof sp.randomlyAddEdgesAmount).toBe("function");
+      expect(typeof sp.deleteNodesPercentage).toBe("function");
+      expect(typeof sp.deleteUndEdgesPercentage).toBe("function");
+      expect(typeof sp.deleteDirEdgesPercentage).toBe("function");
+      expect(typeof sp.deleteNodesAmount).toBe("function");
+      expect(typeof sp.deleteUndEdgesAmount).toBe("function");
+      expect(typeof sp.deleteDirEdgesAmount).toBe("function");
+      expect(typeof sp.addNodesPercentage).toBe("function");
+      expect(typeof sp.addUndEdgesPercentage).toBe("function");
+      expect(typeof sp.addDirEdgesPercentage).toBe("function");
+      expect(typeof sp.addNodesAmount).toBe("function");
+      expect(typeof sp.addEdgesAmount).toBe("function");
     });
 
   });

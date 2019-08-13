@@ -14,6 +14,7 @@ import {BFS} from "../../../src/search/BFS";
 import {DFS} from "../../../src/search/DFS";
 import {PFS} from "../../../src/search/PFS";
 import {Pagerank, PagerankRWConfig} from "../../../src/centralities/Pagerank";
+import {SimplePerturber} from "../../../src/perturbation/SimplePerturbations";
 
 
 const logger = new Logger();
@@ -39,7 +40,11 @@ describe('SCC Tests - ', () => {
 
 	beforeAll(() => {
 		SCCFiles.forEach(scc_file => {
-			SCCGraphs.set(scc_file, csvIn.readFromEdgeListFile(CSV_PERF_PATH + '/' + scc_file));
+			const tic = +new Date;
+			const graph = csvIn.readFromEdgeListFile(CSV_PERF_PATH + '/' + scc_file);
+			SCCGraphs.set(scc_file, graph);
+			const toc = +new Date;
+			logger.log(`Reading in graph ${scc_file} with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
 		});
 		expect(SCCGraphs.size).toBe(3);
 	});
@@ -65,8 +70,8 @@ describe('SCC Tests - ', () => {
 	});
 
 
-	it('Simple Graph Traversals', () => {
-		[BFS, DFS, PFS].forEach(traversal => {
+	[BFS, DFS, PFS].forEach(traversal => {
+		it(`${traversal.name}`, () => {
 			SCCGraphs.forEach(graph => {
 				const tic = +new Date;
 				traversal(graph, graph.getRandomNode());
@@ -86,7 +91,30 @@ describe('SCC Tests - ', () => {
 			// fs.writeFileSync(`${OUTPUT_PATH}/pagerank_result_${graph.label}.json`, JSON.stringify(result));
 			logger.log(`Pagerank (UNweighted) on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
 		});
+	});
 
+
+	it.only('Perturbation - Adding nodes with edges', () => {
+		const nrAddNodes = Math.floor(Math.random() * 300);
+		const probEdge = Math.random() * 0.003;
+		SCCGraphs.forEach(graph => {
+			const PT = new SimplePerturber(graph);
+			const tic = +new Date;
+			PT.addNodesAmount(nrAddNodes, {probability_und: probEdge});
+			const toc = +new Date;
+			logger.log(`Adding ${nrAddNodes} nodes & introducing new edges with p=${probEdge} on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
+		});
+	});
+
+
+	it('Perturbation - Adding nodes & edges', () => {
+		SCCGraphs.forEach(graph => {
+			const PT = new SimplePerturber(graph);
+			const tic = +new Date;
+			PT.addNodesAmount(graph.nrNodes());
+			const toc = +new Date;
+			logger.log(`Doubling nodes & introducing new edges on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
+		});
 	});
 
 });
