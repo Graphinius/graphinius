@@ -1,8 +1,11 @@
 import * as $N from '../core/base/BaseNode';
 import * as $E from '../core/base/BaseEdge';
 import * as $G from '../core/base/BaseGraph';
-import { Logger } from '../utils/Logger';
 
+import * as uuid from 'uuid';
+const v4 = uuid.v4;
+
+import { Logger } from '../utils/Logger';
 let logger : Logger = new Logger();
 
 /**
@@ -48,12 +51,14 @@ class SimplePerturber implements ISimplePerturber {
 
   constructor(private _graph: $G.IGraph) {}
 
-
 	/**
 	 *
 	 * @param percentage
 	 */
 	randomlyDeleteNodesPercentage( percentage: number ) : void {
+		if ( percentage < 0 ) {
+			throw new Error('Cowardly refusing to remove a negative amount of nodes');
+		}
 		if ( percentage > 100 ) {
 			percentage = 100;
 		}
@@ -202,13 +207,15 @@ class SimplePerturber implements ISimplePerturber {
 	 * 
 	 */
 	randomlyAddNodesPercentage( percentage: number, config?: NodeDegreeConfiguration ) : void {
+		if ( percentage < 0 ) {
+			throw 'Cowardly refusing to add a negative amount of nodes';
+		}
 		let nr_nodes_to_add = Math.ceil(this._graph.nrNodes() * percentage/100);
 		this.randomlyAddNodesAmount( nr_nodes_to_add, config );
 	}
 
 
 	/**
-	 * 
 	 * If the degree configuration is invalid
 	 * (negative or infinite degree amount / percentage)
 	 * the nodes will have been created nevertheless
@@ -223,7 +230,7 @@ class SimplePerturber implements ISimplePerturber {
 			/**
 			 * @todo check if this procedure is 'random enough'
 			 */
-			let new_node_id = (Math.random()+1).toString(36).substr(2, 32) + (Math.random()+1).toString(36).substr(2, 32);
+			let new_node_id = v4();
 			new_nodes[new_node_id] = this._graph.addNodeByID( new_node_id );
 		}
 		
@@ -284,7 +291,8 @@ class SimplePerturber implements ISimplePerturber {
 	 * Go through all node combinations, and
 	 * add an (un)directed edge with 
 	 * @param probability and
-	 * @direction true or false
+	 * @param directed true or false
+	 * @param new_nodes set of nodes that were added
 	 * CAUTION: this algorithm takes quadratic runtime in #nodes
 	 */
 	createRandomEdgesProb( probability: number, directed?: boolean,
@@ -294,19 +302,17 @@ class SimplePerturber implements ISimplePerturber {
 		}
 		directed = directed || false;
 		new_nodes = new_nodes || this._graph.getNodes();
-		let all_nodes = this._graph.getNodes(),
+		let
+			all_nodes = this._graph.getNodes(),
 				node_a, 
 				node_b,
 				edge_id,
 				dir = directed ? '_d' : '_u';
+
 		for (node_a in new_nodes) {
 			for (node_b in all_nodes) {
 				if (node_a !== node_b && Math.random() <= probability) {
 					edge_id = all_nodes[node_a].getID() + "_" + all_nodes[node_b].getID() + dir;
-					// Check if edge already exists
-					if (this._graph.getNodes()[node_a].hasEdgeID(edge_id)) {
-						continue;
-					}
 					this._graph.addEdgeByID(edge_id, all_nodes[node_a], all_nodes[node_b], {directed: directed});
 				}
 			}
