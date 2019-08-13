@@ -4,6 +4,9 @@ import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {SimplePerturber, NodeDegreeConfiguration} from '../../src/perturbation/SimplePerturbations';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
+import {Logger} from "../../src/utils/Logger";
+
+const logger = new Logger();
 
 const degCent = new DegreeCentrality();
 
@@ -50,6 +53,9 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 		// 	graph = json.readFromJSONFile(small_graph);
 		// 	perturber = new SimplePerturber(graph);
 		// 	stats = graph.getStats();
+		//
+		// 	logger.log(stats);
+		//
 		// 	expect(graph.nrNodes()).toBe(SMALL_GRAPH_NR_NODES);
 		// 	expect(graph.nrUndEdges()).toBe(0);
 		// 	expect(graph.nrDirEdges()).toBe(SMALL_GRAPH_NR_EDGES);
@@ -59,12 +65,14 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 		describe('Randomly ADD different amounts / percentages of NODES - ', () => {
 
 			test('should refuse to add a negative amount of nodes', () => {
-				expect(perturber.randomlyAddNodesAmount.bind(perturber, -1)).toThrowError('Cowardly refusing to add a negative amount of nodes');
+				expect(perturber.randomlyAddNodesAmount.bind(perturber, -1))
+					.toThrowError('Cowardly refusing to add a negative amount of nodes');
 			});
 
 
 			test('should refuse to add a negative percentage of nodes', () => {
-				expect(perturber.randomlyAddNodesPercentage.bind(perturber, -1)).toThrowError('Cowardly refusing to add a negative amount of nodes');
+				expect(perturber.randomlyAddNodesPercentage.bind(perturber, -1))
+					.toThrowError('Cowardly refusing to add a negative amount of nodes');
 			});
 
 

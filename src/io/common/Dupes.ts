@@ -32,7 +32,6 @@ class EdgeDupeChecker {
 		// logger.log(`Got ${pds.size} potential edge dupe`);
 
 		for ( let pd of pds.values() ) {
-
 			if ( !EdgeDupeChecker.checkTypeWeightEquality(e, pd)
 				|| !EdgeDupeChecker.typeWeightDupe(e, pd) ) {
 				pds.delete(pd);
