@@ -3,46 +3,40 @@ import * as $E from '../../src/core/base/BaseEdge';
 import * as $G from '../../src/core/base/BaseGraph';
 import * as $KRON from '../../src/generators/KroneckerLeskovec';
 
-import { Logger } from '../../src/utils/Logger';
+import {Logger} from '../../src/utils/Logger';
 const logger = new Logger();
 
 
 describe("Base Tests", () => {
-    test('should generate a standard config', () => {
-        var gen = new $KRON.KROL();
-        var cfg = gen.prepareKROLStandardConfig();
-        expect(cfg).toEqual({
-            genMat: [[0.9, 0.5], [0.5, 0.1]],
-            cycles: 5
-        });
-    });
 
-    test('should generate a graph from standard config', () => {
-        var gen = new $KRON.KROL();
-        var synGraph = gen.generate().graph;
-        expect(synGraph.nrNodes() ).toBe(64);
-        // TODO: what can we test besides the number of nodes?
-    });
+	test('should generate a standard config', () => {
+		let gen = new $KRON.KROL();
+		let cfg = gen.prepareKROLStandardConfig();
+		expect(cfg).toEqual({
+			genMat: [[0.9, 0.5], [0.5, 0.1]],
+			cycles: 5
+		});
+	});
 
-    test('should generate a graph with 256 nodes', () => {
-        var cfg = {
-            genMat: [[0.9, 0.5], [0.5, 0.1]],
-            cycles: 7
-        };
-        var gen = new $KRON.KROL(cfg);
-        var synGraph = gen.generate().graph;
-        expect(synGraph.nrNodes() ).toBe(256);
-    });
-    
 
-    test.skip('Performance Test - should generate a graph with 2^13 nodes', () => {
-        var cfg = {
-            genMat: [[0.7, 0.5], [0.5, 0.7]],
-            cycles: 12
-        };
-        var gen = new $KRON.KROL(cfg);
-        var synGraph = gen.generate().graph;
-        logger.log(`Graph has ${synGraph.nrUndEdges()} edges.`)
-        expect(synGraph.nrNodes()).toBe(1024*8);
-    });
+	/**
+	 * @todo what can we test besides the number of nodes?
+	 */
+	test('should generate a graph from standard config', () => {
+		let gen = new $KRON.KROL();
+		let synGraph = gen.generate().graph;
+		expect(synGraph.nrNodes()).toBe(64);
+	});
+
+
+	test('should generate a graph with 256 nodes', () => {
+		let cfg = {
+			genMat: [[0.9, 0.5], [0.5, 0.1]],
+			cycles: 4
+		};
+		let gen = new $KRON.KROL(cfg);
+		let synGraph = gen.generate().graph;
+		expect(synGraph.nrNodes()).toBe(32);
+	});
+
 });
