@@ -91,50 +91,6 @@ describe('Johnsons APSP TEST -', () => {
         }
     );
 
-    /**
-     * @todo outsource to the performance test suite, once established...
-     */
-    test.skip(
-        'on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall',
-        () => {
-            let startF = +new Date();
-            $FW.FloydWarshallAPSP(graph_midsize);
-            let endF = +new Date();
-            let runtimeF = endF - startF;
-
-            let startJ = +new Date();
-            $JO.Johnsons(graph_midsize);
-            let endJ = +new Date();
-            let runtimeJ = endJ - startJ;
-
-            expect(runtimeF).toBeGreaterThan(runtimeJ);
-            logger.log("On the midsize graph, Johnsons was " + runtimeF / runtimeJ + " times faster than FW." +
-                "runtime Johnsons: " + runtimeJ + " ms, runtime FW: " + runtimeF + " ms.");
-        }
-    );
-
-    /**
-     * @todo outsource to the performance test suite, once established...
-     */
-    test.skip(
-        'on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall',
-        () => {
-            let startF = +new Date();
-            $FW.FloydWarshallAPSP(graph_social);
-            let endF = +new Date();
-            //runtimes are always in ms
-            let runtimeF = endF - startF;
-
-            let startJ = +new Date();
-            $JO.Johnsons(graph_social);
-            let endJ = +new Date();
-            let runtimeJ = endJ - startJ;
-
-            expect(runtimeF).toBeGreaterThan(runtimeJ);
-            logger.log("On the social graph, Johnsons was " + runtimeF / runtimeJ + " times faster than FW." +
-                "runtime Johnsons: " + runtimeJ + " ms, \nruntime FW: " + runtimeF + " ms.");
-        }
-    );
 
     test('should refuse to compute Johnsons on empty graph', () => {
         let empty_graph = new $G.BaseGraph("iamempty");
@@ -142,11 +98,13 @@ describe('Johnsons APSP TEST -', () => {
             .toThrowError("Cowardly refusing to traverse graph without edges.");
     });
 
+
     test('should correctly recognize graphs with/without negative edges', () => {
         expect(graph_search.hasNegativeEdge()).toBe(false);
         expect(graph_BF.hasNegativeEdge()).toBe(true);
         expect(graph_NC.hasNegativeEdge()).toBe(true);
     });
+
 
     test('should refuse to compute a graph with negative cycle',
         () => {
@@ -157,6 +115,7 @@ describe('Johnsons APSP TEST -', () => {
         }
     );
 
+
     test('function addextraNandE should correctly add a node', () => {
         let extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         let graph_extra = graph_search.cloneStructure();
@@ -164,12 +123,14 @@ describe('Johnsons APSP TEST -', () => {
         expect(graph_extra.nrNodes()).toEqual(graph_search.nrNodes() + 1);
     });
 
+
     test('function addextraNandE should correctly add n edges', () => {
         let extraNode: $N.BaseNode = new $N.BaseNode("extraNode");
         let graph_extra = graph_search.cloneStructure();
         graph_extra = $JO.addExtraNandE(graph_extra, extraNode);
         expect(graph_extra.nrDirEdges() + graph_extra.nrUndEdges()).toEqual(graph_search.nrDirEdges() + graph_search.nrUndEdges() + graph_search.nrNodes());
     });
+
 
     test('function reweighGraph should function correctly', () => {
         expect(graph_BF.hasNegativeEdge()).toBe(true);
@@ -180,6 +141,46 @@ describe('Johnsons APSP TEST -', () => {
         graph_BF3 = $JO.reWeighGraph(graph_BF3, BFresult.distances, extraNode);
         expect(graph_BF3.hasNegativeEdge()).toBe(false);
     });
+    
+
+  test.skip(
+    'on midsize graphs, runtime of Johnsons should be faster than Floyd-Warshall',
+    () => {
+      let startF = +new Date();
+      $FW.FloydWarshallAPSP(graph_midsize);
+      let endF = +new Date();
+      let runtimeF = endF - startF;
+
+      let startJ = +new Date();
+      $JO.Johnsons(graph_midsize);
+      let endJ = +new Date();
+      let runtimeJ = endJ - startJ;
+
+      expect(runtimeF).toBeGreaterThan(runtimeJ);
+      logger.log("On the midsize graph, Johnsons was " + runtimeF / runtimeJ + " times faster than FW." +
+        "runtime Johnsons: " + runtimeJ + " ms, runtime FW: " + runtimeF + " ms.");
+    }
+  );
+
+  test.skip(
+    'on large all-positive graphs, runtime of Johnsons should be faster than Floyd-Warshall',
+    () => {
+      let startF = +new Date();
+      $FW.FloydWarshallAPSP(graph_social);
+      let endF = +new Date();
+      //runtimes are always in ms
+      let runtimeF = endF - startF;
+
+      let startJ = +new Date();
+      $JO.Johnsons(graph_social);
+      let endJ = +new Date();
+      let runtimeJ = endJ - startJ;
+
+      expect(runtimeF).toBeGreaterThan(runtimeJ);
+      logger.log("On the social graph, Johnsons was " + runtimeF / runtimeJ + " times faster than FW." +
+        "runtime Johnsons: " + runtimeJ + " ms, \nruntime FW: " + runtimeF + " ms.");
+    }
+  );
 
 });
 

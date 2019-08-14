@@ -854,12 +854,12 @@ declare module 'graphinius/utils/Gauss' {
 
 }
 declare module 'graphinius/centralities/PagerankGauss' {
-	import * as $G from 'graphinius/core/base/BaseGraph'; class pageRankDetCentrality {
+	import * as $G from 'graphinius/core/base/BaseGraph'; class PagerankGauss {
 	    getCentralityMap(graph: $G.IGraph, weighted?: boolean): {
 	        [id: string]: number;
 	    };
 	}
-	export { pageRankDetCentrality };
+	export { PagerankGauss };
 
 }
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {

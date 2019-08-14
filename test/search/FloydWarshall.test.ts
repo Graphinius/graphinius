@@ -13,14 +13,14 @@ let bernd_graph = `${JSON_DATA_PATH}/bernd_ares_pos.json`;
 let intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`;
 let search_graph_pos = `${JSON_DATA_PATH}/search_graph_multiple_SPs_positive.json`;
 
-let csv_config: ICSVInConfig = {
+const csv_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 };
 
-let std_json_in_config: IJSONInConfig = {
+const json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
@@ -35,19 +35,19 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		graph_search: $G.IGraph,
 		graph_nullcycle: $G.IGraph,
 		graph_bernd: $G.IGraph,
-		graph_midsize: $G.IGraph,
+		graph_intermediate: $G.IGraph,
 		graph_social: $G.IGraph,
 		stats: $G.GraphStats,
 		FW_res: {};
 
 
 	beforeAll(() => {
-		json = new JSONInput(std_json_in_config);
+		json = new JSONInput(json_in_config);
 		csv = new CSVInput(csv_config);
 		graph_search = json.readFromJSONFile(search_graph_pos);
 		graph_bernd = json.readFromJSONFile(bernd_graph);
 		graph_nullcycle = json.readFromJSONFile(search_graph);
-		graph_midsize = json.readFromJSONFile(intermediate);
+		graph_intermediate = json.readFromJSONFile(intermediate);
 		graph_social = csv.readFromEdgeListFile(social_graph);
 	});
 
@@ -110,39 +110,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 					expect(FW_res).toEqual(expected_result);
 				}
 			);
-
-		});
-
-	});
-
-	/**
-	 * @todo outsource to performance test suite
-	 */
-	describe('FW on several (slightly) larger graphs - ', () => {
-
-		test(
-			'performance test of Floyd Warshal on a ~75 node / ~200 edge graph',
-			() => {
-				let d = +new Date();
-				FW_res = $FW.FloydWarshallArray(graph_bernd);
-				// FW_res = $FW.FloydWarshallWithShortestPaths(graph_bernd);
-				// FW_res = $FW.FloydWarshallAPSP(graph_bernd);
-				let e = +new Date();
-				logger.log("Floyd on Bernd (75 nodes) took " + (e - d) + "ms to finish");
-			}
-		);
-
-
-		test('performance test of FW implementation on 246 nodes)', () => {
-			let d = +new Date();
-			FW_res = $FW.FloydWarshallAPSP(graph_midsize);
-			let e = +new Date();
-			logger.log("Floyd on intermediate graph (246 nodes) with SPs took " + (e - d) + "ms to finish");
-			d = +new Date();
-			FW_res = $FW.FloydWarshallArray(graph_midsize);
-			// logger.log(FW_res);
-			e = +new Date();
-			logger.log("Floyd on intermediate graph without SPs (246 nodes, ARRAY version) took " + (e - d) + "ms to finish");
 		});
 
 
@@ -155,13 +122,6 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 			}
 		);
 
-
-		test.skip('performance test of ~1k nodes and ~50k edges', () => {
-			let d = +new Date();
-			FW_res = $FW.FloydWarshallArray(graph_social);
-			let e = +new Date();
-			logger.log("Floyd on social network ~1k (Array version) took " + (e - d) + "ms to finish");
-		});
 	});
 
 });
