@@ -11,16 +11,8 @@ import {Logger} from '../../src/utils/Logger';
 
 const logger = new Logger();
 
-let csv_config: ICSVInConfig = {
-	separator: ' ',
-	explicit_direction: false,
-	direction_mode: false,
-	weighted: false
-};
-
 const
 	json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
-	csv = new CSVInput(csv_config),
 	search_graph = `${JSON_DATA_PATH}/search_graph_multiple_SPs.json`,
 	bf_graph_file = `${JSON_DATA_PATH}/bellman_ford.json`,
 	graph_search: $G.IGraph = json.readFromJSONFile(search_graph),
@@ -30,18 +22,15 @@ const
 describe('Johnsons APSP TEST -', () => {
 
 	let bf_graph_neg_cycle_file = `${JSON_DATA_PATH}/negative_cycle.json`,
-		intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`,
-		social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;
+		intermediate = `${JSON_DATA_PATH}/bernd_ares_intermediate_pos.json`;
 
 	let graph_NC: $G.IGraph,
-		graph_midsize: $G.IGraph,
-		graph_social: $G.IGraph;
+		graph_midsize: $G.IGraph;
 
 
 	beforeEach(() => {
 		graph_NC = json.readFromJSONFile(bf_graph_neg_cycle_file);
 		graph_midsize = json.readFromJSONFile(intermediate);
-		graph_social = csv.readFromEdgeListFile(social_graph);
 	});
 
 

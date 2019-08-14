@@ -11,9 +11,6 @@ function Johnsons(graph: $G.IGraph): {} {
     throw new Error("Cowardly refusing to traverse graph without edges.");
   }
 
-  //getting all graph nodes
-  let allNodes: { [key: string]: $N.IBaseNode } = graph.getNodes();
-
   if (graph.hasNegativeEdge()) {
     let extraNode: $N.IBaseNode = new $N.BaseNode("extraNode");
     graph = addExtraNandE(graph, extraNode);
@@ -127,8 +124,8 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
   };
   specialConfig.callbacks.not_encountered.splice(0, 1, notEncounteredJohnsons);
 
-  let betterPathJohnsons = function (context: $PFS.PFS_Scope) {
 
+  let betterPathJohnsons = function (context: $PFS.PFS_Scope) {
     let i = nodeIDIdxMap[context.root_node.getID()],
       j = nodeIDIdxMap[context.next.node.getID()];
 
@@ -138,8 +135,8 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
       next[i][j].splice(0, next[i][j].length, nodeIDIdxMap[context.current.node.getID()]);
     }
   };
-  
   specialConfig.callbacks.better_path.splice(0, 1, betterPathJohnsons);
+
 
   let equalPathJohnsons = function (context: $PFS.PFS_Scope) {
     let
@@ -150,8 +147,8 @@ function PFSFromAllNodes(graph: $G.IGraph): {} {
       next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], [nodeIDIdxMap[context.current.node.getID()]]);
     }
   };
-  
   specialConfig.callbacks.equal_path.push(equalPathJohnsons);
+
 
   for (let key in nodesDict) {
     $PFS.PFS(graph, nodesDict[key], specialConfig);

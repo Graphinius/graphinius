@@ -6,7 +6,7 @@ import {
 	CSV_DATA_PATH,
 	JSON_DATA_PATH,
 	JSON_CENT_PATH,
-	CSV_SN_PATH
+	CSV_SN_PATH, CSV_EGO_PATH
 } from '../config/config';
 
 import {Logger} from '../../src/utils/Logger';
@@ -396,13 +396,14 @@ describe("PageRank Centrality Tests", () => {
 
 
 	/**
-	 * COMPARISON TESTS BETWEEN "DEFAULT INIT" AND "RANDOM INIT MAP" ON 333 NODE GRAPH
+	 * COMPARISON TESTS BETWEEN "DEFAULT INIT" AND `RANDOM INIT MAP`
 	 *
-	 * @todo - Check for a mathematically sound explanation of why differently initialized graphs will converge to *about* the same static distribution
+	 * @todo - Check for a mathematically sound explanation of why differently initialized graphs
+	 * 				 will converge to *about* the same static distribution
 	 * @todo - figure out why they don't converge to the *exact* same solution...
 	 */
-	test('default & random INIT on 333 node graph should give similar results', () => {
-		let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + sn_300_file);
+	test('default & random INIT should give similar results', () => {
+		let sn_graph = csv.readFromEdgeListFile(`${CSV_EGO_PATH}/3980.csv`);
 		let results = {
 			default_init: {},
 			random_init: {}
