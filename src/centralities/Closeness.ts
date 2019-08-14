@@ -41,7 +41,7 @@ class ClosenessCentrality{
       accumulated_distance += context.current.best + (isNaN(context.next.edge.getWeight()) ? 1 : context.next.edge.getWeight());
     };
     //We found a better path, we need to correct the accumulated distance
-    var betterPathFound = function( context: $PFS.PFS_Scope  ) {
+    let betterPathFound = function( context: $PFS.PFS_Scope  ) {
       //console.log("correcting distance "+context.current.node.getID()+"->"+context.next.node.getID()+" from " + pfs_config.result[context.next.node.getID()].distance + "to" + context.better_dist);
       accumulated_distance -= pfs_config.result[context.next.node.getID()].distance - context.proposed_dist;
       };

@@ -5,21 +5,21 @@ import * as $CC from '../../src/centralities/Closeness';
 import {CSV_CENT_PATH, CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 
 
-let csv_in_config: ICSVInConfig = {
+const csv_in_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 };
 
-let json_in_config: IJSONInConfig = {
+const json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: true,
 	weighted: true
 };
 
 
-let csv = new CSVInput(csv_in_config),
+const csv = new CSVInput(csv_in_config),
 	json = new JSONInput(json_in_config),
 	sn_graph_file_1K 		= `${CSV_SN_PATH}/social_network_edges_1K.csv`,
 	sn_graph_file_300 	= `${CSV_SN_PATH}/social_network_edges_300.csv`,
@@ -27,7 +27,6 @@ let csv = new CSVInput(csv_in_config),
 	deg_cent_graph 			= `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
 	graph: $G.IGraph = json.readFromJSONFile(deg_cent_graph),
 	graph_und_unw: $G.IGraph = csv.readFromEdgeListFile(und_unw_graph),
-	closeness_mapFW,
 	CC = new $CC.ClosenessCentrality();
 
 
@@ -123,50 +122,6 @@ describe("Closeness Centrality Tests", () => {
 			//checkScoresEqual(graph_6,CCFW.getCentralityMapFW( graph_6 ));
 		}
 	);
-
-
-
-	/**
-	 * Performance measurement
-	 * 
-	 * TODO: Outsource to it's own performance test suite
-	 */
-
-	test('should run the closeness centrality on a 300 nodes social network, FW', () => {
-			let sn_graph = csv.readFromEdgeListFile(sn_graph_file_300);
-
-			let CCFW = new $CC.ClosenessCentrality();
-			closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
-		}
-	);
-
-
-	describe('Performance tests - ', () => {
-		[sn_graph_file_300].forEach( sn_graph_file => { // , sn_graph_file_1K
-			test('should run the closeness centrality on a 300 nodes social network, should be same as FW', () => {
-				let sn_graph = csv.readFromEdgeListFile(sn_graph_file);
-				let CCFW = new $CC.ClosenessCentrality();
-
-				let tic = +new Date();
-				closeness_mapFW = CCFW.getCentralityMapFW(sn_graph);
-				let toc = +new Date();
-				//console.log(closeness_mapFW);
-				console.log(`Closeness on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} using FW took ${toc - tic} ms to finish`);
-				tic = +new Date();
-				let cc = CC.getCentralityMap(sn_graph);
-				toc = +new Date();
-				//console.log(cc);
-				console.log(`Closeness on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} using PFS took ${toc - tic} ms to finish`);
-				
-				let ctr = 0;
-				for (let key in cc) {
-					//console.log("["+key+"]"+cc[key]+" " +closeness_mapFW[ctr]+"["+ctr+"]");
-					expect(cc[key]).toBe(closeness_mapFW[ctr]);
-					ctr++;
-				}
-			});
-		});
-	});
 
 });
 
