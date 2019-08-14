@@ -8,7 +8,6 @@ import { gauss } from "../utils/Gauss";
 class PagerankGauss {
 
   getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id:string]: number} {
-
     //First initialize the values for all nodes
     let divideTable = {}; //Tells us how many outgoing edges each node has
     let matr = [];
@@ -23,7 +22,7 @@ class PagerankGauss {
       map[key] = ctr;
       let node = graph.getNodeById(key);
       let node_InEdges = $SU.mergeObjects([node.inEdges(), node.undEdges()]);
-      matr[ctr] = new Array();
+      matr[ctr] = [];
       //Find out which other nodes influence the PageRank of this node
       for(let edgeKey in node_InEdges){
         let edge:IBaseEdge = node_InEdges[edgeKey];
