@@ -5,16 +5,16 @@
  * (NodeJS standard heap size is limited to 1.7 GB)
  */
 import * as fs from 'fs';
-import {CSVInput, ICSVInConfig} from '../../../src/io/input/CSVInput';
-import {CSV_PERF_PATH, OUTPUT_PATH} from '../../config/config';
-import {Logger} from "../../../src/utils/Logger";
-import {IGraph} from "../../../src/core/base/BaseGraph";
-import {DegreeCentrality, DegreeDistribution} from '../../../src/centralities/Degree';
-import {BFS} from "../../../src/search/BFS";
-import {DFS} from "../../../src/search/DFS";
-import {PFS} from "../../../src/search/PFS";
-import {Pagerank, PagerankRWConfig} from "../../../src/centralities/Pagerank";
-import {SimplePerturber} from "../../../src/perturbation/SimplePerturbations";
+import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
+import {CSV_PERF_PATH, OUTPUT_PATH} from '../config/config';
+import {Logger} from "../../src/utils/Logger";
+import {IGraph} from "../../src/core/base/BaseGraph";
+import {DegreeCentrality, DegreeDistribution} from '../../src/centralities/Degree';
+import {BFS} from "../../src/search/BFS";
+import {DFS} from "../../src/search/DFS";
+import {PFS} from "../../src/search/PFS";
+import {Pagerank, PagerankRWConfig} from "../../src/centralities/Pagerank";
+import {SimplePerturber} from "../../src/perturbation/SimplePerturbations";
 
 
 const logger = new Logger();
@@ -94,7 +94,7 @@ describe('SCC Tests - ', () => {
 	});
 
 
-	it.only('Perturbation - Adding nodes with edges', () => {
+	it('Perturbation - Adding nodes with edges', () => {
 		const nrAddNodes = Math.floor(Math.random() * 300);
 		const probEdge = Math.random() * 0.003;
 		SCCGraphs.forEach(graph => {
@@ -107,13 +107,13 @@ describe('SCC Tests - ', () => {
 	});
 
 
-	it('Perturbation - Adding nodes & edges', () => {
+	it('Perturbation - Deleting nodes & edges', () => {
 		SCCGraphs.forEach(graph => {
 			const PT = new SimplePerturber(graph);
 			const tic = +new Date;
-			PT.addNodesAmount(graph.nrNodes());
+			PT.deleteUndEdgesAmount(graph.nrNodes() / 2);
 			const toc = +new Date;
-			logger.log(`Doubling nodes & introducing new edges on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
+			logger.log(`Cutting nodes in half on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
 		});
 	});
 

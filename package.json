@@ -2,10 +2,10 @@
   "scripts": {
     "build": "gulp build",
     "bundle": "gulp bundle",
-    "test:all": "jest -c jest.config.js",
-    "test:sync": "jest -c jest.config.sync.js",
-    "test:async": "jest -c jest.config.async.js",
-    "test:performance": "jest -c jest.config.performance.js"
+    "test:all": "jest -c jest.config.all.js",
+    "test:sync": "jest -c jest.config.js",
+    "test:async": "G_LOG=debug jest -c jest.config.async.js",
+    "test:performance": "G_LOG=debug jest -c jest.config.performance.js"
   },
   "repository": {
     "type": "git",

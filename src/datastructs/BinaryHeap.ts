@@ -107,7 +107,7 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   find(obj: any): any {
-    var pos = this.getNodePosition(obj);
+    let pos = this.getNodePosition(obj);
     return this._array[pos];
   }
 
@@ -137,20 +137,14 @@ class BinaryHeap implements IBinaryHeap {
       throw new Error('Object invalid.');
     }
 
-    var objID = this._evalObjID(obj),
-        found = null;
-
-    /**
-     * Search in O(1)
-     */
-    var pos = this.getNodePosition(obj),
+    let pos = this.getNodePosition(obj),
         found = this._array[pos] != null ? this._array[pos] : null;
 
     if (found === null) {
       return undefined;
     }
     
-    var last_array_obj = this._array.pop();
+    let last_array_obj = this._array.pop();
     this.removeNodePosition(obj);
 
     if ( this.size() && found !== last_array_obj ) {
@@ -166,10 +160,10 @@ class BinaryHeap implements IBinaryHeap {
 
 
   private trickleDown(i: number) {
-    var parent = this._array[i];
+    let parent = this._array[i];
 
     while (true) {
-      var right_child_idx = (i + 1) * 2,
+      let right_child_idx = (i + 1) * 2,
         left_child_idx = right_child_idx - 1,
         right_child = this._array[right_child_idx],
         left_child = this._array[left_child_idx],
@@ -203,11 +197,11 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   private trickleUp(i: number) {
-    var child = this._array[i];
+    let child = this._array[i];
 
     // Can only trickle up from positive levels
     while (i) {
-      var parent_idx = Math.floor((i + 1) / 2) - 1,
+      let parent_idx = Math.floor((i + 1) / 2) - 1,
         parent = this._array[parent_idx];
       if (this.orderCorrect(parent, child)) {
         break;
@@ -226,8 +220,8 @@ class BinaryHeap implements IBinaryHeap {
   }
 
   private orderCorrect(obj_a, obj_b) {
-    var obj_a_pr = this._evalPriority(obj_a);
-    var obj_b_pr = this._evalPriority(obj_b);
+    let obj_a_pr = this._evalPriority(obj_a);
+    let obj_b_pr = this._evalPriority(obj_b);
     if (this._mode === BinaryHeapMode.MIN) {
       return obj_a_pr <= obj_b_pr;
     }
@@ -246,11 +240,11 @@ class BinaryHeap implements IBinaryHeap {
     if ( obj == null || pos == null || pos !== (pos|0) ) {
       throw new Error('minium required arguments are obj and new_pos');
     }
-    var pos_obj: PositionHeapEntry = {
+    let pos_obj: PositionHeapEntry = {
       score: this.evalInputScore(obj),
       position: pos
     };
-    var obj_key = this.evalInputObjID(obj);
+    let obj_key = this.evalInputObjID(obj);
     this._positions[obj_key] = pos_obj;
   }
 
@@ -259,10 +253,10 @@ class BinaryHeap implements IBinaryHeap {
    *
    */
   private getNodePosition(obj: any) : number {
-    var obj_key = this.evalInputObjID(obj);
+    let obj_key = this.evalInputObjID(obj);
     // console.log(obj_key);
 
-    var occurrence : PositionHeapEntry = this._positions[obj_key];
+    let occurrence : PositionHeapEntry = this._positions[obj_key];
     // console.log(occurrence);
     
     return occurrence ? occurrence.position : null;
@@ -274,7 +268,7 @@ class BinaryHeap implements IBinaryHeap {
    * @returns {number}
    */
   private removeNodePosition(obj: any) : void {
-    var obj_key = this.evalInputObjID(obj);
+    let obj_key = this.evalInputObjID(obj);
     delete this._positions[obj_key];
   }
 
