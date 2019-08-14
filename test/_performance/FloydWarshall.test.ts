@@ -1,10 +1,10 @@
 import {FloydWarshallAPSP, FloydWarshallArray} from "../../src/search/FloydWarshall";
-import {Logger} from '../../src/utils/Logger';
 import * as $G from "../../src/core/base/BaseGraph";
 import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
 import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
 import {JSONInput, IJSONInConfig} from "../../src/io/input/JSONInput";
 
+import {Logger} from '../../src/utils/Logger';
 const logger = new Logger();
 
 const csv_config: ICSVInConfig = {
