@@ -25,14 +25,10 @@ let sn_config: ICSVInConfig = {
 
 
 const small_graph_file 								= `${JSON_DATA_PATH}/small_graph.json`,
-			real_graph_file 								= `${JSON_DATA_PATH}/real_graph.json`,
-			bernd_graph_file 								= `${JSON_DATA_PATH}/BerndAres2016.json`,
 			neg_cycle_multi_component_file 	= `${JSON_DATA_PATH}/negative_cycle_multi_component.json`,
 			SMALL_GRAPH_NR_NODES = 4,
 			SMALL_GRAPH_NR_UND_EDGES = 2,
-			SMALL_GRAPH_NR_DIR_EDGES = 5,
-			REAL_GRAPH_NR_NODES = 6204,
-			REAL_GRAPH_NR_EDGES = 18550;
+			SMALL_GRAPH_NR_DIR_EDGES = 5;
 
 
 describe('GRAPH TESTS: ', () => {
@@ -43,8 +39,7 @@ describe('GRAPH TESTS: ', () => {
 		edge_ab: $E.IBaseEdge,
 		edge_2: $E.IBaseEdge,
 		stats: $G.GraphStats,
-		csv: CSVInput = new CSVInput(),
-		csv_sn: CSVInput = new CSVInput(sn_config);
+		csv: CSVInput = new CSVInput();
 
 
 	describe('Basic graph instantiation - ', () => {
@@ -1113,40 +1108,6 @@ describe('GRAPH TESTS: ', () => {
 			}
 		);
 
-
-		/**
-		 * JUST FOR FUN - can also be removed - The REAL graph example
-		 */
-		test(
-			'should successfully clone a real-world graph in explicit mode including weights',
-			() => {
-				json_in = new JSONInput({explicit_direction: false, directed: false, weighted: true});
-				graph = json_in.readFromJSONFile(real_graph_file);
-				let deg_dist_all = degCent.degreeDistribution(graph).all;
-				clone_graph = graph.cloneStructure();
-				let clone_deg_dist_all = degCent.degreeDistribution(clone_graph).all;
-
-				expect(clone_graph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
-				expect(clone_graph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
-				expect(clone_graph.nrDirEdges()).toBe(0);
-				expect(clone_deg_dist_all).toEqual(deg_dist_all);
-				// expect(clone_graph).to.deep.equal(graph);
-			}
-		);
-
-		/**
-		 * Cloning only a part of the graph
-		 */
-		test('should successfully clone a part of a social network', () => {
-			json_in = new JSONInput({explicit_direction: false, directed: false, weighted: true});
-			graph = csv_sn.readFromEdgeListFile(`${CSV_SN_PATH}/social_network_edges_1K.csv`);
-
-			clone_graph = graph.cloneSubGraphStructure(graph.getNodeById("1374"), 300);
-
-			expect(clone_graph.nrNodes()).toBe(300);
-			expect(clone_graph.nrUndEdges()).toBe(4635); //TODO:: check number?
-			expect(clone_graph.nrDirEdges()).toBe(0);
-		});
 	});
 
 
@@ -1274,35 +1235,6 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-		/**
-		 * @todo outsource to performance test suite (once instantiated)
-		 */
-		describe("Adjacency List, DICT Version, performance test - ", () => {
-			let csv_in_custom = new CSVInput({
-				separator: ' ',
-				explicit_direction: false,
-				direction_mode: true,
-				weighted: true
-			});
-
-			test(
-				'should measure the time it takes to create the adj.list.dict for a 1034 node graph',
-				() => {
-
-					graph = csv_in_custom.readFromEdgeListFile(`${CSV_SN_PATH}/social_network_edges_1K.csv`);
-					expect(graph.nrNodes()).toBe(1034);
-					expect(graph.nrDirEdges()).toBe(53498);
-
-					let start = +new Date();
-					let adjListDict = graph.adjListDict(false, false);
-					let end = +new Date();
-					logger.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${end - start} ms.`);
-					expect(Object.keys(adjListDict).length).toBe(graph.nrNodes());
-				}
-			);
-
-		});
-
 
 		/**
 		 * @todo  how to deal with negative loops?
@@ -1375,17 +1307,6 @@ describe('GRAPH TESTS: ', () => {
 				expect(adj_list).toEqual(expected_result);
 			});
 
-
-			test(
-				'performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
-				() => {
-					sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
-					adj_list = sn_300_graph.adjListArray(true);
-					expect(adj_list.length).toBe(sn_300_graph.nrNodes());
-					adj_list.forEach(adj_entry => expect(adj_entry.length).toBe(sn_300_graph.nrNodes()));
-				}
-			);
-
 		});
 
 
@@ -1449,15 +1370,6 @@ describe('GRAPH TESTS: ', () => {
 
 				expect(next).toEqual(expected_result);
 			});
-
-
-			test('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
-				() => {
-					sn_300_graph = csvReader.readFromEdgeListFile(sn_300_graph_file);
-					next = sn_300_graph.nextArray(true);
-					// logger.log(next);
-				}
-			);
 
 		});
 
@@ -1585,34 +1497,6 @@ describe('GRAPH TESTS: ', () => {
 			'should correctly detect a negative cycle in a multi-component graph',
 			() => {
 				expect(graph_negcycle_multicomp.hasNegativeCycles(graph_negcycle_multicomp.getNodeById("S"))).toBe(true);
-			}
-		);
-
-
-		test(
-			'performance test on bernd graph (1483 nodes), no negative cycles',
-			() => {
-				json = new JSONInput({explicit_direction: false, directed: true, weighted: false});
-				graph_bernd = json.readFromJSONFile(bernd_graph_file);
-				let start_node = "1040";
-				expect(DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
-				expect(graph_bernd.hasNegativeCycles()).toBe(false);
-			}
-		);
-
-
-		test(
-			'performance test on bernd graph (1483 nodes), WITH negative cycles',
-			() => {
-				json = new JSONInput({explicit_direction: false, directed: true, weighted: true});
-				graph_bernd = json.readFromJSONFile(bernd_graph_file);
-				let start_node = "1040";
-				let edges = graph_bernd.getDirEdges();
-				for (let edge_idx in edges) {
-					edges[edge_idx].setWeight(-1);
-				}
-				expect(DFS(graph_bernd, graph_bernd.getNodeById(start_node)).length).toBe(5);
-				expect(graph_bernd.hasNegativeCycles()).toBe(true);
 			}
 		);
 
