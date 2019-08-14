@@ -191,49 +191,6 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			});
 		});
 
-
-		/**
-		 * Edge list, but with a REAL graph now, edges set to undirected
-		 * graph should have 5937 nodes.
-		 *
-		 */
-		test(
-			'should construct a real sized graph from an edge list with edges set to undirected',
-			() => {
-				csv._config.separator = " ";
-				csv._config.explicit_direction = false;
-				csv._config.direction_mode = false;
-				input_file = "real_graph_edge_list_no_dir.csv";
-				graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + input_file);
-				stats = graph.getStats();
-				expect(stats.nr_nodes).toBe(5937);
-				expect(stats.nr_dir_edges).toBe(0);
-				expect(stats.nr_und_edges).toBe(17777);
-				expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
-			}
-		);
-
-
-		/**
-		 * Edge list, but with a REAL graph now, edges set to directed
-		 * graph should have 5937 nodes.
-		 */
-		test(
-			'should construct a real sized graph from an edge list with edges set to directed',
-			() => {
-				csv._config.separator = " ";
-				csv._config.explicit_direction = false;
-				csv._config.direction_mode = true;
-				input_file = "real_graph_edge_list_no_dir.csv";
-				graph = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + input_file);
-				stats = graph.getStats();
-				expect(stats.nr_nodes).toBe(5937);
-				expect(stats.nr_dir_edges).toBe(17777);
-				expect(stats.nr_und_edges).toBe(0);
-				expect(stats.mode).toBe($G.GraphMode.DIRECTED);
-			}
-		);
-
 	});
 
 

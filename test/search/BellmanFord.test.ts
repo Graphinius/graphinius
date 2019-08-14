@@ -9,14 +9,14 @@ import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
-let csv_config: ICSVInConfig = {
+const csv_config: ICSVInConfig = {
 	separator: ' ',
 	explicit_direction: false,
 	direction_mode: false,
 	weighted: false
 };
 
-let json_in_config: IJSONInConfig = {
+const json_in_config: IJSONInConfig = {
 	explicit_direction: true,
 	directed: false,
 	weighted: true
@@ -91,7 +91,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 
 	/**
-	 * TODO more test cases (directed, undirected, weighted, unweighted graphs)
+	 * @todo more test cases (directed, undirected, weighted, unweighted graphs)
 	 */
 	describe('BF Dict version tests - ', () => {
 		
@@ -118,7 +118,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 
 	/**
-	 * TODO more test cases (directed, undirected, weighted, unweighted graphs)
+	 * @todo more test cases (directed, undirected, weighted, unweighted graphs)
 	 */
 	describe('BF Array version tests - ', () => {
 
@@ -135,48 +135,6 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 
 		test('BF should detect the negative cycle in the bf_neg_cycle graph', () => {
 			expect(BellmanFordArray(bf_neg_cycle_graph, bf_neg_cycle_graph.getNodeById("S")).neg_cycle).toBe(true);
-		});
-
-	});
-
-
-	/**
-	 * @todo abstract out to performance test suite
-	 */
-	describe('Performance Tests - ', () => {
-
-		let social_300_file = `${CSV_SN_PATH}/social_network_edges_300.csv`,
-				social_1k_file = `${CSV_SN_PATH}/social_network_edges_1K.csv`,
-				social_20k_file = `${CSV_SN_PATH}/social_network_edges_20K.csv`,
-				sn_300_graph  		: $G.IGraph,
-				sn_1k_graph				: $G.IGraph,
-				sn_20k_graph 			: $G.IGraph;
-
-
-		/**
-		 * For some reason, the beforeAll block is not executed before the forEach block
-		 * -> probably some quirk with jest & asynchronous tests...
-		 */
-		// beforeAll(() => {
-			csv = new CSVInput(csv_config);
-			sn_300_graph = csv.readFromEdgeListFile(social_300_file);
-			sn_1k_graph = csv.readFromEdgeListFile(social_1k_file);
-			sn_20k_graph = csv.readFromEdgeListFile(social_20k_file);
-
-			// logger.log(`Social network graph with ${sn_300_graph.nrNodes()} nodes: ${sn_300_graph}`);
-		// });
-
-		[sn_300_graph].forEach( sn_graph => { // , sn_1k_graph , sn_20k_graph
-			test(`BF performance test on social networks of realistic (client-side) size:` , () => {
-				let tic = +new Date();
-				BF_compute = BellmanFordDict(sn_graph, sn_graph.getRandomNode());
-				let toc = +new Date();
-				logger.log("BellmanFord on social network of ~300 nodes took " + (toc-tic) + " ms. to finish");
-				tic = +new Date();
-				BF_compute = BellmanFordArray(sn_graph, sn_graph.getRandomNode());
-				toc = +new Date();
-				logger.log("BellmanFord (Array) on social network of ~300 nodes took " + (toc-tic) + " ms. to finish");
-			});
 		});
 
 	});

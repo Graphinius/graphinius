@@ -99,27 +99,6 @@ describe('GRAPH CSV OUTPUT TESTS - ', () => {
       expect(inGraph.nrUndEdges()).toBe(4);      
     });
   
-  
-    describe("Tests with real graph sizes", () => {
-      
-      test('should output a real graph as CSV file', () => {
-        jsonIn = new $J.JSONInput({explicit_direction: false, directed: false, weighted: false});
-        let realGraph = jsonIn.readFromJSONFile(real_graph_file);
-        
-        expect(realGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
-        expect(realGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
-        
-        let outfile = OUTPUT_PATH + "/adj_list_real_graph.csv";
-        csvOut.writeToAdjacencyListFile(outfile, realGraph);
-        
-        let inGraph = csvIn.readFromAdjacencyListFile(outfile);
-        expect(inGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
-        expect(inGraph.nrDirEdges()).toBe(0);
-        expect(inGraph.nrUndEdges()).toBe(REAL_GRAPH_NR_EDGES);
-      });
-      
-    });  
-  
   });
 
 
