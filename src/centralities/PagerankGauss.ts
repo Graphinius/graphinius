@@ -5,7 +5,7 @@ import { gauss } from "../utils/Gauss";
 
 
 //Calculates the page rank for a given graph
-class pageRankDetCentrality {
+class PagerankGauss {
 
   getCentralityMap(graph: $G.IGraph, weighted?: boolean): {[id:string]: number} {
 
@@ -77,5 +77,5 @@ class pageRankDetCentrality {
 }
 
 export {
-    pageRankDetCentrality
+    PagerankGauss
 };

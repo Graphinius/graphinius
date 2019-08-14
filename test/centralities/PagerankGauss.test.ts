@@ -1,6 +1,5 @@
-import * as fs from 'fs';
 import * as $G from '../../src/core/base/BaseGraph';
-import * as $PRGauss from '../../src/centralities/PagerankGauss';
+import { PagerankGauss } from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/Logger';
@@ -28,12 +27,10 @@ const std_json_in_config: IJSONInConfig = {
 let csv = new CSVInput(std_csv_in_config),
 	json = new JSONInput(std_json_in_config),
 	deg_cent_graph 	= `search_graph_pfs_extended.json`,
-	sn_300_file 		= `social_network_edges_300.csv`,
-	sn_1K_file 			= `social_network_edges_1K.csv`,
 	graph_uw_ud			= `network_undirected_unweighted.csv`,
 	graph: $G.IGraph = json.readFromJSONFile(JSON_DATA_PATH + '/' + deg_cent_graph),
 	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_uw_ud),
-	PrGauss = new $PRGauss.pageRankDetCentrality();
+	PrGauss = new PagerankGauss();
 
 
 describe("PageRank Gauss Tests", () => {
@@ -71,32 +68,6 @@ describe("PageRank Gauss Tests", () => {
 		checkRankPrecision(graph_6, PrGauss.getCentralityMap(graph_6));
 	});
 
-
-	/**
-	 * PERFORMANCE TESTS UNWEIGHTED
-	 * 
-	 * Also checking against the python implementation
-	 * 
-	 * @todo figure out why the 20k graph shows significantly different results 
-	 * while the 300 & 1k graphs are 
-	 * @todo Extract out into seperate performance test suite !!
-	 */
-	describe('PageRank Gauss performance tests - ', () => {
-
-		[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file => HEAP out of memory...!
-			test('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + graph_file);
-				let tic = +new Date;
-				let pr = PrGauss.getCentralityMap(sn_graph);
-				let toc = +new Date;
-				logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`);
-				expect(Array.isArray(pr)).toBeTruthy;
-			});
-
-		});
-
-	});
-
 });
 
 
@@ -105,7 +76,7 @@ describe("PageRank Gauss Tests", () => {
  * @param graph
  * @param gauss
  *
- * @todo WTF !?!?
+ * @todo what does this do !?
  */
 function checkRankPrecision(graph, gauss) {
 	let last = gauss[0];

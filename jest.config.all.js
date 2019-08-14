@@ -28,7 +28,6 @@ module.exports = {
     '**/test/**/*.ts'
   ],
   testPathIgnorePatterns: [
-    '_performance',
     'config.ts',
     'common.ts'
   ]

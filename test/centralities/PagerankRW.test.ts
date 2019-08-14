@@ -1,17 +1,11 @@
-import * as fs from 'fs';
 import * as $G from '../../src/core/base/BaseGraph';
-import {DFS} from '../../src/search/DFS';
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import {JSONOutput} from '../../src/io/output/JSONOutput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {PRArrayDS, Pagerank} from '../../src/centralities/Pagerank';
 import {
 	CSV_DATA_PATH,
 	JSON_DATA_PATH,
-	RES_CENT_PATH,
 	JSON_CENT_PATH,
-	JSON_REC_PATH,
-	CSV_EGO_PATH,
 	CSV_SN_PATH
 } from '../config/config';
 
@@ -19,9 +13,9 @@ import {Logger} from '../../src/utils/Logger';
 
 const logger = new Logger();
 
-const EPSILON = 1e-6;
-const DIGITS = 6; // inverse of epsilon (number of digits after the decimal, for jest)
-
+const
+	EPSILON = 1e-6,
+	DIGITS = 6;
 
 const std_csv_config: ICSVInConfig = {
 	separator: ' ',
@@ -37,13 +31,11 @@ const std_json_in_config: IJSONInConfig = {
 };
 
 let csv: CSVInput = new CSVInput(std_csv_config),
-	sn_300_file 					= `social_network_edges_300.csv`,
-	sn_1K_file 						= `social_network_edges_1K.csv`,
-	sn_20K_file 					= `social_network_edges_20K.csv`,
-	graph_uw_ud_file			= `network_undirected_unweighted.csv`,
-	deg_cent_graph 				= `search_graph_pfs_extended.json`,
-	pr_3nodes_file 				= `3node2SPs1direct.json`,
-	beerGraphFile 				= `beerGraph.json`,
+	sn_300_file = `social_network_edges_300.csv`,
+	graph_uw_ud_file = `network_undirected_unweighted.csv`,
+	deg_cent_graph = `search_graph_pfs_extended.json`,
+	pr_3nodes_file = `3node2SPs1direct.json`,
+	beerGraphFile = `beerGraph.json`,
 	jsonIn = new JSONInput(std_json_in_config),
 	graph: $G.IGraph = jsonIn.readFromJSONFile(JSON_DATA_PATH + '/' + deg_cent_graph),
 	graph_und_unw = csv.readFromEdgeListFile(CSV_DATA_PATH + '/' + graph_uw_ud_file);
@@ -409,7 +401,7 @@ describe("PageRank Centrality Tests", () => {
 	 * @todo - Check for a mathematically sound explanation of why differently initialized graphs will converge to *about* the same static distribution
 	 * @todo - figure out why they don't converge to the *exact* same solution...
 	 */
-	test('default & random INIT on 333 node graph should give similar results, but in a different number of iterations', () => {
+	test('default & random INIT on 333 node graph should give similar results', () => {
 		let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + sn_300_file);
 		let results = {
 			default_init: {},
@@ -426,128 +418,4 @@ describe("PageRank Centrality Tests", () => {
 		Object.keys(results.default_init).forEach(n => expect(results.default_init[n]).toBeCloseTo(results.random_init[n], 4));
 	});
 
-
-	/**
-	 * PERFORMANCE TESTS UNWEIGHTED
-	 *
-	 * Also checking against the python implementation
-	 *
-	 * @todo figure out why the 20k graph shows significantly different results
-	 *       while the 300 & 1k graphs are at least OK with an epsilon = 1e-4
-	 * @todo Extract out into seperate performance test suite !!
-	 */
-	describe('Page Rank Random Walk performance tests on actual (small) social graphs - ', () => {
-		[sn_300_file, sn_1K_file].forEach(graph_file => { //sn_300_file, sn_1K_file, sn_20K_file
-			test('should calculate the PR via Random Walk for graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + graph_file);
-				let PR = new Pagerank(sn_graph, {
-					epsilon: 1e-6, // limiting tolerance for speed, Numpy comparison works till 1e-15 !!!
-					normalize: true
-				});
-
-				let start_node = sn_graph.getRandomNode();
-				let dfs = DFS(sn_graph, start_node);
-				logger.log(`Graph ${graph_file} consists of ${dfs.length} components.`);
-
-				let tic = +new Date;
-				let result;
-				// for ( let i = 0; i < 1e2; i++ ) { // incredible speedup when executed 100 times !?!?
-				result = PR.computePR();
-				// }
-				let toc = +new Date;
-				logger.log(`Single-Thread JS PageRank (Arrays) on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
-
-				let controlFileName = `${RES_CENT_PATH}/pagerank/comparison_selected/pagerank_numpy_${graph_file}_results.json`;
-				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
-
-				// Length
-				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
-				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
-				// Structure
-				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
-				// Content
-				/**
-				 * @todo the problem (at least with the ~20k graph) could lie in the fact that before normalization we get ridiculously heigh numbers (PR(n_i) ~ 2.5 !!!)
-				 */
-				let within_eps = 0;
-				Object.keys(result).forEach(n => {
-					if (result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON) {
-						within_eps++;
-					}
-					expect(result[n]).toBeCloseTo(nxControl[n], DIGITS);
-				});
-				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
-			});
-		});
-	});
-
-
-	/**
-	 * EGOS !!!
-	 */
-	describe('Page Rank Random Walk on ego graphs + comparison to networkx - ', () => {
-		fs.readdirSync(CSV_EGO_PATH).forEach(graph_file => {
-
-			test('should calculate the PR via Random Walk for EGO graphs of realistic size', () => {
-				let sn_graph = csv.readFromEdgeListFile(CSV_EGO_PATH + '/' + graph_file);
-				let PR = new Pagerank(sn_graph, {
-					epsilon: 1e-15,
-					normalize: true
-				});
-
-				let start_node = sn_graph.getRandomNode();
-				let dfs = DFS(sn_graph, start_node);
-				if (dfs.length > 1) {
-					throw new Error('graph is DISCONNECTED - YMMV');
-				}
-
-				let tic = +new Date;
-				let result = PR.computePR();
-				let toc = +new Date;
-				logger.log(`PageRank for graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
-
-				let controlFileName = `${RES_CENT_PATH}/pagerank/comparison_ego_graphs/pagerank_numpy_ego_network_v_${sn_graph.nrNodes()}_e_${sn_graph.nrUndEdges() * 2}.json`;
-
-				let nxControl = JSON.parse(fs.readFileSync(controlFileName).toString());
-				expect(Object.keys(result).length).toEqual(sn_graph.nrNodes());
-				expect(Object.keys(result).length).toEqual(Object.keys(nxControl).length);
-				expect(Object.keys(result)).toEqual(Object.keys(nxControl));
-
-				let within_eps = 0;
-				Object.keys(result).forEach(n => {
-					if (result[n] <= nxControl[n] + EPSILON && result[n] >= nxControl[n] - EPSILON) {
-						within_eps++;
-					}
-					expect(result[n]).toBeCloseTo(nxControl[n], 15);
-				});
-				logger.log(`Got ${within_eps} pageranks out of ${sn_graph.nrNodes()} right.`);
-			});
-		});
-	});
-
-
-	/**
-	 * Graphs from Neo4j tutorials / examples
-	 */
-	describe('Neo4j example graphs (converted) - ', () => {
-
-		it('should correctly compute the beer graph', () => {
-			let graph = new JSONInput().readFromJSONFile(JSON_REC_PATH + '/' + beerGraphFile);
-			let pagerank = new Pagerank(graph, {
-				epsilon: 1e-3,
-				normalize: true
-			});
-			let tic = +new Date;
-			let result = pagerank.computePR();
-			let toc = +new Date;
-			logger.log(`PageRank for graph of |V|=${graph.nrNodes()} and |E|=${graph.nrDirEdges()} took ${toc - tic} ms.`)
-		});
-
-	});
-
 });
-
-
-// let pr_outfile = fs.writeFileSync(`./test/data/output/PageRankRW_${graph_file}.json`, JSON.stringify(result));
-// new JSONOutput().writeToJSONFile(`./test/data/social_network_${graph_file}.json`, sn_graph);
-
