@@ -96,7 +96,6 @@ describe('==== NODE TESTS ====', () => {
 			KilledBy = 'KILLED_BY'
 		}
 
-
 		let
 			graph: TypedGraph,
 			a: ITypedNode,
@@ -313,6 +312,55 @@ describe('==== NODE TESTS ====', () => {
 			a.removeEdge(e2);
 			expect(a.conns(GENERIC_TYPES.Edge)).toBeDefined();
 			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(0);
+		});
+
+
+		it('should return all edges of a type, regardless of direction', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e1 = a.addEdge(new TypedEdge('e2', b, a, {directed: true, type: EDGE_TYPES.Likes}));
+			e1 = a.addEdge(new TypedEdge('e3', c, a, {type: EDGE_TYPES.Likes}));
+			expect(a.all(EDGE_TYPES.Likes).size).toBe(3);
+		});
+
+
+		it('should give the correct stats', () => {
+			e1 = a.addEdge(new TypedEdge('e1', a, b, {directed: true, type: EDGE_TYPES.Likes}));
+			e1 = a.addEdge(new TypedEdge('e2', b, a, {directed: true, type: EDGE_TYPES.Likes}));
+			e1 = a.addEdge(new TypedEdge('e3', b, a, {type: EDGE_TYPES.Friends}));
+			e1 = a.addEdge(new TypedEdge('e4', a, c, {directed: true, type: EDGE_TYPES.Drinks}));
+			e1 = a.addEdge(new TypedEdge('e5', c, a, {directed: true, type: EDGE_TYPES.KilledBy}));
+			e1 = a.addEdge(new TypedEdge('e6', b, a, {directed: true}));
+			e1 = a.addEdge(new TypedEdge('e7', a, b, {directed: true}));
+			e1 = a.addEdge(new TypedEdge('e8', a, c));
+			expect(a.stats).toEqual({
+				typed_edges: {
+					'GENERIC': {
+						ins: 1,
+						outs: 1,
+						conns: 1
+					},
+					[EDGE_TYPES.Friends]: {
+						ins: 0,
+						outs: 0,
+						conns: 1
+					},
+					[EDGE_TYPES.Likes]: {
+						ins: 1,
+						outs: 1,
+						conns: 0
+					},
+					[EDGE_TYPES.Drinks]: {
+						ins: 0,
+						outs: 1,
+						conns: 0
+					},
+					[EDGE_TYPES.KilledBy]: {
+						ins: 1,
+						outs: 0,
+						conns: 0
+					}
+				}
+			});
 		});
 
 	});

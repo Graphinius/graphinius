@@ -59,7 +59,6 @@ export interface IBaseNode {
 	allEdges() : {[k: string] : $E.IBaseEdge};
 
 	removeEdge(edge: $E.IBaseEdge) : void;
-	/* @todo removeEdgeByID... */
 	removeEdgeByID(id: string) : void;
 	
 	// Clear different types of edges

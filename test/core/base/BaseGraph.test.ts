@@ -1200,9 +1200,8 @@ describe('GRAPH TESTS: ', () => {
 
 
 			/**
-			 * TODO include edge to self when 'include_self' is not set?
+			 * @todo what's the default for 'include_self'?
 			 */
-
 			test('should produce the correct adj.list considering default weights', () => {
 				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 				graph = jsonReader.readFromJSONFile(small_graph_file);

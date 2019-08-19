@@ -184,7 +184,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should produce the correct graphStats', () => {
 			graph.addEdge(new TypedEdge('1', a, b, {directed: true, type: edgeType1}));
-			graph.addEdge(new TypedEdge('1', b, a, {directed: true, type: edgeType2}));
+			graph.addEdge(new TypedEdge('2', b, a, {directed: true, type: edgeType2}));
 
 			// logger.log(JSON.stringify(graph.getStats()));
 
@@ -195,8 +195,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 				nr_dir_edges: 2,
 				density_dir: 1,
 				density_und: 0,
-				// node_types: [GENERIC_TYPE, 'PERSON'],
-				// edge_types: [GENERIC_TYPE, 'FRIENDS_WITH', 'CO_AUTHORS'],
 				typed_nodes: {
 					[GENERIC_TYPES.Node]: 0,
 					[nodeType]: 2

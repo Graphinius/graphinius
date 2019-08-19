@@ -3,6 +3,7 @@ import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
 import {Logger} from '../../utils/Logger';
+import {GraphStats} from "../base/BaseGraph";
 const logger = new Logger();
 
 
@@ -14,11 +15,24 @@ export interface TypedAdjListsEntry {
 	conns?: NeighborEntries;
 }
 
-export type TypedAdjLists = { [type: string]: TypedAdjListsEntry };
+export type TypedAdjSets = { [type: string]: TypedAdjListsEntry };
+
+
+interface TypedEdgesStatsEntry {
+	ins: number;
+	outs: number;
+	conns: number;
+}
+
+export interface TypedNodeStats {
+	typed_edges: { [key: string]: TypedEdgesStatsEntry };
+}
 
 
 export interface ITypedNode extends IBaseNode {
 	readonly type: string;
+
+	readonly stats: TypedNodeStats;
 
 	uniqueNID(e: ITypedEdge): string;
 
@@ -26,7 +40,7 @@ export interface ITypedNode extends IBaseNode {
 
 	removeEdge(edge: ITypedEdge): void;
 
-	removeEdgeByID(id: string): void;
+	// removeEdgeByID(id: string): void;
 
 	/**
 	 * Typed neighbor methods
@@ -39,6 +53,8 @@ export interface ITypedNode extends IBaseNode {
 	outs(type: string): NeighborEntries;
 
 	conns(type: string): NeighborEntries;
+
+	all(type:string): NeighborEntries;
 }
 
 
@@ -49,7 +65,7 @@ export interface TypedNodeConfig extends BaseNodeConfig {
 
 class TypedNode extends BaseNode implements ITypedNode {
 	protected _type: string;
-	protected _typedAdjSets: TypedAdjLists;
+	protected _typedAdjSets: TypedAdjSets;
 
 	constructor(protected _id: string, config: TypedNodeConfig = {}) {
 		super(_id, config);
@@ -65,6 +81,22 @@ class TypedNode extends BaseNode implements ITypedNode {
 
 	get type(): string {
 		return this._type;
+	}
+
+
+	get stats(): TypedNodeStats {
+		const result: TypedNodeStats = {
+			typed_edges: {
+
+			}
+		};
+		for ( let type of Object.keys(this._typedAdjSets) ) {
+			result.typed_edges[type] = {ins: 0, outs: 0, conns: 0};
+			result.typed_edges[type].ins = this._typedAdjSets[type].ins ? this._typedAdjSets[type].ins.size : 0;
+			result.typed_edges[type].outs = this._typedAdjSets[type].outs ? this._typedAdjSets[type].outs.size : 0;
+			result.typed_edges[type].conns = this._typedAdjSets[type].conns ? this._typedAdjSets[type].conns.size : 0;
+		}
+		return result;
 	}
 
 
@@ -130,21 +162,35 @@ class TypedNode extends BaseNode implements ITypedNode {
 		}
 	}
 
-	removeEdgeByID(id: string): void {
 
-	}
+	// removeEdgeByID(id: string): void {
+	// 	super.removeEdgeByID(id);
+	// }
 
 
 	ins(type: string): NeighborEntries {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].ins : undefined;
 	}
 
+
 	outs(type: string): NeighborEntries {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].outs : undefined;
 	}
 
+
 	conns(type: string): NeighborEntries {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].conns : undefined;
+	}
+
+
+	all(type:string): NeighborEntries {
+		const result = new Set();
+		if ( this._typedAdjSets[type] ) {
+			this._typedAdjSets[type].ins && result.add([...this._typedAdjSets[type].ins]);
+			this._typedAdjSets[type].outs && result.add([...this._typedAdjSets[type].outs]);
+			this._typedAdjSets[type].conns && result.add([...this._typedAdjSets[type].conns]);
+		}
+		return result;
 	}
 
 
