@@ -6,7 +6,7 @@ import {JSON_REC_PATH} from '../../config/config';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
-import {TypedEdge} from "../../../src/core/typed/TypedEdge";
+import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 
 const logger = new Logger();
 
@@ -250,7 +250,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
-				logger.log(graph.stats);
+				// logger.log(graph.stats);
 				expect(graph.stats).toEqual(controlStats);
 			});
 
@@ -258,5 +258,33 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 	});
 
-});
 
+	describe('typed node `histogram` tests - ', () => {
+		enum NODE_TYPES {
+			Person = 'PERSON',
+			Coffee = 'COFFEE'
+		}
+
+		enum EDGE_TYPES {
+			Coworker = 'COWORKER',
+			Likes = 'LIKES',
+			Drinks = 'DRINKS',
+			KilledBy = 'KILLED_BY'
+		}
+
+		let
+			graph: TypedGraph,
+			a, b, c: ITypedNode,
+			e1, e2, e3: ITypedEdge;
+
+
+		beforeEach(() => {
+			graph = new TypedGraph('uniqus testus');
+			a = graph.addNodeByID('A', {type: NODE_TYPES.Person});
+			b = graph.addNodeByID('B', {type: NODE_TYPES.Person});
+			c = graph.addNodeByID('C', {type: NODE_TYPES.Coffee});
+		});
+
+	});
+
+});

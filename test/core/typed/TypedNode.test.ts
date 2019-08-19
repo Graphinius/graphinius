@@ -98,12 +98,8 @@ describe('==== NODE TESTS ====', () => {
 
 		let
 			graph: TypedGraph,
-			a: ITypedNode,
-			b: ITypedNode,
-			c: ITypedNode,
-			e1: ITypedEdge,
-			e2: ITypedEdge,
-			e3: ITypedEdge;
+			a, b, c: ITypedNode,
+			e1, e2, e3: ITypedEdge;
 
 
 		beforeEach(() => {
@@ -120,9 +116,7 @@ describe('==== NODE TESTS ====', () => {
 			expect(a.conns(GENERIC_TYPES.Edge)).not.toBeUndefined;
 		});
 
-		/**
-		 * We have to check on SOME other specific relation type...
-		 */
+
 		it('should have only GENERIC type upon instantiation (2/2)', () => {
 			expect(a.ins(EDGE_TYPES.Friends)).toBeUndefined;
 			expect(a.outs(EDGE_TYPES.Friends)).toBeUndefined;
