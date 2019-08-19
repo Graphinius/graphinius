@@ -188,7 +188,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 			// logger.log(JSON.stringify(graph.getStats()));
 
-			expect(graph.getStats()).toEqual({
+			expect(graph.stats).toEqual({
 				mode: 1,
 				nr_nodes: 2,
 				nr_und_edges: 0,
@@ -252,21 +252,6 @@ describe('TYPED GRAPH TESTS: ', () => {
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
 				logger.log(graph.stats);
 				expect(graph.stats).toEqual(controlStats);
-			});
-
-
-			/**
-			 * @todo refactor out into performance test suite
-			 */
-			it.skip('PERFORMANCE: should read meetupGraph from neo4j example in reasonable time', () => {
-				const graphFile = JSON_REC_PATH + '/meetupGraph.json';
-
-				const tic = +new Date;
-				graph = new JSONInput({dupeCheck: false}).readFromJSONFile(graphFile, graph) as TypedGraph;
-				const toc = +new Date;
-
-				logger.log(`Reading in TypedGraph from Neo4j meetup example took: ${toc - tic} ms.`);
-				logger.log(graph.stats);
 			});
 
 		});

@@ -123,33 +123,45 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    outs?: NeighborEntries;
 	    conns?: NeighborEntries;
 	}
-	export type TypedAdjLists = {
+	export type TypedAdjSets = {
 	    [type: string]: TypedAdjListsEntry;
 	};
+	interface TypedEdgesStatsEntry {
+	    ins: number;
+	    outs: number;
+	    conns: number;
+	}
+	export interface TypedNodeStats {
+	    typed_edges: {
+	        [key: string]: TypedEdgesStatsEntry;
+	    };
+	}
 	export interface ITypedNode extends IBaseNode {
 	    readonly type: string;
+	    readonly stats: TypedNodeStats;
 	    uniqueNID(e: ITypedEdge): string;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
-	    removeEdgeByID(id: string): void;
 	    ins(type: string): NeighborEntries;
 	    outs(type: string): NeighborEntries;
 	    conns(type: string): NeighborEntries;
+	    all(type: string): NeighborEntries;
 	}
 	export interface TypedNodeConfig extends BaseNodeConfig {
 	    type?: string;
 	} class TypedNode extends BaseNode implements ITypedNode {
 	    protected _id: string;
 	    protected _type: string;
-	    protected _typedAdjSets: TypedAdjLists;
+	    protected _typedAdjSets: TypedAdjSets;
 	    constructor(_id: string, config?: TypedNodeConfig);
 	    readonly type: string;
+	    readonly stats: TypedNodeStats;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
-	    removeEdgeByID(id: string): void;
 	    ins(type: string): NeighborEntries;
 	    outs(type: string): NeighborEntries;
 	    conns(type: string): NeighborEntries;
+	    all(type: string): NeighborEntries;
 	    uniqueNID(e: ITypedEdge): string;
 	    private noEdgesOfTypeLeft;
 	}
@@ -546,6 +558,8 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	        [key: string]: number;
 	    };
 	}
+	export interface TypedHistogram {
+	}
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
 	    protected _type: string;
@@ -600,6 +614,9 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    readonly stats: GraphStats;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
+	    readonly inHist: Set<number>[];
+	    readonly outHist: Set<number>[];
+	    readonly connHist: Set<number>[];
 	    addNode(node: IBaseNode): IBaseNode;
 	    addNodeByID(id: string, opts?: {}): IBaseNode;
 	    hasNodeID(id: string): boolean;
@@ -670,6 +687,9 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    readonly label: string;
 	    readonly mode: GraphMode;
 	    readonly stats: GraphStats;
+	    readonly inHist: Set<number>[];
+	    readonly outHist: Set<number>[];
+	    readonly connHist: Set<number>[];
 	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
 	    toDirectedGraph(copy?: boolean): IGraph;
 	    toUndirectedGraph(): IGraph;

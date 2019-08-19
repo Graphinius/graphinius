@@ -1234,7 +1234,6 @@ describe('GRAPH TESTS: ', () => {
 		});
 
 
-
 		/**
 		 * @todo  how to deal with negative loops?
 		 */
@@ -1588,14 +1587,44 @@ describe('GRAPH TESTS: ', () => {
 			});
 
 
-			test.skip("should correctly re-interpret all directed edges as UNdirected", () => {
+			test.skip("should correctly project all directed edges as UNdirected", () => {
 
 			});
 
 
-			test.skip("should correctly re-interpret all UNdirected edges as directed", () => {
+			test.skip("should correctly project all UNdirected edges as directed", () => {
 
 			});
+
+		});
+
+	});
+
+
+	describe.skip('testing node histogram sets - ', () => {
+
+		let graph: $G.IGraph = null;
+		const json = new JSONInput();
+
+		beforeAll(() => {
+			graph = json.readFromJSONFile(small_graph_file);
+			logger.log(graph.stats);
+		});
+
+
+		it('should show the correct IN-histogram for the small graph', () => {
+			expect(graph.inHist).toEqual([
+				new Set([])	// 0,
+			])
+		});
+
+
+		it('should show the correct IN-histogram for the small graph', () => {
+
+		});
+
+
+		it('should show the correct IN-histogram for the small graph', () => {
 
 		});
 

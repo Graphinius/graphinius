@@ -29,6 +29,9 @@ export interface IGraph {
     readonly stats: GraphStats;
     getMode(): GraphMode;
     getStats(): GraphStats;
+    readonly inHist: Set<number>[];
+    readonly outHist: Set<number>[];
+    readonly connHist: Set<number>[];
     addNode(node: IBaseNode): IBaseNode;
     addNodeByID(id: string, opts?: {}): IBaseNode;
     hasNodeID(id: string): boolean;
@@ -100,6 +103,9 @@ declare class BaseGraph implements IGraph {
     readonly label: string;
     readonly mode: GraphMode;
     readonly stats: GraphStats;
+    readonly inHist: Set<number>[];
+    readonly outHist: Set<number>[];
+    readonly connHist: Set<number>[];
     reweighIfHasNegativeEdge(clone?: boolean): IGraph;
     toDirectedGraph(copy?: boolean): IGraph;
     toUndirectedGraph(): IGraph;

@@ -12,6 +12,8 @@ export interface TypedGraphStats extends GraphStats {
         [key: string]: number;
     };
 }
+export interface TypedHistogram {
+}
 export declare class TypedGraph extends BaseGraph {
     _label: string;
     protected _type: string;

@@ -3,7 +3,6 @@ import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
 import {Logger} from '../../utils/Logger';
-import {GraphStats} from "../base/BaseGraph";
 const logger = new Logger();
 
 
@@ -33,6 +32,8 @@ export interface ITypedNode extends IBaseNode {
 	readonly type: string;
 
 	readonly stats: TypedNodeStats;
+
+	// inHistT(type): Set<number> [];
 
 	uniqueNID(e: ITypedEdge): string;
 

@@ -14,10 +14,12 @@ export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 
 export interface TypedGraphStats extends GraphStats {
-	// node_types: string[];
-	// edge_types: string[];
 	typed_nodes: { [key: string]: number };
 	typed_edges: { [key: string]: number };
+}
+
+export interface TypedHistogram {
+
 }
 
 /**

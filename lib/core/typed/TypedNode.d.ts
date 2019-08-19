@@ -6,18 +6,29 @@ export interface TypedAdjListsEntry {
     outs?: NeighborEntries;
     conns?: NeighborEntries;
 }
-export declare type TypedAdjLists = {
+export declare type TypedAdjSets = {
     [type: string]: TypedAdjListsEntry;
 };
+interface TypedEdgesStatsEntry {
+    ins: number;
+    outs: number;
+    conns: number;
+}
+export interface TypedNodeStats {
+    typed_edges: {
+        [key: string]: TypedEdgesStatsEntry;
+    };
+}
 export interface ITypedNode extends IBaseNode {
     readonly type: string;
+    readonly stats: TypedNodeStats;
     uniqueNID(e: ITypedEdge): string;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
-    removeEdgeByID(id: string): void;
     ins(type: string): NeighborEntries;
     outs(type: string): NeighborEntries;
     conns(type: string): NeighborEntries;
+    all(type: string): NeighborEntries;
 }
 export interface TypedNodeConfig extends BaseNodeConfig {
     type?: string;
@@ -25,15 +36,16 @@ export interface TypedNodeConfig extends BaseNodeConfig {
 declare class TypedNode extends BaseNode implements ITypedNode {
     protected _id: string;
     protected _type: string;
-    protected _typedAdjSets: TypedAdjLists;
+    protected _typedAdjSets: TypedAdjSets;
     constructor(_id: string, config?: TypedNodeConfig);
     readonly type: string;
+    readonly stats: TypedNodeStats;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
-    removeEdgeByID(id: string): void;
     ins(type: string): NeighborEntries;
     outs(type: string): NeighborEntries;
     conns(type: string): NeighborEntries;
+    all(type: string): NeighborEntries;
     uniqueNID(e: ITypedEdge): string;
     private noEdgesOfTypeLeft;
 }

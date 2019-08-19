@@ -49,6 +49,11 @@ export interface IGraph {
 	getMode() : GraphMode;
 	getStats() : GraphStats;
 
+	// HISTOGRAM
+	readonly inHist: Set<number>[];
+	readonly outHist: Set<number>[];
+	readonly connHist: Set<number>[];
+
 	// NODES
 	addNode(node: IBaseNode) : IBaseNode;
 	addNodeByID(id: string, opts? : {}) : IBaseNode;
@@ -64,7 +69,6 @@ export interface IGraph {
 	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
 	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge;
 	hasEdgeID(id: string) : boolean;
-
 	getEdgeById(id: string) : IBaseEdge;
 	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;
 	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;
@@ -141,6 +145,24 @@ class BaseGraph implements IGraph {
 
 	get stats(): GraphStats {
 		return this.getStats();
+	}
+
+	get inHist(): Set<number>[] {
+		let result = [];
+
+		return result;
+	}
+
+	get outHist(): Set<number>[] {
+		let result = [];
+
+		return result;
+	}
+
+	get connHist(): Set<number>[] {
+		let result = [];
+
+		return result;
 	}
 	
 	/**
