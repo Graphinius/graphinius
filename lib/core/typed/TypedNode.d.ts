@@ -9,7 +9,7 @@ export interface TypedAdjListsEntry {
 export declare type TypedAdjSets = {
     [type: string]: TypedAdjListsEntry;
 };
-interface TypedEdgesStatsEntry {
+export interface TypedEdgesStatsEntry {
     ins: number;
     outs: number;
     conns: number;

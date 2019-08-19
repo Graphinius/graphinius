@@ -305,10 +305,50 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
+		it('should correctly compute the IN histogram of hates', () => {
+			expect(g.inHistT(NODE_TYPES.Person, EDGE_TYPES.Hates)).toEqual([
+				new Set([g.n('B'), g.n('C'), g.n('F'), g.n('G')]),
+				new Set([g.n('A')]),
+				new Set([g.n('D'), g.n('E')])
+			]);
+		});
+
+
+		it('should correctly compute the OUT histogram of hates', () => {
+			expect(g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Hates)).toEqual([
+				new Set([g.n('A'),g.n('F'), g.n('G')]),
+				new Set([g.n('B'), g.n('D'), g.n('E')]),
+				new Set([g.n('C')])
+			]);
+		});
+
 
 		it('should correctly compute the CONN histogram of hates', () => {
 			expect(g.connHistT(NODE_TYPES.Person, EDGE_TYPES.Hates)).toEqual([
 				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'), g.n('F'), g.n('G')])
+			]);
+		});
+
+
+		it('should correctly compute the IN histogram of coworkers', () => {
+			expect(g.inHistT(NODE_TYPES.Person, EDGE_TYPES.Coworker)).toEqual([
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'), g.n('F'), g.n('G')])
+			]);
+		});
+
+
+		it('should correctly compute the OUT histogram of coworkers', () => {
+			expect(g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Coworker)).toEqual([
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'), g.n('F'), g.n('G')])
+			]);
+		});
+
+
+		it('should correctly compute the CONN histogram of coworkers', () => {
+			expect(g.connHistT(NODE_TYPES.Person, EDGE_TYPES.Coworker)).toEqual([
+				new Set([g.n('C'), g.n('E'), g.n('G')]),
+				new Set([g.n('B'), g.n('F')]),
+				new Set([g.n('A'), g.n('D')])
 			]);
 		});
 

@@ -1,6 +1,11 @@
 import { IBaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge } from './BaseEdge';
 import { TypedGraph } from "../typed/TypedGraph";
+export declare enum DIR {
+    in = "IN",
+    out = "OUT",
+    conn = "CONN"
+}
 export declare enum GraphMode {
     INIT = 0,
     DIRECTED = 1,

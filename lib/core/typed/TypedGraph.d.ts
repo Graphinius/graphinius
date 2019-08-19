@@ -25,6 +25,10 @@ export declare class TypedGraph extends BaseGraph {
     edgeTypes(): string[];
     nrTypedNodes(type: string): number | null;
     nrTypedEdges(type: string): number | null;
+    inHistT(nType: string, eType: string): Set<number>[];
+    outHistT(nType: string, eType: string): Set<number>[];
+    connHistT(nType: string, eType: string): Set<number>[];
+    private degreeHistTyped;
     addNodeByID(id: string, opts?: {}): ITypedNode;
     addNode(node: ITypedNode): ITypedNode;
     getNodeById(id: string): TypedNode;

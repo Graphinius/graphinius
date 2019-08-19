@@ -126,7 +126,7 @@ declare module 'graphinius/core/typed/TypedNode' {
 	export type TypedAdjSets = {
 	    [type: string]: TypedAdjListsEntry;
 	};
-	interface TypedEdgesStatsEntry {
+	export interface TypedEdgesStatsEntry {
 	    ins: number;
 	    outs: number;
 	    conns: number;
@@ -571,6 +571,10 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    edgeTypes(): string[];
 	    nrTypedNodes(type: string): number | null;
 	    nrTypedEdges(type: string): number | null;
+	    inHistT(nType: string, eType: string): Set<number>[];
+	    outHistT(nType: string, eType: string): Set<number>[];
+	    connHistT(nType: string, eType: string): Set<number>[];
+	    private degreeHistTyped;
 	    addNodeByID(id: string, opts?: {}): ITypedNode;
 	    addNode(node: ITypedNode): ITypedNode;
 	    getNodeById(id: string): TypedNode;
@@ -586,6 +590,11 @@ declare module 'graphinius/core/base/BaseGraph' {
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
 	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
+	export enum DIR {
+	    in = "IN",
+	    out = "OUT",
+	    conn = "CONN"
+	}
 	export enum GraphMode {
 	    INIT = 0,
 	    DIRECTED = 1,
