@@ -1,7 +1,7 @@
 import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
-import {BaseGraph, GraphMode, GraphStats} from '../base/BaseGraph';
+import {BaseGraph, DIR, GraphMode, GraphStats} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
 
 import {Logger} from '../../utils/Logger';
@@ -85,6 +85,50 @@ export class TypedGraph extends BaseGraph {
 	nrTypedEdges(type: string): number | null {
 		type = type.toUpperCase();
 		return this._typedEdges.get(type) ? this._typedEdges.get(type).size : null;
+	}
+
+
+	/**
+	 * TYPED HISTOGRAMS
+	 */
+	inHistT(nType: string, eType: string): Set<number>[] {
+		return this.degreeHistTyped(DIR.in, nType, eType);
+	}
+
+	outHistT(nType: string, eType: string): Set<number>[] {
+		return this.degreeHistTyped(DIR.out, nType, eType);
+	}
+
+	connHistT(nType: string, eType: string): Set<number>[] {
+		return this.degreeHistTyped(DIR.conn, nType, eType);
+	}
+
+	private degreeHistTyped(dir: string, nType: string, eType: string): Set<number>[] {
+		let result = [];
+
+		for ( let [node_id, node] of this._typedNodes.get(nType) ) {
+			// logger.log(node_id);
+			// logger.log(node);
+
+			let deg;
+			switch(dir) {
+				case DIR.in:
+					deg = node.ins(eType) ? node.ins(eType).size : 0;
+					break;
+				case DIR.out:
+					deg = node.outs(eType) ? node.outs(eType).size : 0;
+					break;
+				default:
+					deg = node.conns(eType) ? node.conns(eType).size : 0;
+			}
+			if ( !result[deg] ) {
+				result[deg] = new Set([node]);
+			}
+			else {
+				result[deg].add(node);
+			}
+		}
+		return result;
 	}
 
 

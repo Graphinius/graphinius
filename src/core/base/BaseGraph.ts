@@ -11,6 +11,12 @@ let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 
+export enum DIR {
+	in = "IN",
+	out = "OUT",
+	conn = "CONN"
+}
+
 export enum GraphMode {
 	INIT,
 	DIRECTED,
@@ -149,27 +155,27 @@ class BaseGraph implements IGraph {
 	}
 
 	get inHist(): Set<number>[] {
-		return this.degreeHist('in');
+		return this.degreeHist(DIR.in);
 	}
 
 	get outHist(): Set<number>[] {
-		return this.degreeHist('out');
+		return this.degreeHist(DIR.out);
 	}
 
 	get connHist(): Set<number>[] {
-		return this.degreeHist('conn');
+		return this.degreeHist(DIR.conn);
 	}
 
-	private degreeHist(dir: string) {
+	private degreeHist(dir: string): Set<number>[] {
 		let result = [];
 		for ( let nid in this._nodes) {
 			let node = this._nodes[nid];
 			let deg;
 			switch(dir) {
-				case 'in':
+				case DIR.in:
 					deg = node.inDegree();
 					break;
-				case 'out':
+				case DIR.out:
 					deg = node.outDegree();
 					break;
 				default:
@@ -290,7 +296,7 @@ class BaseGraph implements IGraph {
 		 */
 		DFS(this, start).forEach( comp => {
 			let min_count = Number.POSITIVE_INFINITY,
-					comp_start_node : string;
+					comp_start_node : string = "";
 
 			Object.keys(comp).forEach( node_id => {
 				if ( min_count > comp[node_id].counter ) {

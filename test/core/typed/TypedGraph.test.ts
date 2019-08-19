@@ -1,13 +1,12 @@
+import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 import {BaseNode} from "../../../src/core/base/BaseNode";
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
-import {JSON_REC_PATH} from '../../config/config';
+import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/config';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
-import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
-
 const logger = new Logger();
 
 
@@ -186,7 +185,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			graph.addEdge(new TypedEdge('1', a, b, {directed: true, type: edgeType1}));
 			graph.addEdge(new TypedEdge('2', b, a, {directed: true, type: edgeType2}));
 
-			// logger.log(JSON.stringify(graph.getStats()));
+			// logger.log(JSON.stringify(graph.stats));
 
 			expect(graph.stats).toEqual({
 				mode: 1,
@@ -249,7 +248,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				graph = new JSONInput({dupeCheck: false}).readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
 
-				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
+				// logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
 				// logger.log(graph.stats);
 				expect(graph.stats).toEqual(controlStats);
 			});
@@ -259,30 +258,58 @@ describe('TYPED GRAPH TESTS: ', () => {
 	});
 
 
-	describe('typed node `histogram` tests - ', () => {
+	/**
+	 * @todo construct graph with second node type & check this as well
+	 * 			 - most popular person vs. most popular coffee...
+	 */
+	describe('Typed graph `histogram` tests - ', () => {
+
 		enum NODE_TYPES {
 			Person = 'PERSON',
 			Coffee = 'COFFEE'
 		}
 
 		enum EDGE_TYPES {
-			Coworker = 'COWORKER',
 			Likes = 'LIKES',
+			Hates = 'HATES',
 			Drinks = 'DRINKS',
-			KilledBy = 'KILLED_BY'
+			Coworker = 'COWORKER'
 		}
 
-		let
-			graph: TypedGraph,
-			a, b, c: ITypedNode,
-			e1, e2, e3: ITypedEdge;
+		const
+			json = new JSONInput(),
+			g: TypedGraph = json.readFromJSONFile(JSON_TYPE_PATH + '/office.json', new TypedGraph('office graph')) as TypedGraph;
 
 
-		beforeEach(() => {
-			graph = new TypedGraph('uniqus testus');
-			a = graph.addNodeByID('A', {type: NODE_TYPES.Person});
-			b = graph.addNodeByID('B', {type: NODE_TYPES.Person});
-			c = graph.addNodeByID('C', {type: NODE_TYPES.Coffee});
+		it('should correctly compute the IN histogram of likes', () => {
+			expect(g.inHistT(NODE_TYPES.Person, EDGE_TYPES.Likes)).toEqual([
+				new Set([g.n('E'), g.n('F'), g.n('G')]),
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D')])
+			]);
+		});
+
+
+		it('should correctly compute the OUT histogram of likes', () => {
+			expect(g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Likes)).toEqual([
+				new Set([g.n('C'), g.n('D'), g.n('E'), g.n('G')]),
+				new Set([g.n('B'), g.n('F')]),
+				new Set([g.n('A')]),
+			]);
+		});
+
+
+		it('should correctly compute the CONN histogram of likes', () => {
+			expect(g.connHistT(NODE_TYPES.Person, EDGE_TYPES.Likes)).toEqual([
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'), g.n('F'), g.n('G')])
+			]);
+		});
+
+
+
+		it('should correctly compute the CONN histogram of hates', () => {
+			expect(g.connHistT(NODE_TYPES.Person, EDGE_TYPES.Hates)).toEqual([
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'), g.n('F'), g.n('G')])
+			]);
 		});
 
 	});
