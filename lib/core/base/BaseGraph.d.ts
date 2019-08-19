@@ -36,6 +36,7 @@ export interface IGraph {
     addNodeByID(id: string, opts?: {}): IBaseNode;
     hasNodeID(id: string): boolean;
     getNodeById(id: string): IBaseNode;
+    n(id: string): IBaseNode;
     getNodes(): {
         [key: string]: IBaseNode;
     };
@@ -106,6 +107,7 @@ declare class BaseGraph implements IGraph {
     readonly inHist: Set<number>[];
     readonly outHist: Set<number>[];
     readonly connHist: Set<number>[];
+    private degreeHist;
     reweighIfHasNegativeEdge(clone?: boolean): IGraph;
     toDirectedGraph(copy?: boolean): IGraph;
     toUndirectedGraph(): IGraph;
@@ -123,6 +125,7 @@ declare class BaseGraph implements IGraph {
     addNode(node: IBaseNode): IBaseNode;
     hasNodeID(id: string): boolean;
     getNodeById(id: string): IBaseNode;
+    n(id: string): IBaseNode;
     getNodes(): {
         [key: string]: IBaseNode;
     };

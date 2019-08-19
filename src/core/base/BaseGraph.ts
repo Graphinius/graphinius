@@ -59,6 +59,7 @@ export interface IGraph {
 	addNodeByID(id: string, opts? : {}) : IBaseNode;
 	hasNodeID(id: string) : boolean;
 	getNodeById(id: string) : IBaseNode;
+	n(id: string) : IBaseNode;
 	getNodes() : {[key: string] : IBaseNode};
 	nrNodes() : number;
 	getRandomNode() : IBaseNode;
@@ -148,20 +149,39 @@ class BaseGraph implements IGraph {
 	}
 
 	get inHist(): Set<number>[] {
-		let result = [];
-
-		return result;
+		return this.degreeHist('in');
 	}
 
 	get outHist(): Set<number>[] {
-		let result = [];
-
-		return result;
+		return this.degreeHist('out');
 	}
 
 	get connHist(): Set<number>[] {
-		let result = [];
+		return this.degreeHist('conn');
+	}
 
+	private degreeHist(dir: string) {
+		let result = [];
+		for ( let nid in this._nodes) {
+			let node = this._nodes[nid];
+			let deg;
+			switch(dir) {
+				case 'in':
+					deg = node.inDegree();
+					break;
+				case 'out':
+					deg = node.outDegree();
+					break;
+				default:
+					deg = node.degree();
+			}
+			if ( !result[deg] ) {
+				result[deg] = new Set([node]);
+			}
+			else {
+				result[deg].add(node);
+			}
+		}
 		return result;
 	}
 	
@@ -445,6 +465,10 @@ class BaseGraph implements IGraph {
 
 	getNodeById(id: string) : IBaseNode {
 		return this._nodes[id];
+	}
+
+	n(id: string) : IBaseNode {
+		return this.getNodeById(id);
 	}
 
 	getNodes() : {[key: string] : IBaseNode} {

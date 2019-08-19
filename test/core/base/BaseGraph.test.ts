@@ -25,6 +25,7 @@ let sn_config: ICSVInConfig = {
 
 
 const small_graph_file 								= `${JSON_DATA_PATH}/small_graph.json`,
+			search_graph_file 							= `${JSON_DATA_PATH}/search_graph.json`,
 			neg_cycle_multi_component_file 	= `${JSON_DATA_PATH}/negative_cycle_multi_component.json`,
 			SMALL_GRAPH_NR_NODES = 4,
 			SMALL_GRAPH_NR_UND_EDGES = 2,
@@ -122,6 +123,11 @@ describe('GRAPH TESTS: ', () => {
 				expect(graph.addNodeByID.bind(graph, 'A')).toThrowError("Won't add node with duplicate ID.");
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
+			});
+
+			test('nid is alias to getNodeByID', () => {
+				graph.addNodeByID('A');
+				expect(graph.n('A')).toEqual(graph.getNodeById('A'));
 			});
 
 			test(
@@ -1601,31 +1607,44 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe.skip('testing node histogram sets - ', () => {
+	describe('testing node histogram sets - ', () => {
 
-		let graph: $G.IGraph = null;
+		let g: $G.IGraph = null;
 		const json = new JSONInput();
 
 		beforeAll(() => {
-			graph = json.readFromJSONFile(small_graph_file);
-			logger.log(graph.stats);
+			g = json.readFromJSONFile(search_graph_file);
+			logger.log(g.stats);
 		});
 
 
+		/* degrees 0-2 */
 		it('should show the correct IN-histogram for the small graph', () => {
-			expect(graph.inHist).toEqual([
-				new Set([])	// 0,
-			])
+			expect(g.inHist).toEqual([
+				new Set([g.n('G')]),
+				new Set([g.n('A'), g.n('B'), g.n('C'), g.n('D'), g.n('E'),]),
+				new Set([g.n('F')])
+			]);
 		});
 
 
-		it('should show the correct IN-histogram for the small graph', () => {
-
+		/* degrees 0-3 */
+		it('should show the correct OUT-histogram for the small graph', () => {
+			expect(g.outHist).toEqual([
+				new Set([g.n('B'), g.n('F'), g.n('G')]),
+				new Set([g.n('C'), g.n('E')]),
+				new Set([g.n('D')]),
+				new Set([g.n('A')])
+			]);
 		});
 
 
-		it('should show the correct IN-histogram for the small graph', () => {
-
+		/* degrees 0-1 */
+		it('should show the correct CONN-histogram for the small graph', () => {
+			expect(g.connHist).toEqual([
+				new Set([g.n('B'), g.n('E'), g.n('F'), g.n('G'),]),
+				new Set([g.n('A'), g.n('C'), g.n('D')])
+			]);
 		});
 
 	});
