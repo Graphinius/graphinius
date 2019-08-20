@@ -145,7 +145,6 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    ins(type: string): NeighborEntries;
 	    outs(type: string): NeighborEntries;
 	    conns(type: string): NeighborEntries;
-	    all(type: string): NeighborEntries;
 	}
 	export interface TypedNodeConfig extends BaseNodeConfig {
 	    type?: string;
@@ -163,6 +162,7 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    conns(type: string): NeighborEntries;
 	    all(type: string): NeighborEntries;
 	    uniqueNID(e: ITypedEdge): string;
+	    static nIDFromUID(uid: string): string;
 	    private noEdgesOfTypeLeft;
 	}
 	export { TypedNode };
@@ -558,23 +558,25 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	        [key: string]: number;
 	    };
 	}
-	export interface TypedHistogram {
-	}
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
 	    protected _type: string;
 	    protected _typedNodes: TypedNodes;
 	    protected _typedEdges: TypedEdges;
 	    constructor(_label: string);
+	    n(id: string): TypedNode;
 	    readonly type: string;
 	    nodeTypes(): string[];
 	    edgeTypes(): string[];
 	    nrTypedNodes(type: string): number | null;
 	    nrTypedEdges(type: string): number | null;
+	    ins(node: ITypedNode, type: string): ITypedNode[];
+	    outs(node: ITypedNode, type: string): ITypedNode[];
+	    conns(node: ITypedNode, type: string): ITypedNode[];
 	    inHistT(nType: string, eType: string): Set<number>[];
 	    outHistT(nType: string, eType: string): Set<number>[];
 	    connHistT(nType: string, eType: string): Set<number>[];
-	    private degreeHistTyped;
+	    private degreeHistT;
 	    addNodeByID(id: string, opts?: {}): ITypedNode;
 	    addNode(node: ITypedNode): ITypedNode;
 	    getNodeById(id: string): TypedNode;

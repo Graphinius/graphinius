@@ -28,7 +28,6 @@ export interface ITypedNode extends IBaseNode {
     ins(type: string): NeighborEntries;
     outs(type: string): NeighborEntries;
     conns(type: string): NeighborEntries;
-    all(type: string): NeighborEntries;
 }
 export interface TypedNodeConfig extends BaseNodeConfig {
     type?: string;
@@ -47,6 +46,7 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     conns(type: string): NeighborEntries;
     all(type: string): NeighborEntries;
     uniqueNID(e: ITypedEdge): string;
+    static nIDFromUID(uid: string): string;
     private noEdgesOfTypeLeft;
 }
 export { TypedNode };

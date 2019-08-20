@@ -7,6 +7,7 @@ import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/config';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
+
 const logger = new Logger();
 
 
@@ -260,7 +261,53 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 	/**
 	 * @todo construct graph with second node type & check this as well
-	 * 			 - most popular person vs. most popular coffee...
+	 *       - most popular person vs. most popular coffee...
+	 */
+	describe.only('Typed graph node neighborhood tests - ', () => {
+
+		enum NODE_TYPES {
+			Person = 'PERSON',
+			Coffee = 'COFFEE'
+		}
+
+		enum EDGE_TYPES {
+			Likes = 'LIKES',
+			Hates = 'HATES',
+			Drinks = 'DRINKS',
+			Coworker = 'COWORKER'
+		}
+
+		const
+			json = new JSONInput(),
+			g: TypedGraph = json.readFromJSONFile(JSON_TYPE_PATH + '/office.json', new TypedGraph('office graph')) as TypedGraph;
+
+
+		it('should correctly compute the friends of A', () => {
+			const friends = g.ins(g.n('A'), EDGE_TYPES.Likes);
+			expect(friends.length).toBe(1);
+			expect(friends[0].id).toBe('B');
+		});
+
+
+		it('should correctly compute the enemies of C', () => {
+			const enemies = g.outs(g.n('C'), EDGE_TYPES.Hates);
+			expect(enemies.length).toBe(2);
+			expect([enemies[0].id, enemies[1].id]).toEqual(['A', 'D']);
+		});
+
+
+		it('should correctly compute the coworkers of D', () => {
+			const cowies = g.conns(g.n('D'), EDGE_TYPES.Coworker);
+			expect(cowies.length).toBe(2);
+			expect([cowies[0].id, cowies[1].id]).toEqual(['A', 'F']);
+		});
+
+	});
+
+
+	/**
+	 * @todo construct graph with second node type & check this as well
+	 *       - most popular person vs. most popular coffee...
 	 */
 	describe('Typed graph `histogram` tests & least/most/k-l/m popular/degree - ', () => {
 
@@ -316,7 +363,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should correctly compute the OUT histogram of hates', () => {
 			expect(g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Hates)).toEqual([
-				new Set([g.n('A'),g.n('F'), g.n('G')]),
+				new Set([g.n('A'), g.n('F'), g.n('G')]),
 				new Set([g.n('B'), g.n('D'), g.n('E')]),
 				new Set([g.n('C')])
 			]);
@@ -355,13 +402,13 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should find the most liking / trusting person', () => {
 			const likingHist = g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Likes);
-			expect(likingHist[likingHist.length-1]).toEqual(new Set([g.n('A')]));
+			expect(likingHist[likingHist.length - 1]).toEqual(new Set([g.n('A')]));
 		});
 
 
 		it('should find the most hateful person', () => {
 			const hatingHist = g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Hates);
-			expect(hatingHist[hatingHist.length-1]).toEqual(new Set([g.n('C')]));
+			expect(hatingHist[hatingHist.length - 1]).toEqual(new Set([g.n('C')]));
 		});
 
 

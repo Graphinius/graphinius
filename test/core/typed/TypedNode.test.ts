@@ -43,6 +43,12 @@ describe('==== NODE TESTS ====', () => {
 			b = graph.addNodeByID('B');
 		});
 
+		it('should return nodeID from UID', () => {
+			expect(TypedNode.nIDFromUID('B#1#u')).toBe('B');
+			expect(TypedNode.nIDFromUID('243#0#w')).toBe('243');
+			expect(+TypedNode.nIDFromUID('243#0#w')).toBe(243);
+		});
+
 		it('should return `B#1#u', () => {
 			e = graph.addEdgeByID('1', a, b);
 			expect(a.uniqueNID(e)).toBe('B#1#u');

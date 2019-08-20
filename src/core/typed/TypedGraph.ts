@@ -1,12 +1,10 @@
-import {ITypedNode, TypedNode} from './TypedNode';
+import {ITypedNode, NeighborEntries, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph, DIR, GraphMode, GraphStats} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
 
 import {Logger} from '../../utils/Logger';
-import {BaseNode} from "../base/BaseNode";
-
 const logger = new Logger();
 
 
@@ -18,9 +16,6 @@ export interface TypedGraphStats extends GraphStats {
 	typed_edges: { [key: string]: number };
 }
 
-export interface TypedHistogram {
-
-}
 
 /**
  * @description TypedGraph only takes TypedNodes & TypedEdges
@@ -60,27 +55,31 @@ export class TypedGraph extends BaseGraph {
 		this._typedEdges.set(GENERIC_TYPES.Edge, new Map());
 	}
 
+	/**
+	 * convenience methods
+	 */
+	n(id: string) {
+		return this.getNodeById(id);
+	}
+
+
 
 	get type(): string {
 		return this._type;
 	}
 
-
 	nodeTypes(): string[] {
 		return Array.from(this._typedNodes.keys());
 	}
-
 
 	edgeTypes(): string[] {
 		return Array.from(this._typedEdges.keys());
 	}
 
-
 	nrTypedNodes(type: string): number | null {
 		type = type.toUpperCase();
 		return this._typedNodes.get(type) ? this._typedNodes.get(type).size : null;
 	}
-
 
 	nrTypedEdges(type: string): number | null {
 		type = type.toUpperCase();
@@ -89,21 +88,37 @@ export class TypedGraph extends BaseGraph {
 
 
 	/**
+	 * Neighbor nodes depending on type
+	 */
+	ins(node: ITypedNode, type: string): ITypedNode[] {
+		return [...node.ins(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	}
+
+	outs(node: ITypedNode, type: string): ITypedNode[] {
+		return [...node.outs(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	}
+
+	conns(node: ITypedNode, type: string): ITypedNode[] {
+		return [...node.conns(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	}
+
+
+	/**
 	 * TYPED HISTOGRAMS
 	 */
 	inHistT(nType: string, eType: string): Set<number>[] {
-		return this.degreeHistTyped(DIR.in, nType, eType);
+		return this.degreeHistT(DIR.in, nType, eType);
 	}
 
 	outHistT(nType: string, eType: string): Set<number>[] {
-		return this.degreeHistTyped(DIR.out, nType, eType);
+		return this.degreeHistT(DIR.out, nType, eType);
 	}
 
 	connHistT(nType: string, eType: string): Set<number>[] {
-		return this.degreeHistTyped(DIR.conn, nType, eType);
+		return this.degreeHistT(DIR.conn, nType, eType);
 	}
 
-	private degreeHistTyped(dir: string, nType: string, eType: string): Set<number>[] {
+	private degreeHistT(dir: string, nType: string, eType: string): Set<number>[] {
 		let result = [];
 
 		for ( let [node_id, node] of this._typedNodes.get(nType) ) {
@@ -133,7 +148,7 @@ export class TypedGraph extends BaseGraph {
 
 
 	/**
-	 * @todo copied from super ??
+	 * @todo difference to super ??
 	 * @param id
 	 * @param opts
 	 */

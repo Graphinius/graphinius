@@ -33,8 +33,6 @@ export interface ITypedNode extends IBaseNode {
 
 	readonly stats: TypedNodeStats;
 
-	// inHistT(type): Set<number> [];
-
 	uniqueNID(e: ITypedEdge): string;
 
 	addEdge(edge: ITypedEdge): ITypedEdge;
@@ -46,16 +44,13 @@ export interface ITypedNode extends IBaseNode {
 	/**
 	 * Typed neighbor methods
 	 * @param type string identifying the edge type
-	 * @todo find better method Names?
-	 *   -> restructure also BaseNode names for clarity
+	 * @todo also restructure BaseNode names for clarity?
 	 */
 	ins(type: string): NeighborEntries;
 
 	outs(type: string): NeighborEntries;
 
 	conns(type: string): NeighborEntries;
-
-	all(type:string): NeighborEntries;
 }
 
 
@@ -79,6 +74,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 			}
 		}
 	}
+
 
 	get type(): string {
 		return this._type;
@@ -198,12 +194,18 @@ class TypedNode extends BaseNode implements ITypedNode {
 	/**
 	 * Unique ID for Neighbor (traversal)
 	 * @param e ITypedEdge
+	 * @description {node} `other / target` node
 	 * @returns unique neighbor entry ID
 	 */
 	uniqueNID(e: ITypedEdge): string {
-		const conn = e.getNodes();
-		const node = conn.a === this ? conn.b : conn.a;
+		const {a, b} = e.getNodes();
+		const node = a === this ? b : a;
 		return `${node.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
+	}
+
+
+	static nIDFromUID(uid: string) {
+		return uid.split('#')[0];
 	}
 
 

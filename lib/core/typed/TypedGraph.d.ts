@@ -12,23 +12,25 @@ export interface TypedGraphStats extends GraphStats {
         [key: string]: number;
     };
 }
-export interface TypedHistogram {
-}
 export declare class TypedGraph extends BaseGraph {
     _label: string;
     protected _type: string;
     protected _typedNodes: TypedNodes;
     protected _typedEdges: TypedEdges;
     constructor(_label: string);
+    n(id: string): TypedNode;
     readonly type: string;
     nodeTypes(): string[];
     edgeTypes(): string[];
     nrTypedNodes(type: string): number | null;
     nrTypedEdges(type: string): number | null;
+    ins(node: ITypedNode, type: string): ITypedNode[];
+    outs(node: ITypedNode, type: string): ITypedNode[];
+    conns(node: ITypedNode, type: string): ITypedNode[];
     inHistT(nType: string, eType: string): Set<number>[];
     outHistT(nType: string, eType: string): Set<number>[];
     connHistT(nType: string, eType: string): Set<number>[];
-    private degreeHistTyped;
+    private degreeHistT;
     addNodeByID(id: string, opts?: {}): ITypedNode;
     addNode(node: ITypedNode): ITypedNode;
     getNodeById(id: string): TypedNode;
