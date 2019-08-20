@@ -262,7 +262,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 	 * @todo construct graph with second node type & check this as well
 	 * 			 - most popular person vs. most popular coffee...
 	 */
-	describe('Typed graph `histogram` tests - ', () => {
+	describe('Typed graph `histogram` tests & least/most/k-l/m popular/degree - ', () => {
 
 		enum NODE_TYPES {
 			Person = 'PERSON',
@@ -350,6 +350,30 @@ describe('TYPED GRAPH TESTS: ', () => {
 				new Set([g.n('B'), g.n('F')]),
 				new Set([g.n('A'), g.n('D')])
 			]);
+		});
+
+
+		it('should find the most liking / trusting person', () => {
+			const likingHist = g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Likes);
+			expect(likingHist[likingHist.length-1]).toEqual(new Set([g.n('A')]));
+		});
+
+
+		it('should find the most hateful person', () => {
+			const hatingHist = g.outHistT(NODE_TYPES.Person, EDGE_TYPES.Hates);
+			expect(hatingHist[hatingHist.length-1]).toEqual(new Set([g.n('C')]));
+		});
+
+
+		/**
+		 * @todo try this with `sparse` array (and position 42...)
+		 */
+		it('should find people with at least two coworkers', () => {
+			const k_least = 2;
+			const coworkHist = g.connHistT(NODE_TYPES.Person, EDGE_TYPES.Coworker);
+			const idxs = Object.keys(coworkHist);
+			// logger.log(idxs[k_least]);
+			expect(coworkHist[idxs[k_least]]).toEqual(new Set([g.n('A'), g.n('D')]));
 		});
 
 	});
