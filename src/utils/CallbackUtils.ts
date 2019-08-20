@@ -1,4 +1,5 @@
 /**
+ * @param cbs
  * @param context this pointer to the DFS or DFSVisit function
  */
 function execCallbacks(cbs : Array<Function>, context?) {

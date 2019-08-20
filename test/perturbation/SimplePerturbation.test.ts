@@ -369,7 +369,6 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 		/**
 		 * @todo enhance by node types
 		 */
-
 		describe('Randomly DELETE different amounts / percentages of NODES - ', () => {
 
 			test('should refuse to delete a negative AMOUNT of nodes', () => {

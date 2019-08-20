@@ -3,8 +3,8 @@ import { IBaseNode } from '../core/base/BaseNode';
 import { IBaseEdge } from '../core/base/BaseEdge';
 import { mergeObjects } from "../utils/StructUtils";
 
-import { Logger } from "../utils/Logger";
-const logger = new Logger();
+// import { Logger } from "../utils/Logger";
+// const logger = new Logger();
 
 
 const DEFAULT_WEIGHTED = false;
@@ -233,7 +233,7 @@ class Pagerank {
 		}
 
 		let toc = +new Date;
-		logger.log(`PR Array DS init took ${toc - tic} ms.`);
+		// logger.log(`PR Array DS init took ${toc - tic} ms.`);
 	}
 
 
@@ -305,8 +305,8 @@ class Pagerank {
            *       (using a contrived, wrongly constructed pull 2D array)
            */
 					if (ds.out_deg[source] === 0) {
-						logger.log(`Node: ${node}`);
-						logger.log(`Source: ${source} `);
+						// logger.log(`Node: ${node}`);
+						// logger.log(`Source: ${source} `);
 						throw ('Encountered zero divisor!');
 					}
 					let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;

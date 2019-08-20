@@ -7,9 +7,6 @@ import { labelKeys } from '../interfaces';
 import { BaseEdge } from "../../core/base/BaseEdge";
 import { BaseNode } from "../../core/base/BaseNode";
 
-import {Logger} from "../../utils/Logger";
-const logger = new Logger();
-
 
 export interface IJSONOutput {
 	writeToJSONFile(filepath: string, graph: $G.IGraph): void;

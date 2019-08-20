@@ -1,8 +1,8 @@
 import { IBaseNode } from "../../core/base/BaseNode";
 import { ITypedNode } from "../../core/typed/TypedNode";
+import { TypedGraph } from "../../core/typed/TypedGraph";
 import { IGraph } from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
-import { TypedGraph } from "../../core/typed/TypedGraph";
 export interface JSONEdge {
     to: string;
     directed?: string;

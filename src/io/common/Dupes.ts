@@ -4,9 +4,6 @@ import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
 import { IGraph } from '../../core/base/BaseGraph';
 import { TypedGraph } from '../../core/typed/TypedGraph';
 
-import { Logger } from "../../utils/Logger";
-const logger = new Logger();
-
 
 export interface PotentialEdgeInfo {
 	a							: IBaseNode;

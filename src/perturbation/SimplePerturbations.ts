@@ -5,8 +5,6 @@ import * as $G from '../core/base/BaseGraph';
 import * as uuid from 'uuid';
 const v4 = uuid.v4;
 
-import { Logger } from '../utils/Logger';
-let logger : Logger = new Logger();
 
 /**
  * EITHER generate new edges via specified degree span

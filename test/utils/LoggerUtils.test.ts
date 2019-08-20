@@ -42,6 +42,11 @@ describe('Basic logger tests - ', () => {
 			[undefined, true].forEach(bright => {
 				test('Should successfully output a log message', () => {
 					expect(logger.log("This is a default log message", color, bright)).toBe(true);
+					expect(logger.error("This is a default log message", color, bright)).toBe(true);
+					expect(logger.dir({msg: "This is a default log message"}, color, bright)).toBe(true);
+					expect(logger.info("This is a default log message", color, bright)).toBe(true);
+					expect(logger.warn("This is a default log message", color, bright)).toBe(true);
+					expect(logger.write("This is a default log message", color, bright)).toBe(true);
 				});
 			});
 		});

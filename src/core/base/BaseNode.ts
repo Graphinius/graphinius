@@ -2,9 +2,6 @@ import * as $E from './BaseEdge';
 import {TypedNode} from '../typed/TypedNode';
 import * as $SU from '../../utils/StructUtils';
 
-import {Logger} from '../../utils/Logger';
-const logger = new Logger();
-
 
 export interface NeighborEntry {
   node  : IBaseNode;

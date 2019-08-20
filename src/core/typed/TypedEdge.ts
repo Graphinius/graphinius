@@ -1,9 +1,6 @@
 import { IBaseEdge, BaseEdge, BaseEdgeConfig } from '../base/BaseEdge';
 import { GENERIC_TYPES } from '../../config/run_config';
-
-import { Logger } from '../../utils/Logger';
 import * as $N from "../base/BaseNode";
-const logger = new Logger();
 
 
 export interface ITypedEdge extends IBaseEdge {

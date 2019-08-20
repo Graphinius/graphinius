@@ -7,8 +7,6 @@ import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 
-import { Logger } from '../../utils/Logger';
-let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 const CSV_EXTENSION = ".csv";
@@ -167,9 +165,6 @@ class CSVInput implements ICSVInput {
 			}
 			
 			if ( elements.length < 2 || elements.length > 3 ) {
-				
-				logger.log(elements);
-
 				throw new Error('Edge list is in wrong format - every line has to consist of two entries (the 2 nodes)');
 			}
 			

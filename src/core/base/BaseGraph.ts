@@ -6,8 +6,6 @@ import { BellmanFordDict, BellmanFordArray } from '../../search/BellmanFord';
 import { reWeighGraph, addExtraNandE} from '../../search/Johnsons';
 import {TypedGraph} from "../typed/TypedGraph";
 
-import { Logger } from '../../utils/Logger';
-let logger : Logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
 

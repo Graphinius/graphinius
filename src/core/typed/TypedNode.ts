@@ -2,9 +2,6 @@ import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
 import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
-import {Logger} from '../../utils/Logger';
-const logger = new Logger();
-
 
 export type NeighborEntries = Set<string>;
 

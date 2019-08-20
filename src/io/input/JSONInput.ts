@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import {IBaseEdge} from '../../core/base/BaseEdge';
 import {IBaseNode} from "../../core/base/BaseNode";
 import {ITypedNode} from "../../core/typed/TypedNode";
+import {TypedGraph} from "../../core/typed/TypedGraph";
 import {IGraph, BaseGraph} from '../../core/base/BaseGraph';
 import * as $R from '../../utils/RemoteUtils';
 import {labelKeys} from '../interfaces';
@@ -12,8 +13,6 @@ import * as uuid from 'uuid'
 const v4 = uuid.v4;
 
 import {Logger} from '../../utils/Logger';
-import {TypedGraph} from "../../core/typed/TypedGraph";
-
 const logger = new Logger();
 
 

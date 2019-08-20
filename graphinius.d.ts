@@ -10,41 +10,6 @@ declare module 'graphinius/config/run_config' {
 	export { LOG_LEVELS, GENERIC_TYPES, runLevel };
 
 }
-declare module 'graphinius/utils/Logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	}
-	export enum LogColors {
-	    FgBlack = 30,
-	    FgRed = 31,
-	    FgGreen = 32,
-	    FgYellow = 33,
-	    FgBlue = 34,
-	    FgMagenta = 35,
-	    FgCyan = 36,
-	    FgWhite = 37,
-	    BgBlack = 40,
-	    BgRed = 41,
-	    BgGreen = 42,
-	    BgYellow = 43,
-	    BgBlue = 44,
-	    BgMagenta = 45,
-	    BgCyan = 46,
-	    BgWhite = 47
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any, color?: any, bright?: boolean): boolean;
-	    error(err: any, color?: any, bright?: boolean): boolean;
-	    dir(obj: any, color?: any, bright?: boolean): boolean;
-	    info(msg: any, color?: any, bright?: boolean): boolean;
-	    warn(msg: any, color?: any, bright?: boolean): boolean;
-	    write(msg: any, color?: any, bright?: boolean): boolean;
-	    static colorize(color: any, output: any, bright: any): string;
-	}
-	export { Logger };
-
-}
 declare module 'graphinius/core/typed/TypedEdge' {
 	import { IBaseEdge, BaseEdge, BaseEdgeConfig } from 'graphinius/core/base/BaseEdge';
 	import * as $N from 'graphinius/core/base/BaseNode';
@@ -896,6 +861,41 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	export { PagerankGauss };
 
 }
+declare module 'graphinius/utils/Logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any, color?: any, bright?: boolean): boolean;
+	    error(err: any, color?: any, bright?: boolean): boolean;
+	    dir(obj: any, color?: any, bright?: boolean): boolean;
+	    info(msg: any, color?: any, bright?: boolean): boolean;
+	    warn(msg: any, color?: any, bright?: boolean): boolean;
+	    write(msg: any, color?: any, bright?: boolean): boolean;
+	    static colorize(color: any, output: any, bright: any): string;
+	}
+	export { Logger };
+
+}
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $E from 'graphinius/core/base/BaseEdge';
@@ -1111,9 +1111,9 @@ declare module 'graphinius/io/input/CSVInput' {
 declare module 'graphinius/io/input/JSONInput' {
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
 	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	import * as $R from 'graphinius/utils/RemoteUtils';
-	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	export interface JSONEdge {
 	    to: string;
 	    directed?: string;

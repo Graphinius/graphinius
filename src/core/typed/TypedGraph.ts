@@ -4,9 +4,6 @@ import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph, DIR, GraphMode, GraphStats} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
 
-import {Logger} from '../../utils/Logger';
-const logger = new Logger();
-
 
 export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, ITypedEdge>>;

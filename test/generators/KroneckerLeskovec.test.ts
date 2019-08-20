@@ -3,9 +3,6 @@ import * as $E from '../../src/core/base/BaseEdge';
 import * as $G from '../../src/core/base/BaseGraph';
 import * as $KRON from '../../src/generators/KroneckerLeskovec';
 
-import {Logger} from '../../src/utils/Logger';
-const logger = new Logger();
-
 
 describe("Base Tests", () => {
 

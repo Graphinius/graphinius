@@ -7,7 +7,6 @@ import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/config';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
-
 const logger = new Logger();
 
 
@@ -263,7 +262,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 	 * @todo construct graph with second node type & check this as well
 	 *       - most popular person vs. most popular coffee...
 	 */
-	describe.only('Typed graph node neighborhood tests - ', () => {
+	describe('Typed graph node neighborhood tests - ', () => {
 
 		enum NODE_TYPES {
 			Person = 'PERSON',

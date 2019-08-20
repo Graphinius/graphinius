@@ -1,8 +1,9 @@
 import * as http from 'http';
 import * as https from 'https';
-import { Logger } from './Logger';
 
+import { Logger } from './Logger';
 const logger = new Logger();
+
 const SSL_PORT = '443';
 
 export interface RequestConfig {
