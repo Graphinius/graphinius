@@ -283,22 +283,22 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should correctly compute the friends of A', () => {
 			const friends = g.ins(g.n('A'), EDGE_TYPES.Likes);
-			expect(friends.length).toBe(1);
-			expect(friends[0].id).toBe('B');
+			expect(friends.size).toBe(1);
+			friends.forEach(f => expect(['B']).toContain((<any>f).id));
 		});
 
 
 		it('should correctly compute the enemies of C', () => {
 			const enemies = g.outs(g.n('C'), EDGE_TYPES.Hates);
-			expect(enemies.length).toBe(2);
-			expect([enemies[0].id, enemies[1].id]).toEqual(['A', 'D']);
+			expect(enemies.size).toBe(2);
+			enemies.forEach(e => expect(['A', 'D']).toContain((<any>e).id));
 		});
 
 
 		it('should correctly compute the coworkers of D', () => {
 			const cowies = g.conns(g.n('D'), EDGE_TYPES.Coworker);
-			expect(cowies.length).toBe(2);
-			expect([cowies[0].id, cowies[1].id]).toEqual(['A', 'F']);
+			expect(cowies.size).toBe(2);
+			cowies.forEach(c => expect(['A', 'F']).toContain((<any>c).id));
 		});
 
 	});

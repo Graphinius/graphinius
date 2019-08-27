@@ -87,16 +87,16 @@ export class TypedGraph extends BaseGraph {
 	/**
 	 * Neighbor nodes depending on type
 	 */
-	ins(node: ITypedNode, type: string): ITypedNode[] {
-		return [...node.ins(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	ins(node: ITypedNode, type: string): Set<ITypedNode> {
+		return new Set([...node.ins(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
-	outs(node: ITypedNode, type: string): ITypedNode[] {
-		return [...node.outs(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	outs(node: ITypedNode, type: string): Set<ITypedNode> {
+		return new Set([...node.outs(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
-	conns(node: ITypedNode, type: string): ITypedNode[] {
-		return [...node.conns(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode);
+	conns(node: ITypedNode, type: string): Set<ITypedNode> {
+		return new Set([...node.conns(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
 

@@ -24,9 +24,9 @@ export declare class TypedGraph extends BaseGraph {
     edgeTypes(): string[];
     nrTypedNodes(type: string): number | null;
     nrTypedEdges(type: string): number | null;
-    ins(node: ITypedNode, type: string): ITypedNode[];
-    outs(node: ITypedNode, type: string): ITypedNode[];
-    conns(node: ITypedNode, type: string): ITypedNode[];
+    ins(node: ITypedNode, type: string): Set<ITypedNode>;
+    outs(node: ITypedNode, type: string): Set<ITypedNode>;
+    conns(node: ITypedNode, type: string): Set<ITypedNode>;
     inHistT(nType: string, eType: string): Set<number>[];
     outHistT(nType: string, eType: string): Set<number>[];
     connHistT(nType: string, eType: string): Set<number>[];
