@@ -59,8 +59,6 @@ export class TypedGraph extends BaseGraph {
 		return this.getNodeById(id);
 	}
 
-
-
 	get type(): string {
 		return this._type;
 	}
@@ -186,6 +184,16 @@ export class TypedGraph extends BaseGraph {
 
 	getNodeById(id: string): TypedNode {
 		return super.getNodeById(id) as TypedNode;
+	}
+
+
+	getNodesT(type: string) {
+		return this._typedNodes.get(type.toUpperCase());
+	}
+
+
+	getEdgesT(type: string) {
+		return this._typedEdges.get(type.toUpperCase());
 	}
 
 

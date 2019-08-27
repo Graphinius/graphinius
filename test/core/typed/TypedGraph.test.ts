@@ -111,6 +111,24 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(graph.nrTypedNodes(nodeType)).toBe(1);
 		});
 
+
+		it('should get nodes of type Person', () => {
+			graph.addNode(new TypedNode("A", {type: nodeType}));
+			graph.addNode(new TypedNode("B", {type: nodeType}));
+			expect(graph.getNodesT('Generic')).toBeNull;
+			expect(graph.getNodesT('Person').size).toBe(2);
+		});
+
+
+		it('should get edges of type Likes', () => {
+			graph.addNode(new TypedNode("A", {type: nodeType}));
+			graph.addNode(new TypedNode("B", {type: nodeType}));
+			graph.addEdgeByNodeIDs('l1', 'A', 'B', {directed: true, type: 'Likes'});
+			expect(graph.getEdgesT('Hates')).toBeNull;
+			expect(graph.getEdgesT('Likes').size).toBe(1);
+		});
+
+
 	});
 
 
@@ -284,21 +302,21 @@ describe('TYPED GRAPH TESTS: ', () => {
 		it('should correctly compute the friends of A', () => {
 			const friends = g.ins(g.n('A'), EDGE_TYPES.Likes);
 			expect(friends.size).toBe(1);
-			friends.forEach(f => expect(['B']).toContain((<any>f).id));
+			expect(Array.from(friends).map(e => e.id)).toEqual(['B']);
 		});
 
 
 		it('should correctly compute the enemies of C', () => {
 			const enemies = g.outs(g.n('C'), EDGE_TYPES.Hates);
 			expect(enemies.size).toBe(2);
-			enemies.forEach(e => expect(['A', 'D']).toContain((<any>e).id));
+			expect(Array.from(enemies).map(e => e.id)).toEqual(['A', 'D']);
 		});
 
 
 		it('should correctly compute the coworkers of D', () => {
 			const cowies = g.conns(g.n('D'), EDGE_TYPES.Coworker);
 			expect(cowies.size).toBe(2);
-			cowies.forEach(c => expect(['A', 'F']).toContain((<any>c).id));
+			expect(Array.from(cowies).map(c => c.id)).toEqual(['A', 'F']);
 		});
 
 	});

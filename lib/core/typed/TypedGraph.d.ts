@@ -34,6 +34,8 @@ export declare class TypedGraph extends BaseGraph {
     addNodeByID(id: string, opts?: {}): ITypedNode;
     addNode(node: ITypedNode): ITypedNode;
     getNodeById(id: string): TypedNode;
+    getNodesT(type: string): Map<string, ITypedNode>;
+    getEdgesT(type: string): Map<string, ITypedEdge>;
     deleteNode(node: ITypedNode): void;
     addEdgeByID(id: string, a: ITypedNode, b: ITypedNode, opts?: TypedEdgeConfig): ITypedEdge;
     addEdge(edge: ITypedEdge | IBaseEdge): ITypedEdge;
