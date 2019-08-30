@@ -3,6 +3,12 @@ import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
 
+export interface NeighborEntry {
+	n: ITypedNode;
+	e: string; // edge entry
+	w: number; // weight
+}
+
 export interface TypedAdjListsEntry {
 	ins?: Set<string>;
 	outs?: Set<string>;
@@ -196,7 +202,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 		const {a, b} = e.getNodes();
 		const node = a === this ? b : a;
 		let string = `${node.id}#${e.id}#`;
-		string += e.isWeighted() ? 'w' + e.getWeight() : 'u';
+		string += e.isWeighted() ? 'w#' + e.getWeight() : 'u';
 		return string;
 	}
 

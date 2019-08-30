@@ -1,5 +1,10 @@
 import { IBaseNode, BaseNode, BaseNodeConfig } from '../base/BaseNode';
 import { ITypedEdge } from "./TypedEdge";
+export interface NeighborEntry {
+    n: ITypedNode;
+    e: string;
+    w: number;
+}
 export interface TypedAdjListsEntry {
     ins?: Set<string>;
     outs?: Set<string>;

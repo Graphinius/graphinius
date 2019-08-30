@@ -82,6 +82,11 @@ declare module 'graphinius/core/base/BaseEdge' {
 declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
 	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	export interface NeighborEntry {
+	    n: ITypedNode;
+	    e: string;
+	    w: number;
+	}
 	export interface TypedAdjListsEntry {
 	    ins?: Set<string>;
 	    outs?: Set<string>;
@@ -521,11 +526,6 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    typed_edges: {
 	        [key: string]: number;
 	    };
-	}
-	export interface NeighborEntry {
-	    n: ITypedNode;
-	    e: string;
-	    w: number;
 	}
 	export class TypedGraph extends BaseGraph {
 	    _label: string;

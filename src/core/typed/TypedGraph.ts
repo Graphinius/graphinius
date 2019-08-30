@@ -13,12 +13,6 @@ export interface TypedGraphStats extends GraphStats {
 	typed_edges: { [key: string]: number };
 }
 
-export interface NeighborEntry {
-	n: ITypedNode;
-	e: string; // edge entry
-	w: number; // weight
-}
-
 
 /**
  * @description TypedGraph only takes TypedNodes & TypedEdges
