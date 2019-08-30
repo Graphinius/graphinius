@@ -1,10 +1,9 @@
 import { IBaseNode, BaseNode, BaseNodeConfig } from '../base/BaseNode';
 import { ITypedEdge } from "./TypedEdge";
-export declare type NeighborEntries = Set<string>;
 export interface TypedAdjListsEntry {
-    ins?: NeighborEntries;
-    outs?: NeighborEntries;
-    conns?: NeighborEntries;
+    ins?: Set<string>;
+    outs?: Set<string>;
+    conns?: Set<string>;
 }
 export declare type TypedAdjSets = {
     [type: string]: TypedAdjListsEntry;
@@ -25,9 +24,9 @@ export interface ITypedNode extends IBaseNode {
     uniqueNID(e: ITypedEdge): string;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
-    ins(type: string): NeighborEntries;
-    outs(type: string): NeighborEntries;
-    conns(type: string): NeighborEntries;
+    ins(type: string): Set<string>;
+    outs(type: string): Set<string>;
+    conns(type: string): Set<string>;
 }
 export interface TypedNodeConfig extends BaseNodeConfig {
     type?: string;
@@ -41,10 +40,10 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     readonly stats: TypedNodeStats;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
-    ins(type: string): NeighborEntries;
-    outs(type: string): NeighborEntries;
-    conns(type: string): NeighborEntries;
-    all(type: string): NeighborEntries;
+    ins(type: string): Set<string>;
+    outs(type: string): Set<string>;
+    conns(type: string): Set<string>;
+    all(type: string): Set<string>;
     uniqueNID(e: ITypedEdge): string;
     static nIDFromUID(uid: string): string;
     private noEdgesOfTypeLeft;

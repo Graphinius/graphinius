@@ -82,11 +82,10 @@ declare module 'graphinius/core/base/BaseEdge' {
 declare module 'graphinius/core/typed/TypedNode' {
 	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
 	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
-	export type NeighborEntries = Set<string>;
 	export interface TypedAdjListsEntry {
-	    ins?: NeighborEntries;
-	    outs?: NeighborEntries;
-	    conns?: NeighborEntries;
+	    ins?: Set<string>;
+	    outs?: Set<string>;
+	    conns?: Set<string>;
 	}
 	export type TypedAdjSets = {
 	    [type: string]: TypedAdjListsEntry;
@@ -107,9 +106,9 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    uniqueNID(e: ITypedEdge): string;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
-	    ins(type: string): NeighborEntries;
-	    outs(type: string): NeighborEntries;
-	    conns(type: string): NeighborEntries;
+	    ins(type: string): Set<string>;
+	    outs(type: string): Set<string>;
+	    conns(type: string): Set<string>;
 	}
 	export interface TypedNodeConfig extends BaseNodeConfig {
 	    type?: string;
@@ -122,10 +121,10 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    readonly stats: TypedNodeStats;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
-	    ins(type: string): NeighborEntries;
-	    outs(type: string): NeighborEntries;
-	    conns(type: string): NeighborEntries;
-	    all(type: string): NeighborEntries;
+	    ins(type: string): Set<string>;
+	    outs(type: string): Set<string>;
+	    conns(type: string): Set<string>;
+	    all(type: string): Set<string>;
 	    uniqueNID(e: ITypedEdge): string;
 	    static nIDFromUID(uid: string): string;
 	    private noEdgesOfTypeLeft;
@@ -522,6 +521,11 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    typed_edges: {
 	        [key: string]: number;
 	    };
+	}
+	export interface NeighborEntry {
+	    n: ITypedNode;
+	    e: string;
+	    w: number;
 	}
 	export class TypedGraph extends BaseGraph {
 	    _label: string;

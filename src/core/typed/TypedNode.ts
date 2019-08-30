@@ -3,12 +3,10 @@ import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
 
-export type NeighborEntries = Set<string>;
-
 export interface TypedAdjListsEntry {
-	ins?: NeighborEntries;
-	outs?: NeighborEntries;
-	conns?: NeighborEntries;
+	ins?: Set<string>;
+	outs?: Set<string>;
+	conns?: Set<string>;
 }
 
 export type TypedAdjSets = { [type: string]: TypedAdjListsEntry };
@@ -43,11 +41,11 @@ export interface ITypedNode extends IBaseNode {
 	 * @param type string identifying the edge type
 	 * @todo also restructure BaseNode names for clarity?
 	 */
-	ins(type: string): NeighborEntries;
+	ins(type: string): Set<string>;
 
-	outs(type: string): NeighborEntries;
+	outs(type: string): Set<string>;
 
-	conns(type: string): NeighborEntries;
+	conns(type: string): Set<string>;
 }
 
 
@@ -162,22 +160,22 @@ class TypedNode extends BaseNode implements ITypedNode {
 	// }
 
 
-	ins(type: string): NeighborEntries {
+	ins(type: string): Set<string> {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].ins : undefined;
 	}
 
 
-	outs(type: string): NeighborEntries {
+	outs(type: string): Set<string> {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].outs : undefined;
 	}
 
 
-	conns(type: string): NeighborEntries {
+	conns(type: string): Set<string> {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].conns : undefined;
 	}
 
 
-	all(type:string): NeighborEntries {
+	all(type:string): Set<string> {
 		const result = new Set();
 		if ( this._typedAdjSets[type] ) {
 			this._typedAdjSets[type].ins && result.add([...this._typedAdjSets[type].ins]);
@@ -197,7 +195,9 @@ class TypedNode extends BaseNode implements ITypedNode {
 	uniqueNID(e: ITypedEdge): string {
 		const {a, b} = e.getNodes();
 		const node = a === this ? b : a;
-		return `${node.id}#${e.id}#${e.isWeighted() ? 'w' : 'u'}`;
+		let string = `${node.id}#${e.id}#`;
+		string += e.isWeighted() ? 'w' + e.getWeight() : 'u';
+		return string;
 	}
 
 

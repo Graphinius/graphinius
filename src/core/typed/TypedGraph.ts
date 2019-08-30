@@ -1,4 +1,4 @@
-import {ITypedNode, NeighborEntries, TypedNode} from './TypedNode';
+import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph, DIR, GraphMode, GraphStats} from '../base/BaseGraph';
@@ -11,6 +11,12 @@ export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 export interface TypedGraphStats extends GraphStats {
 	typed_nodes: { [key: string]: number };
 	typed_edges: { [key: string]: number };
+}
+
+export interface NeighborEntry {
+	n: ITypedNode;
+	e: string; // edge entry
+	w: number; // weight
 }
 
 
@@ -96,6 +102,15 @@ export class TypedGraph extends BaseGraph {
 	conns(node: ITypedNode, type: string): Set<ITypedNode> {
 		return new Set([...node.conns(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
+
+
+	// private constructNeighborEntry(uid:string) : NeighborEntry {
+	// 	return {
+	// 		n: this.n(TypedNode.nIDFromUID(uid)) as TypedNode,
+	// 		e: uid,
+	// 		w: +uid.split('#')[-1]
+	// 	}
+	// }
 
 
 	/**
