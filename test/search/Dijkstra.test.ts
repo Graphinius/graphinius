@@ -44,13 +44,13 @@ describe('Dijkstra TESTS - ', () => {
   });
 
 
-  it('should accept a goal node', () => {
+  it('should accept a target node', () => {
     $Dijkstra.Dijkstra(graph, graph.getRandomNode(), graph.getRandomNode());
   });
 
 
   it.todo('should stop when reaching the target node');
 
-  it.todo('should get the right distance to goal node');
+  it.todo('should get the right distance to target node');
 
 });

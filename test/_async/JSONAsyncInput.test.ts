@@ -1,7 +1,7 @@
-import * as $G from '../../../src/core/base/BaseGraph';
-import * as $C from '../../io/input/common';
-import * as $R from '../../../src/utils/RemoteUtils';
-import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
+import * as $G from '../../src/core/base/BaseGraph';
+import * as $C from '../io/input/common';
+import * as $R from '../../src/utils/RemoteUtils';
+import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 
 
 const std_json_in_config: IJSONInConfig = {

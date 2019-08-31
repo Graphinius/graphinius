@@ -1,11 +1,11 @@
-import * as $N from '../../../src/core/base/BaseNode';
-import * as $E from '../../../src/core/base/BaseEdge';
-import * as $G from '../../../src/core/base/BaseGraph';
-import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
-import * as $C from '../../io/input/common';
-import * as $R from '../../../src/utils/RemoteUtils';
+import * as $N from '../../src/core/base/BaseNode';
+import * as $E from '../../src/core/base/BaseEdge';
+import * as $G from '../../src/core/base/BaseGraph';
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import * as $C from '../io/input/common';
+import * as $R from '../../src/utils/RemoteUtils';
 
-import { Logger } from '../../../src/utils/Logger';
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 
