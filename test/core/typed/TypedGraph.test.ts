@@ -565,19 +565,28 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(expanse.size).toBe(200);
 		});
 
-		// /**
-		//  * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
-		//  */
-		// it('should expand K steps from a Set OUT', () => {
-		// 	const tic = process.hrtime()[1];
-		// 	const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 2);
-		// 	const toc = process.hrtime()[1];
-		// 	console.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
-		// 	expect(expanse.size).toBe(165);
-		// });
+		/**
+		 * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
+		 */
+		it('should expand K steps OUT from a Set', () => {
+			const tic = process.hrtime()[1];
+			const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 2);
+			const toc = process.hrtime()[1];
+			expect(expanse.size).toBe(194);
+			// const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
+			// console.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
+			// fs.writeFileSync('./data/output/marie_tom_2k_out.csv', names.join('\n'));
+		});
 
-
-
+		/**
+		 * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
+		 */
+		it('should expand K steps IN from a Set', () => {
+			const tic = process.hrtime()[1];
+			const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.in, knows, 2);
+			const toc = process.hrtime()[1];
+			expect(expanse.size).toBe(180);
+		});
 
 	});
 

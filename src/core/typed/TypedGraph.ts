@@ -133,6 +133,9 @@ export class TypedGraph extends BaseGraph {
 	 * expand over k steps
 	 *
 	 * @description a typed BFS ??
+	 *
+	 * @todo this is really slow if the periphery becomes larger (after k=2 even on a small graph...)
+	 * 			 -> Optimize !!!
 	 */
 	expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
 		if ( k < 0 ) {
@@ -147,7 +150,9 @@ export class TypedGraph extends BaseGraph {
 		k = k || this._nr_nodes;
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			periphery = this.getNeighborsOfSet(periphery, dir, type);
-			// console.log(`Periphery at k=${k} is of size=${periphery.size}`);
+
+			console.log(`Periphery at k=${k} is of size=${periphery.size}`);
+
 			// copy
 			const old_size = resultSet.size;
 			for ( let target of periphery ) {
