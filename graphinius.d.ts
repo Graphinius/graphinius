@@ -1196,11 +1196,20 @@ declare module 'graphinius/io/output/CSVOutput' {
 declare module 'graphinius/io/output/JSONOutput' {
 	import * as $E from 'graphinius/core/base/BaseEdge';
 	import * as $G from 'graphinius/core/base/BaseGraph';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	export interface IJSONOutput {
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONString(graph: $G.IGraph): string;
+	}
+	export interface TypeLUT {
+	    nodes: {
+	        [key: string]: string;
+	    };
+	    edges: {
+	        [key: string]: string;
+	    };
 	} class JSONOutput implements IJSONOutput {
-	    constructor();
+	    constructTypeRLUT(g: TypedGraph): [TypeLUT, TypeLUT];
 	    writeToJSONFile(filepath: string, graph: $G.IGraph): void;
 	    writeToJSONString(graph: $G.IGraph): string;
 	    static handleEdgeWeight(edge: $E.IBaseEdge): string | number;

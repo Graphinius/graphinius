@@ -257,30 +257,52 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     const nodeType1 = 'PERSON';
     const nodeType2 = 'COFFEE';
     const edgeID = 'TypedEdge';
-    const edgeType = 'FRIENDS_WITH';
+    const edgeType = 'DRINKS';
 
 
     beforeEach(() => {
       typedGraph = new TypedGraph("Output Test graph");
+      let n_a = typedGraph.addNodeByID("A", {type: nodeType1});
+      let n_b = typedGraph.addNodeByID("B", {type: nodeType2});
+      typedGraph.addEdgeByID(edgeID, n_a, n_b, {type: edgeType, directed: true});
     });
 
 
     it('should correctly output the node type', function () {
-      let n_a = typedGraph.addNodeByID("A", {type: nodeType1});
-      let n_b = typedGraph.addNodeByID("B", {type: nodeType2});
       resultString = new JSONOutput().writeToJSONString(typedGraph);
-      expect(resultString).toContain(`"x":"PERSON"`);
-      expect(resultString).toContain(`"x":"COFFEE"`);
+      expect(resultString).toContain(`"${labelKeys.n_type}":"PERSON"`);
+      expect(resultString).toContain(`"${labelKeys.n_type}":"COFFEE"`);
     });
 
 
     it('should correctly output the edge type', () => {
-      let n_a = typedGraph.addNodeByID("A");
-      let n_b = typedGraph.addNodeByID("B");
-      typedGraph.addEdgeByID(edgeID, n_b, n_a, {type: edgeType});
       resultString =  new JSONOutput().writeToJSONString(typedGraph);
-      expect(resultString).toContain(`"e":[{"t":"B","d":0,"y":"FRIENDS_WITH"}`);
+      expect(resultString).toContain(`"e":[{"t":"B","d":1,"${labelKeys.e_type}":"DRINKS"}`);
     });
+
+
+    it('should construct the correct LUT', () => {
+      const rlt_exp = {
+        nodes: { '!': 'GENERIC', '"': 'PERSON', '#': 'COFFEE' },
+        edges: { '!': 'GENERIC', '"': 'DRINKS' }
+      };
+      const rlt =  new JSONOutput().constructTypeRLUT(typedGraph)[1];
+      expect(rlt).toEqual(rlt_exp);
+    });
+
+
+    it('should include the LUT in the output string', () => {
+      const rlut_exp = {
+        nodes: { '!': 'GENERIC', '"': 'PERSON', '#': 'COFFEE' },
+        edges: { '!': 'GENERIC', '"': 'DRINKS' }
+      };
+      resultString = new JSONOutput().writeToJSONString(typedGraph);
+      expect(resultString).toContain(JSON.stringify(rlut_exp));
+      expect(JSON.parse(resultString).typeRLT).toEqual(rlut_exp);
+      console.log(resultString);
+    });
+
+
 
   });
 

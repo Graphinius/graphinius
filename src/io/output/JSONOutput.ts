@@ -3,39 +3,80 @@ import fs = require('fs');
 import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
-import { labelKeys } from '../interfaces';
-import { BaseEdge } from "../../core/base/BaseEdge";
-import { BaseNode } from "../../core/base/BaseNode";
+import {labelKeys} from '../interfaces';
+import {BaseEdge} from "../../core/base/BaseEdge";
+import {BaseNode} from "../../core/base/BaseNode";
+import {TypedGraph} from "../../core/typed/TypedGraph";
+import {BaseGraph} from "../../core/base/BaseGraph";
 
 
 export interface IJSONOutput {
 	writeToJSONFile(filepath: string, graph: $G.IGraph): void;
+
 	writeToJSONString(graph: $G.IGraph): string;
 }
 
 
+export interface TypeLUT {
+	nodes: { [key: string]: string };
+	edges: { [key: string]: string };
+}
+
+const startChar: number = 33;
+
 
 class JSONOutput implements IJSONOutput {
 
-	constructor() { }
+	// constructor() {}
+
+	constructTypeRLUT(g: TypedGraph): [TypeLUT, TypeLUT] {
+		let nchar = startChar;
+		let echar = startChar;
+		const lut: TypeLUT = {
+			nodes: {},
+			edges: {}
+		};
+		const rlut: TypeLUT = {
+			nodes: {},
+			edges: {}
+		};
+
+		const ntypes = g.nodeTypes();
+		for (let t of ntypes) {
+			lut.nodes[t] = String.fromCharCode(nchar);
+			rlut.nodes[String.fromCharCode(nchar++)] = t;
+		}
+		const etypes = g.edgeTypes();
+		for ( let t of etypes ) {
+			lut.edges[t] = String.fromCharCode(echar);
+			rlut.edges[String.fromCharCode(echar++)] = t;
+		}
+		return [lut, rlut];
+	}
+
 
 	writeToJSONFile(filepath: string, graph: $G.IGraph): void {
 		if (typeof window !== 'undefined' && window !== null) {
 			throw new Error('cannot write to File inside of Browser');
 		}
-
 		fs.writeFileSync(filepath, this.writeToJSONString(graph));
 	}
 
 
 	writeToJSONString(graph: $G.IGraph): string {
+		let lut: TypeLUT = null;
+		let rlt: TypeLUT = null;
 
-		let nodes			: { [key: string]: $N.IBaseNode },
-			node				: $N.IBaseNode,
+		if ( BaseGraph.isTyped(graph) ) {
+			[lut, rlt] = this.constructTypeRLUT(graph);
+		}
+
+		let nodes: { [key: string]: $N.IBaseNode },
+			node: $N.IBaseNode,
 			node_struct,
-			und_edges		: { [key: string]: $E.IBaseEdge } | {},
-			dir_edges		: { [key: string]: $E.IBaseEdge } | {},
-			edge				: $E.IBaseEdge,
+			und_edges: { [key: string]: $E.IBaseEdge } | {},
+			dir_edges: { [key: string]: $E.IBaseEdge } | {},
+			edge: $E.IBaseEdge,
 			coords;
 
 		let result = {
@@ -45,6 +86,9 @@ class JSONOutput implements IJSONOutput {
 			und_e: graph.nrUndEdges(),
 			data: {}
 		};
+		if ( lut ) {
+			result['typeRLT'] = rlt;
+		}
 
 		// Go through all nodes 
 		nodes = graph.getNodes();
@@ -53,10 +97,10 @@ class JSONOutput implements IJSONOutput {
 			node_struct = result.data[node.getID()] = {
 				[labelKeys.edges]: []
 			};
-			if ( node.getID() !== node.getLabel() ) {
+			if (node.getID() !== node.getLabel()) {
 				node_struct[labelKeys.n_label] = node.label;
 			}
-			if ( BaseNode.isTyped(node) ) {
+			if (BaseNode.isTyped(node)) {
 				node_struct[labelKeys.n_type] = node.type;
 			}
 
@@ -74,10 +118,10 @@ class JSONOutput implements IJSONOutput {
 					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
 					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
 				};
-				if ( edge.getID() !== edge.getLabel() ) {
+				if (edge.getID() !== edge.getLabel()) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
-				if ( BaseEdge.isTyped(edge) ) {
+				if (BaseEdge.isTyped(edge)) {
 					edgeStruct[labelKeys.e_type] = edge.type;
 				}
 				node_struct[labelKeys.edges].push(edgeStruct);
@@ -97,10 +141,10 @@ class JSONOutput implements IJSONOutput {
 					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
 					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
 				};
-				if ( edge.getID() !== edge.getLabel() ) {
+				if (edge.getID() !== edge.getLabel()) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
-				if ( BaseEdge.isTyped(edge) ) {
+				if (BaseEdge.isTyped(edge)) {
 					edgeStruct[labelKeys.e_type] = edge.type;
 				}
 				node_struct[labelKeys.edges].push(edgeStruct);
@@ -120,11 +164,11 @@ class JSONOutput implements IJSONOutput {
 
 
 	static handleEdgeWeight(edge: $E.IBaseEdge): string | number {
-		if ( !edge.isWeighted() ) {
+		if (!edge.isWeighted()) {
 			return undefined;
 		}
 
-		switch ( edge.getWeight() ) {
+		switch (edge.getWeight()) {
 			case Number.POSITIVE_INFINITY:
 				return 'Infinity';
 			case Number.NEGATIVE_INFINITY:
@@ -139,4 +183,4 @@ class JSONOutput implements IJSONOutput {
 	}
 }
 
-export { JSONOutput }
+export {JSONOutput}
