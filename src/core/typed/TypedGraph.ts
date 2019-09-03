@@ -109,22 +109,32 @@ export class TypedGraph extends BaseGraph {
 	 * 			 graph->nodeNeighbors is a problem or not !?
 	 * @todo decide if method call via [dir] is an abomination or not
 	 * 			 -> definitely screws up code assist / intellisense !!!
-	 * @todo improvement 2 -> optionally hand it a (k-1) periphery to check for dupes
 	 */
 	getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {
 		const resultSet = new Set<ITypedNode>();
+		let nr_visits = 0,
+			nodeRef;
+		const tic = process.hrtime()[1];
 		for ( let node of nodes ) {
 			// maybe we can stop earlier?
 			if ( resultSet.size >= this._nr_nodes ) {
 				return resultSet;
 			}
-			for ( let target of node[dir](type) ) {
+			const targets = node[dir](type);
+			if ( !targets ) {
+				return new Set();
+			}
+			for ( let target of targets ) {
+				nr_visits++;
+				nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
 				// In case of several nodes, they could refer to each other...
-				if ( !nodes.has(target) ) {
-					resultSet.add(this.n(TypedNode.nIDFromUID(target)) as TypedNode);
+				if ( !nodes.has(nodeRef) ) {
+					resultSet.add(nodeRef);
 				}
 			}
 		}
+		const toc = process.hrtime()[1];
+		// console.log(`Expanding from ${nodes.size} nodes involved ${nr_visits} visits & took ${toc-tic} nanos.`);
 		return resultSet;
 	}
 
@@ -135,34 +145,40 @@ export class TypedGraph extends BaseGraph {
 	 * @description a typed BFS ??
 	 *
 	 * @todo this is really slow if the periphery becomes larger (after k=2 even on a small graph...)
-	 * 			 -> Optimize !!!
+	 * 			 -> Optimize !! But how !?
 	 */
 	expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
 		if ( k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		let resultSet = new Set<ITypedNode>();
+
 		// Start with initial set
-		const peripheries = [];
-		peripheries[k] = nodes;
 		let periphery = nodes;
 		// Maximum possible step size (actually n-1, but we are catching it anyways)
 		k = k || this._nr_nodes;
+
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
+			const otic = process.hrtime()[1];
 			periphery = this.getNeighborsOfSet(periphery, dir, type);
-
-			console.log(`Periphery at k=${k} is of size=${periphery.size}`);
-
+			// console.log(`Periphery at k=${k} is of size=${periphery.size}`);
 			// copy
 			const old_size = resultSet.size;
+
+			const tic = process.hrtime()[1];
 			for ( let target of periphery ) {
 				resultSet.add(target);
 			}
+			const toc = process.hrtime()[1];
+			// console.log(`Copying set took ${toc-tic} nanos.`);
+
 			// if resultSize has not increased, we also reached a maximum
 			if ( old_size === resultSet.size ) {
 				// console.log('reached MAX - break, break, break!');
 				break;
 			}
+			const otoc = process.hrtime()[1];
+			// console.log(`Expand iteration took ${otoc-otic} nanos.`);
 		}
 		return resultSet;
 	}

@@ -26,7 +26,7 @@ export interface BFS_Callbacks {
 }
 
 export interface BFS_Scope {
-	marked 	  	: {[id: string] : boolean};
+	// marked 	  	: {[id: string] : boolean};
 	nodes		  	: {[id: string] : $N.IBaseNode};
 	queue				: Array<$N.IBaseNode>;
 	current			: $N.IBaseNode;
@@ -73,7 +73,7 @@ function BFS(graph 	 : $G.IGraph,
 
 	// scope to pass to callbacks at different stages of execution
 	let bfsScope : BFS_Scope = {
-		marked: {},
+		// marked: {},
 		nodes: graph.getNodes(),
 		queue: [],
 		current: null,
