@@ -1,1 +1,1 @@
-{"name":"Edgus Labellius","nodes":2,"dir_e":0,"und_e":1,"data":{"A":{"e":[{"t":"B","d":0,"y":"FRIENDS_WITH"}],"x":"PERSON","f":{}},"B":{"e":[{"t":"A","d":0,"y":"FRIENDS_WITH"}],"x":"PERSON","f":{}}},"typeRLT":{"nodes":{"!":"GENERIC","\"":"PERSON"},"edges":{"!":"GENERIC","\"":"FRIENDS_WITH"}}}
+{"name":"Edgus Labellius","nodes":2,"dir_e":0,"und_e":1,"data":{"A":{"e":[{"t":"B","d":0,"y":"A"}],"x":"A","f":{}},"B":{"e":[{"t":"A","d":0,"y":"A"}],"x":"A","f":{}}},"typeRLT":{"nodes":{"@":"GENERIC","A":"PERSON"},"edges":{"@":"GENERIC","A":"FRIENDS_WITH"}}}

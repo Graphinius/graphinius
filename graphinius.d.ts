@@ -1135,6 +1135,10 @@ declare module 'graphinius/io/input/JSONInput' {
 	    };
 	}
 	export interface JSONGraph {
+	    typeRLT: {
+	        nodes: {};
+	        edges: {};
+	    };
 	    name: string;
 	    nodes: number;
 	    edges: number;

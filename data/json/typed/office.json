@@ -5,99 +5,111 @@
   "und_e": 2,
   "data": {
     "A": {
-      "x": "PERSON",
+      "x": "A",
       "e": [
         {
           "t": "B",
           "d": 1,
-          "y": "LIKES"
+          "y": "A"
         },
         {
           "t": "B",
           "d": 0,
-          "y": "COWORKER"
+          "y": "C"
         },
         {
           "t": "C",
           "d": 1,
-          "y": "LIKES"
+          "y": "A"
         },
         {
           "t": "D",
           "d": 0,
-          "y": "COWORKER"
+          "y": "C"
         }
       ]
     },
     "B": {
-      "x": "PERSON",
+      "x": "A",
       "e": [
         {
           "t": "A",
           "d": 1,
-          "y": "LIKES"
+          "y": "A"
         },
         {
           "t": "E",
           "d": 1,
-          "y": "HATES"
+          "y": "B"
         }
       ]
     },
     "C": {
-      "x": "PERSON",
+      "x": "A",
       "e": [
         {
           "t": "A",
           "d": 1,
-          "y": "HATES"
+          "y": "B"
         },
         {
           "t": "D",
           "d": 1,
-          "y": "HATES"
+          "y": "B"
         }
       ]
     },
     "D": {
-      "x": "PERSON",
+      "x": "A",
       "e":
       [
         {
           "t": "E",
           "d": 1,
-          "y": "HATES"
+          "y": "B"
         },
         {
           "t": "F",
           "d": 0,
-          "y": "COWORKER"
+          "y": "C"
         }
       ]
     },
     "E": {
-      "x": "PERSON",
+      "x": "A",
       "e": [
         {
           "t": "D",
           "d": 1,
-          "y": "HATES"
+          "y": "B"
         }
       ]
     },
     "F": {
-      "x": "PERSON",
+      "x": "A",
       "e": [
         {
           "t": "D",
           "d": 1,
-          "y": "LIKES"
+          "y": "A"
         }
       ]
     },
     "G": {
-      "x": "PERSON",
+      "x": "A",
       "e": []
+    }
+  },
+  "typeRLT": {
+    "nodes": {
+      "@": "GENERIC",
+      "A": "PERSON"
+    },
+    "edges": {
+      "@": "GENERIC",
+      "A": "LIKES",
+      "B": "HATES",
+      "C": "COWORKER"
     }
   }
 }

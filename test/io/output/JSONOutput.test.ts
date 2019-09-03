@@ -268,23 +268,29 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
     });
 
 
+    /**
+     * @todo why is PERSON without double quotes, but COFFEE is with...?
+     */
     it('should correctly output the node type', function () {
+      const [lut, rlt] =  new JSONOutput().constructTypeRLUT(typedGraph);
       resultString = new JSONOutput().writeToJSONString(typedGraph);
-      expect(resultString).toContain(`"${labelKeys.n_type}":"PERSON"`);
-      expect(resultString).toContain(`"${labelKeys.n_type}":"COFFEE"`);
+      // logger.log(resultString);
+      expect(resultString).toContain(`"${labelKeys.n_type}":"${lut.nodes['PERSON']}"`);
+      expect(resultString).toContain(`"${labelKeys.n_type}":"${lut.nodes['COFFEE']}"`);
     });
 
 
     it('should correctly output the edge type', () => {
+      const [lut, rlt] =  new JSONOutput().constructTypeRLUT(typedGraph);
       resultString =  new JSONOutput().writeToJSONString(typedGraph);
-      expect(resultString).toContain(`"e":[{"t":"B","d":1,"${labelKeys.e_type}":"DRINKS"}`);
+      expect(resultString).toContain(`"e":[{"t":"B","d":1,"${labelKeys.e_type}":"${lut.edges['DRINKS']}"`);
     });
 
 
     it('should construct the correct LUT', () => {
       const rlt_exp = {
-        nodes: { '!': 'GENERIC', '"': 'PERSON', '#': 'COFFEE' },
-        edges: { '!': 'GENERIC', '"': 'DRINKS' }
+        nodes: { '@': 'GENERIC', 'A': 'PERSON', 'B': 'COFFEE' },
+        edges: { '@': 'GENERIC', 'A': 'DRINKS' }
       };
       const rlt =  new JSONOutput().constructTypeRLUT(typedGraph)[1];
       expect(rlt).toEqual(rlt_exp);
@@ -293,16 +299,14 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
 
     it('should include the LUT in the output string', () => {
       const rlut_exp = {
-        nodes: { '!': 'GENERIC', '"': 'PERSON', '#': 'COFFEE' },
-        edges: { '!': 'GENERIC', '"': 'DRINKS' }
+        nodes: { '@': 'GENERIC', 'A': 'PERSON', 'B': 'COFFEE' },
+        edges: { '@': 'GENERIC', 'A': 'DRINKS' }
       };
       resultString = new JSONOutput().writeToJSONString(typedGraph);
       expect(resultString).toContain(JSON.stringify(rlut_exp));
       expect(JSON.parse(resultString).typeRLT).toEqual(rlut_exp);
       console.log(resultString);
     });
-
-
 
   });
 

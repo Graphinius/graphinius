@@ -35,10 +35,11 @@ export interface JSONNode {
 
 
 export interface JSONGraph {
+	typeRLT: {nodes: {}, edges: {}};
 	name: string;
 	nodes: number;
 	edges: number;
-	data: { [key: string]: JSONNode }
+	data: { [key: string]: JSONNode };
 }
 
 
@@ -101,6 +102,9 @@ class JSONInput implements IJSONInput {
 	readFromJSON(json: JSONGraph, graph?: IGraph | TypedGraph): IGraph | TypedGraph {
 		graph = graph || new BaseGraph(json.name);
 		const edc = new EdgeDupeChecker(graph);
+		const rlt = json.typeRLT;
+		logger.log(rlt);
+
 
 		this.addNodesToGraph(json, graph);
 
@@ -114,7 +118,7 @@ class JSONInput implements IJSONInput {
 				// BASE INFO
 				const target_node = this.getTargetNode(graph, edge_input);
 				const edge_label = edge_input[labelKeys.e_label];
-				const edge_type = edge_input[labelKeys.e_type];
+				const edge_type = rlt && rlt.edges[edge_input[labelKeys.e_type]] || null;
 
 				// DIRECTION
 				const directed = this._config.explicit_direction ? !!edge_input[labelKeys.e_dir] : this._config.directed;
@@ -163,6 +167,8 @@ class JSONInput implements IJSONInput {
 
 
 	addNodesToGraph(json: JSONGraph, graph: IGraph) {
+		const rlt = json.typeRLT;
+
 		let
 			coords_json: { [key: string]: any },
 			coords: { [key: string]: Number },
@@ -170,7 +176,7 @@ class JSONInput implements IJSONInput {
 			features: { [key: string]: any };
 
 		for (let node_id in json.data) {
-			const type = BaseGraph.isTyped(graph) ? json.data[node_id][labelKeys.n_type] : null;
+			const type = BaseGraph.isTyped(graph) ? rlt && rlt.nodes[json.data[node_id][labelKeys.n_type]] : null;
 			const label = json.data[node_id][labelKeys.n_label];
 			const node = graph.addNodeByID(node_id, {label, type});
 			// Here we set the reference...?

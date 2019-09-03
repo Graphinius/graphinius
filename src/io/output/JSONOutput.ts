@@ -22,7 +22,7 @@ export interface TypeLUT {
 	edges: { [key: string]: string };
 }
 
-const startChar: number = 33;
+const startChar: number = 64;
 
 
 class JSONOutput implements IJSONOutput {
@@ -67,10 +67,6 @@ class JSONOutput implements IJSONOutput {
 		let lut: TypeLUT = null;
 		let rlt: TypeLUT = null;
 
-		if ( BaseGraph.isTyped(graph) ) {
-			[lut, rlt] = this.constructTypeRLUT(graph);
-		}
-
 		let nodes: { [key: string]: $N.IBaseNode },
 			node: $N.IBaseNode,
 			node_struct,
@@ -86,7 +82,11 @@ class JSONOutput implements IJSONOutput {
 			und_e: graph.nrUndEdges(),
 			data: {}
 		};
-		if ( lut ) {
+
+		if ( BaseGraph.isTyped(graph) ) {
+			[lut, rlt] = this.constructTypeRLUT(graph);
+		}
+		if ( rlt ) {
 			result['typeRLT'] = rlt;
 		}
 
@@ -101,7 +101,7 @@ class JSONOutput implements IJSONOutput {
 				node_struct[labelKeys.n_label] = node.label;
 			}
 			if (BaseNode.isTyped(node)) {
-				node_struct[labelKeys.n_type] = node.type;
+				node_struct[labelKeys.n_type] = lut && lut.nodes[node.type];
 			}
 
 
@@ -122,7 +122,7 @@ class JSONOutput implements IJSONOutput {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
 				if (BaseEdge.isTyped(edge)) {
-					edgeStruct[labelKeys.e_type] = edge.type;
+					edgeStruct[labelKeys.e_type] = lut && lut.edges[edge.type];
 				}
 				node_struct[labelKeys.edges].push(edgeStruct);
 			}
@@ -145,7 +145,7 @@ class JSONOutput implements IJSONOutput {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
 				if (BaseEdge.isTyped(edge)) {
-					edgeStruct[labelKeys.e_type] = edge.type;
+					edgeStruct[labelKeys.e_type] = lut && lut.edges[edge.type];
 				}
 				node_struct[labelKeys.edges].push(edgeStruct);
 			}

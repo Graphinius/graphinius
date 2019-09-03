@@ -19,6 +19,10 @@ export interface JSONNode {
     };
 }
 export interface JSONGraph {
+    typeRLT: {
+        nodes: {};
+        edges: {};
+    };
     name: string;
     nodes: number;
     edges: number;
