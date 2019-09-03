@@ -27,6 +27,8 @@ export declare class TypedGraph extends BaseGraph {
     ins(node: ITypedNode, type: string): Set<ITypedNode>;
     outs(node: ITypedNode, type: string): Set<ITypedNode>;
     conns(node: ITypedNode, type: string): Set<ITypedNode>;
+    getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
+    expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
     inHistT(nType: string, eType: string): Set<number>[];
     outHistT(nType: string, eType: string): Set<number>[];
     connHistT(nType: string, eType: string): Set<number>[];

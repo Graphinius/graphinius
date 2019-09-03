@@ -309,9 +309,6 @@ declare module 'graphinius/search/BFS' {
 	    sort_nodes?: Function;
 	}
 	export interface BFS_Scope {
-	    marked: {
-	        [id: string]: boolean;
-	    };
 	    nodes: {
 	        [id: string]: $N.IBaseNode;
 	    };
@@ -542,6 +539,8 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    ins(node: ITypedNode, type: string): Set<ITypedNode>;
 	    outs(node: ITypedNode, type: string): Set<ITypedNode>;
 	    conns(node: ITypedNode, type: string): Set<ITypedNode>;
+	    getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
+	    expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
 	    inHistT(nType: string, eType: string): Set<number>[];
 	    outHistT(nType: string, eType: string): Set<number>[];
 	    connHistT(nType: string, eType: string): Set<number>[];
@@ -564,9 +563,9 @@ declare module 'graphinius/core/base/BaseGraph' {
 	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	export enum DIR {
-	    in = "IN",
-	    out = "OUT",
-	    conn = "CONN"
+	    in = "ins",
+	    out = "outs",
+	    conn = "conns"
 	}
 	export enum GraphMode {
 	    INIT = 0,
