@@ -98,13 +98,74 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	// private constructNeighborEntry(uid:string) : NeighborEntry {
-	// 	return {
-	// 		n: this.n(TypedNode.nIDFromUID(uid)) as TypedNode,
-	// 		e: uid,
-	// 		w: +uid.split('#')[-1]
-	// 	}
-	// }
+	/**
+	 * Neighbor nodes depending on type - from start SET
+	 * @description we have to start with node objects, since dupe-checkable strings
+	 * 							are only available once we deal with edge/neighborhood entries
+	 *  						However, we then need to switch to an `intermediate representation`
+	 *  					  using those strings for dupe checking, and in the end map back to
+	 *  					  a node set...
+	 * @todo decide if this difference in representation between node->neighbors &
+	 * 			 graph->nodeNeighbors is a problem or not !?
+	 * @todo decide if method call via [dir] is an abomination or not
+	 * 			 -> definitely screws up code assist / intellisense !!!
+	 *
+	 * @todo Set with node objects cannot be checked for dupes... use Strings instead!
+	 * @todo this is just not a problem as long as there are no self-loops...
+	 * @todo HEY, wait a moment!! Since we are getting references back, we SHOULD be able to check for dupes!!!...
+	 *
+	 * @todo improvement 2 -> optionally hand it a (k-1) periphery to check for dupes
+	 */
+	getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {
+		const resultSet = new Set<ITypedNode>();
+		for ( let node of nodes ) {
+			// maybe we can stop earlier?
+			if ( resultSet.size >= this._nr_nodes ) {
+				return resultSet;
+			}
+			for ( let target of node[dir](type) ) {
+				// In case of several nodes, they could refer to each other...
+				if ( !nodes.has(target) ) {
+					resultSet.add(this.n(TypedNode.nIDFromUID(target)) as TypedNode);
+				}
+			}
+		}
+		return resultSet;
+	}
+
+
+	/**
+	 * expand over k steps
+	 *
+	 * @description a typed BFS ??
+	 */
+	expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
+		if ( k < 0 ) {
+			throw new Error('cowardly refusing to expand a negative number of steps.');
+		}
+		let resultSet = new Set<ITypedNode>();
+		// Start with initial set
+		const peripheries = [];
+		peripheries[k] = nodes;
+		let periphery = nodes;
+		// Maximum possible step size (actually n-1, but we are catching it anyways)
+		k = k || this._nr_nodes;
+		while ( k-- || resultSet.size >= this._nr_nodes ) {
+			periphery = this.getNeighborsOfSet(periphery, dir, type);
+			// console.log(`Periphery at k=${k} is of size=${periphery.size}`);
+			// copy
+			const old_size = resultSet.size;
+			for ( let target of periphery ) {
+				resultSet.add(target);
+			}
+			// if resultSize has not increased, we also reached a maximum
+			if ( old_size === resultSet.size ) {
+				// console.log('reached MAX - break, break, break!');
+				break;
+			}
+		}
+		return resultSet;
+	}
 
 
 	/**

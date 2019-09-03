@@ -51,3 +51,12 @@ Then execute the following lines of code to obtain a (random) DFS segmentation:
 [colorBFSREPL]:https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/colorBFSREPL.png
 
 [colorDFSREPL]:https://raw.githubusercontent.com/cassinius/MSCThesisGraphinius/master/figures/colorDFSREPL.png
+
+
+# NOTES
+
+### *DUPLICATES*
+
+ @describe we check for duplicate edges on a graph level, but not on a node level
+ - when systematically (batch) instantiationg from an input source, our input classes check for duplicate edges
+ - when programmatically building a graph manually, the graph class will reject duplicates, whereas the node classes used internally will not -> don't use <node>.addEdge...() manually!

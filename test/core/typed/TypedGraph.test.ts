@@ -1,5 +1,8 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 import {BaseNode} from "../../../src/core/base/BaseNode";
+import {DIR} from '../../../src/core/base/BaseGraph';
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
@@ -8,6 +11,8 @@ import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
 const logger = new Logger();
+
+const jobsGraphFile = path.join(__dirname, '../../../data/json/recommender/jobs.json');
 
 
 /**
@@ -438,6 +443,64 @@ describe('TYPED GRAPH TESTS: ', () => {
 			const idxs = Object.keys(coworkHist);
 			// logger.log(idxs[k_least]);
 			expect(coworkHist[idxs[k_least]]).toEqual(new Set([g.n('A'), g.n('D')]));
+		});
+
+	});
+
+
+	/**
+	 * Using JobSkill sample graph
+	 *
+	 * @description since we have no fulltext search in Graphinius itself,
+	 * 							and we're not using names as IDs, we manually looked up:
+	 * 							- Marie Pfeffer -> ID 40
+	 * 						  - Tom Lemke -> ID 20
+	 */
+	describe.only('(sub)set expansion tests - ', () => {
+
+		const knows = 'KNOWS';
+		let
+			g: TypedGraph;
+
+		beforeAll(() => {
+			g = new TypedGraph('jobs / skills sample');
+			g = new JSONInput().readFromJSONFile(jobsGraphFile, g) as TypedGraph;
+			expect(g.stats.mode).toBe(1);
+			expect(g.stats.nr_nodes).toBe(305);
+			expect(g.stats.nr_und_edges).toBe(0);
+			expect(g.stats.nr_dir_edges).toBe(7628);
+			expect(g.n('20').getFeature('name')).toBe('Tom Lemke');
+			expect(g.n('40').getFeature('name')).toBe('Marie Pfeffer');
+		});
+
+		/**
+		 * Marie Pfeffer -> known by 11 people
+		 */
+		it('should expand a single node (IN) when passed as Set', () => {
+			expect(g.getNeighborsOfSet(new Set([g.n('40')]), DIR.in, knows).size).toBe(11);
+		});
+
+		/**
+		 * Marie Pfeffer & Tom Lemke -> together known by 25 people
+		 */
+		it('should expand a node SET (IN)', () => {
+			const expanse = g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.in, knows);
+			// console.log(expanse);
+			expect(expanse.size).toBe(25);
+		});
+
+		/**
+		 * Marie Pfeffer -> knows 17 people
+		 */
+		it('should expand a single node (OUT) when passed as Set', () => {
+			expect(g.getNeighborsOfSet(new Set([g.n('40')]), DIR.out, knows).size).toBe(17);
+		});
+
+		/**
+		 * Marie Pfeffer & Tom Lemke -> together know 32 people
+		 */
+		it('should expand a node SET (OUT)', () => {
+			expect(g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.out, knows).size).toBe(32);
 		});
 
 	});

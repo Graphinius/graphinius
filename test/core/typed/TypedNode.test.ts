@@ -84,11 +84,6 @@ describe('==== NODE TESTS ====', () => {
 	});
 
 
-	/**
-	 * @todo take the test cases from above & extend by
-	 *       -) type
-	 *       -) direction
-	 */
 	describe('Edge addition / deletion tests - ', () => {
 		enum NODE_TYPES {
 			Person = 'PERSON',
