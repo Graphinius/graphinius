@@ -109,11 +109,6 @@ export class TypedGraph extends BaseGraph {
 	 * 			 graph->nodeNeighbors is a problem or not !?
 	 * @todo decide if method call via [dir] is an abomination or not
 	 * 			 -> definitely screws up code assist / intellisense !!!
-	 *
-	 * @todo Set with node objects cannot be checked for dupes... use Strings instead!
-	 * @todo this is just not a problem as long as there are no self-loops...
-	 * @todo HEY, wait a moment!! Since we are getting references back, we SHOULD be able to check for dupes!!!...
-	 *
 	 * @todo improvement 2 -> optionally hand it a (k-1) periphery to check for dupes
 	 */
 	getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {

@@ -503,6 +503,82 @@ describe('TYPED GRAPH TESTS: ', () => {
 			expect(g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.out, knows).size).toBe(32);
 		});
 
+
+		it('should not expand a negative number of steps', () => {
+			expect(() => g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, -1))
+				.toThrowError('cowardly refusing to expand a negative number of steps.');
+		});
+
+		/**
+		 * Marie Pfeffer -> knows 17 people
+		 */
+		it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			expect(g.expandK(new Set([g.n('40')]), DIR.out, knows, 1).size).toBe(17);
+		});
+
+		/**
+		 * Marie Pfeffer & Tom Lemke -> together know 32 people
+		 */
+		it('should expand K steps from a node SET (OUT)', () => {
+			expect(g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 1).size).toBe(32);
+		});
+
+		/**
+		 * Marie Pfeffer -> 2 steps OUT -> 157 people
+		 */
+		it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			const expanse = g.expandK(new Set([g.n('40')]), DIR.out, knows, 2);
+			const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
+			// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
+			const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv').toString().trim().split('\n');
+			expect(expanse.size).toBe(161);
+			expect(names).toEqual(compareNames);
+		});
+
+		/**
+		 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
+		 */
+		it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			const tic = process.hrtime()[1];
+			const expanse = g.expandK(new Set([g.n('40')]), DIR.out, knows, 3);
+			const toc = process.hrtime()[1];
+			console.log(`Expanding people to the max ;-) took ${toc-tic} nanos.`);
+			expect(expanse.size).toBe(200);
+		});
+
+		/**
+		 * Marie Pfeffer -> 2 steps IN -> 122 people
+		 */
+		it('should expand K steps from a single node (IN) when passed as Set', () => {
+			const expanse = g.expandK(new Set([g.n('40')]), DIR.in, knows, 2);
+			expect(expanse.size).toBe(122);
+		});
+
+		/**
+		 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
+		 */
+		it('should expand K steps from a single node (IN) when passed as Set', () => {
+			const tic = process.hrtime()[1];
+			const expanse = g.expandK(new Set([g.n('40')]), DIR.in, knows, 3);
+			const toc = process.hrtime()[1];
+			console.log(`Expanding people to the max ;-) took ${toc-tic} nanos.`);
+			expect(expanse.size).toBe(200);
+		});
+
+		// /**
+		//  * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
+		//  */
+		// it('should expand K steps from a Set OUT', () => {
+		// 	const tic = process.hrtime()[1];
+		// 	const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 2);
+		// 	const toc = process.hrtime()[1];
+		// 	console.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
+		// 	expect(expanse.size).toBe(165);
+		// });
+
+
+
+
 	});
 
 });
