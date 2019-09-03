@@ -22,9 +22,6 @@ export interface BFS_Callbacks {
     sort_nodes?: Function;
 }
 export interface BFS_Scope {
-    marked: {
-        [id: string]: boolean;
-    };
     nodes: {
         [id: string]: $N.IBaseNode;
     };
