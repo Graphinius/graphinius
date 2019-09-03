@@ -1,5 +1,8 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 import {BaseNode} from "../../../src/core/base/BaseNode";
+import {DIR} from '../../../src/core/base/BaseGraph';
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
@@ -7,7 +10,10 @@ import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/config';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
+
 const logger = new Logger();
+
+const jobsGraphFile = path.join(__dirname, '../../../data/json/recommender/jobs.json');
 
 
 /**
@@ -442,4 +448,194 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 	});
 
+
+	/**
+	 * Using JobSkill sample graph
+	 *
+	 * @description since we have no fulltext search in Graphinius itself,
+	 *              and we're not using names as IDs, we manually looked up:
+	 *              - Marie Pfeffer -> ID 40
+	 *              - Tom Lemke -> ID 20
+	 */
+	describe.only('(sub)set expansion tests - ', () => {
+
+		const knows = 'KNOWS';
+		let
+			g: TypedGraph;
+
+		beforeAll(() => {
+			g = new TypedGraph('jobs / skills sample');
+			g = new JSONInput().readFromJSONFile(jobsGraphFile, g) as TypedGraph;
+			expect(g.stats.mode).toBe(1);
+			expect(g.stats.nr_nodes).toBe(305);
+			expect(g.stats.nr_und_edges).toBe(0);
+			expect(g.stats.nr_dir_edges).toBe(7628);
+			expect(g.n('20').getFeature('name')).toBe('Tom Lemke');
+			expect(g.n('40').getFeature('name')).toBe('Marie Pfeffer');
+		});
+
+
+		describe('getting direct neighbors of set', () => {
+
+			/**
+			 * Marie Pfeffer -> known by 11 people
+			 */
+			it('should expand a single node (IN) when passed as Set', () => {
+				expect(g.getNeighborsOfSet(new Set([g.n('40')]), DIR.in, knows).size).toBe(11);
+			});
+
+			/**
+			 * Marie Pfeffer & Tom Lemke -> together known by 25 people
+			 */
+			it('should expand a node SET (IN)', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.in, knows);
+				// console.log(expanse);
+				expect(expanse.size).toBe(25);
+			});
+
+			/**
+			 * Marie Pfeffer -> knows 17 people
+			 */
+			it('should expand a single node (OUT) when passed as Set', () => {
+				expect(g.getNeighborsOfSet(new Set([g.n('40')]), DIR.out, knows).size).toBe(17);
+			});
+
+			/**
+			 * Marie Pfeffer & Tom Lemke -> together know 32 people
+			 */
+			it('should expand a node SET (OUT)', () => {
+				expect(g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.out, knows).size).toBe(32);
+			});
+
+			/**
+			 * SKILLS
+			 * Marie Pfeffer & Tom Lemke -> have 20 skills combined
+			 *
+			 * @todo sort & collect on a specific field -> in this example e.g., we have 'Stata' as 2 different nodes...
+			 */
+			it('should expand skills from a set', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.out, 'HAS_SKILL');
+				console.log([...expanse.values()].map(s => s.getFeature('name')).sort());
+				// Should be 20, if `collected` on name...
+				expect(expanse.size).toBe(21);
+			});
+
+			it('should expand skills from a set', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('40'), g.n('20')]), DIR.out, 'WORKS_FOR');
+				expect(expanse.size).toBe(2);
+			});
+
+			/**
+			 * Scala -> ID 219
+			 * Cython -> ID 218
+			 */
+			it('should find 37 companies looking for Skills `Scala` or `Cython`', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('218'), g.n('219')]), DIR.in, 'LOOKS_FOR_SKILL');
+				expect(expanse.size).toBe(37);
+			});
+
+
+			it('but zero if the direction is reversed...', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('218'), g.n('219')]), DIR.out, 'LOOKS_FOR_SKILL');
+				expect(expanse.size).toBe(0);
+			});
+
+
+			it('... same with `undirected` relationship', () => {
+				const expanse = g.getNeighborsOfSet(new Set([g.n('218'), g.n('219')]), DIR.conn, 'LOOKS_FOR_SKILL');
+				expect(expanse.size).toBe(0);
+			});
+
+		});
+
+
+		describe('expand over K steps - ', () => {
+
+			it('should not expand a negative number of steps', () => {
+				expect(() => g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, -1))
+					.toThrowError('cowardly refusing to expand a negative number of steps.');
+			});
+
+			/**
+			 * Marie Pfeffer -> knows 17 people
+			 */
+			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+				expect(g.expandK(new Set([g.n('40')]), DIR.out, knows, 1).size).toBe(17);
+			});
+
+			/**
+			 * Marie Pfeffer & Tom Lemke -> together know 32 people
+			 */
+			it('should expand K steps from a node SET (OUT)', () => {
+				expect(g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 1).size).toBe(32);
+			});
+
+			/**
+			 * Marie Pfeffer -> 2 steps OUT -> 157 people
+			 */
+			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+				const expanse = g.expandK(new Set([g.n('40')]), DIR.out, knows, 2);
+				const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
+				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
+				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv').toString().trim().split('\n');
+				expect(expanse.size).toBe(161);
+				expect(names).toEqual(compareNames);
+			});
+
+			/**
+			 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
+			 */
+			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+				const tic = +new Date;
+				const expanse = g.expandK(new Set([g.n('40')]), DIR.out, knows, 3);
+				const toc = +new Date;
+				console.log(`Expanding people (OUT) to the max ;-) took ${toc - tic} ms.`);
+				expect(expanse.size).toBe(200);
+			});
+
+			/**
+			 * Marie Pfeffer -> 2 steps IN -> 122 people
+			 */
+			it('should expand K steps from a single node (IN) when passed as Set', () => {
+				const expanse = g.expandK(new Set([g.n('40')]), DIR.in, knows, 2);
+				expect(expanse.size).toBe(122);
+			});
+
+			/**
+			 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
+			 */
+			it('should expand K steps from a single node (IN) when passed as Set', () => {
+				const tic = +new Date;
+				const expanse = g.expandK(new Set([g.n('40')]), DIR.in, knows, 3);
+				const toc = +new Date;
+				console.log(`Expanding people (IN) to the max ;-) took ${toc - tic} ms.`);
+				expect(expanse.size).toBe(200);
+			});
+
+			/**
+			 * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
+			 */
+			it('should expand K steps OUT from a Set', () => {
+				const tic = process.hrtime()[1];
+				const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.out, knows, 2);
+				const toc = process.hrtime()[1];
+				expect(expanse.size).toBe(194);
+				// const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
+				// console.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
+				// fs.writeFileSync('./data/output/marie_tom_2k_out.csv', names.join('\n'));
+			});
+
+			/**
+			 * Marie Pfeffer & Tom Lemke -> 2 steps OUT -> 165 people
+			 */
+			it('should expand K steps IN from a Set', () => {
+				const tic = process.hrtime()[1];
+				const expanse = g.expandK(new Set([g.n('40'), g.n('20')]), DIR.in, knows, 2);
+				const toc = process.hrtime()[1];
+				expect(expanse.size).toBe(180);
+			});
+
+		});
+
+	});
 });

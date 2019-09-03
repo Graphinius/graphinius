@@ -10,9 +10,9 @@ import {TypedGraph} from "../typed/TypedGraph";
 const DEFAULT_WEIGHT = 1;
 
 export enum DIR {
-	in = "IN",
-	out = "OUT",
-	conn = "CONN"
+	in = "ins",
+	out = "outs",
+	conn = "conns"
 }
 
 export enum GraphMode {
