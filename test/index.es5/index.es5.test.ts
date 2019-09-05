@@ -28,6 +28,24 @@ describe('Checking index.js structure - ', () => {
       expect(typeof base).toBe("object");
     });
 
+
+    it('core should contain GraphMode', () => {
+      let GM = index.core.GraphMode;
+      expect(GM.INIT).toBe(0);
+      expect(GM.DIRECTED).toBe(1);
+      expect(GM.UNDIRECTED).toBe(2);
+      expect(GM.MIXED).toBe(3);
+    });
+
+
+    it('core should contain DIR(ection)', () => {
+      let DIR = index.core.DIR;
+      expect(DIR.in).toBe('ins');
+      expect(DIR.out).toBe('outs');
+      expect(DIR.und).toBe('unds');
+    });
+
+
     /**
      * @todo only test one of the API methods !?
      */
@@ -54,15 +72,6 @@ describe('Checking index.js structure - ', () => {
       graph = new base.BaseGraph("Graphinius Maximus");
       // only graphs can give you random nodes
       expect(typeof graph.getRandomNode).toBe("function");
-    });
-
-
-    it('core should contain GraphMode', () => {
-      let GM = base.GraphMode;
-      expect(GM.INIT).toBe(0);
-      expect(GM.DIRECTED).toBe(1);
-      expect(GM.UNDIRECTED).toBe(2);
-      expect(GM.MIXED).toBe(3);
     });
 
 

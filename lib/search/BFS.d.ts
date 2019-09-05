@@ -1,3 +1,4 @@
+import { GraphMode } from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $E from '../core/base/BaseEdge';
 import * as $G from '../core/base/BaseGraph';
@@ -6,7 +7,7 @@ export interface BFS_Config {
         [id: string]: BFS_ResultEntry;
     };
     callbacks: BFS_Callbacks;
-    dir_mode: $G.GraphMode;
+    dir_mode: GraphMode;
     messages?: {};
     filters?: any;
 }

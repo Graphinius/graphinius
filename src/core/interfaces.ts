@@ -4,10 +4,14 @@ import {ITypedEdge} from "./typed/TypedEdge";
 /*----------------------------------------*/
 /*							BASE GRAPH								*/
 /*----------------------------------------*/
+
+/**
+ * @todo maybe refactor to more sensible value(type)s...
+ */
 export enum DIR {
 	in = "ins",
 	out = "outs",
-	unds = "unds"
+	und = "unds"
 }
 
 export enum GraphMode {

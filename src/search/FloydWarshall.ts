@@ -1,3 +1,4 @@
+import {MinAdjacencyListArray, NextArray} from '../core/interfaces';
 import * as $G from '../core/base/BaseGraph';
 import * as $SU from '../utils/StructUtils'
 
@@ -24,8 +25,8 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists: $G.MinAdjacencyListArray = graph.adjListArray();
-	let next: $G.NextArray = graph.nextArray();
+	let dists: MinAdjacencyListArray = graph.adjListArray();
+	let next: NextArray = graph.nextArray();
 
 	let N = dists.length;
 	for (let k = 0; k < N; ++k) {
@@ -59,7 +60,7 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
+function FloydWarshallArray(graph: $G.IGraph): MinAdjacencyListArray {
 	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
@@ -80,7 +81,7 @@ function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray {
 }
 
 
-function changeNextToDirectParents(input: $G.NextArray): $G.NextArray {
+function changeNextToDirectParents(input: NextArray): NextArray {
 	let output: Array<Array<Array<number>>> = [];
 	
 	for (let a = 0; a < input.length; a++) {

@@ -1,3 +1,4 @@
+import { GraphMode } from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
 import * as $BH from '../datastructs/BinaryHeap';
@@ -7,7 +8,7 @@ export interface PFS_Config {
         [id: string]: PFS_ResultEntry;
     };
     callbacks: PFS_Callbacks;
-    dir_mode: $G.GraphMode;
+    dir_mode: GraphMode;
     goal_node: $N.IBaseNode;
     messages?: PFS_Messages;
     filters?: any;

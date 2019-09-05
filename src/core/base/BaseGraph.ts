@@ -130,7 +130,7 @@ class BaseGraph implements IGraph {
 	}
 
 	get connHist(): Set<number>[] {
-		return this.degreeHist(DIR.unds);
+		return this.degreeHist(DIR.und);
 	}
 
 	private degreeHist(dir: string): Set<number>[] {

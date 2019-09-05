@@ -1,4 +1,5 @@
 // CORE
+const iCore										= require("./lib/core/interfaces");
 // Base
 const BaseEdge	      				= require("./lib/core/base/BaseEdge.js");
 const BaseNode 	      				= require("./lib/core/base/BaseNode.js");
@@ -49,11 +50,12 @@ let out = typeof window !== 'undefined' ? window : global;
  */
 out.$G = {
 	core: {
+		GraphMode								: iCore.GraphMode,
+		DIR											: iCore.DIR,
 		base: {
 			BaseEdge 								: BaseEdge.BaseEdge,
 			BaseNode 								: BaseNode.BaseNode,
-			BaseGraph 							: BaseGraph.BaseGraph,
-			GraphMode								: BaseGraph.GraphMode
+			BaseGraph 							: BaseGraph.BaseGraph
 		},
 		typed: {
 			TypedEdge								: TypedEdge.TypedEdge,

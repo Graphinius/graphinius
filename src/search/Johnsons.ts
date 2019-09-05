@@ -1,3 +1,4 @@
+import {NextArray} from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
 import * as $PFS from '../search/PFS';
@@ -93,7 +94,7 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
 
 function PFSFromAllNodes(graph: $G.IGraph): {} {
   let dists: Array<Array<number>> = graph.adjListArray();
-  let next: $G.NextArray = graph.nextArray();
+  let next: NextArray = graph.nextArray();
 
   let nodesDict = graph.getNodes();
   let nodeIDIdxMap = {};

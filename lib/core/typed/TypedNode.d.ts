@@ -31,7 +31,7 @@ export interface ITypedNode extends IBaseNode {
     removeEdge(edge: ITypedEdge): void;
     ins(type: string): Set<string>;
     outs(type: string): Set<string>;
-    conns(type: string): Set<string>;
+    unds(type: string): Set<string>;
 }
 export interface TypedNodeConfig extends BaseNodeConfig {
     type?: string;
@@ -47,7 +47,7 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     removeEdge(edge: ITypedEdge): void;
     ins(type: string): Set<string>;
     outs(type: string): Set<string>;
-    conns(type: string): Set<string>;
+    unds(type: string): Set<string>;
     all(type: string): Set<string>;
     uniqueNID(e: ITypedEdge): string;
     static nIDFromUID(uid: string): string;

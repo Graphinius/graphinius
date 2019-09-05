@@ -190,7 +190,7 @@ export class TypedGraph extends BaseGraph {
 	}
 
 	connHistT(nType: string, eType: string): Set<number>[] {
-		return this.degreeHistT(DIR.unds, nType, eType);
+		return this.degreeHistT(DIR.und, nType, eType);
 	}
 
 	private degreeHistT(dir: string, nType: string, eType: string): Set<number>[] {

@@ -1,33 +1,7 @@
+import { GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from '../interfaces';
 import { IBaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge } from './BaseEdge';
 import { TypedGraph } from "../typed/TypedGraph";
-export declare enum DIR {
-    in = "ins",
-    out = "outs",
-    conn = "conns"
-}
-export declare enum GraphMode {
-    INIT = 0,
-    DIRECTED = 1,
-    UNDIRECTED = 2,
-    MIXED = 3
-}
-export interface GraphStats {
-    mode: GraphMode;
-    nr_nodes: number;
-    nr_und_edges: number;
-    nr_dir_edges: number;
-    density_dir: number;
-    density_und: number;
-}
-export declare type MinAdjacencyListDict = {
-    [id: string]: MinAdjacencyListDictEntry;
-};
-export declare type MinAdjacencyListDictEntry = {
-    [id: string]: number;
-};
-export declare type MinAdjacencyListArray = Array<Array<number>>;
-export declare type NextArray = Array<Array<Array<number>>>;
 export interface IGraph {
     readonly label: string;
     readonly mode: GraphMode;

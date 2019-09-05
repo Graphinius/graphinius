@@ -1,17 +1,8 @@
 import { ITypedNode, TypedNode } from './TypedNode';
 import { ITypedEdge, TypedEdgeConfig } from "./TypedEdge";
 import { IBaseEdge } from "../base/BaseEdge";
-import { BaseGraph, GraphStats } from '../base/BaseGraph';
-export declare type TypedNodes = Map<string, Map<string, ITypedNode>>;
-export declare type TypedEdges = Map<string, Map<string, ITypedEdge>>;
-export interface TypedGraphStats extends GraphStats {
-    typed_nodes: {
-        [key: string]: number;
-    };
-    typed_edges: {
-        [key: string]: number;
-    };
-}
+import { BaseGraph } from '../base/BaseGraph';
+import { TypedGraphStats, TypedEdges, TypedNodes } from '../interfaces';
 export declare class TypedGraph extends BaseGraph {
     _label: string;
     protected _type: string;
@@ -26,9 +17,9 @@ export declare class TypedGraph extends BaseGraph {
     nrTypedEdges(type: string): number | null;
     ins(node: ITypedNode, type: string): Set<ITypedNode>;
     outs(node: ITypedNode, type: string): Set<ITypedNode>;
-    conns(node: ITypedNode, type: string): Set<ITypedNode>;
-    getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
-    expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
+    unds(node: ITypedNode, type: string): Set<ITypedNode>;
+    expand(input: ITypedNode | Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
+    expandK(input: ITypedNode | Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
     inHistT(nType: string, eType: string): Set<number>[];
     outHistT(nType: string, eType: string): Set<number>[];
     connHistT(nType: string, eType: string): Set<number>[];

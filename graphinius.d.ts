@@ -79,64 +79,6 @@ declare module 'graphinius/core/base/BaseEdge' {
 	export { BaseEdge };
 
 }
-declare module 'graphinius/core/typed/TypedNode' {
-	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
-	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
-	export interface NeighborEntry {
-	    n: ITypedNode;
-	    e: string;
-	    w: number;
-	}
-	export interface TypedAdjListsEntry {
-	    ins?: Set<string>;
-	    outs?: Set<string>;
-	    conns?: Set<string>;
-	}
-	export type TypedAdjSets = {
-	    [type: string]: TypedAdjListsEntry;
-	};
-	export interface TypedEdgesStatsEntry {
-	    ins: number;
-	    outs: number;
-	    conns: number;
-	}
-	export interface TypedNodeStats {
-	    typed_edges: {
-	        [key: string]: TypedEdgesStatsEntry;
-	    };
-	}
-	export interface ITypedNode extends IBaseNode {
-	    readonly type: string;
-	    readonly stats: TypedNodeStats;
-	    uniqueNID(e: ITypedEdge): string;
-	    addEdge(edge: ITypedEdge): ITypedEdge;
-	    removeEdge(edge: ITypedEdge): void;
-	    ins(type: string): Set<string>;
-	    outs(type: string): Set<string>;
-	    conns(type: string): Set<string>;
-	}
-	export interface TypedNodeConfig extends BaseNodeConfig {
-	    type?: string;
-	} class TypedNode extends BaseNode implements ITypedNode {
-	    protected _id: string;
-	    protected _type: string;
-	    protected _typedAdjSets: TypedAdjSets;
-	    constructor(_id: string, config?: TypedNodeConfig);
-	    readonly type: string;
-	    readonly stats: TypedNodeStats;
-	    addEdge(edge: ITypedEdge): ITypedEdge;
-	    removeEdge(edge: ITypedEdge): void;
-	    ins(type: string): Set<string>;
-	    outs(type: string): Set<string>;
-	    conns(type: string): Set<string>;
-	    all(type: string): Set<string>;
-	    uniqueNID(e: ITypedEdge): string;
-	    static nIDFromUID(uid: string): string;
-	    private noEdgesOfTypeLeft;
-	}
-	export { TypedNode };
-
-}
 declare module 'graphinius/utils/StructUtils' {
 	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
 	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
@@ -279,12 +221,113 @@ declare module 'graphinius/core/base/BaseNode' {
 	export { BaseNode };
 
 }
+declare module 'graphinius/core/typed/TypedNode' {
+	import { IBaseNode, BaseNode, BaseNodeConfig } from 'graphinius/core/base/BaseNode';
+	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	export interface NeighborEntry {
+	    n: ITypedNode;
+	    e: string;
+	    w: number;
+	}
+	export interface TypedAdjListsEntry {
+	    ins?: Set<string>;
+	    outs?: Set<string>;
+	    conns?: Set<string>;
+	}
+	export type TypedAdjSets = {
+	    [type: string]: TypedAdjListsEntry;
+	};
+	export interface TypedEdgesStatsEntry {
+	    ins: number;
+	    outs: number;
+	    conns: number;
+	}
+	export interface TypedNodeStats {
+	    typed_edges: {
+	        [key: string]: TypedEdgesStatsEntry;
+	    };
+	}
+	export interface ITypedNode extends IBaseNode {
+	    readonly type: string;
+	    readonly stats: TypedNodeStats;
+	    uniqueNID(e: ITypedEdge): string;
+	    addEdge(edge: ITypedEdge): ITypedEdge;
+	    removeEdge(edge: ITypedEdge): void;
+	    ins(type: string): Set<string>;
+	    outs(type: string): Set<string>;
+	    unds(type: string): Set<string>;
+	}
+	export interface TypedNodeConfig extends BaseNodeConfig {
+	    type?: string;
+	} class TypedNode extends BaseNode implements ITypedNode {
+	    protected _id: string;
+	    protected _type: string;
+	    protected _typedAdjSets: TypedAdjSets;
+	    constructor(_id: string, config?: TypedNodeConfig);
+	    readonly type: string;
+	    readonly stats: TypedNodeStats;
+	    addEdge(edge: ITypedEdge): ITypedEdge;
+	    removeEdge(edge: ITypedEdge): void;
+	    ins(type: string): Set<string>;
+	    outs(type: string): Set<string>;
+	    unds(type: string): Set<string>;
+	    all(type: string): Set<string>;
+	    uniqueNID(e: ITypedEdge): string;
+	    static nIDFromUID(uid: string): string;
+	    private noEdgesOfTypeLeft;
+	}
+	export { TypedNode };
+
+}
+declare module 'graphinius/core/interfaces' {
+	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	export enum DIR {
+	    in = "ins",
+	    out = "outs",
+	    und = "unds"
+	}
+	export enum GraphMode {
+	    INIT = 0,
+	    DIRECTED = 1,
+	    UNDIRECTED = 2,
+	    MIXED = 3
+	}
+	export interface GraphStats {
+	    mode: GraphMode;
+	    nr_nodes: number;
+	    nr_und_edges: number;
+	    nr_dir_edges: number;
+	    density_dir: number;
+	    density_und: number;
+	}
+	export type MinAdjacencyListDict = {
+	    [id: string]: MinAdjacencyListDictEntry;
+	};
+	export type MinAdjacencyListDictEntry = {
+	    [id: string]: number;
+	};
+	export type MinAdjacencyListArray = Array<Array<number>>;
+	export type NextArray = Array<Array<Array<number>>>;
+	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
+	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
+	export interface TypedGraphStats extends GraphStats {
+	    typed_nodes: {
+	        [key: string]: number;
+	    };
+	    typed_edges: {
+	        [key: string]: number;
+	    };
+	}
+
+}
 declare module 'graphinius/utils/CallbackUtils' {
 	 function execCallbacks(cbs: Array<Function>, context?: any): void;
 	export { execCallbacks };
 
 }
 declare module 'graphinius/search/BFS' {
+	import { GraphMode } from 'graphinius/core/interfaces';
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $E from 'graphinius/core/base/BaseEdge';
 	import * as $G from 'graphinius/core/base/BaseGraph';
@@ -293,7 +336,7 @@ declare module 'graphinius/search/BFS' {
 	        [id: string]: BFS_ResultEntry;
 	    };
 	    callbacks: BFS_Callbacks;
-	    dir_mode: $G.GraphMode;
+	    dir_mode: GraphMode;
 	    messages?: {};
 	    filters?: any;
 	}
@@ -325,12 +368,13 @@ declare module 'graphinius/search/BFS' {
 
 }
 declare module 'graphinius/search/DFS' {
+	import { GraphMode } from 'graphinius/core/interfaces';
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $G from 'graphinius/core/base/BaseGraph';
 	export interface DFS_Config {
 	    visit_result: {};
 	    callbacks: DFS_Callbacks;
-	    dir_mode: $G.GraphMode;
+	    dir_mode: GraphMode;
 	    dfs_visit_marked: {
 	        [id: string]: boolean;
 	    };
@@ -426,6 +470,7 @@ declare module 'graphinius/datastructs/BinaryHeap' {
 
 }
 declare module 'graphinius/search/PFS' {
+	import { GraphMode } from 'graphinius/core/interfaces';
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $G from 'graphinius/core/base/BaseGraph';
 	import * as $BH from 'graphinius/datastructs/BinaryHeap';
@@ -435,7 +480,7 @@ declare module 'graphinius/search/PFS' {
 	        [id: string]: PFS_ResultEntry;
 	    };
 	    callbacks: PFS_Callbacks;
-	    dir_mode: $G.GraphMode;
+	    dir_mode: GraphMode;
 	    goal_node: $N.IBaseNode;
 	    messages?: PFS_Messages;
 	    filters?: any;
@@ -513,17 +558,8 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	import { ITypedNode, TypedNode } from 'graphinius/core/typed/TypedNode';
 	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
-	import { BaseGraph, GraphStats } from 'graphinius/core/base/BaseGraph';
-	export type TypedNodes = Map<string, Map<string, ITypedNode>>;
-	export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
-	export interface TypedGraphStats extends GraphStats {
-	    typed_nodes: {
-	        [key: string]: number;
-	    };
-	    typed_edges: {
-	        [key: string]: number;
-	    };
-	}
+	import { BaseGraph } from 'graphinius/core/base/BaseGraph';
+	import { TypedGraphStats, TypedEdges, TypedNodes } from 'graphinius/core/interfaces';
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
 	    protected _type: string;
@@ -538,9 +574,9 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    nrTypedEdges(type: string): number | null;
 	    ins(node: ITypedNode, type: string): Set<ITypedNode>;
 	    outs(node: ITypedNode, type: string): Set<ITypedNode>;
-	    conns(node: ITypedNode, type: string): Set<ITypedNode>;
-	    getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
-	    expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
+	    unds(node: ITypedNode, type: string): Set<ITypedNode>;
+	    expand(input: ITypedNode | Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
+	    expandK(input: ITypedNode | Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
 	    inHistT(nType: string, eType: string): Set<number>[];
 	    outHistT(nType: string, eType: string): Set<number>[];
 	    connHistT(nType: string, eType: string): Set<number>[];
@@ -559,36 +595,10 @@ declare module 'graphinius/core/typed/TypedGraph' {
 
 }
 declare module 'graphinius/core/base/BaseGraph' {
+	import { GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from 'graphinius/core/interfaces';
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
 	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
-	export enum DIR {
-	    in = "ins",
-	    out = "outs",
-	    conn = "conns"
-	}
-	export enum GraphMode {
-	    INIT = 0,
-	    DIRECTED = 1,
-	    UNDIRECTED = 2,
-	    MIXED = 3
-	}
-	export interface GraphStats {
-	    mode: GraphMode;
-	    nr_nodes: number;
-	    nr_und_edges: number;
-	    nr_dir_edges: number;
-	    density_dir: number;
-	    density_und: number;
-	}
-	export type MinAdjacencyListDict = {
-	    [id: string]: MinAdjacencyListDictEntry;
-	};
-	export type MinAdjacencyListDictEntry = {
-	    [id: string]: number;
-	};
-	export type MinAdjacencyListArray = Array<Array<number>>;
-	export type NextArray = Array<Array<Array<number>>>;
 	export interface IGraph {
 	    readonly label: string;
 	    readonly mode: GraphMode;
@@ -734,7 +744,8 @@ declare module 'graphinius/core/base/BaseGraph' {
 
 }
 declare module 'graphinius/search/FloydWarshall' {
-	import * as $G from 'graphinius/core/base/BaseGraph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): $G.MinAdjacencyListArray; function changeNextToDirectParents(input: $G.NextArray): $G.NextArray;
+	import { MinAdjacencyListArray, NextArray } from 'graphinius/core/interfaces';
+	import * as $G from 'graphinius/core/base/BaseGraph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): MinAdjacencyListArray; function changeNextToDirectParents(input: NextArray): NextArray;
 	export { FloydWarshallAPSP, FloydWarshallArray, changeNextToDirectParents };
 
 }

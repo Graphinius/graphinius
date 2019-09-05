@@ -559,7 +559,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 			it('... same with `undirected` relationship', () => {
-				const expanse = g.expand(new Set([g.n(cython), g.n(scala)]), DIR.unds, 'LOOKS_FOR_SKILL');
+				const expanse = g.expand(new Set([g.n(cython), g.n(scala)]), DIR.und, 'LOOKS_FOR_SKILL');
 				expect(expanse.size).toBe(0);
 			});
 

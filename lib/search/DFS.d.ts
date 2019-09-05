@@ -1,9 +1,10 @@
+import { GraphMode } from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
 export interface DFS_Config {
     visit_result: {};
     callbacks: DFS_Callbacks;
-    dir_mode: $G.GraphMode;
+    dir_mode: GraphMode;
     dfs_visit_marked: {
         [id: string]: boolean;
     };
