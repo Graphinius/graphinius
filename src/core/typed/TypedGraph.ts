@@ -102,34 +102,36 @@ export class TypedGraph extends BaseGraph {
 	 * 			 graph->nodeNeighbors is a problem or not !?
 	 * @todo decide if method call via [dir] is an abomination or not
 	 * 			 -> definitely screws up code assist / intellisense !!!
+	 * @todo In case of multiple input nodes, they could reference each other...
+	 * 			 -> Neo4j allows that, so we allow it as well (for now ;-))
 	 */
-	expand(input: ITypedNode | Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {
+	expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string): Set<ITypedNode> {
+
 		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		const resultSet = new Set<ITypedNode>();
+
 		let
 			nr_visits = 0,
 			nodeRef;
 
-		const tic = process.hrtime()[1];
+		// const tic = process.hrtime()[1];
 		for ( let node of nodes ) {
-			// maybe we can stop earlier?
-			if ( resultSet.size >= this._nr_nodes ) {
-				return resultSet;
-			}
 			const targets = node[dir](type);
 			if ( !targets ) {
-				return new Set();
+				continue;
 			}
 			for ( let target of targets ) {
 				nr_visits++;
 				nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
-				// In case of several nodes, they could refer to each other...
-				if ( !nodes.has(nodeRef) ) {
-					resultSet.add(nodeRef);
+				resultSet.add(nodeRef);
+
+				// in case we reached the whole graph we can stop
+				if ( resultSet.size >= this._nr_nodes ) {
+					return resultSet;
 				}
 			}
 		}
-		const toc = process.hrtime()[1];
+		// const toc = process.hrtime()[1];
 		// logger.log(`Expanding from ${nodes.size} nodes involved ${nr_visits} visits & took ${toc-tic} nanos.`);
 		return resultSet;
 	}
@@ -138,9 +140,12 @@ export class TypedGraph extends BaseGraph {
 	/**
 	 * expand over k steps
 	 *
+	 * @description like neo4j's `-[:REL*1..k]->`
+	 * 							returning the node sets at distance <= `k`
+	 *
 	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
-	expandK(input: ITypedNode | Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
+	expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode> {
 		if ( k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
@@ -153,17 +158,17 @@ export class TypedGraph extends BaseGraph {
 		k = k || this._nr_nodes;
 
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
-			const otic = process.hrtime()[1];
+			// const otic = process.hrtime()[1];
 			periphery = this.expand(periphery, dir, type);
 			// logger.log(`Periphery at k=${k} is of size=${periphery.size}`);
+
 			// copy
 			const old_size = resultSet.size;
-
-			const tic = process.hrtime()[1];
+			// const tic = process.hrtime()[1];
 			for ( let target of periphery ) {
 				resultSet.add(target);
 			}
-			const toc = process.hrtime()[1];
+			// const toc = process.hrtime()[1];
 			// logger.log(`Copying set took ${toc-tic} nanos.`);
 
 			// if resultSize has not increased, we also reached a maximum
@@ -171,10 +176,19 @@ export class TypedGraph extends BaseGraph {
 				// logger.log('reached MAX - break, break, break!');
 				break;
 			}
-			const otoc = process.hrtime()[1];
+			// const otoc = process.hrtime()[1];
 			// logger.log(`Expand iteration took ${otoc-otic} nanos.`);
 		}
 		return resultSet;
+	}
+
+
+	/**
+	 * @description like neo4j's `-[:REL*k]->`
+	 * 							only returning the node set at distance `k`
+	 */
+	peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode> {
+		throw new Error('not yet implemented');
 	}
 
 

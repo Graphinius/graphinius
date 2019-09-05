@@ -499,7 +499,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> known by 11 people
 			 */
-			it('should expand a single node (IN) when passed as Set', () => {
+			it('should expand a single node (IN)', () => {
 				expect(g.expand(g.n(marie), DIR.in, knows).size).toBe(11);
 			});
 
@@ -515,7 +515,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> knows 17 people
 			 */
-			it('should expand a single node (OUT) when passed as Set', () => {
+			it('should expand a single node (OUT)', () => {
 				expect(g.expand(g.n(marie), DIR.out, knows).size).toBe(17);
 			});
 
@@ -566,6 +566,14 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
+		/**
+		 * @todo implement and test
+		 */
+		describe('get periphery @ K steps - ', () => {
+
+		});
+
+
 		describe('expand over K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
@@ -576,7 +584,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> knows 17 people
 			 */
-			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			it('should expand K steps from a single node (OUT)', () => {
 				expect(g.expandK(g.n(marie), DIR.out, knows, 1).size).toBe(17);
 			});
 
@@ -590,7 +598,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> 2 steps OUT -> 157 people
 			 */
-			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			it('should expand K steps from a single node (OUT)', () => {
 				const expanse = g.expandK(g.n(marie), DIR.out, knows, 2);
 				const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
 				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
@@ -602,7 +610,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
 			 */
-			it('should expand K steps from a single node (OUT) when passed as Set', () => {
+			it('should expand K steps from a single node (OUT)', () => {
 				const tic = +new Date;
 				const expanse = g.expandK(g.n(marie), DIR.out, knows, 3);
 				const toc = +new Date;
@@ -613,7 +621,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> 2 steps IN -> 122 people
 			 */
-			it('should expand K steps from a single node (IN) when passed as Set', () => {
+			it('should expand K steps from a single node (IN)', () => {
 				const expanse = g.expandK(g.n(marie), DIR.in, knows, 2);
 				expect(expanse.size).toBe(122);
 			});
@@ -621,7 +629,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			/**
 			 * Marie Pfeffer -> 3 steps OUT -> 200 people (max)
 			 */
-			it('should expand K steps from a single node (IN) when passed as Set', () => {
+			it('should expand K steps from a single node (IN)', () => {
 				const tic = +new Date;
 				const expanse = g.expandK(g.n(marie), DIR.in, knows, 3);
 				const toc = +new Date;

@@ -2,7 +2,7 @@ import { ITypedNode, TypedNode } from './TypedNode';
 import { ITypedEdge, TypedEdgeConfig } from "./TypedEdge";
 import { IBaseEdge } from "../base/BaseEdge";
 import { BaseGraph } from '../base/BaseGraph';
-import { TypedGraphStats, TypedEdges, TypedNodes } from '../interfaces';
+import { DIR, TypedGraphStats, TypedEdges, TypedNodes } from '../interfaces';
 export declare class TypedGraph extends BaseGraph {
     _label: string;
     protected _type: string;
@@ -18,8 +18,9 @@ export declare class TypedGraph extends BaseGraph {
     ins(node: ITypedNode, type: string): Set<ITypedNode>;
     outs(node: ITypedNode, type: string): Set<ITypedNode>;
     unds(node: ITypedNode, type: string): Set<ITypedNode>;
-    expand(input: ITypedNode | Set<ITypedNode>, dir: string, type: string): Set<ITypedNode>;
-    expandK(input: ITypedNode | Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode>;
+    expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string): Set<ITypedNode>;
+    expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode>;
+    peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode>;
     inHistT(nType: string, eType: string): Set<number>[];
     outHistT(nType: string, eType: string): Set<number>[];
     connHistT(nType: string, eType: string): Set<number>[];
