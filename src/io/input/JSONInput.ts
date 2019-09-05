@@ -103,7 +103,7 @@ class JSONInput implements IJSONInput {
 		graph = graph || new BaseGraph(json.name);
 		const edc = new EdgeDupeChecker(graph);
 		const rlt = json.typeRLT;
-		logger.log(rlt);
+		// logger.log(rlt);
 
 
 		this.addNodesToGraph(json, graph);

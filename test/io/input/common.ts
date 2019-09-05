@@ -1,3 +1,4 @@
+import {GraphMode} from '../../../src/core/interfaces';
 import * as $G from '../../../src/core/base/BaseGraph';
 import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
 const degCent = new DegreeCentrality();
@@ -9,7 +10,7 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 	expect(stats.nr_nodes).toBe(4);
 	expect(stats.nr_dir_edges).toBe(5);
 	expect(stats.nr_und_edges).toBe(2);
-	expect(stats.mode).toBe($G.GraphMode.MIXED);
+	expect(stats.mode).toBe(GraphMode.MIXED);
 	
 	let deg_dist : DegreeDistribution = degCent.degreeDistribution(graph);
 	expect(deg_dist.und).toEqual(new Uint32Array([1, 2, 1, 0, 0, 0, 0, 0, 0]));

@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats} from '../../src/core/interfaces';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $E from '../../src/core/base/BaseEdge';
 import * as $G from '../../src/core/base/BaseGraph';
@@ -7,11 +8,6 @@ import * as $R from '../../src/utils/RemoteUtils';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
-
-
-let Node = $N.BaseNode,
-		Edge = $E.BaseEdge,
-		Graph = $G.BaseGraph;
 
 const REMOTE_HOST = "raw.githubusercontent.com";
 const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/csv/";
@@ -27,7 +23,7 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,
-		stats: $G.GraphStats,
+		stats: GraphStats,
 		DEFAULT_SEP: string = ',',
 		config: $R.RequestConfig;
 
@@ -90,7 +86,7 @@ describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {
 				expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
 				expect(stats.nr_dir_edges).toBe(REAL_GRAPH_NR_EDGES);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+				expect(stats.mode).toBe(GraphMode.DIRECTED);
 				done();
 			});
 		}

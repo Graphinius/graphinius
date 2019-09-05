@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
 import * as $CB from '../utils/CallbackUtils';
@@ -6,7 +7,7 @@ import * as $CB from '../utils/CallbackUtils';
 export interface DFS_Config {
   visit_result: {};
   callbacks: DFS_Callbacks;
-  dir_mode: $G.GraphMode;
+  dir_mode: GraphMode;
   dfs_visit_marked: {[id: string] : boolean};
   messages?: {};
   filters?: any;
@@ -72,13 +73,13 @@ function DFSVisit(graph 				: $G.IGraph,
 	/**
 	 * We are not traversing an empty graph...
 	 */
-	if ( graph.getMode() === $G.GraphMode.INIT ) {
+	if ( graph.getMode() === GraphMode.INIT ) {
 		throw new Error('Cowardly refusing to traverse graph without edges.');
 	}
   /**
 	 * We are not traversing a graph taking NO edges into account
 	 */
-	if ( dir_mode === $G.GraphMode.INIT ) {
+	if ( dir_mode === GraphMode.INIT ) {
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
 
@@ -124,13 +125,13 @@ function DFSVisit(graph 				: $G.IGraph,
 			 * Do we move only in the directed subgraph,
 			 * undirected subgraph or complete (mixed) graph?
 			 */
-			if ( dir_mode === $G.GraphMode.MIXED ) {
+			if ( dir_mode === GraphMode.MIXED ) {
 				dfsVisitScope.adj_nodes = dfsVisitScope.current.reachNodes();
 			}
-			else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
+			else if ( dir_mode === GraphMode.UNDIRECTED ) {
 				dfsVisitScope.adj_nodes = dfsVisitScope.current.connNodes();
 			}
-			else if ( dir_mode === $G.GraphMode.DIRECTED ) {
+			else if ( dir_mode === GraphMode.DIRECTED ) {
 				dfsVisitScope.adj_nodes = dfsVisitScope.current.nextNodes();
 			}
 
@@ -201,10 +202,10 @@ function DFS( graph 		  : $G.IGraph,
   let callbacks = config.callbacks,
       dir_mode = config.dir_mode;
       
-	if ( graph.getMode() === $G.GraphMode.INIT ) {
+	if ( graph.getMode() === GraphMode.INIT ) {
 		throw new Error('Cowardly refusing to traverse graph without edges.');
 	}
-	if ( dir_mode === $G.GraphMode.INIT ) {
+	if ( dir_mode === GraphMode.INIT ) {
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
   
@@ -286,7 +287,7 @@ function prepareDFSVisitStandardConfig() {
     callbacks: {},
     messages: {},
     dfs_visit_marked: {},
-    dir_mode: $G.GraphMode.MIXED
+    dir_mode: GraphMode.MIXED
   },
   result = config.visit_result,
   callbacks = config.callbacks;

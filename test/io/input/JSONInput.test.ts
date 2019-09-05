@@ -1,5 +1,6 @@
 import * as $C from './common';
-import { BaseGraph, IGraph, GraphStats, GraphMode } from '../../../src/core/base/BaseGraph';
+import {GraphMode, GraphStats} from '../../../src/core/interfaces';
+import { BaseGraph, IGraph} from '../../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from "../../../src/io/output/JSONOutput";
 import { labelKeys } from '../../../src/io/interfaces';

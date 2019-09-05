@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats} from '../../../src/core/interfaces';
 import * as $G from '../../../src/core/base/BaseGraph';
 import * as $I from '../../../src/io/input/CSVInput';
 import * as $C from './common';
@@ -12,7 +13,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 		sep: string,
 		input_file: string,
 		graph: $G.IGraph,
-		stats: $G.GraphStats,
+		stats: GraphStats,
 		DEFAULT_SEP: string = ',';
 
 
@@ -88,7 +89,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(4);
 				expect(stats.nr_dir_edges).toBe(0);
 				expect(stats.nr_und_edges).toBe(4);
-				expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+				expect(stats.mode).toBe(GraphMode.UNDIRECTED);
 			}
 		);
 
@@ -108,7 +109,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(4);
 				expect(stats.nr_dir_edges).toBe(7);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+				expect(stats.mode).toBe(GraphMode.DIRECTED);
 			}
 		);
 
@@ -143,7 +144,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(4);
 				expect(stats.nr_dir_edges).toBe(0);
 				expect(stats.nr_und_edges).toBe(4);
-				expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+				expect(stats.mode).toBe(GraphMode.UNDIRECTED);
 			}
 		);
 
@@ -163,7 +164,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 				expect(stats.nr_nodes).toBe(4);
 				expect(stats.nr_dir_edges).toBe(7);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+				expect(stats.mode).toBe(GraphMode.DIRECTED);
 			}
 		);
 
@@ -182,7 +183,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.nr_nodes).toBe(4);
 			expect(stats.nr_dir_edges).toBe(4);
 			expect(stats.nr_und_edges).toBe(0);
-			expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+			expect(stats.mode).toBe(GraphMode.DIRECTED);
 			Object.keys(graph.getDirEdges()).forEach(e_id => {
 				let edge = graph.getEdgeById(e_id);
 				expect(edge.isWeighted()).toBe(true);
@@ -274,7 +275,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.nr_nodes).toBe(4);
 			expect(stats.nr_dir_edges).toBe(4);
 			expect(stats.nr_und_edges).toBe(0);
-			expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+			expect(stats.mode).toBe(GraphMode.DIRECTED);
 			Object.keys(graph.getDirEdges()).forEach(e_id => {
 				let edge = graph.getEdgeById(e_id);
 				expect(edge.isWeighted()).toBe(true);
@@ -294,7 +295,7 @@ describe('GRAPH CSV INPUT TESTS', () => {
 			expect(stats.nr_nodes).toBe(4);
 			expect(stats.nr_dir_edges).toBe(4);
 			expect(stats.nr_und_edges).toBe(0);
-			expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+			expect(stats.mode).toBe(GraphMode.DIRECTED);
 			Object.keys(graph.getDirEdges()).forEach(e_id => {
 				let edge = graph.getEdgeById(e_id);
 				expect(edge.isWeighted()).toBe(true);

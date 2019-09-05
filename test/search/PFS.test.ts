@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '../../src/core/interfaces';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
@@ -48,7 +49,7 @@ describe('PFS TESTS - ', () => {
 				config: $PFS.PFS_Config = {
 					result: {},
 					callbacks: {},
-					dir_mode: $G.GraphMode.INIT,
+					dir_mode: GraphMode.INIT,
 					goal_node: null,
 					evalPriority: function (ne: $N.NeighborEntry) {
 						return ne.best;
@@ -82,7 +83,7 @@ describe('PFS TESTS - ', () => {
 				let config = $PFS.preparePFSStandardConfig();
 				expect(config).toBeDefined();
 				expect(config.dir_mode).toBeDefined();
-				expect(config.dir_mode).toBe($G.GraphMode.MIXED);
+				expect(config.dir_mode).toBe(GraphMode.MIXED);
 			}
 		);
 
@@ -301,7 +302,7 @@ describe('PFS TESTS - ', () => {
 		describe('DIRECTED mode search', () => {
 
 			let config = $PFS.preparePFSStandardConfig();
-			config.dir_mode = $G.GraphMode.DIRECTED;
+			config.dir_mode = GraphMode.DIRECTED;
 
 			test('Should correctly compute best paths from Node A', () => {
 				let root = graph.getNodeById('A'),
@@ -392,7 +393,7 @@ describe('PFS TESTS - ', () => {
 		describe('UNDIRECTED mode search', () => {
 
 			let config = $PFS.preparePFSStandardConfig();
-			config.dir_mode = $G.GraphMode.UNDIRECTED;
+			config.dir_mode = GraphMode.UNDIRECTED;
 
 			test('Should correctly compute best paths from Node B', () => {
 				let root = graph.getNodeById('B'),
@@ -552,7 +553,7 @@ describe('PFS TESTS - ', () => {
 	describe('PFS search on search graph in UNWEIGHTED, mixed mode', () => {
 
 		let config = $PFS.preparePFSStandardConfig();
-		config.dir_mode = $G.GraphMode.MIXED;
+		config.dir_mode = GraphMode.MIXED;
 
 		beforeEach(() => {
 			json = new JSONInput({explicit_direction: true, directed: false, weighted: false});

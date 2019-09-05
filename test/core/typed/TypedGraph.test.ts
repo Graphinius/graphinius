@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
 import {BaseNode} from "../../../src/core/base/BaseNode";
-import {DIR} from '../../../src/core/base/BaseGraph';
+import {DIR, GraphMode} from '../../../src/core/interfaces';
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
@@ -274,7 +274,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
-				logger.log(graph.stats);
+				// logger.log(graph.stats);
 				expect(graph.stats).toEqual(controlStats);
 			});
 
@@ -321,7 +321,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should correctly compute the coworkers of D', () => {
-			const cowies = g.conns(g.n('D'), EDGE_TYPES.Coworker);
+			const cowies = g.unds(g.n('D'), EDGE_TYPES.Coworker);
 			expect(cowies.size).toBe(2);
 			expect(Array.from(cowies).map(c => c.id)).toEqual(['A', 'F']);
 		});
@@ -500,15 +500,15 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> known by 11 people
 			 */
 			it('should expand a single node (IN) when passed as Set', () => {
-				expect(g.getNeighborsOfSet(new Set([g.n(marie)]), DIR.in, knows).size).toBe(11);
+				expect(g.expand(g.n(marie), DIR.in, knows).size).toBe(11);
 			});
 
 			/**
 			 * Marie Pfeffer & Tom Lemke -> together known by 25 people
 			 */
 			it('should expand a node SET (IN)', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(marie), g.n(tom)]), DIR.in, knows);
-				// console.log(expanse);
+				const expanse = g.expand(new Set([g.n(marie), g.n(tom)]), DIR.in, knows);
+				// logger.log(expanse);
 				expect(expanse.size).toBe(25);
 			});
 
@@ -516,14 +516,14 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> knows 17 people
 			 */
 			it('should expand a single node (OUT) when passed as Set', () => {
-				expect(g.getNeighborsOfSet(new Set([g.n(marie)]), DIR.out, knows).size).toBe(17);
+				expect(g.expand(g.n(marie), DIR.out, knows).size).toBe(17);
 			});
 
 			/**
 			 * Marie Pfeffer & Tom Lemke -> together know 32 people
 			 */
 			it('should expand a node SET (OUT)', () => {
-				expect(g.getNeighborsOfSet(new Set([g.n(marie), g.n(tom)]), DIR.out, knows).size).toBe(32);
+				expect(g.expand(new Set([g.n(marie), g.n(tom)]), DIR.out, knows).size).toBe(32);
 			});
 
 			/**
@@ -533,33 +533,33 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * @todo sort & collect on a specific field -> in this example e.g., we have 'Stata' as 2 different nodes...
 			 */
 			it('should expand skills from a set', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(marie), g.n(tom)]), DIR.out, 'HAS_SKILL');
-				console.log([...expanse.values()].map(s => s.getFeature('name')).sort());
+				const expanse = g.expand(new Set([g.n(marie), g.n(tom)]), DIR.out, 'HAS_SKILL');
+				// logger.log([...expanse.values()].map(s => s.getFeature('name')).sort());
 				// Should be 20, if `collected` on name...
 				expect(expanse.size).toBe(21);
 			});
 
 
 			it('should expand skills from a set', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(marie), g.n(tom)]), DIR.out, 'WORKS_FOR');
+				const expanse = g.expand(new Set([g.n(marie), g.n(tom)]), DIR.out, 'WORKS_FOR');
 				expect(expanse.size).toBe(2);
 			});
 
 
 			it('should find 37 companies looking for Skills `Scala` or `Cython`', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(cython), g.n(scala)]), DIR.in, 'LOOKS_FOR_SKILL');
+				const expanse = g.expand(new Set([g.n(cython), g.n(scala)]), DIR.in, 'LOOKS_FOR_SKILL');
 				expect(expanse.size).toBe(37);
 			});
 
 
 			it('but zero if the direction is reversed...', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(cython), g.n(scala)]), DIR.out, 'LOOKS_FOR_SKILL');
+				const expanse = g.expand(new Set([g.n(cython), g.n(scala)]), DIR.out, 'LOOKS_FOR_SKILL');
 				expect(expanse.size).toBe(0);
 			});
 
 
 			it('... same with `undirected` relationship', () => {
-				const expanse = g.getNeighborsOfSet(new Set([g.n(cython), g.n(scala)]), DIR.conn, 'LOOKS_FOR_SKILL');
+				const expanse = g.expand(new Set([g.n(cython), g.n(scala)]), DIR.unds, 'LOOKS_FOR_SKILL');
 				expect(expanse.size).toBe(0);
 			});
 
@@ -577,7 +577,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> knows 17 people
 			 */
 			it('should expand K steps from a single node (OUT) when passed as Set', () => {
-				expect(g.expandK(new Set([g.n(marie)]), DIR.out, knows, 1).size).toBe(17);
+				expect(g.expandK(g.n(marie), DIR.out, knows, 1).size).toBe(17);
 			});
 
 			/**
@@ -591,7 +591,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> 2 steps OUT -> 157 people
 			 */
 			it('should expand K steps from a single node (OUT) when passed as Set', () => {
-				const expanse = g.expandK(new Set([g.n(marie)]), DIR.out, knows, 2);
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, 2);
 				const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
 				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
 				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv').toString().trim().split('\n');
@@ -604,9 +604,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (OUT) when passed as Set', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(new Set([g.n(marie)]), DIR.out, knows, 3);
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, 3);
 				const toc = +new Date;
-				console.log(`Expanding people (OUT) to the max ;-) took ${toc - tic} ms.`);
+				logger.log(`Expanding people (OUT) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.size).toBe(200);
 			});
 
@@ -614,7 +614,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> 2 steps IN -> 122 people
 			 */
 			it('should expand K steps from a single node (IN) when passed as Set', () => {
-				const expanse = g.expandK(new Set([g.n(marie)]), DIR.in, knows, 2);
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, 2);
 				expect(expanse.size).toBe(122);
 			});
 
@@ -623,9 +623,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (IN) when passed as Set', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(new Set([g.n(marie)]), DIR.in, knows, 3);
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, 3);
 				const toc = +new Date;
-				console.log(`Expanding people (IN) to the max ;-) took ${toc - tic} ms.`);
+				logger.log(`Expanding people (IN) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.size).toBe(200);
 			});
 
@@ -638,7 +638,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const toc = process.hrtime()[1];
 				expect(expanse.size).toBe(194);
 				// const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
-				// console.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
+				// logger.log(`Expanding 2 people OUT took ${toc-tic} nanos.`);
 				// fs.writeFileSync('./data/output/marie_tom_2k_out.csv', names.join('\n'));
 			});
 
@@ -655,4 +655,5 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 	});
+
 });

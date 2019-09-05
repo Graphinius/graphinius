@@ -1,7 +1,12 @@
 // CORE
-const BaseEdge	      				= require("./lib/core/base/BaseEdge.js").BaseEdge;
-const BaseNode 	      				= require("./lib/core/base/BaseNode.js").BaseNode;
+// Base
+const BaseEdge	      				= require("./lib/core/base/BaseEdge.js");
+const BaseNode 	      				= require("./lib/core/base/BaseNode.js");
 const BaseGraph	      				= require("./lib/core/base/BaseGraph.js");
+// Typed
+const TypedEdge	      				= require("./lib/core/typed/TypedEdge.js");
+const TypedNode 	      				= require("./lib/core/typed/TypedNode.js");
+const TypedGraph	      				= require("./lib/core/typed/TypedGraph.js");
 // CENTRALITIES
 const BetweennessCent					= require("./lib/centralities/Betweenness.js");
 const BrandesCent							= require("./lib/centralities/Brandes");
@@ -45,10 +50,15 @@ let out = typeof window !== 'undefined' ? window : global;
 out.$G = {
 	core: {
 		base: {
-			BaseEdge 									: BaseEdge,
-			BaseNode 									: BaseNode,
-			BaseGraph 								: BaseGraph.BaseGraph,
-			GraphMode									: BaseGraph.GraphMode
+			BaseEdge 								: BaseEdge.BaseEdge,
+			BaseNode 								: BaseNode.BaseNode,
+			BaseGraph 							: BaseGraph.BaseGraph,
+			GraphMode								: BaseGraph.GraphMode
+		},
+		typed: {
+			TypedEdge								: TypedEdge.TypedEdge,
+			TypedNode								: TypedNode.TypedNode,
+			TypedGraph							: TypedGraph.TypedGraph
 		}
 	},
 	centralities: {

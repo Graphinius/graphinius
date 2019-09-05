@@ -114,20 +114,20 @@ describe('==== NODE TESTS ====', () => {
 		it('Should only have GENERIC type upon instantiation (1/2)', () => {
 			expect(a.ins(GENERIC_TYPES.Edge)).not.toBeUndefined;
 			expect(a.outs(GENERIC_TYPES.Edge)).not.toBeUndefined;
-			expect(a.conns(GENERIC_TYPES.Edge)).not.toBeUndefined;
+			expect(a.unds(GENERIC_TYPES.Edge)).not.toBeUndefined;
 		});
 
 
 		it('should have only GENERIC type upon instantiation (2/2)', () => {
 			expect(a.ins(EDGE_TYPES.Friends)).toBeUndefined;
 			expect(a.outs(EDGE_TYPES.Friends)).toBeUndefined;
-			expect(a.conns(EDGE_TYPES.Friends)).toBeUndefined;
+			expect(a.unds(EDGE_TYPES.Friends)).toBeUndefined;
 		});
 
 
 		it('should correctly add a FRIENDSHIP (undirected -> CONNS)', () => {
 			e1 = a.addEdge(new TypedEdge('bff', a, b, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).has(a.uniqueNID(e1))).toBe(true);
+			expect(a.unds(EDGE_TYPES.Friends).has(a.uniqueNID(e1))).toBe(true);
 		});
 
 		/**
@@ -135,7 +135,7 @@ describe('==== NODE TESTS ====', () => {
 		 */
 		it('should correctly (and only) add a CONNS', () => {
 			e1 = a.addEdge(new TypedEdge('bff', a, b, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).has(a.uniqueNID(e1))).toBe(true);
+			expect(a.unds(EDGE_TYPES.Friends).has(a.uniqueNID(e1))).toBe(true);
 			expect(a.ins(EDGE_TYPES.Friends)).toBeUndefined();
 			expect(a.outs(EDGE_TYPES.Friends)).toBeUndefined();
 		});
@@ -143,7 +143,7 @@ describe('==== NODE TESTS ====', () => {
 
 		it('should correctly (and only) add an OUT', () => {
 			e1 = a.addEdge(new TypedEdge('bff', a, b, {directed: true, type: EDGE_TYPES.Likes}));
-			expect(a.conns(EDGE_TYPES.Likes)).toBeUndefined();
+			expect(a.unds(EDGE_TYPES.Likes)).toBeUndefined();
 			expect(a.ins(EDGE_TYPES.Likes)).toBeUndefined();
 			expect(a.outs(EDGE_TYPES.Likes).has(a.uniqueNID(e1))).toBe(true);
 		});
@@ -151,7 +151,7 @@ describe('==== NODE TESTS ====', () => {
 
 		it('should correctly (and only) add an IN', () => {
 			e1 = a.addEdge(new TypedEdge('bff', b, a, {directed: true, type: EDGE_TYPES.Likes}));
-			expect(a.conns(EDGE_TYPES.Likes)).toBeUndefined();
+			expect(a.unds(EDGE_TYPES.Likes)).toBeUndefined();
 			expect(a.ins(EDGE_TYPES.Likes).has(a.uniqueNID(e1))).toBe(true);
 			expect(a.outs(EDGE_TYPES.Likes)).toBeUndefined();
 		});
@@ -263,18 +263,18 @@ describe('==== NODE TESTS ====', () => {
 
 		it('directed -> CONNS -> several', () => {
 			e1 = a.addEdge(new TypedEdge('bffff', a, b, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(1);
 			e2 = a.addEdge(new TypedEdge('bff', a, b, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(2);
 		});
 
 
 		it('directed -> CONNS -> delete one -> preserve type', () => {
 			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
 			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(2);
 			a.removeEdge(e1);
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(1);
 		});
 
 
@@ -282,31 +282,31 @@ describe('==== NODE TESTS ====', () => {
 			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
 			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
 			e3 = a.addEdge(new TypedEdge('e3', c, a, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(3);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(3);
 			a.removeEdge(e1);
 			a.removeEdge(e2);
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(1);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(1);
 		});
 
 
 		it('directed -> CONNS -> delete all -> lose type', () => {
 			e1 = a.addEdge(new TypedEdge('e1', a, b, {type: EDGE_TYPES.Friends}));
 			e2 = a.addEdge(new TypedEdge('e2', a, c, {type: EDGE_TYPES.Friends}));
-			expect(a.conns(EDGE_TYPES.Friends).size).toBe(2);
+			expect(a.unds(EDGE_TYPES.Friends).size).toBe(2);
 			a.removeEdge(e1);
 			a.removeEdge(e2);
-			expect(a.conns(EDGE_TYPES.Friends)).toBeUndefined();
+			expect(a.unds(EDGE_TYPES.Friends)).toBeUndefined();
 		});
 
 
 		it('GENERIC type can never be lost', () => {
 			e1 = a.addEdge(new TypedEdge('e1', a, b));
 			e2 = a.addEdge(new TypedEdge('e2', a, c));
-			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(2);
+			expect(a.unds(GENERIC_TYPES.Edge).size).toBe(2);
 			a.removeEdge(e1);
 			a.removeEdge(e2);
-			expect(a.conns(GENERIC_TYPES.Edge)).toBeDefined();
-			expect(a.conns(GENERIC_TYPES.Edge).size).toBe(0);
+			expect(a.unds(GENERIC_TYPES.Edge)).toBeDefined();
+			expect(a.unds(GENERIC_TYPES.Edge).size).toBe(0);
 		});
 
 

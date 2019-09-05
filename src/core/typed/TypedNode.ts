@@ -51,7 +51,7 @@ export interface ITypedNode extends IBaseNode {
 
 	outs(type: string): Set<string>;
 
-	conns(type: string): Set<string>;
+	unds(type: string): Set<string>;
 }
 
 
@@ -176,7 +176,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 	}
 
 
-	conns(type: string): Set<string> {
+	unds(type: string): Set<string> {
 		return this._typedAdjSets[type] ? this._typedAdjSets[type].conns : undefined;
 	}
 

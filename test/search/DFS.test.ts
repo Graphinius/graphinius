@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '../../src/core/interfaces';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
@@ -11,7 +12,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 
 	let jsonReader = new JSONInput(),
 		graph: $G.IGraph = jsonReader.readFromJSONFile(search_graph),
-		stats: $G.GraphStats = graph.getStats();
+		stats: GraphStats = graph.getStats();
 
 
 	describe('testing config preparation functions - ', () => {
@@ -41,7 +42,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				expect(prepForDFSVisitSpy).toHaveBeenCalledTimes(1);
 
 				expect(config.dir_mode).not.toBeUndefined();
-				expect(config.dir_mode).toBe($G.GraphMode.MIXED);
+				expect(config.dir_mode).toBe(GraphMode.MIXED);
 
 				expect(config.visit_result).not.toBeUndefined();
 				expect(config.visit_result).toEqual({});
@@ -87,7 +88,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 			() => {
 				let config = $DFS.prepareDFSStandardConfig();
 				expect(config.dir_mode).toBeDefined;
-				expect(config.dir_mode).toBe($G.GraphMode.MIXED);
+				expect(config.dir_mode).toBe(GraphMode.MIXED);
 
 				expect(config.visit_result).toBeDefined;
 				expect(config.visit_result).toEqual({});
@@ -130,7 +131,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							init_dfs_visit: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsVisitInitTestCallback = function () {
@@ -151,7 +152,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							node_popped: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsVisitNodePoppedTestCallback = function () {
@@ -172,7 +173,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							node_marked: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsVisitNodeMarkedTestCallback = function () {
@@ -193,7 +194,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							node_unmarked: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsVisitNodeUnMarkedTestCallback = function () {
@@ -214,7 +215,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							sort_nodes: null
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				config.callbacks.sort_nodes = () => {
@@ -234,7 +235,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							adj_nodes_pushed: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsVisitAdjNodesPushedTestCallback = function () {
@@ -255,7 +256,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						callbacks: {
 							init_dfs: []
 						},
-						dir_mode: $G.GraphMode.MIXED
+						dir_mode: GraphMode.MIXED
 					};
 
 				let dfsInitTestCallback = function () {
@@ -293,7 +294,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						visit_result: {},
 						dfs_visit_marked: {},
 						callbacks: {},
-						dir_mode: $G.GraphMode.INIT
+						dir_mode: GraphMode.INIT
 					};
 
 				expect($DFS.DFSVisit.bind($DFS.DFSVisit, graph, root, config)).toThrowError('Cannot traverse a graph with dir_mode set to INIT.');
@@ -320,7 +321,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 						visit_result: {},
 						dfs_visit_marked: {},
 						callbacks: {},
-						dir_mode: $G.GraphMode.INIT
+						dir_mode: GraphMode.INIT
 					};
 
 				expect($DFS.DFS.bind($DFS.DFS, graph, root, config)).toThrowError('Cannot traverse a graph with dir_mode set to INIT.');
@@ -335,7 +336,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node A', () => {
 			let root = graph.getNodeById('A'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.DIRECTED;
+			config.dir_mode = GraphMode.DIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(4);
@@ -359,7 +360,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node D', () => {
 			let root = graph.getNodeById('D'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.DIRECTED;
+			config.dir_mode = GraphMode.DIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(3);
@@ -382,7 +383,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node G', () => {
 			let root = graph.getNodeById('G'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.DIRECTED;
+			config.dir_mode = GraphMode.DIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(1);
@@ -406,7 +407,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node A', () => {
 			let root = graph.getNodeById('A'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.UNDIRECTED;
+			config.dir_mode = GraphMode.UNDIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(2);
@@ -428,7 +429,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node D', () => {
 			let root = graph.getNodeById('D'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.UNDIRECTED;
+			config.dir_mode = GraphMode.UNDIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(2);
@@ -453,7 +454,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 		test('should correctly compute lookup distance from node G', () => {
 			let root = graph.getNodeById('G'),
 				config = $DFS.prepareDFSVisitStandardConfig();
-			config.dir_mode = $G.GraphMode.UNDIRECTED;
+			config.dir_mode = GraphMode.UNDIRECTED;
 			let result = $DFS.DFSVisit(graph, root, config);
 
 			expect(Object.keys(result).length).toBe(1);
@@ -549,7 +550,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 	describe('testing DFS on small search graph (including unconnected component)', () => {
 
 		/**
-		 * $G.GraphMode enum holds 0-init (no edges),
+		 * GraphMode enum holds 0-init (no edges),
 		 * 1-directed, 2-undirected, 3-mixed
 		 *
 		 * TODO - WRITE TESTS FOR SPECIFIC VERTICES AND THEN
@@ -595,7 +596,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				let root = graph.getNodeById('A'),
 					config = $DFS.prepareDFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				let dfs_result = $DFS.DFS(graph, root, config);
 
 				expect(dfs_result.length).toBe(3);
@@ -630,7 +631,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				let root = graph.getNodeById('D'),
 					config = $DFS.prepareDFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				let dfs_result = $DFS.DFS(graph, root, config);
 
 				expect(dfs_result.length).toBe(3);
@@ -669,7 +670,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 				let root = graph.getNodeById('A'),
 					config = $DFS.prepareDFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				let dfs_result = $DFS.DFS(graph, root, config);
 
 				expect(dfs_result.length).toBe(6);
@@ -779,7 +780,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					root = graph.getNodeById('A'),
 					config = $DFS.prepareDFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				let weight_dists = {};
 				config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 				$DFS.DFS(graph, root, config);
@@ -803,7 +804,7 @@ describe('Basic GRAPH SEARCH Tests - Depth first search -', () => {
 					root = graph.getNodeById('A'),
 					config = $DFS.prepareDFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				let weight_dists = {};
 				config.callbacks.node_unmarked.push(setWeightCostsDFS(weight_dists));
 				$DFS.DFS(graph, root, config);

@@ -1,17 +1,10 @@
 import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
-import {BaseGraph, DIR, GraphMode, GraphStats} from '../base/BaseGraph';
+import {BaseGraph} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
-
-
-export type TypedNodes = Map<string, Map<string, ITypedNode>>;
-export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
-
-export interface TypedGraphStats extends GraphStats {
-	typed_nodes: { [key: string]: number };
-	typed_edges: { [key: string]: number };
-}
+import {BaseNode} from "../base/BaseNode";
+import {DIR, GraphMode, GraphStats, TypedGraphStats, TypedEdges, TypedNodes} from '../interfaces';
 
 
 /**
@@ -81,7 +74,6 @@ export class TypedGraph extends BaseGraph {
 		return this._typedEdges.get(type) ? this._typedEdges.get(type).size : null;
 	}
 
-
 	/**
 	 * Neighbor nodes depending on type
 	 */
@@ -93,13 +85,14 @@ export class TypedGraph extends BaseGraph {
 		return new Set([...node.outs(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
-	conns(node: ITypedNode, type: string): Set<ITypedNode> {
-		return new Set([...node.conns(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
+	unds(node: ITypedNode, type: string): Set<ITypedNode> {
+		return new Set([...node.unds(type)].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
 
 	/**
-	 * Neighbor nodes depending on type - from start SET
+	 * Neighbor nodes depending on type
+	 * @description takes either a single TypedNode or a Set of TypedNodes as input
 	 * @description we have to start with node objects, since dupe-checkable strings
 	 * 							are only available once we deal with edge/neighborhood entries
 	 *  						However, we then need to switch to an `intermediate representation`
@@ -110,10 +103,13 @@ export class TypedGraph extends BaseGraph {
 	 * @todo decide if method call via [dir] is an abomination or not
 	 * 			 -> definitely screws up code assist / intellisense !!!
 	 */
-	getNeighborsOfSet(nodes: Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {
+	expand(input: ITypedNode | Set<ITypedNode>, dir: string, type: string): Set<ITypedNode> {
+		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		const resultSet = new Set<ITypedNode>();
-		let nr_visits = 0,
+		let
+			nr_visits = 0,
 			nodeRef;
+
 		const tic = process.hrtime()[1];
 		for ( let node of nodes ) {
 			// maybe we can stop earlier?
@@ -134,7 +130,7 @@ export class TypedGraph extends BaseGraph {
 			}
 		}
 		const toc = process.hrtime()[1];
-		// console.log(`Expanding from ${nodes.size} nodes involved ${nr_visits} visits & took ${toc-tic} nanos.`);
+		// logger.log(`Expanding from ${nodes.size} nodes involved ${nr_visits} visits & took ${toc-tic} nanos.`);
 		return resultSet;
 	}
 
@@ -142,15 +138,13 @@ export class TypedGraph extends BaseGraph {
 	/**
 	 * expand over k steps
 	 *
-	 * @description a typed BFS ??
-	 *
-	 * @todo this is really slow if the periphery becomes larger (after k=2 even on a small graph...)
-	 * 			 -> Optimize !! But how !?
+	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
-	expandK(nodes: Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
+	expandK(input: ITypedNode | Set<ITypedNode>, dir: string, type: string, k?: number): Set<ITypedNode> {
 		if ( k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
+		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		let resultSet = new Set<ITypedNode>();
 
 		// Start with initial set
@@ -160,8 +154,8 @@ export class TypedGraph extends BaseGraph {
 
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			const otic = process.hrtime()[1];
-			periphery = this.getNeighborsOfSet(periphery, dir, type);
-			// console.log(`Periphery at k=${k} is of size=${periphery.size}`);
+			periphery = this.expand(periphery, dir, type);
+			// logger.log(`Periphery at k=${k} is of size=${periphery.size}`);
 			// copy
 			const old_size = resultSet.size;
 
@@ -170,15 +164,15 @@ export class TypedGraph extends BaseGraph {
 				resultSet.add(target);
 			}
 			const toc = process.hrtime()[1];
-			// console.log(`Copying set took ${toc-tic} nanos.`);
+			// logger.log(`Copying set took ${toc-tic} nanos.`);
 
 			// if resultSize has not increased, we also reached a maximum
 			if ( old_size === resultSet.size ) {
-				// console.log('reached MAX - break, break, break!');
+				// logger.log('reached MAX - break, break, break!');
 				break;
 			}
 			const otoc = process.hrtime()[1];
-			// console.log(`Expand iteration took ${otoc-otic} nanos.`);
+			// logger.log(`Expand iteration took ${otoc-otic} nanos.`);
 		}
 		return resultSet;
 	}
@@ -196,16 +190,13 @@ export class TypedGraph extends BaseGraph {
 	}
 
 	connHistT(nType: string, eType: string): Set<number>[] {
-		return this.degreeHistT(DIR.conn, nType, eType);
+		return this.degreeHistT(DIR.unds, nType, eType);
 	}
 
 	private degreeHistT(dir: string, nType: string, eType: string): Set<number>[] {
 		let result = [];
 
 		for ( let [node_id, node] of this._typedNodes.get(nType) ) {
-			// logger.log(node_id);
-			// logger.log(node);
-
 			let deg;
 			switch(dir) {
 				case DIR.in:
@@ -215,7 +206,7 @@ export class TypedGraph extends BaseGraph {
 					deg = node.outs(eType) ? node.outs(eType).size : 0;
 					break;
 				default:
-					deg = node.conns(eType) ? node.conns(eType).size : 0;
+					deg = node.unds(eType) ? node.unds(eType).size : 0;
 			}
 			if ( !result[deg] ) {
 				result[deg] = new Set([node]);
@@ -344,7 +335,6 @@ export class TypedGraph extends BaseGraph {
 		if (BaseEdge.isTyped(edge) && edge.type) {
 			type = edge.type.toUpperCase();
 		}
-
 		if (!this._typedEdges.get(type)) {
 			throw Error('Edge type does not exist on this TypedGraph.');
 		}
@@ -356,7 +346,6 @@ export class TypedGraph extends BaseGraph {
 		if (this.nrTypedEdges(type) === 0) {
 			this._typedEdges.delete(type);
 		}
-
 		super.deleteEdge(edge);
 	}
 

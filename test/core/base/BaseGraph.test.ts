@@ -1,6 +1,8 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict, MinAdjacencyListArray, NextArray} from '../../../src/core/interfaces';
 import * as $N from '../../../src/core/base/BaseNode';
 import * as $E from '../../../src/core/base/BaseEdge';
 import * as $G from '../../../src/core/base/BaseGraph';
+import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 import { DegreeDistribution, DegreeCentrality } from '../../../src/centralities/Degree';
 import { DFS } from '../../../src/search/DFS';
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
@@ -8,7 +10,6 @@ import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../../config/config';
 
 import { Logger } from '../../../src/utils/Logger'
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();
@@ -39,7 +40,7 @@ describe('GRAPH TESTS: ', () => {
 		node_b: $N.IBaseNode,
 		edge_ab: $E.IBaseEdge,
 		edge_2: $E.IBaseEdge,
-		stats: $G.GraphStats,
+		stats: GraphStats,
 		csv: CSVInput = new CSVInput();
 
 
@@ -59,14 +60,14 @@ describe('GRAPH TESTS: ', () => {
 			'should correctly instantiate a graph with GraphMode INIT (no edges added)',
 			() => {
 				graph = new Graph('Test graph');
-				expect(graph.getMode()).toBe($G.GraphMode.INIT);
+				expect(graph.getMode()).toBe(GraphMode.INIT);
 			}
 		);
 
 
 		test('should get mode via getter',() => {
 				graph = new Graph('Test graph');
-				expect(graph.mode).toBe($G.GraphMode.INIT);
+				expect(graph.mode).toBe(GraphMode.INIT);
 			}
 		);
 
@@ -196,7 +197,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(0);
 				expect(stats.nr_und_edges).toBe(1);
-				expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
 			});
 
 
@@ -223,7 +224,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(1);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 			});
 
 
@@ -245,7 +246,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(stats.nr_nodes).toBe(1);
 				expect(stats.nr_dir_edges).toBe(0);
 				expect(stats.nr_und_edges).toBe(1);
-				expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
 			});
 
 
@@ -267,7 +268,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(stats.nr_nodes).toBe(1);
 				expect(stats.nr_dir_edges).toBe(1);
 				expect(stats.nr_und_edges).toBe(0);
-				expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 			});
 
 
@@ -362,7 +363,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(1);
 				expect(stats.nr_und_edges).toBe(1);
-				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+				expect(graph.getMode()).toBe(GraphMode.MIXED);
 			});
 
 		});
@@ -555,7 +556,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrNodes()).toBe(4);
 			expect(graph.nrDirEdges()).toBe(5);
 			expect(graph.nrUndEdges()).toBe(2);
-			expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
 
 
@@ -608,13 +609,13 @@ describe('GRAPH TESTS: ', () => {
 
 
 		test('should return the correct graph density w.r.t. directed edges', () => {
-			const stats: $G.GraphStats = graph.getStats();
+			const stats: GraphStats = graph.getStats();
 			expect(stats.density_dir).toBe(5 / 12);
 		});
 
 
 		test('should return the correct graph density w.r.t. UNdirected edges', () => {
-			const stats: $G.GraphStats = graph.getStats();
+			const stats: GraphStats = graph.getStats();
 			expect(stats.density_und).toBe(4 / 12);
 		});
 
@@ -671,7 +672,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(n_b.degree()).toBe(n_b_deg - 1);
 				expect(n_b.outDegree()).toBe(n_b_out_deg);
 				expect(n_b.inDegree()).toBe(n_b_in_deg);
-				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+				expect(graph.getMode()).toBe(GraphMode.MIXED);
 			}
 		);
 
@@ -712,7 +713,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(n_b.outDegree()).toBe(n_b_out_deg);
 				expect(n_b.inDegree()).toBe(n_b_in_deg - 1);
 				expect(n_b.degree()).toBe(n_b_deg);
-				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+				expect(graph.getMode()).toBe(GraphMode.MIXED);
 			}
 		);
 
@@ -736,7 +737,7 @@ describe('GRAPH TESTS: ', () => {
 
 				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
 				expect(graph.nrUndEdges()).toBe(0);
-				expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 			}
 		);
 
@@ -762,7 +763,7 @@ describe('GRAPH TESTS: ', () => {
 
 				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
 				expect(graph.nrDirEdges()).toBe(0);
-				expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+				expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
 			}
 		);
 
@@ -788,7 +789,7 @@ describe('GRAPH TESTS: ', () => {
 
 				expect(graph.nrUndEdges()).toBe(0);
 				expect(graph.nrDirEdges()).toBe(0);
-				expect(graph.getMode()).toBe($G.GraphMode.INIT);
+				expect(graph.getMode()).toBe(GraphMode.INIT);
 			}
 		);
 
@@ -834,7 +835,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_b.inDegree()).toBe(0);
 			expect(n_d.inDegree()).toBe(0);
 			expect(graph.nrDirEdges()).toBe(2);
-			expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
 
 
@@ -859,7 +860,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_c.outDegree()).toBe(0);
 			expect(n_d.outDegree()).toBe(0);
 			expect(graph.nrDirEdges()).toBe(2);
-			expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
 
 
@@ -887,7 +888,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_d.outDegree()).toBe(0);
 			expect(graph.nrDirEdges()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(2);
-			expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+			expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
 		});
 
 
@@ -912,7 +913,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(n_c.degree()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(0);
 			expect(graph.nrDirEdges()).toBe(5);
-			expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+			expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 		});
 
 
@@ -934,7 +935,7 @@ describe('GRAPH TESTS: ', () => {
 			graph.deleteAllEdgesOf(n_a);
 			expect(graph.nrDirEdges()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(0);
-			expect(graph.getMode()).toBe($G.GraphMode.INIT);
+			expect(graph.getMode()).toBe(GraphMode.INIT);
 		});
 
 
@@ -951,7 +952,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrNodes()).toBe(3);
 			expect(graph.nrDirEdges()).toBe(4);
 			expect(graph.nrUndEdges()).toBe(1);
-			expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
 
 
@@ -966,7 +967,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(graph.nrDirEdges()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(0);
 			expect(graph.nrNodes()).toBe(3);
-			expect(graph.getMode()).toBe($G.GraphMode.INIT);
+			expect(graph.getMode()).toBe(GraphMode.INIT);
 		});
 
 	});
@@ -1027,7 +1028,7 @@ describe('GRAPH TESTS: ', () => {
 			expect(clone_graph.nrNodes()).toBe(0);
 			expect(clone_graph.nrUndEdges()).toBe(0);
 			expect(clone_graph.nrDirEdges()).toBe(0);
-			expect(clone_graph.getMode()).toBe($G.GraphMode.INIT);
+			expect(clone_graph.getMode()).toBe(GraphMode.INIT);
 			expect(clone_graph.getNodes()).toEqual({});
 			expect(clone_graph.getUndEdges()).toEqual({});
 			expect(clone_graph.getDirEdges()).toEqual({});
@@ -1053,7 +1054,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(clone_graph.nrNodes()).toBe(1);
 				expect(clone_graph.nrUndEdges()).toBe(0);
 				expect(clone_graph.nrDirEdges()).toBe(0);
-				expect(clone_graph.getMode()).toBe($G.GraphMode.INIT);
+				expect(clone_graph.getMode()).toBe(GraphMode.INIT);
 				expect(clone_graph.getNodeById("A")).toEqual(n_a);
 			}
 		);
@@ -1072,7 +1073,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(clone_graph.nrNodes()).toBe(2);
 				expect(clone_graph.nrUndEdges()).toBe(1);
 				expect(clone_graph.nrDirEdges()).toBe(0);
-				expect(clone_graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+				expect(clone_graph.getMode()).toBe(GraphMode.UNDIRECTED);
 			}
 		);
 
@@ -1090,7 +1091,7 @@ describe('GRAPH TESTS: ', () => {
 				expect(clone_graph.nrNodes()).toBe(2);
 				expect(clone_graph.nrUndEdges()).toBe(0);
 				expect(clone_graph.nrDirEdges()).toBe(1);
-				expect(clone_graph.getMode()).toBe($G.GraphMode.DIRECTED);
+				expect(clone_graph.getMode()).toBe(GraphMode.DIRECTED);
 			}
 		);
 
@@ -1122,8 +1123,8 @@ describe('GRAPH TESTS: ', () => {
 		describe("Minimum Adjacency List generation Tests, DICT version - ", () => {
 
 			let graph: $G.IGraph,
-				adj_list: $G.MinAdjacencyListDict,
-				expected_result: $G.MinAdjacencyListDict,
+				adj_list: MinAdjacencyListDict,
+				expected_result: MinAdjacencyListDict,
 				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true});
 
 
@@ -1246,9 +1247,9 @@ describe('GRAPH TESTS: ', () => {
 		describe("Minimum Adjacency List generation Tests, ARRAY version", () => {
 
 			let sn_300_graph_file = `${CSV_SN_PATH}/social_network_edges_300.csv`, graph: $G.IGraph,
-				adj_list: $G.MinAdjacencyListArray,
+				adj_list: MinAdjacencyListArray,
 				sn_300_graph: $G.IGraph,
-				expected_result: $G.MinAdjacencyListArray,
+				expected_result: MinAdjacencyListArray,
 				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
 				csvReader = new CSVInput(sn_config),
 				inf = Number.POSITIVE_INFINITY;
@@ -1321,8 +1322,8 @@ describe('GRAPH TESTS: ', () => {
 				graph: $G.IGraph,
 				sn_300_graph: $G.IGraph,
 				// TODO invent better name for next/adj_list
-				next: $G.NextArray,
-				expected_result: $G.MinAdjacencyListArray,
+				next: NextArray,
+				expected_result: MinAdjacencyListArray,
 				csvReader = new CSVInput(sn_config),
 				jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
 				inf = Number.POSITIVE_INFINITY;
@@ -1516,7 +1517,7 @@ describe('GRAPH TESTS: ', () => {
 			beforeEach(() => {
 				graph = new $G.BaseGraph("emptinius");
 				expect(graph).toBeDefined();
-				expect(graph.getMode()).toBe($G.GraphMode.INIT);
+				expect(graph.getMode()).toBe(GraphMode.INIT);
 				expect(graph.nrNodes()).toBe(0);
 				expect(graph.nrDirEdges()).toBe(0);
 				expect(graph.nrUndEdges()).toBe(0);
@@ -1586,7 +1587,7 @@ describe('GRAPH TESTS: ', () => {
 			beforeEach(() => {
 				graph = jsonReader.readFromJSONFile(small_graph_file);
 				expect(graph).toBeDefined();
-				expect(graph.getMode()).toBe($G.GraphMode.MIXED);
+				expect(graph.getMode()).toBe(GraphMode.MIXED);
 				expect(graph.nrNodes()).toBe(4);
 				expect(graph.nrDirEdges()).toBe(5);
 				expect(graph.nrUndEdges()).toBe(2);

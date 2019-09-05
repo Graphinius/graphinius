@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats} from '../../src/core/interfaces';
 import * as $G from '../../src/core/base/BaseGraph';
 import * as $C from '../io/input/common';
 import * as $R from '../../src/utils/RemoteUtils';
@@ -14,7 +15,7 @@ const std_json_in_config: IJSONInConfig = {
 describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 
 	let json: JSONInput,
-		stats: $G.GraphStats;
+		stats: GraphStats;
 
 	const REMOTE_HOST = "raw.githubusercontent.com";
 	const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/json/";
@@ -57,7 +58,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 					expect(graph.nrNodes()).toBe(4);
 					expect(graph.nrDirEdges()).toBe(0);
 					expect(graph.nrUndEdges()).toBe(4);
-					expect(graph.getMode()).toBe($G.GraphMode.UNDIRECTED);
+					expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
 					done();
 				});
 			}
@@ -72,7 +73,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 					expect(graph.nrNodes()).toBe(4);
 					expect(graph.nrDirEdges()).toBe(7);
 					expect(graph.nrUndEdges()).toBe(0);
-					expect(graph.getMode()).toBe($G.GraphMode.DIRECTED);
+					expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 					done();
 				});
 			}
@@ -97,7 +98,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 					expect(stats.nr_nodes).toBe(REAL_GRAPH_NR_NODES);
 					expect(stats.nr_dir_edges).toBe(0);
 					expect(stats.nr_und_edges).toBe(REAL_GRAPH_NR_EDGES);
-					expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+					expect(stats.mode).toBe(GraphMode.UNDIRECTED);
 					done();
 				});
 

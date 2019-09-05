@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '../../src/core/interfaces';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
 import {JSONInput} from '../../src/io/input/JSONInput';
@@ -19,7 +20,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 
 	let json: JSONInput,
 		graph: $G.IGraph,
-		stats: $G.GraphStats,
+		stats: GraphStats,
 		bfs_res: { [id: string]: $BFS.BFS_ResultEntry };
 
 
@@ -136,7 +137,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 		test('should refuse to traverse a graph with _mode set to INIT', () => {
 			let root = graph.getRandomNode(),
 				config = $BFS.prepareBFSStandardConfig();
-			config.dir_mode = $G.GraphMode.INIT;
+			config.dir_mode = GraphMode.INIT;
 			expect($BFS.BFS.bind($BFS.BFS, graph, root, config)).toThrowError("Cannot traverse a graph with dir_mode set to INIT.");
 		});
 
@@ -184,7 +185,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -218,7 +219,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -252,7 +253,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -286,7 +287,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('G'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.UNDIRECTED;
+				config.dir_mode = GraphMode.UNDIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -324,7 +325,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('A'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -358,7 +359,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('D'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -392,7 +393,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('C'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);
@@ -426,7 +427,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 				let root = graph.getNodeById('G'),
 					config = $BFS.prepareBFSStandardConfig();
 
-				config.dir_mode = $G.GraphMode.DIRECTED;
+				config.dir_mode = GraphMode.DIRECTED;
 				bfs_res = $BFS.BFS(graph, root, config);
 
 				expect(Object.keys(bfs_res).length).toBe(7);

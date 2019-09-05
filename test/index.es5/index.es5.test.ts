@@ -4,24 +4,34 @@ const index = require(path.join(__dirname, '../../index.js'));
 
 describe('Checking index.js structure - ', () => {
 
-  let node_a, node_b,
-      edge,
-      graph;
+  const
+    base = index.core.base,
+    typed = index.core.typed;
+
+  let
+    node_a,
+    node_b,
+    edge,
+    graph;
+
+  beforeEach(() => {
+    node_a = null;
+    node_b = null;
+    edge = null;
+    graph = null;
+  });
 
 
   describe('checking core...', () => {
-
-    const base = index.core.base;
 
     it('checks for the existence of the core object', () => {
       expect(typeof base).toBe("object");
     });
 
-
     /**
      * @todo only test one of the API methods !?
      */
-    it('core should contain Nodes', () => {
+    it('core should contain BaseNodes', () => {
       expect(typeof base.BaseNode).toBe("function");
       node_a = new base.BaseNode("A");
       // only Nodes have degree(s)
@@ -29,8 +39,9 @@ describe('Checking index.js structure - ', () => {
     });
 
 
-    it('core should contain Edges', () => {
+    it('core should contain BaseEdges', () => {
       expect(typeof base.BaseEdge).toBe("function");
+      node_a = new base.BaseNode("A");
       node_b = new base.BaseNode("B");
       edge = new base.BaseEdge("edgy", node_a, node_b);
       // only Edges can be directed
@@ -38,7 +49,7 @@ describe('Checking index.js structure - ', () => {
     });
 
 
-    it('core should contain Graphs', () => {
+    it('core should contain BaseGraphs', () => {
       expect(typeof base.BaseGraph).toBe("function");
       graph = new base.BaseGraph("Graphinius Maximus");
       // only graphs can give you random nodes
@@ -52,6 +63,33 @@ describe('Checking index.js structure - ', () => {
       expect(GM.DIRECTED).toBe(1);
       expect(GM.UNDIRECTED).toBe(2);
       expect(GM.MIXED).toBe(3);
+    });
+
+
+    it('core should contain TypedNodes', () => {
+      expect(typeof typed.TypedNode).toBe("function");
+      node_a = new typed.TypedNode("A", {type: "blahoo"});
+      // only Typed Nodes have type
+      expect(node_a.type).toBe("blahoo");
+    });
+
+
+    it('core should contain TypedEdges', () => {
+      expect(typeof typed.TypedEdge).toBe("function");
+      node_a = new typed.TypedNode("A", {type: "Person"});
+      node_b = new typed.TypedNode("B", {type: "Person"});
+      edge = new typed.TypedEdge("edgy", node_a, node_b, {type: "HATELOVE"});
+      // only Typed Edges have type
+      expect(edge.type).toBe("HATELOVE");
+    });
+
+
+    it('core should contain TypedGraphs', () => {
+      expect(typeof typed.TypedGraph).toBe("function");
+      graph = new typed.TypedGraph("Graphinius Maximus Typicus");
+      // only Typed Graphs give you nodeTypes & edgeTypes
+      expect(typeof graph.nodeTypes).toBe("function");
+      expect(typeof graph.edgeTypes).toBe("function");
     });
 
   });
@@ -104,6 +142,7 @@ describe('Checking index.js structure - ', () => {
     it('centralities should contain Pagerank Centrality', () => {
       const Pagerank = index.centralities.Pagerank;
       expect(typeof Pagerank).toBe("function");
+      graph = new base.BaseGraph('PR');
       const pr = new Pagerank(graph);
       expect(typeof pr.computePR).toBe("function");
     });

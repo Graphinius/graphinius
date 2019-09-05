@@ -1,3 +1,4 @@
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $E from '../core/base/BaseEdge';
 import * as $G from '../core/base/BaseGraph';
@@ -7,7 +8,7 @@ import * as $CB from '../utils/CallbackUtils';
 export interface BFS_Config {
 	result			:	{[id: string]: BFS_ResultEntry};
 	callbacks		:	BFS_Callbacks;
-	dir_mode		:	$G.GraphMode;
+	dir_mode		:	GraphMode;
 	messages?		: {};
 	filters?		: any;
 }
@@ -61,13 +62,13 @@ function BFS(graph 	 : $G.IGraph,
 	/**
 	 * We are not traversing an empty graph...
 	 */
-	if ( graph.getMode() === $G.GraphMode.INIT ) {
+	if ( graph.getMode() === GraphMode.INIT ) {
 		throw new Error('Cowardly refusing to traverse graph without edges.');
 	}
 	/**
 	 * We are not traversing a graph taking NO edges into account
 	 */
-	if ( dir_mode === $G.GraphMode.INIT ) {
+	if ( dir_mode === GraphMode.INIT ) {
 		throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
 	}
 
@@ -100,13 +101,13 @@ function BFS(graph 	 : $G.IGraph,
 		 * Do we move only in the directed subgraph,
 		 * undirected subgraph or complete (mixed) graph?
 		 */
-		if ( dir_mode === $G.GraphMode.MIXED ) {
+		if ( dir_mode === GraphMode.MIXED ) {
 			bfsScope.adj_nodes = bfsScope.current.reachNodes();
 		}
-		else if ( dir_mode === $G.GraphMode.UNDIRECTED ) {
+		else if ( dir_mode === GraphMode.UNDIRECTED ) {
 			bfsScope.adj_nodes = bfsScope.current.connNodes();
 		}
-		else if ( dir_mode === $G.GraphMode.DIRECTED ) {
+		else if ( dir_mode === GraphMode.DIRECTED ) {
 			bfsScope.adj_nodes = bfsScope.current.nextNodes();
 		}
 		else {
@@ -155,7 +156,7 @@ function prepareBFSStandardConfig() {
 			node_marked: [],
 			sort_nodes: undefined
 		},
-		dir_mode: $G.GraphMode.MIXED,
+		dir_mode: GraphMode.MIXED,
 		messages: {},
 		filters: {}
 	},

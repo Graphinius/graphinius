@@ -1,9 +1,9 @@
+import {GraphMode} from '../../src/core/interfaces';
 import {CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH} from "../config/config";
 import * as $G from "../../src/core/base/BaseGraph";
 import {CSVInput} from '../../src/io/input/CSVInput';
 import {CSVOutput, ICSVOutConfig} from '../../src/io/output/CSVOutput';
 import {JSONInput} from "../../src/io/input/JSONInput";
-import {GraphMode} from "../../src/core/base/BaseGraph";
 
 let csvIn = new CSVInput({
 	separator: ' ',
@@ -38,7 +38,7 @@ describe('CSVInput performance tests - ', () => {
 			expect(stats.nr_nodes).toBe(5937);
 			expect(stats.nr_dir_edges).toBe(0);
 			expect(stats.nr_und_edges).toBe(17777);
-			expect(stats.mode).toBe($G.GraphMode.UNDIRECTED);
+			expect(stats.mode).toBe(GraphMode.UNDIRECTED);
 		}
 	);
 
@@ -53,7 +53,7 @@ describe('CSVInput performance tests - ', () => {
 			expect(stats.nr_nodes).toBe(5937);
 			expect(stats.nr_dir_edges).toBe(17777);
 			expect(stats.nr_und_edges).toBe(0);
-			expect(stats.mode).toBe($G.GraphMode.DIRECTED);
+			expect(stats.mode).toBe(GraphMode.DIRECTED);
 		}
 	);
 

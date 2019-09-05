@@ -1,3 +1,4 @@
+import {DIR, GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict} from '../interfaces';
 import { IBaseNode, BaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
 import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../../search/BFS';
@@ -9,38 +10,6 @@ import {TypedGraph} from "../typed/TypedGraph";
 
 const DEFAULT_WEIGHT = 1;
 
-export enum DIR {
-	in = "ins",
-	out = "outs",
-	conn = "conns"
-}
-
-export enum GraphMode {
-	INIT,
-	DIRECTED,
-	UNDIRECTED,
-	MIXED
-}
-
-export interface GraphStats {
-	mode					: GraphMode;
-	nr_nodes			: number;
-	nr_und_edges	: number;
-	nr_dir_edges	: number;
-	density_dir		: number;
-	density_und		: number;
-}
-
-/**
- * Only gives the best distance to a node in case of multiple direct edges
- */
-export type MinAdjacencyListDict = {[id: string]: MinAdjacencyListDictEntry};
-
-export type MinAdjacencyListDictEntry = {[id: string] : number};
-
-export type MinAdjacencyListArray = Array<Array<number>>;
-
-export type NextArray = Array<Array<Array<number>>>;
 
 export interface IGraph {
 	/**
@@ -161,7 +130,7 @@ class BaseGraph implements IGraph {
 	}
 
 	get connHist(): Set<number>[] {
-		return this.degreeHist(DIR.conn);
+		return this.degreeHist(DIR.unds);
 	}
 
 	private degreeHist(dir: string): Set<number>[] {
@@ -893,7 +862,7 @@ class BaseGraph implements IGraph {
 	 * Could be replaced by a better fraction-increasing function above...
 	 * 
 	 * @param propList
-	 * @param fraction
+	 * @param amount
 	 * @returns {Array}
 	 */
 	pickRandomProperties(propList, amount) : Array<string> {
