@@ -298,6 +298,117 @@ describe('Checking index.js structure - ', () => {
   });
 
 
+  describe('checking Similarities...', () => {
+
+    const similarities = index.similarities;
+    const commons = index.similarities.Commons;
+    const sets = index.similarities.Sets;
+    const score = index.similarities.Score;
+
+
+    it('checks for the existence of the commons object', () => {
+      expect(typeof similarities).toBe("object");
+      expect(typeof commons).toBe("object");
+    });
+
+
+    it('should have the sim method', () => {
+      expect(typeof commons.sim).toBe("function");
+    });
+
+
+    it('should have the simSource method', () => {
+      expect(typeof commons.simSource).toBe("function");
+    });
+
+
+    it('should have the simPairwise method', () => {
+      expect(typeof commons.simPairwise).toBe("function");
+    });
+
+
+    it('should have the simSubsets method', () => {
+      expect(typeof commons.simSubsets).toBe("function");
+    });
+
+
+    it('should have the simGroups method', () => {
+      expect(typeof commons.simGroups).toBe("function");
+    });
+
+
+    it('should have the knnNodeArray method', () => {
+      expect(typeof commons.knnNodeArray).toBe("function");
+    });
+
+
+    it('should have the knnNodeDict method', () => {
+      expect(typeof commons.knnNodeDict).toBe("function");
+    });
+
+
+    it('should have the viaSharedPrefs method', () => {
+      expect(typeof commons.viaSharedPrefs).toBe("function");
+    });
+
+
+    it('should have the getBsNotInA method', () => {
+      expect(typeof commons.getBsNotInA).toBe("function");
+    });
+
+
+    it('checks for the existence of the sets object', () => {
+      expect(typeof sets).toBe("object");
+    });
+
+
+    it('should have the jaccard method', () => {
+      expect(typeof sets.simFuncs.jaccard).toBe("function");
+    });
+
+
+    it('should have the overlap method', () => {
+      expect(typeof sets.simFuncs.overlap).toBe("function");
+    });
+
+
+    it('checks for the existence of the scores object', () => {
+      expect(typeof score).toBe("object");
+    });
+
+
+    it('should have the cosine method', () => {
+      expect(typeof score.simFuncs.cosine).toBe("function");
+    });
+
+
+    it('should have the cosineSets method', () => {
+      expect(typeof score.simFuncs.cosineSets).toBe("function");
+    });
+
+
+    it('should have the euclidean method', () => {
+      expect(typeof score.simFuncs.euclidean).toBe("function");
+    });
+
+
+    it('should have the euclideanSets method', () => {
+      expect(typeof score.simFuncs.euclideanSets).toBe("function");
+    });
+
+
+    it('should have the pearson method', () => {
+      expect(typeof score.simFuncs.pearson).toBe("function");
+    });
+
+
+    it('should have the pearsonSets method', () => {
+      expect(typeof score.simFuncs.pearsonSets).toBe("function");
+    });
+
+  });
+
+
   describe('checking Utils...', () => {
 
     it('checks for the existence of the utils object', () => {

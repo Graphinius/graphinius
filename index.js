@@ -27,6 +27,10 @@ const Dijkstra								= require("./lib/search/Dijkstra");
 const BellmanFord     				= require("./lib/search/BellmanFord.js");
 const FloydWarshall						= require("./lib/search/FloydWarshall.js");
 const Johnsons								= require("./lib/search/Johnsons.js");
+// SIMILARITIES
+const SimCommons							= require("./lib/similarities/SimilarityCommons");
+const SetSims									= require("./lib/similarities/SetSimilarities");
+const ScoreSims								= require("./lib/similarities/ScoreSimilarities");
 // UTILS
 const StructUtils     				= require("./lib/utils/StructUtils.js");
 const RemoteUtils     				= require("./lib/utils/RemoteUtils.js");
@@ -86,6 +90,11 @@ out.$G = {
 		BellmanFord								: BellmanFord,
 		FloydWarshall							: FloydWarshall,
 		Johnsons									: Johnsons
+	},
+	similarities: {
+		Commons										: SimCommons,
+		Sets											: SetSims,
+		Score											: ScoreSims,
 	},
   utils: {						
     Struct        						: StructUtils,
