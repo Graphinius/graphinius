@@ -4,7 +4,7 @@ import * as $G from '../../src/core/base/BaseGraph';
 import {JSONInput} from '../../src/io/input/JSONInput';
 import * as $BFS from '../../src/search/BFS';
 import * as $CB from '../../src/utils/CallbackUtils';
-import { JSON_DATA_PATH } from '../config/config';
+import { JSON_DATA_PATH } from '../config/test_paths';
 
 
 let search_graph = `${JSON_DATA_PATH}/search_graph.json`;

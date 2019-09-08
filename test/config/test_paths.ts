@@ -21,5 +21,6 @@ export const JSON_PART_PATH = `./data/json/partitioning`;
 export const JSON_CENT_PATH = `./data/json/centralities`;
 export const JSON_REC_PATH 	= './data/json/recommender';
 export const JSON_TYPE_PATH = './data/json/typed';
+export const JSON_SIM_PATH  = './data/json/similarities';
 
 export const OUTPUT_PATH 	= `./data/output`;

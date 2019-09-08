@@ -1,4 +1,4 @@
-import {CSV_SN_PATH} from "../config/config";
+import {CSV_SN_PATH} from "../config/test_paths";
 import * as $G from "../../src/core/base/BaseGraph";
 import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
 import {BellmanFordArray, BellmanFordDict} from "../../src/search/BellmanFord";

@@ -1,4 +1,4 @@
-import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/config";
+import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/test_paths";
 import {Logger} from "../../src/utils/Logger";
 import {CSVInput} from "../../src/io/input/CSVInput";
 import {JSONInput} from "../../src/io/input/JSONInput";

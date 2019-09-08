@@ -3,8 +3,9 @@ import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degre
 import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {SimplePerturber, NodeDegreeConfiguration} from '../../src/perturbation/SimplePerturbations';
-import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/config';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/test_paths';
 import {Logger} from "../../src/utils/Logger";
+import {GraphStats} from "../../src/core/interfaces";
 
 const logger = new Logger();
 
@@ -18,7 +19,7 @@ const
 let
 	graph: $G.IGraph,
 	json: JSONInput,
-	stats: $G.GraphStats,
+	stats: GraphStats,
 	deg_config: NodeDegreeConfiguration,
 	PT: SimplePerturber;
 

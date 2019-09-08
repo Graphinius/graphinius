@@ -6,7 +6,7 @@
  */
 import * as fs from 'fs';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {CSV_PERF_PATH, OUTPUT_PATH} from '../config/config';
+import {CSV_PERF_PATH, OUTPUT_PATH} from '../config/test_paths';
 import {Logger} from "../../src/utils/Logger";
 import {IGraph} from "../../src/core/base/BaseGraph";
 import {DegreeCentrality, DegreeDistribution} from '../../src/centralities/Degree';

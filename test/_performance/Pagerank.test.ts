@@ -4,7 +4,7 @@ import {
 	CSV_SN_PATH,
 	RES_CENT_PATH,
 	JSON_REC_PATH
-} from "../config/config";
+} from "../config/test_paths";
 import {Pagerank} from "../../src/centralities/Pagerank";
 import {PagerankGauss} from '../../src/centralities/PagerankGauss';
 import {DFS} from "../../src/search/DFS";

@@ -5,7 +5,7 @@ import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { JSONOutput} from '../../src/io/output/JSONOutput';
 
 import * as $EME from '../../src/energyminimization/ExpansionBoykov';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
 
 let json = new JSONInput({explicit_direction: false, directed: false, weighted: true}),

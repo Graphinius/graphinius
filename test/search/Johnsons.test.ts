@@ -5,7 +5,7 @@ import * as $JO from '../../src/search/Johnsons';
 import * as $FW from '../../src/search/FloydWarshall';
 import {JSONInput} from '../../src/io/input/JSONInput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
+import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
 
 import {Logger} from '../../src/utils/Logger';
 

@@ -746,7 +746,7 @@ declare module 'graphinius/core/base/BaseGraph' {
 }
 declare module 'graphinius/search/FloydWarshall' {
 	import { MinAdjacencyListArray, NextArray } from 'graphinius/core/interfaces';
-	import * as $G from 'graphinius/core/base/BaseGraph'; function FloydWarshallAPSP(graph: $G.IGraph): {}; function FloydWarshallArray(graph: $G.IGraph): MinAdjacencyListArray; function changeNextToDirectParents(input: NextArray): NextArray;
+	import { IGraph } from 'graphinius/core/base/BaseGraph'; function FloydWarshallAPSP(graph: IGraph): {}; function FloydWarshallArray(graph: IGraph): MinAdjacencyListArray; function changeNextToDirectParents(input: NextArray): NextArray;
 	export { FloydWarshallAPSP, FloydWarshallArray, changeNextToDirectParents };
 
 }
@@ -1364,6 +1364,96 @@ declare module 'graphinius/perturbation/SimplePerturbations' {
 	export { SimplePerturber };
 
 }
+declare module 'graphinius/similarities/interfaces' {
+	import { DIR } from 'graphinius/core/interfaces';
+	export type SetOfSets = {
+	    [key: string]: Set<any>;
+	};
+	export interface Similarity {
+	    isect?: number;
+	    sim: number;
+	}
+	export interface SimilarityEntry extends Similarity {
+	    from: string;
+	    to: string;
+	}
+	export type SimilarityResult = SimilarityEntry[];
+	export interface TopKEntry extends Similarity {
+	    from: string;
+	    to: string;
+	}
+	export type TopKArray = TopKEntry[];
+	export type TopKDict = {
+	    [key: string]: TopKEntry[];
+	};
+	export interface SortCutFuncs {
+	    sort?: (e1: SimilarityEntry, e2: SimilarityEntry) => number;
+	    cutFunc?: (sim: number, thres: number) => boolean;
+	}
+	export interface SimilarityConfig extends SortCutFuncs {
+	    cutoff?: number;
+	    knn?: number;
+	    dup?: boolean;
+	}
+	export interface SimPerSharedPrefConfig extends SortCutFuncs {
+	    t1: string;
+	    t2: string;
+	    d1: DIR;
+	    d2: DIR;
+	    e1: string;
+	    e2: string;
+	    co?: number;
+	}
+
+}
+declare module 'graphinius/similarities/SetSimilarities' {
+	import * as $I from 'graphinius/similarities/interfaces';
+	export const simFuncs: {
+	    jaccard: typeof jaccard;
+	    overlap: typeof overlap;
+	}; function jaccard(a: Set<any>, b: Set<any>): $I.Similarity; function overlap(a: Set<any>, b: Set<any>): $I.Similarity;
+	export {};
+
+}
+declare module 'graphinius/similarities/SimilarityCommons' {
+	import * as $I from 'graphinius/similarities/interfaces';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
+	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
+	export const simSort: {
+	    asc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => number;
+	    desc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => number;
+	};
+	export const cutFuncs: {
+	    above: (sim: number, threshold: number) => boolean;
+	    below: (sim: number, threshold: number) => boolean;
+	};
+	export function sim(algo: Function, a: Set<any>, b: Set<any>): any;
+	export function simSource(algo: Function, s: string, t: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
+	export function simPairwise(algo: Function, s: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
+	export function simSubsets(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
+	export function simGroups(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, config?: $I.SimilarityConfig): $I.Similarity;
+	export function knnNodeArray(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig): $I.TopKArray;
+	export function knnNodeDict(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig): $I.TopKDict;
+	export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerSharedPrefConfig): any[];
+	export function getBsNotInA(a: Set<ITypedNode>, b: Set<ITypedNode>): Set<ITypedNode>;
+
+}
+declare module 'graphinius/perturbation/TheAugments' {
+	import { ITypedEdge } from 'graphinius/core/typed/TypedEdge';
+	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
+	import * as $I from 'graphinius/similarities/interfaces';
+	interface SubSetConfig extends $I.SortCutFuncs {
+	    rtype: string;
+	    knn?: number;
+	    cutoff?: number;
+	} class TheAugments {
+	    private _g;
+	    constructor(_g: TypedGraph);
+	    addSubsetRelationship(algo: Function, sets: $I.SetOfSets, cfg: SubSetConfig): Set<ITypedEdge>;
+	}
+	export { TheAugments };
+
+}
 declare module 'graphinius/search/Dijkstra' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $G from 'graphinius/core/base/BaseGraph';
@@ -1371,5 +1461,29 @@ declare module 'graphinius/search/Dijkstra' {
 	    [id: string]: $PFS.PFS_ResultEntry;
 	};
 	export { Dijkstra };
+
+}
+declare module 'graphinius/similarities/ScoreSimilarities' {
+	export const simFuncs: {
+	    cosine: typeof cosine;
+	    cosineSets: typeof cosineSets;
+	    euclidean: typeof euclidean;
+	    euclideanSets: typeof euclideanSets;
+	    pearson: typeof pearson;
+	    pearsonSets: typeof pearsonSets;
+	}; function euclidean(a: number[], b: number[]): {
+	    sim: number;
+	}; function cosine(a: number[], b: number[]): {
+	    sim: number;
+	}; function pearson(a: number[], b: number[], a_mean?: number, b_mean?: number): {
+	    sim: any;
+	}; function cosineSets(a: Set<string>, b: Set<string>): {
+	    sim: number;
+	}; function euclideanSets(a: Set<string>, b: Set<string>): {
+	    sim: number;
+	}; function pearsonSets(a: Set<string>, b: Set<string>): {
+	    sim: any;
+	};
+	export {};
 
 }

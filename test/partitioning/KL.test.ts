@@ -2,7 +2,7 @@ import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
 import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
 import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
-import { JSON_PART_PATH} from '../config/config';
+import { JSON_PART_PATH} from '../config/test_paths';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();

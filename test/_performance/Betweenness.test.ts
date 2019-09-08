@@ -1,6 +1,6 @@
 import {Brandes} from "../../src/centralities/Brandes";
 import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
-import {CSV_SN_PATH, RES_CENT_PATH} from "../config/config";
+import {CSV_SN_PATH, RES_CENT_PATH} from "../config/test_paths";
 import * as fs from "fs";
 import {Logger} from '../../src/utils/Logger';
 import {IGraph} from "../../src/core/base/BaseGraph";

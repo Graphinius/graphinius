@@ -1,5 +1,5 @@
 import {CSVInput} from "../../src/io/input/CSVInput";
-import {CSV_SN_PATH} from "../config/config";
+import {CSV_SN_PATH} from "../config/test_paths";
 import * as $PFS from "../../src/search/PFS";
 import {Logger} from "../../src/utils/Logger";
 

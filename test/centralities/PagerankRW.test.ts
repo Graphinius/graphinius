@@ -7,7 +7,7 @@ import {
 	JSON_DATA_PATH,
 	JSON_CENT_PATH,
 	CSV_SN_PATH, CSV_EGO_PATH
-} from '../config/config';
+} from '../config/test_paths';
 
 import {Logger} from '../../src/utils/Logger';
 

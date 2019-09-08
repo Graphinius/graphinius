@@ -2,7 +2,7 @@ import * as $N from '../../../src/core/base/BaseNode';
 import { TypedNode } from "../../../src/core/typed/TypedNode";
 import * as $E from '../../../src/core/base/BaseEdge';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
-import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/config';
+import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/test_paths';
 
 import {Logger} from '../../../src/utils/Logger';
 const logger = new Logger();

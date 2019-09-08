@@ -1,7 +1,7 @@
 import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { DegreeCentrality, DegreeMode } from '../../src/centralities/Degree';
-import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/config';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
 let std_json_in_config: IJSONInConfig = {
 	explicit_direction: true,

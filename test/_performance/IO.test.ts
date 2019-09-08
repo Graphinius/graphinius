@@ -1,5 +1,5 @@
 import {GraphMode} from '../../src/core/interfaces';
-import {CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH} from "../config/config";
+import {CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH} from "../config/test_paths";
 import * as $G from "../../src/core/base/BaseGraph";
 import {CSVInput} from '../../src/io/input/CSVInput';
 import {CSVOutput, ICSVOutConfig} from '../../src/io/output/CSVOutput';

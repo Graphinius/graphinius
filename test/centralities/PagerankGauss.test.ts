@@ -3,7 +3,7 @@ import { PagerankGauss } from '../../src/centralities/PagerankGauss';
 import { ICSVInConfig, CSVInput } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { Logger } from '../../src/utils/Logger';
-import { CSV_DATA_PATH, CSV_CENT_PATH, CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
+import { CSV_DATA_PATH, CSV_CENT_PATH, CSV_SN_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
 
 const logger = new Logger();

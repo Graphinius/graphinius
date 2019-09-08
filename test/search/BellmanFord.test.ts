@@ -4,9 +4,10 @@ import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { BellmanFordDict, BellmanFordArray } from '../../src/search/BellmanFord';
-import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/config';
+import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
 
 import { Logger } from '../../src/utils/Logger';
+import {GraphStats} from "../../src/core/interfaces";
 const logger = new Logger();
 
 const csv_config: ICSVInConfig = {
@@ -33,7 +34,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 			csv								: CSVInput,
 			bf_graph    			: $G.IGraph,
 			bf_neg_cycle_graph: $G.IGraph,
-      stats							: $G.GraphStats,
+      stats							: GraphStats,
       // BF                : Function = BellmanFordDict,
 			BF_expect     		: {} = {},
 			// BF_neg_expect			: {} = {},

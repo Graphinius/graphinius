@@ -30,7 +30,7 @@ module.exports = {
   testPathIgnorePatterns: [
     '_async',
     '_performance',
-    'config.ts',
+    'test_paths.ts',
     'common.ts'
   ]
 };

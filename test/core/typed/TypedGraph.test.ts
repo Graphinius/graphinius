@@ -6,11 +6,10 @@ import {DIR, GraphMode} from '../../../src/core/interfaces';
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
-import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/config';
+import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/test_paths';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
 import {Logger} from '../../../src/utils/Logger';
-import {JSONOutput} from "../../../src/io/output/JSONOutput";
 
 const logger = new Logger();
 

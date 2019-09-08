@@ -4,7 +4,7 @@ import { BaseGraph, IGraph} from '../../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from "../../../src/io/output/JSONOutput";
 import { labelKeys } from '../../../src/io/interfaces';
-import { JSON_DATA_PATH } from '../../config/config';
+import { JSON_DATA_PATH } from '../../config/test_paths';
 import { TypedNode } from "../../../src/core/typed/TypedNode";
 import { TypedGraph } from "../../../src/core/typed/TypedGraph";
 import { ITypedEdge, TypedEdge } from "../../../src/core/typed/TypedEdge";

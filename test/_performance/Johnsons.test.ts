@@ -5,7 +5,7 @@ import {Logger} from '../../src/utils/Logger';
 import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
 import {IJSONInConfig, JSONInput} from "../../src/io/input/JSONInput";
 import * as $G from "../../src/core/base/BaseGraph";
-import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/config";
+import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/test_paths";
 
 const logger = new Logger();
 

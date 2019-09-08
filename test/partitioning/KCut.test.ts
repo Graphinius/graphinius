@@ -2,7 +2,7 @@ import * as $G from '../../src/core/base/BaseGraph';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { GraphPartitioning } from '../../src/partitioning/Interfaces';
 import { KCut } from '../../src/partitioning/KCut';
-import { CSV_DATA_PATH, CSV_SN_PATH } from '../config/config';
+import { CSV_DATA_PATH, CSV_SN_PATH } from '../config/test_paths';
 
 import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();

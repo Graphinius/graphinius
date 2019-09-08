@@ -1,8 +1,7 @@
-import {JSON_REC_PATH} from "../config/config";
+import {JSON_REC_PATH} from "../config/test_paths";
 import {JSONInput} from "../../src/io/input/JSONInput";
 import {TypedGraph} from "../../src/core/typed/TypedGraph";
 import {Logger} from "../../src/utils/Logger";
-import {IGraph, DIR} from "../../src/core/base/BaseGraph";
 
 const
 	logger = new Logger(),

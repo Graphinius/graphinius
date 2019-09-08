@@ -1,15 +1,13 @@
 import {MinAdjacencyListArray, NextArray} from '../core/interfaces';
-import * as $G from '../core/base/BaseGraph';
 import * as $SU from '../utils/StructUtils'
+import {IGraph} from "../core/base/BaseGraph";
 
 
 const DEFAULT_WEIGHT = 1;
 
 /**
- * @todo FW directed mode ??
+ * @todo FW directed mode...
  */
-
-
 
 /**
  * Floyd-Warshall - we mostly use it to get the Betweenness
@@ -20,7 +18,7 @@ const DEFAULT_WEIGHT = 1;
  * @returns m*m matrix of values, m*m*m matrix of neighbors
  * @constructor
  */
-function FloydWarshallAPSP(graph: $G.IGraph): {} {
+function FloydWarshallAPSP(graph: IGraph): {} {
 	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
@@ -60,7 +58,7 @@ function FloydWarshallAPSP(graph: $G.IGraph): {} {
  * @returns m*m matrix of values
  * @constructor
  */
-function FloydWarshallArray(graph: $G.IGraph): MinAdjacencyListArray {
+function FloydWarshallArray(graph: IGraph): MinAdjacencyListArray {
 	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}

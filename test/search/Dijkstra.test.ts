@@ -3,7 +3,7 @@ import { JSONInput } from '../../src/io/input/JSONInput';
 import * as $Dijkstra from '../../src/search/Dijkstra';
 import * as $PFS from '../../src/search/PFS';
 
-import {JSON_DATA_PATH} from '../config/config';
+import {JSON_DATA_PATH} from '../config/test_paths';
 
 const
   json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),

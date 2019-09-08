@@ -3,7 +3,7 @@ import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {ClosenessCentrality} from "../../src/centralities/Closeness";
 
 import {Logger} from "../../src/utils/Logger";
-import {CSV_SN_PATH} from "../config/config";
+import {CSV_SN_PATH} from "../config/test_paths";
 
 const logger = new Logger();
 

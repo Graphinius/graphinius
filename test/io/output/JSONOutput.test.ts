@@ -5,7 +5,7 @@ import * as $G from '../../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
 import { JSONOutput } from '../../../src/io/output/JSONOutput';
 import { labelKeys } from '../../../src/io/interfaces';
-import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/config';
+import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/test_paths';
 import {TypedGraph} from "../../../src/core/typed/TypedGraph";
 
 import {Logger} from "../../../src/utils/Logger";

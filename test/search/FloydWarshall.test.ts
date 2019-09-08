@@ -2,9 +2,10 @@ import * as $G from '../../src/core/base/BaseGraph';
 import * as $FW from '../../src/search/FloydWarshall';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/config';
+import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
 import {Logger} from '../../src/utils/Logger';
+import {GraphStats} from "../../src/core/interfaces";
 const logger = new Logger();
 
 let social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;
@@ -37,7 +38,7 @@ describe('GRAPH SEARCH Tests - Floyd-Warshall - ', () => {
 		graph_bernd: $G.IGraph,
 		graph_intermediate: $G.IGraph,
 		graph_social: $G.IGraph,
-		stats: $G.GraphStats,
+		stats: GraphStats,
 		FW_res: {};
 
 
