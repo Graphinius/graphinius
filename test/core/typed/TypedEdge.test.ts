@@ -3,6 +3,7 @@ import {ITypedNode, TypedNode} from '../../../src/core/typed/TypedNode';
 import {ITypedEdge, TypedEdge} from '../../../src/core/typed/TypedEdge';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 
+
 describe('==== TYPED EDGE TESTS ====', () => {
 
 	const typeDirCombos = [
@@ -14,13 +15,15 @@ describe('==== TYPED EDGE TESTS ====', () => {
 		{type: 'CO_LOCATED', dir: false}
 	];
 
-	const id = 'NewTypedEdge',
+	const
+		id = 'NewTypedEdge',
 		defType = typeDirCombos[0].type,
 		defDir = typeDirCombos[0].dir,
 		nodeTypeA = 'PERSON',
 		nodeTypeB = 'COFFEE';
 
-	let node_a: TypedNode,
+	let
+		node_a: TypedNode,
 		node_b: TypedNode;
 
 	/**

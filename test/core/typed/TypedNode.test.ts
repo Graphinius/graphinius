@@ -43,38 +43,45 @@ describe('==== NODE TESTS ====', () => {
 			b = graph.addNodeByID('B');
 		});
 
+
 		it('should return nodeID from UID', () => {
 			expect(TypedNode.nIDFromUID('B#1#u')).toBe('B');
 			expect(TypedNode.nIDFromUID('243#0#w')).toBe('243');
 			expect(+TypedNode.nIDFromUID('243#0#w')).toBe(243);
 		});
 
+
 		it('should return `B#1#u', () => {
 			e = graph.addEdgeByID('1', a, b);
 			expect(a.uniqueNID(e)).toBe('B#1#u');
 		});
+
 
 		// From perspective of 'A' -> still the same
 		it('should return `B#1#u', () => {
 			e = graph.addEdgeByID('1', b, a);
 			expect(a.uniqueNID(e)).toBe('B#1#u');
 		});
+
 
 		it('should return `A#1#u', () => {
 			e = graph.addEdgeByID('1', b, a);
 			expect(b.uniqueNID(e)).toBe('A#1#u');
 		});
 
+
 		it('should return `B#42#w#1', () => {
 			e = graph.addEdgeByID('42', a, b, {weighted: true});
 			expect(a.uniqueNID(e)).toBe('B#42#w#1');
 		});
+
 
 		// From perspective of 'A' -> still the same
 		it('should return `B#42#w#42', () => {
 			e = graph.addEdgeByID('42', b, a, {weighted: true, weight: 42});
 			expect(a.uniqueNID(e)).toBe('B#42#w#42');
 		});
+
 
 		it('should return `A#42#w#1', () => {
 			e = graph.addEdgeByID('42', b, a, {weighted: true});

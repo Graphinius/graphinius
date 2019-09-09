@@ -114,14 +114,13 @@ export class TypedGraph extends BaseGraph {
 			nr_visits = 0,
 			nodeRef;
 
-		// const tic = process.hrtime()[1];
 		for ( let node of nodes ) {
 			const targets = node[dir](type);
 			if ( !targets ) {
 				continue;
 			}
 			for ( let target of targets ) {
-				nr_visits++;
+				// nr_visits++;
 				nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
 				resultSet.add(nodeRef);
 
@@ -131,8 +130,6 @@ export class TypedGraph extends BaseGraph {
 				}
 			}
 		}
-		// const toc = process.hrtime()[1];
-		// logger.log(`Expanding from ${nodes.size} nodes involved ${nr_visits} visits & took ${toc-tic} nanos.`);
 		return resultSet;
 	}
 
@@ -158,26 +155,17 @@ export class TypedGraph extends BaseGraph {
 		k = k || this._nr_nodes - 1;
 
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
-			// const otic = process.hrtime()[1];
 			periphery = this.expand(periphery, dir, type);
-			// logger.log(`Periphery at k=${k} is of size=${periphery.size}`);
 
-			// copy
 			const old_size = resultSet.size;
-			// const tic = process.hrtime()[1];
 			for ( let target of periphery ) {
 				resultSet.add(target);
 			}
-			// const toc = process.hrtime()[1];
-			// logger.log(`Copying set took ${toc-tic} nanos.`);
 
 			// if resultSize has not increased, we also reached a maximum
 			if ( old_size === resultSet.size ) {
-				// logger.log('reached MAX - break, break, break!');
 				break;
 			}
-			// const otoc = process.hrtime()[1];
-			// logger.log(`Expand iteration took ${otoc-otic} nanos.`);
 		}
 		return resultSet;
 	}
@@ -263,7 +251,8 @@ export class TypedGraph extends BaseGraph {
 		}
 		// logger.log(JSON.stringify(node));
 
-		const id = node.getID(),
+		const
+			id = node.getID(),
 			type = node.type ? node.type.toUpperCase() : null;
 
 		/**

@@ -565,7 +565,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		describe.only('get periphery @ K steps - ', () => {
+		describe('get periphery @ K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
 				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, -1))

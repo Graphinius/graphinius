@@ -84,9 +84,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 
 	get stats(): TypedNodeStats {
 		const result: TypedNodeStats = {
-			typed_edges: {
-
-			}
+			typed_edges: {}
 		};
 		for ( let type of Object.keys(this._typedAdjSets) ) {
 			result.typed_edges[type] = {ins: 0, outs: 0, conns: 0};
