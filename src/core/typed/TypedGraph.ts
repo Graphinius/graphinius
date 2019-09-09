@@ -154,8 +154,8 @@ export class TypedGraph extends BaseGraph {
 
 		// Start with initial set
 		let periphery = nodes;
-		// Maximum possible step size (actually n-1, but we are catching it anyways)
-		k = k || this._nr_nodes;
+		// Maximum possible step size (path graph)
+		k = k || this._nr_nodes - 1;
 
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			// const otic = process.hrtime()[1];
@@ -188,7 +188,17 @@ export class TypedGraph extends BaseGraph {
 	 * 							only returning the node set at distance `k`
 	 */
 	peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode> {
-		throw new Error('not yet implemented');
+		if ( k < 0 ) {
+			throw new Error('cowardly refusing to expand a negative number of steps.');
+		}
+		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
+		let resultSet = new Set<ITypedNode>();
+		let periphery = nodes;
+		k = k || this._nr_nodes - 1;
+		while ( k-- || resultSet.size >= this._nr_nodes ) {
+			periphery = this.expand(periphery, dir, type);
+		}
+		return periphery;
 	}
 
 

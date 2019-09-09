@@ -565,10 +565,47 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
-		/**
-		 * @todo implement and test
-		 */
-		describe('get periphery @ K steps - ', () => {
+		describe.only('get periphery @ K steps - ', () => {
+
+			it('should not expand a negative number of steps', () => {
+				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, -1))
+					.toThrowError('cowardly refusing to expand a negative number of steps.');
+			});
+
+
+			it('should give the correct 1-periphery from a single node (OUT)', () => {
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, 1).size).toBe(17);
+			});
+
+
+			it('should give the correct 2-periphery from a single node (OUT)', () => {
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, 2).size).toBe(157);
+			});
+
+
+			it('should give the correct 2-periphery from a single node (IN)', () => {
+				expect(g.peripheryAtK(g.n(marie), DIR.in, knows, 2).size).toBe(115);
+			});
+
+
+			it('should give the correct 1-periphery from a set OUT', () => {
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 1).size).toBe(32);
+			});
+
+
+			it('should give the correct 1-periphery from a set OUT', () => {
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 1).size).toBe(25);
+			});
+
+
+			it('should give the correct 2-periphery from a set OUT', () => {
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 2).size).toBe(189);
+			});
+
+
+			it('should give the correct 2-periphery from a set OUT', () => {
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 2).size).toBe(177);
+			});
 
 		});
 
