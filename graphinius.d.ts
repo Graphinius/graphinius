@@ -109,6 +109,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    setLabel(label: string): void;
 	    getFeatures(): NodeFeatures;
 	    getFeature(key: string): any;
+	    f(key: string): any | undefined;
 	    setFeatures(features: NodeFeatures): void;
 	    setFeature(key: string, value: any): void;
 	    deleteFeature(key: string): any;
@@ -177,6 +178,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	        [k: string]: any;
 	    };
 	    getFeature(key: string): any | undefined;
+	    f(key: string): any | undefined;
 	    setFeatures(features: {
 	        [k: string]: any;
 	    }): void;

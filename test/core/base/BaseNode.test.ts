@@ -113,6 +113,10 @@ describe('==== NODE TESTS ====', () => {
 			expect(node.getFeature('future')).toBe('Billionaire');
 		});
 
+		test('should correctly retrieve a set feature via the shortcut method', () => {
+			expect(node.f('future')).toBe('Billionaire');
+		});
+
 		test('should allow to set new feature', () => {
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
 			node.setFeature('founder', 'Lemontiger');

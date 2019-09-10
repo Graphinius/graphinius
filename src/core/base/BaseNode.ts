@@ -33,6 +33,7 @@ export interface IBaseNode {
 	// FEATURES methods
 	getFeatures() : NodeFeatures;
 	getFeature(key: string) : any;
+	f(key:string) : any | undefined; // shortcut for getFeature
 	setFeatures( features: NodeFeatures ) : void;
 	setFeature(key: string, value: any) : void;
 	deleteFeature(key: string) : any;
@@ -138,6 +139,10 @@ class BaseNode implements IBaseNode {
 	
 	getFeature(key: string) : any | undefined {
 		return this._features[key];
+	}
+
+	f(key:string) : any | undefined {
+		return this.getFeature(key);
 	}
 	
 	setFeatures( features: { [k:string]: any } ) : void {
