@@ -52,7 +52,7 @@ export function simSource(algo: Function, s: string, t: $I.SetOfSets, cfg: $I.Si
 	if ( cfg.knn != null && cfg.knn <= result.length ) {
 		result = result.slice(0, cfg.knn);
 	}
-	return result.sort(sort);
+	return result;
 }
 
 
@@ -92,9 +92,9 @@ export function simPairwise(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityC
  * @description similarity of individuals of one subset to another
  * @description kNN relates to each s1-node's subset
  * 
- * @param algo 
- * @param s1 
- * @param s2 
+ * @param algo
+ * @param s1
+ * @param s2
  * @param cfg
  * 
  * @returns an array of Similarity entries
@@ -234,10 +234,27 @@ export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerShar
 	const t1Set = g.getNodesT(cfg.t1);
 	const t2Set = g.getNodesT(cfg.t2);
 
+	const prefCache = new Map<string, Set<ITypedNode>>();	
+
 	for ( let [t1Name, t1Node] of t1Set.entries() ) {
 		for ( let [t2Name, t2Node] of t2Set.entries() ) {
-			const prefSet1 = g[cfg.d1](t1Node, cfg.e1.toUpperCase());
-			const prefSet2 = g[cfg.d2](t2Node, cfg.e2.toUpperCase());
+			let 
+				prefSet1,
+				prefSet2;
+			if ( prefCache.get(t1Node.id) ) {
+				prefSet1 = prefCache.get(t1Node.id);
+			}
+			else {
+				prefSet1 = g[cfg.d1](t1Node, cfg.e1.toUpperCase());
+				prefCache.set(t1Node.id, prefSet1);
+			}
+			if ( prefCache.get(t2Node.id) ) {
+				prefSet2 = prefCache.get(t2Node.id);
+			}
+			else {
+				prefSet2 = g[cfg.d2](t2Node, cfg.e2.toUpperCase());
+				prefCache.set(t2Node.id, prefSet2);
+			}
 			const sim = algo(prefSet1, prefSet2);
 			if ( cutFunc(sim.sim, cutoff) ) {
 				sims.push({from: t1Name, to: t2Name, ...sim});
