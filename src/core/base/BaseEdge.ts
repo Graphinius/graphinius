@@ -1,10 +1,13 @@
 import * as $N from "./BaseNode";
 import { TypedEdge } from '../typed/TypedEdge';
+import * as $SU from "../../utils/StructUtils";
 
 export interface IConnectedNodes {
 	a: $N.IBaseNode;
 	b: $N.IBaseNode;
 }
+
+export type EdgeFeatures = { [k:string]: any };
 
 /**
  * Edges are the most basic components in graphinius.
@@ -19,10 +22,20 @@ export interface IBaseEdge {
 	 */
 	readonly id: string;
 	readonly label: string;
+	readonly features: EdgeFeatures;
 
 	getID() : string;
 	getLabel() : string;
 	setLabel(label : string) : void;
+
+	// FEATURES methods
+	getFeatures() : EdgeFeatures;
+	getFeature(key: string) : any;
+	f(key:string) : any | undefined; // shortcut for getFeature
+	setFeatures( features: EdgeFeatures ) : void;
+	setFeature(key: string, value: any) : void;
+	deleteFeature(key: string) : any;
+	clearFeatures() : void;
 
 	isDirected()						: boolean;
 	isWeighted()						: boolean;
@@ -47,6 +60,7 @@ export interface BaseEdgeConfig {
 	weighted?		: boolean;
 	weight?			: number;
 	label?			: string;
+	features?		: EdgeFeatures;
 }
 
 class BaseEdge implements IBaseEdge {
@@ -54,6 +68,7 @@ class BaseEdge implements IBaseEdge {
 	protected _weighted 	: boolean;
 	protected _weight			: number;
 	protected _label			: string;
+	protected _features		: EdgeFeatures;
 
 	constructor (protected _id: string,
 							protected _node_a: $N.IBaseNode,
@@ -70,6 +85,7 @@ class BaseEdge implements IBaseEdge {
     // @NOTE isNaN and Number.isNaN confusion...
 		this._weight = this._weighted ? ( isNaN(config.weight) ? 1 : config.weight ) : undefined;
 		this._label = config.label || this._id;
+		this._features = config.features != null ? $SU.clone(config.features) : {};
 	}
 
 	get id(): string {
@@ -78,6 +94,10 @@ class BaseEdge implements IBaseEdge {
 
 	get label(): string {
 		return this._label;
+	}
+
+	get features(): EdgeFeatures {
+		return this._features;
 	}
 
 	getID() : string {
@@ -90,6 +110,36 @@ class BaseEdge implements IBaseEdge {
 
 	setLabel(label : string) : void {
 		this._label = label;
+	}
+
+	getFeatures() : { [k:string] : any } {
+		return this._features;
+	}
+
+	getFeature(key: string) : any | undefined {
+		return this._features[key];
+	}
+
+	f(key:string) : any | undefined {
+		return this.getFeature(key);
+	}
+
+	setFeatures( features: { [k:string]: any } ) : void {
+		this._features = $SU.clone(features);
+	}
+
+	setFeature(key: string, value: any) : void {
+		this._features[key] = value;
+	}
+
+	deleteFeature(key: string) : any {
+		let feat = this._features[key];
+		delete this._features[key];
+		return feat;
+	}
+
+	clearFeatures() : void {
+		this._features = {};
 	}
 
 	isDirected () : boolean {

@@ -81,7 +81,7 @@ class BaseNode implements IBaseNode {
 	protected _in_degree = 0;
 	protected _out_degree = 0;
 	protected _und_degree = 0;
-	protected _features	: { [k:string] : any };
+	protected _features	: NodeFeatures;
 		
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
@@ -90,8 +90,6 @@ class BaseNode implements IBaseNode {
 	/**
 	 * @param _id
 	 * @param config
-	 *
-	 * @todo rename features to options? -> not really the same...
 	 */
 	constructor (
 								protected _id: string,

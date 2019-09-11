@@ -4,12 +4,23 @@ export interface IConnectedNodes {
     a: $N.IBaseNode;
     b: $N.IBaseNode;
 }
+export declare type EdgeFeatures = {
+    [k: string]: any;
+};
 export interface IBaseEdge {
     readonly id: string;
     readonly label: string;
+    readonly features: EdgeFeatures;
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;
+    getFeatures(): EdgeFeatures;
+    getFeature(key: string): any;
+    f(key: string): any | undefined;
+    setFeatures(features: EdgeFeatures): void;
+    setFeature(key: string, value: any): void;
+    deleteFeature(key: string): any;
+    clearFeatures(): void;
     isDirected(): boolean;
     isWeighted(): boolean;
     getWeight(): number;
@@ -22,6 +33,7 @@ export interface BaseEdgeConfig {
     weighted?: boolean;
     weight?: number;
     label?: string;
+    features?: EdgeFeatures;
 }
 declare class BaseEdge implements IBaseEdge {
     protected _id: string;
@@ -31,12 +43,25 @@ declare class BaseEdge implements IBaseEdge {
     protected _weighted: boolean;
     protected _weight: number;
     protected _label: string;
+    protected _features: EdgeFeatures;
     constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
     readonly id: string;
     readonly label: string;
+    readonly features: EdgeFeatures;
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;
+    getFeatures(): {
+        [k: string]: any;
+    };
+    getFeature(key: string): any | undefined;
+    f(key: string): any | undefined;
+    setFeatures(features: {
+        [k: string]: any;
+    }): void;
+    setFeature(key: string, value: any): void;
+    deleteFeature(key: string): any;
+    clearFeatures(): void;
     isDirected(): boolean;
     isWeighted(): boolean;
     getWeight(): number;

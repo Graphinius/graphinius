@@ -1,8 +1,7 @@
-import * as $N from '../../../src/core/base/BaseNode';
-import * as $E from '../../../src/core/base/BaseEdge';
-
-const Node = $N.BaseNode;
-const Edge = $E.BaseEdge;
+// import * as $N from '../../../src/core/base/BaseNode';
+// import * as $E from '../../../src/core/base/BaseEdge';
+import {IBaseEdge, BaseEdge as Edge, EdgeFeatures} from "../../../src/core/base/BaseEdge";
+import {IBaseNode, BaseNode as Node} from "../../../src/core/base/BaseNode";
 
 
 describe('==== EDGE TESTS ====', () => {
@@ -12,8 +11,7 @@ describe('==== EDGE TESTS ====', () => {
 			node_b = new Node("B");
 
 
-	describe('A basic edge instantiation', () => {
-
+	describe('Basic edge instantiation', () => {
 		/**
 		 * An edge without nodes does not make any sense, HOWEVER:
 		 * the edge itself does not check if any of the nodes it connects 
@@ -59,6 +57,107 @@ describe('==== EDGE TESTS ====', () => {
 			expect(edge.getLabel()).toBe(label);
 			edge.setLabel('new Label');
 			expect(edge.getLabel()).toBe('new Label');
+		});
+		
+	});
+
+
+
+	describe('Edge FEATURE vector tests', () => {
+
+		let
+			a: IBaseNode,
+			b: IBaseNode,
+			e: IBaseEdge,
+			date: string,
+			capital: number,
+			singleFounder: boolean,
+			features: EdgeFeatures;
+
+		beforeAll(() => {
+			a = new Node('Bernd');
+			b = new Node('iNodis Corp.');
+		});
+
+		beforeEach(() => {
+			date = '2019-06-03T06:00';
+			capital = 1e4;
+			singleFounder = true;
+			features = {date, capital, singleFounder};
+			e = new Edge('founded', a, b, {features});
+		});
+
+		test('should correctly set default features to an empty hash object', () => {
+			expect(e.getFeatures()).toBeInstanceOf(Object);
+			expect(Object.keys(e.getFeatures()).length).toBe(3);
+		});
+
+		test('should get features via getter', () => {
+			expect(e.features).toBeInstanceOf(Object);
+			expect(Object.keys(e.features).length).toBe(3);
+		});
+
+		test('should correctly set features to specified object', () => {
+			expect(e.getFeatures()).toEqual(features);
+		});
+
+		it('should return "undefined" when retrieving a non-set feature', () => {
+			expect(e.getFeature(null)).toBeUndefined;
+		});
+
+		test('should correctly retrieve a set feature', () => {
+			expect(e.getFeature('date')).toBe(date);
+		});
+
+		test('should correctly retrieve a set feature via the shortcut method', () => {
+			expect(e.f('date')).toBe(date);
+		});
+
+		test('should allow to set new feature', () => {
+			expect(Object.keys(e.getFeatures()).length).toBe(3);
+			e.setFeature('alsoFounded', 'Lemontiger');
+			expect(Object.keys(e.getFeatures()).length).toBe(4);
+			expect(e.getFeature('alsoFounded')).toBe('Lemontiger');
+		});
+
+		test(
+			'should automatically overwrite an existing feature upon renewed setting',
+			() => {
+				e.setFeatures(features);
+				expect(Object.keys(e.getFeatures()).length).toBe(3);
+				e.setFeature('capital', 0);
+				expect(Object.keys(e.getFeatures()).length).toBe(3);
+				expect(e.getFeature('capital')).toBe(0);
+			}
+		);
+
+		it('should return undefined upon trying to delete an unset feature', () => {
+			expect(e.deleteFeature('nokey')).toBeUndefined();
+		});
+
+		it('should return a given feature upon deletion', () => {
+			expect(e.deleteFeature('date')).toBe(date);
+		});
+
+		it('should duly delete a given feature', () => {
+			expect(Object.keys(e.getFeatures()).length).toBe(3);
+			e.deleteFeature('date');
+			expect(Object.keys(e.getFeatures()).length).toBe(2);
+		});
+
+		it('should allow to replace the whole feature vector', () => {
+			let newFeatures = {zacheBastlei: 'oh-yeah'};
+			expect(Object.keys(e.getFeatures()).length).toBe(3);
+			e.setFeatures(newFeatures);
+			expect(Object.keys(e.getFeatures()).length).toBe(1);
+			expect(e.getFeatures()).toEqual(newFeatures);
+		});
+
+		it('should allow to clear the whole feature vector', () => {
+			expect(Object.keys(e.getFeatures()).length).toBe(3);
+			e.clearFeatures();
+			expect(Object.keys(e.getFeatures()).length).toBe(0);
+			expect(e.getFeatures()).toEqual({});
 		});
 		
 	});
@@ -177,10 +276,10 @@ describe('==== EDGE TESTS ====', () => {
 	 */
 	describe('Edge CLONE Tests - ', () => {
 
-		let node_a = new $N.BaseNode("A");
-		let node_b = new $N.BaseNode("B");
-		let edge : $E.IBaseEdge = null;
-		let clone_edge : $E.IBaseEdge = null;
+		let node_a = new Node("A");
+		let node_b = new Node("B");
+		let edge : IBaseEdge = null;
+		let clone_edge : IBaseEdge = null;
 
 
 		beforeEach(() => {
@@ -196,25 +295,25 @@ describe('==== EDGE TESTS ====', () => {
 
 
 		test('should refuse to clone if new node A is invalid', () => {
-			edge = new $E.BaseEdge("default", node_a, node_b);
+			edge = new Edge("default", node_a, node_b);
 			expect(edge.clone.bind(edge, null, node_b)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
 		test('should refuse to clone if new node B is invalid', () => {
-			edge = new $E.BaseEdge("default", node_a, node_b);
+			edge = new Edge("default", node_a, node_b);
 			expect(edge.clone.bind(edge, node_a, null)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
 		test('should refuse to clone if both nodes are invalid', () => {
-			edge = new $E.BaseEdge("default", node_a, node_b);
+			edge = new Edge("default", node_a, node_b);
 			expect(edge.clone.bind(edge, null, null)).toThrowError("refusing to clone edge if any new node is invalid");
 		});
 
 
 		test('should clone a default edge with correct config options', () => {
-			edge = new $E.BaseEdge("default", node_a, node_b);
+			edge = new Edge("default", node_a, node_b);
 			clone_edge = edge.clone(node_a, node_b);
 			expect(clone_edge.getID()).toBe(edge.getID());
 			expect(clone_edge.getLabel()).toBe(edge.getLabel());
@@ -225,7 +324,7 @@ describe('==== EDGE TESTS ====', () => {
 
 
 		test('should clone a default edge with correct config options', () => {
-			edge = new $E.BaseEdge("default", node_a, node_b, {
+			edge = new Edge("default", node_a, node_b, {
 				directed: true,
 				weighted: true,
 				weight: -77,

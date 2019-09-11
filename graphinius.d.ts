@@ -29,6 +29,11 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	export { TypedEdge };
 
 }
+declare module 'graphinius/utils/StructUtils' {
+	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
+	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
+
+}
 declare module 'graphinius/core/base/BaseEdge' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import { TypedEdge } from 'graphinius/core/typed/TypedEdge';
@@ -36,12 +41,23 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    a: $N.IBaseNode;
 	    b: $N.IBaseNode;
 	}
+	export type EdgeFeatures = {
+	    [k: string]: any;
+	};
 	export interface IBaseEdge {
 	    readonly id: string;
 	    readonly label: string;
+	    readonly features: EdgeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
+	    getFeatures(): EdgeFeatures;
+	    getFeature(key: string): any;
+	    f(key: string): any | undefined;
+	    setFeatures(features: EdgeFeatures): void;
+	    setFeature(key: string, value: any): void;
+	    deleteFeature(key: string): any;
+	    clearFeatures(): void;
 	    isDirected(): boolean;
 	    isWeighted(): boolean;
 	    getWeight(): number;
@@ -54,6 +70,7 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    weighted?: boolean;
 	    weight?: number;
 	    label?: string;
+	    features?: EdgeFeatures;
 	} class BaseEdge implements IBaseEdge {
 	    protected _id: string;
 	    protected _node_a: $N.IBaseNode;
@@ -62,12 +79,25 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    protected _weighted: boolean;
 	    protected _weight: number;
 	    protected _label: string;
+	    protected _features: EdgeFeatures;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
 	    readonly id: string;
 	    readonly label: string;
+	    readonly features: EdgeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
+	    getFeatures(): {
+	        [k: string]: any;
+	    };
+	    getFeature(key: string): any | undefined;
+	    f(key: string): any | undefined;
+	    setFeatures(features: {
+	        [k: string]: any;
+	    }): void;
+	    setFeature(key: string, value: any): void;
+	    deleteFeature(key: string): any;
+	    clearFeatures(): void;
 	    isDirected(): boolean;
 	    isWeighted(): boolean;
 	    getWeight(): number;
@@ -77,11 +107,6 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    static isTyped(arg: any): arg is TypedEdge;
 	}
 	export { BaseEdge };
-
-}
-declare module 'graphinius/utils/StructUtils' {
-	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
-	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
 
 }
 declare module 'graphinius/core/base/BaseNode' {
@@ -154,9 +179,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    protected _in_degree: number;
 	    protected _out_degree: number;
 	    protected _und_degree: number;
-	    protected _features: {
-	        [k: string]: any;
-	    };
+	    protected _features: NodeFeatures;
 	    protected _in_edges: {
 	        [k: string]: $E.IBaseEdge;
 	    };
