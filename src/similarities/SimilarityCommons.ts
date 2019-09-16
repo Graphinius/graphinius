@@ -74,6 +74,9 @@ export function simPairwise(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityC
 		for ( let j = 0; j < +i; j++) {
 			const from = keys[i];
 			const to = keys[j];
+			if ( from === to ) {
+				continue;
+			}
 			const sim = algo(s[keys[i]], s[keys[j]], i, j);
 			if ( cfg.cutoff == null || cutFunc(sim.sim, cfg.cutoff ) ) {
 				result.push({from, to, ...sim});
