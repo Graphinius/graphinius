@@ -60,6 +60,9 @@
   ],
   "type": "module",
   "dependencies": {
+    "@tensorflow/tfjs": "^1.2.9",
+    "@tensorflow/tfjs-node": "^1.2.9",
+    "@tensorflow/tfjs-node-gpu": "^1.2.9",
     "uuid": "^3.3.2"
   }
 }

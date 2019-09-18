@@ -1,12 +1,11 @@
-import {DIR, GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict} from '../interfaces';
+import { DIR, GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from '../interfaces';
 import { IBaseNode, BaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
 import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../../search/BFS';
 import { DFS } from '../../search/DFS';
 import { BellmanFordDict, BellmanFordArray } from '../../search/BellmanFord';
-import { reWeighGraph, addExtraNandE} from '../../search/Johnsons';
-import {TypedGraph} from "../typed/TypedGraph";
-
+import { reWeighGraph, addExtraNandE } from '../../search/Johnsons';
+import { TypedGraph } from "../typed/TypedGraph";
 
 const DEFAULT_WEIGHT = 1;
 
@@ -19,8 +18,8 @@ export interface IGraph {
 	readonly mode: GraphMode;
 	readonly stats: GraphStats;
 
-	getMode() : GraphMode;
-	getStats() : GraphStats;
+	getMode(): GraphMode;
+	getStats(): GraphStats;
 
 	// HISTOGRAM
 	readonly inHist: Set<number>[];
@@ -28,66 +27,66 @@ export interface IGraph {
 	readonly connHist: Set<number>[];
 
 	// NODES
-	addNode(node: IBaseNode) : IBaseNode;
-	addNodeByID(id: string, opts? : {}) : IBaseNode;
-	hasNodeID(id: string) : boolean;
-	getNodeById(id: string) : IBaseNode;
-	n(id: string) : IBaseNode;
-	getNodes() : {[key: string] : IBaseNode};
-	nrNodes() : number;
-	getRandomNode() : IBaseNode;
-	deleteNode(node) : void;
-	
+	addNode(node: IBaseNode): IBaseNode;
+	addNodeByID(id: string, opts?: {}): IBaseNode;
+	hasNodeID(id: string): boolean;
+	getNodeById(id: string): IBaseNode;
+	n(id: string): IBaseNode;
+	getNodes(): { [key: string]: IBaseNode };
+	nrNodes(): number;
+	getRandomNode(): IBaseNode;
+	deleteNode(node): void;
+
 	// EDGES
-	addEdge(edge: IBaseEdge) : IBaseEdge;
-	addEdgeByID(label: string, node_a : IBaseNode, node_b : IBaseNode, opts? : {}) : IBaseEdge;
-	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge;
-	hasEdgeID(id: string) : boolean;
-	getEdgeById(id: string) : IBaseEdge;
-	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;
-	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string) : IBaseEdge;
-	getDirEdges() : {[key: string] : IBaseEdge};
-	getUndEdges() : {[key: string] : IBaseEdge};
+	addEdge(edge: IBaseEdge): IBaseEdge;
+	addEdgeByID(label: string, node_a: IBaseNode, node_b: IBaseNode, opts?: {}): IBaseEdge;
+	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge;
+	hasEdgeID(id: string): boolean;
+	getEdgeById(id: string): IBaseEdge;
+	getDirEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
+	getUndEdgeByNodeIDs(node_a_id: string, node_b_id: string): IBaseEdge;
+	getDirEdges(): { [key: string]: IBaseEdge };
+	getUndEdges(): { [key: string]: IBaseEdge };
 	getDirEdgesArray(): Array<IBaseEdge>;
 	getUndEdgesArray(): Array<IBaseEdge>;
-	nrDirEdges() : number;
-	nrUndEdges() : number;
-	deleteEdge(edge: IBaseEdge) : void;
-	getRandomDirEdge() : IBaseEdge;
-	getRandomUndEdge() : IBaseEdge;
+	nrDirEdges(): number;
+	nrUndEdges(): number;
+	deleteEdge(edge: IBaseEdge): void;
+	getRandomDirEdge(): IBaseEdge;
+	getRandomUndEdge(): IBaseEdge;
 
 	// NEGATIVE EDGES AND CYCLES
 	hasNegativeEdge(): boolean
-	hasNegativeCycles(node? : IBaseNode) : boolean;
+	hasNegativeCycles(node?: IBaseNode): boolean;
 
 	// REINTERPRETING EDGES
-	toDirectedGraph(copy?) : IGraph;
-	toUndirectedGraph() : IGraph;
+	toDirectedGraph(copy?): IGraph;
+	toUndirectedGraph(): IGraph;
 
 	// PROPERTIES
-	pickRandomProperty(propList) : any;
-	pickRandomProperties(propList, amount) : Array<string>;
+	pickRandomProperty(propList): any;
+	pickRandomProperties(propList, amount): Array<string>;
 
 	// HANDLE ALL EDGES OF NODES
-	deleteInEdgesOf(node: IBaseNode) : void;
-	deleteOutEdgesOf(node: IBaseNode) : void;
-	deleteDirEdgesOf(node: IBaseNode) : void;
-	deleteUndEdgesOf(node: IBaseNode) : void;
-	deleteAllEdgesOf(node: IBaseNode) : void;
+	deleteInEdgesOf(node: IBaseNode): void;
+	deleteOutEdgesOf(node: IBaseNode): void;
+	deleteDirEdgesOf(node: IBaseNode): void;
+	deleteUndEdgesOf(node: IBaseNode): void;
+	deleteAllEdgesOf(node: IBaseNode): void;
 
 	// HANDLE ALL EDGES IN GRAPH
-	clearAllDirEdges() : void;
-	clearAllUndEdges() : void;
-	clearAllEdges() : void;
+	clearAllDirEdges(): void;
+	clearAllUndEdges(): void;
+	clearAllEdges(): void;
 
 	// CLONING
-	cloneStructure() : IGraph;
-	cloneSubGraphStructure(start:IBaseNode, cutoff:Number) : IGraph;
+	cloneStructure(): IGraph;
+	cloneSubGraphStructure(start: IBaseNode, cutoff: Number): IGraph;
 
 	// REPRESENTATIONS
-	adjListDict(incoming?:boolean, include_self?,  self_dist?:number) : MinAdjacencyListDict;
-	adjListArray(incoming?:boolean) : MinAdjacencyListArray;
-	nextArray(incoming?:boolean) : NextArray;
+	adjListDict(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
+	adjListArray(incoming?: boolean): MinAdjacencyListArray;
+	nextArray(incoming?: boolean): NextArray;
 
 	// REWEIGHTING
 	reweighIfHasNegativeEdge(clone: boolean): IGraph;
@@ -98,14 +97,14 @@ class BaseGraph implements IGraph {
 	protected _nr_nodes = 0;
 	protected _nr_dir_edges = 0;
 	protected _nr_und_edges = 0;
-	protected _mode : GraphMode = GraphMode.INIT;
-	protected _nodes : { [key: string] : IBaseNode } = {};
-	protected _dir_edges : { [key: string] : IBaseEdge } = {};
-	protected _und_edges : { [key: string] : IBaseEdge } = {};
+	protected _mode: GraphMode = GraphMode.INIT;
+	protected _nodes: { [key: string]: IBaseNode } = {};
+	protected _dir_edges: { [key: string]: IBaseEdge } = {};
+	protected _und_edges: { [key: string]: IBaseEdge } = {};
 
-	constructor (protected _label) {	}
+	constructor(protected _label) { }
 
-	static isTyped(arg: any) : arg is TypedGraph {
+	static isTyped(arg: any): arg is TypedGraph {
 		return !!arg.type;
 	}
 
@@ -135,10 +134,10 @@ class BaseGraph implements IGraph {
 
 	private degreeHist(dir: string): Set<number>[] {
 		let result = [];
-		for ( let nid in this._nodes) {
+		for (let nid in this._nodes) {
 			let node = this._nodes[nid];
 			let deg;
-			switch(dir) {
+			switch (dir) {
 				case DIR.in:
 					deg = node.inDegree();
 					break;
@@ -148,7 +147,7 @@ class BaseGraph implements IGraph {
 				default:
 					deg = node.degree();
 			}
-			if ( !result[deg] ) {
+			if (!result[deg]) {
 				result[deg] = new Set([node]);
 			}
 			else {
@@ -157,7 +156,7 @@ class BaseGraph implements IGraph {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 
 	 * @param clone 
@@ -166,36 +165,36 @@ class BaseGraph implements IGraph {
 	 * Tests to be found in test suites for
 	 * BaseGraph, BellmanFord and Johnsons
 	 */
-  reweighIfHasNegativeEdge(clone: boolean = false): IGraph {
-    if (this.hasNegativeEdge()) {
-      let result_graph : IGraph = clone ? this.cloneStructure() : this;
+	reweighIfHasNegativeEdge(clone: boolean = false): IGraph {
+		if (this.hasNegativeEdge()) {
+			let result_graph: IGraph = clone ? this.cloneStructure() : this;
 
-      let extraNode: IBaseNode = new BaseNode("extraNode");
-      result_graph = addExtraNandE(result_graph, extraNode);
-      let BFresult = BellmanFordDict(result_graph, extraNode);
+			let extraNode: IBaseNode = new BaseNode("extraNode");
+			result_graph = addExtraNandE(result_graph, extraNode);
+			let BFresult = BellmanFordDict(result_graph, extraNode);
 
-      if (BFresult.neg_cycle) {
-        throw new Error("The graph contains a negative cycle, thus it can not be processed");
-      }
-      else {
-        let newWeights: {} = BFresult.distances;
+			if (BFresult.neg_cycle) {
+				throw new Error("The graph contains a negative cycle, thus it can not be processed");
+			}
+			else {
+				let newWeights: {} = BFresult.distances;
 
-        result_graph = reWeighGraph(result_graph, newWeights, extraNode);
-        result_graph.deleteNode(extraNode);
-      } 
-      return result_graph;
-    }
+				result_graph = reWeighGraph(result_graph, newWeights, extraNode);
+				result_graph.deleteNode(extraNode);
+			}
+			return result_graph;
+		}
 	}
-	
+
 
 	/**
 	 * Version 1: do it in-place (to the object you receive)
 	 * Version 2: clone the graph first, return the mutated clone
 	 */
-	toDirectedGraph(copy = false) : IGraph {
+	toDirectedGraph(copy = false): IGraph {
 		let result_graph = copy ? this.cloneStructure() : this;
 		// if graph has no edges, we want to throw an exception
-		if ( this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
+		if (this._nr_dir_edges === 0 && this._nr_und_edges === 0) {
 			throw new Error("Cowardly refusing to re-interpret an empty graph.")
 		}
 
@@ -206,7 +205,7 @@ class BaseGraph implements IGraph {
 	/**
 	 * @todo implement!!!
 	 */
-	toUndirectedGraph() : IGraph {
+	toUndirectedGraph(): IGraph {
 
 		return this;
 	}
@@ -219,10 +218,10 @@ class BaseGraph implements IGraph {
 	 */
 	hasNegativeEdge(): boolean {
 		let has_neg_edge = false,
-				edge: IBaseEdge;
+			edge: IBaseEdge;
 
 		// negative und_edges are always negative cycles
-		
+
 		for (let edge_id in this._und_edges) {
 			edge = this._und_edges[edge_id];
 			if (!edge.isWeighted()) {
@@ -245,34 +244,34 @@ class BaseGraph implements IGraph {
 		return has_neg_edge;
 	}
 
-	
+
 	/**
 	 * Do we want to throw an error if an edge is unweighted?
 	 * Or shall we let the traversal algorithm deal with DEFAULT weights like now?
 	 */
 	hasNegativeCycles(node?: IBaseNode): boolean {
-		if ( !this.hasNegativeEdge() ) {
+		if (!this.hasNegativeEdge()) {
 			return false;
 		}
 
-		let	negative_cycle = false,
-				start = node ? node : this.getRandomNode();
+		let negative_cycle = false,
+			start = node ? node : this.getRandomNode();
 
 		/**
 		 * Now do Bellman Ford over all graph components
 		 */
-		DFS(this, start).forEach( comp => {
+		DFS(this, start).forEach(comp => {
 			let min_count = Number.POSITIVE_INFINITY,
-					comp_start_node : string = "";
+				comp_start_node: string = "";
 
-			Object.keys(comp).forEach( node_id => {
-				if ( min_count > comp[node_id].counter ) {
+			Object.keys(comp).forEach(node_id => {
+				if (min_count > comp[node_id].counter) {
 					min_count = comp[node_id].counter;
 					comp_start_node = node_id;
 				}
 			});
 
-			if ( BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle ) {
+			if (BellmanFordArray(this, this._nodes[comp_start_node]).neg_cycle) {
 				negative_cycle = true;
 			}
 		});
@@ -285,26 +284,26 @@ class BaseGraph implements IGraph {
 	 * 
 	 * @param incoming 
 	 */
-	nextArray(incoming:boolean = false) : NextArray {
+	nextArray(incoming: boolean = false): NextArray {
 		let next = [],
-				node_keys = Object.keys(this._nodes);
+			node_keys = Object.keys(this._nodes);
 
 		//?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
 		//I do not understand but it works so it should be okay	
 		const adjDict = this.adjListDict(incoming, true, 0);
-		
-		for ( let i = 0; i < this._nr_nodes; ++i ) {
+
+		for (let i = 0; i < this._nr_nodes; ++i) {
 			next.push([]);
-			for ( let j = 0; j < this._nr_nodes; ++j ) {
+			for (let j = 0; j < this._nr_nodes; ++j) {
 				next[i].push([]);
-				
-				next[i][j].push( i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null );
+
+				next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
 			}
 		}
 		return next;
 	}
 
-	
+
 	/**
 	 * This function iterates over the adjDict in order to use it's advantage
 	 * of being able to override edges if edges with smaller weights exist
@@ -318,16 +317,16 @@ class BaseGraph implements IGraph {
 	 * @param include_self contains a distance to itself apart?
 	 * @param self_dist default distance to self
 	 */
-	adjListArray(incoming:boolean = false, include_self = false, self_dist = 0) : MinAdjacencyListArray {
+	adjListArray(incoming: boolean = false, include_self = false, self_dist = 0): MinAdjacencyListArray {
 		let adjList = [],
-				node_keys = Object.keys(this._nodes);
+			node_keys = Object.keys(this._nodes);
 
 		const adjDict = this.adjListDict(incoming, true, 0);
-		
-		for ( let i = 0; i < this._nr_nodes; ++i ) {
+
+		for (let i = 0; i < this._nr_nodes; ++i) {
 			adjList.push([]);
-			for ( let j = 0; j < this._nr_nodes; ++j ) {
-				adjList[i].push( i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY );
+			for (let j = 0; j < this._nr_nodes; ++j) {
+				adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
 			}
 		}
 		return adjList;
@@ -340,27 +339,27 @@ class BaseGraph implements IGraph {
 	 * @param include_self contains a distance to itself apart?
 	 * @param self_dist default distance to self
 	 */
-	adjListDict(incoming:boolean = false, include_self = false, self_dist = 0) : MinAdjacencyListDict {
+	adjListDict(incoming: boolean = false, include_self = false, self_dist = 0): MinAdjacencyListDict {
 		let adj_list_dict: MinAdjacencyListDict = {},
-				nodes = this.getNodes(),
-				cur_dist: number,
-				key: string,
-				cur_edge_weight: number;
+			nodes = this.getNodes(),
+			cur_dist: number,
+			key: string,
+			cur_edge_weight: number;
 
-		for ( key in nodes ) {
+		for (key in nodes) {
 			adj_list_dict[key] = {};
-			if ( include_self ) {
+			if (include_self) {
 				adj_list_dict[key][key] = self_dist;
 			}
 		}
-		for ( key in nodes ) {
+		for (key in nodes) {
 			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
 
-			neighbors.forEach( (ne) => {
+			neighbors.forEach((ne) => {
 				cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
 				cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
 
-				if ( cur_edge_weight < cur_dist ) {
+				if (cur_edge_weight < cur_dist) {
 					adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
 
 					if (incoming) { // we need to update the 'inverse' entry as well
@@ -380,31 +379,31 @@ class BaseGraph implements IGraph {
 	}
 
 
-	getMode() : GraphMode {
+	getMode(): GraphMode {
 		return this._mode;
 	}
 
 
-	getStats() : GraphStats {
+	getStats(): GraphStats {
 		return {
 			mode: this._mode,
 			nr_nodes: this._nr_nodes,
 			nr_und_edges: this._nr_und_edges,
 			nr_dir_edges: this._nr_dir_edges,
-			density_dir: this._nr_dir_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) ),
-			density_und: 2* this._nr_und_edges / ( this._nr_nodes * ( this._nr_nodes - 1 ) )
+			density_dir: this._nr_dir_edges / (this._nr_nodes * (this._nr_nodes - 1)),
+			density_und: 2 * this._nr_und_edges / (this._nr_nodes * (this._nr_nodes - 1))
 		}
 	}
 
-	nrNodes() : number {
+	nrNodes(): number {
 		return this._nr_nodes;
 	}
 
-	nrDirEdges() : number {
+	nrDirEdges(): number {
 		return this._nr_dir_edges;
 	}
 
-	nrUndEdges() : number {
+	nrUndEdges(): number {
 		return this._nr_und_edges;
 	}
 
@@ -415,16 +414,16 @@ class BaseGraph implements IGraph {
 	 * 
 	 * @todo addNode functions should check if a node with a given ID already exists -> node IDs have to be unique... 
 	 */
-	addNodeByID(id: string, opts? : {}) : IBaseNode {
-		if ( this.hasNodeID( id ) ) {
+	addNodeByID(id: string, opts?: {}): IBaseNode {
+		if (this.hasNodeID(id)) {
 			throw new Error("Won't add node with duplicate ID.");
 		}
 		let node = new BaseNode(id, opts);
 		return this.addNode(node) ? node : null;
 	}
 
-	addNode(node: IBaseNode) : IBaseNode {
-		if ( this.hasNodeID( node.getID() ) ) {
+	addNode(node: IBaseNode): IBaseNode {
+		if (this.hasNodeID(node.getID())) {
 			throw new Error("Won't add node with duplicate ID.");
 		}
 		this._nodes[node.getID()] = node;
@@ -432,32 +431,32 @@ class BaseGraph implements IGraph {
 		return node;
 	}
 
-	hasNodeID(id: string) : boolean {
+	hasNodeID(id: string): boolean {
 		return !!this._nodes[id];
 	}
 
-	getNodeById(id: string) : IBaseNode {
+	getNodeById(id: string): IBaseNode {
 		return this._nodes[id];
 	}
 
-	n(id: string) : IBaseNode {
+	n(id: string): IBaseNode {
 		return this.getNodeById(id);
 	}
 
-	getNodes() : {[key: string] : IBaseNode} {
+	getNodes(): { [key: string]: IBaseNode } {
 		return this._nodes;
 	}
 
 	/**
 	 * CAUTION - This function takes linear time in # nodes
 	 */
-	getRandomNode() : IBaseNode {
+	getRandomNode(): IBaseNode {
 		return this.pickRandomProperty(this._nodes);
 	}
 
-	deleteNode(node) : void {
+	deleteNode(node): void {
 		let rem_node = this._nodes[node.getID()];
-		if ( !rem_node ) {
+		if (!rem_node) {
 			throw new Error('Cannot remove a foreign node.');
 		}
 		// Edges?
@@ -466,13 +465,13 @@ class BaseGraph implements IGraph {
 		let deg = node.degree();
 
 		// Delete all edges brutally...
-		if ( in_deg ) {
+		if (in_deg) {
 			this.deleteInEdgesOf(node);
 		}
-		if ( out_deg ) {
+		if (out_deg) {
 			this.deleteOutEdgesOf(node);
 		}
-		if ( deg ) {
+		if (deg) {
 			this.deleteUndEdgesOf(node);
 		}
 
@@ -480,23 +479,23 @@ class BaseGraph implements IGraph {
 		this._nr_nodes -= 1;
 	}
 
-	hasEdgeID(id: string) : boolean {
+	hasEdgeID(id: string): boolean {
 		return !!this._dir_edges[id] || !!this._und_edges[id];
 	}
 
-	getEdgeById(id: string) : IBaseEdge {
+	getEdgeById(id: string): IBaseEdge {
 		let edge = this._dir_edges[id] || this._und_edges[id];
-		if ( !edge ) {
+		if (!edge) {
 			throw new Error("cannot retrieve edge with non-existing ID.");
 		}
 		return edge;
 	}
 
-	static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode) : void {
-		if ( !node_a ) {
+	static checkExistanceOfEdgeNodes(node_a: IBaseNode, node_b: IBaseNode): void {
+		if (!node_a) {
 			throw new Error(`Cannot find edge. Node A does not exist (in graph).`);
 		}
-		if ( !node_b ) {
+		if (!node_b) {
 			throw new Error("Cannot find edge. Node B does not exist (in graph).");
 		}
 	}
@@ -509,13 +508,13 @@ class BaseGraph implements IGraph {
 
 		// check for outgoing directed edges
 		let edges_dir = node_a.outEdges(),
-				edges_dir_keys = Object.keys(edges_dir);
-		
+			edges_dir_keys = Object.keys(edges_dir);
+
 		for (let i = 0; i < edges_dir_keys.length; i++) {
-		    let edge = edges_dir[edges_dir_keys[i]];
-				if (edge.getNodes().b.getID() == node_b_id) {
-				    return edge;
-				}
+			let edge = edges_dir[edges_dir_keys[i]];
+			if (edge.getNodes().b.getID() == node_b_id) {
+				return edge;
+			}
 		}
 
 		// if we managed to arrive here, there is no edge!
@@ -529,23 +528,23 @@ class BaseGraph implements IGraph {
 
 		// check for undirected edges
 		let edges_und = node_a.undEdges(),
-		edges_und_keys = Object.keys(edges_und);
+			edges_und_keys = Object.keys(edges_und);
 
 		for (let i = 0; i < edges_und_keys.length; i++) {
-		    let edge = edges_und[edges_und_keys[i]];
-				let b: string;
-				(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
-				if (b == node_b_id) {
-				    return edge;
-				}
+			let edge = edges_und[edges_und_keys[i]];
+			let b: string;
+			(edge.getNodes().a.getID() == node_a_id) ? (b = edge.getNodes().b.getID()) : (b = edge.getNodes().a.getID());
+			if (b == node_b_id) {
+				return edge;
+			}
 		}
 	}
 
-	getDirEdges() : {[key: string] : IBaseEdge} {
+	getDirEdges(): { [key: string]: IBaseEdge } {
 		return this._dir_edges;
 	}
 
-	getUndEdges() : {[key: string] : IBaseEdge} {
+	getUndEdges(): { [key: string]: IBaseEdge } {
 		return this._und_edges;
 	}
 
@@ -565,13 +564,13 @@ class BaseGraph implements IGraph {
 		return edges;
 	}
 
-	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts? : {}) : IBaseEdge {
+	addEdgeByNodeIDs(label: string, node_a_id: string, node_b_id: string, opts?: {}): IBaseEdge {
 		let node_a = this.getNodeById(node_a_id),
-				node_b = this.getNodeById(node_b_id);
-		if ( !node_a ) {
+			node_b = this.getNodeById(node_b_id);
+		if (!node_a) {
 			throw new Error("Cannot add edge. Node A does not exist");
 		}
-		else if ( !node_b ) {
+		else if (!node_b) {
 			throw new Error("Cannot add edge. Node B does not exist");
 		}
 		else {
@@ -582,7 +581,7 @@ class BaseGraph implements IGraph {
 	/**
 	 * @description now all test cases pertaining addEdge() call this one...
 	 */
-	addEdgeByID(id: string, node_a : IBaseNode, node_b : IBaseNode, opts? : BaseEdgeConfig) : IBaseEdge {
+	addEdgeByID(id: string, node_a: IBaseNode, node_b: IBaseNode, opts?: BaseEdgeConfig): IBaseEdge {
 		let edge = new BaseEdge(id, node_a, node_b, opts || {});
 		return this.addEdge(edge) ? edge : null;
 	}
@@ -591,20 +590,20 @@ class BaseGraph implements IGraph {
 	 * @todo test cases should be reversed / completed
 	 * @todo make transactional
 	 */
-	addEdge(edge: IBaseEdge) : IBaseEdge {
+	addEdge(edge: IBaseEdge): IBaseEdge {
 		let node_a = edge.getNodes().a,
-				node_b = edge.getNodes().b;
+			node_b = edge.getNodes().b;
 
-		if ( !this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID()) 
-					|| this._nodes[node_a.getID()] !== node_a || this._nodes[node_b.getID()] !== node_b
-			 ) {
+		if (!this.hasNodeID(node_a.getID()) || !this.hasNodeID(node_b.getID())
+			|| this._nodes[node_a.getID()] !== node_a || this._nodes[node_b.getID()] !== node_b
+		) {
 			throw new Error("can only add edge between two nodes existing in graph");
 		}
 
 		// connect edge to first node anyways
 		node_a.addEdge(edge);
 
-		if ( edge.isDirected() ) {
+		if (edge.isDirected()) {
 			// add edge to second node too
 			node_b.addEdge(edge);
 			this._dir_edges[edge.getID()] = edge;
@@ -613,7 +612,7 @@ class BaseGraph implements IGraph {
 		}
 		else {
 			// add edge to both nodes, except they are the same...
-			if ( node_a !== node_b ) {
+			if (node_a !== node_b) {
 				node_b.addEdge(edge);
 			}
 			this._und_edges[edge.getID()] = edge;
@@ -623,95 +622,95 @@ class BaseGraph implements IGraph {
 		return edge;
 	}
 
-	deleteEdge(edge: IBaseEdge) : void {
+	deleteEdge(edge: IBaseEdge): void {
 		let dir_edge = this._dir_edges[edge.getID()];
 		let und_edge = this._und_edges[edge.getID()];
 
-		if ( !dir_edge && !und_edge ) {
+		if (!dir_edge && !und_edge) {
 			throw new Error('cannot remove non-existing edge.');
 		}
 
 		let nodes = edge.getNodes();
 		nodes.a.removeEdge(edge);
-		if ( nodes.a !== nodes.b ) {
-				nodes.b.removeEdge(edge);
+		if (nodes.a !== nodes.b) {
+			nodes.b.removeEdge(edge);
 		}
 
-		if ( dir_edge ) {
+		if (dir_edge) {
 			delete this._dir_edges[edge.getID()];
-			this._nr_dir_edges -=1;
+			this._nr_dir_edges -= 1;
 		}
 		else {
 			delete this._und_edges[edge.getID()];
-			this._nr_und_edges -=1;
+			this._nr_und_edges -= 1;
 		}
 
 		this.updateGraphMode();
 	}
 
 	// Some atomicity / rollback feature would be nice here...
-	deleteInEdgesOf(node: IBaseNode) : void {
+	deleteInEdgesOf(node: IBaseNode): void {
 		this.checkConnectedNodeOrThrow(node);
 		let in_edges = node.inEdges();
-		let key 	: string,
-				edge	: IBaseEdge;
+		let key: string,
+			edge: IBaseEdge;
 
 		for (key in in_edges) {
 			edge = in_edges[key];
 			edge.getNodes().a.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
-			this._nr_dir_edges -=1;
+			this._nr_dir_edges -= 1;
 		}
 		node.clearInEdges();
 		this.updateGraphMode();
 	}
 
 	// Some atomicity / rollback feature would be nice here...
-	deleteOutEdgesOf(node: IBaseNode) : void {
+	deleteOutEdgesOf(node: IBaseNode): void {
 		this.checkConnectedNodeOrThrow(node);
 		let out_edges = node.outEdges();
-		let key 	: string,
-				edge	: IBaseEdge;
+		let key: string,
+			edge: IBaseEdge;
 
 		for (key in out_edges) {
 			edge = out_edges[key];
 			edge.getNodes().b.removeEdge(edge);
 			delete this._dir_edges[edge.getID()];
-			this._nr_dir_edges -=1;
+			this._nr_dir_edges -= 1;
 		}
 		node.clearOutEdges();
 		this.updateGraphMode();
 	}
 
 	// Some atomicity / rollback feature would be nice here...
-	deleteDirEdgesOf(node: IBaseNode) : void {
+	deleteDirEdgesOf(node: IBaseNode): void {
 		this.deleteInEdgesOf(node);
 		this.deleteOutEdgesOf(node);
 	}
 
 	// Some atomicity / rollback feature would be nice here...
-	deleteUndEdgesOf(node: IBaseNode) : void {
+	deleteUndEdgesOf(node: IBaseNode): void {
 		this.checkConnectedNodeOrThrow(node);
 		let und_edges = node.undEdges();
-		let key 	: string,
-				edge	: IBaseEdge;
+		let key: string,
+			edge: IBaseEdge;
 
 		for (key in und_edges) {
 			edge = und_edges[key];
 			let conns = edge.getNodes();
 			conns.a.removeEdge(edge);
-			if ( conns.a !== conns.b ) {
+			if (conns.a !== conns.b) {
 				conns.b.removeEdge(edge);
 			}
 			delete this._und_edges[edge.getID()];
-			this._nr_und_edges -=1;
+			this._nr_und_edges -= 1;
 		}
 		node.clearUndEdges();
 		this.updateGraphMode();
 	}
 
 	// Some atomicity / rollback feature would be nice here...
-	deleteAllEdgesOf(node: IBaseNode) : void {
+	deleteAllEdgesOf(node: IBaseNode): void {
 		this.deleteDirEdgesOf(node);
 		this.deleteUndEdgesOf(node);
 	}
@@ -719,19 +718,19 @@ class BaseGraph implements IGraph {
 	/**
 	 * Remove all the (un)directed edges in the graph
 	 */
-	clearAllDirEdges() : void {
+	clearAllDirEdges(): void {
 		for (let edge in this._dir_edges) {
 			this.deleteEdge(this._dir_edges[edge]);
 		}
 	}
 
-	clearAllUndEdges() : void {
+	clearAllUndEdges(): void {
 		for (let edge in this._und_edges) {
 			this.deleteEdge(this._und_edges[edge]);
 		}
 	}
 
-	clearAllEdges() : void {
+	clearAllEdges(): void {
 		this.clearAllDirEdges();
 		this.clearAllUndEdges();
 	}
@@ -740,48 +739,48 @@ class BaseGraph implements IGraph {
 	/**
 	 * CAUTION - This function is linear in # directed edges
 	 */
-	getRandomDirEdge() : IBaseEdge {
+	getRandomDirEdge(): IBaseEdge {
 		return this.pickRandomProperty(this._dir_edges);
 	}
 
 	/**
 	 * CAUTION - This function is linear in # undirected edges
 	 */
-	getRandomUndEdge() : IBaseEdge {
+	getRandomUndEdge(): IBaseEdge {
 		return this.pickRandomProperty(this._und_edges);
 	}
 
 
-	cloneStructure() : IGraph {
+	cloneStructure(): IGraph {
 		let new_graph = new BaseGraph(this._label),
-				old_nodes = this.getNodes(),
-				old_edge : IBaseEdge,
-				new_node_a  = null,
-				new_node_b  = null;
+			old_nodes = this.getNodes(),
+			old_edge: IBaseEdge,
+			new_node_a = null,
+			new_node_b = null;
 
-		for ( let node_id in old_nodes ) {
-			new_graph.addNode( old_nodes[node_id].clone() );
+		for (let node_id in old_nodes) {
+			new_graph.addNode(old_nodes[node_id].clone());
 		}
 
-		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
-			for ( let edge_id in old_edges ) {
+		[this.getDirEdges(), this.getUndEdges()].forEach((old_edges) => {
+			for (let edge_id in old_edges) {
 				old_edge = old_edges[edge_id];
-				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
-				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
-				new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) )
+				new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+				new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+				new_graph.addEdge(old_edge.clone(new_node_a, new_node_b))
 			}
 		});
 
 		return new_graph;
 	}
 
-	cloneSubGraphStructure(root:IBaseNode, cutoff:Number) : IGraph{
+	cloneSubGraphStructure(root: IBaseNode, cutoff: Number): IGraph {
 		let new_graph = new BaseGraph(this._label);
 
 		let config = prepareBFSStandardConfig();
 
-		let bfsNodeUnmarkedTestCallback = function(context: BFS_Scope) {
-			if(config.result[context.next_node.getID()].counter>cutoff){
+		let bfsNodeUnmarkedTestCallback = function (context: BFS_Scope) {
+			if (config.result[context.next_node.getID()].counter > cutoff) {
 				context.queue = [];
 			} else { //This means we only add cutoff -1 nodes to the cloned graph, # of nodes is then equal to cutoff
 				new_graph.addNode(context.next_node.clone());
@@ -789,17 +788,17 @@ class BaseGraph implements IGraph {
 		};
 		config.callbacks.node_unmarked.push(bfsNodeUnmarkedTestCallback);
 		BFS(this, root, config);
-		let old_edge : IBaseEdge,
-			new_node_a  = null,
-			new_node_b  = null;
+		let old_edge: IBaseEdge,
+			new_node_a = null,
+			new_node_b = null;
 
-		[this.getDirEdges(), this.getUndEdges()].forEach( (old_edges) => {
-			for ( let edge_id in old_edges ) {
+		[this.getDirEdges(), this.getUndEdges()].forEach((old_edges) => {
+			for (let edge_id in old_edges) {
 				old_edge = old_edges[edge_id];
-				new_node_a = new_graph.getNodeById( old_edge.getNodes().a.getID() );
-				new_node_b = new_graph.getNodeById( old_edge.getNodes().b.getID() );
-				if(new_node_a != null && new_node_b != null)
-					new_graph.addEdge( old_edge.clone(new_node_a, new_node_b) );
+				new_node_a = new_graph.getNodeById(old_edge.getNodes().a.getID());
+				new_node_b = new_graph.getNodeById(old_edge.getNodes().b.getID());
+				if (new_node_a != null && new_node_b != null)
+					new_graph.addEdge(old_edge.clone(new_node_a, new_node_b));
 			}
 		});
 
@@ -807,9 +806,9 @@ class BaseGraph implements IGraph {
 	}
 
 
-	protected checkConnectedNodeOrThrow(node : IBaseNode) {
+	protected checkConnectedNodeOrThrow(node: IBaseNode) {
 		let inGraphNode = this._nodes[node.getID()];
-		if ( !inGraphNode ) {
+		if (!inGraphNode) {
 			throw new Error('Cowardly refusing to delete edges of a foreign node.');
 		}
 	}
@@ -819,13 +818,13 @@ class BaseGraph implements IGraph {
 		let nr_dir = this._nr_dir_edges,
 			nr_und = this._nr_und_edges;
 
-		if ( nr_dir && nr_und  ) {
+		if (nr_dir && nr_und) {
 			this._mode = GraphMode.MIXED;
 		}
-		else if ( nr_dir ) {
+		else if (nr_dir) {
 			this._mode = GraphMode.DIRECTED;
 		}
-		else if ( nr_und ) {
+		else if (nr_und) {
 			this._mode = GraphMode.UNDIRECTED;
 		}
 		else {
@@ -834,15 +833,15 @@ class BaseGraph implements IGraph {
 	}
 
 
-	pickRandomProperty(propList) : any {
+	pickRandomProperty(propList): any {
 		let tmpList = Object.keys(propList);
-		let randomPropertyName = tmpList[ Math.floor(Math.random()*tmpList.length) ];
+		let randomPropertyName = tmpList[Math.floor(Math.random() * tmpList.length)];
 		return propList[randomPropertyName];
 	}
 
 
 	/**
-	 * In some cases we need to give back a large number of objects
+	 * In some cases we need to return a large number of objects
 	 * in one swoop, as calls to Object.keys() are really slow
 	 * for large input objects.
 	 *
@@ -865,23 +864,23 @@ class BaseGraph implements IGraph {
 	 * @param amount
 	 * @returns {Array}
 	 */
-	pickRandomProperties(propList, amount) : Array<string> {
+	pickRandomProperties(propList, amount): Array<string> {
 		let ids = [];
 		let keys = Object.keys(propList);
 		let fraction = amount / keys.length;
 		let used_keys = {};
 
-		for ( let i = 0; ids.length < amount && i < keys.length; i++ ) {
-			if ( Math.random() < fraction ) {
-				ids.push( keys[i] );
+		for (let i = 0; ids.length < amount && i < keys.length; i++) {
+			if (Math.random() < fraction) {
+				ids.push(keys[i]);
 				used_keys[keys[i]] = i;
 			}
 		}
 
 		let diff = amount - ids.length;
-		for ( let i = 0; i < keys.length && diff; i++ ) {
-			if ( used_keys[keys[i]] == null) {
-				ids.push( keys[i] );
+		for (let i = 0; i < keys.length && diff; i++) {
+			if (used_keys[keys[i]] == null) {
+				ids.push(keys[i]);
 				diff--;
 			}
 		}
@@ -891,4 +890,4 @@ class BaseGraph implements IGraph {
 
 }
 
-export {BaseGraph};
+export { BaseGraph };
