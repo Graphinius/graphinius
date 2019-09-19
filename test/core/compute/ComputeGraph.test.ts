@@ -13,7 +13,7 @@ let sn_config: ICSVInConfig = {
 };
 
 const small_graph_file = `${JSON_DATA_PATH}/small_graph.json`;
-
+const triangle_graph_file = `${JSON_DATA_PATH}/triangle_graph.json`;
 
 
 describe('Adjacency List / Hash Tests - ', () => {
@@ -38,13 +38,13 @@ describe('Adjacency List / Hash Tests - ', () => {
 		test('should output an empty adjacency list for an empty graph', () => {
 			g = new $G.BaseGraph("testus");
 			cg = new ComputeGraph(g);
-			expect(cg.adjListDict()).toEqual({});
+			expect(cg.adjListW()).toEqual({});
 		});
 
 
 		test('should produce a non-empty adj.list for the small example graph', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListDict();
+			adj_list = cg.adjListW();
 			expect(adj_list).not.toBeUndefined();
 			expect(adj_list).not.toEqual({});
 		});
@@ -52,7 +52,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 
 		test('should produce the correct adj.list without incoming edges', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListDict(false);
+			adj_list = cg.adjListW(false);
 			expected_result = {
 				'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 				'B': { 'A': 3 },
@@ -65,7 +65,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 
 		test('should produce the correct adj.list including incoming edges', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListDict(true);
+			adj_list = cg.adjListW(true);
 			expected_result = {
 				'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 				'B': { 'A': 1 },
@@ -79,7 +79,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 		test('should produce the correct adj.list including incoming edges & implicit self connection',
 			() => {
 				g = jsonReader.readFromJSONFile(small_graph_file, g);
-				adj_list = cg.adjListDict(true, true);
+				adj_list = cg.adjListW(true, true);
 				expected_result = {
 					'A': { 'A': 7, 'B': 1, 'C': 0, 'D': -33 },
 					'B': { 'A': 1, 'B': 0 },
@@ -97,7 +97,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 		 */
 		test('should produce the correct adj.list with specific self-dist', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListDict(true, true, 1);
+			adj_list = cg.adjListW(true, true, 1);
 			expected_result = {
 				'A': { 'A': 1, 'B': 1, 'C': 0, 'D': -33 },
 				'B': { 'A': 1, 'B': 1 },
@@ -115,7 +115,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 			jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 			g = jsonReader.readFromJSONFile(small_graph_file);
 			cg = new ComputeGraph(g);
-			adj_list = cg.adjListDict(true);
+			adj_list = cg.adjListW(true);
 			expected_result = {
 				'A': { 'A': 1, 'B': 1, 'C': 1, 'D': 1 },
 				'B': { 'A': 1 },
@@ -129,7 +129,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 		test('should produce the correct adj.list considering default weights', () => {
 			jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListDict(true, true);
+			adj_list = cg.adjListW(true, true);
 
 			expected_result = {
 				'A': { 'A': 1, 'B': 1, 'C': 1, 'D': 1 },
@@ -161,21 +161,49 @@ describe('Adjacency List / Hash Tests - ', () => {
 			expected_result = [];
 			g = new BaseGraph('emptinius');
 			cg = new ComputeGraph(g);
-			expect(cg.adjListArray()).toEqual(expected_result);
+			expect(cg.adjMatrixW()).toEqual(expected_result);
 		});
 
 
 		test('should produce a non-empty adj.list for the small example graph', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListArray();
+			adj_list = cg.adjMatrixW();
 			expect(adj_list).toBeDefined();
 			expect(adj_list).not.toEqual([]);
 		});
 
 
+		test('should produce a correct UNweighted adj.list for the small example graph', () => {
+			g = jsonReader.readFromJSONFile(small_graph_file, g);
+			adj_list = cg.adjMatrix();
+			expected_result = [
+				[0, 1, 1, 1],
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[1, 0, 0, 0]
+			];
+			expect(adj_list).toEqual(expected_result);
+		});
+
+
+		test('should produce a correct UNweighted adj.list for the triangle example graph', () => {
+			g = jsonReader.readFromJSONFile(triangle_graph_file, g);
+			adj_list = cg.adjMatrix();
+			expected_result = [
+				[0, 1, 1, 1, 0, 0],
+				[1, 0, 1, 1, 0, 0],
+				[1, 1, 0, 1, 1, 1],
+				[1, 1, 1, 0, 0, 0],
+				[0, 0, 1, 0, 0, 0],
+				[0, 0, 1, 0, 0, 0]
+			];
+			expect(adj_list).toEqual(expected_result);
+		});
+
+
 		test('should produce the correct adj.list without incoming edges', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListArray();
+			adj_list = cg.adjMatrixW();
 			expected_result = [
 				[0, 1, 0, -33],
 				[3, 0, inf, inf],
@@ -188,7 +216,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 
 		test('should produce the correct adj.list including incoming edges', () => {
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListArray(true);
+			adj_list = cg.adjMatrixW(true);
 			expected_result = [
 				[0, 1, 0, -33],
 				[1, 0, inf, inf],
@@ -202,7 +230,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 		test('should produce the correct adj.list considering default weights', () => {
 			jsonReader = new JSONInput({explicit_direction: true, directed: false, weighted: false});
 			g = jsonReader.readFromJSONFile(small_graph_file, g);
-			adj_list = cg.adjListArray(true);
+			adj_list = cg.adjMatrixW(true);
 
 			expected_result = [
 				[0, 1, 1, 1],
@@ -231,7 +259,7 @@ describe('Adjacency List / Hash Tests - ', () => {
 
 		test('should output an empty next array for an empty graph', () => {
 			expected_result = [];
-			expect(cg.adjListArray()).toEqual(expected_result);
+			expect(cg.adjMatrixW()).toEqual(expected_result);
 		});
 
 

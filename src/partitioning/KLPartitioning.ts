@@ -82,7 +82,7 @@ export class KLPartitioning {
     };
 
     this._cg = new ComputeGraph(this._graph);
-    this._adjList = this._cg.adjListDict();
+    this._adjList = this._cg.adjListW();
     this._keys = Object.keys(this._graph.getNodes());
 
     this.initPartitioning(this._config.initShuffle);

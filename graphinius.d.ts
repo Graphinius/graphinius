@@ -581,8 +581,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from 'graphinius/core/interfaces';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	export interface IComputeGraph {
-	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
-	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
+	    adjListW(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
+	    adjMatrix(): MinAdjacencyListArray;
+	    adjMatrixW(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
 	    readonly clustCoef: ClusteringCoefs;
 	} class ComputeGraph implements IComputeGraph {
@@ -594,8 +595,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    private adj_list_dw;
 	    constructor(_g: IGraph, _tf?: any);
 	    nextArray(incoming?: boolean): NextArray;
-	    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
-	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
+	    adjMatrix(): MinAdjacencyListArray;
+	    adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
+	    adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    readonly clustCoef: ClusteringCoefs;
 	}
 	export { ComputeGraph };

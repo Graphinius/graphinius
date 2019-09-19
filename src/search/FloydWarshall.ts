@@ -26,7 +26,7 @@ function FloydWarshallAPSP(graph: IGraph): {} {
 
 	const cg = new ComputeGraph(graph);
 
-	let dists: MinAdjacencyListArray = cg.adjListArray();
+	let dists: MinAdjacencyListArray = cg.adjMatrixW();
 	let next: NextArray = cg.nextArray();
 
 	let N = dists.length;
@@ -68,7 +68,7 @@ function FloydWarshallArray(graph: IGraph): MinAdjacencyListArray {
 
 	const cg = new ComputeGraph(graph);
 
-	let dists = cg.adjListArray();
+	let dists = cg.adjMatrixW();
 	let N = dists.length;
 
 	for (let k = 0; k < N; ++k) {

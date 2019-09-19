@@ -41,7 +41,7 @@ class Brandes {
 		}
 
 		let nodes = this._graph.getNodes();
-		let adjList = this._cg.adjListDict();
+		let adjList = this._cg.adjListW();
 
 		//Variables for Brandes algorithm
 		let s: $N.IBaseNode,     //source node
@@ -157,7 +157,7 @@ class Brandes {
 
 		let nodes = this._graph.getNodes();
 		let N = Object.keys(nodes).length;
-		let adjList = this._cg.adjListDict();
+		let adjList = this._cg.adjListW();
 
 		const evalPriority = (nb: BrandesHeapEntry) => nb.best;
 		const evalObjID = (nb: BrandesHeapEntry) => nb.id;
@@ -274,7 +274,7 @@ class Brandes {
 	 */
 	computePFSbased(normalize: boolean, directed: boolean): {} {
 		let nodes = this._graph.getNodes();
-		let adjList = this._cg.adjListDict();
+		let adjList = this._cg.adjListW();
 
 		//Variables for Brandes algorithm
 		let Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes

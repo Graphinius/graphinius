@@ -30,9 +30,14 @@ export interface GraphStats {
 	density_und		: number;
 }
 
+export interface TriangleCount {
+	und: number;
+	dir: number;
+}
+
 export interface ClusteringCoefs {
-	global_und : number;
-	global_dir : number;
+	und : number;
+	dir : number;
 	// typed...
 }
 

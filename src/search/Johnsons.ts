@@ -96,7 +96,7 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
 function PFSFromAllNodes(graph: $G.IGraph): {} {
   const cg = new ComputeGraph(graph);
 
-  let dists: Array<Array<number>> = cg.adjListArray();
+  let dists: Array<Array<number>> = cg.adjMatrixW();
   let next: NextArray = cg.nextArray();
 
   let nodesDict = graph.getNodes();

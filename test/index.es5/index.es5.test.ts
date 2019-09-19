@@ -107,8 +107,9 @@ describe('Checking index.js structure - ', () => {
       graph = new base.BaseGraph("fodder for compute graph");
       const cg = new index.core.compute.ComputeGraph(graph);
 
-      expect(typeof cg.adjListDict).toBe("function");
-      expect(typeof cg.adjListArray).toBe("function");
+      expect(typeof cg.adjListW).toBe("function");
+      expect(typeof cg.adjMatrix).toBe("function");
+			expect(typeof cg.adjMatrixW).toBe("function");
       expect(typeof cg.nextArray).toBe("function");
       // getter already calls a function...
       // expect(typeof cg.clustCoef).toBe("function");

@@ -12,9 +12,11 @@ console.log(tf.getBackend());
 // console.log(tfc);
 
 
-describe.skip('Clustering coefficient tests - ', () => {
+describe('Clustering coefficient tests - ', () => {
 
 	const small_graph_file = JSON_DATA_PATH + '/small_graph.json';
+	const triangle_graph_file = `${JSON_DATA_PATH}/triangle_graph.json`;
+
 
 	let
 		g: IGraph = null,
@@ -28,15 +30,66 @@ describe.skip('Clustering coefficient tests - ', () => {
 
 	describe('small graph - ', () => {
 
-		beforeAll(() => {
-			g = new JSONInput().readFromJSONFile(small_graph_file);
+		beforeEach(() => {
+			g = new BaseGraph('triangulus');
 			cg = new ComputeGraph(g, tf);
 		});
 
 
-		it('should compute global clustering coefficient using TF', () => {
-			// console.log(cg.clustCoef(tf));
+		it('triangle Counting should throw an error if not handed a TF handle', () => {
+			cg = new ComputeGraph(g);
+			expect(cg.triangleCount()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
 		});
+
+
+		it('CC should throw an error if not handed a TF handle', () => {
+			cg = new ComputeGraph(g);
+			expect(cg.globalCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+		});
+
+
+		it('should compute triangle counts on small graph using TF', (done) => {
+			g = new JSONInput().readFromJSONFile(small_graph_file, g);
+			cg.triangleCount().then(res => {
+				expect(res.dir).toBe(0);
+				expect(res.und).toBe(0);
+				done();
+			});
+		});
+
+
+		// it('should compute global UNweighted CC on small graph using TF', (done) => {
+		// 	g = new JSONInput().readFromJSONFile(small_graph_file, g);
+		// 	cg.globalCC().then(res => {
+		// 		console.log(res);
+		// 		expect(res.und).toBe(0);
+		// 		done();
+		// 	});
+		// });
+
+
+		/**
+		 * @todo should we take the direction explicitly or not?
+		 * 			 -> computing on UNdirected adj_list AND directed one?
+		 */
+		it('should compute triangle counts on triangle graph using TF', (done) => {
+			g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
+			cg.triangleCount().then(res => {
+				expect(res.dir).toBe(8);
+				expect(res.und).toBe(4);
+				done();
+			});
+		});
+
+
+
+		// it('should compute global UNweighted CC on triangle graph using TF', (done) => {
+		// 	g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
+		// 	cg.globalCC().then(res => {
+		// 		console.log(res);
+		// 		done();
+		// 	});
+		// });
 
 	});
 

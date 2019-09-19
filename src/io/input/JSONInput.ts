@@ -149,7 +149,7 @@ class JSONInput implements IJSONInput {
 				};
 				if ( this._config.dupeCheck && edc.isDupe(newEdge) ) {
 					// Don't throw, just log
-					logger.log(`Edge ${edge_id} is a duplicate according to assumptions... omitting.`);
+					// logger.log(`Edge ${edge_id} is a duplicate according to assumptions... omitting.`);
 					continue;
 				}
 				graph.addEdgeByID(edge_id, node, target_node, {
