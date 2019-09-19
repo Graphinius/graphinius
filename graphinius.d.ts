@@ -619,6 +619,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    triadCount(directed?: boolean): number;
 	    triangleCount(directed?: boolean): Promise<number>;
 	    transitivity(directed?: boolean): Promise<number>;
+	    clustCoef(directed?: boolean): Promise<{
+	        [key: string]: number;
+	    }>;
 	} class ComputeGraph implements IComputeGraph {
 	    private _g;
 	    private _tf?;
@@ -634,6 +637,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    transitivity(directed?: boolean): Promise<number>;
 	    triadCount(directed?: boolean): number;
 	    triangleCount(directed?: boolean): Promise<number>;
+	    clustCoef(directed?: boolean): Promise<{
+	        [key: string]: number;
+	    }>;
 	}
 	export { ComputeGraph };
 

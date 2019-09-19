@@ -38,20 +38,26 @@ describe('Clustering coefficient tests - ', () => {
 
 		it('triangle Counting should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.triangleCount()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+			expect(cg.triangleCount()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
+		});
+
+
+		it('transitivity should throw an error if not handed a TF handle', () => {
+			cg = new ComputeGraph(g);
+			expect(cg.transitivity()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
 		});
 
 
 		it('CC should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.transitivity()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+			expect(cg.clustCoef()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
 		});
 
 
 		/**
 		 * @description friends of your friends are likely to be(come) friends as well...
 		 */
-		describe('UN-directed', () => {
+		describe('transitivity UN-directed', () => {
 
 			beforeEach(() => {
 				g = new BaseGraph('triangulus');
@@ -121,7 +127,7 @@ describe('Clustering coefficient tests - ', () => {
 		 * @description “Your followers are likely to follow common targets"
 		 * @description frequency of loops of length two in a directed network: `reciprocity`
 		 */
-		describe('DIRECTED - ', () => {
+		describe('transitivity DIRECTED - ', () => {
 
 			beforeAll(() => {
 				g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed);
@@ -150,6 +156,26 @@ describe('Clustering coefficient tests - ', () => {
 				cg.transitivity(true).then(res => {
 					// console.log(res);
 					expect(res).toBe(0.6);
+					done();
+				});
+			});
+
+		});
+
+
+		describe('clustering coefficient UNdirected - ', () => {
+
+			beforeAll(() => {
+				g = new JSONInput().readFromJSONFile(triangle_graph_file);
+				cg = new ComputeGraph(g, tf);
+			});
+
+
+			it('should compute local clustering coefficients per node', (done) => {
+				const clust_exp = {0: 1.0, 1: 1.0, 2: 0.3, 3: 1.0, 4: 0, 5: 0};
+				cg.clustCoef().then(clust => {
+					// console.log(clust);
+					expect(clust).toEqual(clust_exp);
 					done();
 				});
 			});

@@ -118,13 +118,14 @@ describe('Checking index.js structure - ', () => {
     });
 
 
-    it('compute graph should contain list / matrix methods', () => {
+    it('compute graph should contain clustering / transitivity methods', () => {
       graph = new base.BaseGraph("fodder for compute graph");
       const cg = new index.core.compute.ComputeGraph(graph);
 
       expect(typeof cg.triadCount).toBe("function");
       expect(typeof cg.triangleCount).toBe("function");
       expect(typeof cg.transitivity).toBe("function");
+      expect(typeof cg.clustCoef).toBe("function");
     });
 
   });

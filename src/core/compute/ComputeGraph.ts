@@ -23,6 +23,8 @@ export interface IComputeGraph {
 	triangleCount(directed?: boolean): Promise<number>;
 
 	transitivity(directed?: boolean): Promise<number>;
+
+	clustCoef(directed? : boolean) : Promise<{[key: string]: number}>;
 }
 
 
@@ -232,7 +234,7 @@ class ComputeGraph implements IComputeGraph {
 
 	async triangleCount(directed = false): Promise<number> {
 		if (!this._tf || !this._tf.matMul) {
-			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
+			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
 		}
 
 		const adj_list = this.adjMatrix();
@@ -251,6 +253,28 @@ class ComputeGraph implements IComputeGraph {
 			trace += aux3[i][i];
 		}
 		return directed ? trace / 3 : trace / 6;
+	}
+
+
+	async clustCoef(directed = false) : Promise<{[key: string]: number}> {
+		if (!this._tf || !this._tf.matMul) {
+			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
+		}
+		const result = {};
+		const adj_list = this.adjMatrix();
+		const a = this._tf.tensor2d(adj_list);
+		const aux2 = await a.matMul(a).array();
+		const aux3 = await a.matMul(aux2).array();
+		/**
+		 * @todo check if node order is equivalent to aux3 ordering
+		 */
+		let deg: number;
+		const keys = Object.keys(this._g.getNodes());
+		for ( let i in aux3[0] ) {
+			deg = this._g.getNodeById(keys[i]).degree();
+			result[i] = (aux3[i][i] / (deg * (deg-1))) || 0;
+		}
+		return result;
 	}
 
 }

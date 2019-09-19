@@ -8,6 +8,9 @@ export interface IComputeGraph {
     triadCount(directed?: boolean): number;
     triangleCount(directed?: boolean): Promise<number>;
     transitivity(directed?: boolean): Promise<number>;
+    clustCoef(directed?: boolean): Promise<{
+        [key: string]: number;
+    }>;
 }
 declare class ComputeGraph implements IComputeGraph {
     private _g;
@@ -24,5 +27,8 @@ declare class ComputeGraph implements IComputeGraph {
     transitivity(directed?: boolean): Promise<number>;
     triadCount(directed?: boolean): number;
     triangleCount(directed?: boolean): Promise<number>;
+    clustCoef(directed?: boolean): Promise<{
+        [key: string]: number;
+    }>;
 }
 export { ComputeGraph };
