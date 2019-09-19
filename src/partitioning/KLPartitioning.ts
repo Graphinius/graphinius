@@ -5,6 +5,7 @@ import { KCut } from './KCut';
 import { BinaryHeap, BinaryHeapMode } from '../datastructs/BinaryHeap';
 
 import { Logger, LogColors } from '../utils/Logger';
+import {ComputeGraph, IComputeGraph} from "../core/compute/ComputeGraph";
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
@@ -20,20 +21,20 @@ export type GainEntry = {
 export interface KL_Costs {
   internal: {[key:string]: number};
   external: {[key:string]: number};
-};
+}
 
 
 export interface KL_Config {
   initShuffle? : boolean;
   directed?    : boolean;
   weighted?    : boolean;
-};
+}
 
 
 export interface KL_Open_Sets {
   partition_a : Map<string, boolean>;
   partition_b : Map<string, boolean>;
-};
+}
 
 /**
  * We require node features to have partition entries 1 & 2, EXACTLY!
@@ -51,17 +52,20 @@ export class KLPartitioning {
   public _open_sets           : KL_Open_Sets;
 
   public _adjList : {};
+
   // for faster iteration, as long as we're not using Maps
   private _keys : Array<string>;
   private _config : KL_Config;
   private _gainsHash : Map<string, GainEntry>; // {[key: string]: GainEntry};
+  private _cg : IComputeGraph;
+
 
   constructor(private _graph : IGraph, config? : KL_Config) {
     this._config = config || {
       initShuffle: false,
       directed: false,
       weighted: false
-    }
+    };
     this._bestPartitioning = 1;
     this._currentPartitioning = 1;
     this._partitionings = new Map<number, GraphPartitioning>();
@@ -77,7 +81,8 @@ export class KLPartitioning {
       partition_b : new Map<string, boolean>()
     };
 
-    this._adjList = this._graph.adjListDict();
+    this._cg = new ComputeGraph(this._graph);
+    this._adjList = this._cg.adjListDict();
     this._keys = Object.keys(this._graph.getNodes());
 
     this.initPartitioning(this._config.initShuffle);

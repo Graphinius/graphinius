@@ -1,4 +1,12 @@
-import { DIR, GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from '../interfaces';
+import {
+	DIR,
+	GraphMode,
+	GraphStats,
+	NextArray,
+	MinAdjacencyListArray,
+	MinAdjacencyListDict,
+	ClusteringCoefs
+} from '../interfaces';
 import { IBaseNode, BaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
 import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../../search/BFS';
@@ -17,7 +25,9 @@ export interface IGraph {
 	readonly label: string;
 	readonly mode: GraphMode;
 	readonly stats: GraphStats;
+	// readonly adj_list: MinAdjacencyListArray;
 
+	// ANALYSIS
 	getMode(): GraphMode;
 	getStats(): GraphStats;
 
@@ -83,10 +93,6 @@ export interface IGraph {
 	cloneStructure(): IGraph;
 	cloneSubGraphStructure(start: IBaseNode, cutoff: Number): IGraph;
 
-	// REPRESENTATIONS
-	adjListDict(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
-	adjListArray(incoming?: boolean): MinAdjacencyListArray;
-	nextArray(incoming?: boolean): NextArray;
 
 	// REWEIGHTING
 	reweighIfHasNegativeEdge(clone: boolean): IGraph;
@@ -277,105 +283,6 @@ class BaseGraph implements IGraph {
 		});
 
 		return negative_cycle;
-	}
-
-
-	/**
-	 * 
-	 * @param incoming 
-	 */
-	nextArray(incoming: boolean = false): NextArray {
-		let next = [],
-			node_keys = Object.keys(this._nodes);
-
-		//?? - but AdjDict contains distance value only for the directly reachable neighbors for each node, not all!	
-		//I do not understand but it works so it should be okay	
-		const adjDict = this.adjListDict(incoming, true, 0);
-
-		for (let i = 0; i < this._nr_nodes; ++i) {
-			next.push([]);
-			for (let j = 0; j < this._nr_nodes; ++j) {
-				next[i].push([]);
-
-				next[i][j].push(i === j ? j : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? j : null);
-			}
-		}
-		return next;
-	}
-
-
-	/**
-	 * This function iterates over the adjDict in order to use it's advantage
-	 * of being able to override edges if edges with smaller weights exist
-	 * 
-	 * However, the order of nodes in the array represents the order of nodes
-	 * at creation time, no other implicit alphabetical or collational sorting.
-	 * 
-	 * This has to be considered when further processing the result
-	 * 
-	 * @param incoming whether or not to consider incoming edges as well
-	 * @param include_self contains a distance to itself apart?
-	 * @param self_dist default distance to self
-	 */
-	adjListArray(incoming: boolean = false, include_self = false, self_dist = 0): MinAdjacencyListArray {
-		let adjList = [],
-			node_keys = Object.keys(this._nodes);
-
-		const adjDict = this.adjListDict(incoming, true, 0);
-
-		for (let i = 0; i < this._nr_nodes; ++i) {
-			adjList.push([]);
-			for (let j = 0; j < this._nr_nodes; ++j) {
-				adjList[i].push(i === j ? 0 : isFinite(adjDict[node_keys[i]][node_keys[j]]) ? adjDict[node_keys[i]][node_keys[j]] : Number.POSITIVE_INFINITY);
-			}
-		}
-		return adjList;
-	}
-
-
-	/**
-	 * 
-	 * @param incoming whether or not to consider incoming edges as well
-	 * @param include_self contains a distance to itself apart?
-	 * @param self_dist default distance to self
-	 */
-	adjListDict(incoming: boolean = false, include_self = false, self_dist = 0): MinAdjacencyListDict {
-		let adj_list_dict: MinAdjacencyListDict = {},
-			nodes = this.getNodes(),
-			cur_dist: number,
-			key: string,
-			cur_edge_weight: number;
-
-		for (key in nodes) {
-			adj_list_dict[key] = {};
-			if (include_self) {
-				adj_list_dict[key][key] = self_dist;
-			}
-		}
-		for (key in nodes) {
-			let neighbors = incoming ? nodes[key].reachNodes().concat(nodes[key].prevNodes()) : nodes[key].reachNodes();
-
-			neighbors.forEach((ne) => {
-				cur_dist = adj_list_dict[key][ne.node.getID()] || Number.POSITIVE_INFINITY;
-				cur_edge_weight = isNaN(ne.edge.getWeight()) ? DEFAULT_WEIGHT : ne.edge.getWeight();
-
-				if (cur_edge_weight < cur_dist) {
-					adj_list_dict[key][ne.node.getID()] = cur_edge_weight;
-
-					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list_dict[ne.node.getID()][key] = cur_edge_weight;
-					}
-				}
-				else {
-					adj_list_dict[key][ne.node.getID()] = cur_dist;
-
-					if (incoming) { // we need to update the 'inverse' entry as well
-						adj_list_dict[ne.node.getID()][key] = cur_dist;
-					}
-				}
-			});
-		}
-		return adj_list_dict;
 	}
 
 

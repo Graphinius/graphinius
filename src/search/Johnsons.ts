@@ -4,6 +4,7 @@ import * as $G from '../core/base/BaseGraph';
 import * as $PFS from '../search/PFS';
 import * as $BF from '../search/BellmanFord';
 import * as $SU from '../utils/StructUtils'
+import {ComputeGraph} from "../core/compute/ComputeGraph";
 
 
 function Johnsons(graph: $G.IGraph): {} {
@@ -93,8 +94,10 @@ function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): 
 
 
 function PFSFromAllNodes(graph: $G.IGraph): {} {
-  let dists: Array<Array<number>> = graph.adjListArray();
-  let next: NextArray = graph.nextArray();
+  const cg = new ComputeGraph(graph);
+
+  let dists: Array<Array<number>> = cg.adjListArray();
+  let next: NextArray = cg.nextArray();
 
   let nodesDict = graph.getNodes();
   let nodeIDIdxMap = {};

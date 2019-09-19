@@ -1,4 +1,4 @@
-import { GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from '../interfaces';
+import { GraphMode, GraphStats } from '../interfaces';
 import { IBaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge } from './BaseEdge';
 import { TypedGraph } from "../typed/TypedGraph";
@@ -58,9 +58,6 @@ export interface IGraph {
     clearAllEdges(): void;
     cloneStructure(): IGraph;
     cloneSubGraphStructure(start: IBaseNode, cutoff: Number): IGraph;
-    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
-    adjListArray(incoming?: boolean): MinAdjacencyListArray;
-    nextArray(incoming?: boolean): NextArray;
     reweighIfHasNegativeEdge(clone: boolean): IGraph;
 }
 declare class BaseGraph implements IGraph {
@@ -92,9 +89,6 @@ declare class BaseGraph implements IGraph {
     toUndirectedGraph(): IGraph;
     hasNegativeEdge(): boolean;
     hasNegativeCycles(node?: IBaseNode): boolean;
-    nextArray(incoming?: boolean): NextArray;
-    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
-    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
     getMode(): GraphMode;
     getStats(): GraphStats;
     nrNodes(): number;

@@ -30,6 +30,12 @@ export interface GraphStats {
 	density_und		: number;
 }
 
+export interface ClusteringCoefs {
+	global_und : number;
+	global_dir : number;
+	// typed...
+}
+
 /**
  * Only gives the best distance to a node in case of multiple direct edges
  */

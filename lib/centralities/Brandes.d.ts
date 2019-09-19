@@ -5,6 +5,7 @@ export interface BrandesHeapEntry {
 }
 declare class Brandes {
     private _graph;
+    private _cg;
     constructor(_graph: $G.IGraph);
     computeUnweighted(normalize?: boolean, directed?: boolean): {};
     computeWeighted(normalize: boolean, directed: boolean): {};

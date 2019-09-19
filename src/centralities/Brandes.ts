@@ -13,6 +13,7 @@ import * as $P from '../search/PFS';
 import * as $BF from '../search/BellmanFord';
 import * as $JO from '../search/Johnsons';
 import * as $BH from '../datastructs/BinaryHeap';
+import {ComputeGraph, IComputeGraph} from "../core/compute/ComputeGraph";
 
 
 export interface BrandesHeapEntry {
@@ -26,8 +27,11 @@ export interface BrandesHeapEntry {
  * @returns Dict of betweenness centrality values for each node
  */
 class Brandes {
+	private _cg: IComputeGraph;
 	
-	constructor(private _graph: $G.IGraph) { }
+	constructor(private _graph: $G.IGraph) {
+		this._cg = new ComputeGraph(this._graph);
+	}
 
 
 	computeUnweighted(normalize: boolean = false, directed: boolean = false): {} {
@@ -37,7 +41,7 @@ class Brandes {
 		}
 
 		let nodes = this._graph.getNodes();
-		let adjList = this._graph.adjListDict();
+		let adjList = this._cg.adjListDict();
 
 		//Variables for Brandes algorithm
 		let s: $N.IBaseNode,     //source node
@@ -153,7 +157,7 @@ class Brandes {
 
 		let nodes = this._graph.getNodes();
 		let N = Object.keys(nodes).length;
-		let adjList = this._graph.adjListDict();
+		let adjList = this._cg.adjListDict();
 
 		const evalPriority = (nb: BrandesHeapEntry) => nb.best;
 		const evalObjID = (nb: BrandesHeapEntry) => nb.id;
@@ -270,7 +274,7 @@ class Brandes {
 	 */
 	computePFSbased(normalize: boolean, directed: boolean): {} {
 		let nodes = this._graph.getNodes();
-		let adjList = this._graph.adjListDict();
+		let adjList = this._cg.adjListDict();
 
 		//Variables for Brandes algorithm
 		let Pred: { [key: string]: string[] } = {},     //list of Predecessors=parent nodes

@@ -326,6 +326,10 @@ declare module 'graphinius/core/interfaces' {
 	    density_dir: number;
 	    density_und: number;
 	}
+	export interface ClusteringCoefs {
+	    global_und: number;
+	    global_dir: number;
+	}
 	export type MinAdjacencyListDict = {
 	    [id: string]: MinAdjacencyListDictEntry;
 	};
@@ -573,6 +577,30 @@ declare module 'graphinius/search/BellmanFord' {
 	export { BellmanFordDict, BellmanFordArray };
 
 }
+declare module 'graphinius/core/compute/ComputeGraph' {
+	import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from 'graphinius/core/interfaces';
+	import { IGraph } from 'graphinius/core/base/BaseGraph';
+	export interface IComputeGraph {
+	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
+	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
+	    nextArray(incoming?: boolean): NextArray;
+	    readonly clustCoef: ClusteringCoefs;
+	} class ComputeGraph implements IComputeGraph {
+	    private _g;
+	    private _tf?;
+	    private adj_list_uu;
+	    private adj_list_du;
+	    private adj_list_uw;
+	    private adj_list_dw;
+	    constructor(_g: IGraph, _tf?: any);
+	    nextArray(incoming?: boolean): NextArray;
+	    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
+	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
+	    readonly clustCoef: ClusteringCoefs;
+	}
+	export { ComputeGraph };
+
+}
 declare module 'graphinius/search/Johnsons' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import * as $G from 'graphinius/core/base/BaseGraph'; function Johnsons(graph: $G.IGraph): {}; function addExtraNandE(target: $G.IGraph, nodeToAdd: $N.IBaseNode): $G.IGraph; function reWeighGraph(target: $G.IGraph, distDict: {}, tempNode: $N.IBaseNode): $G.IGraph; function PFSFromAllNodes(graph: $G.IGraph): {};
@@ -621,7 +649,7 @@ declare module 'graphinius/core/typed/TypedGraph' {
 
 }
 declare module 'graphinius/core/base/BaseGraph' {
-	import { GraphMode, GraphStats, NextArray, MinAdjacencyListArray, MinAdjacencyListDict } from 'graphinius/core/interfaces';
+	import { GraphMode, GraphStats } from 'graphinius/core/interfaces';
 	import { IBaseNode } from 'graphinius/core/base/BaseNode';
 	import { BaseEdgeConfig, IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
@@ -681,9 +709,6 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    clearAllEdges(): void;
 	    cloneStructure(): IGraph;
 	    cloneSubGraphStructure(start: IBaseNode, cutoff: Number): IGraph;
-	    adjListDict(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
-	    adjListArray(incoming?: boolean): MinAdjacencyListArray;
-	    nextArray(incoming?: boolean): NextArray;
 	    reweighIfHasNegativeEdge(clone: boolean): IGraph;
 	} class BaseGraph implements IGraph {
 	    protected _label: any;
@@ -714,9 +739,6 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    toUndirectedGraph(): IGraph;
 	    hasNegativeEdge(): boolean;
 	    hasNegativeCycles(node?: IBaseNode): boolean;
-	    nextArray(incoming?: boolean): NextArray;
-	    adjListArray(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
-	    adjListDict(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
 	    getMode(): GraphMode;
 	    getStats(): GraphStats;
 	    nrNodes(): number;
@@ -787,6 +809,7 @@ declare module 'graphinius/centralities/Brandes' {
 	    best: number;
 	} class Brandes {
 	    private _graph;
+	    private _cg;
 	    constructor(_graph: $G.IGraph);
 	    computeUnweighted(normalize?: boolean, directed?: boolean): {};
 	    computeWeighted(normalize: boolean, directed: boolean): {};
@@ -1321,6 +1344,7 @@ declare module 'graphinius/partitioning/KLPartitioning' {
 	    private _keys;
 	    private _config;
 	    private _gainsHash;
+	    private _cg;
 	    constructor(_graph: IGraph, config?: KL_Config);
 	    private initPartitioning;
 	    private initCosts;

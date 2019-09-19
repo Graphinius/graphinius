@@ -23,7 +23,7 @@ import * as $N from '../core/base/BaseNode';
  */
 function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: boolean): {} {
   let paths;
-  var sparse = sparse || false;
+  sparse = sparse || false;
 
   if (sparse) {
     paths = $JO.Johnsons(graph)[1];

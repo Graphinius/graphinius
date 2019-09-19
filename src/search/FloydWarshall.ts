@@ -1,6 +1,7 @@
 import {MinAdjacencyListArray, NextArray} from '../core/interfaces';
 import * as $SU from '../utils/StructUtils'
 import {IGraph} from "../core/base/BaseGraph";
+import {ComputeGraph} from "../core/compute/ComputeGraph";
 
 
 const DEFAULT_WEIGHT = 1;
@@ -23,8 +24,10 @@ function FloydWarshallAPSP(graph: IGraph): {} {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists: MinAdjacencyListArray = graph.adjListArray();
-	let next: NextArray = graph.nextArray();
+	const cg = new ComputeGraph(graph);
+
+	let dists: MinAdjacencyListArray = cg.adjListArray();
+	let next: NextArray = cg.nextArray();
 
 	let N = dists.length;
 	for (let k = 0; k < N; ++k) {
@@ -63,7 +66,9 @@ function FloydWarshallArray(graph: IGraph): MinAdjacencyListArray {
 		throw new Error("Cowardly refusing to traverse graph without edges.");
 	}
 
-	let dists = graph.adjListArray();
+	const cg = new ComputeGraph(graph);
+
+	let dists = cg.adjListArray();
 	let N = dists.length;
 
 	for (let k = 0; k < N; ++k) {

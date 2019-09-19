@@ -37,6 +37,7 @@ export declare class KLPartitioning {
     private _keys;
     private _config;
     private _gainsHash;
+    private _cg;
     constructor(_graph: IGraph, config?: KL_Config);
     private initPartitioning;
     private initCosts;

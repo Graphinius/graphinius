@@ -4,6 +4,7 @@ import {CSVInput} from "../../src/io/input/CSVInput";
 import {JSONInput} from "../../src/io/input/JSONInput";
 import {DegreeCentrality} from "../../src/centralities/Degree";
 import {DFS} from "../../src/search/DFS";
+import {ComputeGraph} from "../../src/core/compute/ComputeGraph";
 
 const logger = new Logger();
 
@@ -41,7 +42,7 @@ describe("Adjacency List performance test - ", () => {
 			it('should measure the time it takes to create the adj.list.DICT for a 1034 node graph',
 				() => {
 					let tic = +new Date;
-					let adjListDict = graph.adjListDict(false, false);
+					let adjListDict = new ComputeGraph(graph).adjListDict(false, false);
 					let toc = +new Date;
 
 					logger.log(`Construction of adjList DICT on ${graph.nrNodes()} took ${toc - tic} ms.`);
@@ -59,7 +60,7 @@ describe("Adjacency List performance test - ", () => {
 			it('performance test on next array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
 				() => {
 					let tic = +new Date;
-					const adj_list = graph.adjListArray(true);
+					const adj_list = new ComputeGraph(graph).adjListArray(true);
 					let toc = +new Date;
 
 					logger.log(`Construction of adjList ARRAY on ${graph.nrNodes()} took ${toc - tic} ms.`);
@@ -77,7 +78,7 @@ describe("Adjacency List performance test - ", () => {
 			it('performance test on NEXT array including incoming edges for UNDIRECTED, UNWEIGHTED graph',
 				() => {
 					let tic = +new Date;
-					graph.nextArray(true);
+					new ComputeGraph(graph).nextArray(true);
 					let toc = +new Date;
 
 					logger.log(`Construction of NEXT ARRAY on ${graph.nrNodes()} took ${toc - tic} ms.`);

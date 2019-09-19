@@ -19,6 +19,10 @@ export interface GraphStats {
     density_dir: number;
     density_und: number;
 }
+export interface ClusteringCoefs {
+    global_und: number;
+    global_dir: number;
+}
 export declare type MinAdjacencyListDict = {
     [id: string]: MinAdjacencyListDictEntry;
 };
