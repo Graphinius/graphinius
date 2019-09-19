@@ -101,6 +101,19 @@ describe('Checking index.js structure - ', () => {
       expect(typeof graph.edgeTypes).toBe("function");
     });
 
+
+    it('core should contain ComputeGraph', () => {
+      expect(typeof index.core.compute.ComputeGraph).toBe("function");
+      graph = new base.BaseGraph("fodder for compute graph");
+      const cg = new index.core.compute.ComputeGraph(graph);
+
+      expect(typeof cg.adjListDict).toBe("function");
+      expect(typeof cg.adjListArray).toBe("function");
+      expect(typeof cg.nextArray).toBe("function");
+      // getter already calls a function...
+      // expect(typeof cg.clustCoef).toBe("function");
+    });
+
   });
 
 

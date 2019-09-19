@@ -1,5 +1,6 @@
 // CORE
 const iCore										= require("./lib/core/interfaces");
+const ComputeGraph						= require("./lib/core/compute/ComputeGraph");
 // Base
 const BaseEdge	      				= require("./lib/core/base/BaseEdge.js");
 const BaseNode 	      				= require("./lib/core/base/BaseNode.js");
@@ -65,6 +66,9 @@ out.$G = {
 			TypedEdge								: TypedEdge.TypedEdge,
 			TypedNode								: TypedNode.TypedNode,
 			TypedGraph							: TypedGraph.TypedGraph
+		},
+		compute: {
+			ComputeGraph						: ComputeGraph.ComputeGraph
 		}
 	},
 	centralities: {
