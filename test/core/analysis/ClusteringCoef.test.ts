@@ -4,6 +4,10 @@ import {ComputeGraph, IComputeGraph} from '../../../src/core/compute/ComputeGrap
 import {JSONInput} from "../../../src/io/input/JSONInput";
 import {JSON_DATA_PATH} from "../../config/test_paths";
 
+import {Logger} from "../../../src/utils/Logger";
+const logger = new Logger();
+
+
 const tf = require('@tensorflow/tfjs-node');
 // console.log(tf);
 console.log(tf.getBackend());
@@ -16,6 +20,7 @@ describe('Clustering coefficient tests - ', () => {
 
 	const small_graph_file = JSON_DATA_PATH + '/small_graph.json';
 	const triangle_graph_file = `${JSON_DATA_PATH}/triangle_graph.json`;
+	const triangle_directed = `${JSON_DATA_PATH}/triangle_directed.json`;
 
 
 	let
@@ -29,12 +34,6 @@ describe('Clustering coefficient tests - ', () => {
 
 
 	describe('small & triangle graph - ', () => {
-
-		beforeEach(() => {
-			g = new BaseGraph('triangulus');
-			cg = new ComputeGraph(g, tf);
-		});
-
 
 		it('triangle Counting should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
@@ -50,29 +49,33 @@ describe('Clustering coefficient tests - ', () => {
 
 		describe('UN-directed', () => {
 
+			beforeEach(() => {
+				g = new BaseGraph('triangulus');
+				cg = new ComputeGraph(g, tf);
+			});
+
+
 			it('should compute triad counts on small graph ', () => {
 				g = new JSONInput({explicit_direction: false, directed: false}).readFromJSONFile(small_graph_file, g);
 				const res = cg.triadCount();
-				// expect(res.dir).toBe(8);
-				expect(res.und).toBe(3);
+				expect(res).toBe(3);
 			});
 
 
 			it('should compute triangle counts on small graph ', (done) => {
 				g = new JSONInput({explicit_direction: false, directed: false}).readFromJSONFile(small_graph_file, g);
 				cg.triangleCount().then(res => {
-					expect(res.dir).toBe(0);
-					expect(res.und).toBe(0);
+					expect(res).toBe(0);
 					done();
 				});
 			});
 
 
-			it('should compute global UNdirected CC on small graph ', (done) => {
+			it('should compute UNdirected transitivity on small graph ', (done) => {
 				g = new JSONInput().readFromJSONFile(small_graph_file, g);
 				cg.transitivity().then(res => {
 					// console.log(res);
-					expect(res.und).toBe(0);
+					expect(res).toBe(0);
 					done();
 				});
 			});
@@ -81,8 +84,7 @@ describe('Clustering coefficient tests - ', () => {
 			it('should compute triad counts on triangle graph ', () => {
 				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
 				const res = cg.triadCount();
-				// expect(res.dir).toBe(8);
-				expect(res.und).toBe(19);
+				expect(res).toBe(19);
 			});
 
 
@@ -93,24 +95,58 @@ describe('Clustering coefficient tests - ', () => {
 			it('should compute triangle counts on triangle graph ', (done) => {
 				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
 				cg.triangleCount().then(res => {
-					expect(res.dir).toBe(8);
-					expect(res.und).toBe(4);
+					expect(res).toBe(4);
 					done();
 				});
 			});
 
 
-			it('should compute global UNdirected CC on triangle graph ', (done) => {
+			it('should compute UNdirected transitivity on triangle graph ', (done) => {
 				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
 				cg.transitivity().then(res => {
 					// console.log(res);
-					expect(res.und).toBe(0.631578947368421);
+					expect(res).toBe(0.631578947368421);
 					done();
 				});
 			});
 
 		});
 
+
+		/**
+		 * @description frequency of loops of length two in a directed network: `reciprocity`
+		 */
+		describe('DIRECTED - ', () => {
+
+			beforeAll(() => {
+				g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed);
+				cg = new ComputeGraph(g, tf);
+			});
+
+
+			it('should compute triad counts on triangle graph ', () => {
+				const res = cg.triadCount(true);
+				expect(res).toBe(10);
+			});
+
+
+			it('should compute triangle counts on triangle graph ', (done) => {
+				cg.triangleCount(true).then(res => {
+					expect(res).toBe(2);
+					done();
+				});
+			});
+
+
+			it('should compute DIRECTED transitivity on triangle graph ', (done) => {
+				cg.transitivity(true).then(res => {
+					// console.log(res);
+					expect(res).toBe(0.6);
+					done();
+				});
+			});
+
+		});
 
 	});
 

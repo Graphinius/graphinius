@@ -30,16 +30,6 @@ export interface GraphStats {
 	density_und		: number;
 }
 
-export interface TriadCount {
-	und: number;
-	dir: number;
-}
-
-export interface ClusteringCoefs {
-	und : number;
-	dir : number;
-	// typed...
-}
 
 /**
  * Only gives the best distance to a node in case of multiple direct edges

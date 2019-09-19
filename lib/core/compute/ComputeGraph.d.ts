@@ -1,13 +1,13 @@
-import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray, TriadCount } from "../interfaces";
+import { MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from "../interfaces";
 import { IGraph } from "../base/BaseGraph";
 export interface IComputeGraph {
     adjListW(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
     adjMatrix(): MinAdjacencyListArray;
     adjMatrixW(incoming?: boolean): MinAdjacencyListArray;
     nextArray(incoming?: boolean): NextArray;
-    triadCount(): TriadCount;
-    triangleCount(): Promise<TriadCount>;
-    transitivity(): Promise<ClusteringCoefs>;
+    triadCount(directed?: boolean): number;
+    triangleCount(directed?: boolean): Promise<number>;
+    transitivity(directed?: boolean): Promise<number>;
 }
 declare class ComputeGraph implements IComputeGraph {
     private _g;
@@ -21,8 +21,8 @@ declare class ComputeGraph implements IComputeGraph {
     adjMatrix(): MinAdjacencyListArray;
     adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
     adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
-    transitivity(): Promise<ClusteringCoefs>;
-    triadCount(): TriadCount;
-    triangleCount(): Promise<TriadCount>;
+    transitivity(directed?: boolean): Promise<number>;
+    triadCount(directed?: boolean): number;
+    triangleCount(directed?: boolean): Promise<number>;
 }
 export { ComputeGraph };

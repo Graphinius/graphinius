@@ -326,14 +326,6 @@ declare module 'graphinius/core/interfaces' {
 	    density_dir: number;
 	    density_und: number;
 	}
-	export interface TriadCount {
-	    und: number;
-	    dir: number;
-	}
-	export interface ClusteringCoefs {
-	    und: number;
-	    dir: number;
-	}
 	export type MinAdjacencyListDict = {
 	    [id: string]: MinAdjacencyListDictEntry;
 	};
@@ -581,17 +573,52 @@ declare module 'graphinius/search/BellmanFord' {
 	export { BellmanFordDict, BellmanFordArray };
 
 }
+declare module 'graphinius/utils/Logger' {
+	export interface LOG_CONFIG {
+	    log_level: string;
+	}
+	export enum LogColors {
+	    FgBlack = 30,
+	    FgRed = 31,
+	    FgGreen = 32,
+	    FgYellow = 33,
+	    FgBlue = 34,
+	    FgMagenta = 35,
+	    FgCyan = 36,
+	    FgWhite = 37,
+	    BgBlack = 40,
+	    BgRed = 41,
+	    BgGreen = 42,
+	    BgYellow = 43,
+	    BgBlue = 44,
+	    BgMagenta = 45,
+	    BgCyan = 46,
+	    BgWhite = 47
+	} class Logger {
+	    config: LOG_CONFIG;
+	    constructor(config?: any);
+	    log(msg: any, color?: any, bright?: boolean): boolean;
+	    error(err: any, color?: any, bright?: boolean): boolean;
+	    dir(obj: any, color?: any, bright?: boolean): boolean;
+	    info(msg: any, color?: any, bright?: boolean): boolean;
+	    warn(msg: any, color?: any, bright?: boolean): boolean;
+	    write(msg: any, color?: any, bright?: boolean): boolean;
+	    static colorize(color: any, output: any, bright: any): string;
+	}
+	export { Logger };
+
+}
 declare module 'graphinius/core/compute/ComputeGraph' {
-	import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray, TriadCount } from 'graphinius/core/interfaces';
+	import { MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from 'graphinius/core/interfaces';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	export interface IComputeGraph {
 	    adjListW(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
-	    triadCount(): TriadCount;
-	    triangleCount(): Promise<TriadCount>;
-	    transitivity(): Promise<ClusteringCoefs>;
+	    triadCount(directed?: boolean): number;
+	    triangleCount(directed?: boolean): Promise<number>;
+	    transitivity(directed?: boolean): Promise<number>;
 	} class ComputeGraph implements IComputeGraph {
 	    private _g;
 	    private _tf?;
@@ -604,9 +631,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
 	    adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
-	    transitivity(): Promise<ClusteringCoefs>;
-	    triadCount(): TriadCount;
-	    triangleCount(): Promise<TriadCount>;
+	    transitivity(directed?: boolean): Promise<number>;
+	    triadCount(directed?: boolean): number;
+	    triangleCount(directed?: boolean): Promise<number>;
 	}
 	export { ComputeGraph };
 
@@ -934,41 +961,6 @@ declare module 'graphinius/centralities/PagerankGauss' {
 	    };
 	}
 	export { PagerankGauss };
-
-}
-declare module 'graphinius/utils/Logger' {
-	export interface LOG_CONFIG {
-	    log_level: string;
-	}
-	export enum LogColors {
-	    FgBlack = 30,
-	    FgRed = 31,
-	    FgGreen = 32,
-	    FgYellow = 33,
-	    FgBlue = 34,
-	    FgMagenta = 35,
-	    FgCyan = 36,
-	    FgWhite = 37,
-	    BgBlack = 40,
-	    BgRed = 41,
-	    BgGreen = 42,
-	    BgYellow = 43,
-	    BgBlue = 44,
-	    BgMagenta = 45,
-	    BgCyan = 46,
-	    BgWhite = 47
-	} class Logger {
-	    config: LOG_CONFIG;
-	    constructor(config?: any);
-	    log(msg: any, color?: any, bright?: boolean): boolean;
-	    error(err: any, color?: any, bright?: boolean): boolean;
-	    dir(obj: any, color?: any, bright?: boolean): boolean;
-	    info(msg: any, color?: any, bright?: boolean): boolean;
-	    warn(msg: any, color?: any, bright?: boolean): boolean;
-	    write(msg: any, color?: any, bright?: boolean): boolean;
-	    static colorize(color: any, output: any, bright: any): string;
-	}
-	export { Logger };
 
 }
 declare module 'graphinius/mincutmaxflow/MinCutMaxFlowBoykov' {

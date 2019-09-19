@@ -4,8 +4,7 @@ import {
 	GraphStats,
 	NextArray,
 	MinAdjacencyListArray,
-	MinAdjacencyListDict,
-	ClusteringCoefs
+	MinAdjacencyListDict
 } from '../interfaces';
 import { IBaseNode, BaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
