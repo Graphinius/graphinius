@@ -16,6 +16,7 @@ console.log(tf.getBackend());
 // console.log(tfc);
 
 
+
 describe('Clustering coefficient tests - ', () => {
 
 	const small_graph_file = JSON_DATA_PATH + '/small_graph.json';
@@ -47,6 +48,9 @@ describe('Clustering coefficient tests - ', () => {
 		});
 
 
+		/**
+		 * @description friends of your friends are likely to be(come) friends as well...
+		 */
 		describe('UN-directed', () => {
 
 			beforeEach(() => {
@@ -114,6 +118,7 @@ describe('Clustering coefficient tests - ', () => {
 
 
 		/**
+		 * @description “Your followers are likely to follow common targets"
 		 * @description frequency of loops of length two in a directed network: `reciprocity`
 		 */
 		describe('DIRECTED - ', () => {
@@ -138,6 +143,9 @@ describe('Clustering coefficient tests - ', () => {
 			});
 
 
+			/**
+			 * @todo networkx says 0.4...
+			 */
 			it('should compute DIRECTED transitivity on triangle graph ', (done) => {
 				cg.transitivity(true).then(res => {
 					// console.log(res);

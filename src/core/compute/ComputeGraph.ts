@@ -154,6 +154,12 @@ class ComputeGraph implements IComputeGraph {
 	}
 
 
+	/**
+	 * @todo there are 4 different ways to define a triplet closure in DIRECTED graphs
+	 * 			 -> using the `undirected` formula (transitivity) is not consistent with networkx
+	 * 			 -> do I care ???
+	 * @param directed
+	 */
 	async transitivity(directed = false): Promise<number> {
 		const triangles = await this.triangleCount(directed);
 		const triads = this.triadCount(directed);
