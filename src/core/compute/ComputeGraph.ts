@@ -1,4 +1,4 @@
-import {ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray, TriangleCount} from "../interfaces";
+import {ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray, TriadCount} from "../interfaces";
 import {IGraph} from "../base/BaseGraph";
 
 
@@ -8,13 +8,19 @@ const DEFAULT_WEIGHT = 1;
 export interface IComputeGraph {
 	// REPRESENTATIONS
 	adjListW(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
+
 	adjMatrix(): MinAdjacencyListArray;
+
 	adjMatrixW(incoming?: boolean): MinAdjacencyListArray;
+
 	nextArray(incoming?: boolean): NextArray;
 
 	// ANALYSIS
-	triangleCount(): Promise<TriangleCount>;
-	globalCC(): Promise<ClusteringCoefs>;
+	triadCount(): TriadCount;
+
+	triangleCount(): Promise<TriadCount>;
+
+	transitivity(): Promise<ClusteringCoefs>;
 }
 
 
@@ -27,7 +33,6 @@ class ComputeGraph implements IComputeGraph {
 
 
 	constructor(private _g: IGraph, private _tf?: any) {
-
 	}
 
 
@@ -144,31 +149,89 @@ class ComputeGraph implements IComputeGraph {
 	}
 
 
-	async globalCC(): Promise<ClusteringCoefs> {
+	async transitivity(): Promise<ClusteringCoefs> {
 		const tc = await this.triangleCount();
-
+		const triads = this.triadCount();
 		return {
-			und: tc.und,
+			und: 3 * tc.und / triads.und,
 			dir: null
 		};
 	}
 
 
-	async triangleCount(): Promise<TriangleCount> {
+	triadCount(): TriadCount {
+		let und_count = 0;
+		const dupes_set = new Set<string>();
+
+		const und_edges = Object.values(this._g.getUndEdges());
+		let ia, ib, ja, jb, path_id;
+
+		for (let i of und_edges) {
+			for (let j of und_edges) {
+				if ( i === j ) {
+					continue;
+				}
+
+				ia = i.getNodes().a;
+				ib = i.getNodes().b;
+				ja = j.getNodes().a;
+				jb = j.getNodes().b;
+
+				// loops
+				if ( ia === ib || ja === jb ) {
+					continue;
+				}
+
+				// Spread 1
+				if ( ia === ja && ib !== jb ) {
+					path_id = `${ib.id}-${ia.id}-${jb.id}`;
+					if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
+						dupes_set.add(path_id);
+						und_count++;
+					}
+				}
+				// Spread 2
+				if ( ib === jb && ia !== ja ) {
+					path_id = `${ia.id}-${ib.id}-${ja.id}`;
+					if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
+						dupes_set.add(path_id);
+						und_count++;
+					}
+				}
+				// In 'order'...
+				if ( ib === ja && ia !== jb ) {
+					path_id = `${ia.id}-${ib.id}-${jb.id}`;
+					if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
+						dupes_set.add(path_id);
+						und_count++;
+					}
+				}
+			}
+		}
+		// console.log(dupes_set);
+
+		return {
+			dir: null,
+			und: und_count
+		}
+	}
+
+
+	async triangleCount(): Promise<TriadCount> {
 		if (!this._tf || !this._tf.matMul) {
 			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
 		}
 
 		const adj_list = this.adjMatrix();
-		console.log(adj_list);
+		// console.log(adj_list);
 
 		const a = this._tf.tensor2d(adj_list);
 
 		const aux2 = await a.matMul(a).array();
-		console.log(aux2);
+		// console.log(aux2);
 
 		const aux3 = await a.matMul(aux2).array();
-		console.log(aux3);
+		// console.log(aux3);
 
 		let trace = 0;
 		for (let i = 0; i < aux3.length; i++) {

@@ -19,9 +19,13 @@ export interface GraphStats {
     density_dir: number;
     density_und: number;
 }
+export interface TriadCount {
+    und: number;
+    dir: number;
+}
 export interface ClusteringCoefs {
-    global_und: number;
-    global_dir: number;
+    und: number;
+    dir: number;
 }
 export declare type MinAdjacencyListDict = {
     [id: string]: MinAdjacencyListDictEntry;

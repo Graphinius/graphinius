@@ -30,7 +30,7 @@ export interface GraphStats {
 	density_und		: number;
 }
 
-export interface TriangleCount {
+export interface TriadCount {
 	und: number;
 	dir: number;
 }

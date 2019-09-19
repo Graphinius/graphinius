@@ -104,15 +104,27 @@ describe('Checking index.js structure - ', () => {
 
     it('core should contain ComputeGraph', () => {
       expect(typeof index.core.compute.ComputeGraph).toBe("function");
+    });
+
+
+    it('compute graph should contain list / matrix methods', () => {
       graph = new base.BaseGraph("fodder for compute graph");
       const cg = new index.core.compute.ComputeGraph(graph);
 
       expect(typeof cg.adjListW).toBe("function");
       expect(typeof cg.adjMatrix).toBe("function");
-			expect(typeof cg.adjMatrixW).toBe("function");
+      expect(typeof cg.adjMatrixW).toBe("function");
       expect(typeof cg.nextArray).toBe("function");
-      // getter already calls a function...
-      // expect(typeof cg.clustCoef).toBe("function");
+    });
+
+
+    it('compute graph should contain list / matrix methods', () => {
+      graph = new base.BaseGraph("fodder for compute graph");
+      const cg = new index.core.compute.ComputeGraph(graph);
+
+      expect(typeof cg.triadCount).toBe("function");
+      expect(typeof cg.triangleCount).toBe("function");
+      expect(typeof cg.transitivity).toBe("function");
     });
 
   });

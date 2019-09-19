@@ -326,9 +326,13 @@ declare module 'graphinius/core/interfaces' {
 	    density_dir: number;
 	    density_und: number;
 	}
+	export interface TriadCount {
+	    und: number;
+	    dir: number;
+	}
 	export interface ClusteringCoefs {
-	    global_und: number;
-	    global_dir: number;
+	    und: number;
+	    dir: number;
 	}
 	export type MinAdjacencyListDict = {
 	    [id: string]: MinAdjacencyListDictEntry;
@@ -578,14 +582,16 @@ declare module 'graphinius/search/BellmanFord' {
 
 }
 declare module 'graphinius/core/compute/ComputeGraph' {
-	import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from 'graphinius/core/interfaces';
+	import { ClusteringCoefs, MinAdjacencyListArray, MinAdjacencyListDict, NextArray, TriadCount } from 'graphinius/core/interfaces';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
 	export interface IComputeGraph {
 	    adjListW(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean): MinAdjacencyListArray;
 	    nextArray(incoming?: boolean): NextArray;
-	    readonly clustCoef: ClusteringCoefs;
+	    triadCount(): TriadCount;
+	    triangleCount(): Promise<TriadCount>;
+	    transitivity(): Promise<ClusteringCoefs>;
 	} class ComputeGraph implements IComputeGraph {
 	    private _g;
 	    private _tf?;
@@ -598,7 +604,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
 	    adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
-	    readonly clustCoef: ClusteringCoefs;
+	    transitivity(): Promise<ClusteringCoefs>;
+	    triadCount(): TriadCount;
+	    triangleCount(): Promise<TriadCount>;
 	}
 	export { ComputeGraph };
 

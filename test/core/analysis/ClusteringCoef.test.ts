@@ -28,7 +28,7 @@ describe('Clustering coefficient tests - ', () => {
 	});
 
 
-	describe('small graph - ', () => {
+	describe('small & triangle graph - ', () => {
 
 		beforeEach(() => {
 			g = new BaseGraph('triangulus');
@@ -44,52 +44,73 @@ describe('Clustering coefficient tests - ', () => {
 
 		it('CC should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.globalCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+			expect(cg.transitivity()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
 		});
 
 
-		it('should compute triangle counts on small graph using TF', (done) => {
-			g = new JSONInput().readFromJSONFile(small_graph_file, g);
-			cg.triangleCount().then(res => {
-				expect(res.dir).toBe(0);
-				expect(res.und).toBe(0);
-				done();
+		describe('UN-directed', () => {
+
+			it('should compute triad counts on small graph ', () => {
+				g = new JSONInput({explicit_direction: false, directed: false}).readFromJSONFile(small_graph_file, g);
+				const res = cg.triadCount();
+				// expect(res.dir).toBe(8);
+				expect(res.und).toBe(3);
 			});
-		});
 
 
-		// it('should compute global UNweighted CC on small graph using TF', (done) => {
-		// 	g = new JSONInput().readFromJSONFile(small_graph_file, g);
-		// 	cg.globalCC().then(res => {
-		// 		console.log(res);
-		// 		expect(res.und).toBe(0);
-		// 		done();
-		// 	});
-		// });
-
-
-		/**
-		 * @todo should we take the direction explicitly or not?
-		 * 			 -> computing on UNdirected adj_list AND directed one?
-		 */
-		it('should compute triangle counts on triangle graph using TF', (done) => {
-			g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
-			cg.triangleCount().then(res => {
-				expect(res.dir).toBe(8);
-				expect(res.und).toBe(4);
-				done();
+			it('should compute triangle counts on small graph ', (done) => {
+				g = new JSONInput({explicit_direction: false, directed: false}).readFromJSONFile(small_graph_file, g);
+				cg.triangleCount().then(res => {
+					expect(res.dir).toBe(0);
+					expect(res.und).toBe(0);
+					done();
+				});
 			});
+
+
+			it('should compute global UNdirected CC on small graph ', (done) => {
+				g = new JSONInput().readFromJSONFile(small_graph_file, g);
+				cg.transitivity().then(res => {
+					// console.log(res);
+					expect(res.und).toBe(0);
+					done();
+				});
+			});
+
+
+			it('should compute triad counts on triangle graph ', () => {
+				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
+				const res = cg.triadCount();
+				// expect(res.dir).toBe(8);
+				expect(res.und).toBe(19);
+			});
+
+
+			/**
+			 * @todo should we take the direction explicitly or not?
+			 *       -> computing on UNdirected adj_list AND directed one?
+			 */
+			it('should compute triangle counts on triangle graph ', (done) => {
+				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
+				cg.triangleCount().then(res => {
+					expect(res.dir).toBe(8);
+					expect(res.und).toBe(4);
+					done();
+				});
+			});
+
+
+			it('should compute global UNdirected CC on triangle graph ', (done) => {
+				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
+				cg.transitivity().then(res => {
+					// console.log(res);
+					expect(res.und).toBe(0.631578947368421);
+					done();
+				});
+			});
+
 		});
 
-
-
-		// it('should compute global UNweighted CC on triangle graph using TF', (done) => {
-		// 	g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
-		// 	cg.globalCC().then(res => {
-		// 		console.log(res);
-		// 		done();
-		// 	});
-		// });
 
 	});
 
