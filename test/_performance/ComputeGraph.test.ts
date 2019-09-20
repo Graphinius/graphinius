@@ -3,6 +3,7 @@ import {JSONInput} from "../../src/io/input/JSONInput";
 import {ComputeGraph} from "../../src/core/compute/ComputeGraph";
 
 import {Logger} from "../../src/utils/Logger";
+
 const logger = new Logger();
 
 const tf = require('@tensorflow/tfjs-node');
@@ -10,33 +11,58 @@ console.log(tf.getBackend());
 
 const json = new JSONInput({
 	explicit_direction: false,
-	directed: false,
+	directed: true,
 	weighted: false
 });
 
 const beer_graph_file = `${JSON_REC_PATH}/beerGraph.json`;
+const jobs_graph_file = `${JSON_REC_PATH}/jobs.json`;
+const meetup_graph_file = `${JSON_REC_PATH}/meetupGraph.json`;
 
 
 describe('transitivity - clustering coefficient performance tests - ', () => {
 
-	const beerGraph = new JSONInput().readFromJSONFile(beer_graph_file);
-	const computeBeer = new ComputeGraph(beerGraph, tf);
+	const jobsGraph = json.readFromJSONFile(jobs_graph_file);
+	const beerGraph = json.readFromJSONFile(beer_graph_file);
+	// const meetupGraph = json.readFromJSONFile(meetup_graph_file);
+	let cg;
 	let tic, toc;
 
-	it('computes the transitivity of a ~500 nodes, ~7k edges graph', () => {
-		tic = Date.now();
-		computeBeer.transitivity();
-		toc = Date.now();
-		logger.log(`Computing transitivity (TF) on beer graph took ${toc - tic} ms.`);
+
+	beforeAll(() => {
+		console.log(jobsGraph.stats);
+		console.log(beerGraph.stats);
 	});
 
 
-	it('computes the local clustering coefficients of a ~500 nodes, ~7k edges graph', () => {
-		tic = Date.now();
-		computeBeer.clustCoef();
-		toc = Date.now();
-		logger.log(`Computing CC (TF) on beer graph took ${toc - tic} ms.`);
+	/**
+	 * @TODO figure out why the beer graph seems to have transitivity / CCs of ALL zero... !?
+	 */
+	[jobsGraph, beerGraph].forEach(graph => { // meetupGraph -> explodes the heap ;-)
+
+		it('computes the transitivity of a recommender graph', (done) => {
+			cg = new ComputeGraph(graph, tf);
+			tic = Date.now();
+			cg.transitivity(true).then(res => {
+				toc = Date.now();
+				console.log(res);
+				logger.log(`Computing transitivity (TF) on ${graph.label} took ${toc - tic} ms.`);
+				done()
+			});
+		});
+
+
+		it('computes the local clustering coefficients of a recommender graph', (done) => {
+			cg = new ComputeGraph(graph, tf);
+			tic = Date.now();
+			cg.clustCoef(true).then(res => {
+				toc = Date.now();
+				// console.log(res);
+				logger.log(`Computing CC (TF) on ${graph.label} took ${toc - tic} ms.`);
+				done();
+			});
+		});
+
 	});
 
 });
-

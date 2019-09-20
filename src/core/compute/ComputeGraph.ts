@@ -292,4 +292,3 @@ class ComputeGraph implements IComputeGraph {
 export {
 	ComputeGraph
 }
-
