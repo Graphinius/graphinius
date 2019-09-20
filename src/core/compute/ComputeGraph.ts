@@ -2,6 +2,7 @@ import {MinAdjacencyListArray, MinAdjacencyListDict, NextArray} from "../interfa
 import {IGraph} from "../base/BaseGraph";
 
 import {Logger} from "../../utils/Logger";
+import {IBaseNode} from "../base/BaseNode";
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;
@@ -157,19 +158,6 @@ class ComputeGraph implements IComputeGraph {
 
 
 	/**
-	 * @todo there are 4 different ways to define a triplet closure in DIRECTED graphs
-	 * 			 -> using the `undirected` formula (transitivity) is not consistent with networkx
-	 * 			 -> do I care ???
-	 * @param directed
-	 */
-	async transitivity(directed = false): Promise<number> {
-		const triangles = await this.triangleCount(directed);
-		const triads = this.triadCount(directed);
-		return 3 * triangles / triads;
-	}
-
-
-	/**
 	 * @todo check necessity of the reverse conditions in the `directed` case
 	 *
 	 * @param directed
@@ -256,6 +244,19 @@ class ComputeGraph implements IComputeGraph {
 	}
 
 
+	/**
+	 * @todo there are 4 different ways to define a triplet closure in DIRECTED graphs
+	 * 			 -> using the `undirected` formula results are not consistent with networkx
+	 * 			 -> do I care ???
+	 * @param directed
+	 */
+	async transitivity(directed = false): Promise<number> {
+		const triangles = await this.triangleCount(directed);
+		const triads = this.triadCount(directed);
+		return 3 * triangles / triads;
+	}
+
+
 	async clustCoef(directed = false) : Promise<{[key: string]: number}> {
 		if (!this._tf || !this._tf.matMul) {
 			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
@@ -266,13 +267,21 @@ class ComputeGraph implements IComputeGraph {
 		const aux2 = await a.matMul(a).array();
 		const aux3 = await a.matMul(aux2).array();
 		/**
-		 * @todo check if node order is equivalent to aux3 ordering
+		 * @todo ensure node order is equivalent to aux3 ordering
 		 */
 		let deg: number;
+		let node: IBaseNode;
+		let cci: number;
 		const keys = Object.keys(this._g.getNodes());
+
 		for ( let i in aux3[0] ) {
-			deg = this._g.getNodeById(keys[i]).degree();
-			result[i] = (aux3[i][i] / (deg * (deg-1))) || 0;
+			node = this._g.getNodeById(keys[i]);
+			deg = directed ? node.inDegree() + node.outDegree() : node.degree();
+
+			// console.log(`node ${node.id} has degree ${deg}`);
+
+			cci = (aux3[i][i] / (deg * (deg-1))) || 0;
+			result[i] = directed ? 2 * cci : cci;
 		}
 		return result;
 	}

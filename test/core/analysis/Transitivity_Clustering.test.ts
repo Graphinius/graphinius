@@ -163,18 +163,40 @@ describe('Clustering coefficient tests - ', () => {
 		});
 
 
-		describe('clustering coefficient UNdirected - ', () => {
+		/**
+		 * Self loops are ignored.
+		 */
+		describe('clustering coefficient (UN)directed - ', () => {
 
-			beforeAll(() => {
-				g = new JSONInput().readFromJSONFile(triangle_graph_file);
-				cg = new ComputeGraph(g, tf);
+			beforeEach(() => {
+				g = null;
+				cg = null;
 			});
 
 
 			it('should compute local clustering coefficients per node', (done) => {
+				g = new JSONInput().readFromJSONFile(triangle_graph_file);
+				cg = new ComputeGraph(g, tf);
 				const clust_exp = {0: 1.0, 1: 1.0, 2: 0.3, 3: 1.0, 4: 0, 5: 0};
 				cg.clustCoef().then(clust => {
 					// console.log(clust);
+					expect(clust).toEqual(clust_exp);
+					done();
+				});
+			});
+
+
+			/**
+			 * @todo in order to match networkx results, we have to multiply the directed results by 2...
+			 * 			 -> shouldn't this be the other way around?
+			 * 			 -> seems we're already over-compensating for th
+			 */
+			it('should compute DIRECTED local clustering coefficients per node', (done) => {
+				g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed);
+				cg = new ComputeGraph(g, tf);
+				const clust_exp = {0: 1.0, 1: 0.6666666666666666, 2: 0.2, 3: 1.0, 4: 0, 5: 0};
+				cg.clustCoef(true).then(clust => {
+					console.log(clust);
 					expect(clust).toEqual(clust_exp);
 					done();
 				});

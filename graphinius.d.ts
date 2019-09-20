@@ -634,9 +634,9 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
 	    adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
-	    transitivity(directed?: boolean): Promise<number>;
 	    triadCount(directed?: boolean): number;
 	    triangleCount(directed?: boolean): Promise<number>;
+	    transitivity(directed?: boolean): Promise<number>;
 	    clustCoef(directed?: boolean): Promise<{
 	        [key: string]: number;
 	    }>;

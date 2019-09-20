@@ -14,6 +14,7 @@ let sn_config: ICSVInConfig = {
 
 const small_graph_file = `${JSON_DATA_PATH}/small_graph.json`;
 const triangle_graph_file = `${JSON_DATA_PATH}/triangle_graph.json`;
+const triangle_directed = `${JSON_DATA_PATH}/triangle_directed.json`;
 
 
 describe('Adjacency List / Hash Tests - ', () => {
@@ -140,6 +141,36 @@ describe('Adjacency List / Hash Tests - ', () => {
 			expect(adj_list).toEqual(expected_result);
 		});
 
+
+		test('should produce a correct UNweighted adj.list for the triangle example graph', () => {
+			g = jsonReader.readFromJSONFile(triangle_graph_file, g);
+			adj_list = cg.adjListW();
+			expected_result = {
+				'A': { 'B': 1, 'C': 1, 'D': 1 },
+				'B': { 'A': 1, 'C': 1, 'D': 1 },
+				'C': { 'A': 1, 'B': 1, 'D': 1, 'E': 1, 'F': 1 },
+				'D': { 'A': 1, 'B': 1, 'C': 1 },
+				'E': { 'C': 1 },
+				'F': { 'C': 1 }
+			};
+			expect(adj_list).toEqual(expected_result);
+		});
+
+
+		test('should produce a correct UNweighted adj.list for the triangle DIRECTED graph', () => {
+			g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed, g);
+			adj_list = cg.adjListW();
+			expected_result = {
+				'A': { 'C': 1 },
+				'B': { 'A': 1, 'D': 1 },
+				'C': { 'B': 1, 'E': 1, 'F': 1 },
+				'D': { 'C': 1 },
+				'E': {  },
+				'F': {  }
+			};
+			expect(adj_list).toEqual(expected_result);
+		});
+
 	});
 
 
@@ -196,6 +227,21 @@ describe('Adjacency List / Hash Tests - ', () => {
 				[1, 1, 1, 0, 0, 0],
 				[0, 0, 1, 0, 0, 0],
 				[0, 0, 1, 0, 0, 0]
+			];
+			expect(adj_list).toEqual(expected_result);
+		});
+
+
+		test('should produce a correct UNweighted adj.list for the triangle DIRECTED graph', () => {
+			g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed, g);
+			adj_list = cg.adjMatrix();
+			expected_result = [
+				[0, 0, 1, 0, 0, 0],
+				[1, 0, 0, 1, 0, 0],
+				[0, 1, 0, 0, 1, 1],
+				[0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0]
 			];
 			expect(adj_list).toEqual(expected_result);
 		});
