@@ -180,7 +180,7 @@ class TypedNode extends BaseNode implements ITypedNode {
 
 
 	all(type:string): Set<string> {
-		const result = new Set();
+		const result = new Set<any>(); // spread operator has a problem with Set<string>...
 		if ( this._typedAdjSets[type] ) {
 			this._typedAdjSets[type].ins && result.add([...this._typedAdjSets[type].ins]);
 			this._typedAdjSets[type].outs && result.add([...this._typedAdjSets[type].outs]);

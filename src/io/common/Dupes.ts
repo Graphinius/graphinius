@@ -39,7 +39,7 @@ class EdgeDupeChecker {
 
 
 	potentialEndpoints(e: PotentialEdgeInfo): Set<IBaseEdge | ITypedEdge> {
-		const result = new Set();
+		const result = new Set<IBaseEdge | ITypedEdge>();
 
 		if ( e.dir ) {
 			e.a.nextNodes().forEach(ne => {

@@ -30,15 +30,15 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 
 
 	beforeAll(() => {
-		console.log(jobsGraph.stats);
-		console.log(beerGraph.stats);
+		// console.log(jobsGraph.stats);
+		// console.log(beerGraph.stats);
 	});
 
 
 	/**
 	 * @TODO figure out why the beer graph seems to have transitivity / CCs of ALL zero... !?
 	 */
-	[jobsGraph, beerGraph].forEach(graph => { // meetupGraph -> explodes the heap ;-)
+	[jobsGraph].forEach(graph => { // meetupGraph -> explodes the heap ;-)
 
 		it('computes the transitivity of a recommender graph', (done) => {
 			cg = new ComputeGraph(graph, tf);
@@ -47,7 +47,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 				toc = Date.now();
 				console.log(res);
 				logger.log(`Computing transitivity (TF) on ${graph.label} took ${toc - tic} ms.`);
-				done()
+				done();
 			});
 		});
 
@@ -57,7 +57,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 			tic = Date.now();
 			cg.clustCoef(true).then(res => {
 				toc = Date.now();
-				// console.log(res);
+				console.log(res);
 				logger.log(`Computing CC (TF) on ${graph.label} took ${toc - tic} ms.`);
 				done();
 			});
