@@ -1,11 +1,11 @@
-import * as $E from './BaseEdge';
 import {TypedNode} from '../typed/TypedNode';
 import * as $SU from '../../utils/StructUtils';
+import {IBaseEdge} from "./BaseEdge";
 
 
 export interface NeighborEntry {
   node  : IBaseNode;
-  edge  : $E.IBaseEdge;
+  edge  : IBaseEdge;
   // only used (and tested) in PFS
   best? : number;
 }
@@ -49,18 +49,18 @@ export interface IBaseNode {
 	readonly self_out_deg: number;
 	
 	// EDGE methods
-	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
-	hasEdge(edge: $E.IBaseEdge) : boolean;	
+	addEdge(edge: IBaseEdge) : IBaseEdge;
+	hasEdge(edge: IBaseEdge) : boolean;	
 	hasEdgeID(id: string) : boolean;	
-	getEdge(id: string) : $E.IBaseEdge;
-	
-	inEdges() : {[k: string] : $E.IBaseEdge};
-	outEdges() : {[k: string] : $E.IBaseEdge};
-	undEdges() : {[k: string] : $E.IBaseEdge};
-	dirEdges() : {[k: string] : $E.IBaseEdge};
-	allEdges() : {[k: string] : $E.IBaseEdge};
+	getEdge(id: string) : IBaseEdge;
 
-	removeEdge(edge: $E.IBaseEdge) : void;
+	inEdges() : {[k: string] : IBaseEdge};
+	outEdges() : {[k: string] : IBaseEdge};
+	undEdges() : {[k: string] : IBaseEdge};
+	dirEdges() : {[k: string] : IBaseEdge};
+	allEdges() : {[k: string] : IBaseEdge};
+
+	removeEdge(edge: IBaseEdge) : void;
 	removeEdgeByID(id: string) : void;
 	
 	// Clear different types of edges
@@ -91,9 +91,9 @@ class BaseNode implements IBaseNode {
 
 	protected _features	: NodeFeatures;
 
-	protected _in_edges		: {[k: string] : $E.IBaseEdge};
-	protected _out_edges	: {[k: string] : $E.IBaseEdge};
-	protected _und_edges	: {[k: string] : $E.IBaseEdge};
+	protected _in_edges		: {[k: string] : IBaseEdge};
+	protected _out_edges	: {[k: string] : IBaseEdge};
+	protected _und_edges	: {[k: string] : IBaseEdge};
 
 	/**
 	 * @param _id
@@ -199,55 +199,47 @@ class BaseNode implements IBaseNode {
 	 * 2. add it to the edge array
 	 * 3. check type of edge (directed / undirected)
 	 * 4. update our degrees accordingly
-	 * This is a design decision we can defend by pointing out
-	 * that querying degrees will occur much more often
-	 * than modifying the edge structure of a node (??)
-	 * One further point: do we also check for duplicate
-	 * edges not in the sense of duplicate ID's but duplicate
-	 * structure (nodes, direction) ?
-	 * => Not for now, as we would have to check every edge
-	 * instead of simply checking the hash id...
-	 * ALTHOUGH: adding edges will (presumably) not occur often...
 	 */
-	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge {
-		// is this edge connected to us at all?
-		let nodes = edge.getNodes();
-		if ( nodes.a !== this && nodes.b !== this ) {
+	addEdge(edge: IBaseEdge) : IBaseEdge {
+		let ends = edge.getNodes();
+		if ( ends.a !== this && ends.b !== this ) {
 			throw new Error("Cannot add edge that does not connect to this node");
 		}
-		let edgeID = edge.getID();
-		
-		// Is it an undirected or directed edge?
+		const id = edge.id;
+
 		if ( edge.isDirected() ) {
 			// is it outgoing or incoming?
-			if ( nodes.a === this && !this._out_edges[edgeID]) {
-				this._out_edges[edgeID] = edge;
+			if ( ends.a === this && !this._out_edges[id]) {
+				this._out_edges[id] = edge;
 				this._out_deg += 1;
-				// Is the edge also connecting to ourselves -> SELF_LOOP ?
-				if ( nodes.b === this && !this._in_edges[edgeID]) {
-					this._in_edges[edgeID] = edge;
+				// Directed self loop ?
+				if ( ends.b === this && !this._in_edges[id]) {
+					this._in_edges[id] = edge;
 					this._in_deg += 1;
+					this._self_in_deg += 1;
+					this._self_out_deg += 1;
 				}
 			}
-			// Can't be a SELF_LOOP anymore
-			else if ( !this._in_edges[edgeID] ) { // nodes.b === this
-				this._in_edges[edgeID] = edge;
+			// No self loop
+			else if ( !this._in_edges[id] ) { // nodes.b === this
+				this._in_edges[id] = edge;
 				this._in_deg += 1;
 			}
 		}
 		// UNdirected
 		else {
-			// Is the edge also connecting to ourselves -> SELF_LOOP
-			if (this._und_edges[ edge.getID() ]) {
+			if (this._und_edges[ edge.id ]) {
 				throw new Error("Cannot add same undirected edge multiple times.");
 			}
-			this._und_edges[edge.getID()] = edge;
+			this._und_edges[id] = edge;
 			this._deg += 1;
+			if ( ends.a === ends.b ) {
+				this._self_deg += 1;
+			}
 		}
 		return edge;
 	}
-	
-	hasEdge(edge: $E.IBaseEdge) : boolean {
+	hasEdge(edge: IBaseEdge) : boolean {
 		return !!this._in_edges[ edge.getID() ] || !!this._out_edges[ edge.getID() ] || !!this._und_edges[ edge.getID() ];
 	}
 	
@@ -255,7 +247,7 @@ class BaseNode implements IBaseNode {
 		return !!this._in_edges[ id ] || !!this._out_edges[ id ] || !!this._und_edges[ id ];
 	}
 	
-	getEdge(id: string) : $E.IBaseEdge {
+	getEdge(id: string) : IBaseEdge {
 		let edge = this._in_edges[id] || this._out_edges[id] || this._und_edges[id];
 		if ( !edge ) {
 			throw new Error("Cannot retrieve non-existing edge.");
@@ -263,45 +255,53 @@ class BaseNode implements IBaseNode {
 		return edge;
 	}
 	
-	inEdges() : {[k: string] : $E.IBaseEdge} {
+	inEdges() : {[k: string] : IBaseEdge} {
 		return this._in_edges;
 	}
 	
-	outEdges() : {[k: string] : $E.IBaseEdge} {
+	outEdges() : {[k: string] : IBaseEdge} {
 		return this._out_edges;
 	}
 	
-	undEdges() : {[k: string] : $E.IBaseEdge} {
+	undEdges() : {[k: string] : IBaseEdge} {
 		return this._und_edges;
 	}
 
-	dirEdges() : {[k: string] : $E.IBaseEdge} {
+	dirEdges() : {[k: string] : IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges]);
 	}
 
-	allEdges() : {[k: string] : $E.IBaseEdge} {
+	allEdges() : {[k: string] : IBaseEdge} {
 		return $SU.mergeObjects([this._in_edges, this._out_edges, this._und_edges]);
 	}
-	
-	removeEdge(edge: $E.IBaseEdge) : void {
+
+	/**
+	 * @description automatically takes care of self-loops (since looking up in all internal data structures)
+	 * @param edge
+	 */
+	removeEdge(edge: IBaseEdge) : void {
 		if ( !this.hasEdge(edge) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		let id = edge.getID();
+		const id = edge.id;
+		const ends = edge.getNodes();
 		let e = this._und_edges[id];
 		if ( e ) {
 			delete this._und_edges[id];
 			this._deg -= 1;
+			( ends.a === ends.b ) && ( this._self_deg -= 1 );
 		}
 		e = this._in_edges[id];
 		if ( e ) {
 			delete this._in_edges[id];
 			this._in_deg -= 1;
+			( ends.a === ends.b ) && ( this._self_in_deg -= 1 );
 		}
 		e = this._out_edges[id];
 		if ( e ) {
 			delete this._out_edges[id];
 			this._out_deg -= 1;
+			( ends.a === ends.b ) && ( this._self_out_deg -= 1 );
 		}
 	}
 
@@ -309,42 +309,38 @@ class BaseNode implements IBaseNode {
 		if ( !this.hasEdgeID(id) ) {
 			throw new Error("Cannot remove unconnected edge.");
 		}
-		let e = this._und_edges[id];
-		if ( e ) { 
-			delete this._und_edges[id];
-			this._deg -= 1;
-		}
-		e = this._in_edges[id];
-		if ( e ) { 
-			delete this._in_edges[id];
-			this._in_deg -= 1;
-		}
-		e = this._out_edges[id];
-		if ( e ) { 
-			delete this._out_edges[id];
-			this._out_deg -= 1;
-		}
+		this.removeEdge(this.getEdge(id));
 	}
-	
+
+	/**
+	 * @description slow -> if possible, just clear ALL edges instead
+	 */
 	clearOutEdges() : void {
-		this._out_edges = {};
-		this._out_deg = 0;
+		for ( let e of Object.values(this.outEdges()) ) {
+			this.removeEdge(e);
+		}
 	}
-	
+
+	/**
+	 * @description slow -> if possible, just clear ALL edges instead
+	 */
 	clearInEdges() : void {
-		this._in_edges = {};		
-		this._in_deg = 0;
+		for ( let e of Object.values(this.inEdges()) ) {
+			this.removeEdge(e);
+		}
 	}
-	
+
 	clearUndEdges() : void {
 		this._und_edges = {};
 		this._deg = 0;
+		this._self_deg = 0;
 	}
 	
 	clearEdges() : void {
-		this.clearInEdges();
-		this.clearOutEdges();
 		this.clearUndEdges();
+		this._in_edges = {};
+		this._out_edges = {};
+		this._deg = this._self_deg = this._in_deg = this._self_in_deg = this._out_deg = this._self_out_deg = 0;
 	}
 	
 	/**
@@ -354,7 +350,7 @@ class BaseNode implements IBaseNode {
 	prevNodes() : Array<NeighborEntry> {
 		let prevs : Array<NeighborEntry> = [];
 		let key 	: string,
-				edge 	: $E.IBaseEdge;
+				edge 	: IBaseEdge;
 				
 		for ( key in this._in_edges ) {
 			if ( this._in_edges.hasOwnProperty(key) ) {
@@ -375,7 +371,7 @@ class BaseNode implements IBaseNode {
 	nextNodes() : Array<NeighborEntry> {
 		let nexts : Array<NeighborEntry> = [];
 		let key 	: string,
-				edge 	: $E.IBaseEdge;
+				edge 	: IBaseEdge;
 		
 		for ( key in this._out_edges ) {
 			if ( this._out_edges.hasOwnProperty(key) ) {
@@ -396,7 +392,7 @@ class BaseNode implements IBaseNode {
 	connNodes() : Array<NeighborEntry> {
 		let conns : Array<NeighborEntry> = [];
 		let key 	: string,
-				edge 	: $E.IBaseEdge;
+				edge 	: IBaseEdge;
 		
 		for ( key in this._und_edges ) {
 			if ( this._und_edges.hasOwnProperty(key) ) {
@@ -462,6 +458,5 @@ class BaseNode implements IBaseNode {
 	}
 	
 }
-
 
 export { BaseNode };

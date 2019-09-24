@@ -68,10 +68,10 @@ describe('Clustering coefficient tests - ', () => {
 			/**
 			 * @todo consider the self-loops
 			 */
-			it.skip('should compute triad counts on small graph ', () => {
+			it('should compute triad counts on small graph ', () => {
 				g = new JSONInput({explicit_direction: false, directed: false}).readFromJSONFile(small_graph_file, g);
-				logger.log(g.stats);
-				logger.log(g.getUndEdges());
+				// logger.log(g.stats);
+				// logger.log(g.getUndEdges());
 				const res = cg.triadCount();
 				expect(res).toBe(3);
 			});

@@ -168,15 +168,16 @@ class ComputeGraph implements IComputeGraph {
 	 */
 	triadCount(directed = false): number {
 		let triangle_count = 0;
-		const dupes_set = new Set<string>();
 		const nodes = Object.values(this._g.getNodes());
+		let deg;
 
 		for ( let n of nodes ) {
 			if ( directed ) {
-				triangle_count += n.in_deg * n.out_deg;
+				triangle_count += ( n.in_deg - n.self_in_deg ) * ( n.out_deg - n.self_out_deg );
 			}
 			else {
-				triangle_count += n.deg * ( n.deg - 1 ) / 2;
+				deg = n.deg - n.self_deg;
+				triangle_count += deg * ( deg - 1 ) / 2;
 			}
 		}
 		return triangle_count;

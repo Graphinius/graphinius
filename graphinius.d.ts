@@ -29,11 +29,6 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	export { TypedEdge };
 
 }
-declare module 'graphinius/utils/StructUtils' {
-	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
-	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
-
-}
 declare module 'graphinius/core/base/BaseEdge' {
 	import * as $N from 'graphinius/core/base/BaseNode';
 	import { TypedEdge } from 'graphinius/core/typed/TypedEdge';
@@ -109,12 +104,17 @@ declare module 'graphinius/core/base/BaseEdge' {
 	export { BaseEdge };
 
 }
+declare module 'graphinius/utils/StructUtils' {
+	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
+	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
+
+}
 declare module 'graphinius/core/base/BaseNode' {
-	import * as $E from 'graphinius/core/base/BaseEdge';
 	import { TypedNode } from 'graphinius/core/typed/TypedNode';
+	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	export interface NeighborEntry {
 	    node: IBaseNode;
-	    edge: $E.IBaseEdge;
+	    edge: IBaseEdge;
 	    best?: number;
 	}
 	export interface BaseNodeConfig {
@@ -145,26 +145,26 @@ declare module 'graphinius/core/base/BaseNode' {
 	    readonly self_deg: number;
 	    readonly self_in_deg: number;
 	    readonly self_out_deg: number;
-	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-	    hasEdge(edge: $E.IBaseEdge): boolean;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
+	    hasEdge(edge: IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
-	    getEdge(id: string): $E.IBaseEdge;
+	    getEdge(id: string): IBaseEdge;
 	    inEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    outEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    undEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    dirEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    allEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
-	    removeEdge(edge: $E.IBaseEdge): void;
+	    removeEdge(edge: IBaseEdge): void;
 	    removeEdgeByID(id: string): void;
 	    clearOutEdges(): void;
 	    clearInEdges(): void;
@@ -187,13 +187,13 @@ declare module 'graphinius/core/base/BaseNode' {
 	    protected _self_deg: number;
 	    protected _features: NodeFeatures;
 	    protected _in_edges: {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    protected _out_edges: {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    protected _und_edges: {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    constructor(_id: string, config?: BaseNodeConfig);
 	    static isTyped(arg: any): arg is TypedNode;
@@ -220,26 +220,26 @@ declare module 'graphinius/core/base/BaseNode' {
 	    readonly self_deg: number;
 	    readonly self_in_deg: number;
 	    readonly self_out_deg: number;
-	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-	    hasEdge(edge: $E.IBaseEdge): boolean;
+	    addEdge(edge: IBaseEdge): IBaseEdge;
+	    hasEdge(edge: IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
-	    getEdge(id: string): $E.IBaseEdge;
+	    getEdge(id: string): IBaseEdge;
 	    inEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    outEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    undEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    dirEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
 	    allEdges(): {
-	        [k: string]: $E.IBaseEdge;
+	        [k: string]: IBaseEdge;
 	    };
-	    removeEdge(edge: $E.IBaseEdge): void;
+	    removeEdge(edge: IBaseEdge): void;
 	    removeEdgeByID(id: string): void;
 	    clearOutEdges(): void;
 	    clearInEdges(): void;

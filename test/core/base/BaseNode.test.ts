@@ -1,23 +1,23 @@
-import * as $N from '../../../src/core/base/BaseNode';
-import { TypedNode } from "../../../src/core/typed/TypedNode";
-import * as $E from '../../../src/core/base/BaseEdge';
+import {TypedNode} from "../../../src/core/typed/TypedNode";
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/test_paths';
 
 import {Logger} from '../../../src/utils/Logger';
+import {BaseNode, IBaseNode, NeighborEntry} from "../../../src/core/base/BaseNode";
+import {BaseEdge, IBaseEdge} from "../../../src/core/base/BaseEdge";
+
 const logger = new Logger();
 
-let Edge = $E.BaseEdge;
-
-let small_graph_file = `${JSON_DATA_PATH}/small_graph.json`,
+let
+	small_graph_file = `${JSON_DATA_PATH}/small_graph.json`,
 	json_in = new JSONInput({explicit_direction: false, directed: false, weighted: false}),
 	small_graph = json_in.readFromJSONFile(small_graph_file);
 
 /**
  * TODO Test
  */
-function collectNodesFromNeighbors(neighbors: Array<$N.NeighborEntry>): Array<$N.IBaseNode> {
-	let nodes: Array<$N.IBaseNode> = [];
+function collectNodesFromNeighbors(neighbors: Array<NeighborEntry>): Array<IBaseNode> {
+	let nodes: Array<IBaseNode> = [];
 	for (let n_idx in neighbors) {
 		nodes.push(neighbors[n_idx].node);
 	}
@@ -31,55 +31,59 @@ describe('==== NODE TESTS ====', () => {
 	describe('Basic node instantiation', () => {
 
 		test('should correclty instantiate a node with id', () => {
-			let node = new $N.BaseNode(id);
+			let node = new BaseNode(id);
 			expect(node.getID()).toBe(id);
 		});
 
 		test('should set default label to ID', () => {
-			let node = new $N.BaseNode(id);
+			let node = new BaseNode(id);
 			expect(node.getLabel()).toBe(id);
 		});
 
 		test('should get ID via getter', () => {
-			let node = new $N.BaseNode(id);
+			let node = new BaseNode(id);
 			expect(node.id).toBe(id);
 		});
 
 		test('should get label via getter', () => {
-			let node = new $N.BaseNode(id);
+			let node = new BaseNode(id);
 			expect(node.label).toBe(id);
 		});
 
 		test('should correclty instantiate a node with label', () => {
 			let label = "New Label";
-			let node = new $N.BaseNode(id, {label: label});
+			let node = new BaseNode(id, {label: label});
 			expect(node.getLabel()).toBe(label);
 		});
 
 		test('should allow setting new label', () => {
 			let label = "New Label";
-			let node = new $N.BaseNode(id, {label: label});
+			let node = new BaseNode(id, {label: label});
 			expect(node.getLabel()).toBe(label);
 			node.setLabel("Even newer");
 			expect(node.getLabel()).toBe("Even newer");
 		});
 
-		test(
-			'should automatically report all degree values as zero upon instantiations',
-			() => {
-				let node = new $N.BaseNode(id);
-				expect(node.in_deg).toBe(0);
-				expect(node.out_deg).toBe(0);
-				expect(node.deg).toBe(0);
-			}
-		);
+		it('should report all degree values as zero upon instantiations', () => {
+			let node = new BaseNode(id);
+			expect(node.deg).toBe(0);
+			expect(node.in_deg).toBe(0);
+			expect(node.out_deg).toBe(0);
+		});
+
+		it('should report all self degree values as zero upon instantiations', () => {
+			let node = new BaseNode(id);
+			expect(node.self_deg).toBe(0);
+			expect(node.self_in_deg).toBe(0);
+			expect(node.self_out_deg).toBe(0);
+		});
 
 		it('should report BaseNode to be NOT typed', function () {
-			expect($N.BaseNode.isTyped(new $N.BaseNode('blah'))).toBe(false);
+			expect(BaseNode.isTyped(new BaseNode('blah'))).toBe(false);
 		});
 
 		it('should report TypedNode to be TYPED', function () {
-			expect($N.BaseNode.isTyped(new TypedNode('blah'))).toBe(true);
+			expect(BaseNode.isTyped(new TypedNode('blah'))).toBe(true);
 		});
 
 	});
@@ -87,7 +91,7 @@ describe('==== NODE TESTS ====', () => {
 
 	describe('Node FEATURE vector tests', () => {
 		let features = {name: 'Bernie', age: 36, future: 'Billionaire'};
-		let node = new $N.BaseNode(id, {features});
+		let node = new BaseNode(id, {features});
 
 		test('should correctly set default features to an empty hash object', () => {
 			expect(node.getFeatures()).toBeInstanceOf(Object);
@@ -147,7 +151,7 @@ describe('==== NODE TESTS ====', () => {
 
 		test('should allow to replace the whole feature vector', () => {
 			let features = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			let node = new $N.BaseNode(id, {features});
+			let node = new BaseNode(id, {features});
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
 			node.setFeatures({});
 			expect(Object.keys(node.getFeatures()).length).toBe(0);
@@ -155,7 +159,7 @@ describe('==== NODE TESTS ====', () => {
 
 		test('should allow to clear the whole feature vector', () => {
 			let features = {name: 'Bernie', age: '36', future: 'Billionaire'};
-			let node = new $N.BaseNode(id, {features});
+			let node = new BaseNode(id, {features});
 			expect(Object.keys(node.getFeatures()).length).toBe(3);
 			node.clearFeatures();
 			expect(Object.keys(node.getFeatures()).length).toBe(0);
@@ -165,16 +169,16 @@ describe('==== NODE TESTS ====', () => {
 
 	describe('Node edge addition / query / removal tests - ', () => {
 		let
-			node_a = new $N.BaseNode(id),
-			node_b = new $N.BaseNode(id),
+			node_a = new BaseNode(id),
+			node_b = new BaseNode(id),
 			e_id = "Edgy";
 
 
 		describe('Node edge addition tests', () => {
 
 			test('should throw an error if we add an unrelated edge', () => {
-				let node_c = new $N.BaseNode('9999', {label: 'Not connected to node_a'});
-				let edge = new $E.BaseEdge(e_id, node_b, node_c);
+				let node_c = new BaseNode('9999', {label: 'Not connected to node_a'});
+				let edge = new BaseEdge(e_id, node_b, node_c);
 
 				expect(node_a.addEdge.bind(node_a, edge)).toThrowError("Cannot add edge that does not connect to this node");
 			});
@@ -182,7 +186,7 @@ describe('==== NODE TESTS ====', () => {
 			test(
 				'should throw an error if we try to add an unidrected edge more than once',
 				() => {
-					let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+					let edge = new BaseEdge(e_id, node_a, node_b, {
 						directed: false
 					});
 
@@ -198,20 +202,17 @@ describe('==== NODE TESTS ====', () => {
 				}
 			);
 
-			test(
-				'should not throw an error if we try to connect the same edge (ID) as incoming and outgoing (the node then belongs to its own prevs and nexts)..',
-				() => {
-					let edge = new $E.BaseEdge(e_id, node_a, node_a, {
-						directed: true
-					});
-					let in_deg = node_a.in_deg;
-					let out_deg = node_a.out_deg;
-					expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
-					expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
-					expect(node_a.in_deg).toBe(in_deg + 1);
-					expect(node_a.out_deg).toBe(out_deg + 1);
-				}
-			);
+			test('should not throw an error if we try to connect the same edge (ID) as incoming and outgoing (the node then belongs to its own prevs and nexts)..', () => {
+				let edge = new BaseEdge(e_id, node_a, node_a, {
+					directed: true
+				});
+				let in_deg = node_a.in_deg;
+				let out_deg = node_a.out_deg;
+				expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
+				expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
+				expect(node_a.in_deg).toBe(in_deg + 1);
+				expect(node_a.out_deg).toBe(out_deg + 1);
+			});
 
 
 			/**
@@ -229,7 +230,7 @@ describe('==== NODE TESTS ====', () => {
 			test('should correctly add an undirected edge and recompute degrees', () => {
 				// Clear up the node first..
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+				let edge = new BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 				let in_deg_a = node_a.in_deg,
@@ -246,7 +247,7 @@ describe('==== NODE TESTS ====', () => {
 
 			test('should correctly add an outgoing edge and recompute degrees', () => {
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+				let edge = new BaseEdge(e_id, node_a, node_b, {
 					directed: true
 				});
 				let in_deg_a = node_a.in_deg,
@@ -264,7 +265,7 @@ describe('==== NODE TESTS ====', () => {
 
 			test('should correctly add an incoming edge and recompute degrees', () => {
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_b, node_a, {
+				let edge = new BaseEdge(e_id, node_b, node_a, {
 					directed: true
 				});
 				let in_deg_a = node_a.in_deg,
@@ -280,13 +281,120 @@ describe('==== NODE TESTS ====', () => {
 			});
 
 		});
+		
+		
+		describe('self-degree tests - ', () => {
+		  
+			let
+				a: IBaseNode,
+				e: IBaseEdge;
+						
+			beforeEach(() => {
+				a = new BaseNode('A');
+			});
+
+			it('should increment self_deg', () => {
+				expect(a.self_deg).toBe(0);
+				a.addEdge(new BaseEdge('edgy', a, a));
+				expect(a.self_deg).toBe(1);
+			});
+
+			it('should increment self_in_deg', () => {
+				expect(a.self_in_deg).toBe(0);
+				a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(a.self_in_deg).toBe(1);
+			});
+
+			it('should increment self_out_deg', () => {
+				expect(a.self_out_deg).toBe(0);
+				a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(a.self_out_deg).toBe(1);
+			});
+
+			it('should decrement self_deg', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a));
+				expect(a.self_deg).toBe(1);
+				a.removeEdge(e);
+				expect(a.self_deg).toBe(0);
+			});
+
+			it('should decrement self_in_deg', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(a.self_in_deg).toBe(1);
+				a.removeEdge(e);
+				expect(a.self_in_deg).toBe(0);
+			});
+
+			it('should remove both ends of a self loop', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(Object.keys(a.inEdges()).length).toBe(1);
+				expect(Object.keys(a.outEdges()).length).toBe(1);
+				a.removeEdge(e);
+				expect(Object.keys(a.inEdges()).length).toBe(0);
+				expect(Object.keys(a.outEdges()).length).toBe(0);
+			});
+
+			it('should remove dangling self loops when clearing IN edges', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(Object.keys(a.inEdges()).length).toBe(1);
+				expect(Object.keys(a.outEdges()).length).toBe(1);
+				a.clearInEdges();
+				expect(Object.keys(a.inEdges()).length).toBe(0);
+				expect(Object.keys(a.outEdges()).length).toBe(0);
+			});
+
+			it('should remove dangling self loops when clearing OUT edges', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(Object.keys(a.inEdges()).length).toBe(1);
+				expect(Object.keys(a.outEdges()).length).toBe(1);
+				a.clearOutEdges();
+				expect(Object.keys(a.inEdges()).length).toBe(0);
+				expect(Object.keys(a.outEdges()).length).toBe(0);
+			});
+
+			it('should decrement self_in_deg', () => {
+				e = a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				expect(a.self_out_deg).toBe(1);
+				a.removeEdge(e);
+				expect(a.self_out_deg).toBe(0);
+			});
+
+			it('should set self_deg to zero on clearing UNdirected edges', () => {
+				a.addEdge(new BaseEdge('edgy', a, a));
+				a.addEdge(new BaseEdge('edgy1', a, a));
+				expect(a.self_deg).toBe(2);
+				a.clearUndEdges();
+				expect(a.self_deg).toBe(0);
+			});
+
+			it('should set self_degs to zero on clearing IN edges', () => {
+				a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				a.addEdge(new BaseEdge('edgy1', a, a, {directed: true}));
+				expect(a.self_in_deg).toBe(2);
+				expect(a.self_out_deg).toBe(2);
+				a.clearInEdges();
+				expect(a.self_in_deg).toBe(0);
+				expect(a.self_out_deg).toBe(0);
+			});
+
+			it('should set self_degs to zero on clearing OUT edges', () => {
+				a.addEdge(new BaseEdge('edgy', a, a, {directed: true}));
+				a.addEdge(new BaseEdge('edgy1', a, a, {directed: true}));
+				expect(a.self_in_deg).toBe(2);
+				expect(a.self_out_deg).toBe(2);
+				a.clearOutEdges();
+				expect(a.self_in_deg).toBe(0);
+				expect(a.self_out_deg).toBe(0);
+			});
+
+		});
 
 
 		describe('Node single edge queries', () => {
 
 			test('should assert that an added edge is connected by reference', () => {
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+				let edge = new BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 				node_a.addEdge(edge);
@@ -295,7 +403,7 @@ describe('==== NODE TESTS ====', () => {
 
 			test('should assert that an added edge is connected by ID', () => {
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+				let edge = new BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 				node_a.addEdge(edge);
@@ -317,7 +425,7 @@ describe('==== NODE TESTS ====', () => {
 
 			test('should correctly retrieve exising edge by ID', () => {
 				node_a.clearEdges();
-				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
+				let edge = new BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
 				node_a.addEdge(edge);
@@ -341,17 +449,17 @@ describe('==== NODE TESTS ====', () => {
 		 */
 		describe('a little more complex scenario - ', () => {
 
-			let n_a = new $N.BaseNode("A", {label: "A"}),
-				n_b = new $N.BaseNode("B", {label: "B"}),
-				n_c = new $N.BaseNode("C", {label: "C"}),
-				n_d = new $N.BaseNode("D", {label: "D"}),
-				e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"}),
-				e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"}),
-				e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
-				e_4 = new $E.BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true}),
-				e_5 = new $E.BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true}),
-				e_6 = new $E.BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true}),
-				e_7 = new $E.BaseEdge("7", n_d, n_a, {label: "d_da", directed: true});
+			let n_a = new BaseNode("A", {label: "A"}),
+				n_b = new BaseNode("B", {label: "B"}),
+				n_c = new BaseNode("C", {label: "C"}),
+				n_d = new BaseNode("D", {label: "D"}),
+				e_1 = new BaseEdge("1", n_a, n_b, {label: "u_ab"}),
+				e_2 = new BaseEdge("2", n_a, n_c, {label: "u_ac"}),
+				e_3 = new BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true}),
+				e_4 = new BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true}),
+				e_5 = new BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true}),
+				e_6 = new BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true}),
+				e_7 = new BaseEdge("7", n_d, n_a, {label: "d_da", directed: true});
 			n_a.addEdge(e_1);
 			n_a.addEdge(e_2);
 			n_a.addEdge(e_3);
@@ -489,18 +597,18 @@ describe('==== NODE TESTS ====', () => {
 					e_1, e_2, e_3, e_4, e_5, e_6, e_7, e_8;
 
 				beforeEach(() => {
-						n_a = new $N.BaseNode("A", {label: "A"});
-						n_b = new $N.BaseNode("B", {label: "B"});
-						n_c = new $N.BaseNode("C", {label: "C"});
-						n_d = new $N.BaseNode("D", {label: "D"});
-						e_1 = new $E.BaseEdge("1", n_a, n_b, {label: "u_ab"});
-						e_2 = new $E.BaseEdge("2", n_a, n_c, {label: "u_ac"});
-						e_3 = new $E.BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true});
-						e_4 = new $E.BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true});
-						e_5 = new $E.BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true});
-						e_6 = new $E.BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true});
-						e_7 = new $E.BaseEdge("7", n_d, n_a, {label: "d_da", directed: true});
-						e_8 = new $E.BaseEdge("8", n_a, n_a, {label: "d_da"});
+						n_a = new BaseNode("A", {label: "A"});
+						n_b = new BaseNode("B", {label: "B"});
+						n_c = new BaseNode("C", {label: "C"});
+						n_d = new BaseNode("D", {label: "D"});
+						e_1 = new BaseEdge("1", n_a, n_b, {label: "u_ab"});
+						e_2 = new BaseEdge("2", n_a, n_c, {label: "u_ac"});
+						e_3 = new BaseEdge("3", n_a, n_a, {label: "d_aa", directed: true});
+						e_4 = new BaseEdge("4", n_a, n_b, {label: "d_ab", directed: true});
+						e_5 = new BaseEdge("5", n_a, n_d, {label: "d_ad", directed: true});
+						e_6 = new BaseEdge("6", n_c, n_a, {label: "d_ca", directed: true});
+						e_7 = new BaseEdge("7", n_d, n_a, {label: "d_da", directed: true});
+						e_8 = new BaseEdge("8", n_a, n_a, {label: "d_da"});
 						n_a.addEdge(e_1);
 						n_a.addEdge(e_2);
 						n_a.addEdge(e_3);
@@ -528,7 +636,7 @@ describe('==== NODE TESTS ====', () => {
 
 
 				test('should throw an Error when trying to delete non-connected edge', () => {
-					let edginot = new $E.BaseEdge("Unconnected", n_b, n_c);
+					let edginot = new BaseEdge("Unconnected", n_b, n_c);
 					expect(n_a.removeEdge.bind(n_a, edginot)).toThrowError("Cannot remove unconnected edge.");
 				});
 
@@ -628,14 +736,14 @@ describe('==== NODE TESTS ====', () => {
 
 
 			beforeEach(() => {
-				node_a = new $N.BaseNode(id);
-				edge_1 = new $E.BaseEdge("1", node_a, node_b, {
+				node_a = new BaseNode(id);
+				edge_1 = new BaseEdge("1", node_a, node_b, {
 					directed: false
 				});
-				edge_2 = new $E.BaseEdge("2", node_a, node_b, {
+				edge_2 = new BaseEdge("2", node_a, node_b, {
 					directed: true
 				});
-				edge_3 = new $E.BaseEdge("3", node_b, node_a, {
+				edge_3 = new BaseEdge("3", node_b, node_a, {
 					directed: true
 				});
 				node_a.addEdge(edge_1);
@@ -699,8 +807,8 @@ describe('==== NODE TESTS ====', () => {
 	 */
 	describe("Node CLONE tests", () => {
 
-		let node: $N.IBaseNode = null;
-		let clone_node: $N.IBaseNode = null;
+		let node: IBaseNode = null;
+		let clone_node: IBaseNode = null;
 
 
 		beforeEach(() => {
@@ -725,33 +833,33 @@ describe('==== NODE TESTS ====', () => {
 
 
 		test('should return a new node upon cloning', () => {
-			node = new $N.BaseNode("A");
+			node = new BaseNode("A");
 			clone_node = node.clone();
 			expect(clone_node).not.toBeUndefined();
 			expect(clone_node).not.toBeNull();
-			expect(clone_node).toBeInstanceOf($N.BaseNode);
+			expect(clone_node).toBeInstanceOf(BaseNode);
 		});
 
 
 		test('should ignore undirected edges upon cloning', () => {
-			node = new $N.BaseNode("A");
-			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B")));
+			node = new BaseNode("A");
+			node.addEdge(new BaseEdge("someEdge", node, new BaseNode("B")));
 			clone_node = node.clone();
 			expect(clone_node.deg).toBe(0);
 		});
 
 
 		test('should ignore undirected edges upon cloning', () => {
-			node = new $N.BaseNode("A");
-			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B"), {directed: true}));
+			node = new BaseNode("A");
+			node.addEdge(new BaseEdge("someEdge", node, new BaseNode("B"), {directed: true}));
 			clone_node = node.clone();
 			expect(clone_node.out_deg).toBe(0);
 		});
 
 
 		test('should ignore undirected edges upon cloning', () => {
-			node = new $N.BaseNode("A");
-			node.addEdge(new $E.BaseEdge("someEdge", new $N.BaseNode("B"), node, {directed: true}));
+			node = new BaseNode("A");
+			node.addEdge(new BaseEdge("someEdge", new BaseNode("B"), node, {directed: true}));
 			clone_node = node.clone();
 			expect(clone_node.in_deg).toBe(0);
 		});
@@ -766,8 +874,8 @@ describe('==== NODE TESTS ====', () => {
 
 		test('should ignore references to edges in node features', () => {
 			node = small_graph.getNodeById("A");
-			let other_node = new $N.BaseNode("B");
-			let edge = new $E.BaseEdge("someEdge", node, other_node);
+			let other_node = new BaseNode("B");
+			let edge = new BaseEdge("someEdge", node, other_node);
 			node.addEdge(edge);
 			node.setFeature('edge-case', edge);
 			clone_node = node.clone();

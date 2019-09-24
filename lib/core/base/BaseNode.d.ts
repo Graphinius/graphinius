@@ -1,8 +1,8 @@
-import * as $E from './BaseEdge';
 import { TypedNode } from '../typed/TypedNode';
+import { IBaseEdge } from "./BaseEdge";
 export interface NeighborEntry {
     node: IBaseNode;
-    edge: $E.IBaseEdge;
+    edge: IBaseEdge;
     best?: number;
 }
 export interface BaseNodeConfig {
@@ -34,26 +34,26 @@ export interface IBaseNode {
     readonly self_deg: number;
     readonly self_in_deg: number;
     readonly self_out_deg: number;
-    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-    hasEdge(edge: $E.IBaseEdge): boolean;
+    addEdge(edge: IBaseEdge): IBaseEdge;
+    hasEdge(edge: IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;
-    getEdge(id: string): $E.IBaseEdge;
+    getEdge(id: string): IBaseEdge;
     inEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     outEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     undEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     dirEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     allEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
-    removeEdge(edge: $E.IBaseEdge): void;
+    removeEdge(edge: IBaseEdge): void;
     removeEdgeByID(id: string): void;
     clearOutEdges(): void;
     clearInEdges(): void;
@@ -77,13 +77,13 @@ declare class BaseNode implements IBaseNode {
     protected _self_deg: number;
     protected _features: NodeFeatures;
     protected _in_edges: {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     protected _out_edges: {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     protected _und_edges: {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     constructor(_id: string, config?: BaseNodeConfig);
     static isTyped(arg: any): arg is TypedNode;
@@ -110,26 +110,26 @@ declare class BaseNode implements IBaseNode {
     readonly self_deg: number;
     readonly self_in_deg: number;
     readonly self_out_deg: number;
-    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
-    hasEdge(edge: $E.IBaseEdge): boolean;
+    addEdge(edge: IBaseEdge): IBaseEdge;
+    hasEdge(edge: IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;
-    getEdge(id: string): $E.IBaseEdge;
+    getEdge(id: string): IBaseEdge;
     inEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     outEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     undEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     dirEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
     allEdges(): {
-        [k: string]: $E.IBaseEdge;
+        [k: string]: IBaseEdge;
     };
-    removeEdge(edge: $E.IBaseEdge): void;
+    removeEdge(edge: IBaseEdge): void;
     removeEdgeByID(id: string): void;
     clearOutEdges(): void;
     clearInEdges(): void;

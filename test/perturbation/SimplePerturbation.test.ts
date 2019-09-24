@@ -421,7 +421,8 @@ describe('GRAPH PERTURBATION TESTS: - ', () => {
 
 
 		/**
-		 * TODO: enhance by edge types
+		 * @todo: enhance by edge types ?
+		 * 				-> probably not, do it on graph projection instead
 		 */
 		describe('Randomly delete different amounts / percentages of UNDIRECTED Edges - ', () => {
 
