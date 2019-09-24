@@ -142,6 +142,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    inDegree(): number;
 	    outDegree(): number;
 	    degree(): number;
+	    selfDegree(): number;
 	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    hasEdge(edge: $E.IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
@@ -179,6 +180,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    protected _in_degree: number;
 	    protected _out_degree: number;
 	    protected _und_degree: number;
+	    protected _self_degree: number;
 	    protected _features: NodeFeatures;
 	    protected _in_edges: {
 	        [k: string]: $E.IBaseEdge;
@@ -211,6 +213,7 @@ declare module 'graphinius/core/base/BaseNode' {
 	    inDegree(): number;
 	    outDegree(): number;
 	    degree(): number;
+	    selfDegree(): number;
 	    addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
 	    hasEdge(edge: $E.IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;

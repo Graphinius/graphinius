@@ -43,6 +43,8 @@ export interface IBaseNode {
 	inDegree() : number;
 	outDegree() : number;
 	degree() : number;
+	selfDegree() : number;
+
 	
 	// EDGE methods
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
@@ -81,6 +83,7 @@ class BaseNode implements IBaseNode {
 	protected _in_degree = 0;
 	protected _out_degree = 0;
 	protected _und_degree = 0;
+	protected _self_degree = 0;
 	protected _features	: NodeFeatures;
 		
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
@@ -172,7 +175,11 @@ class BaseNode implements IBaseNode {
 	degree() : number {
 		return this._und_degree;
 	}
-	
+
+	selfDegree(): number {
+		return this._self_degree;
+	}
+
 	/**
 	 * We have to: 
 	 * 1. throw an error if the edge is already attached

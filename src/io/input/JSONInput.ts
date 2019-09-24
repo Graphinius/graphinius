@@ -105,7 +105,6 @@ class JSONInput implements IJSONInput {
 		const rlt = json.typeRLT;
 		// logger.log(rlt);
 
-
 		this.addNodesToGraph(json, graph);
 
 		for (let node_id in json.data) {

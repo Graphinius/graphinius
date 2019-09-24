@@ -158,64 +158,27 @@ class ComputeGraph implements IComputeGraph {
 
 
 	/**
-	 * @todo check necessity of the reverse conditions in the `directed` case
+	 * @describe count all 2-triads (triangles & potential triangles)
+	 * 					 - UN-directed scenario for earch node: all pairwise connections could form a triangle
+	 * 					 - directed scenario for each node: -ins could form triangles with -outs
+	 *
+	 * @todo this only works for nodes without self-loops !!!
 	 *
 	 * @param directed
 	 */
 	triadCount(directed = false): number {
 		let triangle_count = 0;
 		const dupes_set = new Set<string>();
-		const edges = directed ? Object.values(this._g.getDirEdges()) : Object.values(this._g.getUndEdges());
+		const nodes = Object.values(this._g.getNodes());
 
-		let ia, ib, ja, jb, path_id;
-
-		for (let i of edges) {
-			for (let j of edges) {
-				if ( i === j ) {
-					continue;
-				}
-
-				ia = i.getNodes().a;
-				ib = i.getNodes().b;
-				ja = j.getNodes().a;
-				jb = j.getNodes().b;
-
-				// logger.log(`${i.id} -- ${j.id}`);
-
-				// loops
-				if ( ia === ib || ja === jb ) {
-					continue;
-				}
-				// In 'order'...
-				if ( ib === ja && ia !== jb ) {
-					path_id = `${ia.id}-${ib.id}-${jb.id}`;
-					if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
-						dupes_set.add(path_id);
-						triangle_count++;
-					}
-				}
-				if ( !directed ) {
-					// Spread 1
-					if ( ia === ja && ib !== jb ) {
-						path_id = `${ib.id}-${ia.id}-${jb.id}`;
-						if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
-							dupes_set.add(path_id);
-							triangle_count++;
-						}
-					}
-					// Spread 2
-					if ( ib === jb && ia !== ja ) {
-						path_id = `${ia.id}-${ib.id}-${ja.id}`;
-						if ( !dupes_set.has(path_id) && !dupes_set.has(path_id.split('-').reverse().join('-')) ) {
-							dupes_set.add(path_id);
-							triangle_count++;
-						}
-					}
-				}
+		for ( let n of nodes ) {
+			if ( directed ) {
+				triangle_count += n.inDegree() * n.outDegree();
+			}
+			else {
+				triangle_count += n.degree() * ( n.degree() - 1 ) / 2;
 			}
 		}
-		// logger.log('Dupes Set: ', dupes_set);
-
 		return triangle_count;
 	}
 
@@ -224,15 +187,9 @@ class ComputeGraph implements IComputeGraph {
 		if (!this._tf || !this._tf.matMul) {
 			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
 		}
-
 		const adj_list = this.adjMatrix();
-		// logger.log(adj_list);
-
 		const a = this._tf.tensor2d(adj_list);
-
 		const aux2 = await a.matMul(a).array();
-		// logger.log(aux2);
-
 		const aux3 = await a.matMul(aux2).array();
 		// logger.log(aux3);
 

@@ -45,7 +45,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 			tic = Date.now();
 			cg.transitivity(true).then(res => {
 				toc = Date.now();
-				console.log(res);
+				// console.log(res);
 				logger.log(`Computing transitivity (TF) on ${graph.label} took ${toc - tic} ms.`);
 				done();
 			});
@@ -57,7 +57,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 			tic = Date.now();
 			cg.clustCoef(true).then(res => {
 				toc = Date.now();
-				console.log(res);
+				// console.log(res);
 				logger.log(`Computing CC (TF) on ${graph.label} took ${toc - tic} ms.`);
 				done();
 			});
