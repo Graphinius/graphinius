@@ -42,14 +42,6 @@ describe('EUCLIDEAN base similarity tests', () => {
 		expect(simFuncs.euclidean(c, d)).toEqual({sim: 0});
 	});
 
-
-	it('PERFORMANCE - should compute a great amount of cosines between two short vectors', () => {
-		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) simFuncs.euclidean(a, b);
-		const toc = +new Date;
-		console.log(`1e5 iterations of cosine on 5-dim vectors took ${toc - tic} ms.`);
-	});
-
 });
 
 

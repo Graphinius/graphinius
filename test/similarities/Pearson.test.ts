@@ -51,14 +51,6 @@ describe('PEARSON base similarity tests', () => {
 		expect(simFuncs.pearson(c, e)).toEqual({sim: -1});
 	});
 
-
-	it('PERFORMANCE - should compute a great amount of cosines between two short vectors', () => {
-		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) simFuncs.pearson(a, b);
-		const toc = +new Date;
-		console.log(`1e5 iterations of cosine on 5-dim vectors took ${toc - tic} ms.`);
-	});
-
 });
 
 

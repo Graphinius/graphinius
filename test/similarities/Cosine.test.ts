@@ -34,14 +34,6 @@ describe('COSINE base similarity tests', () => {
 		it('should compute COSINE between two LARGE vectors', () => {
 			expect(simFuncs.cosine(c, d)).toEqual({sim: 0.94491});
     });
-
-
-    it('PERFORMANCE - should compute a great amount of cosines between two short vectors', () => {
-			const tic = +new Date;
-			for ( let i = 0; i < SUPER_SIZE; i++ ) simFuncs.cosine(a,b);
-			const toc = +new Date;
-			console.log(`1e5 iterations of cosine on 5-dim vectors took ${toc - tic} ms.`);
-		});
     
 	});
 	
