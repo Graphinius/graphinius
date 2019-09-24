@@ -173,10 +173,10 @@ class ComputeGraph implements IComputeGraph {
 
 		for ( let n of nodes ) {
 			if ( directed ) {
-				triangle_count += n.inDegree() * n.outDegree();
+				triangle_count += n.in_deg * n.out_deg;
 			}
 			else {
-				triangle_count += n.degree() * ( n.degree() - 1 ) / 2;
+				triangle_count += n.deg * ( n.deg - 1 ) / 2;
 			}
 		}
 		return triangle_count;
@@ -233,7 +233,7 @@ class ComputeGraph implements IComputeGraph {
 
 		for ( let i in aux3[0] ) {
 			node = this._g.getNodeById(keys[i]);
-			deg = directed ? node.inDegree() + node.outDegree() : node.degree();
+			deg = directed ? node.in_deg + node.out_deg : node.deg;
 
 			// console.log(`node ${node.id} has degree ${deg}`);
 

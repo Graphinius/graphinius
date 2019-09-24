@@ -53,7 +53,12 @@ describe('Checking index.js structure - ', () => {
       expect(typeof base.BaseNode).toBe("function");
       node_a = new base.BaseNode("A");
       // only Nodes have degree(s)
-      expect(typeof node_a.inDegree).toBe("function");
+      expect(node_a.deg).toBeDefined();
+      expect(node_a.in_deg).toBeDefined();
+      expect(node_a.out_deg).toBeDefined();
+      expect(node_a.self_deg).toBeDefined();
+      expect(node_a.self_in_deg).toBeDefined();
+      expect(node_a.self_out_deg).toBeDefined();
     });
 
 

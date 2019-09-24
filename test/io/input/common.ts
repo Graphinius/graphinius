@@ -27,27 +27,27 @@ function checkSmallGraphStats(graph : $G.IGraph) {
 			
 	expect(n_a).not.toBeUndefined();
 	expect(n_a.getLabel()).toBe('A');
-	expect(n_a.inDegree()).toBe(3);
-	expect(n_a.outDegree()).toBe(3);
-	expect(n_a.degree()).toBe(2);
+	expect(n_a.in_deg).toBe(3);
+	expect(n_a.out_deg).toBe(3);
+	expect(n_a.deg).toBe(2);
 	
 	expect(n_b).not.toBeUndefined();
 	expect(n_b.getLabel()).toBe('B');
-	expect(n_b.inDegree()).toBe(1);
-	expect(n_b.outDegree()).toBe(0);
-	expect(n_b.degree()).toBe(1);
+	expect(n_b.in_deg).toBe(1);
+	expect(n_b.out_deg).toBe(0);
+	expect(n_b.deg).toBe(1);
 	
 	expect(n_c).not.toBeUndefined();
 	expect(n_c.getLabel()).toBe('C');
-	expect(n_c.inDegree()).toBe(0);
-	expect(n_c.outDegree()).toBe(1);
-	expect(n_c.degree()).toBe(1);
+	expect(n_c.in_deg).toBe(0);
+	expect(n_c.out_deg).toBe(1);
+	expect(n_c.deg).toBe(1);
 	
 	expect(n_d).not.toBeUndefined();
 	expect(n_d.getLabel()).toBe('D');
-	expect(n_d.inDegree()).toBe(1);
-	expect(n_d.outDegree()).toBe(1);
-	expect(n_d.degree()).toBe(0);
+	expect(n_d.in_deg).toBe(1);
+	expect(n_d.out_deg).toBe(1);
+	expect(n_d.deg).toBe(0);
 	
 	let und_edges = graph.getUndEdges();
   for (let edge in und_edges) {

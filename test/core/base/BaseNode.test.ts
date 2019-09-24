@@ -68,9 +68,9 @@ describe('==== NODE TESTS ====', () => {
 			'should automatically report all degree values as zero upon instantiations',
 			() => {
 				let node = new $N.BaseNode(id);
-				expect(node.inDegree()).toBe(0);
-				expect(node.outDegree()).toBe(0);
-				expect(node.degree()).toBe(0);
+				expect(node.in_deg).toBe(0);
+				expect(node.out_deg).toBe(0);
+				expect(node.deg).toBe(0);
 			}
 		);
 
@@ -164,7 +164,8 @@ describe('==== NODE TESTS ====', () => {
 
 
 	describe('Node edge addition / query / removal tests - ', () => {
-		let node_a = new $N.BaseNode(id),
+		let
+			node_a = new $N.BaseNode(id),
 			node_b = new $N.BaseNode(id),
 			e_id = "Edgy";
 
@@ -203,12 +204,12 @@ describe('==== NODE TESTS ====', () => {
 					let edge = new $E.BaseEdge(e_id, node_a, node_a, {
 						directed: true
 					});
-					let in_deg = node_a.inDegree();
-					let out_deg = node_a.outDegree();
+					let in_deg = node_a.in_deg;
+					let out_deg = node_a.out_deg;
 					expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
 					expect(node_a.addEdge.bind(node_a, edge)).not.toThrowError("Cannot add same undirected edge multiple times.");
-					expect(node_a.inDegree()).toBe(in_deg + 1);
-					expect(node_a.outDegree()).toBe(out_deg + 1);
+					expect(node_a.in_deg).toBe(in_deg + 1);
+					expect(node_a.out_deg).toBe(out_deg + 1);
 				}
 			);
 
@@ -231,15 +232,15 @@ describe('==== NODE TESTS ====', () => {
 				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: false
 				});
-				let in_deg_a = node_a.inDegree(),
-					out_deg_a = node_a.outDegree(),
-					dir_deg_a = node_a.degree();
+				let in_deg_a = node_a.in_deg,
+					out_deg_a = node_a.out_deg,
+					dir_deg_a = node_a.deg;
 
 				node_a.addEdge(edge);
 
-				expect(node_a.inDegree()).toBe(in_deg_a);
-				expect(node_a.outDegree()).toBe(out_deg_a);
-				expect(node_a.degree()).toBe(dir_deg_a + 1);
+				expect(node_a.in_deg).toBe(in_deg_a);
+				expect(node_a.out_deg).toBe(out_deg_a);
+				expect(node_a.deg).toBe(dir_deg_a + 1);
 			});
 
 
@@ -248,16 +249,16 @@ describe('==== NODE TESTS ====', () => {
 				let edge = new $E.BaseEdge(e_id, node_a, node_b, {
 					directed: true
 				});
-				let in_deg_a = node_a.inDegree(),
-					out_deg_a = node_a.outDegree(),
-					dir_deg_a = node_a.degree();
+				let in_deg_a = node_a.in_deg,
+					out_deg_a = node_a.out_deg,
+					dir_deg_a = node_a.deg;
 
 				node_a.addEdge(edge);
 				expect(node_a.getEdge(edge.getID())).toBe(edge);
 
-				expect(node_a.inDegree()).toBe(in_deg_a);
-				expect(node_a.outDegree()).toBe(out_deg_a + 1);
-				expect(node_a.degree()).toBe(dir_deg_a);
+				expect(node_a.in_deg).toBe(in_deg_a);
+				expect(node_a.out_deg).toBe(out_deg_a + 1);
+				expect(node_a.deg).toBe(dir_deg_a);
 			});
 
 
@@ -266,16 +267,16 @@ describe('==== NODE TESTS ====', () => {
 				let edge = new $E.BaseEdge(e_id, node_b, node_a, {
 					directed: true
 				});
-				let in_deg_a = node_a.inDegree(),
-					out_deg_a = node_a.outDegree(),
-					dir_deg_a = node_a.degree();
+				let in_deg_a = node_a.in_deg,
+					out_deg_a = node_a.out_deg,
+					dir_deg_a = node_a.deg;
 
 				node_a.addEdge(edge);
 				expect(node_a.getEdge(edge.getID())).toBe(edge);
 
-				expect(node_a.inDegree()).toBe(in_deg_a + 1);
-				expect(node_a.outDegree()).toBe(out_deg_a);
-				expect(node_a.degree()).toBe(dir_deg_a);
+				expect(node_a.in_deg).toBe(in_deg_a + 1);
+				expect(node_a.out_deg).toBe(out_deg_a);
+				expect(node_a.deg).toBe(dir_deg_a);
 			});
 
 		});
@@ -365,9 +366,9 @@ describe('==== NODE TESTS ====', () => {
 			describe('degrees and retrieval', () => {
 
 				test('should correctly have computed the degree structure', () => {
-					expect(n_a.degree()).toBe(2);
-					expect(n_a.outDegree()).toBe(3);
-					expect(n_a.inDegree()).toBe(3);
+					expect(n_a.deg).toBe(2);
+					expect(n_a.out_deg).toBe(3);
+					expect(n_a.in_deg).toBe(3);
 				});
 
 				test('should correctly retrieve undirected edges', () => {
@@ -640,9 +641,9 @@ describe('==== NODE TESTS ====', () => {
 				node_a.addEdge(edge_1);
 				node_a.addEdge(edge_2);
 				node_a.addEdge(edge_3);
-				expect(node_a.inDegree()).toBe(1);
-				expect(node_a.outDegree()).toBe(1);
-				expect(node_a.degree()).toBe(1);
+				expect(node_a.in_deg).toBe(1);
+				expect(node_a.out_deg).toBe(1);
+				expect(node_a.deg).toBe(1);
 			});
 
 
@@ -650,18 +651,18 @@ describe('==== NODE TESTS ====', () => {
 				'should clear all outgoing edges and update degrees accordingly',
 				() => {
 					node_a.clearOutEdges();
-					expect(node_a.inDegree()).toBe(1);
-					expect(node_a.outDegree()).toBe(0);
-					expect(node_a.degree()).toBe(1);
+					expect(node_a.in_deg).toBe(1);
+					expect(node_a.out_deg).toBe(0);
+					expect(node_a.deg).toBe(1);
 				}
 			);
 
 
 			test('should clear all incoming edges and update degrees accordingly', () => {
 				node_a.clearInEdges();
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(1);
-				expect(node_a.degree()).toBe(1);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(1);
+				expect(node_a.deg).toBe(1);
 			});
 
 
@@ -669,18 +670,18 @@ describe('==== NODE TESTS ====', () => {
 				'should clear all undirected edges and update degrees accordingly',
 				() => {
 					node_a.clearUndEdges();
-					expect(node_a.inDegree()).toBe(1);
-					expect(node_a.outDegree()).toBe(1);
-					expect(node_a.degree()).toBe(0);
+					expect(node_a.in_deg).toBe(1);
+					expect(node_a.out_deg).toBe(1);
+					expect(node_a.deg).toBe(0);
 				}
 			);
 
 
 			test('should clear all edges and set degrees back to zero', () => {
 				node_a.clearEdges();
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(0);
-				expect(node_a.degree()).toBe(0);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(0);
+				expect(node_a.deg).toBe(0);
 			});
 
 		});
@@ -711,9 +712,9 @@ describe('==== NODE TESTS ====', () => {
 		afterEach(() => {
 			expect(clone_node.getID()).toBe(node.getID());
 			expect(clone_node.getLabel()).toBe(node.getLabel());
-			expect(clone_node.inDegree()).toBe(0);
-			expect(clone_node.outDegree()).toBe(0);
-			expect(clone_node.degree()).toBe(0);
+			expect(clone_node.in_deg).toBe(0);
+			expect(clone_node.out_deg).toBe(0);
+			expect(clone_node.deg).toBe(0);
 			expect(clone_node.inEdges()).toEqual({});
 			expect(clone_node.outEdges()).toEqual({});
 			expect(clone_node.allEdges()).toEqual({});
@@ -736,7 +737,7 @@ describe('==== NODE TESTS ====', () => {
 			node = new $N.BaseNode("A");
 			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B")));
 			clone_node = node.clone();
-			expect(clone_node.degree()).toBe(0);
+			expect(clone_node.deg).toBe(0);
 		});
 
 
@@ -744,7 +745,7 @@ describe('==== NODE TESTS ====', () => {
 			node = new $N.BaseNode("A");
 			node.addEdge(new $E.BaseEdge("someEdge", node, new $N.BaseNode("B"), {directed: true}));
 			clone_node = node.clone();
-			expect(clone_node.outDegree()).toBe(0);
+			expect(clone_node.out_deg).toBe(0);
 		});
 
 
@@ -752,7 +753,7 @@ describe('==== NODE TESTS ====', () => {
 			node = new $N.BaseNode("A");
 			node.addEdge(new $E.BaseEdge("someEdge", new $N.BaseNode("B"), node, {directed: true}));
 			clone_node = node.clone();
-			expect(clone_node.inDegree()).toBe(0);
+			expect(clone_node.in_deg).toBe(0);
 		});
 
 

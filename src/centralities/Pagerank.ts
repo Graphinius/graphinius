@@ -112,7 +112,7 @@ class Pagerank {
 			pull_weight: this._weighted ? [] : null,
 			teleport: config.tele_set ? [] : null,
 			tele_size: config.tele_set ? 0 : null
-		}
+		};
 
     /**
      * Just for the purpose of testing
@@ -169,7 +169,7 @@ class Pagerank {
 				this._PRArrayDS.old[i] = defaultInit(this._graph);
 			}
 
-			this._PRArrayDS.out_deg[i] = node.outDegree() + node.degree();
+			this._PRArrayDS.out_deg[i] = node.out_deg + node.deg;
 
       /**
        * @todo enhance this to actual weights!?

@@ -18,9 +18,9 @@ export interface IBaseNode {
     readonly id: string;
     readonly label: string;
     readonly features: NodeFeatures;
+    setLabel(label: string): void;
     getID(): string;
     getLabel(): string;
-    setLabel(label: string): void;
     getFeatures(): NodeFeatures;
     getFeature(key: string): any;
     f(key: string): any | undefined;
@@ -28,10 +28,12 @@ export interface IBaseNode {
     setFeature(key: string, value: any): void;
     deleteFeature(key: string): any;
     clearFeatures(): void;
-    inDegree(): number;
-    outDegree(): number;
-    degree(): number;
-    selfDegree(): number;
+    readonly deg: number;
+    readonly in_deg: number;
+    readonly out_deg: number;
+    readonly self_deg: number;
+    readonly self_in_deg: number;
+    readonly self_out_deg: number;
     addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
     hasEdge(edge: $E.IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;
@@ -67,10 +69,12 @@ export interface IBaseNode {
 declare class BaseNode implements IBaseNode {
     protected _id: string;
     protected _label: string;
-    protected _in_degree: number;
-    protected _out_degree: number;
-    protected _und_degree: number;
-    protected _self_degree: number;
+    protected _in_deg: number;
+    protected _out_deg: number;
+    protected _deg: number;
+    protected _self_in_deg: number;
+    protected _self_out_deg: number;
+    protected _self_deg: number;
     protected _features: NodeFeatures;
     protected _in_edges: {
         [k: string]: $E.IBaseEdge;
@@ -100,10 +104,12 @@ declare class BaseNode implements IBaseNode {
     setFeature(key: string, value: any): void;
     deleteFeature(key: string): any;
     clearFeatures(): void;
-    inDegree(): number;
-    outDegree(): number;
-    degree(): number;
-    selfDegree(): number;
+    readonly deg: number;
+    readonly in_deg: number;
+    readonly out_deg: number;
+    readonly self_deg: number;
+    readonly self_in_deg: number;
+    readonly self_out_deg: number;
     addEdge(edge: $E.IBaseEdge): $E.IBaseEdge;
     hasEdge(edge: $E.IBaseEdge): boolean;
     hasEdgeID(id: string): boolean;

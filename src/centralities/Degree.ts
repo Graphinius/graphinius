@@ -38,7 +38,7 @@ class DegreeCentrality {
           let node = graph.getNodeById(key);
           if(node!=null) {
             if(!weighted) {
-              ret[key] = node.inDegree();
+              ret[key] = node.in_deg;
             }
             else {
               ret[key] = ret[key]||0;
@@ -55,7 +55,7 @@ class DegreeCentrality {
           let node = graph.getNodeById(key);
           if(node!=null) {
             if(!weighted) {
-              ret[key] = node.outDegree();
+              ret[key] = node.out_deg;
             }
             else {
               ret[key] = ret[key]||0;
@@ -72,7 +72,7 @@ class DegreeCentrality {
           let node = graph.getNodeById(key);
           if(node!=null) {
             if(!weighted) {
-              ret[key] = node.degree();
+              ret[key] = node.deg;
             }
             else {
               ret[key] = ret[key]||0;
@@ -89,7 +89,7 @@ class DegreeCentrality {
           let node = graph.getNodeById(key);
           if(node!=null) {
             if(!weighted) {
-              ret[key] = node.inDegree() + node.outDegree();
+              ret[key] = node.in_deg + node.out_deg;
             }
             else {
               ret[key] = ret[key]||0;
@@ -107,7 +107,7 @@ class DegreeCentrality {
           let node = graph.getNodeById(key);
           if(node!=null) {
             if(!weighted) {
-              ret[key] = node.degree() + node.inDegree() + node.outDegree();
+              ret[key] = node.deg + node.in_deg + node.out_deg;
             }
             else {
               ret[key] = ret[key]||0;
@@ -129,7 +129,7 @@ class DegreeCentrality {
    * @TODO per edge type !
 	 */
   degreeDistribution(graph: $G.IGraph) {
-		var max_deg : number = 0,
+		let max_deg : number = 0,
         key			: string,
         nodes   : {[id: string] : $N.IBaseNode} = graph.getNodes(),
 				node 		: $N.IBaseNode,
@@ -137,11 +137,11 @@ class DegreeCentrality {
 
 		for ( key in nodes ) {
 			node = nodes[key];
-			all_deg = node.inDegree() + node.outDegree() + node.degree() + 1;
+			all_deg = node.in_deg + node.out_deg + node.deg + 1;
 			max_deg =  all_deg > max_deg ? all_deg : max_deg;
 		}
 
-		var deg_dist : DegreeDistribution = {
+		let deg_dist : DegreeDistribution = {
 			in: new Uint32Array(max_deg),
 			out: new Uint32Array(max_deg),
 			dir: new Uint32Array(max_deg),
@@ -151,11 +151,11 @@ class DegreeCentrality {
 
 		for ( key in nodes ) {
 			node = nodes[key];
-			deg_dist.in[node.inDegree()]++;
-			deg_dist.out[node.outDegree()]++;
-			deg_dist.dir[node.inDegree() + node.outDegree()]++;
-			deg_dist.und[node.degree()]++;
-			deg_dist.all[node.inDegree() + node.outDegree() + node.degree()]++;
+			deg_dist.in[node.in_deg]++;
+			deg_dist.out[node.out_deg]++;
+			deg_dist.dir[node.in_deg + node.out_deg]++;
+			deg_dist.und[node.deg]++;
+			deg_dist.all[node.in_deg + node.out_deg + node.deg]++;
 		}
 		// console.dir(deg_dist);
 		return deg_dist;

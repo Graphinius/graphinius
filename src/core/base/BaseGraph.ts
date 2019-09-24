@@ -144,13 +144,13 @@ class BaseGraph implements IGraph {
 			let deg;
 			switch (dir) {
 				case DIR.in:
-					deg = node.inDegree();
+					deg = node.in_deg;
 					break;
 				case DIR.out:
-					deg = node.outDegree();
+					deg = node.out_deg;
 					break;
 				default:
-					deg = node.degree();
+					deg = node.deg;
 			}
 			if (!result[deg]) {
 				result[deg] = new Set([node]);
@@ -366,9 +366,9 @@ class BaseGraph implements IGraph {
 			throw new Error('Cannot remove a foreign node.');
 		}
 		// Edges?
-		let in_deg = node.inDegree();
-		let out_deg = node.outDegree();
-		let deg = node.degree();
+		let in_deg = node.in_deg;
+		let out_deg = node.out_deg;
+		let deg = node.deg;
 
 		// Delete all edges brutally...
 		if (in_deg) {

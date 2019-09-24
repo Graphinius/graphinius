@@ -19,16 +19,17 @@ type NodeFeatures = { [k:string]: any };
 
 
 export interface IBaseNode {
-	/**
-	 * Getters
-	 */
+	// BASIC
 	readonly id: string;
 	readonly label: string;
 	readonly features: NodeFeatures;
+	setLabel(label : string) : void;
 
+	/**
+	 * @todo old method versions -> take out..
+	 */
 	getID()	: string;
 	getLabel() : string;
-	setLabel(label : string) : void;
 	
 	// FEATURES methods
 	getFeatures() : NodeFeatures;
@@ -40,11 +41,12 @@ export interface IBaseNode {
 	clearFeatures() : void;
 	
 	// Degrees
-	inDegree() : number;
-	outDegree() : number;
-	degree() : number;
-	selfDegree() : number;
-
+	readonly deg: number;
+	readonly in_deg: number;
+	readonly out_deg: number;
+	readonly self_deg: number;
+	readonly self_in_deg: number;
+	readonly self_out_deg: number;
 	
 	// EDGE methods
 	addEdge(edge: $E.IBaseEdge) : $E.IBaseEdge;
@@ -80,12 +82,15 @@ export interface IBaseNode {
 
 class BaseNode implements IBaseNode {
 	protected _label : string;
-	protected _in_degree = 0;
-	protected _out_degree = 0;
-	protected _und_degree = 0;
-	protected _self_degree = 0;
+	protected _in_deg = 0;
+	protected _out_deg = 0;
+	protected _deg = 0;
+	protected _self_in_deg = 0;
+	protected _self_out_deg = 0;
+	protected _self_deg = 0;
+
 	protected _features	: NodeFeatures;
-		
+
 	protected _in_edges		: {[k: string] : $E.IBaseEdge};
 	protected _out_edges	: {[k: string] : $E.IBaseEdge};
 	protected _und_edges	: {[k: string] : $E.IBaseEdge};
@@ -163,21 +168,29 @@ class BaseNode implements IBaseNode {
 	clearFeatures() : void {
 		this._features = {};
 	}
-				
-	inDegree() : number {
-		return this._in_degree;
-	}
-	
-	outDegree() : number {
-		return this._out_degree;
-	}
-	
-	degree() : number {
-		return this._und_degree;
+
+	get deg() : number {
+		return this._deg;
 	}
 
-	selfDegree(): number {
-		return this._self_degree;
+	get in_deg() : number {
+		return this._in_deg;
+	}
+
+	get out_deg() : number {
+		return this._out_deg;
+	}
+
+	get self_deg() : number {
+		return this._self_deg;
+	}
+
+	get self_in_deg() : number {
+		return this._self_in_deg;
+	}
+
+	get self_out_deg() : number {
+		return this._self_out_deg;
 	}
 
 	/**
@@ -209,17 +222,17 @@ class BaseNode implements IBaseNode {
 			// is it outgoing or incoming?
 			if ( nodes.a === this && !this._out_edges[edgeID]) {
 				this._out_edges[edgeID] = edge;
-				this._out_degree += 1;
+				this._out_deg += 1;
 				// Is the edge also connecting to ourselves -> SELF_LOOP ?
 				if ( nodes.b === this && !this._in_edges[edgeID]) {
 					this._in_edges[edgeID] = edge;
-					this._in_degree += 1;
+					this._in_deg += 1;
 				}
 			}
 			// Can't be a SELF_LOOP anymore
 			else if ( !this._in_edges[edgeID] ) { // nodes.b === this
 				this._in_edges[edgeID] = edge;
-				this._in_degree += 1;
+				this._in_deg += 1;
 			}
 		}
 		// UNdirected
@@ -229,7 +242,7 @@ class BaseNode implements IBaseNode {
 				throw new Error("Cannot add same undirected edge multiple times.");
 			}
 			this._und_edges[edge.getID()] = edge;
-			this._und_degree += 1;
+			this._deg += 1;
 		}
 		return edge;
 	}
@@ -278,17 +291,17 @@ class BaseNode implements IBaseNode {
 		let e = this._und_edges[id];
 		if ( e ) {
 			delete this._und_edges[id];
-			this._und_degree -= 1;
+			this._deg -= 1;
 		}
 		e = this._in_edges[id];
 		if ( e ) {
 			delete this._in_edges[id];
-			this._in_degree -= 1;
+			this._in_deg -= 1;
 		}
 		e = this._out_edges[id];
 		if ( e ) {
 			delete this._out_edges[id];
-			this._out_degree -= 1;
+			this._out_deg -= 1;
 		}
 	}
 
@@ -299,33 +312,33 @@ class BaseNode implements IBaseNode {
 		let e = this._und_edges[id];
 		if ( e ) { 
 			delete this._und_edges[id];
-			this._und_degree -= 1;
+			this._deg -= 1;
 		}
 		e = this._in_edges[id];
 		if ( e ) { 
 			delete this._in_edges[id];
-			this._in_degree -= 1;
+			this._in_deg -= 1;
 		}
 		e = this._out_edges[id];
 		if ( e ) { 
 			delete this._out_edges[id];
-			this._out_degree -= 1;
+			this._out_deg -= 1;
 		}
 	}
 	
 	clearOutEdges() : void {
 		this._out_edges = {};
-		this._out_degree = 0;
+		this._out_deg = 0;
 	}
 	
 	clearInEdges() : void {
 		this._in_edges = {};		
-		this._in_degree = 0;
+		this._in_deg = 0;
 	}
 	
 	clearUndEdges() : void {
 		this._und_edges = {};
-		this._und_degree = 0;
+		this._deg = 0;
 	}
 	
 	clearEdges() : void {

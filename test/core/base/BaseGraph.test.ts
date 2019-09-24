@@ -187,12 +187,12 @@ describe('GRAPH TESTS: ', () => {
 				node_b = graph.addNodeByID('B');
 				edge_ab = graph.addEdgeByID('und_a_b', node_a, node_b); // undirected edge
 				expect(edge_ab.isDirected()).toBe(false);
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(0);
-				expect(node_a.degree()).toBe(1);
-				expect(node_b.inDegree()).toBe(0);
-				expect(node_b.outDegree()).toBe(0);
-				expect(node_b.degree()).toBe(1);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(0);
+				expect(node_a.deg).toBe(1);
+				expect(node_b.in_deg).toBe(0);
+				expect(node_b.out_deg).toBe(0);
+				expect(node_b.deg).toBe(1);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(0);
@@ -214,12 +214,12 @@ describe('GRAPH TESTS: ', () => {
 				node_b = graph.addNodeByID('B');
 				edge_ab = graph.addEdgeByID('dir_a_b', node_a, node_b, { directed: true });
 				expect(edge_ab.isDirected()).toBe(true);
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(1);
-				expect(node_a.degree()).toBe(0);
-				expect(node_b.inDegree()).toBe(1);
-				expect(node_b.outDegree()).toBe(0);
-				expect(node_b.degree()).toBe(0);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(1);
+				expect(node_a.deg).toBe(0);
+				expect(node_b.in_deg).toBe(1);
+				expect(node_b.out_deg).toBe(0);
+				expect(node_b.deg).toBe(0);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(1);
@@ -239,9 +239,9 @@ describe('GRAPH TESTS: ', () => {
 				node_a = graph.addNodeByID('A');
 				edge_ab = graph.addEdgeByID('und_a_a', node_a, node_a, { directed: false });
 				expect(edge_ab.isDirected()).toBe(false);
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(0);
-				expect(node_a.degree()).toBe(1);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(0);
+				expect(node_a.deg).toBe(1);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 				expect(stats.nr_dir_edges).toBe(0);
@@ -261,9 +261,9 @@ describe('GRAPH TESTS: ', () => {
 				node_a = graph.addNodeByID('A');
 				edge_ab = graph.addEdgeByID('und_a_a', node_a, node_a, { directed: true });
 				expect(edge_ab.isDirected()).toBe(true);
-				expect(node_a.inDegree()).toBe(1);
-				expect(node_a.outDegree()).toBe(1);
-				expect(node_a.degree()).toBe(0);
+				expect(node_a.in_deg).toBe(1);
+				expect(node_a.out_deg).toBe(1);
+				expect(node_a.deg).toBe(0);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(1);
 				expect(stats.nr_dir_edges).toBe(1);
@@ -353,12 +353,12 @@ describe('GRAPH TESTS: ', () => {
 				expect(edge_ab.isDirected()).toBe(false);
 				edge_2 = graph.addEdgeByID('dir_b_b', node_b, node_b, { directed: true });
 				expect(edge_2.isDirected()).toBe(true);
-				expect(node_a.inDegree()).toBe(0);
-				expect(node_a.outDegree()).toBe(0);
-				expect(node_a.degree()).toBe(1);
-				expect(node_b.inDegree()).toBe(1);
-				expect(node_b.outDegree()).toBe(1);
-				expect(node_b.degree()).toBe(1);
+				expect(node_a.in_deg).toBe(0);
+				expect(node_a.out_deg).toBe(0);
+				expect(node_a.deg).toBe(1);
+				expect(node_b.in_deg).toBe(1);
+				expect(node_b.out_deg).toBe(1);
+				expect(node_b.deg).toBe(1);
 				stats = graph.getStats();
 				expect(stats.nr_nodes).toBe(2);
 				expect(stats.nr_dir_edges).toBe(1);
@@ -654,24 +654,24 @@ describe('GRAPH TESTS: ', () => {
 				let graph_nr_nodes = graph.nrNodes(),
 					graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges(),
-					n_a_deg = n_a.degree(),
-					n_a_in_deg = n_a.inDegree(),
-					n_a_out_deg = n_a.outDegree(),
-					n_b_deg = n_b.degree(),
-					n_b_in_deg = n_b.inDegree(),
-					n_b_out_deg = n_b.outDegree();
+					n_a_deg = n_a.deg,
+					n_a_in_deg = n_a.in_deg,
+					n_a_out_deg = n_a.out_deg,
+					n_b_deg = n_b.deg,
+					n_b_in_deg = n_b.in_deg,
+					n_b_out_deg = n_b.out_deg;
 
 				graph.deleteEdge(e_1);
 
 				expect(graph.nrNodes()).toBe(graph_nr_nodes);
 				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges);
 				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges - 1);
-				expect(n_a.degree()).toBe(n_a_deg - 1);
-				expect(n_a.outDegree()).toBe(n_a_out_deg);
-				expect(n_a.inDegree()).toBe(n_a_in_deg);
-				expect(n_b.degree()).toBe(n_b_deg - 1);
-				expect(n_b.outDegree()).toBe(n_b_out_deg);
-				expect(n_b.inDegree()).toBe(n_b_in_deg);
+				expect(n_a.deg).toBe(n_a_deg - 1);
+				expect(n_a.out_deg).toBe(n_a_out_deg);
+				expect(n_a.in_deg).toBe(n_a_in_deg);
+				expect(n_b.deg).toBe(n_b_deg - 1);
+				expect(n_b.out_deg).toBe(n_b_out_deg);
+				expect(n_b.in_deg).toBe(n_b_in_deg);
 				expect(graph.getMode()).toBe(GraphMode.MIXED);
 			}
 		);
@@ -695,24 +695,24 @@ describe('GRAPH TESTS: ', () => {
 				let graph_nr_nodes = graph.nrNodes(),
 					graph_nr_dir_edges = graph.nrDirEdges(),
 					graph_nr_und_edges = graph.nrUndEdges(),
-					n_a_deg = n_a.degree(),
-					n_a_in_deg = n_a.inDegree(),
-					n_a_out_deg = n_a.outDegree(),
-					n_b_deg = n_b.degree(),
-					n_b_in_deg = n_b.inDegree(),
-					n_b_out_deg = n_b.outDegree();
+					n_a_deg = n_a.deg,
+					n_a_in_deg = n_a.in_deg,
+					n_a_out_deg = n_a.out_deg,
+					n_b_deg = n_b.deg,
+					n_b_in_deg = n_b.in_deg,
+					n_b_out_deg = n_b.out_deg;
 
 				graph.deleteEdge(e_4);
 
 				expect(graph.nrNodes()).toBe(graph_nr_nodes);
 				expect(graph.nrDirEdges()).toBe(graph_nr_dir_edges - 1);
 				expect(graph.nrUndEdges()).toBe(graph_nr_und_edges);
-				expect(n_a.outDegree()).toBe(n_a_out_deg - 1);
-				expect(n_a.inDegree()).toBe(n_a_in_deg);
-				expect(n_a.degree()).toBe(n_a_deg);
-				expect(n_b.outDegree()).toBe(n_b_out_deg);
-				expect(n_b.inDegree()).toBe(n_b_in_deg - 1);
-				expect(n_b.degree()).toBe(n_b_deg);
+				expect(n_a.out_deg).toBe(n_a_out_deg - 1);
+				expect(n_a.in_deg).toBe(n_a_in_deg);
+				expect(n_a.deg).toBe(n_a_deg);
+				expect(n_b.out_deg).toBe(n_b_out_deg);
+				expect(n_b.in_deg).toBe(n_b_in_deg - 1);
+				expect(n_b.deg).toBe(n_b_deg);
 				expect(graph.getMode()).toBe(GraphMode.MIXED);
 			}
 		);
@@ -830,10 +830,10 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should correctly delete all outgoing edges of a node', () => {
 			graph.deleteOutEdgesOf(n_a);
-			expect(n_a.outDegree()).toBe(0);
-			expect(n_a.inDegree()).toBe(2);
-			expect(n_b.inDegree()).toBe(0);
-			expect(n_d.inDegree()).toBe(0);
+			expect(n_a.out_deg).toBe(0);
+			expect(n_a.in_deg).toBe(2);
+			expect(n_b.in_deg).toBe(0);
+			expect(n_d.in_deg).toBe(0);
 			expect(graph.nrDirEdges()).toBe(2);
 			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
@@ -855,10 +855,10 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should correctly delete all incoming edges of a node', () => {
 			graph.deleteInEdgesOf(n_a);
-			expect(n_a.inDegree()).toBe(0);
-			expect(n_a.outDegree()).toBe(2);
-			expect(n_c.outDegree()).toBe(0);
-			expect(n_d.outDegree()).toBe(0);
+			expect(n_a.in_deg).toBe(0);
+			expect(n_a.out_deg).toBe(2);
+			expect(n_c.out_deg).toBe(0);
+			expect(n_d.out_deg).toBe(0);
 			expect(graph.nrDirEdges()).toBe(2);
 			expect(graph.getMode()).toBe(GraphMode.MIXED);
 		});
@@ -880,12 +880,12 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should correctly delete all directed edges of a node', () => {
 			graph.deleteDirEdgesOf(n_a);
-			expect(n_a.inDegree()).toBe(0);
-			expect(n_a.outDegree()).toBe(0);
-			expect(n_b.inDegree()).toBe(0);
-			expect(n_c.outDegree()).toBe(0);
-			expect(n_d.inDegree()).toBe(0);
-			expect(n_d.outDegree()).toBe(0);
+			expect(n_a.in_deg).toBe(0);
+			expect(n_a.out_deg).toBe(0);
+			expect(n_b.in_deg).toBe(0);
+			expect(n_c.out_deg).toBe(0);
+			expect(n_d.in_deg).toBe(0);
+			expect(n_d.out_deg).toBe(0);
 			expect(graph.nrDirEdges()).toBe(0);
 			expect(graph.nrUndEdges()).toBe(2);
 			expect(graph.getMode()).toBe(GraphMode.UNDIRECTED);
@@ -908,9 +908,9 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should correctly delete all undirected edges of a node', () => {
 			graph.deleteUndEdgesOf(n_a);
-			expect(n_a.degree()).toBe(0);
-			expect(n_b.degree()).toBe(0);
-			expect(n_c.degree()).toBe(0);
+			expect(n_a.deg).toBe(0);
+			expect(n_b.deg).toBe(0);
+			expect(n_c.deg).toBe(0);
 			expect(graph.nrUndEdges()).toBe(0);
 			expect(graph.nrDirEdges()).toBe(5);
 			expect(graph.getMode()).toBe(GraphMode.DIRECTED);
@@ -947,8 +947,8 @@ describe('GRAPH TESTS: ', () => {
 		 */
 		test('should correctly delete a node including edges, test case 1', () => {
 			graph.deleteNode(n_c);
-			expect(n_a.degree()).toBe(1);
-			expect(n_a.inDegree()).toBe(2);
+			expect(n_a.deg).toBe(1);
+			expect(n_a.in_deg).toBe(2);
 			expect(graph.nrNodes()).toBe(3);
 			expect(graph.nrDirEdges()).toBe(4);
 			expect(graph.nrUndEdges()).toBe(1);
@@ -1245,7 +1245,7 @@ describe('GRAPH TESTS: ', () => {
 	});
 
 
-	describe.skip("Edge re-interpretation - ", () => {
+	describe.skip("Graph PROJECTIONS - ", () => {
 
 		const jsonReader = new JSONInput();
 
