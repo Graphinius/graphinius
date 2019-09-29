@@ -47,13 +47,23 @@ export interface PagerankRWConfig {
 	weighted?: boolean;
 	alpha?: number;
 	epsilon?: number;
-	iterations?: number;
+	maxIterations?: number;
 	normalize?: boolean;
-	// init?         : Function;
 	PRArrays?: PRArrayDS;
 	personalized?: boolean;
 	tele_set?: TeleSet;
 	init_map?: InitMap;
+}
+
+
+/**
+ * Pagerank result type
+ */
+export interface PRResult {
+	map: RankMap;
+	config: PagerankRWConfig;
+	iters: number;
+	delta: number;
 }
 
 
@@ -88,7 +98,7 @@ class Pagerank {
 		config = config || {}; // just so we don't get `property of undefined` errors below
 		this._weighted = config.weighted || DEFAULT_WEIGHTED;
 		this._alpha = config.alpha || DEFAULT_ALPHA;
-		this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
+		this._maxIterations = config.maxIterations || DEFAULT_MAX_ITERATIONS;
 		this._epsilon = config.epsilon || DEFAULT_EPSILON;
 		this._normalize = config.normalize || DEFAULT_NORMALIZE;
 		this._personalized = config.personalized ? config.personalized : false;
@@ -116,13 +126,13 @@ class Pagerank {
 	}
 
 
-	getConfig() {
+	getConfig() : PagerankRWConfig {
 		return {
-			_weighted: this._weighted,
-			_alpha: this._alpha,
-			_maxIterations: this._maxIterations,
-			_epsilon: this._epsilon,
-			_normalize: this._normalize
+			weighted: this._weighted,
+			alpha: this._alpha,
+			maxIterations: this._maxIterations,
+			epsilon: this._epsilon,
+			normalize: this._normalize
 		}
 	}
 
@@ -228,7 +238,7 @@ class Pagerank {
 	}
 
 
-	getRankMapFromArray() {
+	getRankMapFromArray() : RankMap {
 		let result: RankMap = {};
 		let nodes = this._graph.getNodes();
 		if (this._normalize) {
@@ -263,15 +273,16 @@ class Pagerank {
 	}
 
 
-	computePR() {
+	computePR() : PRResult {
 		const ds = this._PRArrayDS;
 		const N = this._graph.nrNodes();
 
 		// debug
 		let visits = 0;
+		let delta_iter: number;
 
 		for (let i = 0; i < this._maxIterations; ++i) {
-			let delta_iter = 0.0;
+			delta_iter = 0.0;
 
 			// node is number...
 			for (let node in ds.curr) {
@@ -311,14 +322,24 @@ class Pagerank {
 
 			if (delta_iter <= this._epsilon) {
 				// logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
-				return this.getRankMapFromArray();
+				return {
+					config: this.getConfig(),
+					map: this.getRankMapFromArray(),
+					iters: i,
+					delta: delta_iter
+				};
 			}
 
 			ds.old = [...ds.curr];
 		}
 
 		// logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
-		return this.getRankMapFromArray();
+		return {
+			config: this.getConfig(),
+			map: this.getRankMapFromArray(),
+			iters: this._maxIterations,
+			delta: delta_iter
+		};
 	}
 
 }

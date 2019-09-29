@@ -7,14 +7,14 @@ const BaseNode 	      				= require("./lib/core/base/BaseNode.js");
 const BaseGraph	      				= require("./lib/core/base/BaseGraph.js");
 // Typed
 const TypedEdge	      				= require("./lib/core/typed/TypedEdge.js");
-const TypedNode 	      				= require("./lib/core/typed/TypedNode.js");
-const TypedGraph	      				= require("./lib/core/typed/TypedGraph.js");
+const TypedNode 	      			= require("./lib/core/typed/TypedNode.js");
+const TypedGraph	      			= require("./lib/core/typed/TypedGraph.js");
 // CENTRALITIES
-const BetweennessCent					= require("./lib/centralities/Betweenness.js");
-const BrandesCent							= require("./lib/centralities/Brandes");
-const ClosenessCent	 					= require("./lib/centralities/Closeness.js");
-const DegreeCent		 					= require("./lib/centralities/Degree.js");
-const PagerankCent						= require("./lib/centralities/Pagerank.js");
+const Betweenness							= require("./lib/centralities/Betweenness.js");
+const Brandes									= require("./lib/centralities/Brandes");
+const Closeness	 							= require("./lib/centralities/Closeness.js");
+const Degree		 							= require("./lib/centralities/Degree.js");
+const Pagerank								= require("./lib/centralities/Pagerank.js");
 // IO
 const CSVInput 	      				= require("./lib/io/input/CSVInput.js");
 const CSVOutput       				= require("./lib/io/output/CSVOutput.js");
@@ -44,7 +44,6 @@ const Perturb									= require("./lib/perturbation/SimplePerturbations.js");
 const KronLeskovec						= require("./lib/generators/KroneckerLeskovec.js");
 // MISC
 // var MCMFBoykov							= require("./dist/mincutmaxflow/minCutMaxFlowBoykov.js");
-// var PRGauss								= require("./lib/centralities/PageRankGaussian.js");
 
 
 // Define global object
@@ -72,11 +71,11 @@ out.$G = {
 		}
 	},
 	centralities: {
-		Betweenness								: BetweennessCent.betweennessCentrality,
-		Brandes										: BrandesCent.Brandes,
-		Closeness									: ClosenessCent.ClosenessCentrality,
-		Degree										: DegreeCent.DegreeCentrality,
-		Pagerank									: PagerankCent.Pagerank
+		Betweenness								: Betweenness.betweennessCentrality,
+		Brandes										: Brandes.Brandes,
+		Closeness									: Closeness.ClosenessCentrality,
+		Degree										: Degree.DegreeCentrality,
+		Pagerank									: Pagerank.Pagerank
 	},
 	input: {
 		CSVInput 									: CSVInput.CSVInput,
