@@ -6,7 +6,6 @@ import {
 	JSON_REC_PATH
 } from "../config/test_paths";
 import {Pagerank} from "../../src/centralities/Pagerank";
-import {PagerankGauss} from '../../src/centralities/PagerankGauss';
 import {DFS} from "../../src/search/DFS";
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 
@@ -32,7 +31,6 @@ const std_csv_config: ICSVInConfig = {
 	weighted: false
 };
 const csv = new CSVInput(std_csv_config);
-const PrGauss = new PagerankGauss();
 
 
 /**
@@ -58,7 +56,7 @@ describe('Page Rank Random Walk performance tests on actual (small) social graph
 			let tic = +new Date;
 			let result;
 			// for ( let i = 0; i < 1e2; i++ ) { // incredible speedup when executed 100 times !?!?
-			result = PR.computePR();
+			result = PR.computePR().map;
 			// }
 			let toc = +new Date;
 			logger.log(`Single-Thread JS PageRank (Arrays) on graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
@@ -105,7 +103,7 @@ describe('Page Rank Random Walk on ego graphs + comparison to networkx - ', () =
 			}
 
 			let tic = +new Date;
-			let result = PR.computePR();
+			let result = PR.computePR().map;
 			let toc = +new Date;
 			logger.log(`PageRank for graph of |V|=${sn_graph.nrNodes()} and |E|=${sn_graph.nrUndEdges()} took ${toc - tic} ms.`);
 
@@ -141,29 +139,6 @@ describe('Neo4j beer graph (converted) - ', () => {
 		pagerank.computePR();
 		let toc = +new Date;
 		logger.log(`PageRank for graph of |V|=${graph.nrNodes()} and |E|=${graph.nrDirEdges()} took ${toc - tic} ms.`)
-	});
-
-});
-
-
-/*----------------------------------------*/
-/*						OLD GAUSS TESTS							*/
-/*----------------------------------------*/
-/**
- * @todo 20k graph -> Heap out of memory...
- */
-describe('PageRank Gauss performance tests - ', () => {
-
-	[sn_300_file, sn_1K_file].forEach(graph_file => { // sn_20K_graph_file
-		test('should calculate the PR with Gaussian Elimination for graphs of realistic size', () => {
-			let sn_graph = csv.readFromEdgeListFile(CSV_SN_PATH + '/' + graph_file);
-			let tic = +new Date;
-			let pr = PrGauss.getCentralityMap(sn_graph);
-			let toc = +new Date;
-			logger.log(`PageRank Gaussian Elimination for ${graph_file} graph took ${toc - tic} ms.`);
-			expect(Array.isArray(pr)).toBeTruthy;
-		});
-
 	});
 
 });

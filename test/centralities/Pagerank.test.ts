@@ -68,12 +68,11 @@ describe("PageRank Centrality Tests", () => {
 		test('correctly initialized PageRank configuration from default values', () => {
 			let PR = new Pagerank(graph);
 			expect(PR.getConfig()).toEqual({
-				_weighted: false,
-				_alpha: 0.15,
-				_maxIterations: 1e3,
-				_epsilon: 1e-6,
-				_normalize: false,
-				// _init: 1 / graph.nrNodes()
+				weighted: false,
+				alpha: 0.15,
+				maxIterations: 1e3,
+				epsilon: 1e-6,
+				normalize: false,
 			});
 		});
 
@@ -229,7 +228,7 @@ describe("PageRank Centrality Tests", () => {
 		let pagerank = new Pagerank(graph, {
 			alpha: 1e-1,
 			epsilon: convergence
-		}).computePR();
+		}).computePR().map;
 
 		for (let key in pagerank) {
 			expect(pagerank[key]).toBeLessThan(convergence);
@@ -246,8 +245,8 @@ describe("PageRank Centrality Tests", () => {
 		let pagerank = new Pagerank(graph_und_unw, {
 			alpha: 1e-1,
 			epsilon: 1e-13,
-			iterations: 2
-		}).computePR();
+			maxIterations: 2
+		}).computePR().map;
 
 		for (let key in pagerank) {
 			expect(pagerank[key]).toBeLessThan(max_rank);
@@ -281,7 +280,7 @@ describe("PageRank Centrality Tests", () => {
 			weighted: false,
 			normalize: true
 		});
-		let result = PR.computePR();
+		let result = PR.computePR().map;
 		logger.log(JSON.stringify(result));
 
 		const nxControlNumpy = {'A': 0.19757964929612257, 'B': 0.520869350456903, 'C': 0.2815510002469745};
@@ -307,7 +306,7 @@ describe("PageRank Centrality Tests", () => {
 
 		logger.log(JSON.stringify(PR.getDSs()));
 
-		let result = PR.computePR();
+		let result = PR.computePR().map;
 		logger.log(JSON.stringify(result));
 
 		const nxControl = {'A': 0.1924769023070071, 'B': 0.502859162757028, 'C': 0.3046639349359649};
@@ -346,7 +345,7 @@ describe("PageRank Centrality Tests", () => {
 				personalized: true,
 				tele_set: teleports.teleport_set
 			});
-			let result = PR.computePR();
+			let result = PR.computePR().map;
 			logger.log(JSON.stringify(result));
 
 			const nxControl = teleports.nx_control;
@@ -384,7 +383,7 @@ describe("PageRank Centrality Tests", () => {
 				normalize: true,
 				init_map: inits.init_map
 			});
-			let result = PR.computePR();
+			let result = PR.computePR().map;
 			logger.log(JSON.stringify(result));
 
 			const nxControl = inits.nx_control;
@@ -412,9 +411,9 @@ describe("PageRank Centrality Tests", () => {
 		Object.keys(sn_graph.getNodes()).forEach(n => random_init_map[n] = Math.random());
 
 		let PR = new Pagerank(sn_graph, {normalize: true});
-		results.default_init = PR.computePR();
+		results.default_init = PR.computePR().map;
 		PR = new Pagerank(sn_graph, {normalize: true, init_map: random_init_map});
-		results.random_init = PR.computePR();
+		results.random_init = PR.computePR().map;
 
 		Object.keys(results.default_init).forEach(n => expect(results.default_init[n]).toBeCloseTo(results.random_init[n], 4));
 	});

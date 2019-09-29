@@ -25,8 +25,7 @@ export type RankMap = { [id: string]: number };
  * 
  * @description we assume that nodes are always in the same order in the various arrays, 
  *              with the exception of the pull sub-arrays, of course (which give the node index as values)
- * 
- * @todo write a method that takes a graph and produces those array in the same order
+ *
  * @todo guarantee that the graph doesn't change during that mapping -> unmapping process 
  *       already guaranteed by the single-threadedness of JS/Node, unless we build workers into it...
  */
@@ -48,13 +47,23 @@ export interface PagerankRWConfig {
 	weighted?: boolean;
 	alpha?: number;
 	epsilon?: number;
-	iterations?: number;
+	maxIterations?: number;
 	normalize?: boolean;
-	// init?         : Function;
 	PRArrays?: PRArrayDS;
 	personalized?: boolean;
 	tele_set?: TeleSet;
 	init_map?: InitMap;
+}
+
+
+/**
+ * Pagerank result type
+ */
+export interface PRResult {
+	map: RankMap;
+	config: PagerankRWConfig;
+	iters: number;
+	delta: number;
 }
 
 
@@ -64,36 +73,34 @@ export interface PagerankRWConfig {
  * 
  * @description We assume that all necessary properties of a node's feature vector
  *              has been incorporated into it's initial rank or the link structure
- *              of the graph. This way we can 
+ *              of the graph. This means we carefully have to construct our graph
+ *              before interpreting Pagerank as anything meaninful for a particular
+ *              application.
  * 
- * @todo find a paper / article detailing this implementation
+ * @todo find a paper / article detailing this implementation (it's the networkx numpy version...)
  * @todo compute a ground truth for our sample social networks (python!)
+ * @todo compute a ground truth for our jobs / beer / northwind / meetup sample graphs (neo4j / networkx)
  */
 class Pagerank {
-  /**
-   * @todo unused as of now ??
-   */
-	private _weighted: boolean;
-	private _alpha: number;
-	private _epsilon: number;
-	private _maxIterations: number;
-	// private _init           : number;
-	private _normalize: boolean;
-	private _personalized: boolean;
+	private readonly _weighted: boolean;
+	private readonly _alpha: number;
+	private readonly _epsilon: number;
+	private readonly _maxIterations: number;
+	private readonly _normalize: boolean;
+	private readonly _personalized: boolean;
 
   /**
    * Holds all the data structures necessary to compute PR in LinAlg form
    */
-	private _PRArrayDS: PRArrayDS;
+	private readonly _PRArrayDS: PRArrayDS;
 
 	constructor(private _graph: IGraph, config?: PagerankRWConfig) {
 		config = config || {}; // just so we don't get `property of undefined` errors below
 		this._weighted = config.weighted || DEFAULT_WEIGHTED;
 		this._alpha = config.alpha || DEFAULT_ALPHA;
-		this._maxIterations = config.iterations || DEFAULT_MAX_ITERATIONS;
+		this._maxIterations = config.maxIterations || DEFAULT_MAX_ITERATIONS;
 		this._epsilon = config.epsilon || DEFAULT_EPSILON;
 		this._normalize = config.normalize || DEFAULT_NORMALIZE;
-		// this._init = config.init ? config.init(this._graph) : defaultInit(this._graph);
 		this._personalized = config.personalized ? config.personalized : false;
 
 		if (this._personalized && !config.tele_set) {
@@ -114,24 +121,18 @@ class Pagerank {
 			tele_size: config.tele_set ? 0 : null
 		};
 
-    /**
-     * Just for the purpose of testing
-     * 
-     * @todo but then the _graph constructor argument is useless - how to handle this??
-     */
 		config.PRArrays || this.constructPRArrayDataStructs(config);
 		// logger.log(JSON.stringify(this._PRArrayDS));
 	}
 
 
-	getConfig() {
+	getConfig() : PagerankRWConfig {
 		return {
-			_weighted: this._weighted,
-			_alpha: this._alpha,
-			_maxIterations: this._maxIterations,
-			_epsilon: this._epsilon,
-			_normalize: this._normalize,
-			// _init: this._init
+			weighted: this._weighted,
+			alpha: this._alpha,
+			maxIterations: this._maxIterations,
+			epsilon: this._epsilon,
+			normalize: this._normalize
 		}
 	}
 
@@ -192,7 +193,7 @@ class Pagerank {
 			this._PRArrayDS.old = this._PRArrayDS.old.map(n => n /= init_sum);
 		}
 
-		// normalize teleport probs
+		// normalize teleport probabilities
 		if (this._personalized && teleport_prob_sum !== 1) {
 			this._PRArrayDS.teleport = this._PRArrayDS.teleport.map(n => n /= teleport_prob_sum);
 		}
@@ -237,15 +238,14 @@ class Pagerank {
 	}
 
 
-	getRankMapFromArray() {
+	getRankMapFromArray() : RankMap {
 		let result: RankMap = {};
 		let nodes = this._graph.getNodes();
 		if (this._normalize) {
 			this.normalizePR();
 		}
 		for (let key in nodes) {
-			let node_val = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
-			result[key] = node_val;
+			result[key] = this._PRArrayDS.curr[nodes[key].getFeature('PR_index')];
 		}
 		return result;
 	}
@@ -259,9 +259,6 @@ class Pagerank {
 	}
 
 
-  /**
-   * method to produce 1D Array for passing to WASM / TF.js
-   */
 	pull2DTo1D(): Array<number> {
 		let p1d = [];
 		let p2d = this._PRArrayDS.pull;
@@ -276,19 +273,18 @@ class Pagerank {
 	}
 
 
-	computePR() {
+	computePR() : PRResult {
 		const ds = this._PRArrayDS;
-		// logger.log( JSON.stringify(ds) );
-
 		const N = this._graph.nrNodes();
 
 		// debug
 		let visits = 0;
+		let delta_iter: number;
 
 		for (let i = 0; i < this._maxIterations; ++i) {
-			let delta_iter = 0.0;
+			delta_iter = 0.0;
 
-			// node is number... !
+			// node is number...
 			for (let node in ds.curr) {
 
 				let pull_rank = 0;
@@ -305,12 +301,9 @@ class Pagerank {
            *       (using a contrived, wrongly constructed pull 2D array)
            */
 					if (ds.out_deg[source] === 0) {
-						// logger.log(`Node: ${node}`);
-						// logger.log(`Source: ${source} `);
 						throw ('Encountered zero divisor!');
 					}
 					let weight = this._weighted ? ds.pull_weight[node][idx++] : 1.0;
-					// logger.log(`Weight for ${source}->${node}: ${weight}`);
 					pull_rank += ds.old[source] * weight / ds.out_deg[source];
 				}
 
@@ -327,18 +320,26 @@ class Pagerank {
 				delta_iter += Math.abs(ds.curr[node] - ds.old[node]);
 			}
 
-			// logger.log( ds.curr );
-
 			if (delta_iter <= this._epsilon) {
 				// logger.log(`CONVERGED after ${i} iterations with ${visits} visits and a final delta of ${delta_iter}.`);
-				return this.getRankMapFromArray();
+				return {
+					config: this.getConfig(),
+					map: this.getRankMapFromArray(),
+					iters: i,
+					delta: delta_iter
+				};
 			}
 
 			ds.old = [...ds.curr];
 		}
 
 		// logger.log(`ABORTED after ${this._maxIterations} iterations with ${visits} visits.`);
-		return this.getRankMapFromArray();
+		return {
+			config: this.getConfig(),
+			map: this.getRankMapFromArray(),
+			iters: this._maxIterations,
+			delta: delta_iter
+		};
 	}
 
 }

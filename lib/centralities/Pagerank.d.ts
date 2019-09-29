@@ -21,35 +21,35 @@ export interface PagerankRWConfig {
     weighted?: boolean;
     alpha?: number;
     epsilon?: number;
-    iterations?: number;
+    maxIterations?: number;
     normalize?: boolean;
     PRArrays?: PRArrayDS;
     personalized?: boolean;
     tele_set?: TeleSet;
     init_map?: InitMap;
 }
+export interface PRResult {
+    map: RankMap;
+    config: PagerankRWConfig;
+    iters: number;
+    delta: number;
+}
 declare class Pagerank {
     private _graph;
-    private _weighted;
-    private _alpha;
-    private _epsilon;
-    private _maxIterations;
-    private _normalize;
-    private _personalized;
-    private _PRArrayDS;
+    private readonly _weighted;
+    private readonly _alpha;
+    private readonly _epsilon;
+    private readonly _maxIterations;
+    private readonly _normalize;
+    private readonly _personalized;
+    private readonly _PRArrayDS;
     constructor(_graph: IGraph, config?: PagerankRWConfig);
-    getConfig(): {
-        _weighted: boolean;
-        _alpha: number;
-        _maxIterations: number;
-        _epsilon: number;
-        _normalize: boolean;
-    };
+    getConfig(): PagerankRWConfig;
     getDSs(): PRArrayDS;
     constructPRArrayDataStructs(config: PagerankRWConfig): void;
     getRankMapFromArray(): RankMap;
     private normalizePR;
     pull2DTo1D(): Array<number>;
-    computePR(): RankMap;
+    computePR(): PRResult;
 }
 export { Pagerank };
