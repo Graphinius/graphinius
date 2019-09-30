@@ -1471,7 +1471,7 @@ declare module 'graphinius/similarities/SimilarityCommons' {
 	import * as $I from 'graphinius/similarities/interfaces';
 	import { TypedGraph } from 'graphinius/core/typed/TypedGraph';
 	import { ITypedNode } from 'graphinius/core/typed/TypedNode';
-	export const simSort: {
+	export const sortFuncs: {
 	    asc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => number;
 	    desc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => number;
 	};
@@ -1483,7 +1483,6 @@ declare module 'graphinius/similarities/SimilarityCommons' {
 	export function simSource(algo: Function, s: string, t: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
 	export function simPairwise(algo: Function, s: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
 	export function simSubsets(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, cfg?: $I.SimilarityConfig): $I.SimilarityResult;
-	export function simGroups(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, config?: $I.SimilarityConfig): $I.Similarity;
 	export function knnNodeArray(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig): $I.TopKArray;
 	export function knnNodeDict(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig): $I.TopKDict;
 	export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerSharedPrefConfig): any[];

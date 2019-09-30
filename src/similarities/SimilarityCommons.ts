@@ -3,7 +3,7 @@ import {TypedGraph} from '../core/typed/TypedGraph';
 import { ITypedNode } from '../core/typed/TypedNode';
 
 
-export const simSort = {
+export const sortFuncs = {
 	asc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => se1.sim - se2.sim,
 	desc: (se1: $I.SimilarityEntry, se2: $I.SimilarityEntry) => se2.sim - se1.sim
 };
@@ -11,7 +11,7 @@ export const simSort = {
 
 export const cutFuncs = {
 	above: (sim: number, threshold: number) => sim >= threshold,
-	below: (sim: number, threshold: number) => sim <= threshold,
+	below: (sim: number, threshold: number) => sim <= threshold
 };
 
 
@@ -34,7 +34,7 @@ export function sim(algo: Function, a: Set<any>, b: Set<any>) {
  * @param cfg object
  */
 export function simSource(algo: Function, s: string, t: $I.SetOfSets, cfg: $I.SimilarityConfig = {}) : $I.SimilarityResult {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const cutFunc = cfg.cutFunc || cutFuncs.above;
 
 	let result: $I.SimilarityResult = [];
@@ -65,7 +65,7 @@ export function simSource(algo: Function, s: string, t: $I.SetOfSets, cfg: $I.Si
  * @param cfg object
  */
 export function simPairwise(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig = {}) : $I.SimilarityResult {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const cutFunc = cfg.cutFunc || cutFuncs.above;
 
 	let result: $I.SimilarityResult = [];
@@ -103,7 +103,7 @@ export function simPairwise(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityC
  * @returns an array of Similarity entries
  */
 export function simSubsets(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, cfg: $I.SimilarityConfig = {}) : $I.SimilarityResult {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const cutFunc = cfg.cutFunc || cutFuncs.above;
 
 	let result: $I.SimilarityResult = [];
@@ -143,10 +143,10 @@ export function simSubsets(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, c
 //  *
 //  * @returns an array of Similarity entries
 //  */
-export function simGroups(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, config: $I.SimilarityConfig = {}) : $I.Similarity {
-	throw new Error('not implemented yet');
-	return {isect: 0, sim: 0};
-}
+// export function simGroups(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, config: $I.SimilarityConfig = {}) : $I.Similarity {
+// 	throw new Error('not implemented yet');
+// 	return {isect: 0, sim: 0};
+// }
 
 
 /**
@@ -161,7 +161,7 @@ export function simGroups(algo: Function, s1: $I.SetOfSets, s2: $I.SetOfSets, co
  * @todo there are no duplicates in this array, similarities might differ in different directions -> adapt!
  */
 export function knnNodeArray(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig) : $I.TopKArray {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const c = cfg.cutoff || 0;
 
 	const topK: $I.TopKArray = [];
@@ -192,7 +192,7 @@ export function knnNodeArray(algo: Function, s: $I.SetOfSets, cfg: $I.Similarity
  * @param cfg
  */
 export function knnNodeDict(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityConfig) {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const c = cfg.cutoff || 0;
 
 	const topK: $I.TopKDict = {};
@@ -229,7 +229,7 @@ export function knnNodeDict(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityC
  * @todo get rid of graph somehow (transfer method to other class...!)
  */
 export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerSharedPrefConfig ) {
-	const sort = cfg.sort || simSort.desc;
+	const sort = cfg.sort || sortFuncs.desc;
 	const cutoff = cfg.co == null ? 1e-6 : cfg.co;
 	const cutFunc = cfg.cutFunc || cutFuncs.above;
 

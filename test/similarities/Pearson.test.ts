@@ -6,7 +6,7 @@ import {
 	simSubsets,
 	knnNodeArray,
 	getBsNotInA,
-	simSort, cutFuncs, knnNodeDict
+	sortFuncs, cutFuncs, knnNodeDict
 } from '../../src/similarities/SimilarityCommons';
 import {TheAugments} from '../../src/perturbation/TheAugments';
 import {TypedGraph} from '../../src/core/typed/TypedGraph';

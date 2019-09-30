@@ -364,9 +364,9 @@ describe('Checking index.js structure - ', () => {
     });
 
 
-    it('should have the simGroups method', () => {
-      expect(typeof commons.simGroups).toBe("function");
-    });
+    // it('should have the simGroups method', () => {
+    //   expect(typeof commons.simGroups).toBe("function");
+    // });
 
 
     it('should have the knnNodeArray method', () => {

@@ -1,6 +1,6 @@
 import {DIR} from '../../src/core/interfaces';
 import {Similarity} from '../../src/similarities/interfaces';
-import {sim, simSource, simPairwise, simSort,  knnNodeArray, viaSharedPrefs} from "../../src/similarities/SimilarityCommons";
+import {sim, simSource, simPairwise, sortFuncs,  knnNodeArray, viaSharedPrefs} from "../../src/similarities/SimilarityCommons";
 import {simFuncs} from '../../src/similarities/SetSimilarities';
 import {TypedGraph} from '../../src/core/typed/TypedGraph';
 import {JSONInput} from '../../src/io/input/JSONInput';

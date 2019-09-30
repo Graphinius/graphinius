@@ -118,7 +118,5 @@ out.$G = {
 	// },
 };
 
-/**
- * For NodeJS / CommonJS global object
- */
+// CommonJS global object
 module.exports = out.$G;

@@ -6,7 +6,7 @@ import {
 	simSubsets,
 	knnNodeArray,
 	getBsNotInA,
-	simSort, cutFuncs, knnNodeDict
+	sortFuncs, cutFuncs, knnNodeDict
 } from '../../src/similarities/SimilarityCommons';
 import {TheAugments} from '../../src/perturbation/TheAugments';
 import {TypedGraph} from '../../src/core/typed/TypedGraph';
@@ -92,7 +92,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 		const eres = simSource(simFuncs.euclideanSets, start, allSets, {
 			// cutoff: 1e-6,
 			cutFunc: cutFuncs.below,
-			sort: simSort.asc
+			sort: sortFuncs.asc
 		});
 		// console.log(eres);
 		expect(eres).toEqual(exp);
@@ -116,7 +116,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 		g.getNodesT('Person').forEach(n => {
 			allSets[n.label] = n.outs('LIKES');
 		});
-		const eres = simPairwise(simFuncs.euclideanSets, allSets, {sort: simSort.asc});
+		const eres = simPairwise(simFuncs.euclideanSets, allSets, {sort: sortFuncs.asc});
 		// console.log(eres);
 		expect(eres).toEqual(exp);
 	});
@@ -135,7 +135,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 			allSets[n.label] = n.outs('LIKES');
 		});
 		const eres = simPairwise(simFuncs.euclideanSets, allSets, {
-			sort: simSort.asc,
+			sort: sortFuncs.asc,
 			cutoff: 4,
 			cutFunc: cutFuncs.below
 		});
@@ -157,7 +157,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 			allSets[n.label] = n.outs('LIKES');
 		});
 		const eres = knnNodeArray(simFuncs.euclideanSets, allSets, {
-			sort: simSort.asc,
+			sort: sortFuncs.asc,
 			knn: 1,
 			dup: true
 		});
@@ -179,7 +179,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 			allSets[n.label] = n.outs('LIKES');
 		});
 		const eres = knnNodeDict(simFuncs.euclideanSets, allSets, {
-			sort: simSort.asc,
+			sort: sortFuncs.asc,
 			knn: 1,
 			dup: true
 		});
@@ -201,7 +201,7 @@ describe('EUCLIDEAN tests on neo4j sample graph', () => {
 			Praveena: g.n('Praveena').outs('LIKES'),
 			Arya: g.n('Arya').outs('LIKES'),
 		};
-		const eres = simSubsets(simFuncs.euclideanSets, subSet, allSets, {knn: 1, sort: simSort.asc});
+		const eres = simSubsets(simFuncs.euclideanSets, subSet, allSets, {knn: 1, sort: sortFuncs.asc});
 		// console.log(eres);
 		expect(eres).toEqual(exp);
 	});
