@@ -8,6 +8,8 @@ import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
 import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/test_paths';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
+import {viaSharedPrefs} from "../../../src/similarities/SimilarityCommons";
+import {simFuncs as setSimFuncs} from "../../../src/similarities/SetSimilarities";
 
 import {Logger} from '../../../src/utils/Logger';
 
@@ -694,6 +696,46 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 2);
 				const toc = process.hrtime()[1];
 				expect(expanse.size).toBe(180);
+			});
+
+		});
+
+
+		describe('via shared prefs', () => {
+
+			const
+				person = 'PERSON',
+				company = 'COMPANY',
+				knows = 'KNOWS',
+				worksFor = 'WORKS_FOR';
+
+			/**
+			 * @todo check against neo4j...
+			 */
+			it('should find friends - employees overlap', () => {
+				const sim_exp = [
+					{ from: 'Lilyan Beer', to: 'Schroeder-Corwin', isect: 4, sim: 0.2 },
+					{ from: 'Felix Wisoky', to: 'Spinka Inc', isect: 4, sim: 0.19048 },
+					{	from: 'Tristin Kohler',	to: 'Bogisich, Beatty and Rodriguez',	isect: 4,	sim: 0.19048 },
+					{ from: 'Earlene Osinski', to: 'Schroeder-Corwin', isect: 4, sim: 0.19048	},
+					{	from: 'Martine Treutel', to: 'Jaskolski-Adams',	isect: 3,	sim: 0.17647 }
+				];
+				const friendEmployeeSim = viaSharedPrefs(g, setSimFuncs.jaccard, {
+					t1: person,
+					e1: knows,
+					d1: DIR.out,
+					t2: company,
+					e2: worksFor,
+					d2: DIR.in
+				});
+				const result = friendEmployeeSim.map(e => ({
+					from: g.n(e.from).f('name'),
+					to: g.n(e.to).f('name'),
+					isect: e.isect,
+					sim: e.sim
+				})).slice(0, 5);
+				// console.log(result);
+				expect(result).toEqual(sim_exp);
 			});
 
 		});

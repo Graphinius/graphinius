@@ -242,8 +242,8 @@ export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerShar
 	for ( let [t1Name, t1Node] of t1Set.entries() ) {
 		for ( let [t2Name, t2Node] of t2Set.entries() ) {
 			let 
-				prefSet1,
-				prefSet2;
+				prefSet1: Set<ITypedNode>,
+				prefSet2: Set<ITypedNode>;
 			if ( prefCache.get(t1Node.id) ) {
 				prefSet1 = prefCache.get(t1Node.id);
 			}
@@ -257,6 +257,9 @@ export function viaSharedPrefs(g: TypedGraph, algo: Function, cfg: $I.SimPerShar
 			else {
 				prefSet2 = g[cfg.d2](t2Node, cfg.e2.toUpperCase());
 				prefCache.set(t2Node.id, prefSet2);
+			}
+			if ( !prefSet1 || !prefSet2 || prefSet1.size === 0 || prefSet2.size === 0 ) {
+				continue;
 			}
 			const sim = algo(prefSet1, prefSet2);
 			if ( cutFunc(sim.sim, cutoff) ) {
