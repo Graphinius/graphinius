@@ -36,9 +36,9 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 
 
 	/**
-	 * @TODO figure out why the beer graph seems to have transitivity / CCs of ALL zero... !?
+	 * @TODO figure out why the beer graph seems to have transitivity / CCs of ALL ZERO... !?
 	 */
-	[jobsGraph].forEach(graph => { // meetupGraph -> explodes the heap ;-)
+	[jobsGraph, beerGraph].forEach(graph => { // meetupGraph -> explodes the heap ;-)
 
 		it('computes the transitivity of a recommender graph', (done) => {
 			cg = new ComputeGraph(graph, tf);

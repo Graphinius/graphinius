@@ -105,8 +105,8 @@ declare module 'graphinius/core/base/BaseEdge' {
 
 }
 declare module 'graphinius/utils/StructUtils' {
-	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function findKey(obj: Object, cb: Function): string; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
-	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups, findKey };
+	 function clone(obj: any): any; function shuffleArray(arr: Array<any>): Array<any>; function mergeArrays(args: Array<Array<any>>, cb?: Function): any[]; function mergeObjects(args: Array<Object>): {}; function mergeOrderedArraysNoDups(a: Array<number>, b: Array<number>): Array<number>;
+	export { clone, shuffleArray, mergeArrays, mergeObjects, mergeOrderedArraysNoDups };
 
 }
 declare module 'graphinius/core/base/BaseNode' {

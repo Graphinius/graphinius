@@ -664,7 +664,7 @@ class BaseGraph implements IGraph {
 			new_node_a = null,
 			new_node_b = null;
 
-		for (let node_id in old_nodes) {
+		for ( let node_id in old_nodes ) {
 			new_graph.addNode(old_nodes[node_id].clone());
 		}
 

@@ -455,7 +455,6 @@ describe('Checking index.js structure - ', () => {
       expect(typeof StructUtils.shuffleArray).toBe("function");
       expect(typeof StructUtils.mergeArrays).toBe("function");
       expect(typeof StructUtils.mergeObjects).toBe("function");
-      expect(typeof StructUtils.findKey).toBe("function");
       expect(typeof StructUtils.mergeOrderedArraysNoDups).toBe("function");
     });
 

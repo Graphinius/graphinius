@@ -1,11 +1,17 @@
 import * as $SU from '../../src/utils/StructUtils';
+import {BaseEdge} from "../../src/core/base/BaseEdge";
+import {BaseNode} from "../../src/core/base/BaseNode";
+import {BaseGraph} from "../../src/core/base/BaseGraph";
+import {Logger} from "../../src/utils/Logger";
+
+const logger = new Logger();
 
 
 describe('Datastructure Utils Tests - ', () => {
 
 	describe('Merge Array tests', () => {
 
-		test('should only accept arrays as arg inputs', () => {
+		it('should only accept arrays as arg inputs', () => {
 			let a = [1, 2, 3],
 				b = {},
 				c = "bla",
@@ -19,7 +25,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test(
+		it(
 			'should correctly mergeArrays two arrays of completely different numbers',
 			() => {
 				let a = [1, 2, 3],
@@ -31,7 +37,7 @@ describe('Datastructure Utils Tests - ', () => {
 		);
 
 
-		test('should not give the same results for overlapping number inputs', () => {
+		it('should not give the same results for overlapping number inputs', () => {
 			let a = [1, 2, 3],
 				b = [3, 5, 6],
 				result = a.concat(b);
@@ -42,7 +48,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test(
+		it(
 			'should correctly mergeArrays two arrays of completely different strings',
 			() => {
 				let a = ["a", "b", "c"],
@@ -54,7 +60,7 @@ describe('Datastructure Utils Tests - ', () => {
 		);
 
 
-		test('should not give the same results for overlapping string inputs', () => {
+		it('should not give the same results for overlapping string inputs', () => {
 			let a = ["a", "b", "c"],
 				b = ["c", "e", "f"],
 				result = a.concat(b);
@@ -65,7 +71,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test('should "mergeArrays" a list of empty arrays into an empty array', () => {
+		it('should "mergeArrays" a list of empty arrays into an empty array', () => {
 			let a = [],
 				b = [],
 				c = [];
@@ -78,8 +84,7 @@ describe('Datastructure Utils Tests - ', () => {
      * @todo extract out all spy / mock tests
      */
 
-
-		test('should take and use a callback on each entry', () => {
+		it('should take and use a callback on each entry', () => {
 			let a = [1, 2, 3],
 				b = [3, 4, 5],
 				r = a.concat(b), // not a set...
@@ -93,7 +98,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test(
+		it(
 			'should correctly mergeArrays two object arrays given certain IDs',
 			() => {
 				let a = [{ id: 1 }, { id: 2 }, { id: 3 }],
@@ -111,7 +116,7 @@ describe('Datastructure Utils Tests - ', () => {
 		);
 
 
-		test(
+		it(
 			'should mergeArrays two object arrays by their toString method, if no CB given',
 			() => {
 				let a = [{ id: 1 }, { id: 2 }, { id: 3 }],
@@ -127,7 +132,7 @@ describe('Datastructure Utils Tests - ', () => {
 	});
 
 	describe('Merge Array no duplicates tests', () => {
-		test('should merge two arrays with only one or no elements', () => {
+		it('should merge two arrays with only one or no elements', () => {
 			let a = [0],
 				b = [1],
 				c = [2],
@@ -140,7 +145,7 @@ describe('Datastructure Utils Tests - ', () => {
 			expect($SU.mergeOrderedArraysNoDups(e, e)).toEqual([]);
 			expect($SU.mergeOrderedArraysNoDups(d, e)).toEqual([0]);
 		});
-		test('should merge two more complex arrays', () => {
+		it('should merge two more complex arrays', () => {
 			let a = [0, 1, 2, 4, 5, 6, 10, 11],
 				b = [0, 2, 4, 5, 7, 9, 10, 11, 12];
 
@@ -151,7 +156,7 @@ describe('Datastructure Utils Tests - ', () => {
 
 	describe('Merge Object tests', () => {
 
-		test('should only accept objects as arg inputs', () => {
+		it('should only accept objects as arg inputs', () => {
 			let a = {},
 				b = [1, 2, 3],
 				c = "bla",
@@ -167,7 +172,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test('should merge two empty objects into an emtpy result object', () => {
+		it('should merge two empty objects into an emtpy result object', () => {
 			let a = {},
 				b = {};
 
@@ -175,7 +180,7 @@ describe('Datastructure Utils Tests - ', () => {
 		});
 
 
-		test(
+		it(
 			'should merge two objects with disjoint key sets into an expected result object',
 			() => {
 				let a = { 1: 'bla', 2: 'hoo' },
@@ -186,7 +191,7 @@ describe('Datastructure Utils Tests - ', () => {
 		);
 
 
-		test(
+		it(
 			'should overwrite duplicate keys with those from the latter objects',
 			() => {
 				let a = { 1: 'bla', 2: 'hoo' },
@@ -202,26 +207,58 @@ describe('Datastructure Utils Tests - ', () => {
 
 	describe('Clone Object tests', () => {
 
-		test('should return whatever non-object is passed in', () => {
+		it('should return whatever non-object is passed in', () => {
 			expect($SU.clone(undefined)).toBeUndefined();
 			expect($SU.clone(true)).toBe(true);
 			expect($SU.clone(55)).toBe(55);
 			expect($SU.clone('bla')).toBe('bla');
 			const date = +new Date;
 			expect($SU.clone(date)).toBe(date);
-
 			const arr = [1, 2, 3, [4, 5, 6]];
-
 			// check if all entries are the same
 			expect($SU.clone(arr)).toEqual(arr);
-
 			// check that the reference is not the same
 			expect($SU.clone(arr)).not.toBe(arr);
 		});
 
 
-		test('should correctly clone an object', () => {
-			let obj = { 1: { bla: 'hoo' }, 2: true, 'false': true };
+		it('should ignore a BaseEdge Instance', () => {
+			const a = new BaseNode('A');
+			const b = new BaseNode('B');
+			const edge = new BaseEdge('edgy', a, b);
+			expect($SU.clone(edge)).toBeNull();
+		});
+
+
+		it('should ignore a BaseNode Instance', () => {
+			const node = new BaseNode('A');
+			expect($SU.clone(node)).toBeNull();
+		});
+
+
+		it('should ignore a BaseGraph Instance', () => {
+			const graph = new BaseGraph('emptinius');
+			expect($SU.clone(graph)).toBeNull();
+		});
+
+
+		/**
+		 * @todo necessary ??
+		 */
+		it('should ignore not-own-properties', () => {
+			const obj = function() {
+				this.bla = 'hoo';
+			};
+			obj.prototype.getBla = function() {return this.bla};
+			const a = new obj();
+			expect(a.getBla).toBeDefined();
+			const b = $SU.clone(a);
+			expect(b.getBla).toBeUndefined();
+		});
+
+
+		it('should correctly clone an object', () => {
+			const obj = { 1: { bla: 'hoo' }, 2: true, 'false': true };
 			expect($SU.clone(obj)).toEqual(obj);
 		});
 
