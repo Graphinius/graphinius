@@ -37,3 +37,7 @@ export interface TypedGraphStats extends GraphStats {
         [key: string]: number;
     };
 }
+export interface ExpansionConfig {
+    k?: number;
+    freq?: boolean;
+}

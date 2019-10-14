@@ -4,7 +4,7 @@ import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
 import {BaseNode} from "../base/BaseNode";
-import {DIR, GraphMode, GraphStats, TypedGraphStats, TypedEdges, TypedNodes} from '../interfaces';
+import {DIR, ExpansionConfig, TypedGraphStats, TypedEdges, TypedNodes} from '../interfaces';
 
 
 /**
@@ -106,14 +106,16 @@ export class TypedGraph extends BaseGraph {
 	 *  						However, we then need to switch to an `intermediate representation`
 	 *  					  using those strings for dupe checking, and in the end map back to
 	 *  					  a node set...
-	 * @todo decide if this difference in representation between node->neighbors &
-	 * 			 graph->nodeNeighbors is a problem or not !?
-	 * @todo decide if method call via [dir] is an abomination or not
-	 * 			 -> definitely screws up code assist / intellisense !!!
-	 * @todo In case of multiple input nodes, they could reference each other...
+	 * @description In case of multiple input nodes, they could reference each other...
 	 * 			 -> Neo4j allows that, so we allow it as well (for now ;-))
+	 *
+	 * @todo decide if this difference in representation between node->neighbors &
+	 * 			 graph->nodeNeighbors is a problem or not (also performance-wise) !?
+	 * @todo decide if method call via [dir] is an abomination or not
+	 * 			 -> definitely screws up code assist / intellisense !
+	 * 			 -> (we all know it is...)
 	 */
-	expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string): Set<ITypedNode> {
+	expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode> {
 
 		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		const resultSet = new Set<ITypedNode>();
@@ -132,7 +134,6 @@ export class TypedGraph extends BaseGraph {
 				nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
 				resultSet.add(nodeRef);
 
-				// in case we reached the whole graph we can stop
 				if ( resultSet.size >= this._nr_nodes ) {
 					return resultSet;
 				}
@@ -150,17 +151,17 @@ export class TypedGraph extends BaseGraph {
 	 *
 	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
-	expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode> {
-		if ( k < 0 ) {
+	expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg: ExpansionConfig = {})
+						: Set<ITypedNode> | [Set<ITypedNode>, Map<ITypedNode, number>] {
+		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		let resultSet = new Set<ITypedNode>();
-
 		// Start with initial set
 		let periphery = nodes;
 		// Maximum possible step size (path graph)
-		k = k || this._nr_nodes - 1;
+		let k = cfg.k || this._nr_nodes - 1;
 
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			periphery = this.expand(periphery, dir, type);
@@ -183,14 +184,14 @@ export class TypedGraph extends BaseGraph {
 	 * @description like neo4j's `-[:REL*k]->`
 	 * 							only returning the node set at distance `k`
 	 */
-	peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode> {
-		if ( k < 0 ) {
+	peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg: ExpansionConfig = {}): Set<ITypedNode> {
+		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
 		let resultSet = new Set<ITypedNode>();
 		let periphery = nodes;
-		k = k || this._nr_nodes - 1;
+		let k = cfg.k || this._nr_nodes - 1;
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			periphery = this.expand(periphery, dir, type);
 		}

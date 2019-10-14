@@ -353,6 +353,10 @@ declare module 'graphinius/core/interfaces' {
 	        [key: string]: number;
 	    };
 	}
+	export interface ExpansionConfig {
+	    k?: number;
+	    freq?: boolean;
+	}
 
 }
 declare module 'graphinius/utils/CallbackUtils' {
@@ -664,7 +668,7 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { BaseGraph } from 'graphinius/core/base/BaseGraph';
-	import { DIR, TypedGraphStats, TypedEdges, TypedNodes } from 'graphinius/core/interfaces';
+	import { DIR, ExpansionConfig, TypedGraphStats, TypedEdges, TypedNodes } from 'graphinius/core/interfaces';
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
 	    protected _type: string;
@@ -680,9 +684,9 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    ins(node: ITypedNode, type: string): Set<ITypedNode>;
 	    outs(node: ITypedNode, type: string): Set<ITypedNode>;
 	    unds(node: ITypedNode, type: string): Set<ITypedNode>;
-	    expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string): Set<ITypedNode>;
-	    expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode>;
-	    peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, k?: number): Set<ITypedNode>;
+	    expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
+	    expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
+	    peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
 	    inHistT(nType: string, eType: string): Set<number>[];
 	    outHistT(nType: string, eType: string): Set<number>[];
 	    connHistT(nType: string, eType: string): Set<number>[];

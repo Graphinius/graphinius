@@ -25,7 +25,6 @@ const jobsGraphFile = path.join(__dirname, '../../../data/json/recommender/jobs.
 describe('TYPED GRAPH TESTS: ', () => {
 	let graph: TypedGraph;
 
-
 	beforeEach(() => {
 		graph = new TypedGraph("testus");
 	});
@@ -570,43 +569,43 @@ describe('TYPED GRAPH TESTS: ', () => {
 		describe('get periphery @ K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
-				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, -1))
+				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: -1}))
 					.toThrowError('cowardly refusing to expand a negative number of steps.');
 			});
 
 
 			it('should give the correct 1-periphery from a single node (OUT)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, 1).size).toBe(17);
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, {k: 1}).size).toBe(17);
 			});
 
 
 			it('should give the correct 2-periphery from a single node (OUT)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, 2).size).toBe(157);
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, {k: 2}).size).toBe(157);
 			});
 
 
 			it('should give the correct 2-periphery from a single node (IN)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.in, knows, 2).size).toBe(115);
+				expect(g.peripheryAtK(g.n(marie), DIR.in, knows, {k: 2}).size).toBe(115);
 			});
 
 
 			it('should give the correct 1-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 1).size).toBe(32);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows,{k: 1}).size).toBe(32);
 			});
 
 
 			it('should give the correct 1-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 1).size).toBe(25);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows,{k: 1}).size).toBe(25);
 			});
 
 
 			it('should give the correct 2-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 2).size).toBe(189);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: 2}).size).toBe(189);
 			});
 
 
 			it('should give the correct 2-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 2).size).toBe(177);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, {k: 2}).size).toBe(177);
 			});
 
 		});
@@ -615,7 +614,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		describe('expand over K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
-				expect(() => g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, -1))
+				expect(() => g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: -1}))
 					.toThrowError('cowardly refusing to expand a negative number of steps.');
 			});
 
@@ -623,21 +622,21 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> knows 17 people
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
-				expect(g.expandK(g.n(marie), DIR.out, knows, 1).size).toBe(17);
+				expect(g.expandK(g.n(marie), DIR.out, knows,{k: 1}).size).toBe(17);
 			});
 
 			/**
 			 * Marie Pfeffer & Tom Lemke -> together know 32 people
 			 */
 			it('should expand K steps from a node SET (OUT)', () => {
-				expect(g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 1).size).toBe(32);
+				expect(g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k:1}).size).toBe(32);
 			});
 
 			/**
 			 * Marie Pfeffer -> 2 steps OUT -> 157 people
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
-				const expanse = g.expandK(g.n(marie), DIR.out, knows, 2);
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, {k:2});
 				const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
 				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
 				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv').toString().trim().split('\n');
@@ -650,7 +649,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(g.n(marie), DIR.out, knows, 3);
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, {k:3});
 				const toc = +new Date;
 				logger.log(`Expanding people (OUT) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.size).toBe(200);
@@ -660,7 +659,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> 2 steps IN -> 122 people
 			 */
 			it('should expand K steps from a single node (IN)', () => {
-				const expanse = g.expandK(g.n(marie), DIR.in, knows, 2);
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, {k:2});
 				expect(expanse.size).toBe(122);
 			});
 
@@ -669,7 +668,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (IN)', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(g.n(marie), DIR.in, knows, 3);
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, {k: 3});
 				const toc = +new Date;
 				logger.log(`Expanding people (IN) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.size).toBe(200);
@@ -680,7 +679,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps OUT from a Set', () => {
 				const tic = process.hrtime()[1];
-				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, 2);
+				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: 2});
 				const toc = process.hrtime()[1];
 				expect(expanse.size).toBe(194);
 				// const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
@@ -693,7 +692,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps IN from a Set', () => {
 				const tic = process.hrtime()[1];
-				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, 2);
+				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, {k: 2});
 				const toc = process.hrtime()[1];
 				expect(expanse.size).toBe(180);
 			});

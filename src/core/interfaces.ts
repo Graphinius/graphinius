@@ -54,3 +54,7 @@ export interface TypedGraphStats extends GraphStats {
 	typed_edges: { [key: string]: number };
 }
 
+export interface ExpansionConfig {
+	k?		: number;
+	freq?	: boolean;
+}

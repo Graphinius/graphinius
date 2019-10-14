@@ -22,28 +22,28 @@ describe('similarities performance tests - ', () => {
 
 	it('should compute a great amount of EUCLIDEANs between two short vectors', () => {
 		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) scoreSims.euclidean(a, b);
+		for ( let i = 0; i < SUPER_SIZE; i++ ) scoreSims.euclidean(a, b);
 		const toc = +new Date;
 		console.log(`1e5 iterations of euclidean on 5-dim vectors took ${toc - tic} ms.`);
 	});
 
 	it('should compute a great amount of PEARSONs between two short vectors', () => {
 		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) scoreSims.pearson(a, b);
+		for ( let i = 0; i < SUPER_SIZE; i++ ) scoreSims.pearson(a, b);
 		const toc = +new Date;
 		console.log(`1e5 iterations of pearson on 5-dim vectors took ${toc - tic} ms.`);
 	});
 
 	it('should compute a great amount of OVERLAPs between two short vectors', () => {
 		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) setSims.overlap(s_a, s_b);
+		for ( let i = 0; i < SUPER_SIZE; i++ ) setSims.overlap(s_a, s_b);
 		const toc = +new Date;
 		console.log(`1e5 iterations of overlap on 5-dim vectors took ${toc - tic} ms.`);
 	});
 
 	it('should compute a great amount of JACCARDSs between two short vectors', () => {
 		const tic = +new Date;
-		for (let i = 0; i < SUPER_SIZE; i++) setSims.jaccard(s_a, s_b);
+		for ( let i = 0; i < SUPER_SIZE; i++ ) setSims.jaccard(s_a, s_b);
 		const toc = +new Date;
 		console.log(`1e5 iterations of jaccard on 5-dim vectors took ${toc - tic} ms.`);
 	});
