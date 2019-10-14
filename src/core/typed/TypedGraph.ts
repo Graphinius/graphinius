@@ -175,8 +175,6 @@ export class TypedGraph extends BaseGraph {
 	 *
 	 * @description like neo4j's `-[:REL*1..k]->`
 	 *              returning the node sets at distance <= `k`
-	 *
-	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
 	expandK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}): ExpansionResult {
 		if (cfg.k < 0) {
@@ -185,12 +183,10 @@ export class TypedGraph extends BaseGraph {
 		let nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
 		let resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
-		let k = cfg.k || this._nr_nodes - 1; // Maximum possible step size (path graph)
+		let k = cfg.k && cfg.k < this._nr_nodes ? cfg.k : this._nr_nodes - 1;
 
 		while (k--) {
 			nodes = this.expand(nodes, dir, type);
-			const old_size = resultSet.size;
-
 			for (let nodeRef of nodes.set) {
 				if (!freqMap.has(nodeRef)) {
 					freqMap.set(nodeRef, nodes.freq.get(nodeRef));
@@ -214,7 +210,7 @@ export class TypedGraph extends BaseGraph {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		let nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
-		let k = cfg.k || this._nr_nodes - 1;
+		let k = cfg.k && cfg.k < this._nr_nodes ? cfg.k : this._nr_nodes - 1;
 		while (k-- || nodes.set.size >= this._nr_nodes) {
 			nodes = this.expand(nodes, dir, type);
 		}
