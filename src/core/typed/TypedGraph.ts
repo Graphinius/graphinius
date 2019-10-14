@@ -4,7 +4,15 @@ import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph} from '../base/BaseGraph';
 import {GENERIC_TYPES} from "../../config/run_config";
 import {BaseNode} from "../base/BaseNode";
-import {DIR, ExpansionConfig, TypedGraphStats, TypedEdges, TypedNodes} from '../interfaces';
+import {
+	DIR,
+	ExpansionInput,
+	ExpansionConfig,
+	ExpansionResult,
+	TypedGraphStats,
+	TypedEdges,
+	TypedNodes
+} from '../interfaces';
 
 
 /**
@@ -99,6 +107,20 @@ export class TypedGraph extends BaseGraph {
 
 
 	/**
+	 * @todo abomination...
+	 */
+	private convertInputForExpansion(input: ExpansionInput) : ExpansionResult {
+		let nodes: Set<ITypedNode>;
+		if ( BaseNode.isTyped(input) ) {
+			return {set: new Set([input]), freq: new Map<ITypedNode, number>()};
+		} else if ( input instanceof Set ) {
+			return {set: input as Set<ITypedNode>, freq: new Map<ITypedNode, number>()};
+		} else {
+			return input as ExpansionResult;
+		}
+	}
+
+	/**
 	 * Neighbor nodes depending on type
 	 * @description takes either a single TypedNode or a Set of TypedNodes as input
 	 * @description we have to start with node objects, since dupe-checkable strings
@@ -115,31 +137,35 @@ export class TypedGraph extends BaseGraph {
 	 * 			 -> definitely screws up code assist / intellisense !
 	 * 			 -> (we all know it is...)
 	 */
-	expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode> {
-
-		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
+	expand(input: ExpansionInput, dir: DIR, type: string) : ExpansionResult {
+		const nodes: ExpansionResult = this.convertInputForExpansion(input);
 		const resultSet = new Set<ITypedNode>();
+		const freqMap = new Map<ITypedNode, number>();
 
-		let
-			nr_visits = 0,
-			nodeRef;
-
-		for ( let node of nodes ) {
+		for ( let node of nodes.set ) {
 			const targets = node[dir](type);
 			if ( !targets ) {
 				continue;
 			}
-			for ( let target of targets ) {
-				// nr_visits++;
-				nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
-				resultSet.add(nodeRef);
 
+
+			for ( let target of targets ) {
+				let nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
+				if ( !freqMap.has(nodeRef) ) {
+					freqMap.set(nodeRef, 1);
+				}
+				if ( resultSet.has(nodeRef) ) {
+					freqMap.set(nodeRef, freqMap.get(nodeRef) + 1);
+				}
+				resultSet.add(nodeRef);
 				if ( resultSet.size >= this._nr_nodes ) {
-					return resultSet;
+					return {set: resultSet, freq: freqMap};
 				}
 			}
+
+
 		}
-		return resultSet;
+		return {set: resultSet, freq: freqMap};
 	}
 
 
@@ -151,23 +177,26 @@ export class TypedGraph extends BaseGraph {
 	 *
 	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
-	expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg: ExpansionConfig = {})
-						: Set<ITypedNode> | [Set<ITypedNode>, Map<ITypedNode, number>] {
+	expandK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}) : ExpansionResult {
 		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
-		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
+		let nodes: ExpansionResult = this.convertInputForExpansion(input);
 		let resultSet = new Set<ITypedNode>();
-		// Start with initial set
-		let periphery = nodes;
-		// Maximum possible step size (path graph)
-		let k = cfg.k || this._nr_nodes - 1;
+		const freqMap = new Map<ITypedNode, number>();
 
+		let k = cfg.k || this._nr_nodes - 1; // Maximum possible step size (path graph)
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
-			periphery = this.expand(periphery, dir, type);
+			nodes = this.expand(nodes, dir, type);
 
 			const old_size = resultSet.size;
-			for ( let target of periphery ) {
+			for ( let target of nodes.set ) {
+				if ( !freqMap.has(target) ) {
+					freqMap.set(target, 1);
+				}
+				if ( resultSet.has(target) ) {
+					freqMap.set(target, nodes.freq.get(target) + 1);
+				}
 				resultSet.add(target);
 			}
 
@@ -176,7 +205,7 @@ export class TypedGraph extends BaseGraph {
 				break;
 			}
 		}
-		return resultSet;
+		return {set: resultSet, freq: freqMap};
 	}
 
 
@@ -184,18 +213,16 @@ export class TypedGraph extends BaseGraph {
 	 * @description like neo4j's `-[:REL*k]->`
 	 * 							only returning the node set at distance `k`
 	 */
-	peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg: ExpansionConfig = {}): Set<ITypedNode> {
+	peripheryAtK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}): ExpansionResult {
 		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
-		const nodes: Set<ITypedNode> = BaseNode.isTyped(input) ? new Set([input]) : input as Set<ITypedNode>;
-		let resultSet = new Set<ITypedNode>();
-		let periphery = nodes;
+		let nodes: ExpansionResult = this.convertInputForExpansion(input);
 		let k = cfg.k || this._nr_nodes - 1;
-		while ( k-- || resultSet.size >= this._nr_nodes ) {
-			periphery = this.expand(periphery, dir, type);
+		while ( k-- || nodes.set.size >= this._nr_nodes ) {
+			nodes = this.expand(nodes, dir, type);
 		}
-		return periphery;
+		return nodes;
 	}
 
 

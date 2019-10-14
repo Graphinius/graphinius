@@ -37,7 +37,11 @@ export interface TypedGraphStats extends GraphStats {
         [key: string]: number;
     };
 }
+export declare type ExpansionInput = ITypedNode | Set<ITypedNode> | ExpansionResult;
 export interface ExpansionConfig {
     k?: number;
-    freq?: boolean;
+}
+export interface ExpansionResult {
+    set: Set<ITypedNode>;
+    freq: Map<ITypedNode, number>;
 }

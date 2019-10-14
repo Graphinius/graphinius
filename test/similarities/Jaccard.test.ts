@@ -100,7 +100,7 @@ describe('JACCARD tests on neo4j sample graph', () => {
 		const start = karin.label;
 		const allSets = {};
 		g.getNodesT('Person').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			allSets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simSource(simFuncs.jaccard, start, allSets);
 		// console.log(jres);
@@ -123,7 +123,7 @@ describe('JACCARD tests on neo4j sample graph', () => {
 		];
 		const allSets = {};
 		g.getNodesT('Person').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			allSets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simPairwise(simFuncs.jaccard, allSets);
 
@@ -142,7 +142,7 @@ describe('JACCARD tests on neo4j sample graph', () => {
     ];
 		const allSets = {};
 		g.getNodesT('Person').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			allSets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const topK = knnNodeArray(simFuncs.jaccard, allSets, {knn: 1, dup: true});
 		// console.log(topK);

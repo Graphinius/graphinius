@@ -77,7 +77,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     ];
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const ores = simSource(simFuncs.overlap, 'classics', allSets);
 		// console.log(ores);
@@ -107,7 +107,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     ];
     const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
     const ores = simPairwise(simFuncs.overlap, allSets);
     // console.log(ores);
@@ -124,7 +124,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     ];
     const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
     const ores = simPairwise(simFuncs.overlap, allSets, {cutoff: 0.75});
     expect(ores).toEqual(oexp);
@@ -151,7 +151,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     ];
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const ores = knnNodeArray(simFuncs.overlap, allSets, {knn: 2});
 		// console.log(ores);
@@ -180,7 +180,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     };
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const ores = knnNodeDict(simFuncs.overlap, allSets, {knn: 2});
 		// console.log(ores);
@@ -197,7 +197,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     ];
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const ores = knnNodeArray(simFuncs.overlap, allSets, {knn: 4, cutoff: 0.7});
 		// console.log(ores);
@@ -224,7 +224,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
     };
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const ores = knnNodeDict(simFuncs.overlap, allSets, {knn: 4, cutoff: 0.7});
 		// console.log(ores);
@@ -247,7 +247,7 @@ describe('OVERLAP tests on neo4j sample graph', () => {
 		
 		const allSets = {};
 		g.getNodesT('Genre').forEach(n => {
-			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE');
+			allSets[n.label] = g.expand(n, DIR.in, 'HAS_GENRE').set;
     });
 		const newEdges = augment.addSubsetRelationship(simFuncs.overlap, allSets, {rtype: relName, knn: 2, cutoff: 0.5});
 		expect(g.nrDirEdges()).toBe(oldDirEdges + newEdges.size);
@@ -298,8 +298,8 @@ describe('OVERLAP tests on neo4j sample graph', () => {
 	it('should compute group similarity', () => {
 		const subSet1 = new Set([g.n('fahrenheit451'), g.n('hungerGames')]);
 		const subSet2 = new Set([g.n('dune')]);
-		const targetSet1 = g.expand(subSet1, DIR.out, 'HAS_GENRE');
-		const targetSet2 = g.expand(subSet2, DIR.out, 'HAS_GENRE');
+		const targetSet1 = g.expand(subSet1, DIR.out, 'HAS_GENRE').set;
+		const targetSet2 = g.expand(subSet2, DIR.out, 'HAS_GENRE').set;
 		const rover = sim(simFuncs.overlap, targetSet1, targetSet2);
 		const jackl = sim(simFuncs.jaccard, targetSet1, targetSet2);
 

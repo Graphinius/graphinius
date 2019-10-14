@@ -199,7 +199,6 @@ export function knnNodeDict(algo: Function, s: $I.SetOfSets, cfg: $I.SimilarityC
 	for ( let node of Object.keys(s) ) {
 		const topKEntries: $I.SimilarityEntry[] = simSource(algo, node, s, {knn: cfg.knn || 1, sort: cfg.sort});
 		topKEntries.forEach(e => {
-			// console.log(e);
 			if ( c == null || e.sim < c) {
 				return;
 			}

@@ -22,7 +22,7 @@ describe('Cutoff & knn similarity tests', () => {
 		const start = karin.label;
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simSource(simFuncs.jaccard, start, targets, {cutoff: 0.3});
 		expect(jres.length).toBe(1);
@@ -32,7 +32,7 @@ describe('Cutoff & knn similarity tests', () => {
 	it('simPairwise should consider c (cutoff) threshold', () => {
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simPairwise(simFuncs.jaccard, targets, {cutoff: 0.3});
 		expect(jres.length).toBe(3);
@@ -43,7 +43,7 @@ describe('Cutoff & knn similarity tests', () => {
 		const start = karin.label;
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simSource(simFuncs.jaccard, start, targets, {knn: 3});
 		expect(jres.length).toBe(3);
@@ -54,7 +54,7 @@ describe('Cutoff & knn similarity tests', () => {
 		const start = karin.label;
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simSource(simFuncs.jaccard, start, targets, {knn: 13});
 		expect(jres.length).toBe(4);
@@ -64,7 +64,7 @@ describe('Cutoff & knn similarity tests', () => {
 	it('simPairwise should consider knn factor', () => {
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simPairwise(simFuncs.jaccard, targets, {knn: 5});
 		expect(jres.length).toBe(5);
@@ -85,7 +85,7 @@ describe('Cutoff & knn similarity tests', () => {
 		const start = karin.label;
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simSource(simFuncs.jaccard, start, targets, {cutoff: 0.3, knn: 3});
 		expect(jres.length).toBe(1);
@@ -95,7 +95,7 @@ describe('Cutoff & knn similarity tests', () => {
 	it('simPairwise should return min(knn, #res(>cutoff)) results', () => {
 		const targets = {};
 		g.getNodesT('Person').forEach(n => {
-			targets[n.label] = g.expand(n, DIR.out, 'LIKES');
+			targets[n.label] = g.expand(n, DIR.out, 'LIKES').set;
 		});
 		const jres = simPairwise(simFuncs.jaccard, targets, {cutoff: 0.3, knn: 5});
 		expect(jres.length).toBe(3);
@@ -124,14 +124,6 @@ describe('Cutoff & knn similarity tests', () => {
 		// expect(jres).toEqual(jexp);
 		// toc = process.hrtime()[1];
 		// console.log(`Running Jest expect took ${toc-tic} nanos.`);
-	});
-
-
-	/**
-	 *
-	 */
-	it('should get correct (Jaccard) groupwise similarity', () => {
-
 	});
 	
 });

@@ -353,9 +353,13 @@ declare module 'graphinius/core/interfaces' {
 	        [key: string]: number;
 	    };
 	}
+	export type ExpansionInput = ITypedNode | Set<ITypedNode> | ExpansionResult;
 	export interface ExpansionConfig {
 	    k?: number;
-	    freq?: boolean;
+	}
+	export interface ExpansionResult {
+	    set: Set<ITypedNode>;
+	    freq: Map<ITypedNode, number>;
 	}
 
 }
@@ -668,7 +672,7 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	import { ITypedEdge, TypedEdgeConfig } from 'graphinius/core/typed/TypedEdge';
 	import { IBaseEdge } from 'graphinius/core/base/BaseEdge';
 	import { BaseGraph } from 'graphinius/core/base/BaseGraph';
-	import { DIR, ExpansionConfig, TypedGraphStats, TypedEdges, TypedNodes } from 'graphinius/core/interfaces';
+	import { DIR, ExpansionInput, ExpansionConfig, ExpansionResult, TypedGraphStats, TypedEdges, TypedNodes } from 'graphinius/core/interfaces';
 	export class TypedGraph extends BaseGraph {
 	    _label: string;
 	    protected _type: string;
@@ -684,9 +688,10 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    ins(node: ITypedNode, type: string): Set<ITypedNode>;
 	    outs(node: ITypedNode, type: string): Set<ITypedNode>;
 	    unds(node: ITypedNode, type: string): Set<ITypedNode>;
-	    expand(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
-	    expandK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
-	    peripheryAtK(input: ITypedNode | Set<ITypedNode>, dir: DIR, type: string, cfg?: ExpansionConfig): Set<ITypedNode>;
+	    private convertInputForExpansion;
+	    expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult;
+	    expandK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;
+	    peripheryAtK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;
 	    inHistT(nType: string, eType: string): Set<number>[];
 	    outHistT(nType: string, eType: string): Set<number>[];
 	    connHistT(nType: string, eType: string): Set<number>[];
