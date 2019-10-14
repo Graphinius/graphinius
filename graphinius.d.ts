@@ -688,7 +688,8 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    ins(node: ITypedNode, type: string): Set<ITypedNode>;
 	    outs(node: ITypedNode, type: string): Set<ITypedNode>;
 	    unds(node: ITypedNode, type: string): Set<ITypedNode>;
-	    private convertInputForExpansion;
+	    private convertToExpansionResult;
+	    private addTargetUpdateFreqs;
 	    expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult;
 	    expandK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;
 	    peripheryAtK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;

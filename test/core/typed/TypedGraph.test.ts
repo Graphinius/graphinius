@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
+import {TypedEdge} from "../../../src/core/typed/TypedEdge";
 import {BaseNode} from "../../../src/core/base/BaseNode";
-import {DIR, GraphMode} from '../../../src/core/interfaces';
+import {DIR, ExpansionResult} from '../../../src/core/interfaces';
 import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
 import {TypedGraph} from '../../../src/core/typed/TypedGraph';
-import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
+import {JSONInput} from '../../../src/io/input/JSONInput';
 import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/test_paths';
 import {GENERIC_TYPES} from "../../../src/config/run_config";
 import {viaSharedPrefs} from "../../../src/similarities/SimilarityCommons";
@@ -695,6 +695,106 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, {k: 2});
 				const toc = process.hrtime()[1];
 				expect(expanse.set.size).toBe(180);
+			});
+
+		});
+		
+		
+		describe('expansion with correct frequencies (strengths / weights) - ', () => {
+
+			let
+				me: ITypedNode,
+				myCompany: ITypedNode,
+				myCountry: ITypedNode,
+				employees: ExpansionResult;
+
+			beforeAll(() => {
+				me = g.n('583');
+				myCompany = Array.from(g.outs(me, 'WORKS_FOR'))[0];
+				myCountry = Array.from(g.outs(me, 'LIVES_IN'))[0];
+				employees = g.expand(myCompany, DIR.in, 'WORKS_FOR');
+
+				expect(BaseNode.isTyped(me)).toBe(true);
+				expect(BaseNode.isTyped(myCompany)).toBe(true);
+				expect(BaseNode.isTyped(myCountry)).toBe(true);
+			});
+
+
+			it('expand should correctly compute frequencies of employees (all 1\'s)', () => {
+				expect(employees.set.size).toBe(6);
+				expect(employees.freq.size).toBe(6);
+				employees.freq.forEach(f => { expect(f).toBe(1) });
+			});
+
+
+			/**
+			 * @description  some entries are not combined by name since they are explicitly different
+			 * 							 nodes in the graph -> Neo4j combines them when called with `RETURN s.name`
+			 * 							 but this seems a bit shaky at best...
+			 */
+			it('expand should correctly compute frequencies of employee skills', () => {
+				const res_exp = [
+					{ id: 'Caché ObjectScript', freq: 6 },
+					{ id: 'Red', freq: 5 },
+					{ id: 'ALGOL W', freq: 5 },
+					{ id: 'Caml', freq: 5 },
+					{ id: 'xHarbour', freq: 4 },
+					{ id: 'Hartmann pipelines', freq: 4 },
+					{ id: 'Mirah', freq: 4 },
+					{ id: 'PL/M', freq: 4 },
+					{ id: 'Hartmann pipelines', freq: 4 },
+					{ id: 'Scala', freq: 4 },
+					{ id: 'Stata', freq: 4 },
+					{ id: 'MUMPS', freq: 3 },
+					{ id: 'AIMMS', freq: 3 },
+					{ id: 'ML', freq: 3 },
+					{ id: 'csh', freq: 3 },
+					{ id: 'Cayenne', freq: 3 },
+					{ id: 'S/SL', freq: 3 },
+					{ id: 'J++', freq: 3 },
+					{ id: 'RPL', freq: 3 },
+					{ id: 'Datalog', freq: 3 },
+					{ id: 'Ladder', freq: 3 },
+					{ id: 'BPEL', freq: 3 },
+					{ id: 'Scratch', freq: 3 },
+					{ id: 'SequenceL', freq: 2 },
+					{ id: 'Babbage', freq: 2 },
+					{ id: 'TypeScript', freq: 2 },
+					{ id: 'Stata', freq: 2 },
+					{ id: 'Cython', freq: 2 },
+					{ id: 'TypeScript', freq: 2 },
+					{ id: 'ColdC', freq: 2 }
+				];
+				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
+				expect(skills.set.size).toBe(30);
+				expect(skills.freq.size).toBe(30);
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+					.sort((a, b) => b.freq - a.freq);
+				expect(skillsFreqReadable).toEqual(res_exp);
+			});
+
+
+			it('expandK (=1) should correctly compute frequencies', () => {
+				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
+				const skillsK1 = g.expandK(employees, DIR.out, 'HAS_SKILL', {k: 1});
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+					.sort((a, b) => b.freq - a.freq);
+				const skillsK1FreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+					.sort((a, b) => b.freq - a.freq);
+				expect(skillsFreqReadable).toEqual(skillsK1FreqReadable);
+			});
+
+
+			it.skip('expandK (=2) should correctly compute frequencies', () => {
+				const friends = g.expand(employees, DIR.out, 'KNOWS');
+				const friendsK2 = g.expandK(employees, DIR.out, 'KNOWS', {k: 2});
+				expect(friends.set.size).toBeLessThan(friendsK2.set.size);
+				expect(friends.set).not.toEqual(friendsK2);
+			});
+
+
+			it.skip('peripheryAtK should correctly compute frequencies', () => {
+
 			});
 
 		});

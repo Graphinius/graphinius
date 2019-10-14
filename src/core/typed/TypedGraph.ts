@@ -109,7 +109,7 @@ export class TypedGraph extends BaseGraph {
 	/**
 	 * @todo abomination...
 	 */
-	private convertInputForExpansion(input: ExpansionInput) : ExpansionResult {
+	private convertToExpansionResult(input: ExpansionInput) : ExpansionResult {
 		let nodes: Set<ITypedNode>;
 		if ( BaseNode.isTyped(input) ) {
 			return {set: new Set([input]), freq: new Map<ITypedNode, number>()};
@@ -119,6 +119,18 @@ export class TypedGraph extends BaseGraph {
 			return input as ExpansionResult;
 		}
 	}
+
+
+	private addTargetUpdateFreqs(resultSet: Set<ITypedNode>, freqMap: Map<ITypedNode, number>, nodeRef: ITypedNode) : void {
+		if ( !freqMap.has(nodeRef) ) {
+			freqMap.set(nodeRef, 1);
+		}
+		if ( resultSet.has(nodeRef) ) {
+			freqMap.set(nodeRef, freqMap.get(nodeRef) + 1);
+		}
+		resultSet.add(nodeRef);
+	}
+
 
 	/**
 	 * Neighbor nodes depending on type
@@ -138,7 +150,7 @@ export class TypedGraph extends BaseGraph {
 	 * 			 -> (we all know it is...)
 	 */
 	expand(input: ExpansionInput, dir: DIR, type: string) : ExpansionResult {
-		const nodes: ExpansionResult = this.convertInputForExpansion(input);
+		const nodes: ExpansionResult = this.convertToExpansionResult(input);
 		const resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
 
@@ -147,23 +159,13 @@ export class TypedGraph extends BaseGraph {
 			if ( !targets ) {
 				continue;
 			}
-
-
 			for ( let target of targets ) {
 				let nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
-				if ( !freqMap.has(nodeRef) ) {
-					freqMap.set(nodeRef, 1);
-				}
-				if ( resultSet.has(nodeRef) ) {
-					freqMap.set(nodeRef, freqMap.get(nodeRef) + 1);
-				}
-				resultSet.add(nodeRef);
+				this.addTargetUpdateFreqs(resultSet, freqMap, nodeRef);
 				if ( resultSet.size >= this._nr_nodes ) {
 					return {set: resultSet, freq: freqMap};
 				}
 			}
-
-
 		}
 		return {set: resultSet, freq: freqMap};
 	}
@@ -181,25 +183,18 @@ export class TypedGraph extends BaseGraph {
 		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
-		let nodes: ExpansionResult = this.convertInputForExpansion(input);
+		let nodes: ExpansionResult = this.convertToExpansionResult(input);
 		let resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
 
 		let k = cfg.k || this._nr_nodes - 1; // Maximum possible step size (path graph)
 		while ( k-- || resultSet.size >= this._nr_nodes ) {
 			nodes = this.expand(nodes, dir, type);
-
 			const old_size = resultSet.size;
-			for ( let target of nodes.set ) {
-				if ( !freqMap.has(target) ) {
-					freqMap.set(target, 1);
-				}
-				if ( resultSet.has(target) ) {
-					freqMap.set(target, nodes.freq.get(target) + 1);
-				}
-				resultSet.add(target);
-			}
 
+			for ( let target of nodes.set ) {
+				this.addTargetUpdateFreqs(resultSet, freqMap, target);
+			}
 			// if resultSize has not increased, we also reached a maximum
 			if ( old_size === resultSet.size ) {
 				break;
@@ -217,7 +212,7 @@ export class TypedGraph extends BaseGraph {
 		if ( cfg.k < 0 ) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
-		let nodes: ExpansionResult = this.convertInputForExpansion(input);
+		let nodes: ExpansionResult = this.convertToExpansionResult(input);
 		let k = cfg.k || this._nr_nodes - 1;
 		while ( k-- || nodes.set.size >= this._nr_nodes ) {
 			nodes = this.expand(nodes, dir, type);
