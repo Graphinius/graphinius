@@ -700,6 +700,37 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 		
 		
+		describe('convert input to expansion result structure tests - ', () => {
+
+			let	me: ITypedNode;
+
+			beforeAll(() => {
+				me = g.n('583');
+			});
+
+
+			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
+				const exp_res = {set: new Set([me]), freq: new Map()};
+				expect(TypedGraph.convertToExpansionResult(me)).toEqual(exp_res);
+			});
+
+
+			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
+				const exp_res = {set: new Set([me]), freq: new Map()};
+				expect(TypedGraph.convertToExpansionResult(new Set([me]))).toEqual(exp_res);
+			});
+
+
+			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
+				const exp_res = {set: new Set([me]), freq: new Map()};
+				const input = {set: new Set([me]), freq: new Map()};
+				input.freq.set(me, 1);
+				expect(TypedGraph.convertToExpansionResult(input)).toBe(input);
+			});
+
+		});
+		
+		
 		describe('expansion with correct frequencies (strengths / weights) - ', () => {
 
 			let
@@ -830,8 +861,21 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 RETURN friend.name, cnt
 			 ORDER BY cnt DESC
 			 */
-			it.skip('peripheryAtK should correctly compute frequencies', () => {
-
+			it('peripheryAtK should correctly compute frequencies', () => {
+				const res_exp = [
+					{ name: 'Ursula Gerlach', freq: 18 },
+					{ name: 'Tremayne Boehm', freq: 18 },
+					{ name: 'Cyrus Ratke', freq: 14 },
+					{ name: 'Javon Shields', freq: 12},
+					{ name: 'Rosella Kohler', freq: 9},
+					{ name: 'Mariela Okuneva', freq: 6},
+					{ name: 'Asa Botsford', freq: 4},
+				];
+				const friendsK2 = g.peripheryAtK(employees, DIR.out, 'KNOWS', {k: 2});
+				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+					.sort((a, b) => b.freq - a.freq);
+				// console.log(friendsK2Readable);
+				res_exp.forEach(e => expect(friendsK2Readable).toContainEqual(e));
 			});
 
 		});
@@ -869,9 +913,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 					to: g.n(e.to).f('name'),
 					isect: e.isect,
 					sim: e.sim
-				})).slice(0, 5);
-				// console.log(result);
-				expect(result).toEqual(sim_exp);
+				}));
+				// console.log(result.length);
+				expect(result.slice(0, 5)).toEqual(sim_exp);
 			});
 
 		});

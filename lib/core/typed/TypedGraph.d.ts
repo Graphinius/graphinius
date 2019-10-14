@@ -18,7 +18,7 @@ export declare class TypedGraph extends BaseGraph {
     ins(node: ITypedNode, type: string): Set<ITypedNode>;
     outs(node: ITypedNode, type: string): Set<ITypedNode>;
     unds(node: ITypedNode, type: string): Set<ITypedNode>;
-    private convertToExpansionResult;
+    static convertToExpansionResult(input: ExpansionInput): ExpansionResult;
     expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult;
     expandK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;
     peripheryAtK(input: ExpansionInput, dir: DIR, type: string, cfg?: ExpansionConfig): ExpansionResult;
