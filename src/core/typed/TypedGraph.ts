@@ -87,20 +87,21 @@ export class TypedGraph extends BaseGraph {
 	 */
 	ins(node: ITypedNode, type: string): Set<ITypedNode> {
 		const targets = node.ins(type);
-		if ( targets ) {
+		if (targets) {
 			return new Set([...targets].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 		}
 	}
 
 	outs(node: ITypedNode, type: string): Set<ITypedNode> {
 		const targets = node.outs(type);
-		if ( targets ) {}
+		if (targets) {
+		}
 		return new Set([...targets].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 	}
 
 	unds(node: ITypedNode, type: string): Set<ITypedNode> {
 		const targets = node.unds(type);
-		if ( targets ) {
+		if (targets) {
 			return new Set([...targets].map(uid => this.n(TypedNode.nIDFromUID(uid)) as TypedNode));
 		}
 	}
@@ -109,11 +110,11 @@ export class TypedGraph extends BaseGraph {
 	/**
 	 * @todo abomination...
 	 */
-	private convertToExpansionResult(input: ExpansionInput) : ExpansionResult {
+	private convertToExpansionResult(input: ExpansionInput): ExpansionResult {
 		let nodes: Set<ITypedNode>;
-		if ( BaseNode.isTyped(input) ) {
+		if (BaseNode.isTyped(input)) {
 			return {set: new Set([input]), freq: new Map<ITypedNode, number>()};
-		} else if ( input instanceof Set ) {
+		} else if (input instanceof Set) {
 			return {set: input as Set<ITypedNode>, freq: new Map<ITypedNode, number>()};
 		} else {
 			return input as ExpansionResult;
@@ -121,50 +122,48 @@ export class TypedGraph extends BaseGraph {
 	}
 
 
-	private addTargetUpdateFreqs(resultSet: Set<ITypedNode>, freqMap: Map<ITypedNode, number>, nodeRef: ITypedNode) : void {
-		if ( !freqMap.has(nodeRef) ) {
-			freqMap.set(nodeRef, 1);
-		}
-		if ( resultSet.has(nodeRef) ) {
-			freqMap.set(nodeRef, freqMap.get(nodeRef) + 1);
-		}
-		resultSet.add(nodeRef);
-	}
-
-
 	/**
 	 * Neighbor nodes depending on type
 	 * @description takes either a single TypedNode or a Set of TypedNodes as input
 	 * @description we have to start with node objects, since dupe-checkable strings
-	 * 							are only available once we deal with edge/neighborhood entries
-	 *  						However, we then need to switch to an `intermediate representation`
-	 *  					  using those strings for dupe checking, and in the end map back to
-	 *  					  a node set...
+	 *              are only available once we deal with edge/neighborhood entries
+	 *              However, we then need to switch to an `intermediate representation`
+	 *              using those strings for dupe checking, and in the end map back to
+	 *              a node set...
 	 * @description In case of multiple input nodes, they could reference each other...
-	 * 			 -> Neo4j allows that, so we allow it as well (for now ;-))
+	 *       -> Neo4j allows that, so we allow it as well (for now ;-))
 	 *
 	 * @todo decide if this difference in representation between node->neighbors &
-	 * 			 graph->nodeNeighbors is a problem or not (also performance-wise) !?
+	 *       graph->nodeNeighbors is a problem or not (also performance-wise) !?
 	 * @todo decide if method call via [dir] is an abomination or not
-	 * 			 -> definitely screws up code assist / intellisense !
-	 * 			 -> (we all know it is...)
+	 *       -> definitely screws up code assist / intellisense !
+	 *       -> (we all know it is...)
 	 */
-	expand(input: ExpansionInput, dir: DIR, type: string) : ExpansionResult {
+	expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult {
 		const nodes: ExpansionResult = this.convertToExpansionResult(input);
 		const resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
 
-		for ( let node of nodes.set ) {
+		for (let node of nodes.set) {
 			const targets = node[dir](type);
-			if ( !targets ) {
+			if (!targets) {
 				continue;
 			}
-			for ( let target of targets ) {
+			for (let target of targets) {
 				let nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
-				this.addTargetUpdateFreqs(resultSet, freqMap, nodeRef);
-				if ( resultSet.size >= this._nr_nodes ) {
-					return {set: resultSet, freq: freqMap};
+
+				if (!freqMap.has(nodeRef)) {
+					// if we already have a frequency entry for this node, we'll use it for initialization
+					if (nodes.freq.get(node)) {
+						freqMap.set(nodeRef, nodes.freq.get(node));
+					} else {
+						freqMap.set(nodeRef, 1);
+					}
 				}
+				if (resultSet.has(nodeRef)) {
+					freqMap.set(nodeRef, freqMap.get(nodeRef) + nodes.freq.get(node));
+				}
+				resultSet.add(nodeRef);
 			}
 		}
 		return {set: resultSet, freq: freqMap};
@@ -175,29 +174,31 @@ export class TypedGraph extends BaseGraph {
 	 * expand over k steps
 	 *
 	 * @description like neo4j's `-[:REL*1..k]->`
-	 * 							returning the node sets at distance <= `k`
+	 *              returning the node sets at distance <= `k`
 	 *
 	 * @todo -> optimize data structures (maybe a core re-write)
 	 */
-	expandK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}) : ExpansionResult {
-		if ( cfg.k < 0 ) {
+	expandK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}): ExpansionResult {
+		if (cfg.k < 0) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		let nodes: ExpansionResult = this.convertToExpansionResult(input);
 		let resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
-
 		let k = cfg.k || this._nr_nodes - 1; // Maximum possible step size (path graph)
-		while ( k-- || resultSet.size >= this._nr_nodes ) {
+
+		while (k--) {
 			nodes = this.expand(nodes, dir, type);
 			const old_size = resultSet.size;
 
-			for ( let target of nodes.set ) {
-				this.addTargetUpdateFreqs(resultSet, freqMap, target);
-			}
-			// if resultSize has not increased, we also reached a maximum
-			if ( old_size === resultSet.size ) {
-				break;
+			for (let nodeRef of nodes.set) {
+				if (!freqMap.has(nodeRef)) {
+					freqMap.set(nodeRef, nodes.freq.get(nodeRef));
+				}
+				if (resultSet.has(nodeRef)) {
+					freqMap.set(nodeRef, freqMap.get(nodeRef) + nodes.freq.get(nodeRef));
+				}
+				resultSet.add(nodeRef);
 			}
 		}
 		return {set: resultSet, freq: freqMap};
@@ -206,15 +207,15 @@ export class TypedGraph extends BaseGraph {
 
 	/**
 	 * @description like neo4j's `-[:REL*k]->`
-	 * 							only returning the node set at distance `k`
+	 *              only returning the node set at distance `k`
 	 */
 	peripheryAtK(input: ExpansionInput, dir: DIR, type: string, cfg: ExpansionConfig = {}): ExpansionResult {
-		if ( cfg.k < 0 ) {
+		if (cfg.k < 0) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
 		let nodes: ExpansionResult = this.convertToExpansionResult(input);
 		let k = cfg.k || this._nr_nodes - 1;
-		while ( k-- || nodes.set.size >= this._nr_nodes ) {
+		while (k-- || nodes.set.size >= this._nr_nodes) {
 			nodes = this.expand(nodes, dir, type);
 		}
 		return nodes;
@@ -239,9 +240,9 @@ export class TypedGraph extends BaseGraph {
 	private degreeHistT(dir: string, nType: string, eType: string): Set<number>[] {
 		let result = [];
 
-		for ( let [node_id, node] of this._typedNodes.get(nType) ) {
+		for (let [node_id, node] of this._typedNodes.get(nType)) {
 			let deg;
-			switch(dir) {
+			switch (dir) {
 				case DIR.in:
 					deg = node.ins(eType) ? node.ins(eType).size : 0;
 					break;
@@ -251,10 +252,9 @@ export class TypedGraph extends BaseGraph {
 				default:
 					deg = node.unds(eType) ? node.unds(eType).size : 0;
 			}
-			if ( !result[deg] ) {
+			if (!result[deg]) {
 				result[deg] = new Set([node]);
-			}
-			else {
+			} else {
 				result[deg].add(node);
 			}
 		}

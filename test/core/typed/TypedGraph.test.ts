@@ -731,44 +731,50 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * @description  some entries are not combined by name since they are explicitly different
 			 * 							 nodes in the graph -> Neo4j combines them when called with `RETURN s.name`
 			 * 							 but this seems a bit shaky at best...
+			 *
+			 * @example neo4j
+					 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:HAS_SKILL]->(s:Skill)
+					 WITH s, COUNT(s) AS cnt
+					 RETURN s.name, cnt
+					 ORDER BY cnt DESC
 			 */
 			it('expand should correctly compute frequencies of employee skills', () => {
 				const res_exp = [
-					{ id: 'Caché ObjectScript', freq: 6 },
-					{ id: 'Red', freq: 5 },
-					{ id: 'ALGOL W', freq: 5 },
-					{ id: 'Caml', freq: 5 },
-					{ id: 'xHarbour', freq: 4 },
-					{ id: 'Hartmann pipelines', freq: 4 },
-					{ id: 'Mirah', freq: 4 },
-					{ id: 'PL/M', freq: 4 },
-					{ id: 'Hartmann pipelines', freq: 4 },
-					{ id: 'Scala', freq: 4 },
-					{ id: 'Stata', freq: 4 },
-					{ id: 'MUMPS', freq: 3 },
-					{ id: 'AIMMS', freq: 3 },
-					{ id: 'ML', freq: 3 },
-					{ id: 'csh', freq: 3 },
-					{ id: 'Cayenne', freq: 3 },
-					{ id: 'S/SL', freq: 3 },
-					{ id: 'J++', freq: 3 },
-					{ id: 'RPL', freq: 3 },
-					{ id: 'Datalog', freq: 3 },
-					{ id: 'Ladder', freq: 3 },
-					{ id: 'BPEL', freq: 3 },
-					{ id: 'Scratch', freq: 3 },
-					{ id: 'SequenceL', freq: 2 },
-					{ id: 'Babbage', freq: 2 },
-					{ id: 'TypeScript', freq: 2 },
-					{ id: 'Stata', freq: 2 },
-					{ id: 'Cython', freq: 2 },
-					{ id: 'TypeScript', freq: 2 },
-					{ id: 'ColdC', freq: 2 }
+					{ name: 'Caché ObjectScript', freq: 6 },
+					{ name: 'Red', freq: 5 },
+					{ name: 'ALGOL W', freq: 5 },
+					{ name: 'Caml', freq: 5 },
+					{ name: 'xHarbour', freq: 4 },
+					{ name: 'Hartmann pipelines', freq: 4 },
+					{ name: 'Mirah', freq: 4 },
+					{ name: 'PL/M', freq: 4 },
+					{ name: 'Hartmann pipelines', freq: 4 },
+					{ name: 'Scala', freq: 4 },
+					{ name: 'Stata', freq: 4 },
+					{ name: 'MUMPS', freq: 3 },
+					{ name: 'AIMMS', freq: 3 },
+					{ name: 'ML', freq: 3 },
+					{ name: 'csh', freq: 3 },
+					{ name: 'Cayenne', freq: 3 },
+					{ name: 'S/SL', freq: 3 },
+					{ name: 'J++', freq: 3 },
+					{ name: 'RPL', freq: 3 },
+					{ name: 'Datalog', freq: 3 },
+					{ name: 'Ladder', freq: 3 },
+					{ name: 'BPEL', freq: 3 },
+					{ name: 'Scratch', freq: 3 },
+					{ name: 'SequenceL', freq: 2 },
+					{ name: 'Babbage', freq: 2 },
+					{ name: 'TypeScript', freq: 2 },
+					{ name: 'Stata', freq: 2 },
+					{ name: 'Cython', freq: 2 },
+					{ name: 'TypeScript', freq: 2 },
+					{ name: 'ColdC', freq: 2 }
 				];
 				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
 				expect(skills.set.size).toBe(30);
 				expect(skills.freq.size).toBe(30);
-				const skillsFreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
 					.sort((a, b) => b.freq - a.freq);
 				expect(skillsFreqReadable).toEqual(res_exp);
 			});
@@ -777,22 +783,53 @@ describe('TYPED GRAPH TESTS: ', () => {
 			it('expandK (=1) should correctly compute frequencies', () => {
 				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
 				const skillsK1 = g.expandK(employees, DIR.out, 'HAS_SKILL', {k: 1});
-				const skillsFreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
 					.sort((a, b) => b.freq - a.freq);
-				const skillsK1FreqReadable = Array.from(skills.freq).map(e => ({id: e[0].f('name'), freq: e[1]}))
+				const skillsK1FreqReadable = Array.from(skillsK1.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
 					.sort((a, b) => b.freq - a.freq);
 				expect(skillsFreqReadable).toEqual(skillsK1FreqReadable);
 			});
 
 
-			it.skip('expandK (=2) should correctly compute frequencies', () => {
+			/**
+			 * @description not checking for complete neo4j equivalency, but just taking
+			 * 							random samples from the result structure
+			 * @example neo4j
+				 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*1..2]->(friend:Person)
+				 WITH friend, COUNT(friend) AS cnt
+				 RETURN friend.name, cnt
+				 ORDER BY cnt DESC
+			 */
+			it('expandK (=2) should correctly compute frequencies', () => {
+				const res_exp = [
+					{ name: 'Ursula Gerlach', freq: 19 },
+					{ name: 'Tremayne Boehm', freq: 18 },
+					{ name: 'Cyrus Ratke', freq: 15 },
+					{ name: 'Javon Shields', freq: 12},
+					{ name: 'Rosella Kohler', freq: 9},
+					{ name: 'Mariela Okuneva', freq: 7},
+					{ name: 'Asa Botsford', freq: 4},
+				];
 				const friends = g.expand(employees, DIR.out, 'KNOWS');
 				const friendsK2 = g.expandK(employees, DIR.out, 'KNOWS', {k: 2});
 				expect(friends.set.size).toBeLessThan(friendsK2.set.size);
 				expect(friends.set).not.toEqual(friendsK2);
+				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+					.sort((a, b) => b.freq - a.freq);
+				// console.log(friendsK2Readable);
+				res_exp.forEach(e => expect(friendsK2Readable).toContainEqual(e));
 			});
 
 
+			/**
+			 * @description not checking for complete neo4j equivalency, but just taking
+			 * 							random samples from the result structure
+			 * @example neo4j
+			 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*2]->(friend:Person)
+			 WITH friend, COUNT(friend) AS cnt
+			 RETURN friend.name, cnt
+			 ORDER BY cnt DESC
+			 */
 			it.skip('peripheryAtK should correctly compute frequencies', () => {
 
 			});
