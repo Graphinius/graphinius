@@ -111,7 +111,6 @@ export class TypedGraph extends BaseGraph {
 	 * @todo abomination...
 	 */
 	static convertToExpansionResult(input: ExpansionInput): ExpansionResult {
-		let nodes: Set<ITypedNode>;
 		if (BaseNode.isTyped(input)) {
 			return {set: new Set([input]), freq: new Map<ITypedNode, number>()};
 		} else if (input instanceof Set) {

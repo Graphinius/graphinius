@@ -64,3 +64,8 @@ export interface ExpansionResult {
 	set		: Set<ITypedNode>;
 	freq	: Map<ITypedNode, number>;
 }
+
+/**
+ * @todo make it so
+ */
+// export type ExpansionResult = Map<ITypedNode, number>;
