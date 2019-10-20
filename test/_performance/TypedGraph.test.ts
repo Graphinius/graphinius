@@ -4,6 +4,7 @@ import {TypedGraph} from "../../src/core/typed/TypedGraph";
 import {Logger} from "../../src/utils/Logger";
 import {DIR} from "../../src/core/interfaces";
 import * as fs from 'fs';
+import getOwnPropertyDescriptor = Reflect.getOwnPropertyDescriptor;
 
 const
 	logger = new Logger(),
@@ -28,22 +29,11 @@ describe('typed graph performance - ', () => {
 
 	let
 		jobGraph: TypedGraph,
-		meetupGraph: TypedGraph,
-		expandNodeKResults = [],
-		expandSetKResults = [],
-		peripheryResults = [];
+		meetupGraph: TypedGraph;
 
 
 	beforeAll(() => {
 		jobGraph = new JSONInput().readFromJSONFile(jobsGraphFile, new TypedGraph('job')) as TypedGraph;
-		for ( let k = 1; k < 6; k++ ) {
-			const expandNodeKResultsFile = `${JSON_PERF_PATH}/expand/tomlemke-friends-expand${k}.csv`;
-			expandNodeKResults[k] = csvToFreqArray(fs.readFileSync(expandNodeKResultsFile).toString().trim());
-			const expandSetKResultsFile = `${JSON_PERF_PATH}/expand/kovacek-friends-expand${k}.csv`;
-			expandSetKResults[k] = csvToFreqArray(fs.readFileSync(expandSetKResultsFile).toString().trim());
-			const peripherySetKResultsFile = `${JSON_PERF_PATH}/expand/kovacek-friends-periphery${k}.csv`;
-			peripheryResults[k] = csvToFreqArray(fs.readFileSync(peripherySetKResultsFile).toString().trim());
-		}
 	});
 
 
@@ -69,7 +59,7 @@ describe('typed graph performance - ', () => {
 			});
 		});
 		const toc = +new Date;
-		logger.log(`Computing typed histograms over the MEETUP graph took ${toc - tic} ms.`)
+		logger.log(`Computing typed histograms over the MEETUP graph took ${toc - tic} ms.`);
 	});
 
 
@@ -83,73 +73,128 @@ describe('typed graph performance - ', () => {
 			});
 		});
 		const toc = +new Date;
-		logger.log(`Computing typed histograms over the JOBS graph took ${toc - tic} ms.`)
+		logger.log(`Computing typed histograms over the JOBS graph took ${toc - tic} ms.`);
 	});
 
 
-	/**
-	 MATCH (me:Person{name: 'Tom Lemke'})-[:KNOWS*1..5]->(p:Person)
-	 WITH me, p.name as person, count(p.name) as cnt
-	 RETURN person, cnt
-	 ORDER by cnt DESC
-	 */
-	for ( let k = 1; k < 6; k++ ) {
-		it.only('expands NODE -> friends of friends a certain number of times', () => {
-			const tic = +new Date;
-			const me = jobGraph.n('583');
-			const socialSphere = jobGraph.expandK(me, DIR.out, 'KNOWS', {k});
-			const toc = +new Date;
-			logger.log(`Expanding social sphere of 'Tom Lemke' ${k}-fold took ${toc - tic} ms.`);
 
-			const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')})).sort((a, b) => b.freq - a.freq);
-			console.log(readable);
-			readable.forEach(e => expect(expandNodeKResults[k]).toContainEqual(e));
+	describe('periphery@k / expandk tests - ', () => {
+
+		let
+			jobGraph: TypedGraph,
+			meetupGraph: TypedGraph,
+			expandNodeKResults = [],
+			expandSetKResults = [],
+			peripheryNodeResults = [],
+			peripherySetResults = [];
+
+
+		beforeAll(() => {
+			jobGraph = new JSONInput().readFromJSONFile(jobsGraphFile, new TypedGraph('job')) as TypedGraph;
+			for (let k = 1; k < 6; k++) {
+				const expandNodeKResultsFile = `${JSON_PERF_PATH}/expand/tomlemke-friends-expand${k}.csv`;
+				expandNodeKResults[k] = csvToFreqArray(fs.readFileSync(expandNodeKResultsFile).toString().trim());
+				const expandSetKResultsFile = `${JSON_PERF_PATH}/expand/kovacek-friends-expand${k}.csv`;
+				expandSetKResults[k] = csvToFreqArray(fs.readFileSync(expandSetKResultsFile).toString().trim());
+				const peripheryNodeKResultsFile = `${JSON_PERF_PATH}/expand/tomlemke-friends-periphery${k}.csv`;
+				peripheryNodeResults[k] = csvToFreqArray(fs.readFileSync(peripheryNodeKResultsFile).toString().trim());
+				const peripherySetKResultsFile = `${JSON_PERF_PATH}/expand/kovacek-friends-periphery${k}.csv`;
+				peripherySetResults[k] = csvToFreqArray(fs.readFileSync(peripherySetKResultsFile).toString().trim());
+			}
 		});
-	}
 
 
-	/**
-	 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*1..k]->(p:Person)
-	 WITH c.name as company, p, p.name as person, count(p.name) as cnt
-	 RETURN person, cnt
-	 ORDER by cnt DESC
-	 */
-	for ( let k = 1; k < 6; k++ ) {
-		it.only('expands SET -> friends of friends a certain number of times', () => {
-			const tic = +new Date;
-			const company = jobGraph.n('245');
-			const employees = jobGraph.expand(company, DIR.in, 'WORKS_FOR');
-			const socialSphere = jobGraph.expandK(employees, DIR.out, 'KNOWS', {k});
-			const toc = +new Date;
-			logger.log(`Expanding social sphere of 'Kovacek'-employees ${k}-fold took ${toc - tic} ms.`);
+		/**
+		 MATCH (me:Person{name: 'Tom Lemke'})-[:KNOWS*1..k]->(p:Person)
+		 WITH me, p.name as person, count(p.name) as cnt
+		 RETURN person, cnt
+		 ORDER by cnt DESC
+		 */
+		for (let k = 1; k < 6; k++) {
+			it(`expands NODE -> friends of friends up to distance ${k}`, () => {
+				const tic = +new Date;
+				const me = jobGraph.n('583');
+				const socialSphere = jobGraph.expandK(me, DIR.out, 'KNOWS', {k});
+				const toc = +new Date;
+				logger.log(`Expanding social sphere of 'Tom Lemke' ${k}-fold took ${toc - tic} ms.`);
 
-			const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')})).sort((a, b) => b.freq - a.freq);
-			console.log(readable);
-			readable.forEach(e => expect(expandSetKResults[k]).toContainEqual(e));
-		});
-	}
+				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
+					.sort((a, b) => b.freq - a.freq);
+				console.log(readable);
+				readable.forEach(e => expect(expandNodeKResults[k]).toContainEqual(e));
+			});
+		}
 
 
-	/**
-	 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*k]->(p:Person)
-	 WITH c.name as company, p, p.name as person, count(p.name) as cnt
-	 RETURN person, cnt
-	 ORDER by cnt DESC
-	 */
-	for ( let k = 1; k < 6; k++ ) {
-		it.only('social periphery SET -> friends of friends @ distance k', () => {
-			const tic = +new Date;
-			const company = jobGraph.n('245');
-			const employees = jobGraph.expand(company, DIR.in, 'WORKS_FOR');
-			const socialSphere = jobGraph.peripheryAtK(employees, DIR.out, 'KNOWS', {k});
-			const toc = +new Date;
-			logger.log(`Computing ${k}-distant social periphery of 'Kovacek'-employees took ${toc - tic} ms.`);
+		/**
+		 MATCH (me:Person{name: 'Tom Lemke'})-[:KNOWS*k]->(p:Person)
+		 WITH me, p.name as person, count(p.name) as cnt
+		 RETURN person, cnt
+		 ORDER by cnt DESC
+		 */
+		for (let k = 1; k < 6; k++) {
+			it(`social periphery NODE -> friends of friends @ distance ${k}`, () => {
+				const tic = +new Date;
+				const me = jobGraph.n('583');
+				const socialSphere = jobGraph.peripheryAtK(me, DIR.out, 'KNOWS', {k});
+				const toc = +new Date;
+				logger.log(`Expanding social sphere of 'Tom Lemke' ${k}-fold took ${toc - tic} ms.`);
 
-			const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')})).sort((a, b) => b.freq - a.freq);
-			console.log(readable);
-			readable.forEach(e => expect(peripheryResults[k]).toContainEqual(e));
-		});
-	}
+				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
+					.sort((a, b) => b.freq - a.freq);
+				console.log(readable);
+				readable.forEach(e => expect(peripheryNodeResults[k]).toContainEqual(e));
+			});
+		}
+
+
+		/**
+		 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*1..k]->(p:Person)
+		 WITH c.name as company, p, p.name as person, count(p.name) as cnt
+		 RETURN person, cnt
+		 ORDER by cnt DESC
+		 */
+		for (let k = 1; k < 6; k++) {
+			it(`expands SET -> friends of friends up to distance ${k}`, () => {
+				const tic = +new Date;
+				const company = jobGraph.n('245');
+				const employees = jobGraph.expand(company, DIR.in, 'WORKS_FOR');
+				const socialSphere = jobGraph.expandK(employees, DIR.out, 'KNOWS', {k});
+				const toc = +new Date;
+				logger.log(`Expanding social sphere of 'Kovacek'-employees ${k}-fold took ${toc - tic} ms.`);
+
+				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
+					.sort((a, b) => b.freq - a.freq);
+				console.log(readable);
+				readable.forEach(e => expect(expandSetKResults[k]).toContainEqual(e));
+			});
+		}
+
+
+		/**
+		 MATCH (c:Company{name: 'Kovacek-Aufderhar'})<-[:WORKS_FOR]-(e:Person)-[:KNOWS*k]->(p:Person)
+		 WITH c.name as company, p, p.name as person, count(p.name) as cnt
+		 RETURN person, cnt
+		 ORDER by cnt DESC
+		 */
+		for (let k = 1; k < 6; k++) {
+			it(`social periphery SET -> friends of friends @ distance ${k}`, () => {
+				const tic = +new Date;
+				const company = jobGraph.n('245');
+				const employees = jobGraph.expand(company, DIR.in, 'WORKS_FOR');
+				const socialSphere = jobGraph.peripheryAtK(employees, DIR.out, 'KNOWS', {k});
+				const toc = +new Date;
+				logger.log(`Computing ${k}-distant social periphery of 'Kovacek'-employees took ${toc - tic} ms.`);
+
+				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
+					.sort((a, b) => b.freq - a.freq);
+				console.log(readable);
+				readable.forEach(e => expect(peripherySetResults[k]).toContainEqual(e));
+			});
+		}
+
+	});
+
 
 });
 

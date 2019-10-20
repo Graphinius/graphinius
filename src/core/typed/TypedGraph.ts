@@ -152,13 +152,16 @@ export class TypedGraph extends BaseGraph {
 				let nodeRef = this.n(TypedNode.nIDFromUID(target)) as TypedNode;
 
 				if (!freqMap.has(nodeRef)) {
-					// if we already have a frequency entry for this node, we'll use it for initialization
+					// if we already have a frequency entry for this source node, we'll use it for initialization
+					// since if #paths already led to this node, and we have a path from this node to the
+					// target, then we got #paths to the target from whatever original source
 					if (nodes.freq.get(node)) {
 						freqMap.set(nodeRef, nodes.freq.get(node));
 					} else {
 						freqMap.set(nodeRef, 1);
 					}
 				}
+
 				if (resultSet.has(nodeRef)) {
 					freqMap.set(nodeRef, freqMap.get(nodeRef) + nodes.freq.get(node));
 				}
@@ -179,19 +182,22 @@ export class TypedGraph extends BaseGraph {
 		if (cfg.k < 0) {
 			throw new Error('cowardly refusing to expand a negative number of steps.');
 		}
+		let k = cfg.k && cfg.k < this._nr_nodes ? cfg.k : this._nr_nodes - 1;
+
 		let nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
 		let resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
-		let k = cfg.k && cfg.k < this._nr_nodes ? cfg.k : this._nr_nodes - 1;
 
 		while (k--) {
 			nodes = this.expand(nodes, dir, type);
+
 			for (let nodeRef of nodes.set) {
 				if (!freqMap.has(nodeRef)) {
 					freqMap.set(nodeRef, nodes.freq.get(nodeRef));
 				}
 				if (resultSet.has(nodeRef)) {
 					freqMap.set(nodeRef, freqMap.get(nodeRef) + nodes.freq.get(nodeRef));
+
 				}
 				resultSet.add(nodeRef);
 			}
