@@ -6,6 +6,7 @@ import {GENERIC_TYPES} from "../../config/run_config";
 import {BaseNode} from "../base/BaseNode";
 import {
 	DIR,
+	ExpansionInbounds,
 	ExpansionInput,
 	ExpansionConfig,
 	ExpansionResult,
@@ -139,6 +140,8 @@ export class TypedGraph extends BaseGraph {
 	 *       -> (we all know it is...)
 	 */
 	expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult {
+		const expansionInbounds : ExpansionInbounds = {};
+
 		const nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
 		const resultSet = new Set<ITypedNode>();
 		const freqMap = new Map<ITypedNode, number>();
@@ -216,7 +219,8 @@ export class TypedGraph extends BaseGraph {
 		}
 		let nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
 		let k = cfg.k && cfg.k < this._nr_nodes ? cfg.k : this._nr_nodes - 1;
-		while (k-- || nodes.set.size >= this._nr_nodes) {
+
+		for ( let it = 0; it < k; it++ ) {
 			nodes = this.expand(nodes, dir, type);
 		}
 		return nodes;

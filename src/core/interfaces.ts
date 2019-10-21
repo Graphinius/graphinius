@@ -69,3 +69,12 @@ export interface ExpansionResult {
  * @todo make it so
  */
 // export type ExpansionResult = Map<ITypedNode, number>;
+
+/**
+ * For figuring out abberations to n4j expansion results (sometimes tiny)
+ *
+ * @todo maybe this is just experimental, maybe not...
+ */
+type Inbounds = {[key: string] : number}; // sourceID => freq of sourceNode
+export type ExpansionInbounds = {[key: string] : Inbounds};
+

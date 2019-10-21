@@ -2,9 +2,9 @@ import {JSON_PERF_PATH, JSON_REC_PATH} from "../config/test_paths";
 import {JSONInput} from "../../src/io/input/JSONInput";
 import {TypedGraph} from "../../src/core/typed/TypedGraph";
 import {Logger} from "../../src/utils/Logger";
-import {DIR} from "../../src/core/interfaces";
+import {DIR, ExpansionResult} from "../../src/core/interfaces";
 import * as fs from 'fs';
-import getOwnPropertyDescriptor = Reflect.getOwnPropertyDescriptor;
+import {ITypedNode} from "../../src/core/typed/TypedNode";
 
 const
 	logger = new Logger(),
@@ -78,11 +78,11 @@ describe('typed graph performance - ', () => {
 
 
 
-	describe('periphery@k / expandk tests - ', () => {
+	describe.only('periphery@k / expandk tests - ', () => {
 
-		let
-			jobGraph: TypedGraph,
-			meetupGraph: TypedGraph,
+		let jobGraph: TypedGraph;
+
+		const
 			expandNodeKResults = [],
 			expandSetKResults = [],
 			peripheryNodeResults = [],
@@ -120,7 +120,11 @@ describe('typed graph performance - ', () => {
 
 				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
 					.sort((a, b) => b.freq - a.freq);
-				console.log(readable);
+				// console.log(readable);
+
+				const abberations = [];
+				readable.forEach(e => addAbberation(abberations, expandNodeKResults[k], e));
+				console.log('Abberations: ', abberations);
 				readable.forEach(e => expect(expandNodeKResults[k]).toContainEqual(e));
 			});
 		}
@@ -142,7 +146,11 @@ describe('typed graph performance - ', () => {
 
 				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
 					.sort((a, b) => b.freq - a.freq);
-				console.log(readable);
+				// console.log(readable);
+
+				const abberations = [];
+				readable.forEach(e => addAbberation(abberations, peripheryNodeResults[k], e));
+				console.log('Abberations: ', abberations);
 				readable.forEach(e => expect(peripheryNodeResults[k]).toContainEqual(e));
 			});
 		}
@@ -165,7 +173,11 @@ describe('typed graph performance - ', () => {
 
 				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
 					.sort((a, b) => b.freq - a.freq);
-				console.log(readable);
+				// console.log(readable);
+
+				const abberations = [];
+				readable.forEach(e => addAbberation(abberations, expandSetKResults[k], e));
+				console.log('Abberations: ', abberations);
 				readable.forEach(e => expect(expandSetKResults[k]).toContainEqual(e));
 			});
 		}
@@ -188,13 +200,27 @@ describe('typed graph performance - ', () => {
 
 				const readable: SoSFreq = Array.from(socialSphere.freq).map(f => ({freq: f[1], name: f[0].f('name')}))
 					.sort((a, b) => b.freq - a.freq);
-				console.log(readable);
+				// console.log(readable);
+
+				const abberations = [];
+				readable.forEach(e => addAbberation(abberations, peripherySetResults[k], e));
+				console.log('Abberations: ', abberations);
 				readable.forEach(e => expect(peripherySetResults[k]).toContainEqual(e));
 			});
 		}
 
 	});
 
-
 });
 
+
+function addAbberation(abberations: Array<any>, comparisons: Array<{freq: number, name: string}>, e) {
+	for ( let c of comparisons ) {
+		if ( c.name === e.name ) {
+			if ( c.freq !== e.freq ) {
+				abberations.push({$G: e.freq, $N: c.freq, diff: e.freq - c.freq, name: e.name});
+			}
+			break;
+		}
+	}
+}
