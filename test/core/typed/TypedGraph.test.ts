@@ -1,3 +1,4 @@
+import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 import {TypedEdge} from "../../../src/core/typed/TypedEdge";
@@ -637,9 +638,10 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
 				const expanse = g.expandK(g.n(marie), DIR.out, knows, {k:2});
-				const names = [...expanse.set.values()].map(n => n.getFeature('name')).sort();
+				const names = Array.from(expanse.set).map(n => n.f('name')).sort();
 				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
-				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv').toString().trim().split('\n');
+				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv')
+					.toString().trim().split(os.EOL);
 				expect(expanse.set.size).toBe(161);
 				expect(names).toEqual(compareNames);
 			});
