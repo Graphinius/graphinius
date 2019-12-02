@@ -612,6 +612,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 		});
 
 
+		/**
+		 * @todo write tests for expandK with frequencies over k > 3 ..
+		 */
 		describe('expand over K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {

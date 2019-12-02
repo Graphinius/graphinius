@@ -78,7 +78,7 @@ describe('typed graph performance - ', () => {
 
 
 
-	describe.only('periphery@k / expandk tests - ', () => {
+	describe.skip('periphery@k / expandk tests - ', () => {
 
 		let jobGraph: TypedGraph;
 
