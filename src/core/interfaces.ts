@@ -1,6 +1,7 @@
 import {ITypedNode} from "./typed/TypedNode";
 import {ITypedEdge} from "./typed/TypedEdge";
 
+
 /*----------------------------------------*/
 /*							BASE GRAPH								*/
 /*----------------------------------------*/
@@ -43,9 +44,11 @@ export type MinAdjacencyListArray = Array<Array<number>>;
 export type NextArray = Array<Array<Array<number>>>;
 
 
+
 /*----------------------------------------*/
 /*							TYPED GRAPH								*/
 /*----------------------------------------*/
+
 export type TypedNodes = Map<string, Map<string, ITypedNode>>;
 export type TypedEdges = Map<string, Map<string, ITypedEdge>>;
 

@@ -138,9 +138,15 @@ export class TypedGraph extends BaseGraph {
 	 * @todo decide if method call via [dir] is an abomination or not
 	 *       -> definitely screws up code assist / intellisense !
 	 *       -> (we all know it is...)
+	 *
+	 *
+	 *
+	 * @TODO draw a decision diagram...!
+	 * @TODO create a small, manageable test graph for expand(K)/periphery@K scenarios
+	 * 			 -> and put those test cases into the SYNC suite
 	 */
 	expand(input: ExpansionInput, dir: DIR, type: string): ExpansionResult {
-		const expansionInbounds : ExpansionInbounds = {};
+		// const expansionInbounds : ExpansionInbounds = {};
 
 		const nodes: ExpansionResult = TypedGraph.convertToExpansionResult(input);
 		const resultSet = new Set<ITypedNode>();
