@@ -20,7 +20,7 @@
     "recommender"
   ],
   "name": "graphinius",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "Generic graph (analysis) library in Typescript",
   "main": "index.js",
   "author": "Bernd Malle",
