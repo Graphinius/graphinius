@@ -116,8 +116,11 @@ class JSONOutput implements IJSONOutput {
 				let edgeStruct = {
 					[labelKeys.e_to]: endPoints.a.getID() === node.getID() ? endPoints.b.getID() : endPoints.a.getID(),
 					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
-					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
+					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge)
 				};
+				if ( Object.keys(edge.getFeatures()).length ) {
+					edgeStruct[labelKeys.e_features] = JSON.stringify(edge.getFeatures())
+				}
 				if (edge.getID() !== edge.getLabel()) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
@@ -139,8 +142,11 @@ class JSONOutput implements IJSONOutput {
 				let edgeStruct = {
 					[labelKeys.e_to]: endPoints.b.getID(),
 					[labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
-					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
+					[labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge)
 				};
+				if ( Object.keys(edge.getFeatures()).length ) {
+					edgeStruct[labelKeys.e_features] = JSON.stringify(edge.getFeatures())
+				}
 				if (edge.getID() !== edge.getLabel()) {
 					edgeStruct[labelKeys.e_label] = edge.getLabel();
 				}
