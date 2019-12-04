@@ -45,3 +45,10 @@ export interface ExpansionResult {
     set: Set<ITypedNode>;
     freq: Map<ITypedNode, number>;
 }
+declare type Inbounds = {
+    [key: string]: number;
+};
+export declare type ExpansionInbounds = {
+    [key: string]: Inbounds;
+};
+export {};

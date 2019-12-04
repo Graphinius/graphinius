@@ -251,6 +251,94 @@ describe('GRAPH JSON OUTPUT TESTS - ', () => {
   });
 
 
+  describe('EDGE FEATURES (or not)', () => {
+
+    let graph = null;
+    const jsonOut = new JSONOutput();
+
+    const JSONControlStructWithEdgeFeatures = {
+      name: "Feature graph",
+      nodes : 2,
+      dir_e : 0, 
+      und_e : 1,
+      data: {
+        A: {
+          [labelKeys.edges]: [
+            {
+              [labelKeys.e_to]: "B",
+              [labelKeys.e_dir]: 0,
+              [labelKeys.e_features]: "{\"foo\":\"bar\",\"bar\":\"baz\"}"
+            }
+          ],
+          [labelKeys.n_features]:{}
+        },
+        B: {
+          [labelKeys.edges]:
+          [
+            {
+              [labelKeys.e_to]: "A",
+              [labelKeys.e_dir]: 0,
+              [labelKeys.e_features]: "{\"foo\":\"bar\",\"bar\":\"baz\"}"
+            }
+          ],
+          [labelKeys.n_features]:{}
+        }
+      }
+    };
+
+
+    beforeEach(() => {
+      graph = new $G.BaseGraph('Feature graph');
+    });
+
+
+    test('Should ignore empty edge features', () => {
+      const n_a = graph.addNodeByID("A");
+      const n_b = graph.addNodeByID("B");
+      const e = graph.addEdgeByID('edgy', n_a, n_b);
+      // JSONControlStructWithoutEdgeFeatures
+      const jcswef = JSON.parse(JSON.stringify(JSONControlStructWithEdgeFeatures));
+      
+      delete jcswef.data['A'][labelKeys.edges][0][labelKeys.e_features];
+      delete jcswef.data['B'][labelKeys.edges][0][labelKeys.e_features];
+
+      resultString = jsonOut.writeToJSONString(graph);
+      expect(resultString).toEqual(JSON.stringify(jcswef));
+    });
+
+
+    test('Should output toy JSON struct with edge feature(s) passed as constructor argument', () => {
+      const n_a = graph.addNodeByID("A");
+      const n_b = graph.addNodeByID("B");
+      const e = graph.addEdgeByID('edgy', n_a, n_b, {features: {foo: 'bar', bar: 'baz'}});
+      resultString = jsonOut.writeToJSONString(graph);
+      expect(resultString).toEqual(JSON.stringify(JSONControlStructWithEdgeFeatures));
+    });
+
+
+    test('Should output toy JSON struct with edge feature(s) passed as constructor argument', () => {
+      const n_a = graph.addNodeByID("A");
+      const n_b = graph.addNodeByID("B");
+      const e: $E.BaseEdge = graph.addEdgeByID('edgy', n_a, n_b);
+      e.setFeatures({foo: 'bar', bar: 'baz'});
+      resultString = jsonOut.writeToJSONString(graph);
+      expect(resultString).toEqual(JSON.stringify(JSONControlStructWithEdgeFeatures));
+    });
+
+
+    test('Should output toy JSON struct with edge feature(s) passed as constructor argument', () => {
+      const n_a = graph.addNodeByID("A");
+      const n_b = graph.addNodeByID("B");
+      const e: $E.BaseEdge = graph.addEdgeByID('edgy', n_a, n_b);
+      e.setFeature('foo', 'bar');
+      e.setFeature('bar', 'baz');
+      resultString = jsonOut.writeToJSONString(graph);
+      expect(resultString).toEqual(JSON.stringify(JSONControlStructWithEdgeFeatures));
+    });
+
+  });
+
+
   describe('Output toy JSON structs - TYPED graph', () => {
 
     let typedGraph : TypedGraph;

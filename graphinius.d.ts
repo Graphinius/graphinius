@@ -360,7 +360,13 @@ declare module 'graphinius/core/interfaces' {
 	export interface ExpansionResult {
 	    set: Set<ITypedNode>;
 	    freq: Map<ITypedNode, number>;
-	}
+	} type Inbounds = {
+	    [key: string]: number;
+	};
+	export type ExpansionInbounds = {
+	    [key: string]: Inbounds;
+	};
+	export {};
 
 }
 declare module 'graphinius/utils/CallbackUtils' {
@@ -1111,6 +1117,7 @@ declare module 'graphinius/io/interfaces' {
 	    e_weight: string;
 	    e_label: string;
 	    e_type: string;
+	    e_features: string;
 	}
 	export const labelKeys: Abbreviations;
 

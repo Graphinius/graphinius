@@ -9,5 +9,6 @@ export interface Abbreviations {
     e_weight: string;
     e_label: string;
     e_type: string;
+    e_features: string;
 }
 export declare const labelKeys: Abbreviations;
