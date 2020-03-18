@@ -43,7 +43,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 		it('computes the transitivity of a recommender graph', (done) => {
 			cg = new ComputeGraph(graph, tf);
 			tic = Date.now();
-			cg.transitivity(true).then(res => {
+			cg.globalCC(true).then(res => {
 				toc = Date.now();
 				// console.log(res);
 				logger.log(`Computing transitivity (TF) on ${graph.label} took ${toc - tic} ms.`);
@@ -55,7 +55,7 @@ describe('transitivity - clustering coefficient performance tests - ', () => {
 		it('computes the local clustering coefficients of a recommender graph', (done) => {
 			cg = new ComputeGraph(graph, tf);
 			tic = Date.now();
-			cg.clustCoef(true).then(res => {
+			cg.localCC(true).then(res => {
 				toc = Date.now();
 				// console.log(res);
 				logger.log(`Computing CC (TF) on ${graph.label} took ${toc - tic} ms.`);

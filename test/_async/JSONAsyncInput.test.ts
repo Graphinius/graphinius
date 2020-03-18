@@ -27,7 +27,7 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 	let config: $R.RequestConfig;
 
 
-	describe('Small test graph', () => {
+	describe('Small test graphs from JSON', () => {
 
 		beforeEach(() => {
 			config = {
@@ -76,14 +76,12 @@ describe('ASYNC JSON GRAPH INPUT TESTS - ', () => {
 					expect(graph.getMode()).toBe(GraphMode.DIRECTED);
 					done();
 				});
-			}
-		);
-
+			});
 	});
 
 
 	describe('Real graph from JSON', () => {
-
+		jest.setTimeout(60000);
 		/**
 		 * Edge list, but with a REAL graph now
 		 * graph should have 5937 undirected nodes.

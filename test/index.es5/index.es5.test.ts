@@ -129,8 +129,8 @@ describe('Checking index.js structure - ', () => {
 
       expect(typeof cg.triadCount).toBe("function");
       expect(typeof cg.triangleCount).toBe("function");
-      expect(typeof cg.transitivity).toBe("function");
-      expect(typeof cg.clustCoef).toBe("function");
+      expect(typeof cg.globalCC).toBe("function");
+      expect(typeof cg.localCC).toBe("function");
     });
 
   });

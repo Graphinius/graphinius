@@ -44,15 +44,15 @@ describe('Clustering coefficient tests - ', () => {
 
 		it('transitivity should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.transitivity()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
+			expect(cg.globalCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
 		});
 
 
 		it('CC should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.clustCoef()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+			expect(cg.localCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
 		});
-
+		
 
 		/**
 		 * @description friends of your friends are likely to be(come) friends as well...
@@ -88,7 +88,7 @@ describe('Clustering coefficient tests - ', () => {
 
 			it('should compute UNdirected transitivity on small graph ', (done) => {
 				g = new JSONInput().readFromJSONFile(small_graph_file, g);
-				cg.transitivity().then(res => {
+				cg.globalCC().then(res => {
 					// console.log(res);
 					expect(res).toBe(0);
 					done();
@@ -118,7 +118,7 @@ describe('Clustering coefficient tests - ', () => {
 
 			it('should compute UNdirected transitivity on triangle graph ', (done) => {
 				g = new JSONInput().readFromJSONFile(triangle_graph_file, g);
-				cg.transitivity().then(res => {
+				cg.globalCC().then(res => {
 					// console.log(res);
 					expect(res).toBe(0.631578947368421);
 					done();
@@ -158,7 +158,7 @@ describe('Clustering coefficient tests - ', () => {
 			 * @todo networkx says 0.4...
 			 */
 			it('should compute DIRECTED transitivity on triangle graph ', (done) => {
-				cg.transitivity(true).then(res => {
+				cg.globalCC(true).then(res => {
 					// console.log(res);
 					expect(res).toBe(0.6);
 					done();
@@ -183,7 +183,7 @@ describe('Clustering coefficient tests - ', () => {
 				g = new JSONInput().readFromJSONFile(triangle_graph_file);
 				cg = new ComputeGraph(g, tf);
 				const clust_exp = {0: 1.0, 1: 1.0, 2: 0.3, 3: 1.0, 4: 0, 5: 0};
-				cg.clustCoef().then(clust => {
+				cg.localCC().then(clust => {
 					// console.log(clust);
 					expect(clust).toEqual(clust_exp);
 					done();
@@ -200,7 +200,7 @@ describe('Clustering coefficient tests - ', () => {
 				g = new JSONInput({explicit_direction: false, directed: true}).readFromJSONFile(triangle_directed);
 				cg = new ComputeGraph(g, tf);
 				const clust_exp = {0: 1.0, 1: 0.6666666666666666, 2: 0.2, 3: 1.0, 4: 0, 5: 0};
-				cg.clustCoef(true).then(clust => {
+				cg.localCC(true).then(clust => {
 					console.log(clust);
 					expect(clust).toEqual(clust_exp);
 					done();

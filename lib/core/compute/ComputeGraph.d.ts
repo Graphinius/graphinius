@@ -7,8 +7,8 @@ export interface IComputeGraph {
     nextArray(incoming?: boolean): NextArray;
     triadCount(directed?: boolean): number;
     triangleCount(directed?: boolean): Promise<number>;
-    transitivity(directed?: boolean): Promise<number>;
-    clustCoef(directed?: boolean): Promise<{
+    globalCC(directed?: boolean): Promise<number>;
+    localCC(directed?: boolean): Promise<{
         [key: string]: number;
     }>;
 }
@@ -26,8 +26,8 @@ declare class ComputeGraph implements IComputeGraph {
     adjListW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListDict;
     triadCount(directed?: boolean): number;
     triangleCount(directed?: boolean): Promise<number>;
-    transitivity(directed?: boolean): Promise<number>;
-    clustCoef(directed?: boolean): Promise<{
+    globalCC(directed?: boolean): Promise<number>;
+    localCC(directed?: boolean): Promise<{
         [key: string]: number;
     }>;
 }

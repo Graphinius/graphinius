@@ -18,14 +18,14 @@ export interface IComputeGraph {
 
 	nextArray(incoming?: boolean): NextArray;
 
-	// ANALYSIS
+	// METRICS
 	triadCount(directed?: boolean): number;
 
 	triangleCount(directed?: boolean): Promise<number>;
 
-	transitivity(directed?: boolean): Promise<number>;
+	globalCC(directed?: boolean): Promise<number>;
 
-	clustCoef(directed? : boolean) : Promise<{[key: string]: number}>;
+	localCC(directed? : boolean) : Promise<{[key: string]: number}>;
 }
 
 
@@ -157,14 +157,27 @@ class ComputeGraph implements IComputeGraph {
 	}
 
 
+	/**-------------------------------------------------------------
+	 * 				Triad, triangle, CC & transitivity (global CC)
+	 *				@todo refactor out into own module:
+	 *				  - name: `general metrics` ?
+	 *					- modularity / connectivity / CC & Trans
+	 *-------------------------------------------------------------
+	 */
+
 	/**
-	 * @describe count all 2-triads (triangles & potential triangles)
-	 * 					 - UN-directed scenario for earch node: all pairwise connections could form a triangle
-	 * 					 - directed scenario for each node: -ins could form triangles with -outs
+	 * @description `triad`: is either a completed triangle or a potential triangle, 
+	 * 							meaning a connection between 3 nodes that is lacking just 1 edge.
+	 * 							`triplet`: is three nodes that are connected by either two (open triplet) 
+	 * 							or three (closed triplet) undirected ties
+	 * 							triad == triplet
+	 * @description count all 2-triads
+		* 					  UN-directed scenario for earch node: all pairwise connections could form a triangle
+		* 					  directed scenario for each node: -ins could form triangles with -outs (and vice versa)
 	 *
 	 * @todo this only works for nodes without self-loops !!!
 	 *
-	 * @param directed
+	 * @param directed directed or undirected
 	 */
 	triadCount(directed = false): number {
 		let triangle_count = 0;
@@ -184,6 +197,12 @@ class ComputeGraph implements IComputeGraph {
 	}
 
 
+	/**
+	 * @description how many triangles (A-B-C, or A->B->C) are there in the graph
+	 * 							In directed graphs, each triangle is seen thrice (from A, B, C)
+	 * 							In undirected graphs, each triangle is seen six times (from A, B, C, but each in 2 directions)
+	 * @param directed directed or undirected network
+	 */
 	async triangleCount(directed = false): Promise<number> {
 		if (!this._tf || !this._tf.matMul) {
 			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
@@ -203,19 +222,34 @@ class ComputeGraph implements IComputeGraph {
 
 
 	/**
+	 * @description transitivity (or global clustering coefficient, gCC) is the ratio
+	 * 							of actual triangles to potential triangles, or
+	 * 							(nr. of closed triplets / nr. of all triplets)
+	 * 							It therefore measures the connection potential of the whole graph,
+	 * 							the higher the gCC the lower the future connection potential.
+	 * @description should equal the average (local) clustering coefficients of all nodes
+	 * 
+	 * @todo test that avg(lCC) == gCC
 	 * @todo there are 4 different ways to define a triplet closure in DIRECTED graphs
-	 * 			 -> using the `undirected` formula results are not consistent with networkx
-	 * 			 -> do I care ???
-	 * @param directed
+	 * @todo using the `undirected` formula results are not consistent with networkx
+	 * @todo research & correct the $G <-> networkx inconsistency
+	 * @param directed directed or undirected network
 	 */
-	async transitivity(directed = false): Promise<number> {
+	async globalCC(directed = false): Promise<number> {
 		const triangles = await this.triangleCount(directed);
 		const triads = this.triadCount(directed);
 		return 3 * triangles / triads;
 	}
 
 
-	async clustCoef(directed = false) : Promise<{[key: string]: number}> {
+	/**
+	 * @description The CC (also `local` CC) measures how complete the neighborhood of a node is,
+	 * 							i.e. (completed triangles / `potential` triangles), where a potential triangle
+	 * 							could form by adding 1 edge between	hitherto unconnected neighbors.
+	 * 							This can be measured by 							
+	 * @param directed directed or undirected network
+	 */
+	async localCC(directed = false) : Promise<{[key: string]: number}> {
 		if (!this._tf || !this._tf.matMul) {
 			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
 		}
@@ -225,21 +259,18 @@ class ComputeGraph implements IComputeGraph {
 		const aux2 = await a.matMul(a).array();
 		const aux3 = await a.matMul(aux2).array();
 		/**
-		 * @todo ensure node order is equivalent to aux3 ordering
+		 * @todo ensure node order is equivalent to aux3 ordering - HOW ??
 		 */
 		let deg: number;
 		let node: IBaseNode;
-		let cci: number;
+		let cc_i: number; // intermediate
 		const keys = Object.keys(this._g.getNodes());
 
 		for ( let i in aux3[0] ) {
 			node = this._g.getNodeById(keys[i]);
 			deg = directed ? node.in_deg + node.out_deg : node.deg;
-
-			// console.log(`node ${node.id} has degree ${deg}`);
-
-			cci = (aux3[i][i] / (deg * (deg-1))) || 0;
-			result[i] = directed ? 2 * cci : cci;
+			cc_i = (aux3[i][i] / (deg * (deg-1))) || 0;
+			result[i] = directed ? 2 * cc_i : cc_i;
 		}
 		return result;
 	}
