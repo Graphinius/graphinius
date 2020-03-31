@@ -60,3 +60,8 @@ Then execute the following lines of code to obtain a (random) DFS segmentation:
  @describe we check for duplicate edges on a graph level, but not on a node level
  - when systematically (batch) instantiationg from an input source, our input classes check for duplicate edges
  - when programmatically building a graph manually, the graph class will reject duplicates, whereas the node classes used internally will not -> don't use <node>.addEdge...() manually!
+
+
+# Graphinius WASM/WASI project description (OpenTeams)
+
+Using networkx but having to port your solution for production? Doing graph-based ML but the pipeline is deep and brittle, therefore not suited for quick prototyping? Don't want to write 50k lines of C++ to roll out your own features? Graphinius is the vision of a modular graph infrastructure consisting of sovereign components compiled to WASM/WASI with thin wrappers to make them usable in multiple other runtimes incl. Rust, Python, Ruby & JS / Node.js. It will therefore be possible to plug its modules into existing Python infrastructure for ML / prototyping, Web applications for demos & light applications, as well as production-type platforms (since WASM can run at near-native speeds). We'll start with sparse matrices & basic graph algorithms on top of them written in Rust, focusing on parallelization &  vectorization. First milestone: A drop-in replacement for basic networkx functionality with superior performance & memory usage (using their own test suite in python ;-)
