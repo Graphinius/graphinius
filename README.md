@@ -5,6 +5,27 @@
 # Graphinius JS
 Generic graph (analysis) library in Typescript
 
+## Running tests
+
+In order to run the tests, you need an external "Simd-Handler" - any object that implements a certain interface, which currently is:
+```js
+export interface NumericHandler {
+	tensor2d: Function;
+	matMul: Function;
+}
+```
+
+The best way to achieve this for now is to install a respective module globally, e.g.
+```bash
+npm i -g @tensorflow/tfjs-node
+```
+
+and then link it locally via
+```bash
+npm link @tensorflow/tfjs-node
+```
+
+
 ## Generate Documentation
 
 ```bash

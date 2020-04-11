@@ -77,12 +77,12 @@ declare class BaseGraph implements IGraph {
     };
     constructor(_label: any);
     static isTyped(arg: any): arg is TypedGraph;
-    readonly label: string;
-    readonly mode: GraphMode;
-    readonly stats: GraphStats;
-    readonly inHist: Set<number>[];
-    readonly outHist: Set<number>[];
-    readonly connHist: Set<number>[];
+    get label(): string;
+    get mode(): GraphMode;
+    get stats(): GraphStats;
+    get inHist(): Set<number>[];
+    get outHist(): Set<number>[];
+    get connHist(): Set<number>[];
     private degreeHist;
     reweighIfHasNegativeEdge(clone?: boolean): IGraph;
     toDirectedGraph(copy?: boolean): IGraph;

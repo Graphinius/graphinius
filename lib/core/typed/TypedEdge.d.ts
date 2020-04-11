@@ -12,6 +12,6 @@ declare class TypedEdge extends BaseEdge implements ITypedEdge {
     protected _node_b: $N.IBaseNode;
     protected _type: string;
     constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
-    readonly type: string;
+    get type(): string;
 }
 export { TypedEdge };

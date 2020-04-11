@@ -45,9 +45,9 @@ declare class BaseEdge implements IBaseEdge {
     protected _label: string;
     protected _features: EdgeFeatures;
     constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
-    readonly id: string;
-    readonly label: string;
-    readonly features: EdgeFeatures;
+    get id(): string;
+    get label(): string;
+    get features(): EdgeFeatures;
     getID(): string;
     getLabel(): string;
     setLabel(label: string): void;

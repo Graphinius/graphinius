@@ -17,7 +17,7 @@ const json = new JSONInput({
 
 const beer_graph_file = `${JSON_REC_PATH}/beerGraph.json`;
 const jobs_graph_file = `${JSON_REC_PATH}/jobs.json`;
-const meetup_graph_file = `${JSON_REC_PATH}/meetupGraph.json`;
+// const meetup_graph_file = `${JSON_REC_PATH}/meetupGraph.json`;
 
 
 describe('transitivity - clustering coefficient performance tests - ', () => {

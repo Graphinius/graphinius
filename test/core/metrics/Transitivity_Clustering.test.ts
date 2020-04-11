@@ -8,13 +8,10 @@ import {Logger} from "../../../src/utils/Logger";
 const logger = new Logger();
 
 
-const tf = require('@tensorflow/tfjs-node');
-// console.log(tf);
+// const tf = await import('@tensorflow/tfjs-node');
+// import('@tensorflow/tfjs-node').then(res => {})
+const tf = require('@tensorflow/tfjs-node')
 console.log(tf.getBackend());
-
-// import * as tfc from '@tensorflow/tfjs-core';
-// console.log(tfc);
-
 
 
 describe('Clustering coefficient tests - ', () => {

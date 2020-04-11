@@ -10,7 +10,7 @@ export declare class TypedGraph extends BaseGraph {
     protected _typedEdges: TypedEdges;
     constructor(_label: string);
     n(id: string): TypedNode;
-    readonly type: string;
+    get type(): string;
     nodeTypes(): string[];
     edgeTypes(): string[];
     nrTypedNodes(type: string): number | null;

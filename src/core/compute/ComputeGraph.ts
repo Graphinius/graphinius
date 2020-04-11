@@ -8,6 +8,12 @@ const logger = new Logger();
 const DEFAULT_WEIGHT = 1;
 
 
+export interface NumericHandler {
+	tensor2d: Function;
+	matMul: Function;
+}
+
+
 export interface IComputeGraph {
 	// REPRESENTATIONS
 	adjListW(incoming?: boolean, include_self?, self_dist?: number): MinAdjacencyListDict;
@@ -37,7 +43,13 @@ class ComputeGraph implements IComputeGraph {
 	private adj_list_dw: Float32Array;
 
 
-	constructor(private _g: IGraph, private _tf?: any) {
+	constructor(private _g: IGraph, private _numeric?: NumericHandler) { }
+
+
+	checkNumericHandler() {
+		if (!this._numeric || !this._numeric.matMul) {
+			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
+		}
 	}
 
 
@@ -204,11 +216,9 @@ class ComputeGraph implements IComputeGraph {
 	 * @param directed directed or undirected network
 	 */
 	async triangleCount(directed = false): Promise<number> {
-		if (!this._tf || !this._tf.matMul) {
-			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
-		}
+		this.checkNumericHandler();
 		const adj_list = this.adjMatrix();
-		const a = this._tf.tensor2d(adj_list);
+		const a = this._numeric.tensor2d(adj_list);
 		const aux2 = await a.matMul(a).array();
 		const aux3 = await a.matMul(aux2).array();
 		// logger.log(aux3);
@@ -250,12 +260,10 @@ class ComputeGraph implements IComputeGraph {
 	 * @param directed directed or undirected network
 	 */
 	async localCC(directed = false) : Promise<{[key: string]: number}> {
-		if (!this._tf || !this._tf.matMul) {
-			throw new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef.");
-		}
+		this.checkNumericHandler();
 		const result = {};
 		const adj_list = this.adjMatrix();
-		const a = this._tf.tensor2d(adj_list);
+		const a = this._numeric.tensor2d(adj_list);
 		const aux2 = await a.matMul(a).array();
 		const aux3 = await a.matMul(aux2).array();
 		/**
@@ -274,6 +282,8 @@ class ComputeGraph implements IComputeGraph {
 		}
 		return result;
 	}
+
+
 
 }
 

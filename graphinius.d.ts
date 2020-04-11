@@ -24,7 +24,7 @@ declare module 'graphinius/core/typed/TypedEdge' {
 	    protected _node_b: $N.IBaseNode;
 	    protected _type: string;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: TypedEdgeConfig);
-	    readonly type: string;
+	    get type(): string;
 	}
 	export { TypedEdge };
 
@@ -76,9 +76,9 @@ declare module 'graphinius/core/base/BaseEdge' {
 	    protected _label: string;
 	    protected _features: EdgeFeatures;
 	    constructor(_id: string, _node_a: $N.IBaseNode, _node_b: $N.IBaseNode, config?: BaseEdgeConfig);
-	    readonly id: string;
-	    readonly label: string;
-	    readonly features: EdgeFeatures;
+	    get id(): string;
+	    get label(): string;
+	    get features(): EdgeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -197,9 +197,9 @@ declare module 'graphinius/core/base/BaseNode' {
 	    };
 	    constructor(_id: string, config?: BaseNodeConfig);
 	    static isTyped(arg: any): arg is TypedNode;
-	    readonly id: string;
-	    readonly label: string;
-	    readonly features: NodeFeatures;
+	    get id(): string;
+	    get label(): string;
+	    get features(): NodeFeatures;
 	    getID(): string;
 	    getLabel(): string;
 	    setLabel(label: string): void;
@@ -214,12 +214,12 @@ declare module 'graphinius/core/base/BaseNode' {
 	    setFeature(key: string, value: any): void;
 	    deleteFeature(key: string): any;
 	    clearFeatures(): void;
-	    readonly deg: number;
-	    readonly in_deg: number;
-	    readonly out_deg: number;
-	    readonly self_deg: number;
-	    readonly self_in_deg: number;
-	    readonly self_out_deg: number;
+	    get deg(): number;
+	    get in_deg(): number;
+	    get out_deg(): number;
+	    get self_deg(): number;
+	    get self_in_deg(): number;
+	    get self_out_deg(): number;
 	    addEdge(edge: IBaseEdge): IBaseEdge;
 	    hasEdge(edge: IBaseEdge): boolean;
 	    hasEdgeID(id: string): boolean;
@@ -298,8 +298,8 @@ declare module 'graphinius/core/typed/TypedNode' {
 	    protected _type: string;
 	    protected _typedAdjSets: TypedAdjSets;
 	    constructor(_id: string, config?: TypedNodeConfig);
-	    readonly type: string;
-	    readonly stats: TypedNodeStats;
+	    get type(): string;
+	    get stats(): TypedNodeStats;
 	    addEdge(edge: ITypedEdge): ITypedEdge;
 	    removeEdge(edge: ITypedEdge): void;
 	    ins(type: string): Set<string>;
@@ -634,6 +634,10 @@ declare module 'graphinius/utils/Logger' {
 declare module 'graphinius/core/compute/ComputeGraph' {
 	import { MinAdjacencyListArray, MinAdjacencyListDict, NextArray } from 'graphinius/core/interfaces';
 	import { IGraph } from 'graphinius/core/base/BaseGraph';
+	export interface NumericHandler {
+	    tensor2d: Function;
+	    matMul: Function;
+	}
 	export interface IComputeGraph {
 	    adjListW(incoming?: boolean, include_self?: any, self_dist?: number): MinAdjacencyListDict;
 	    adjMatrix(): MinAdjacencyListArray;
@@ -647,12 +651,13 @@ declare module 'graphinius/core/compute/ComputeGraph' {
 	    }>;
 	} class ComputeGraph implements IComputeGraph {
 	    private _g;
-	    private _tf?;
+	    private _numeric?;
 	    private adj_list_uu;
 	    private adj_list_du;
 	    private adj_list_uw;
 	    private adj_list_dw;
-	    constructor(_g: IGraph, _tf?: any);
+	    constructor(_g: IGraph, _numeric?: NumericHandler);
+	    checkNumericHandler(): void;
 	    nextArray(incoming?: boolean): NextArray;
 	    adjMatrix(): MinAdjacencyListArray;
 	    adjMatrixW(incoming?: boolean, include_self?: boolean, self_dist?: number): MinAdjacencyListArray;
@@ -686,7 +691,7 @@ declare module 'graphinius/core/typed/TypedGraph' {
 	    protected _typedEdges: TypedEdges;
 	    constructor(_label: string);
 	    n(id: string): TypedNode;
-	    readonly type: string;
+	    get type(): string;
 	    nodeTypes(): string[];
 	    edgeTypes(): string[];
 	    nrTypedNodes(type: string): number | null;
@@ -794,12 +799,12 @@ declare module 'graphinius/core/base/BaseGraph' {
 	    };
 	    constructor(_label: any);
 	    static isTyped(arg: any): arg is TypedGraph;
-	    readonly label: string;
-	    readonly mode: GraphMode;
-	    readonly stats: GraphStats;
-	    readonly inHist: Set<number>[];
-	    readonly outHist: Set<number>[];
-	    readonly connHist: Set<number>[];
+	    get label(): string;
+	    get mode(): GraphMode;
+	    get stats(): GraphStats;
+	    get inHist(): Set<number>[];
+	    get outHist(): Set<number>[];
+	    get connHist(): Set<number>[];
 	    private degreeHist;
 	    reweighIfHasNegativeEdge(clone?: boolean): IGraph;
 	    toDirectedGraph(copy?: boolean): IGraph;

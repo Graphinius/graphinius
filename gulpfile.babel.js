@@ -11,7 +11,6 @@ import webpack from 'webpack-stream';
 // PATHS
 //----------------------------
 const paths = {
-	typescripts: ['src/**/*.ts', 'test/**/*.ts', '_async/**/*.ts'],
 	typesources: ['src/**/*.ts'],
 	clean_build: ['build'],
 	clean_docs: ['docs'],

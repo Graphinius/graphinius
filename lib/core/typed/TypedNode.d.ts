@@ -41,8 +41,8 @@ declare class TypedNode extends BaseNode implements ITypedNode {
     protected _type: string;
     protected _typedAdjSets: TypedAdjSets;
     constructor(_id: string, config?: TypedNodeConfig);
-    readonly type: string;
-    readonly stats: TypedNodeStats;
+    get type(): string;
+    get stats(): TypedNodeStats;
     addEdge(edge: ITypedEdge): ITypedEdge;
     removeEdge(edge: ITypedEdge): void;
     ins(type: string): Set<string>;
