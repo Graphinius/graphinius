@@ -31,7 +31,7 @@
     "edge feature vector"
   ],
   "name": "graphinius",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "description": "Generic graph (analysis) library in Typescript",
   "main": "index.js",
   "author": "Bernd Malle",
