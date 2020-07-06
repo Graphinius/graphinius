@@ -1,5 +1,4 @@
 import {BaseGraph, IGraph} from '../../../src/core/base/BaseGraph';
-import {TypedGraph} from '../../../src/core/typed/TypedGraph';
 import {ComputeGraph, IComputeGraph} from '../../../src/core/compute/ComputeGraph';
 import {JSONInput} from "../../../src/io/input/JSONInput";
 import {JSON_DATA_PATH} from "../../config/test_paths";
@@ -35,19 +34,19 @@ describe('Clustering coefficient tests - ', () => {
 
 		it('triangle Counting should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.triangleCount()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
+			expect(cg.triangleCount()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present for fast numeric computations."));
 		});
 
 
 		it('transitivity should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.globalCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute transitivity."));
+			expect(cg.globalCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present for fast numeric computations."));
 		});
 
 
 		it('CC should throw an error if not handed a TF handle', () => {
 			cg = new ComputeGraph(g);
-			expect(cg.localCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present in order to compute clustering coef."));
+			expect(cg.localCC()).rejects.toEqual(new Error("Tensorflow & TF matMul function must be present for fast numeric computations."));
 		});
 		
 

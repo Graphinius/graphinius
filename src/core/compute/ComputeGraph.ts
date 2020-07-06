@@ -48,7 +48,7 @@ class ComputeGraph implements IComputeGraph {
 
 	checkNumericHandler() {
 		if (!this._numeric || !this._numeric.matMul) {
-			throw new Error("Tensorflow & TF matMul function must be present in order to compute transitivity.");
+			throw new Error("Tensorflow & TF matMul function must be present for fast numeric computations.");
 		}
 	}
 
