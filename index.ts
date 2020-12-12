@@ -1,44 +1,44 @@
 // Core (why is compute graph here !?)
-export * from './src/core/interfaces';
-export * from './src/core/compute/ComputeGraph';
+export * from './lib/core/interfaces';
+export * from './lib/core/compute/ComputeGraph';
 // Base
-export * from './src/core/base/BaseEdge';
-export * from './src/core/base/BaseNode';
-export * from './src/core/base/BaseGraph';
+export * from './lib/core/base/BaseEdge';
+export * from './lib/core/base/BaseNode';
+export * from './lib/core/base/BaseGraph';
 // Typed
-export * from './src/core/typed/TypedEdge';
-export * from './src/core/typed/TypedNode';
-export * from './src/core/typed/TypedGraph';
+export * from './lib/core/typed/TypedEdge';
+export * from './lib/core/typed/TypedNode';
+export * from './lib/core/typed/TypedGraph';
 // Centralities
-export * from './src/centralities/Betweenness';
-export * from './src/centralities/Brandes';
-export * from './src/centralities/Closeness';
-export * from './src/centralities/Degree';
-export * from './src/centralities/Pagerank';
+export * from './lib/centralities/Betweenness';
+export * from './lib/centralities/Brandes';
+export * from './lib/centralities/Closeness';
+export * from './lib/centralities/Degree';
+export * from './lib/centralities/Pagerank';
 // IO
-export * from './src/io/input/CSVInput';
-export * from './src/io/input/JSONInput';
-export * from './src/io/output/CSVOutput';
-export * from './src/io/output/JSONOutput';
+export * from './lib/io/input/CSVInput';
+export * from './lib/io/input/JSONInput';
+export * from './lib/io/output/CSVOutput';
+export * from './lib/io/output/JSONOutput';
 // Traversal
-export * from './src/traversal/BFS';
-export * from './src/traversal/DFS';
-export * from './src/traversal/PFS';
-export * from './src/traversal/Dijkstra';
-export * from './src/traversal/BellmanFord';
-export * from './src/traversal/FloydWarshall';
-export * from './src/traversal/Johnsons';
+export * from './lib/traversal/BFS';
+export * from './lib/traversal/DFS';
+export * from './lib/traversal/PFS';
+export * from './lib/traversal/Dijkstra';
+export * from './lib/traversal/BellmanFord';
+export * from './lib/traversal/FloydWarshall';
+export * from './lib/traversal/Johnsons';
 // Similarities
-export * from './src/similarities/SimilarityCommons';
-export * from './src/similarities/SetSimilarities';
-export * from './src/similarities/ScoreSimilarities';
+export * from './lib/similarities/SimilarityCommons';
+export * from './lib/similarities/SetSimilarities';
+export * from './lib/similarities/ScoreSimilarities';
 // Utils
-export * from './src/utils/StructUtils';
-export * from './src/utils/RemoteUtils';
-export * from './src/utils/CallbackUtils';
+export * from './lib/utils/StructUtils';
+export * from './lib/utils/RemoteUtils';
+export * from './lib/utils/CallbackUtils';
 // Datastructs
-export * from './src/datastructs/BinaryHeap';
+export * from './lib/datastructs/BinaryHeap';
 // Perturbation
-export * from './src/perturbation/SimplePerturbations';
+export * from './lib/perturbation/SimplePerturbations';
 // Generators
-export * from './src/generators/KroneckerLeskovec';
+export * from './lib/generators/KroneckerLeskovec';

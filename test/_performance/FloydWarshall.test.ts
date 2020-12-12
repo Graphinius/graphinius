@@ -1,10 +1,10 @@
-import {FloydWarshallAPSP, FloydWarshallArray} from "../../src/traversal/FloydWarshall";
-import * as $G from "../../src/core/base/BaseGraph";
+import {FloydWarshallAPSP, FloydWarshallArray} from "../../lib/traversal/FloydWarshall";
+import * as $G from "../../lib/core/base/BaseGraph";
 import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/test_paths';
-import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
-import {JSONInput, IJSONInConfig} from "../../src/io/input/JSONInput";
+import {CSVInput, ICSVInConfig} from "../../lib/io/input/CSVInput";
+import {JSONInput, IJSONInConfig} from "../../lib/io/input/JSONInput";
 
-import {Logger} from '../../src/utils/Logger';
+import {Logger} from '../../lib/utils/Logger';
 const logger = new Logger();
 
 const csv_config: ICSVInConfig = {

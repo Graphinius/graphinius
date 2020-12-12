@@ -1,7 +1,7 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import * as $Dijkstra from '../../src/traversal/Dijkstra';
-import * as $PFS from '../../src/traversal/PFS';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput } from '../../lib/io/input/JSONInput';
+import * as $Dijkstra from '../../lib/traversal/Dijkstra';
+import * as $PFS from '../../lib/traversal/PFS';
 
 import {JSON_DATA_PATH} from '../config/test_paths';
 

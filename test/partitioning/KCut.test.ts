@@ -1,10 +1,10 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { GraphPartitioning } from '../../src/partitioning/Interfaces';
-import { KCut } from '../../src/partitioning/KCut';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
+import { GraphPartitioning } from '../../lib/partitioning/Interfaces';
+import { KCut } from '../../lib/partitioning/KCut';
 import { CSV_DATA_PATH, CSV_SN_PATH } from '../config/test_paths';
 
-import { Logger } from '../../src/utils/Logger';
+import { Logger } from '../../lib/utils/Logger';
 const logger = new Logger();
 
 

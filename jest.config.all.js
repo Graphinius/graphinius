@@ -11,18 +11,14 @@ module.exports = {
   verbose: true,
   watchPathIgnorePatterns: [
     "/graphinius.d.ts",
-    "/build",
     "/coverage",
     "/docs",
-    "/lib",
     "/data"
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/**/*.ts",
+    "lib/**/*.ts",
     "!**/node_modules/**",
-    "!**/lib/**",
-    "!**/build/**"
   ],
   testMatch: [
     '**/test/**/*.ts'

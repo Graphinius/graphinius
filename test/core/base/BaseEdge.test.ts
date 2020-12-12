@@ -1,7 +1,7 @@
-// import * as $N from '../../../src/core/base/BaseNode';
-// import * as $E from '../../../src/core/base/BaseEdge';
-import {IBaseEdge, BaseEdge as Edge, EdgeFeatures} from "../../../src/core/base/BaseEdge";
-import {IBaseNode, BaseNode as Node} from "../../../src/core/base/BaseNode";
+// import * as $N from '../../../lib/core/base/BaseNode';
+// import * as $E from '../../../lib/core/base/BaseEdge';
+import {IBaseEdge, BaseEdge as Edge, EdgeFeatures} from "../../../lib/core/base/BaseEdge";
+import {IBaseNode, BaseNode as Node} from "../../../lib/core/base/BaseNode";
 
 
 describe('==== EDGE TESTS ====', () => {

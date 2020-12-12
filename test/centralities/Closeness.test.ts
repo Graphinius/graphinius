@@ -1,7 +1,7 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import * as $CC from '../../src/centralities/Closeness';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../lib/io/input/JSONInput';
+import * as $CC from '../../lib/centralities/Closeness';
 import {CSV_CENT_PATH, CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
 
 

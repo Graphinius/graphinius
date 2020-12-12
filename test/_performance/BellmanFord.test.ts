@@ -1,8 +1,8 @@
 import {CSV_SN_PATH} from "../config/test_paths";
-import * as $G from "../../src/core/base/BaseGraph";
-import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
-import {BellmanFordArray, BellmanFordDict} from "../../src/traversal/BellmanFord";
-import { Logger } from '../../src/utils/Logger';
+import * as $G from "../../lib/core/base/BaseGraph";
+import {CSVInput, ICSVInConfig} from "../../lib/io/input/CSVInput";
+import {BellmanFordArray, BellmanFordDict} from "../../lib/traversal/BellmanFord";
+import { Logger } from '../../lib/utils/Logger';
 
 const logger = new Logger();
 

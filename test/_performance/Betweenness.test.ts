@@ -1,9 +1,9 @@
-import {Brandes} from "../../src/centralities/Brandes";
-import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
+import {Brandes} from "../../lib/centralities/Brandes";
+import {CSVInput, ICSVInConfig} from "../../lib/io/input/CSVInput";
 import {CSV_SN_PATH, RES_CENT_PATH} from "../config/test_paths";
 import * as fs from "fs";
-import {Logger} from '../../src/utils/Logger';
-import {IGraph} from "../../src/core/base/BaseGraph";
+import {Logger} from '../../lib/utils/Logger';
+import {IGraph} from "../../lib/core/base/BaseGraph";
 
 const logger = new Logger();
 

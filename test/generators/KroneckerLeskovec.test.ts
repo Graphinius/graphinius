@@ -1,7 +1,7 @@
-import * as $N from '../../src/core/base/BaseNode';
-import * as $E from '../../src/core/base/BaseEdge';
-import * as $G from '../../src/core/base/BaseGraph';
-import * as $KRON from '../../src/generators/KroneckerLeskovec';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $E from '../../lib/core/base/BaseEdge';
+import * as $G from '../../lib/core/base/BaseGraph';
+import * as $KRON from '../../lib/generators/KroneckerLeskovec';
 
 
 describe("Base Tests", () => {

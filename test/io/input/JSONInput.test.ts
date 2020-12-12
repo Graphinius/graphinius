@@ -1,15 +1,15 @@
 import * as $C from './common';
-import {GraphMode, GraphStats} from '../../../src/core/interfaces';
-import { BaseGraph, IGraph} from '../../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
-import { JSONOutput } from "../../../src/io/output/JSONOutput";
-import { labelKeys } from '../../../src/io/interfaces';
+import {GraphMode, GraphStats} from '../../../lib/core/interfaces';
+import { BaseGraph, IGraph} from '../../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig } from '../../../lib/io/input/JSONInput';
+import { JSONOutput } from "../../../lib/io/output/JSONOutput";
+import { labelKeys } from '../../../lib/io/interfaces';
 import { JSON_DATA_PATH } from '../../config/test_paths';
-import { TypedNode } from "../../../src/core/typed/TypedNode";
-import { TypedGraph } from "../../../src/core/typed/TypedGraph";
-import { ITypedEdge, TypedEdge } from "../../../src/core/typed/TypedEdge";
+import { TypedNode } from "../../../lib/core/typed/TypedNode";
+import { TypedGraph } from "../../../lib/core/typed/TypedGraph";
+import { ITypedEdge, TypedEdge } from "../../../lib/core/typed/TypedEdge";
 
-import { Logger } from '../../../src/utils/Logger';
+import { Logger } from '../../../lib/utils/Logger';
 const logger = new Logger();
 
 

@@ -1,10 +1,10 @@
-import * as $N from '../../src/core/base/BaseNode';
-import * as $E from '../../src/core/base/BaseEdge';
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { JSONOutput} from '../../src/io/output/JSONOutput';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $E from '../../lib/core/base/BaseEdge';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig } from '../../lib/io/input/JSONInput';
+import { JSONOutput} from '../../lib/io/output/JSONOutput';
 
-import * as $EME from '../../src/energyminimization/ExpansionBoykov';
+import * as $EME from '../../lib/energyminimization/ExpansionBoykov';
 import { CSV_DATA_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
 

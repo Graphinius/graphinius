@@ -1,10 +1,10 @@
-import * as $G from "../../../src/core/base/BaseGraph";
-import {MinAdjacencyListArray, MinAdjacencyListDict, NextArray} from "../../../src/core/interfaces";
-import {JSONInput} from "../../../src/io/input/JSONInput";
+import * as $G from "../../../lib/core/base/BaseGraph";
+import {MinAdjacencyListArray, MinAdjacencyListDict, NextArray} from "../../../lib/core/interfaces";
+import {JSONInput} from "../../../lib/io/input/JSONInput";
 import {CSV_SN_PATH, JSON_DATA_PATH} from "../../config/test_paths";
-import {CSVInput, ICSVInConfig} from "../../../src/io/input/CSVInput";
-import {ComputeGraph} from "../../../src/core/compute/ComputeGraph";
-import {BaseGraph} from "../../../src/core/base/BaseGraph";
+import {CSVInput, ICSVInConfig} from "../../../lib/io/input/CSVInput";
+import {ComputeGraph} from "../../../lib/core/compute/ComputeGraph";
+import {BaseGraph} from "../../../lib/core/base/BaseGraph";
 
 let sn_config: ICSVInConfig = {
 	separator: ' ',

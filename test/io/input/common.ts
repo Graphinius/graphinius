@@ -1,8 +1,8 @@
-import {GraphMode} from '../../../src/core/interfaces';
-import * as $G from '../../../src/core/base/BaseGraph';
-import {DegreeDistribution, DegreeCentrality} from '../../../src/centralities/Degree';
+import {GraphMode} from '../../../lib/core/interfaces';
+import * as $G from '../../../lib/core/base/BaseGraph';
+import {DegreeDistribution, DegreeCentrality} from '../../../lib/centralities/Degree';
 const degCent = new DegreeCentrality();
-import { labelKeys } from '../../../src/io/interfaces';
+import { labelKeys } from '../../../lib/io/interfaces';
 
 		
 function checkSmallGraphStats(graph : $G.IGraph) {

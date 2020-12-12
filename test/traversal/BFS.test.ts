@@ -1,10 +1,10 @@
-import { GraphMode, GraphStats } from '../../src/core/interfaces';
+import { GraphMode, GraphStats } from '../../lib/core/interfaces';
 import { JSON_DATA_PATH } from '../config/test_paths';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import * as $N from '../../src/core/base/BaseNode';
-import * as $G from '../../src/core/base/BaseGraph';
-import * as $BFS from '../../src/traversal/BFS';
-import * as $CB from '../../src/utils/CallbackUtils';
+import { JSONInput } from '../../lib/io/input/JSONInput';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $G from '../../lib/core/base/BaseGraph';
+import * as $BFS from '../../lib/traversal/BFS';
+import * as $CB from '../../lib/utils/CallbackUtils';
 
 
 let search_graph = `${JSON_DATA_PATH}/search_graph.json`;

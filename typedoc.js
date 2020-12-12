@@ -2,7 +2,7 @@ module.exports = {
   out: './docs/',
 
   readme: 'none',
-  includes: './src',
+  includes: './lib',
   exclude: [
       '**/__tests__/**/*',
       '**/__test_utils__/**/*',

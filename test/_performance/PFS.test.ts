@@ -1,7 +1,7 @@
-import { CSVInput } from "../../src/io/input/CSVInput";
+import { CSVInput } from "../../lib/io/input/CSVInput";
 import { CSV_SN_PATH } from "../config/test_paths";
-import * as $PFS from "../../src/traversal/PFS";
-import { Logger } from "../../src/utils/Logger";
+import * as $PFS from "../../lib/traversal/PFS";
+import { Logger } from "../../lib/utils/Logger";
 
 const logger = new Logger();
 

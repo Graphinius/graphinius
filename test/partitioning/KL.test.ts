@@ -1,10 +1,10 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import { GraphPartitioning, Partition } from '../../src/partitioning/Interfaces';
-import { KLPartitioning, KL_Config, GainEntry } from '../../src/partitioning/KLPartitioning';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig} from '../../lib/io/input/JSONInput';
+import { GraphPartitioning, Partition } from '../../lib/partitioning/Interfaces';
+import { KLPartitioning, KL_Config, GainEntry } from '../../lib/partitioning/KLPartitioning';
 import { JSON_PART_PATH} from '../config/test_paths';
 
-import { Logger } from '../../src/utils/Logger';
+import { Logger } from '../../lib/utils/Logger';
 const logger = new Logger();
 
 

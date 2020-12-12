@@ -5,16 +5,16 @@
  * (NodeJS standard heap size is limited to 1.7 GB)
  */
 import * as fs from 'fs';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
 import { CSV_PERF_PATH, OUTPUT_PATH } from '../config/test_paths';
-import { Logger } from "../../src/utils/Logger";
-import { IGraph } from "../../src/core/base/BaseGraph";
-import { DegreeCentrality, DegreeDistribution } from '../../src/centralities/Degree';
-import { BFS } from "../../src/traversal/BFS";
-import { DFS } from "../../src/traversal/DFS";
-import { PFS } from "../../src/traversal/PFS";
-import { Pagerank, PagerankRWConfig } from "../../src/centralities/Pagerank";
-import { SimplePerturber } from "../../src/perturbation/SimplePerturbations";
+import { Logger } from "../../lib/utils/Logger";
+import { IGraph } from "../../lib/core/base/BaseGraph";
+import { DegreeCentrality, DegreeDistribution } from '../../lib/centralities/Degree';
+import { BFS } from "../../lib/traversal/BFS";
+import { DFS } from "../../lib/traversal/DFS";
+import { PFS } from "../../lib/traversal/PFS";
+import { Pagerank, PagerankRWConfig } from "../../lib/centralities/Pagerank";
+import { SimplePerturber } from "../../lib/perturbation/SimplePerturbations";
 
 
 const logger = new Logger();

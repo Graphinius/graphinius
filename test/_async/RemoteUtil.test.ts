@@ -1,4 +1,4 @@
-import * as $RU from '../../src/utils/RemoteUtils';
+import * as $RU from '../../lib/utils/RemoteUtils';
 
 
 const REMOTE_HOST = "raw.githubusercontent.com";

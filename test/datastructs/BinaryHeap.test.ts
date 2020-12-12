@@ -1,6 +1,6 @@
-import * as $CB from '../../src/utils/CallbackUtils';
-import * as $BH from '../../src/datastructs/BinaryHeap';
-import {Logger} from '../../src/utils/Logger';
+import * as $CB from '../../lib/utils/CallbackUtils';
+import * as $BH from '../../lib/datastructs/BinaryHeap';
+import {Logger} from '../../lib/utils/Logger';
 
 const logger = new Logger();
 

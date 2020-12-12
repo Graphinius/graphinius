@@ -1,6 +1,6 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import * as $MC from '../../src/mincutmaxflow/MinCutMaxFlowBoykov';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig} from '../../lib/io/input/JSONInput';
+import * as $MC from '../../lib/mincutmaxflow/MinCutMaxFlowBoykov';
 import { JSON_DATA_PATH } from '../config/test_paths';
 
 

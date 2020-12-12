@@ -12,7 +12,7 @@ module.exports = {
 	],
 	collectCoverage: false,
 	collectCoverageFrom: [
-		"src/**/*.ts",
+		"lib/**/*.ts",
 		"!**/node_modules/**",
 		"!**/lib/**",
 		"!**/build/**"

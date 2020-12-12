@@ -1,4 +1,4 @@
-import * as $CB from '../../src/utils/CallbackUtils';
+import * as $CB from '../../lib/utils/CallbackUtils';
 
 
 describe('general callback util tests - ', () => {

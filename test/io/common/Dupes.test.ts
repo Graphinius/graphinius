@@ -1,11 +1,11 @@
-import {EdgeDupeChecker, PotentialEdgeInfo} from '../../../src/io/common/Dupes';
-import {IBaseEdge, BaseEdge} from "../../../src/core/base/BaseEdge";
-import {IGraph} from "../../../src/core/base/BaseGraph";
-import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
-import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
+import {EdgeDupeChecker, PotentialEdgeInfo} from '../../../lib/io/common/Dupes';
+import {IBaseEdge, BaseEdge} from "../../../lib/core/base/BaseEdge";
+import {IGraph} from "../../../lib/core/base/BaseGraph";
+import {ITypedEdge, TypedEdge} from "../../../lib/core/typed/TypedEdge";
+import {ITypedNode, TypedNode} from "../../../lib/core/typed/TypedNode";
+import {TypedGraph} from "../../../lib/core/typed/TypedGraph";
 
-import {Logger} from "../../../src/utils/Logger";
+import {Logger} from "../../../lib/utils/Logger";
 const logger = new Logger();
 
 import * as uuid from 'uuid'

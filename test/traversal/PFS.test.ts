@@ -1,12 +1,12 @@
-import { GraphMode } from '../../src/core/interfaces';
-import { JSONInput } from '../../src/io/input/JSONInput';
+import { GraphMode } from '../../lib/core/interfaces';
+import { JSONInput } from '../../lib/io/input/JSONInput';
 import { JSON_DATA_PATH } from '../config/test_paths';
 
-import * as $N from '../../src/core/base/BaseNode';
-import * as $G from '../../src/core/base/BaseGraph';
-import * as $PFS from '../../src/traversal/PFS';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $G from '../../lib/core/base/BaseGraph';
+import * as $PFS from '../../lib/traversal/PFS';
 
-import { Logger } from '../../src/utils/Logger';
+import { Logger } from '../../lib/utils/Logger';
 const logger = new Logger();
 
 

@@ -1,8 +1,8 @@
-import * as $SU from '../../src/utils/StructUtils';
-import {BaseEdge} from "../../src/core/base/BaseEdge";
-import {BaseNode} from "../../src/core/base/BaseNode";
-import {BaseGraph} from "../../src/core/base/BaseGraph";
-import {Logger} from "../../src/utils/Logger";
+import * as $SU from '../../lib/utils/StructUtils';
+import {BaseEdge} from "../../lib/core/base/BaseEdge";
+import {BaseNode} from "../../lib/core/base/BaseNode";
+import {BaseGraph} from "../../lib/core/base/BaseGraph";
+import {Logger} from "../../lib/utils/Logger";
 
 const logger = new Logger();
 

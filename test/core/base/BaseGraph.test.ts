@@ -1,15 +1,15 @@
-import { GraphMode, GraphStats, MinAdjacencyListDict, MinAdjacencyListArray, NextArray } from '../../../src/core/interfaces';
-import * as $N from '../../../src/core/base/BaseNode';
-import * as $E from '../../../src/core/base/BaseEdge';
-import * as $G from '../../../src/core/base/BaseGraph';
-import { TypedGraph } from "../../../src/core/typed/TypedGraph";
-import { DegreeDistribution, DegreeCentrality } from '../../../src/centralities/Degree';
-import { DFS } from '../../../src/traversal/DFS';
-import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
-import { JSONInput } from '../../../src/io/input/JSONInput';
+import { GraphMode, GraphStats, MinAdjacencyListDict, MinAdjacencyListArray, NextArray } from '../../../lib/core/interfaces';
+import * as $N from '../../../lib/core/base/BaseNode';
+import * as $E from '../../../lib/core/base/BaseEdge';
+import * as $G from '../../../lib/core/base/BaseGraph';
+import { TypedGraph } from "../../../lib/core/typed/TypedGraph";
+import { DegreeDistribution, DegreeCentrality } from '../../../lib/centralities/Degree';
+import { DFS } from '../../../lib/traversal/DFS';
+import { CSVInput, ICSVInConfig } from '../../../lib/io/input/CSVInput';
+import { JSONInput } from '../../../lib/io/input/JSONInput';
 import { CSV_DATA_PATH, JSON_DATA_PATH } from '../../config/test_paths';
 
-import { Logger } from '../../../src/utils/Logger'
+import { Logger } from '../../../lib/utils/Logger'
 const logger = new Logger();
 
 const degCent = new DegreeCentrality();

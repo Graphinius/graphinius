@@ -1,10 +1,10 @@
 import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/test_paths";
-import {Logger} from "../../src/utils/Logger";
-import {CSVInput} from "../../src/io/input/CSVInput";
-import {JSONInput} from "../../src/io/input/JSONInput";
-import {DegreeCentrality} from "../../src/centralities/Degree";
-import {DFS} from "../../src/traversal/DFS";
-import {ComputeGraph} from "../../src/core/compute/ComputeGraph";
+import {Logger} from "../../lib/utils/Logger";
+import {CSVInput} from "../../lib/io/input/CSVInput";
+import {JSONInput} from "../../lib/io/input/JSONInput";
+import {DegreeCentrality} from "../../lib/centralities/Degree";
+import {DFS} from "../../lib/traversal/DFS";
+import {ComputeGraph} from "../../lib/core/compute/ComputeGraph";
 
 const logger = new Logger();
 

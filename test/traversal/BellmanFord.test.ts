@@ -1,13 +1,13 @@
 
-import * as $N from '../../src/core/base/BaseNode';
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { BellmanFordDict, BellmanFordArray } from '../../src/traversal/BellmanFord';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig } from '../../lib/io/input/JSONInput';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
+import { BellmanFordDict, BellmanFordArray } from '../../lib/traversal/BellmanFord';
 import { JSON_DATA_PATH } from '../config/test_paths';
 
-import { Logger } from '../../src/utils/Logger';
-import { GraphStats } from "../../src/core/interfaces";
+import { Logger } from '../../lib/utils/Logger';
+import { GraphStats } from "../../lib/core/interfaces";
 const logger = new Logger();
 
 const csv_config: ICSVInConfig = {

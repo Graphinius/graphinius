@@ -1,12 +1,12 @@
-import { GraphMode, GraphStats } from '../../src/core/interfaces';
-import * as $N from '../../src/core/base/BaseNode';
-import * as $E from '../../src/core/base/BaseEdge';
-import * as $G from '../../src/core/base/BaseGraph';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { GraphMode, GraphStats } from '../../lib/core/interfaces';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $E from '../../lib/core/base/BaseEdge';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
 import * as $C from '../io/input/common';
-import * as $R from '../../src/utils/RemoteUtils';
+import * as $R from '../../lib/utils/RemoteUtils';
 
-import { Logger } from '../../src/utils/Logger';
+import { Logger } from '../../lib/utils/Logger';
 const logger = new Logger();
 
 const REMOTE_HOST = "raw.githubusercontent.com";

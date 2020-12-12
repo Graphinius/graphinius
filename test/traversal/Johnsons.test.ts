@@ -1,13 +1,13 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import * as $BF from '../../src/traversal/BellmanFord';
-import * as $N from '../../src/core/base/BaseNode';
-import * as $JO from '../../src/traversal/Johnsons';
-import * as $FW from '../../src/traversal/FloydWarshall';
-import {JSONInput} from '../../src/io/input/JSONInput';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
+import * as $G from '../../lib/core/base/BaseGraph';
+import * as $BF from '../../lib/traversal/BellmanFord';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $JO from '../../lib/traversal/Johnsons';
+import * as $FW from '../../lib/traversal/FloydWarshall';
+import {JSONInput} from '../../lib/io/input/JSONInput';
+import {CSVInput, ICSVInConfig} from '../../lib/io/input/CSVInput';
 import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
 
-import {Logger} from '../../src/utils/Logger';
+import {Logger} from '../../lib/utils/Logger';
 
 const logger = new Logger();
 

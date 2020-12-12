@@ -1,9 +1,9 @@
-import {ITypedNode, TypedNode, TypedNodeConfig} from "../../../src/core/typed/TypedNode";
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
-import {ITypedEdge, TypedEdge} from "../../../src/core/typed/TypedEdge";
-import {GENERIC_TYPES} from "../../../src/config/run_config";
+import {ITypedNode, TypedNode, TypedNodeConfig} from "../../../lib/core/typed/TypedNode";
+import {TypedGraph} from "../../../lib/core/typed/TypedGraph";
+import {ITypedEdge, TypedEdge} from "../../../lib/core/typed/TypedEdge";
+import {GENERIC_TYPES} from "../../../lib/config/run_config";
 
-import {Logger} from '../../../src/utils/Logger';
+import {Logger} from '../../../lib/utils/Logger';
 const logger = new Logger();
 
 describe('==== NODE TESTS ====', () => {

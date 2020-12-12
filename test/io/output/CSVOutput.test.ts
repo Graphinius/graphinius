@@ -1,10 +1,10 @@
 import * as fs from 'fs';
-import * as $N from '../../../src/core/base/BaseNode';
-import { IBaseEdge } from '../../../src/core/base/BaseEdge';
-import * as $G from '../../../src/core/base/BaseGraph';
-import { CSVOutput, ICSVOutConfig } from '../../../src/io/output/CSVOutput'
-import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
-import * as $J from '../../../src/io/input/JSONInput';
+import * as $N from '../../../lib/core/base/BaseNode';
+import { IBaseEdge } from '../../../lib/core/base/BaseEdge';
+import * as $G from '../../../lib/core/base/BaseGraph';
+import { CSVOutput, ICSVOutConfig } from '../../../lib/io/output/CSVOutput'
+import { CSVInput, ICSVInConfig } from '../../../lib/io/input/CSVInput';
+import * as $J from '../../../lib/io/input/JSONInput';
 import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/test_paths';
 
 

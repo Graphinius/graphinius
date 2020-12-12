@@ -1,7 +1,7 @@
-import {BaseEdge} from '../../../src/core/base/BaseEdge';
-import {ITypedNode, TypedNode} from '../../../src/core/typed/TypedNode';
-import {ITypedEdge, TypedEdge} from '../../../src/core/typed/TypedEdge';
-import {GENERIC_TYPES} from "../../../src/config/run_config";
+import {BaseEdge} from '../../../lib/core/base/BaseEdge';
+import {ITypedNode, TypedNode} from '../../../lib/core/typed/TypedNode';
+import {ITypedEdge, TypedEdge} from '../../../lib/core/typed/TypedEdge';
+import {GENERIC_TYPES} from "../../../lib/config/run_config";
 
 
 describe('==== TYPED EDGE TESTS ====', () => {

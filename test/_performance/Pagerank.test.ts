@@ -5,12 +5,12 @@ import {
 	RES_CENT_PATH,
 	JSON_REC_PATH
 } from "../config/test_paths";
-import { Pagerank } from "../../src/centralities/Pagerank";
-import { DFS } from "../../src/traversal/DFS";
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { Pagerank } from "../../lib/centralities/Pagerank";
+import { DFS } from "../../lib/traversal/DFS";
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
 
-import { Logger } from '../../src/utils/Logger';
-import { JSONInput } from "../../src/io/input/JSONInput";
+import { Logger } from '../../lib/utils/Logger';
+import { JSONInput } from "../../lib/io/input/JSONInput";
 
 const logger = new Logger();
 

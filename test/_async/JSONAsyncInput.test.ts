@@ -1,8 +1,8 @@
-import {GraphMode, GraphStats} from '../../src/core/interfaces';
-import * as $G from '../../src/core/base/BaseGraph';
+import {GraphMode, GraphStats} from '../../lib/core/interfaces';
+import * as $G from '../../lib/core/base/BaseGraph';
 import * as $C from '../io/input/common';
-import * as $R from '../../src/utils/RemoteUtils';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import * as $R from '../../lib/utils/RemoteUtils';
+import { JSONInput, IJSONInConfig } from '../../lib/io/input/JSONInput';
 
 
 const std_json_in_config: IJSONInConfig = {

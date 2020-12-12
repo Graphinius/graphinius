@@ -1,11 +1,11 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import * as $FW from '../../src/traversal/FloydWarshall';
-import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
+import * as $G from '../../lib/core/base/BaseGraph';
+import * as $FW from '../../lib/traversal/FloydWarshall';
+import { CSVInput, ICSVInConfig } from '../../lib/io/input/CSVInput';
+import { JSONInput, IJSONInConfig } from '../../lib/io/input/JSONInput';
 import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/test_paths';
 
-import {Logger} from '../../src/utils/Logger';
-import {GraphStats} from "../../src/core/interfaces";
+import {Logger} from '../../lib/utils/Logger';
+import {GraphStats} from "../../lib/core/interfaces";
 const logger = new Logger();
 
 let social_graph = `${CSV_SN_PATH}/social_network_edges_1K.csv`;

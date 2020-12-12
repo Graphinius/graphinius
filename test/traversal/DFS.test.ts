@@ -1,8 +1,8 @@
-import { GraphMode, GraphStats, MinAdjacencyListDict } from '../../src/core/interfaces';
-import * as $N from '../../src/core/base/BaseNode';
-import * as $G from '../../src/core/base/BaseGraph';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import * as $DFS from '../../src/traversal/DFS';
+import { GraphMode, GraphStats, MinAdjacencyListDict } from '../../lib/core/interfaces';
+import * as $N from '../../lib/core/base/BaseNode';
+import * as $G from '../../lib/core/base/BaseGraph';
+import { JSONInput } from '../../lib/io/input/JSONInput';
+import * as $DFS from '../../lib/traversal/DFS';
 import { JSON_DATA_PATH } from '../config/test_paths';
 
 let search_graph = `${JSON_DATA_PATH}/search_graph.json`;

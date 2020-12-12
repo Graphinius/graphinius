@@ -1,7 +1,7 @@
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {ClosenessCentrality} from "../../src/centralities/Closeness";
+import {CSVInput, ICSVInConfig} from '../../lib/io/input/CSVInput';
+import {ClosenessCentrality} from "../../lib/centralities/Closeness";
 
-import {Logger} from "../../src/utils/Logger";
+import {Logger} from "../../lib/utils/Logger";
 import {CSV_SN_PATH} from "../config/test_paths";
 
 const logger = new Logger();

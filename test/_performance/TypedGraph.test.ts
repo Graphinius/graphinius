@@ -1,10 +1,10 @@
 import {JSON_PERF_PATH, JSON_REC_PATH} from "../config/test_paths";
-import {JSONInput} from "../../src/io/input/JSONInput";
-import {TypedGraph} from "../../src/core/typed/TypedGraph";
-import {Logger} from "../../src/utils/Logger";
-import {DIR, ExpansionResult} from "../../src/core/interfaces";
+import {JSONInput} from "../../lib/io/input/JSONInput";
+import {TypedGraph} from "../../lib/core/typed/TypedGraph";
+import {Logger} from "../../lib/utils/Logger";
+import {DIR, ExpansionResult} from "../../lib/core/interfaces";
 import * as fs from 'fs';
-import {ITypedNode} from "../../src/core/typed/TypedNode";
+import {ITypedNode} from "../../lib/core/typed/TypedNode";
 
 const
 	logger = new Logger(),

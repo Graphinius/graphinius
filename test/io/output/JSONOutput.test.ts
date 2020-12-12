@@ -1,15 +1,15 @@
 import * as fs from 'fs';
-import * as $N from '../../../src/core/base/BaseNode';
-import * as $E from '../../../src/core/base/BaseEdge';
-import * as $G from '../../../src/core/base/BaseGraph';
-import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
-import { JSONOutput } from '../../../src/io/output/JSONOutput';
-import { labelKeys } from '../../../src/io/interfaces';
+import * as $N from '../../../lib/core/base/BaseNode';
+import * as $E from '../../../lib/core/base/BaseEdge';
+import * as $G from '../../../lib/core/base/BaseGraph';
+import { JSONInput, IJSONInConfig } from '../../../lib/io/input/JSONInput';
+import { JSONOutput } from '../../../lib/io/output/JSONOutput';
+import { labelKeys } from '../../../lib/io/interfaces';
 import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from '../../config/test_paths';
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
+import {TypedGraph} from "../../../lib/core/typed/TypedGraph";
 
-import {Logger} from "../../../src/utils/Logger";
-import {TypedNode} from "../../../src/core/typed/TypedNode";
+import {Logger} from "../../../lib/utils/Logger";
+import {TypedNode} from "../../../lib/core/typed/TypedNode";
 const logger = new Logger();
 
 

@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { CSVInput } from '../../../src/io/input/CSVInput';
-import * as $JI from '../../../src/io/input/JSONInput';
-import * as $R from '../../../src/utils/RemoteUtils';
+import { CSVInput } from '../../../lib/io/input/CSVInput';
+import * as $JI from '../../../lib/io/input/JSONInput';
+import * as $R from '../../../lib/utils/RemoteUtils';
 
 
 const REMOTE_HOST = "raw.githubusercontent.com";

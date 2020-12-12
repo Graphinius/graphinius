@@ -1,8 +1,8 @@
 import {JSON_DATA_PATH, JSON_REC_PATH} from "../config/test_paths";
-import {JSONInput} from "../../src/io/input/JSONInput";
-import {ComputeGraph} from "../../src/core/compute/ComputeGraph";
+import {JSONInput} from "../../lib/io/input/JSONInput";
+import {ComputeGraph} from "../../lib/core/compute/ComputeGraph";
 
-import {Logger} from "../../src/utils/Logger";
+import {Logger} from "../../lib/utils/Logger";
 
 const logger = new Logger();
 

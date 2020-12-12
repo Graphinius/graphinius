@@ -1,5 +1,5 @@
-import {TypedGraph} from '../../../src/core/typed/TypedGraph';
-import {JSONOutput} from '../../../src/io/output/JSONOutput';
+import {TypedGraph} from '../../../lib/core/typed/TypedGraph';
+import {JSONOutput} from '../../../lib/io/output/JSONOutput';
 import {JSON_SIM_PATH} from '../../../test/config/test_paths';
 
 const moviePearsonGraph = JSON_SIM_PATH + '/movies.json';

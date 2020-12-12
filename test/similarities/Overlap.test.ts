@@ -1,10 +1,10 @@
-import { DIR } from '../../src/core/interfaces';
-import { Similarity } from '../../src/similarities/interfaces';
-import { sim, simSource, simPairwise, simSubsets, knnNodeArray, knnNodeDict } from "../../src/similarities/SimilarityCommons";
-import { setSimFuncs as simFuncs } from '../../src/similarities/SetSimilarities';
-import { TypedGraph } from '../../src/core/typed/TypedGraph';
-import { JSONInput } from '../../src/io/input/JSONInput';
-import { TheAugments } from '../../src/perturbation/TheAugments';
+import { DIR } from '../../lib/core/interfaces';
+import { Similarity } from '../../lib/similarities/interfaces';
+import { sim, simSource, simPairwise, simSubsets, knnNodeArray, knnNodeDict } from "../../lib/similarities/SimilarityCommons";
+import { setSimFuncs as simFuncs } from '../../lib/similarities/SetSimilarities';
+import { TypedGraph } from '../../lib/core/typed/TypedGraph';
+import { JSONInput } from '../../lib/io/input/JSONInput';
+import { TheAugments } from '../../lib/perturbation/TheAugments';
 import { JSON_SIM_PATH } from "../config/test_paths";
 
 

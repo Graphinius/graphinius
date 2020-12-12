@@ -1,18 +1,18 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { TypedEdge } from "../../../src/core/typed/TypedEdge";
-import { BaseNode } from "../../../src/core/base/BaseNode";
-import { DIR, ExpansionResult } from '../../../src/core/interfaces';
-import { ITypedNode, TypedNode } from "../../../src/core/typed/TypedNode";
-import { TypedGraph } from '../../../src/core/typed/TypedGraph';
-import { JSONInput } from '../../../src/io/input/JSONInput';
+import { TypedEdge } from "../../../lib/core/typed/TypedEdge";
+import { BaseNode } from "../../../lib/core/base/BaseNode";
+import { DIR, ExpansionResult } from '../../../lib/core/interfaces';
+import { ITypedNode, TypedNode } from "../../../lib/core/typed/TypedNode";
+import { TypedGraph } from '../../../lib/core/typed/TypedGraph';
+import { JSONInput } from '../../../lib/io/input/JSONInput';
 import { JSON_REC_PATH, JSON_TYPE_PATH } from '../../config/test_paths';
-import { GENERIC_TYPES } from "../../../src/config/run_config";
-import { viaSharedPrefs } from "../../../src/similarities/SimilarityCommons";
-import { setSimFuncs } from "../../../src/similarities/SetSimilarities";
+import { GENERIC_TYPES } from "../../../lib/config/run_config";
+import { viaSharedPrefs } from "../../../lib/similarities/SimilarityCommons";
+import { setSimFuncs } from "../../../lib/similarities/SetSimilarities";
 
-import { Logger } from '../../../src/utils/Logger';
+import { Logger } from '../../../lib/utils/Logger';
 
 const logger = new Logger();
 

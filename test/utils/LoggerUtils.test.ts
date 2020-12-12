@@ -1,6 +1,6 @@
-import {LOG_LEVELS} from '../../src/config/run_config';
+import {LOG_LEVELS} from '../../lib/config/run_config';
 
-import {Logger, LOG_CONFIG, LogColors} from '../../src/utils/Logger';
+import {Logger, LOG_CONFIG, LogColors} from '../../lib/utils/Logger';
 
 let logger: Logger = null;
 

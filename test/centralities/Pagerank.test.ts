@@ -1,7 +1,7 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {PRArrayDS, Pagerank} from '../../src/centralities/Pagerank';
+import * as $G from '../../lib/core/base/BaseGraph';
+import {JSONInput, IJSONInConfig} from '../../lib/io/input/JSONInput';
+import {CSVInput, ICSVInConfig} from '../../lib/io/input/CSVInput';
+import {PRArrayDS, Pagerank} from '../../lib/centralities/Pagerank';
 import {
 	CSV_DATA_PATH,
 	JSON_DATA_PATH,
@@ -9,7 +9,7 @@ import {
 	CSV_SN_PATH, CSV_EGO_PATH
 } from '../config/test_paths';
 
-import {Logger} from '../../src/utils/Logger';
+import {Logger} from '../../lib/utils/Logger';
 
 const logger = new Logger();
 

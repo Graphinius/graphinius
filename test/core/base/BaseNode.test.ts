@@ -1,10 +1,10 @@
-import {TypedNode} from "../../../src/core/typed/TypedNode";
-import {JSONInput, IJSONInConfig} from '../../../src/io/input/JSONInput';
+import {TypedNode} from "../../../lib/core/typed/TypedNode";
+import {JSONInput, IJSONInConfig} from '../../../lib/io/input/JSONInput';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../../config/test_paths';
 
-import {Logger} from '../../../src/utils/Logger';
-import {BaseNode, IBaseNode, NeighborEntry} from "../../../src/core/base/BaseNode";
-import {BaseEdge, IBaseEdge} from "../../../src/core/base/BaseEdge";
+import {Logger} from '../../../lib/utils/Logger';
+import {BaseNode, IBaseNode, NeighborEntry} from "../../../lib/core/base/BaseNode";
+import {BaseEdge, IBaseEdge} from "../../../lib/core/base/BaseEdge";
 
 const logger = new Logger();
 

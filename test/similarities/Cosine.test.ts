@@ -1,8 +1,8 @@
-import {scoreSimFuncs as simFuncs } from '../../src/similarities/ScoreSimilarities';
-import {sim, simSource, simPairwise, simSubsets, knnNodeArray, getBsNotInA} from '../../src/similarities/SimilarityCommons';
-import {TheAugments} from '../../src/perturbation/TheAugments';
-import {TypedGraph} from '../../src/core/typed/TypedGraph';
-import {JSONInput} from '../../src/io/input/JSONInput';
+import {scoreSimFuncs as simFuncs } from '../../lib/similarities/ScoreSimilarities';
+import {sim, simSource, simPairwise, simSubsets, knnNodeArray, getBsNotInA} from '../../lib/similarities/SimilarityCommons';
+import {TheAugments} from '../../lib/perturbation/TheAugments';
+import {TypedGraph} from '../../lib/core/typed/TypedGraph';
+import {JSONInput} from '../../lib/io/input/JSONInput';
 import {JSON_SIM_PATH} from "../config/test_paths";
 
 

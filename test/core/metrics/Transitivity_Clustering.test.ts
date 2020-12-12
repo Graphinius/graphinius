@@ -1,9 +1,9 @@
-import {BaseGraph, IGraph} from '../../../src/core/base/BaseGraph';
-import {ComputeGraph, IComputeGraph} from '../../../src/core/compute/ComputeGraph';
-import {JSONInput} from "../../../src/io/input/JSONInput";
+import {BaseGraph, IGraph} from '../../../lib/core/base/BaseGraph';
+import {ComputeGraph, IComputeGraph} from '../../../lib/core/compute/ComputeGraph';
+import {JSONInput} from "../../../lib/io/input/JSONInput";
 import {JSON_DATA_PATH} from "../../config/test_paths";
 
-import {Logger} from "../../../src/utils/Logger";
+import {Logger} from "../../../lib/utils/Logger";
 const logger = new Logger();
 
 

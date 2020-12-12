@@ -1,11 +1,11 @@
-import * as $G from '../../src/core/base/BaseGraph';
-import {DegreeDistribution, DegreeCentrality} from '../../src/centralities/Degree';
-import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {SimplePerturber, NodeDegreeConfiguration} from '../../src/perturbation/SimplePerturbations';
+import * as $G from '../../lib/core/base/BaseGraph';
+import {DegreeDistribution, DegreeCentrality} from '../../lib/centralities/Degree';
+import {JSONInput, IJSONInConfig} from '../../lib/io/input/JSONInput';
+import {CSVInput, ICSVInConfig} from '../../lib/io/input/CSVInput';
+import {SimplePerturber, NodeDegreeConfiguration} from '../../lib/perturbation/SimplePerturbations';
 import {CSV_DATA_PATH, JSON_DATA_PATH} from '../config/test_paths';
-import {Logger} from "../../src/utils/Logger";
-import {GraphStats} from "../../src/core/interfaces";
+import {Logger} from "../../lib/utils/Logger";
+import {GraphStats} from "../../lib/core/interfaces";
 
 const logger = new Logger();
 

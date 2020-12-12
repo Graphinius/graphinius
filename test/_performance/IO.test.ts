@@ -1,8 +1,8 @@
-import { GraphMode } from '../../src/core/interfaces';
+import { GraphMode } from '../../lib/core/interfaces';
 import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from "../config/test_paths";
-import { CSVInput } from '../../src/io/input/CSVInput';
-import { CSVOutput, ICSVOutConfig } from '../../src/io/output/CSVOutput';
-import { JSONInput } from "../../src/io/input/JSONInput";
+import { CSVInput } from '../../lib/io/input/CSVInput';
+import { CSVOutput, ICSVOutConfig } from '../../lib/io/output/CSVOutput';
+import { JSONInput } from "../../lib/io/input/JSONInput";
 
 let csvIn = new CSVInput({
 	separator: ' ',
