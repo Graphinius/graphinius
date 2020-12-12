@@ -21,8 +21,6 @@ module.exports = {
   collectCoverageFrom: [
     "lib/**/*.ts",
     "!**/node_modules/**",
-    "!**/lib/**",
-    "!**/build/**"
   ],
   testMatch: [
     '**/test/**/*.ts'

@@ -1,8 +1,9 @@
-import fs = require('fs');
+import * as fs from 'fs';
 
 import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
+
 import {labelKeys} from '../interfaces';
 import {BaseEdge} from "../../core/base/BaseEdge";
 import {BaseNode} from "../../core/base/BaseNode";

@@ -14,9 +14,7 @@ module.exports = {
 	collectCoverage: false,
 	collectCoverageFrom: [
 		"lib/**/*.ts",
-		"!**/node_modules/**",
-		"!**/lib/**",
-		"!**/build/**"
+		"!**/node_modules/**"
 	],
 	testMatch: [
 		'**/test/_async/**/*.ts'

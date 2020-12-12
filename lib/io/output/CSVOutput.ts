@@ -1,4 +1,4 @@
-import fs = require('fs');
+import * as fs from 'fs';
 import * as $N from '../../core/base/BaseNode';
 import * as $G from '../../core/base/BaseGraph';
 

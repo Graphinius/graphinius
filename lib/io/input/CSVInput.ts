@@ -1,6 +1,5 @@
-import path = require('path');
-import fs = require('fs');
-import http = require('http');
+import * as fs from 'fs';
+import * as path from 'path';
 
 import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';

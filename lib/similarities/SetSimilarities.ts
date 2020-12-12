@@ -45,7 +45,7 @@ function overlap(a: Set<any>, b: Set<any>) : $I.Similarity {
 
 
 function unionIntersect(a: Set<any>, b: Set<any>) {
-	const unionSize = new Set([...a, ...b]).size;
+	const unionSize = new Set([...Array.from(a), ...Array.from(b)]).size;
 	const isectSize = a.size + b.size - unionSize;
 	return {unionSize, isectSize};
 }
