@@ -1,8 +1,8 @@
 import * as $G from '../../src/core/base/BaseGraph';
-import * as $BF from '../../src/search/BellmanFord';
+import * as $BF from '../../src/traversal/BellmanFord';
 import * as $N from '../../src/core/base/BaseNode';
-import * as $JO from '../../src/search/Johnsons';
-import * as $FW from '../../src/search/FloydWarshall';
+import * as $JO from '../../src/traversal/Johnsons';
+import * as $FW from '../../src/traversal/FloydWarshall';
 import {JSONInput} from '../../src/io/input/JSONInput';
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';

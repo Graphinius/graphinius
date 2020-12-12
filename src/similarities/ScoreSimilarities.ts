@@ -3,7 +3,7 @@ import {IBaseNode} from '../core/base/BaseNode';
 
 const PRECISION = 5;
 
-export const simFuncs = {
+export const scoreSimFuncs = {
 	cosine,
 	cosineSets,
 	euclidean,

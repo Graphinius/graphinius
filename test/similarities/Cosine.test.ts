@@ -1,4 +1,4 @@
-import {simFuncs} from '../../src/similarities/ScoreSimilarities';
+import {scoreSimFuncs as simFuncs } from '../../src/similarities/ScoreSimilarities';
 import {sim, simSource, simPairwise, simSubsets, knnNodeArray, getBsNotInA} from '../../src/similarities/SimilarityCommons';
 import {TheAugments} from '../../src/perturbation/TheAugments';
 import {TypedGraph} from '../../src/core/typed/TypedGraph';

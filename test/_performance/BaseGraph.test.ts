@@ -3,7 +3,7 @@ import {Logger} from "../../src/utils/Logger";
 import {CSVInput} from "../../src/io/input/CSVInput";
 import {JSONInput} from "../../src/io/input/JSONInput";
 import {DegreeCentrality} from "../../src/centralities/Degree";
-import {DFS} from "../../src/search/DFS";
+import {DFS} from "../../src/traversal/DFS";
 import {ComputeGraph} from "../../src/core/compute/ComputeGraph";
 
 const logger = new Logger();

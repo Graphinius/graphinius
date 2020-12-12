@@ -5,16 +5,16 @@
  * (NodeJS standard heap size is limited to 1.7 GB)
  */
 import * as fs from 'fs';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {CSV_PERF_PATH, OUTPUT_PATH} from '../config/test_paths';
-import {Logger} from "../../src/utils/Logger";
-import {IGraph} from "../../src/core/base/BaseGraph";
-import {DegreeCentrality, DegreeDistribution} from '../../src/centralities/Degree';
-import {BFS} from "../../src/search/BFS";
-import {DFS} from "../../src/search/DFS";
-import {PFS} from "../../src/search/PFS";
-import {Pagerank, PagerankRWConfig} from "../../src/centralities/Pagerank";
-import {SimplePerturber} from "../../src/perturbation/SimplePerturbations";
+import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
+import { CSV_PERF_PATH, OUTPUT_PATH } from '../config/test_paths';
+import { Logger } from "../../src/utils/Logger";
+import { IGraph } from "../../src/core/base/BaseGraph";
+import { DegreeCentrality, DegreeDistribution } from '../../src/centralities/Degree';
+import { BFS } from "../../src/traversal/BFS";
+import { DFS } from "../../src/traversal/DFS";
+import { PFS } from "../../src/traversal/PFS";
+import { Pagerank, PagerankRWConfig } from "../../src/centralities/Pagerank";
+import { SimplePerturber } from "../../src/perturbation/SimplePerturbations";
 
 
 const logger = new Logger();
@@ -85,7 +85,7 @@ describe('SCC Tests - ', () => {
 	it(`Pagerank (unweighted)`, () => {
 		SCCGraphs.forEach(graph => {
 			const tic = +new Date;
-			const PR = new Pagerank(graph, {epsilon: 1e-4, normalize: true});
+			const PR = new Pagerank(graph, { epsilon: 1e-4, normalize: true });
 			const result = PR.computePR();
 			const toc = +new Date;
 			// fs.writeFileSync(`${OUTPUT_PATH}/pagerank_result_${graph.label}.json`, JSON.stringify(result));
@@ -100,7 +100,7 @@ describe('SCC Tests - ', () => {
 		SCCGraphs.forEach(graph => {
 			const PT = new SimplePerturber(graph);
 			const tic = +new Date;
-			PT.addNodesAmount(nrAddNodes, {probability_und: probEdge});
+			PT.addNodesAmount(nrAddNodes, { probability_und: probEdge });
 			const toc = +new Date;
 			logger.log(`Adding ${nrAddNodes} nodes & introducing new edges with p=${probEdge} on graph with |V|=${graph.nrNodes()} and |E|=${graph.nrUndEdges()} took ${toc - tic} ms.`);
 		});

@@ -1,6 +1,6 @@
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
-import * as $PFS from '../search/PFS';
+import * as $PFS from '../traversal/PFS';
 
 
 /**

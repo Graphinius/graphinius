@@ -1,10 +1,10 @@
-import {GraphMode, GraphStats, MinAdjacencyListDict} from '../../src/core/interfaces';
+import { GraphMode, GraphStats } from '../../src/core/interfaces';
+import { JSON_DATA_PATH } from '../config/test_paths';
+import { JSONInput } from '../../src/io/input/JSONInput';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
-import {JSONInput} from '../../src/io/input/JSONInput';
-import * as $BFS from '../../src/search/BFS';
+import * as $BFS from '../../src/traversal/BFS';
 import * as $CB from '../../src/utils/CallbackUtils';
-import { JSON_DATA_PATH } from '../config/test_paths';
 
 
 let search_graph = `${JSON_DATA_PATH}/search_graph.json`;
@@ -662,7 +662,7 @@ describe('Basic GRAPH SEARCH Tests - Breadth first search - ', () => {
 	describe('PFS_BFS graph traversal tests with edge weight ascending sort - ', () => {
 
 		let search_graph_pfs = `${JSON_DATA_PATH}/search_graph_pfs.json`,
-			json = new JSONInput({explicit_direction: true, directed: true, weighted: true}),
+			json = new JSONInput({ explicit_direction: true, directed: true, weighted: true }),
 			graph = json.readFromJSONFile(search_graph_pfs);
 
 		beforeEach(() => {

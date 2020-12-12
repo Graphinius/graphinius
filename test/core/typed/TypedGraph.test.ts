@@ -1,18 +1,18 @@
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import {TypedEdge} from "../../../src/core/typed/TypedEdge";
-import {BaseNode} from "../../../src/core/base/BaseNode";
-import {DIR, ExpansionResult} from '../../../src/core/interfaces';
-import {ITypedNode, TypedNode} from "../../../src/core/typed/TypedNode";
-import {TypedGraph} from '../../../src/core/typed/TypedGraph';
-import {JSONInput} from '../../../src/io/input/JSONInput';
-import {JSON_REC_PATH, JSON_TYPE_PATH} from '../../config/test_paths';
-import {GENERIC_TYPES} from "../../../src/config/run_config";
-import {viaSharedPrefs} from "../../../src/similarities/SimilarityCommons";
-import {simFuncs as setSimFuncs} from "../../../src/similarities/SetSimilarities";
+import { TypedEdge } from "../../../src/core/typed/TypedEdge";
+import { BaseNode } from "../../../src/core/base/BaseNode";
+import { DIR, ExpansionResult } from '../../../src/core/interfaces';
+import { ITypedNode, TypedNode } from "../../../src/core/typed/TypedNode";
+import { TypedGraph } from '../../../src/core/typed/TypedGraph';
+import { JSONInput } from '../../../src/io/input/JSONInput';
+import { JSON_REC_PATH, JSON_TYPE_PATH } from '../../config/test_paths';
+import { GENERIC_TYPES } from "../../../src/config/run_config";
+import { viaSharedPrefs } from "../../../src/similarities/SimilarityCommons";
+import { setSimFuncs } from "../../../src/similarities/SetSimilarities";
 
-import {Logger} from '../../../src/utils/Logger';
+import { Logger } from '../../../src/utils/Logger';
 
 const logger = new Logger();
 
@@ -68,7 +68,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		it('should correctly register a node type `PERSON`', () => {
 			expect(graph.nrNodes()).toBe(0);
 			expect(graph.nrTypedNodes(nodeType)).toBeNull;
-			graph.addNode(new TypedNode("A", {type: nodeType}));
+			graph.addNode(new TypedNode("A", { type: nodeType }));
 			/* First check for nrNodes in BaseGraph */
 			expect(graph.nrNodes()).toBe(1);
 			/* Now check TypedGraph */
@@ -79,20 +79,20 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should register a node type in UPPERCASE', () => {
-			graph.addNode(new TypedNode("A", {type: nodeTypeLower}));
+			graph.addNode(new TypedNode("A", { type: nodeTypeLower }));
 			expect(graph.nodeTypes()).not.toContain(nodeTypeLower);
 			expect(graph.nodeTypes()).toContain(nodeTypeLower.toUpperCase());
 		});
 
 
 		it('should check for node type existence in UPPERCASE', () => {
-			graph.addNode(new TypedNode("A", {type: nodeTypeLower}));
+			graph.addNode(new TypedNode("A", { type: nodeTypeLower }));
 			expect(graph.nrTypedNodes(nodeTypeLower)).toBe(1);
 		});
 
 
 		it('should delete a node instance but still keep a non-empty set of types', () => {
-			['A', 'B'].forEach(id => graph.addNode(new TypedNode(id, {type: nodeType})));
+			['A', 'B'].forEach(id => graph.addNode(new TypedNode(id, { type: nodeType })));
 			expect(graph.nrNodes()).toBe(2);
 			expect(graph.nrTypedNodes(nodeType)).toBe(2);
 			graph.deleteNode(graph.getNodeById('A') as TypedNode);
@@ -102,7 +102,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should un-register a node type upon deletion of its last instance', () => {
-			graph.addNode(new TypedNode("A", {type: nodeType}));
+			graph.addNode(new TypedNode("A", { type: nodeType }));
 			expect(graph.nodeTypes()).toContain(nodeType);
 			graph.deleteNode(graph.getNodeById('A') as TypedNode);
 			expect(graph.nrNodes()).toBe(0);
@@ -114,24 +114,24 @@ describe('TYPED GRAPH TESTS: ', () => {
 		it('should add a TypedNode by ID', () => {
 			expect(graph.nodeTypes()).not.toContain(nodeType);
 			expect(graph.nrTypedNodes(nodeType)).toBe(null);
-			graph.addNodeByID("A", {type: nodeType});
+			graph.addNodeByID("A", { type: nodeType });
 			expect(graph.nodeTypes()).toContain(nodeType);
 			expect(graph.nrTypedNodes(nodeType)).toBe(1);
 		});
 
 
 		it('should get nodes of type Person', () => {
-			graph.addNode(new TypedNode("A", {type: nodeType}));
-			graph.addNode(new TypedNode("B", {type: nodeType}));
+			graph.addNode(new TypedNode("A", { type: nodeType }));
+			graph.addNode(new TypedNode("B", { type: nodeType }));
 			expect(graph.getNodesT('Generic')).toBeNull;
 			expect(graph.getNodesT('Person').size).toBe(2);
 		});
 
 
 		it('should get edges of type Likes', () => {
-			graph.addNode(new TypedNode("A", {type: nodeType}));
-			graph.addNode(new TypedNode("B", {type: nodeType}));
-			graph.addEdgeByNodeIDs('l1', 'A', 'B', {directed: true, type: 'Likes'});
+			graph.addNode(new TypedNode("A", { type: nodeType }));
+			graph.addNode(new TypedNode("B", { type: nodeType }));
+			graph.addEdgeByNodeIDs('l1', 'A', 'B', { directed: true, type: 'Likes' });
 			expect(graph.getEdgesT('Hates')).toBeNull;
 			expect(graph.getEdgesT('Likes').size).toBe(1);
 		});
@@ -154,15 +154,15 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		beforeEach(() => {
 			graph = new TypedGraph("testus");
-			a = graph.addNode(new TypedNode('A', {type: nodeType}));
-			b = graph.addNode(new TypedNode('B', {type: nodeType}));
+			a = graph.addNode(new TypedNode('A', { type: nodeType }));
+			b = graph.addNode(new TypedNode('B', { type: nodeType }));
 		});
 
 
 		it('should correctly register an edge type `FRIENDS_WITH`', () => {
 			expect(graph.nrUndEdges()).toBe(0);
 			expect(graph.nrTypedEdges("Person")).toBeNull();
-			graph.addEdge(new TypedEdge(edgeID, a, b, {type: edgeType}));
+			graph.addEdge(new TypedEdge(edgeID, a, b, { type: edgeType }));
 			/* First check for nrUndEdges in BaseGraph */
 			expect(graph.nrUndEdges()).toBe(1);
 			/* Now check TypedGraph */
@@ -174,28 +174,28 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 		it('should register an edge type in UPPERCASE', () => {
 			expect(graph.nrTypedNodes(nodeType)).toBe(2);
-			graph.addEdge(new TypedEdge(edgeID, a, b, {type: edgeTypeLower}));
+			graph.addEdge(new TypedEdge(edgeID, a, b, { type: edgeTypeLower }));
 			expect(graph.edgeTypes()).not.toContain(edgeTypeLower);
 			expect(graph.edgeTypes()).toContain(edgeTypeLower.toUpperCase());
 		});
 
 
 		it('should check for edge type existence in UPPERCASE', () => {
-			graph.addEdge(new TypedEdge(edgeID, a, b, {type: edgeTypeLower}));
+			graph.addEdge(new TypedEdge(edgeID, a, b, { type: edgeTypeLower }));
 			expect(graph.nrTypedEdges(edgeTypeLower)).toBe(1);
 		});
 
 
 		it('should delete an edge instance but still keep a non-empty set of types', () => {
-			graph.addEdge(new TypedEdge(edgeID, a, b, {type: edgeType}));
-			graph.addEdge(new TypedEdge(edgeID + "2", a, b, {type: edgeType}));
+			graph.addEdge(new TypedEdge(edgeID, a, b, { type: edgeType }));
+			graph.addEdge(new TypedEdge(edgeID + "2", a, b, { type: edgeType }));
 			graph.deleteEdge(graph.getEdgeById(edgeID) as TypedEdge);
 			expect(graph.nrTypedEdges(edgeType)).toBe(1);
 		});
 
 
 		it('should un-register an edge type upon deletion of its last instance', () => {
-			graph.addEdge(new TypedEdge(edgeID, a, b, {type: edgeType}));
+			graph.addEdge(new TypedEdge(edgeID, a, b, { type: edgeType }));
 			graph.deleteEdge(graph.getEdgeById(edgeID) as TypedEdge);
 			expect(graph.edgeTypes()).not.toContain(edgeType);
 			expect(graph.nrTypedEdges(edgeType)).toBe(null);
@@ -208,8 +208,8 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 		it('should produce the correct graphStats', () => {
-			graph.addEdge(new TypedEdge('1', a, b, {directed: true, type: edgeType1}));
-			graph.addEdge(new TypedEdge('2', b, a, {directed: true, type: edgeType2}));
+			graph.addEdge(new TypedEdge('1', a, b, { directed: true, type: edgeType1 }));
+			graph.addEdge(new TypedEdge('2', b, a, { directed: true, type: edgeType2 }));
 
 			// logger.log(JSON.stringify(graph.stats));
 
@@ -271,7 +271,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const graphFile = JSON_REC_PATH + '/beerGraph.json';
 
 				const tic = +new Date;
-				graph = new JSONInput({dupeCheck: false}).readFromJSONFile(graphFile, graph) as TypedGraph;
+				graph = new JSONInput({ dupeCheck: false }).readFromJSONFile(graphFile, graph) as TypedGraph;
 				const toc = +new Date;
 
 				logger.log(`Reading in TypedGraph from Neo4j beer example took: ${toc - tic} ms.`);
@@ -570,43 +570,43 @@ describe('TYPED GRAPH TESTS: ', () => {
 		describe('get periphery @ K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
-				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: -1}))
+				expect(() => g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: -1 }))
 					.toThrowError('cowardly refusing to expand a negative number of steps.');
 			});
 
 
 			it('should give the correct 1-periphery from a single node (OUT)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, {k: 1}).set.size).toBe(17);
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, { k: 1 }).set.size).toBe(17);
 			});
 
 
 			it('should give the correct 2-periphery from a single node (OUT)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, {k: 2}).set.size).toBe(157);
+				expect(g.peripheryAtK(g.n(marie), DIR.out, knows, { k: 2 }).set.size).toBe(157);
 			});
 
 
 			it('should give the correct 2-periphery from a single node (IN)', () => {
-				expect(g.peripheryAtK(g.n(marie), DIR.in, knows, {k: 2}).set.size).toBe(115);
+				expect(g.peripheryAtK(g.n(marie), DIR.in, knows, { k: 2 }).set.size).toBe(115);
 			});
 
 
 			it('should give the correct 1-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows,{k: 1}).set.size).toBe(32);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: 1 }).set.size).toBe(32);
 			});
 
 
 			it('should give the correct 1-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows,{k: 1}).set.size).toBe(25);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, { k: 1 }).set.size).toBe(25);
 			});
 
 
 			it('should give the correct 2-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: 2}).set.size).toBe(189);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: 2 }).set.size).toBe(189);
 			});
 
 
 			it('should give the correct 2-periphery from a set OUT', () => {
-				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, {k: 2}).set.size).toBe(177);
+				expect(g.peripheryAtK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, { k: 2 }).set.size).toBe(177);
 			});
 
 		});
@@ -618,7 +618,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 		describe('expand over K steps - ', () => {
 
 			it('should not expand a negative number of steps', () => {
-				expect(() => g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: -1}))
+				expect(() => g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: -1 }))
 					.toThrowError('cowardly refusing to expand a negative number of steps.');
 			});
 
@@ -626,21 +626,21 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> knows 17 people
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
-				expect(g.expandK(g.n(marie), DIR.out, knows,{k: 1}).set.size).toBe(17);
+				expect(g.expandK(g.n(marie), DIR.out, knows, { k: 1 }).set.size).toBe(17);
 			});
 
 			/**
 			 * Marie Pfeffer & Tom Lemke -> together know 32 people
 			 */
 			it('should expand K steps from a node SET (OUT)', () => {
-				expect(g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k:1}).set.size).toBe(32);
+				expect(g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: 1 }).set.size).toBe(32);
 			});
 
 			/**
 			 * Marie Pfeffer -> 2 steps OUT -> 157 people
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
-				const expanse = g.expandK(g.n(marie), DIR.out, knows, {k:2});
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, { k: 2 });
 				const names = Array.from(expanse.set).map(n => n.f('name')).sort();
 				// fs.writeFileSync('./data/output/marie_pfeffer_names.csv', names.join('\n'));
 				const compareNames = fs.readFileSync('./data/results/marie_2_expand.csv')
@@ -654,7 +654,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (OUT)', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(g.n(marie), DIR.out, knows, {k:3});
+				const expanse = g.expandK(g.n(marie), DIR.out, knows, { k: 3 });
 				const toc = +new Date;
 				logger.log(`Expanding people (OUT) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.set.size).toBe(200);
@@ -664,7 +664,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 * Marie Pfeffer -> 2 steps IN -> 122 people
 			 */
 			it('should expand K steps from a single node (IN)', () => {
-				const expanse = g.expandK(g.n(marie), DIR.in, knows, {k:2});
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, { k: 2 });
 				expect(expanse.set.size).toBe(122);
 			});
 
@@ -673,7 +673,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps from a single node (IN)', () => {
 				const tic = +new Date;
-				const expanse = g.expandK(g.n(marie), DIR.in, knows, {k: 3});
+				const expanse = g.expandK(g.n(marie), DIR.in, knows, { k: 3 });
 				const toc = +new Date;
 				logger.log(`Expanding people (IN) to the max ;-) took ${toc - tic} ms.`);
 				expect(expanse.set.size).toBe(200);
@@ -684,7 +684,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps OUT from a Set', () => {
 				const tic = process.hrtime()[1];
-				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, {k: 2});
+				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.out, knows, { k: 2 });
 				const toc = process.hrtime()[1];
 				expect(expanse.set.size).toBe(194);
 				// const names = [...expanse.values()].map(n => n.getFeature('name')).sort();
@@ -697,17 +697,17 @@ describe('TYPED GRAPH TESTS: ', () => {
 			 */
 			it('should expand K steps IN from a Set', () => {
 				const tic = process.hrtime()[1];
-				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, {k: 2});
+				const expanse = g.expandK(new Set([g.n(marie), g.n(tom)]), DIR.in, knows, { k: 2 });
 				const toc = process.hrtime()[1];
 				expect(expanse.set.size).toBe(180);
 			});
 
 		});
-		
-		
+
+
 		describe('convert input to expansion result structure tests - ', () => {
 
-			let	me: ITypedNode;
+			let me: ITypedNode;
 
 			beforeAll(() => {
 				me = g.n('583');
@@ -715,27 +715,27 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 
 			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
-				const exp_res = {set: new Set([me]), freq: new Map()};
+				const exp_res = { set: new Set([me]), freq: new Map() };
 				expect(TypedGraph.convertToExpansionResult(me)).toEqual(exp_res);
 			});
 
 
 			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
-				const exp_res = {set: new Set([me]), freq: new Map()};
+				const exp_res = { set: new Set([me]), freq: new Map() };
 				expect(TypedGraph.convertToExpansionResult(new Set([me]))).toEqual(exp_res);
 			});
 
 
 			it('should correctly transform an ITypedNode into an ExpansionResult', () => {
-				const exp_res = {set: new Set([me]), freq: new Map()};
-				const input = {set: new Set([me]), freq: new Map()};
+				const exp_res = { set: new Set([me]), freq: new Map() };
+				const input = { set: new Set([me]), freq: new Map() };
 				input.freq.set(me, 1);
 				expect(TypedGraph.convertToExpansionResult(input)).toBe(input);
 			});
 
 		});
-		
-		
+
+
 		describe('expansion with correct frequencies (strengths / weights) - ', () => {
 
 			let
@@ -810,7 +810,7 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
 				expect(skills.set.size).toBe(30);
 				expect(skills.freq.size).toBe(30);
-				const skillsFreqReadable = Array.from(skills.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({ name: e[0].f('name'), freq: e[1] }))
 					.sort((a, b) => b.freq - a.freq);
 				expect(skillsFreqReadable).toEqual(res_exp);
 			});
@@ -818,10 +818,10 @@ describe('TYPED GRAPH TESTS: ', () => {
 
 			it('expandK (=1) should correctly compute frequencies', () => {
 				const skills = g.expand(employees, DIR.out, 'HAS_SKILL');
-				const skillsK1 = g.expandK(employees, DIR.out, 'HAS_SKILL', {k: 1});
-				const skillsFreqReadable = Array.from(skills.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+				const skillsK1 = g.expandK(employees, DIR.out, 'HAS_SKILL', { k: 1 });
+				const skillsFreqReadable = Array.from(skills.freq).map(e => ({ name: e[0].f('name'), freq: e[1] }))
 					.sort((a, b) => b.freq - a.freq);
-				const skillsK1FreqReadable = Array.from(skillsK1.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+				const skillsK1FreqReadable = Array.from(skillsK1.freq).map(e => ({ name: e[0].f('name'), freq: e[1] }))
 					.sort((a, b) => b.freq - a.freq);
 				expect(skillsFreqReadable).toEqual(skillsK1FreqReadable);
 			});
@@ -841,16 +841,16 @@ describe('TYPED GRAPH TESTS: ', () => {
 					{ name: 'Ursula Gerlach', freq: 19 },
 					{ name: 'Tremayne Boehm', freq: 18 },
 					{ name: 'Cyrus Ratke', freq: 15 },
-					{ name: 'Javon Shields', freq: 12},
-					{ name: 'Rosella Kohler', freq: 9},
-					{ name: 'Mariela Okuneva', freq: 7},
-					{ name: 'Asa Botsford', freq: 4},
+					{ name: 'Javon Shields', freq: 12 },
+					{ name: 'Rosella Kohler', freq: 9 },
+					{ name: 'Mariela Okuneva', freq: 7 },
+					{ name: 'Asa Botsford', freq: 4 },
 				];
 				const friends = g.expand(employees, DIR.out, 'KNOWS');
-				const friendsK2 = g.expandK(employees, DIR.out, 'KNOWS', {k: 2});
+				const friendsK2 = g.expandK(employees, DIR.out, 'KNOWS', { k: 2 });
 				expect(friends.set.size).toBeLessThan(friendsK2.set.size);
 				expect(friends.set).not.toEqual(friendsK2);
-				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({ name: e[0].f('name'), freq: e[1] }))
 					.sort((a, b) => b.freq - a.freq);
 				// console.log(friendsK2Readable);
 				res_exp.forEach(e => expect(friendsK2Readable).toContainEqual(e));
@@ -871,13 +871,13 @@ describe('TYPED GRAPH TESTS: ', () => {
 					{ name: 'Ursula Gerlach', freq: 18 },
 					{ name: 'Tremayne Boehm', freq: 18 },
 					{ name: 'Cyrus Ratke', freq: 14 },
-					{ name: 'Javon Shields', freq: 12},
-					{ name: 'Rosella Kohler', freq: 9},
-					{ name: 'Mariela Okuneva', freq: 6},
-					{ name: 'Asa Botsford', freq: 4},
+					{ name: 'Javon Shields', freq: 12 },
+					{ name: 'Rosella Kohler', freq: 9 },
+					{ name: 'Mariela Okuneva', freq: 6 },
+					{ name: 'Asa Botsford', freq: 4 },
 				];
-				const friendsK2 = g.peripheryAtK(employees, DIR.out, 'KNOWS', {k: 2});
-				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({name: e[0].f('name'), freq: e[1]}))
+				const friendsK2 = g.peripheryAtK(employees, DIR.out, 'KNOWS', { k: 2 });
+				const friendsK2Readable = Array.from(friendsK2.freq).map(e => ({ name: e[0].f('name'), freq: e[1] }))
 					.sort((a, b) => b.freq - a.freq);
 				// console.log(friendsK2Readable);
 				res_exp.forEach(e => expect(friendsK2Readable).toContainEqual(e));
@@ -901,9 +901,9 @@ describe('TYPED GRAPH TESTS: ', () => {
 				const sim_exp = [
 					{ from: 'Lilyan Beer', to: 'Schroeder-Corwin', isect: 4, sim: 0.2 },
 					{ from: 'Felix Wisoky', to: 'Spinka Inc', isect: 4, sim: 0.19048 },
-					{	from: 'Tristin Kohler',	to: 'Bogisich, Beatty and Rodriguez',	isect: 4,	sim: 0.19048 },
-					{ from: 'Earlene Osinski', to: 'Schroeder-Corwin', isect: 4, sim: 0.19048	},
-					{	from: 'Martine Treutel', to: 'Jaskolski-Adams',	isect: 3,	sim: 0.17647 }
+					{ from: 'Tristin Kohler', to: 'Bogisich, Beatty and Rodriguez', isect: 4, sim: 0.19048 },
+					{ from: 'Earlene Osinski', to: 'Schroeder-Corwin', isect: 4, sim: 0.19048 },
+					{ from: 'Martine Treutel', to: 'Jaskolski-Adams', isect: 3, sim: 0.17647 }
 				];
 				const friendEmployeeSim = viaSharedPrefs(g, setSimFuncs.jaccard, {
 					t1: person,

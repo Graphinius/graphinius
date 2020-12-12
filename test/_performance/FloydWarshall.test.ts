@@ -1,4 +1,4 @@
-import {FloydWarshallAPSP, FloydWarshallArray} from "../../src/search/FloydWarshall";
+import {FloydWarshallAPSP, FloydWarshallArray} from "../../src/traversal/FloydWarshall";
 import * as $G from "../../src/core/base/BaseGraph";
 import { CSV_SN_PATH, JSON_DATA_PATH } from '../config/test_paths';
 import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";

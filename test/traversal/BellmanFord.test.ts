@@ -3,11 +3,11 @@ import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
 import { JSONInput, IJSONInConfig } from '../../src/io/input/JSONInput';
 import { CSVInput, ICSVInConfig } from '../../src/io/input/CSVInput';
-import { BellmanFordDict, BellmanFordArray } from '../../src/search/BellmanFord';
-import {CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
+import { BellmanFordDict, BellmanFordArray } from '../../src/traversal/BellmanFord';
+import { JSON_DATA_PATH } from '../config/test_paths';
 
 import { Logger } from '../../src/utils/Logger';
-import {GraphStats} from "../../src/core/interfaces";
+import { GraphStats } from "../../src/core/interfaces";
 const logger = new Logger();
 
 const csv_config: ICSVInConfig = {
@@ -29,18 +29,18 @@ let bf_graph_file = `${JSON_DATA_PATH}/bellman_ford.json`,
 
 
 describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
-	
-	let json 							: JSONInput,
-			csv								: CSVInput,
-			bf_graph    			: $G.IGraph,
-			bf_neg_cycle_graph: $G.IGraph,
-      stats							: GraphStats,
-      // BF                : Function = BellmanFordDict,
-			BF_expect     		: {} = {},
-			// BF_neg_expect			: {} = {},
-			BF_compute				: {} = {},
-			BF_expect_array		: Array<number>,
-			BF_compute_array	: any; // TODO refactor w.r.t union return type
+
+	let json: JSONInput,
+		csv: CSVInput,
+		bf_graph: $G.IGraph,
+		bf_neg_cycle_graph: $G.IGraph,
+		stats: GraphStats,
+		// BF                : Function = BellmanFordDict,
+		BF_expect: {} = {},
+		// BF_neg_expect			: {} = {},
+		BF_compute: {} = {},
+		BF_expect_array: Array<number>,
+		BF_compute_array: any; // TODO refactor w.r.t union return type
 
 
 	beforeAll(() => {
@@ -49,8 +49,8 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		bf_graph = json.readFromJSONFile(bf_graph_file);
 		bf_neg_cycle_graph = json.readFromJSONFile(bf_graph_neg_cycle_file);
 		BF_expect = { S: 0, A: 5, B: 5, C: 7, D: 9, E: 8 };
-		BF_expect_array = [ 0, 5, 5, 7, 9, 8 ];
-  });
+		BF_expect_array = [0, 5, 5, 7, 9, 8];
+	});
 
 
 	test('should correctly instantiate the test BF graph', () => {
@@ -95,7 +95,7 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 	 * @todo more test cases (directed, undirected, weighted, unweighted graphs)
 	 */
 	describe('BF Dict version tests - ', () => {
-		
+
 		test('should correctly compute distances from S within BF test graph', () => {
 			BF_compute = BellmanFordDict(bf_graph, bf_graph.getNodeById("S")).distances;
 			expect(BF_compute).toEqual(BF_expect);
@@ -139,5 +139,5 @@ describe('GRAPH SEARCH Tests - Bellman Ford - ', () => {
 		});
 
 	});
-  
+
 });

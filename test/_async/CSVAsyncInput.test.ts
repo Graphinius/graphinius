@@ -1,4 +1,4 @@
-import {GraphMode, GraphStats} from '../../src/core/interfaces';
+import { GraphMode, GraphStats } from '../../src/core/interfaces';
 import * as $N from '../../src/core/base/BaseNode';
 import * as $E from '../../src/core/base/BaseEdge';
 import * as $G from '../../src/core/base/BaseGraph';
@@ -14,7 +14,7 @@ const REMOTE_PATH = "/cassinius/graphinius-demo/master/test_data/csv/";
 const CSV_EXTENSION = ".csv";
 
 const REAL_GRAPH_NR_NODES = 5937,
-	  REAL_GRAPH_NR_EDGES = 17777;
+	REAL_GRAPH_NR_EDGES = 17777;
 
 
 describe("ASYNC CSV GRAPH INPUT TESTS - ", () => {

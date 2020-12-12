@@ -1,4 +1,3 @@
-import * as $CC from "../../src/centralities/Closeness";
 import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
 import {ClosenessCentrality} from "../../src/centralities/Closeness";
 

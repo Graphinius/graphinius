@@ -1,9 +1,8 @@
-import {GraphMode} from '../../src/core/interfaces';
-import {CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH} from "../config/test_paths";
-import * as $G from "../../src/core/base/BaseGraph";
-import {CSVInput} from '../../src/io/input/CSVInput';
-import {CSVOutput, ICSVOutConfig} from '../../src/io/output/CSVOutput';
-import {JSONInput} from "../../src/io/input/JSONInput";
+import { GraphMode } from '../../src/core/interfaces';
+import { CSV_DATA_PATH, JSON_DATA_PATH, OUTPUT_PATH } from "../config/test_paths";
+import { CSVInput } from '../../src/io/input/CSVInput';
+import { CSVOutput, ICSVOutConfig } from '../../src/io/output/CSVOutput';
+import { JSONInput } from "../../src/io/input/JSONInput";
 
 let csvIn = new CSVInput({
 	separator: ' ',
@@ -19,7 +18,7 @@ let csvOut = new CSVOutput({
 
 const
 	graph_6K_file = `${JSON_DATA_PATH}/real_graph.json`,
-	json = new JSONInput({explicit_direction: false, directed: false, weighted: false}),
+	json = new JSONInput({ explicit_direction: false, directed: false, weighted: false }),
 	graph_6K = json.readFromJSONFile(graph_6K_file);
 
 const
@@ -70,7 +69,7 @@ describe('CSVOutput performance tests - ', () => {
 		let outfile = OUTPUT_PATH + "/adj_list_real_graph.csv";
 		csvOut.writeToAdjacencyListFile(outfile, graph_6K);
 
-		csvIn = new CSVInput({separator: ',', explicit_direction: false, direction_mode: false});
+		csvIn = new CSVInput({ separator: ',', explicit_direction: false, direction_mode: false });
 		let inGraph = csvIn.readFromAdjacencyListFile(outfile);
 		expect(inGraph.nrNodes()).toBe(REAL_GRAPH_NR_NODES);
 		expect(inGraph.nrDirEdges()).toBe(0);

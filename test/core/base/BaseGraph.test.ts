@@ -1,13 +1,13 @@
-import {GraphMode, GraphStats, MinAdjacencyListDict, MinAdjacencyListArray, NextArray} from '../../../src/core/interfaces';
+import { GraphMode, GraphStats, MinAdjacencyListDict, MinAdjacencyListArray, NextArray } from '../../../src/core/interfaces';
 import * as $N from '../../../src/core/base/BaseNode';
 import * as $E from '../../../src/core/base/BaseEdge';
 import * as $G from '../../../src/core/base/BaseGraph';
-import {TypedGraph} from "../../../src/core/typed/TypedGraph";
+import { TypedGraph } from "../../../src/core/typed/TypedGraph";
 import { DegreeDistribution, DegreeCentrality } from '../../../src/centralities/Degree';
-import { DFS } from '../../../src/search/DFS';
+import { DFS } from '../../../src/traversal/DFS';
 import { CSVInput, ICSVInConfig } from '../../../src/io/input/CSVInput';
-import { JSONInput, IJSONInConfig } from '../../../src/io/input/JSONInput';
-import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../../config/test_paths';
+import { JSONInput } from '../../../src/io/input/JSONInput';
+import { CSV_DATA_PATH, JSON_DATA_PATH } from '../../config/test_paths';
 
 import { Logger } from '../../../src/utils/Logger'
 const logger = new Logger();
@@ -18,19 +18,18 @@ const Node = $N.BaseNode;
 const Edge = $E.BaseEdge;
 const Graph = $G.BaseGraph;
 
-let sn_config: ICSVInConfig = {
-	separator: ' ',
-	explicit_direction: false,
-	direction_mode: false
-};
+// let social_net_config: ICSVInConfig = {
+// 	separator: ' ',
+// 	explicit_direction: false,
+// 	direction_mode: false
+// };
 
-
-const small_graph_file 								= `${JSON_DATA_PATH}/small_graph.json`,
-			search_graph_file 							= `${JSON_DATA_PATH}/search_graph.json`,
-			neg_cycle_multi_component_file 	= `${JSON_DATA_PATH}/negative_cycle_multi_component.json`,
-			SMALL_GRAPH_NR_NODES = 4,
-			SMALL_GRAPH_NR_UND_EDGES = 2,
-			SMALL_GRAPH_NR_DIR_EDGES = 5;
+const small_graph_file = `${JSON_DATA_PATH}/small_graph.json`,
+	search_graph_file = `${JSON_DATA_PATH}/search_graph.json`,
+	neg_cycle_multi_component_file = `${JSON_DATA_PATH}/negative_cycle_multi_component.json`,
+	SMALL_GRAPH_NR_NODES = 4,
+	SMALL_GRAPH_NR_UND_EDGES = 2,
+	SMALL_GRAPH_NR_DIR_EDGES = 5;
 
 
 describe('GRAPH TESTS: ', () => {
@@ -65,10 +64,10 @@ describe('GRAPH TESTS: ', () => {
 		);
 
 
-		test('should get mode via getter',() => {
-				graph = new Graph('Test graph');
-				expect(graph.mode).toBe(GraphMode.INIT);
-			}
+		test('should get mode via getter', () => {
+			graph = new Graph('Test graph');
+			expect(graph.mode).toBe(GraphMode.INIT);
+		}
 		);
 
 
@@ -1102,7 +1101,7 @@ describe('GRAPH TESTS: ', () => {
 		test(
 			'should successfully clone a toy graph in explicit mode including weights',
 			() => {
-				json_in = new JSONInput({explicit_direction: true, directed: false, weighted: true});
+				json_in = new JSONInput({ explicit_direction: true, directed: false, weighted: true });
 				graph = json_in.readFromJSONFile(small_graph_file);
 				let deg_dist_all = degCent.degreeDistribution(graph).all;
 				clone_graph = graph.cloneStructure();
@@ -1135,11 +1134,11 @@ describe('GRAPH TESTS: ', () => {
 			e_6: $E.IBaseEdge;
 
 		let isWeightedSpy_e1,
-				isWeightedSpy_e5;
+			isWeightedSpy_e5;
 
 
 		beforeEach(() => {
-			json = new JSONInput({explicit_direction: true, directed: false, weighted: true});
+			json = new JSONInput({ explicit_direction: true, directed: false, weighted: true });
 			graph = new $G.BaseGraph("positive weight graph");
 			graph_negcycle_multicomp = json.readFromJSONFile(neg_cycle_multi_component_file);
 			n_a = graph.addNodeByID("A");
@@ -1159,21 +1158,21 @@ describe('GRAPH TESTS: ', () => {
 
 		afterEach(() => {
 			/** This is used to restore the original isWeighted function
-			  *@todo figure out if necessary...
+				*@todo figure out if necessary...
 				*/
 			jest.restoreAllMocks();
 		});
 
 
 		test(
-		    'should have called isWeighted on e_1 and e_6 once each and returned true and false, respectively',
-		    () => {
-		        graph.hasNegativeEdge();
-		        expect(isWeightedSpy_e1).toHaveBeenCalledTimes(1);
-		        expect(isWeightedSpy_e1).toHaveReturnedWith(true);
-		        expect(isWeightedSpy_e5).toHaveBeenCalledTimes(1);
-		        expect(isWeightedSpy_e5).toHaveReturnedWith(false);
-		    }
+			'should have called isWeighted on e_1 and e_6 once each and returned true and false, respectively',
+			() => {
+				graph.hasNegativeEdge();
+				expect(isWeightedSpy_e1).toHaveBeenCalledTimes(1);
+				expect(isWeightedSpy_e1).toHaveReturnedWith(true);
+				expect(isWeightedSpy_e5).toHaveBeenCalledTimes(1);
+				expect(isWeightedSpy_e5).toHaveReturnedWith(false);
+			}
 		);
 
 
@@ -1271,7 +1270,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/data/search_graph_pfs.json";
-					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
+					let json = new JSONInput({ explicit_direction: true, directed: true, weighted: false });
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);
@@ -1286,7 +1285,7 @@ describe('GRAPH TESTS: ', () => {
 				'should return a copy of the same directed graph if all edges were directed before',
 				() => {
 					let digraph_file = "./test/data/search_graph_pfs.json";
-					let json = new JSONInput({explicit_direction: true, directed: true, weighted: false});
+					let json = new JSONInput({ explicit_direction: true, directed: true, weighted: false });
 					let digraph = json.readFromJSONFile(digraph_file);
 					expect(digraph).toBeDefined();
 					expect(digraph.nrNodes()).toBe(6);
@@ -1302,7 +1301,7 @@ describe('GRAPH TESTS: ', () => {
 
 			test.skip('should return the same UNdirected graph if all edges were UNdirected before', () => {
 
-				}
+			}
 			);
 
 
@@ -1313,7 +1312,7 @@ describe('GRAPH TESTS: ', () => {
 
 			test.skip('should return an UNdirected graph when all edges were directed before', () => {
 
-				}
+			}
 			);
 
 		});

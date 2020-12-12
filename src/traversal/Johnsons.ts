@@ -1,8 +1,8 @@
 import {NextArray} from '../core/interfaces';
 import * as $N from '../core/base/BaseNode';
 import * as $G from '../core/base/BaseGraph';
-import * as $PFS from '../search/PFS';
-import * as $BF from '../search/BellmanFord';
+import * as $PFS from '../traversal/PFS';
+import * as $BF from '../traversal/BellmanFord';
 import * as $SU from '../utils/StructUtils'
 import {ComputeGraph} from "../core/compute/ComputeGraph";
 

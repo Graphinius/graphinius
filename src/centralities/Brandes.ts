@@ -9,9 +9,9 @@
 
 import * as $G from '../core/base/BaseGraph';
 import * as $N from '../core/base/BaseNode';
-import * as $P from '../search/PFS';
-import * as $BF from '../search/BellmanFord';
-import * as $JO from '../search/Johnsons';
+import * as $P from '../traversal/PFS';
+import * as $BF from '../traversal/BellmanFord';
+import * as $JO from '../traversal/Johnsons';
 import * as $BH from '../datastructs/BinaryHeap';
 import {ComputeGraph, IComputeGraph} from "../core/compute/ComputeGraph";
 

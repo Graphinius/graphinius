@@ -2,6 +2,8 @@
   "scripts": {
     "build": "gulp build",
     "bundle": "gulp bundle",
+    "clean": "rm -rf coverage docs",
+    "doc": "typedoc --out docs src",
     "test:all": "jest -c jest.config.all.js",
     "test:sync": "jest -c jest.config.js",
     "test:async": "G_LOG=debug jest -c jest.config.async.js",

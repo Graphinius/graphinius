@@ -3,7 +3,7 @@ import {ITypedEdge, TypedEdge} from "./TypedEdge";
 import {GENERIC_TYPES} from "../../config/run_config";
 
 
-export interface NeighborEntry {
+export interface TypedNeighborEntry {
 	n: ITypedNode;
 	e: string; // edge entry
 	w: number; // weight

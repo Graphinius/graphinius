@@ -1,6 +1,9 @@
+/**
+ * @todo 2020-12-12: What is this thing doing !?
+ */
 import {TypedEdge, ITypedEdge} from '../core/typed/TypedEdge';
 import {TypedNode, ITypedNode} from '../core/typed/TypedNode';
-import {simFuncs} from '../similarities/SetSimilarities';
+import {setSimFuncs} from '../similarities/SetSimilarities';
 import {TypedGraph} from '../core/typed/TypedGraph';
 import * as $I from '../similarities/interfaces';
 import {knnNodeArray} from '../similarities/SimilarityCommons';

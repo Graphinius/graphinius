@@ -1,11 +1,10 @@
-import {TypedNode, ITypedNode} from '../core/typed/TypedNode';
 import * as $I from './interfaces';
 
 /*----------------------------------*/
 /*							CONSTS							*/
 /*----------------------------------*/
 
-export const simFuncs = {
+export const setSimFuncs = {
 	jaccard,
 	overlap
 };

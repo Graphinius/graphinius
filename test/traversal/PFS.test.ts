@@ -1,18 +1,16 @@
-import {GraphMode, GraphStats, MinAdjacencyListDict} from '../../src/core/interfaces';
+import { GraphMode } from '../../src/core/interfaces';
+import { JSONInput } from '../../src/io/input/JSONInput';
+import { JSON_DATA_PATH } from '../config/test_paths';
+
 import * as $N from '../../src/core/base/BaseNode';
 import * as $G from '../../src/core/base/BaseGraph';
-import {CSVInput, ICSVInConfig} from '../../src/io/input/CSVInput';
-import {JSONInput, IJSONInConfig} from '../../src/io/input/JSONInput';
-import * as $PFS from '../../src/search/PFS';
-import {CSV_DATA_PATH, CSV_SN_PATH, JSON_DATA_PATH} from '../config/test_paths';
+import * as $PFS from '../../src/traversal/PFS';
 
-
-import {Logger} from '../../src/utils/Logger';
-
+import { Logger } from '../../src/utils/Logger';
 const logger = new Logger();
 
 
-let json = new JSONInput({explicit_direction: true, directed: false, weighted: true}),
+let json = new JSONInput({ explicit_direction: true, directed: false, weighted: true }),
 	search_graph = `${JSON_DATA_PATH}/search_graph_pfs_extended.json`,
 	equal_dists = `${JSON_DATA_PATH}/equal_path_graph.json`,
 	graph: $G.IGraph;
@@ -556,7 +554,7 @@ describe('PFS TESTS - ', () => {
 		config.dir_mode = GraphMode.MIXED;
 
 		beforeEach(() => {
-			json = new JSONInput({explicit_direction: true, directed: false, weighted: false});
+			json = new JSONInput({ explicit_direction: true, directed: false, weighted: false });
 			graph = json.readFromJSONFile(search_graph);
 			expect(graph).toBeDefined();
 			expect(graph.nrNodes()).toBe(6);

@@ -1,11 +1,11 @@
-import * as $FW from "../../src/search/FloydWarshall";
-import * as $JO from "../../src/search/Johnsons";
+import * as $FW from "../../src/traversal/FloydWarshall";
+import * as $JO from "../../src/traversal/Johnsons";
 
-import {Logger} from '../../src/utils/Logger';
-import {CSVInput, ICSVInConfig} from "../../src/io/input/CSVInput";
-import {IJSONInConfig, JSONInput} from "../../src/io/input/JSONInput";
+import { Logger } from '../../src/utils/Logger';
+import { CSVInput, ICSVInConfig } from "../../src/io/input/CSVInput";
+import { IJSONInConfig, JSONInput } from "../../src/io/input/JSONInput";
 import * as $G from "../../src/core/base/BaseGraph";
-import {CSV_SN_PATH, JSON_DATA_PATH} from "../config/test_paths";
+import { CSV_SN_PATH, JSON_DATA_PATH } from "../config/test_paths";
 
 const logger = new Logger();
 

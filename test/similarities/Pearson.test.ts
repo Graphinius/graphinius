@@ -1,17 +1,15 @@
-import {simFuncs} from '../../src/similarities/ScoreSimilarities';
+import { scoreSimFuncs as simFuncs } from '../../src/similarities/ScoreSimilarities';
 import {
 	sim,
 	simSource,
 	simPairwise,
 	simSubsets,
-	knnNodeArray,
-	getBsNotInA,
-	sortFuncs, cutFuncs, knnNodeDict
+	knnNodeArray
 } from '../../src/similarities/SimilarityCommons';
-import {TheAugments} from '../../src/perturbation/TheAugments';
-import {TypedGraph} from '../../src/core/typed/TypedGraph';
-import {JSONInput} from '../../src/io/input/JSONInput';
-import {JSON_SIM_PATH} from "../config/test_paths";
+import { TheAugments } from '../../src/perturbation/TheAugments';
+import { TypedGraph } from '../../src/core/typed/TypedGraph';
+import { JSONInput } from '../../src/io/input/JSONInput';
+import { JSON_SIM_PATH } from "../config/test_paths";
 
 
 describe('PEARSON base similarity tests', () => {
@@ -38,17 +36,17 @@ describe('PEARSON base similarity tests', () => {
 
 
 	it('should compute PEARSON between two short vectors', () => {
-		expect(simFuncs.pearson(a, b)).toEqual({sim: 0.28768});
+		expect(simFuncs.pearson(a, b)).toEqual({ sim: 0.28768 });
 	});
 
 
 	it('should compute PEARSON between two LARGE vectors', () => {
-		expect(simFuncs.pearson(c, d)).toEqual({sim: 1});
+		expect(simFuncs.pearson(c, d)).toEqual({ sim: 1 });
 	});
 
 
 	it('should compute PEARSON between two LARGE vectors', () => {
-		expect(simFuncs.pearson(c, e)).toEqual({sim: -1});
+		expect(simFuncs.pearson(c, e)).toEqual({ sim: -1 });
 	});
 
 });
@@ -69,7 +67,7 @@ describe('PEARSON tests on neo4j sample graph', () => {
 
 
 	beforeEach(() => {
-		g = new JSONInput({weighted: true}).readFromJSONFile(gFile, new TypedGraph('CosineCuisineSimilarities')) as TypedGraph;
+		g = new JSONInput({ weighted: true }).readFromJSONFile(gFile, new TypedGraph('CosineCuisineSimilarities')) as TypedGraph;
 		zhen = g.n('Zhen');
 		praveena = g.n('Praveena');
 		michael = g.n('Michael');
@@ -79,7 +77,7 @@ describe('PEARSON tests on neo4j sample graph', () => {
 
 
 	it('should compute similarity between Arya and Karin', () => {
-		const pxp = {sim: 0.81947};
+		const pxp = { sim: 0.81947 };
 		const a = arya.outs(rated);
 		const b = karin.outs(rated);
 		const pears = sim(simFuncs.pearsonSets, a, b);
@@ -90,10 +88,10 @@ describe('PEARSON tests on neo4j sample graph', () => {
 
 	it('should compute PEARSON from a source', () => {
 		const pxp = [
-			{from: 'Arya', to: 'Karin', sim: 0.81947},
-			{from: 'Arya', to: 'Zhen', sim: 0.48395},
-			{from: 'Arya', to: 'Praveena', sim: 0.092623},
-			{from: 'Arya', to: 'Michael', sim: -0.9552}
+			{ from: 'Arya', to: 'Karin', sim: 0.81947 },
+			{ from: 'Arya', to: 'Zhen', sim: 0.48395 },
+			{ from: 'Arya', to: 'Praveena', sim: 0.092623 },
+			{ from: 'Arya', to: 'Michael', sim: -0.9552 }
 		];
 		const start = arya.label;
 		const allSets = {};
@@ -141,7 +139,7 @@ describe('PEARSON tests on neo4j sample graph', () => {
 		g.getNodesT('Person').forEach(n => {
 			allSets[n.label] = n.outs(rated);
 		});
-		const pears = simPairwise(simFuncs.pearsonSets, allSets, {cutoff: 0.1});
+		const pears = simPairwise(simFuncs.pearsonSets, allSets, { cutoff: 0.1 });
 		// console.log(pears);
 		expect(pears).toEqual(pxp);
 	});
@@ -158,7 +156,7 @@ describe('PEARSON tests on neo4j sample graph', () => {
 		g.getNodesT('Person').forEach(n => {
 			allSets[n.label] = n.outs(rated);
 		});
-		const pears = knnNodeArray(simFuncs.pearsonSets, allSets, {knn: 1, cutoff: .1, dup: true});
+		const pears = knnNodeArray(simFuncs.pearsonSets, allSets, { knn: 1, cutoff: .1, dup: true });
 		// console.log(pears);
 		expect(pears).toEqual(pxp);
 	});
@@ -194,7 +192,7 @@ describe('PEARSON tests on neo4j sample graph', () => {
 			Praveena: g.n('Praveena').outs(rated),
 			Arya: g.n('Arya').outs(rated),
 		};
-		const pears = simSubsets(simFuncs.pearsonSets, subSet, allSets, {knn: 1});
+		const pears = simSubsets(simFuncs.pearsonSets, subSet, allSets, { knn: 1 });
 		// console.log(pears);
 		expect(pears).toEqual(pxp);
 	});
