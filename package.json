@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cassinius/GraphiniusJS.git"
+    "url": "git+https://github.com/cassinius/graphinius.git"
   },
   "keywords": [
     "graphs",
@@ -25,6 +25,7 @@
     "typed graph",
     "attributed graph",
     "mixed mode graph",
+    "heterogenous graph",
     "node types",
     "edge types",
     "node feature vector",
@@ -32,10 +33,10 @@
   ],
   "name": "graphinius",
   "version": "1.0.0",
-  "description": "Generic graph (analysis) library in Typescript",
-  "main": "index.js",
+  "description": "Generic graph library in Typescript",
+  "main": "index.ts",
   "author": "Bernd Malle",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cassinius/Graphinius/issues"
   },
