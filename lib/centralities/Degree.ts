@@ -1,6 +1,6 @@
-import * as $N from '../core/base/BaseNode';
-import * as $G from '../core/base/BaseGraph';
-import * as $SU from '../utils/StructUtils'
+import * as $N from '@/core/base/BaseNode';
+import * as $G from '@/core/base/BaseGraph';
+import * as $SU from '@/utils/StructUtils'
 
 export enum DegreeMode {
   in,

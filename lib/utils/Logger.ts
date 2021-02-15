@@ -1,4 +1,4 @@
-import {LOG_LEVELS, runLevel} from '../config/run_config';
+import {LOG_LEVELS, runLevel} from '@/config/run_config';
 
 export interface LOG_CONFIG {
 	log_level: string;

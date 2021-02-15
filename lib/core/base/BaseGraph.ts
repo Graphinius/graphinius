@@ -8,10 +8,10 @@ import {
 } from '../interfaces';
 import { IBaseNode, BaseNode } from './BaseNode';
 import { BaseEdgeConfig, IBaseEdge, BaseEdge } from './BaseEdge';
-import { prepareBFSStandardConfig, BFS, BFS_Scope } from '../../traversal/BFS';
-import { DFS } from '../../traversal/DFS';
-import { BellmanFordDict, BellmanFordArray } from '../../traversal/BellmanFord';
-import { reWeighGraph, addExtraNandE } from '../../traversal/Johnsons';
+import { prepareBFSStandardConfig, BFS, BFS_Scope } from '@/traversal/BFS';
+import { DFS } from '@/traversal/DFS';
+import { BellmanFordDict, BellmanFordArray } from '@/traversal/BellmanFord';
+import { reWeighGraph, addExtraNandE } from '@/traversal/Johnsons';
 import { TypedGraph } from "../typed/TypedGraph";
 
 const DEFAULT_WEIGHT = 1;

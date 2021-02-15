@@ -1,9 +1,9 @@
 /*
   Calculates the shortest path to all others via PFS (could use Dijkstra as well...)
  */
-import * as $G from '../core/base/BaseGraph';
-import * as $PFS from '../traversal/PFS';
-import * as $FW from '../traversal/FloydWarshall';
+import * as $G from '@/core/base/BaseGraph';
+import * as $PFS from '@/traversal/PFS';
+import * as $FW from '@/traversal/FloydWarshall';
 
 //Calculates all the shortest path's to all other nodes for all given nodes in the graph
 //Returns a map with every node as key and the average distance to all other nodes as value

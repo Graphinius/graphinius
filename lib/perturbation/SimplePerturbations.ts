@@ -1,6 +1,6 @@
-import * as $N from '../core/base/BaseNode';
-import * as $E from '../core/base/BaseEdge';
-import * as $G from '../core/base/BaseGraph';
+import * as $N from '@/core/base/BaseNode';
+import * as $E from '@/core/base/BaseEdge';
+import * as $G from '@/core/base/BaseGraph';
 
 import * as uuid from 'uuid';
 const v4 = uuid.v4;

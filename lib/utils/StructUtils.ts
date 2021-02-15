@@ -1,6 +1,6 @@
-import {BaseGraph} from '../core/base/BaseGraph'
-import {BaseNode} from '../core/base/BaseNode';
-import {BaseEdge} from '../core/base/BaseEdge';
+import {BaseGraph} from '@/core/base/BaseGraph'
+import {BaseNode} from '@/core/base/BaseNode';
+import {BaseEdge} from '@/core/base/BaseEdge';
 
 /**
  * Method to deep clone an object

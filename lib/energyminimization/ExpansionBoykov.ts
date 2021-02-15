@@ -1,7 +1,7 @@
-import * as $N from '../core/base/BaseNode';
-import * as $E from '../core/base/BaseEdge';
-import * as $G from '../core/base/BaseGraph';
-import * as $MC from '../mincutmaxflow/MinCutMaxFlowBoykov';
+import * as $N from '@/core/base/BaseNode';
+import * as $E from '@/core/base/BaseEdge';
+import * as $G from '@/core/base/BaseGraph';
+import * as $MC from '@/mincutmaxflow/MinCutMaxFlowBoykov';
 
 
 export type EnergyFunctionTerm = (arg1: string, arg2: string) => number;

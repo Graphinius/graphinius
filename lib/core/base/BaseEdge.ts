@@ -1,6 +1,6 @@
 import * as $N from "./BaseNode";
 import { TypedEdge } from '../typed/TypedEdge';
-import * as $SU from "../../utils/StructUtils";
+import * as $SU from "@/utils/StructUtils";
 
 export interface IConnectedNodes {
 	a: $N.IBaseNode;

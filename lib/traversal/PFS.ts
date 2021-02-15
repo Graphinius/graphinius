@@ -1,9 +1,9 @@
 import {GraphMode, GraphStats, MinAdjacencyListDict} from '../core/interfaces';
-import * as $N from '../core/base/BaseNode';
-import * as $E from '../core/base/BaseEdge';
-import * as $G from '../core/base/BaseGraph';
-import * as $CB from '../utils/CallbackUtils';
-import * as $BH from '../datastructs/BinaryHeap';
+import * as $N from '@/core/base/BaseNode';
+import * as $E from '@/core/base/BaseEdge';
+import * as $G from '@/core/base/BaseGraph';
+import * as $CB from '@/utils/CallbackUtils';
+import * as $BH from '@/datastructs/BinaryHeap';
 
 
 export const DEFAULT_WEIGHT: number = 1;

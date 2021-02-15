@@ -1,4 +1,4 @@
-import {DIR} from '../core/interfaces';
+import {DIR} from '@/core/interfaces';
 
 /*----------------------------------*/
 /*		INTERFACES, TYPES & ENUMS			*/

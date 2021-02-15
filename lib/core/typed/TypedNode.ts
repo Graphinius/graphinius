@@ -1,6 +1,6 @@
 import {IBaseNode, BaseNode, BaseNodeConfig} from '../base/BaseNode';
 import {ITypedEdge, TypedEdge} from "./TypedEdge";
-import {GENERIC_TYPES} from "../../config/run_config";
+import {GENERIC_TYPES} from "@/config/run_config";
 
 
 export interface TypedNeighborEntry {

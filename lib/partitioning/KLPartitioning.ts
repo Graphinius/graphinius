@@ -1,11 +1,12 @@
-import { IGraph } from '../core/base/BaseGraph';
-import { IBaseNode } from '../core/base/BaseNode';
 import { GraphPartitioning, Partition } from './Interfaces';
-import { KCut } from './KCut';
-import { BinaryHeap, BinaryHeapMode } from '../datastructs/BinaryHeap';
 
-import { Logger, LogColors } from '../utils/Logger';
-import {ComputeGraph, IComputeGraph} from "../core/compute/ComputeGraph";
+import { IGraph } from '@/core/base/BaseGraph';
+import { IBaseNode } from '@/core/base/BaseNode';
+import { BinaryHeap, BinaryHeapMode } from '@/datastructs/BinaryHeap';
+import { Logger, LogColors } from '@/utils/Logger';
+import {ComputeGraph, IComputeGraph} from "@/core/compute/ComputeGraph";
+
+import { KCut } from './KCut';
 const logger = new Logger();
 
 const DEFAULT_WEIGHT = 1;

@@ -1,7 +1,6 @@
 import { IBaseEdge, BaseEdge, BaseEdgeConfig } from '../base/BaseEdge';
-import { GENERIC_TYPES } from '../../config/run_config';
 import * as $N from "../base/BaseNode";
-
+import { GENERIC_TYPES } from '@/config/run_config';
 
 export interface ITypedEdge extends IBaseEdge {
 	readonly type: string;

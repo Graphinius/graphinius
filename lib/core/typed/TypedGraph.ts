@@ -2,7 +2,6 @@ import {ITypedNode, TypedNode} from './TypedNode';
 import {ITypedEdge, TypedEdge, TypedEdgeConfig} from "./TypedEdge";
 import {BaseEdge, IBaseEdge} from "../base/BaseEdge";
 import {BaseGraph} from '../base/BaseGraph';
-import {GENERIC_TYPES} from "../../config/run_config";
 import {BaseNode} from "../base/BaseNode";
 import {
 	DIR,
@@ -14,6 +13,7 @@ import {
 	TypedEdges,
 	TypedNodes
 } from '../interfaces';
+import {GENERIC_TYPES} from "@/config/run_config";
 
 
 /**

@@ -1,5 +1,5 @@
 import * as $I from './interfaces';
-import {IBaseNode} from '../core/base/BaseNode';
+import {IBaseNode} from '@/core/base/BaseNode';
 
 const PRECISION = 5;
 

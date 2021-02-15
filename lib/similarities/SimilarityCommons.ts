@@ -1,6 +1,6 @@
 import * as $I from './interfaces';
-import {TypedGraph} from '../core/typed/TypedGraph';
-import { ITypedNode } from '../core/typed/TypedNode';
+import {TypedGraph} from '@/core/typed/TypedGraph';
+import { ITypedNode } from '@/core/typed/TypedNode';
 
 
 export const sortFuncs = {

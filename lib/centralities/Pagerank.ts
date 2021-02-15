@@ -1,7 +1,7 @@
-import { IGraph, BaseGraph } from '../core/base/BaseGraph';
-import { IBaseNode } from '../core/base/BaseNode';
-import { IBaseEdge } from '../core/base/BaseEdge';
-import { mergeObjects } from "../utils/StructUtils";
+import { IGraph, BaseGraph } from '@/core/base/BaseGraph';
+import { IBaseNode } from '@/core/base/BaseNode';
+import { IBaseEdge } from '@/core/base/BaseEdge';
+import { mergeObjects } from "@/utils/StructUtils";
 
 // import { Logger } from "../utils/Logger";
 // const logger = new Logger();

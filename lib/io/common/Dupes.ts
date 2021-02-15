@@ -1,8 +1,8 @@
-import { BaseEdge, IBaseEdge } from '../../core/base/BaseEdge';
-import { TypedEdge, ITypedEdge } from '../../core/typed/TypedEdge';
-import { IBaseNode, NeighborEntry } from '../../core/base/BaseNode';
-import { IGraph } from '../../core/base/BaseGraph';
-import { TypedGraph } from '../../core/typed/TypedGraph';
+import { BaseEdge, IBaseEdge } from '@/core/base/BaseEdge';
+import { TypedEdge, ITypedEdge } from '@/core/typed/TypedEdge';
+import { IBaseNode, NeighborEntry } from '@/core/base/BaseNode';
+import { IGraph } from '@/core/base/BaseGraph';
+import { TypedGraph } from '@/core/typed/TypedGraph';
 
 
 export interface PotentialEdgeInfo {

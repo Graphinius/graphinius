@@ -1,7 +1,7 @@
-import {MinAdjacencyListArray, NextArray} from '../core/interfaces';
-import * as $SU from '../utils/StructUtils'
-import {IGraph} from "../core/base/BaseGraph";
-import {ComputeGraph} from "../core/compute/ComputeGraph";
+import {MinAdjacencyListArray, NextArray} from '@/core/interfaces';
+import * as $SU from '@/utils/StructUtils'
+import {IGraph} from "@/core/base/BaseGraph";
+import {ComputeGraph} from "@/core/compute/ComputeGraph";
 
 
 const DEFAULT_WEIGHT = 1;

@@ -1,6 +1,6 @@
-import * as $G from '../core/base/BaseGraph';
-import * as $FW from '../traversal/FloydWarshall';
-import * as $JO from '../traversal/Johnsons';
+import * as $G from '@/core/base/BaseGraph';
+import * as $FW from '@/traversal/FloydWarshall';
+import * as $JO from '@/traversal/Johnsons';
 
 /**
  * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm

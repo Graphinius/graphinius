@@ -1,8 +1,8 @@
-import {GraphMode, GraphStats, MinAdjacencyListDict} from '../core/interfaces';
-import * as $N from '../core/base/BaseNode';
-import * as $E from '../core/base/BaseEdge';
-import * as $G from '../core/base/BaseGraph';
-import * as $CB from '../utils/CallbackUtils';
+import {GraphMode, GraphStats, MinAdjacencyListDict} from '@/core/interfaces';
+import * as $N from '@/core/base/BaseNode';
+import * as $E from '@/core/base/BaseEdge';
+import * as $G from '@/core/base/BaseGraph';
+import * as $CB from '@/utils/CallbackUtils';
 
 
 export interface BFS_Config {

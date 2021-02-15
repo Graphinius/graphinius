@@ -1,5 +1,5 @@
 import {TypedNode} from '../typed/TypedNode';
-import * as $SU from '../../utils/StructUtils';
+import * as $SU from '@/utils/StructUtils';
 import {IBaseEdge} from "./BaseEdge";
 
 

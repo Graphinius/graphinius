@@ -5,6 +5,7 @@
     "clean": "rm -rf coverage docs",
     "doc": "typedoc --out docs lib",
     "test": "jest -c jest.config.js",
+    "test:watch": "yarn test -- --watch",
     "test:perf": "G_LOG=debug jest -c jest.config.perf.js",
     "test:all": "jest -c jest.config.all.js"
   },
