@@ -4,7 +4,6 @@ import * as path from 'path';
 import * as $N from '../../core/base/BaseNode';
 import * as $E from '../../core/base/BaseEdge';
 import * as $G from '../../core/base/BaseGraph';
-import * as $R from '../../utils/RemoteUtils';
 
 
 const DEFAULT_WEIGHT = 1;
@@ -24,11 +23,9 @@ export interface ICSVInput {
 
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph;
 	readFromAdjacencyList(input : Array<string>, graph_name : string) : $G.IGraph;
-	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function);
 	
 	readFromEdgeListFile(filepath : string) : $G.IGraph;
 	readFromEdgeList(input : Array<string>, graph_name: string) : $G.IGraph;
-	readFromEdgeListURL(config : $R.RequestConfig, cb : Function);
 }
 
 
@@ -44,33 +41,6 @@ class CSVInput implements ICSVInput {
 		};
 	}
 	
-	
-	readFromAdjacencyListURL(config : $R.RequestConfig, cb : Function) {
-		this.readGraphFromURL(config, cb, this.readFromAdjacencyList);
-	}
-	
-	
-	readFromEdgeListURL(config : $R.RequestConfig, cb : Function) {
-		this.readGraphFromURL(config, cb, this.readFromEdgeList);
-	}
-	
-	
-	private readGraphFromURL(config: $R.RequestConfig, cb: Function, localFun: Function) {
-		let self = this,
-				graph_name = config.file_name,
-				graph : $G.IGraph,
-				request;
-
-		$R.checkNodeEnvironment()
-		
-		$R.retrieveRemoteFile(config, function(raw_graph) {
-			let input = raw_graph.toString().split('\n');
-			graph = localFun.apply(self, [input, graph_name]);
-			cb(graph, undefined);
-		});
-	}
-	
-	
 	readFromAdjacencyListFile(filepath : string) : $G.IGraph {
 		return this.readFileAndReturn(filepath, this.readFromAdjacencyList);
 	}
@@ -82,7 +52,6 @@ class CSVInput implements ICSVInput {
 	
 	
 	private readFileAndReturn(filepath: string, func: Function) : $G.IGraph {
-		$R.checkNodeEnvironment();
 		let graph_name = path.basename(filepath);
 		let input = fs.readFileSync(filepath).toString().split('\n');
 		return func.apply(this, [input, graph_name]);
