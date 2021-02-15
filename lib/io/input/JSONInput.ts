@@ -1,9 +1,8 @@
 import * as fs from "fs";
-import { IBaseEdge } from "../../core/base/BaseEdge";
-import { IBaseNode } from "../../core/base/BaseNode";
-import { ITypedNode } from "../../core/typed/TypedNode";
-import { TypedGraph } from "../../core/typed/TypedGraph";
-import { IGraph, BaseGraph } from "../../core/base/BaseGraph";
+import { IBaseNode } from "@/core/base/BaseNode";
+import { ITypedNode } from "@/core/typed/TypedNode";
+import { TypedGraph } from "@/core/typed/TypedGraph";
+import { IGraph, BaseGraph } from "@/core/base/BaseGraph";
 import { labelKeys } from "../interfaces";
 import { EdgeDupeChecker, PotentialEdgeInfo } from "../common/Dupes";
 

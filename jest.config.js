@@ -10,12 +10,11 @@ module.exports = {
   testEnvironment: 'node',
   verbose: true,
   watchPathIgnorePatterns: [
-    "/graphinius.d.ts",
     "/build",
     "/coverage",
+    "/data",
     "/docs",
-    "/lib",
-    "/data"
+    "/lib"
   ],
   collectCoverage: false,
   collectCoverageFrom: [
@@ -29,5 +28,17 @@ module.exports = {
     '_performance',
     'test_paths.ts',
     'common.ts'
-  ]
+  ],
+  moduleDirectories: [
+    "node_modules", "lib"
+  ],
+  moduleFileExtensions: [
+    "js",
+    "ts"
+  ],
+  moduleNameMapper: {
+    "@/(.*)": "<rootDir>/lib/$1",
+    "_/(.*)": "<rootDir>/test/$1",
+    "#/(.*)": "<rootDir>/$1",
+  }
 };

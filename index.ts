@@ -34,7 +34,6 @@ export * from './lib/similarities/SetSimilarities';
 export * from './lib/similarities/ScoreSimilarities';
 // Utils
 export * from './lib/utils/StructUtils';
-export * from './lib/utils/RemoteUtils';
 export * from './lib/utils/CallbackUtils';
 // Datastructs
 export * from './lib/datastructs/BinaryHeap';

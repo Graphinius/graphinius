@@ -1,28 +1,28 @@
 {
+  "compileOnSave": false,
+  "include": ["lib/**/*", "test/**/*"],
+  "exclude": ["coverage/*", "data/*", "docs/*", "node_modules/*"],
   "compilerOptions": {
+    "declaration": false,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
     "target": "ESNext",
     "module": "ESNext",
-    "declaration": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "downlevelIteration": true,
+    "skipLibCheck": true,
     "sourceMap": false,
-    "lib": [
-      "es2017",
-      "dom"
-    ],
-    "outDir": "./lib",
-    "removeComments": true,
     "strict": false,
-    "experimentalDecorators": true
-  },
-  "compileOnSave": false,
-  "include": [
-    "lib"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/test/*"
-  ]
+    "lib": ["ESNext", "dom"],
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./lib/*"],
+      "_/*": ["./test/*"],
+      "#/*": ["./*"]
+    }
+  }
 }
-

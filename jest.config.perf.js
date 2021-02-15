@@ -18,6 +18,16 @@ module.exports = {
 	testMatch: [
 		'**/test/_performance/**/*.ts'
 	],
-	testPathIgnorePatterns: [
-	]
+  moduleDirectories: [
+    "node_modules", "lib"
+  ],
+  moduleFileExtensions: [
+    "js",
+    "ts"
+  ],
+  moduleNameMapper: {
+    "@/(.*)": "<rootDir>/lib/$1",
+    "_/(.*)": "<rootDir>/test/$1",
+    "#/(.*)": "<rootDir>/$1",
+  }
 };

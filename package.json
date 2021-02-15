@@ -4,10 +4,9 @@
     "bundle": "gulp bundle",
     "clean": "rm -rf coverage docs",
     "doc": "typedoc --out docs lib",
-    "test:all": "jest -c jest.config.all.js",
-    "test:sync": "jest -c jest.config.js",
-    "test:async": "G_LOG=debug jest -c jest.config.async.js",
-    "test:performance": "G_LOG=debug jest -c jest.config.performance.js"
+    "test": "jest -c jest.config.js",
+    "test:perf": "G_LOG=debug jest -c jest.config.perf.js",
+    "test:all": "jest -c jest.config.all.js"
   },
   "repository": {
     "type": "git",
@@ -46,19 +45,19 @@
   "devDependencies": {
     "@tensorflow/tfjs-node": "^2.7.0",
     "@types/core-js": "^2.5.4",
-    "@types/jest": "^26.0.19",
-    "@types/node": "^14.14.13",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.28",
     "jest": "^26.6.3",
-    "json-loader": "^0.5.7",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^26.5.1",
     "ts-node": "^9.1.1",
-    "typedoc": "^0.19.2",
-    "typescript": "^4.1.3"
+    "typedoc": "^0.20.25",
+    "typescript": "^4.1.5"
   },
   "dependencies": {
     "uuid": "^3.3.2"
   },
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "docs/**/*"
   ]
 }
