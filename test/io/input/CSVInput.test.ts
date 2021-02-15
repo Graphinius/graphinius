@@ -1,8 +1,8 @@
-import {GraphMode, GraphStats} from '../../../lib/core/interfaces';
-import * as $G from '../../../lib/core/base/BaseGraph';
-import * as $I from '../../../lib/io/input/CSVInput';
+import {GraphMode, GraphStats} from '@/core/interfaces';
+import * as $G from '@/core/base/BaseGraph';
+import * as $I from '@/io/input/CSVInput';
 import * as $C from './common';
-import {CSV_DATA_PATH, CSV_ERR_PATH} from "../../config/test_paths";
+import {CSV_DATA_PATH, CSV_ERR_PATH} from "_/config/test_paths";
 
 let CSV = $I.CSVInput;
 

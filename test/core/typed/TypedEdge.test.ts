@@ -1,59 +1,51 @@
-import {BaseEdge} from '../../../lib/core/base/BaseEdge';
-import {ITypedNode, TypedNode} from '../../../lib/core/typed/TypedNode';
-import {ITypedEdge, TypedEdge} from '../../../lib/core/typed/TypedEdge';
-import {GENERIC_TYPES} from "../../../lib/config/run_config";
+import { BaseEdge } from "@/core/base/BaseEdge";
+import { ITypedNode, TypedNode } from "@/core/typed/TypedNode";
+import { ITypedEdge, TypedEdge } from "@/core/typed/TypedEdge";
+import { GENERIC_TYPES } from "@/config/run_config";
 
+/**
+ *
+ */
+describe("==== TYPED EDGE TESTS ====", () => {
+  const typeDirCombos = [
+    { type: "USES", dir: true },
+    { type: "LIKES", dir: true },
+    { type: "PRODUCES", dir: true },
+    { type: "SELLS", dir: true },
+    { type: "KILLED_BY", dir: true },
+    { type: "CO_LOCATED", dir: false },
+  ];
 
-describe('==== TYPED EDGE TESTS ====', () => {
+  const id = "NewTypedEdge",
+    defType = typeDirCombos[0].type,
+    defDir = typeDirCombos[0].dir,
+    nodeTypeA = "PERSON",
+    nodeTypeB = "COFFEE";
 
-	const typeDirCombos = [
-		{type: 'USES', dir: true},
-		{type: 'LIKES', dir: true},
-		{type: 'PRODUCES', dir: true},
-		{type: 'SELLS', dir: true},
-		{type: 'KILLED_BY', dir: true},
-		{type: 'CO_LOCATED', dir: false}
-	];
+  let node_a: TypedNode, node_b: TypedNode;
 
-	const
-		id = 'NewTypedEdge',
-		defType = typeDirCombos[0].type,
-		defDir = typeDirCombos[0].dir,
-		nodeTypeA = 'PERSON',
-		nodeTypeB = 'COFFEE';
+  /**
+   * Possible relationship types: [USES, (DIS)LIKES, (CO)PROGRAMS, TESTS, REACTS_TO, INTERACTS_WITH]
+   */
+  describe("Basic instantiation", () => {
+    beforeEach(() => {
+      node_a = new TypedNode("Bernd", { type: nodeTypeA });
+      node_b = new TypedNode("Roesti", { type: nodeTypeB });
+    });
 
-	let
-		node_a: TypedNode,
-		node_b: TypedNode;
+    it("should return isTyped on BaseEdge of true", () => {
+      const edge = new TypedEdge(id, node_a, node_b);
+      expect(BaseEdge.isTyped(edge)).toBe(true);
+    });
 
-	/**
-	 * Possible relationship types: [USES, (DIS)LIKES, (CO)PROGRAMS, TESTS, REACTS_TO, INTERACTS_WITH]
-	 */
-	describe('Basic instantiation', () => {
+    it("should set a default type of GENERIC", () => {
+      const edge = new TypedEdge(id, node_a, node_b);
+      expect(edge.type).toBe(GENERIC_TYPES.Edge);
+    });
 
-		beforeEach(() => {
-			node_a = new TypedNode('Bernd', {type: nodeTypeA});
-			node_b = new TypedNode('Roesti', {type: nodeTypeB});
-		});
-
-
-		it('should return isTyped on BaseEdge of true', () => {
-			const edge = new TypedEdge(id, node_a, node_b);
-			expect(BaseEdge.isTyped(edge)).toBe(true);
-		});
-
-
-		it('should set a default type of GENERIC', () => {
-			const edge = new TypedEdge(id, node_a, node_b);
-			expect(edge.type).toBe(GENERIC_TYPES.Edge);
-		});
-
-
-		it('should correctly set a type', () => {
-			const edge = new TypedEdge(id, node_a, node_b, {type: defType});
-			expect(edge.type).toBe(defType);
-		});
-
-	});
-
+    it("should correctly set a type", () => {
+      const edge = new TypedEdge(id, node_a, node_b, { type: defType });
+      expect(edge.type).toBe(defType);
+    });
+  });
 });

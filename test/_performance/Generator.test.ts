@@ -1,5 +1,5 @@
-import * as $KRON from "../../lib/generators/KroneckerLeskovec";
-import {Logger} from "../../lib/utils/Logger";
+import * as $KRON from "@/generators/KroneckerLeskovec";
+import {Logger} from "@/utils/Logger";
 const logger = new Logger();
 
 

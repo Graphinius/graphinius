@@ -1,4 +1,4 @@
-import {BinaryHeap, BinaryHeapMode as Mode} from "../../lib/datastructs/BinaryHeap";
+import {BinaryHeap, BinaryHeapMode as Mode} from "@/datastructs/BinaryHeap";
 
 
 describe('BinaryHeap Performance tests - ', () => {

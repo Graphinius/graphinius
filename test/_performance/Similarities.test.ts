@@ -1,5 +1,5 @@
-import { scoreSimFuncs } from "../../lib/similarities/ScoreSimilarities";
-import { setSimFuncs } from "../../lib/similarities/SetSimilarities";
+import { scoreSimFuncs } from "@/similarities/ScoreSimilarities";
+import { setSimFuncs } from "@/similarities/SetSimilarities";
 
 const
 	a = [3, 8, 7, 5, 2, 9],
