@@ -1,8 +1,7 @@
-import {MinAdjacencyListArray, NextArray} from '@/core/interfaces';
-import * as $SU from '@/utils/StructUtils'
-import {IGraph} from "@/core/base/BaseGraph";
-import {ComputeGraph} from "@/core/compute/ComputeGraph";
-
+import { MinAdjacencyListArray, NextArray } from "@/core/interfaces";
+import * as $SU from "@/utils/StructUtils";
+import { IGraph } from "@/core/base/BaseGraph";
+import { ComputeGraph } from "@/core/compute/ComputeGraph";
 
 const DEFAULT_WEIGHT = 1;
 
@@ -20,36 +19,45 @@ const DEFAULT_WEIGHT = 1;
  * @constructor
  */
 function FloydWarshallAPSP(graph: IGraph): {} {
-	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-		throw new Error("Cowardly refusing to traverse graph without edges.");
-	}
+  if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+    throw new Error("Cowardly refusing to traverse graph without edges.");
+  }
 
-	const cg = new ComputeGraph(graph);
+  const cg = new ComputeGraph(graph);
 
-	let dists: MinAdjacencyListArray = cg.adjMatrixW();
-	let next: NextArray = cg.nextArray();
+  let dists: MinAdjacencyListArray = cg.adjMatrixW();
+  let next: NextArray = cg.nextArray();
 
-	let N = dists.length;
-	for (let k = 0; k < N; ++k) {
-		for (let i = 0; i < N; ++i) {
-			for (let j = 0; j < N; ++j) {
-				if (k != i && k != j && i != j && dists[i][j] == (dists[i][k] + dists[k][j]) ) {
-					//if a node is unreachable, the corresponding value in next should not be updated, but stay null
-					if (dists[i][j] !== Number.POSITIVE_INFINITY) {
-						next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
-					}
-				}
+  let N = dists.length;
+  for (let k = 0; k < N; ++k) {
+    for (let i = 0; i < N; ++i) {
+      for (let j = 0; j < N; ++j) {
+        if (
+          k != i &&
+          k != j &&
+          i != j &&
+          dists[i][j] == dists[i][k] + dists[k][j]
+        ) {
+          //if a node is unreachable, the corresponding value in next should not be updated, but stay null
+          if (dists[i][j] !== Number.POSITIVE_INFINITY) {
+            next[i][j] = $SU.mergeOrderedArraysNoDups(next[i][j], next[i][k]);
+          }
+        }
 
-				if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
-					next[i][j] = next[i][k].slice(0);
-					dists[i][j] = dists[i][k] + dists[k][j];
-				}
-			}
-		}
-	}
-	return [dists, next];
+        if (
+          k != i &&
+          k != j &&
+          i != j &&
+          dists[i][j] > dists[i][k] + dists[k][j]
+        ) {
+          next[i][j] = next[i][k].slice(0);
+          dists[i][j] = dists[i][k] + dists[k][j];
+        }
+      }
+    }
+  }
+  return [dists, next];
 }
-
 
 /**
  * Floyd-Warshall - we mostly use it for Closeness centrality.
@@ -62,86 +70,84 @@ function FloydWarshallAPSP(graph: IGraph): {} {
  * @constructor
  */
 function FloydWarshallArray(graph: IGraph): MinAdjacencyListArray {
-	if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-		throw new Error("Cowardly refusing to traverse graph without edges.");
-	}
+  if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
+    throw new Error("Cowardly refusing to traverse graph without edges.");
+  }
 
-	const cg = new ComputeGraph(graph);
+  const cg = new ComputeGraph(graph);
 
-	let dists = cg.adjMatrixW();
-	let N = dists.length;
+  let dists = cg.adjMatrixW();
+  let N = dists.length;
 
-	for (let k = 0; k < N; ++k) {
-		for (let i = 0; i < N; ++i) {
-			for (let j = 0; j < N; ++j) {
-				if (k != i && k != j && i != j && dists[i][j] > dists[i][k] + dists[k][j]) {
-					dists[i][j] = dists[i][k] + dists[k][j];
-				}
-			}
-		}
-	}
-	return dists;
+  for (let k = 0; k < N; ++k) {
+    for (let i = 0; i < N; ++i) {
+      for (let j = 0; j < N; ++j) {
+        if (
+          k != i &&
+          k != j &&
+          i != j &&
+          dists[i][j] > dists[i][k] + dists[k][j]
+        ) {
+          dists[i][j] = dists[i][k] + dists[k][j];
+        }
+      }
+    }
+  }
+  return dists;
 }
-
 
 function changeNextToDirectParents(input: NextArray): NextArray {
-	let output: Array<Array<Array<number>>> = [];
-	
-	for (let a = 0; a < input.length; a++) {
-		output.push([]);
-		for (let b = 0; b < input.length; b++) {
-			output[a].push([]);
-			output[a][b] = input[a][b];
-		}
-	}
+  let output: Array<Array<Array<number>>> = [];
 
-	for (let a = 0; a < input.length; a++) {
-		for (let b = 0; b < input.length; b++) {
-			
-			if ( input[a][b][0] != null
-					 && a != b && !(input[a][b].length === 1
-					 && input[a][b][0] === b))
-			{
-				output[a][b] = [];
-				findDirectParents(a, b, input, output);
-			}
-		}
-	}
-	return output;
+  for (let a = 0; a < input.length; a++) {
+    output.push([]);
+    for (let b = 0; b < input.length; b++) {
+      output[a].push([]);
+      output[a][b] = input[a][b];
+    }
+  }
+
+  for (let a = 0; a < input.length; a++) {
+    for (let b = 0; b < input.length; b++) {
+      if (
+        input[a][b][0] != null &&
+        a != b &&
+        !(input[a][b].length === 1 && input[a][b][0] === b)
+      ) {
+        output[a][b] = [];
+        findDirectParents(a, b, input, output);
+      }
+    }
+  }
+  return output;
 }
-
 
 function findDirectParents(u, v, inNext, outNext): void {
-	let nodesInTracking = [u];
-	let counter = 0;
+  let nodesInTracking = [u];
+  let counter = 0;
 
-	while (nodesInTracking.length > 0) {
-		let currNode = nodesInTracking.pop();
-		
-		if (currNode == u && counter > 0) {
-			continue;
-		}
+  while (nodesInTracking.length > 0) {
+    let currNode = nodesInTracking.pop();
 
-		else {
-			for (let e = 0; e < inNext[currNode][v].length; e++) {
-				if (inNext[currNode][v][e] == v && counter == 0) {
-					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
-				}
-				else if (inNext[currNode][v][e] == v) {
-					outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [currNode]);
-				}
-				else {
-					nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, [inNext[currNode][v][e]]);
-				}
-			}
-		}
-		counter++;
-	}
+    if (currNode == u && counter > 0) {
+      continue;
+    } else {
+      for (let e = 0; e < inNext[currNode][v].length; e++) {
+        if (inNext[currNode][v][e] == v && counter == 0) {
+          outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [v]);
+        } else if (inNext[currNode][v][e] == v) {
+          outNext[u][v] = $SU.mergeOrderedArraysNoDups(outNext[u][v], [
+            currNode,
+          ]);
+        } else {
+          nodesInTracking = $SU.mergeOrderedArraysNoDups(nodesInTracking, [
+            inNext[currNode][v][e],
+          ]);
+        }
+      }
+    }
+    counter++;
+  }
 }
 
-
-export {
-	FloydWarshallAPSP,
-	FloydWarshallArray,
-	changeNextToDirectParents
-};
+export { FloydWarshallAPSP, FloydWarshallArray, changeNextToDirectParents };

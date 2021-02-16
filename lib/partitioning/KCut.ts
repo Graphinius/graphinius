@@ -1,7 +1,7 @@
 import { IBaseNode } from '@/core/base/BaseNode';
 import { IGraph } from '@/core/base/BaseGraph';
 import * as $SU from '@/utils/StructUtils';
-import { GraphPartitioning, Partition } from './Interfaces';
+import { GraphPartitioning, Partition } from './interfaces';
 
 
 export class KCut {

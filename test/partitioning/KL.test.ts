@@ -1,6 +1,6 @@
 import * as $G from "@/core/base/BaseGraph";
 import { JSONInput, IJSONInConfig } from "@/io/input/JSONInput";
-import { GraphPartitioning, Partition } from "@/partitioning/Interfaces";
+import { GraphPartitioning, Partition } from "@/partitioning/interfaces";
 import { KLPartitioning, KL_Config, GainEntry } from "@/partitioning/KLPartitioning";
 import { Logger } from "@/utils/Logger";
 

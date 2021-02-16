@@ -1,35 +1,31 @@
-import { IBaseEdge, BaseEdge, BaseEdgeConfig } from '../base/BaseEdge';
+import { IBaseEdge, BaseEdge, BaseEdgeConfig } from "../base/BaseEdge";
 import * as $N from "../base/BaseNode";
-import { GENERIC_TYPES } from '@/config/run_config';
+import { GENERIC_TYPES } from "@/config/run_config";
 
 export interface ITypedEdge extends IBaseEdge {
-	readonly type: string;
+  readonly type: string;
 }
-
 
 export interface TypedEdgeConfig extends BaseEdgeConfig {
-	type?: string;
+  type?: string;
 }
-
 
 class TypedEdge extends BaseEdge implements ITypedEdge {
-	protected _type : string;
+  protected _type: string;
 
-	constructor(protected _id: string,
-							protected _node_a: $N.IBaseNode,
-							protected _node_b: $N.IBaseNode,
-							config: TypedEdgeConfig = {}) {
-		super(_id, _node_a, _node_b, config);
-		this._type = config.type || GENERIC_TYPES.Edge;
-	}
+  constructor(
+    protected _id: string,
+    protected _node_a: $N.IBaseNode,
+    protected _node_b: $N.IBaseNode,
+    config: TypedEdgeConfig = {}
+  ) {
+    super(_id, _node_a, _node_b, config);
+    this._type = config.type || GENERIC_TYPES.Edge;
+  }
 
-	get type() {
-		return this._type;
-	}
-
+  get type() {
+    return this._type;
+  }
 }
 
-
-export {
-	TypedEdge
-}
+export { TypedEdge };

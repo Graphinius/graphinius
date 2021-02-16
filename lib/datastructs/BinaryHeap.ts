@@ -1,6 +1,6 @@
 export enum BinaryHeapMode {
   MIN,
-  MAX
+  MAX,
 }
 
 export interface PositionHeapEntry {
@@ -30,13 +30,12 @@ export interface IBinaryHeap {
   getPositions(): any;
 }
 
-
 /**
  * We only support unique object ID's for now !!!
  * @TODO Rename into "ObjectBinaryHeap" or such...
  */
 class BinaryHeap implements IBinaryHeap {
-  _nr_removes : number = 0; // just for debugging
+  _nr_removes: number = 0; // just for debugging
   private _array = [];
   private _positions: { [id: string]: PositionHeapEntry } = {};
 
@@ -47,12 +46,13 @@ class BinaryHeap implements IBinaryHeap {
    * @param _evalObjID function to determine an object's identity
    * @param _evalPriority function to determine an objects score
    */
-  constructor(private _mode = BinaryHeapMode.MIN,
+  constructor(
+    private _mode = BinaryHeapMode.MIN,
     private _evalPriority = (obj: any): number => {
-      if (typeof obj !== 'number' && typeof obj !== 'string') {
+      if (typeof obj !== "number" && typeof obj !== "string") {
         return NaN;
       }
-      if (typeof obj === 'number') {
+      if (typeof obj === "number") {
         return obj | 0;
       }
       return parseInt(obj);
@@ -60,9 +60,7 @@ class BinaryHeap implements IBinaryHeap {
     private _evalObjID = (obj: any): any => {
       return obj;
     }
-  ) {
-
-  }
+  ) {}
 
   getMode(): BinaryHeapMode {
     return this._mode;
@@ -118,7 +116,7 @@ class BinaryHeap implements IBinaryHeap {
    */
   insert(obj: any) {
     if (isNaN(this._evalPriority(obj))) {
-      throw new Error("Cannot insert object without numeric priority.")
+      throw new Error("Cannot insert object without numeric priority.");
     }
 
     /**
@@ -134,20 +132,20 @@ class BinaryHeap implements IBinaryHeap {
     this._nr_removes++;
 
     if (isNaN(this._evalPriority(obj))) {
-      throw new Error('Object invalid.');
+      throw new Error("Object invalid.");
     }
 
     let pos = this.getNodePosition(obj),
-        found = this._array[pos] != null ? this._array[pos] : null;
+      found = this._array[pos] != null ? this._array[pos] : null;
 
     if (found === null) {
       return undefined;
     }
-    
+
     let last_array_obj = this._array.pop();
     this.removeNodePosition(obj);
 
-    if ( this.size() && found !== last_array_obj ) {
+    if (this.size() && found !== last_array_obj) {
       this._array[pos] = last_array_obj;
       this.setNodePosition(last_array_obj, pos);
 
@@ -157,7 +155,6 @@ class BinaryHeap implements IBinaryHeap {
 
     return found;
   }
-
 
   private trickleDown(i: number) {
     let parent = this._array[i];
@@ -170,13 +167,19 @@ class BinaryHeap implements IBinaryHeap {
         swap = null;
 
       // check if left child exists && is larger than parent
-      if (left_child_idx < this.size() && !this.orderCorrect(parent, left_child)) {
+      if (
+        left_child_idx < this.size() &&
+        !this.orderCorrect(parent, left_child)
+      ) {
         swap = left_child_idx;
       }
 
       // check if right child exists && is larger than parent
-      if (right_child_idx < this.size() && !this.orderCorrect(parent, right_child)
-        && !this.orderCorrect(left_child, right_child)) {
+      if (
+        right_child_idx < this.size() &&
+        !this.orderCorrect(parent, right_child) &&
+        !this.orderCorrect(left_child, right_child)
+      ) {
         swap = right_child_idx;
       }
 
@@ -205,8 +208,7 @@ class BinaryHeap implements IBinaryHeap {
         parent = this._array[parent_idx];
       if (this.orderCorrect(parent, child)) {
         break;
-      }
-      else {
+      } else {
         this._array[parent_idx] = child;
         this._array[i] = parent;
 
@@ -224,56 +226,49 @@ class BinaryHeap implements IBinaryHeap {
     let obj_b_pr = this._evalPriority(obj_b);
     if (this._mode === BinaryHeapMode.MIN) {
       return obj_a_pr <= obj_b_pr;
-    }
-    else {
+    } else {
       return obj_a_pr >= obj_b_pr;
     }
   }
-
 
   /**
    * Superstructure to enable search in BinHeap in O(1)
    * @param obj
    * @param pos
    */
-  private setNodePosition(obj: any, pos: number) : void {
-    if ( obj == null || pos == null || pos !== (pos|0) ) {
-      throw new Error('minium required arguments are obj and new_pos');
+  private setNodePosition(obj: any, pos: number): void {
+    if (obj == null || pos == null || pos !== (pos | 0)) {
+      throw new Error("minium required arguments are obj and new_pos");
     }
     let pos_obj: PositionHeapEntry = {
       score: this.evalInputScore(obj),
-      position: pos
+      position: pos,
     };
     let obj_key = this.evalInputObjID(obj);
     this._positions[obj_key] = pos_obj;
   }
 
-
   /**
    *
    */
-  private getNodePosition(obj: any) : number {
+  private getNodePosition(obj: any): number {
     let obj_key = this.evalInputObjID(obj);
     // console.log(obj_key);
 
-    let occurrence : PositionHeapEntry = this._positions[obj_key];
+    let occurrence: PositionHeapEntry = this._positions[obj_key];
     // console.log(occurrence);
-    
+
     return occurrence ? occurrence.position : null;
   }
-
 
   /**
    * @param obj
    * @returns {number}
    */
-  private removeNodePosition(obj: any) : void {
+  private removeNodePosition(obj: any): void {
     let obj_key = this.evalInputObjID(obj);
     delete this._positions[obj_key];
   }
-
-
 }
-
 
 export { BinaryHeap };

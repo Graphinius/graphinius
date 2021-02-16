@@ -57,7 +57,8 @@ class JSONInput implements IJSONInput {
 
   constructor(config: IJSONInConfig = {}) {
     this._config = {
-      explicit_direction: config.explicit_direction != null ? config.explicit_direction : true,
+      explicit_direction:
+        config.explicit_direction != null ? config.explicit_direction : true,
       directed: config.directed != null ? config.directed : false,
       weighted: config.weighted != null ? config.weighted : false,
       dupeCheck: config.dupeCheck != null ? config.dupeCheck : true,
@@ -80,7 +81,10 @@ class JSONInput implements IJSONInput {
    * @param json
    * @param graph
    */
-  readFromJSON(json: JSONGraph, graph?: IGraph | TypedGraph): IGraph | TypedGraph {
+  readFromJSON(
+    json: JSONGraph,
+    graph?: IGraph | TypedGraph
+  ): IGraph | TypedGraph {
     graph = graph || new BaseGraph(json.name);
     const edc = new EdgeDupeChecker(graph);
     const rlt = json.typeRLT;
@@ -98,14 +102,18 @@ class JSONInput implements IJSONInput {
         // BASE INFO
         const target_node = this.getTargetNode(graph, edge_input);
         const edge_label = edge_input[labelKeys.e_label];
-        const edge_type = (rlt && rlt.edges[edge_input[labelKeys.e_type]]) || null;
+        const edge_type =
+          (rlt && rlt.edges[edge_input[labelKeys.e_type]]) || null;
 
         // DIRECTION
-        const directed = this._config.explicit_direction ? !!edge_input[labelKeys.e_dir] : this._config.directed;
+        const directed = this._config.explicit_direction
+          ? !!edge_input[labelKeys.e_dir]
+          : this._config.directed;
 
         // WEIGHTS
         const weight_float = JSONInput.handleEdgeWeights(edge_input);
-        const weight_info = weight_float === weight_float ? weight_float : DEFAULT_WEIGHT;
+        const weight_info =
+          weight_float === weight_float ? weight_float : DEFAULT_WEIGHT;
         const edge_weight = this._config.weighted ? weight_info : undefined;
 
         // EDGE_ID creation
@@ -154,7 +162,9 @@ class JSONInput implements IJSONInput {
       features: { [key: string]: any };
 
     for (let node_id in json.data) {
-      const type = BaseGraph.isTyped(graph) ? rlt && rlt.nodes[json.data[node_id][labelKeys.n_type]] : null;
+      const type = BaseGraph.isTyped(graph)
+        ? rlt && rlt.nodes[json.data[node_id][labelKeys.n_type]]
+        : null;
       const label = json.data[node_id][labelKeys.n_label];
       const node = graph.addNodeByID(node_id, { label, type });
       // Here we set the reference...?

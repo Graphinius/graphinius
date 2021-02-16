@@ -1,6 +1,6 @@
 import * as $G from "@/core/base/BaseGraph";
 import { CSVInput, ICSVInConfig } from "@/io/input/CSVInput";
-import { GraphPartitioning } from "@/partitioning/Interfaces";
+import { GraphPartitioning } from "@/partitioning/interfaces";
 import { KCut } from "@/partitioning/KCut";
 import { Logger } from "@/utils/Logger";
 

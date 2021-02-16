@@ -1,4 +1,4 @@
-import { GraphPartitioning, Partition } from './Interfaces';
+import { GraphPartitioning, Partition } from './interfaces';
 
 import { IGraph } from '@/core/base/BaseGraph';
 import { IBaseNode } from '@/core/base/BaseNode';

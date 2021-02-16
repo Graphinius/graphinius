@@ -1,32 +1,35 @@
-import * as $G from '@/core/base/BaseGraph';
-import * as $FW from '@/traversal/FloydWarshall';
-import * as $JO from '@/traversal/Johnsons';
+import * as $G from "@/core/base/BaseGraph";
+import * as $FW from "@/traversal/FloydWarshall";
+import * as $JO from "@/traversal/Johnsons";
 
 /**
  * DEMO Version of a betweenness centrality computed via Johnson's or FloydWarshall algorithm
- * 
+ *
  * @param graph the graph to perform Floyd-Warshall/Johnsons on
  * @param directed for normalization, not used at the moment
  * @param sparse decides if using the FW (dense) or Johnsons (sparse)
- * 
+ *
  * @returns m*m matrix of values (dist), m*m*m matrix of neighbors (next)
  * @constructor
- * 
- * @comment function gives the correct results but is slow. 
+ *
+ * @comment function gives the correct results but is slow.
  *
  * !!! DO NOT USE FOR PRODUCTION !!!
- * 
+ *
  * @todo decide if we still need it...
  * @todo in any case, make a CLASS out of it (standardize centrality signatures)
  */
-function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: boolean): {} {
+function betweennessCentrality(
+  graph: $G.IGraph,
+  directed?: boolean,
+  sparse?: boolean
+): {} {
   let paths;
   sparse = sparse || false;
 
   if (sparse) {
     paths = $JO.Johnsons(graph)[1];
-  }
-  else {
+  } else {
     paths = $FW.changeNextToDirectParents($FW.FloydWarshallAPSP(graph)[1]);
   }
 
@@ -43,7 +46,11 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
   for (var a = 0; a < N; ++a) {
     for (var b = 0; b < N; ++b) {
       //if self, or b is directly reachable from a and it is the only shortest path, no betweenness score is handed out
-      if (a != b && !(paths[a][b].length == 1 && paths[a][b][0] == b) && paths[a][b][0] != null) {
+      if (
+        a != b &&
+        !(paths[a][b].length == 1 && paths[a][b][0] == b) &&
+        paths[a][b][0] != null
+      ) {
         // console.log("called with a and b: "+a+" , "+b);
         let tempMap = {};
         let leadArray: Array<Array<number>> = [];
@@ -59,17 +66,18 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
             //ends when one path is traced back
             let previous: Array<number> = paths[a][tracer];
             let terminate = false;
-            //no branching: 
+            //no branching:
             if (previous.length == 1 && previous[0] == tracer) {
               break;
-            }
-            else if (previous.length == 1) {
+            } else if (previous.length == 1) {
               tracer = previous[0];
               //scoring on the fly
-              tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+              tracer in tempMap
+                ? (tempMap[tracer] += 1)
+                : (tempMap[tracer] = 1);
             }
             //if there is a branching:
-            //handle reaching the terminal node here too!          
+            //handle reaching the terminal node here too!
             if (previous.length > 1) {
               //case: leadArray is empty and we find a branch
               if (leadArray.length == 0) {
@@ -77,10 +85,11 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
                 leadArray.push([0, previous.length]);
                 if (previous[0] == tracer) {
                   terminate = true;
-                }
-                else {
+                } else {
                   tracer = previous[0];
-                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+                  tracer in tempMap
+                    ? (tempMap[tracer] += 1)
+                    : (tempMap[tracer] = 1);
                 }
                 leadCounter++;
               }
@@ -89,10 +98,11 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
                 let choice = leadArray[leadCounter][0];
                 if (previous[choice] == tracer) {
                   terminate = true;
-                }
-                else {
+                } else {
                   tracer = previous[choice];
-                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+                  tracer in tempMap
+                    ? (tempMap[tracer] += 1)
+                    : (tempMap[tracer] = 1);
                 }
                 leadCounter++;
               }
@@ -103,10 +113,11 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
                 leadArray.push([0, previous.length]);
                 if (previous[0] == tracer) {
                   terminate = true;
-                }
-                else {
+                } else {
                   tracer = previous[0];
-                  tracer in tempMap ? tempMap[tracer] += 1 : tempMap[tracer] = 1;
+                  tracer in tempMap
+                    ? (tempMap[tracer] += 1)
+                    : (tempMap[tracer] = 1);
                 }
                 leadCounter++;
               }
@@ -119,7 +130,10 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
           //reminder: each subarray in leadArray: [current branchpoint, length]
           if (leadArray.length > 0) {
             leadArray[leadArray.length - 1][0]++;
-            while (leadArray[leadArray.length - 1][0] == leadArray[leadArray.length - 1][1]) {
+            while (
+              leadArray[leadArray.length - 1][0] ==
+              leadArray[leadArray.length - 1][1]
+            ) {
               //then remove last item from leadArray
               leadArray.splice(leadArray.length - 1, 1);
               if (leadArray.length == 0) {
@@ -129,7 +143,7 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
             }
           }
           //console.log("one round over, path count: " + pathCount);
-        } while (leadArray.length != 0)
+        } while (leadArray.length != 0);
 
         //now put the correct scores into the final map
         //be careful, the return map uses letters as nodekeys! - one must transform, otherwise one gets rubbish
@@ -146,6 +160,4 @@ function betweennessCentrality(graph: $G.IGraph, directed?: boolean, sparse?: bo
   return map;
 }
 
-export {
-  betweennessCentrality
-};
+export { betweennessCentrality };

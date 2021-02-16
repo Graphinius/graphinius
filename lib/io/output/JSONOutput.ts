@@ -23,6 +23,9 @@ export interface TypeLUT {
 
 const startChar: number = 64;
 
+/**
+ *
+ */
 class JSONOutput implements IJSONOutput {
   // constructor() {}
 
@@ -108,7 +111,10 @@ class JSONOutput implements IJSONOutput {
         let endPoints = edge.getNodes();
 
         let edgeStruct = {
-          [labelKeys.e_to]: endPoints.a.getID() === node.getID() ? endPoints.b.getID() : endPoints.a.getID(),
+          [labelKeys.e_to]:
+            endPoints.a.getID() === node.getID()
+              ? endPoints.b.getID()
+              : endPoints.a.getID(),
           [labelKeys.e_dir]: edge.isDirected() ? 1 : 0,
           [labelKeys.e_weight]: JSONOutput.handleEdgeWeight(edge),
         };

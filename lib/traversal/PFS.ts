@@ -1,10 +1,9 @@
-import {GraphMode, GraphStats, MinAdjacencyListDict} from '../core/interfaces';
-import * as $N from '@/core/base/BaseNode';
-import * as $E from '@/core/base/BaseEdge';
-import * as $G from '@/core/base/BaseGraph';
-import * as $CB from '@/utils/CallbackUtils';
-import * as $BH from '@/datastructs/BinaryHeap';
-
+import { GraphMode } from "../core/interfaces";
+import * as $N from "@/core/base/BaseNode";
+import * as $E from "@/core/base/BaseEdge";
+import * as $G from "@/core/base/BaseGraph";
+import * as $CB from "@/utils/CallbackUtils";
+import * as $BH from "@/datastructs/BinaryHeap";
 
 export const DEFAULT_WEIGHT: number = 1;
 
@@ -62,50 +61,57 @@ export interface PFS_Scope {
 
 /**
  * Priority first search
- * 
+ *
  * Like BFS, we are not necessarily visiting the
  * whole graph, but only what's reachable from
  * a given start node.
- * 
+ *
  * @param graph the graph to perform PFS only
  * @param v the node from which to start PFS
  * @param config a config object similar to that used
  * in BFS, automatically instantiated if not given..
  */
 
-function PFS(graph: $G.IGraph,
-              v: $N.IBaseNode,
-              config?: PFS_Config): { [id: string]: PFS_ResultEntry } {
+function PFS(
+  graph: $G.IGraph,
+  v: $N.IBaseNode,
+  config?: PFS_Config
+): { [id: string]: PFS_ResultEntry } {
   config = config || preparePFSStandardConfig();
   let callbacks = config.callbacks,
     dir_mode = config.dir_mode,
     evalPriority = config.evalPriority,
     evalObjID = config.evalObjID;
 
-
   /**
-	 * We are not traversing an empty graph...
-	 */
+   * We are not traversing an empty graph...
+   */
   if (graph.getMode() === GraphMode.INIT) {
-    throw new Error('Cowardly refusing to traverse graph without edges.');
+    throw new Error("Cowardly refusing to traverse graph without edges.");
   }
   /**
-	 * We are not traversing a graph taking NO edges into account
-	 */
+   * We are not traversing a graph taking NO edges into account
+   */
   if (dir_mode === GraphMode.INIT) {
-    throw new Error('Cannot traverse a graph with dir_mode set to INIT.');
+    throw new Error("Cannot traverse a graph with dir_mode set to INIT.");
   }
-
 
   // Root NeighborEntries
   let start_ne: $N.NeighborEntry = {
     node: v,
-    edge: new $E.BaseEdge('virtual start edge', v, v, { weighted: true, weight: 0 }),
-    best: 0
+    edge: new $E.BaseEdge("virtual start edge", v, v, {
+      weighted: true,
+      weight: 0,
+    }),
+    best: 0,
   };
 
   let scope: PFS_Scope = {
-    OPEN_HEAP: new $BH.BinaryHeap($BH.BinaryHeapMode.MIN, evalPriority, evalObjID),
+    OPEN_HEAP: new $BH.BinaryHeap(
+      $BH.BinaryHeapMode.MIN,
+      evalPriority,
+      evalObjID
+    ),
     OPEN: {},
     CLOSED: {},
     nodes: graph.getNodes(),
@@ -116,10 +122,9 @@ function PFS(graph: $G.IGraph,
     proposed_dist: Number.POSITIVE_INFINITY,
   };
 
-
   /**
-	 * HOOK 1: PFS INIT
-	 */
+   * HOOK 1: PFS INIT
+   */
   callbacks.init_pfs && $CB.execCallbacks(callbacks.init_pfs, scope);
   //initializes the result entry, gives the start node the final values, and default values for all others
 
@@ -134,14 +139,15 @@ function PFS(graph: $G.IGraph,
     // console.log(`node: ${scope.current.node.getID()}`); //LOG!
     // console.log(`best: ${scope.current.best}`); //LOG!
 
-
     /**
      * HOOK 2: NEW CURRENT
      */
     callbacks.new_current && $CB.execCallbacks(callbacks.new_current, scope);
 
     if (scope.current == null) {
-      console.log("HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size());
+      console.log(
+        "HEAP popped undefined - HEAP size: " + scope.OPEN_HEAP.size()
+      );
     }
 
     // remove from OPEN
@@ -155,7 +161,8 @@ function PFS(graph: $G.IGraph,
       /**
        * HOOK 3: Goal node reached
        */
-      config.callbacks.goal_reached && $CB.execCallbacks(config.callbacks.goal_reached, scope);
+      config.callbacks.goal_reached &&
+        $CB.execCallbacks(config.callbacks.goal_reached, scope);
 
       // If a goal node is set from the outside & we reach it, we stop.
       return config.result;
@@ -164,20 +171,19 @@ function PFS(graph: $G.IGraph,
     /**
      * Extend the current node, also called
      * "create n's successors"...
-		 */
+     */
 
     // TODO: Reverse callback logic to NOT merge anything by default!!!
     if (dir_mode === GraphMode.MIXED) {
       scope.adj_nodes = scope.current.node.reachNodes();
-    }
-    else if (dir_mode === GraphMode.UNDIRECTED) {
+    } else if (dir_mode === GraphMode.UNDIRECTED) {
       scope.adj_nodes = scope.current.node.connNodes();
-    }
-    else if (dir_mode === GraphMode.DIRECTED) {
+    } else if (dir_mode === GraphMode.DIRECTED) {
       scope.adj_nodes = scope.current.node.nextNodes();
-    }
-    else {
-      throw new Error('Unsupported traversal mode. Please use directed, undirected, or mixed');
+    } else {
+      throw new Error(
+        "Unsupported traversal mode. Please use directed, undirected, or mixed"
+      );
     }
 
     /**
@@ -185,7 +191,6 @@ function PFS(graph: $G.IGraph,
      */
 
     for (let adj_idx in scope.adj_nodes) {
-
       scope.next = scope.adj_nodes[adj_idx];
 
       // console.log("scopeNext now:"); //LOG!
@@ -195,7 +200,8 @@ function PFS(graph: $G.IGraph,
         /**
          * HOOK 4: Goal node already closed
          */
-        config.callbacks.node_closed && $CB.execCallbacks(config.callbacks.node_closed, scope);
+        config.callbacks.node_closed &&
+          $CB.execCallbacks(config.callbacks.node_closed, scope);
         continue;
       }
 
@@ -208,15 +214,21 @@ function PFS(graph: $G.IGraph,
         /**
          * HOOK 5: Goal node already visited, but not yet closed
          */
-        config.callbacks.node_open && $CB.execCallbacks(config.callbacks.node_open, scope);
+        config.callbacks.node_open &&
+          $CB.execCallbacks(config.callbacks.node_open, scope);
 
-        scope.proposed_dist = scope.current.best + (isNaN(scope.next.edge.getWeight()) ? DEFAULT_WEIGHT : scope.next.edge.getWeight());
+        scope.proposed_dist =
+          scope.current.best +
+          (isNaN(scope.next.edge.getWeight())
+            ? DEFAULT_WEIGHT
+            : scope.next.edge.getWeight());
 
         /**
          * HOOK 6: Better path found
          */
         if (scope.next.best > scope.proposed_dist) {
-          config.callbacks.better_path && $CB.execCallbacks(config.callbacks.better_path, scope);
+          config.callbacks.better_path &&
+            $CB.execCallbacks(config.callbacks.better_path, scope);
 
           // HEAP operations are necessary for internal traversal,
           // so we handle them here in the main loop
@@ -233,16 +245,17 @@ function PFS(graph: $G.IGraph,
          * HOOK 7: Equal path found (same weight)
          */
         //at the moment, this callback array is empty here in the PFS and in the Dijkstra, but used in the Johnsons
-
         else if (scope.next.best === scope.proposed_dist) {
-          config.callbacks.equal_path && $CB.execCallbacks(config.callbacks.equal_path, scope);
+          config.callbacks.equal_path &&
+            $CB.execCallbacks(config.callbacks.equal_path, scope);
         }
 
         continue;
       }
 
       // NODE NOT ENCOUNTERED
-      config.callbacks.not_encountered && $CB.execCallbacks(config.callbacks.not_encountered, scope);
+      config.callbacks.not_encountered &&
+        $CB.execCallbacks(config.callbacks.not_encountered, scope);
 
       // HEAP operations are necessary for internal traversal,
       // so we handle them here in the main loop
@@ -250,12 +263,10 @@ function PFS(graph: $G.IGraph,
       scope.OPEN[scope.next.node.getID()] = scope.next;
       // console.log("MARKER-NOT ENCOUNTERED"); //LOG!
     }
-
   }
 
   return config.result;
 }
-
 
 function preparePFSStandardConfig(): PFS_Config {
   let config: PFS_Config = {
@@ -268,7 +279,7 @@ function preparePFSStandardConfig(): PFS_Config {
       node_closed: [],
       better_path: [],
       equal_path: [],
-      goal_reached: []
+      goal_reached: [],
     },
     messages: {
       init_pfs_msgs: [],
@@ -278,7 +289,7 @@ function preparePFSStandardConfig(): PFS_Config {
       node_closed_msgs: [],
       better_path_msgs: [],
       equal_path_msgs: [],
-      goal_reached_msgs: []
+      goal_reached_msgs: [],
     },
     dir_mode: GraphMode.MIXED,
     goal_node: null,
@@ -287,9 +298,9 @@ function preparePFSStandardConfig(): PFS_Config {
     },
     evalObjID: function (ne: $N.NeighborEntry) {
       return ne.node.getID();
-    }
+    },
   };
-  
+
   let callbacks = config.callbacks;
 
   let count = 0;
@@ -304,7 +315,7 @@ function preparePFSStandardConfig(): PFS_Config {
       config.result[key] = {
         distance: Number.POSITIVE_INFINITY,
         parent: null,
-        counter: -1
+        counter: -1,
       };
     }
     // initialize root node entry
@@ -312,26 +323,28 @@ function preparePFSStandardConfig(): PFS_Config {
     config.result[context.root_node.getID()] = {
       distance: 0,
       parent: context.root_node,
-      counter: counter()
+      counter: counter(),
     };
   };
   callbacks.init_pfs.push(initPFS);
-
 
   // Node not yet encountered callback
   let notEncountered = function (context: PFS_Scope) {
     // setting it's best score to actual distance + edge weight
     // and update result structure
-    context.next.best = context.current.best + (isNaN(context.next.edge.getWeight()) ? DEFAULT_WEIGHT : context.next.edge.getWeight());
+    context.next.best =
+      context.current.best +
+      (isNaN(context.next.edge.getWeight())
+        ? DEFAULT_WEIGHT
+        : context.next.edge.getWeight());
 
     config.result[context.next.node.getID()] = {
       distance: context.next.best,
       parent: context.current.node,
-      counter: undefined
+      counter: undefined,
     };
   };
   callbacks.not_encountered.push(notEncountered);
-
 
   // Callback for when we find a better solution
   let betterPathFound = function (context: PFS_Scope) {

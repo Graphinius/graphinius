@@ -1,40 +1,44 @@
-import * as $G from '@/core/base/BaseGraph';
-import * as $E from '@/core/base/BaseEdge';
-import * as $N from '@/core/base/BaseNode';
+import * as $G from "@/core/base/BaseGraph";
+import * as $E from "@/core/base/BaseEdge";
+import * as $N from "@/core/base/BaseNode";
 import { DEFAULT_WEIGHT } from "./PFS";
-
 
 export interface BFArrrayResult {
   distances: Array<number>;
   neg_cycle: boolean;
 }
 
-
 export interface BFDictResult {
   distances: {};
   neg_cycle: boolean;
 }
 
-
 /**
- * 
- * @param graph 
- * @param start 
+ *
+ * @param graph
+ * @param start
  */
 function BFSanityChecks(graph: $G.IGraph, start: $N.IBaseNode) {
   if (graph == null || start == null) {
-    throw new Error('Graph as well as start node have to be valid objects.');
+    throw new Error("Graph as well as start node have to be valid objects.");
   }
   if (graph.nrDirEdges() === 0 && graph.nrUndEdges() === 0) {
-    throw new Error('Cowardly refusing to traverse a graph without edges.');
+    throw new Error("Cowardly refusing to traverse a graph without edges.");
   }
   if (!graph.hasNodeID(start.getID())) {
-    throw new Error('Cannot start from an outside node.');
+    throw new Error("Cannot start from an outside node.");
   }
 }
 
-
-function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult {
+/**
+ *
+ * @param graph
+ * @param start
+ */
+function BellmanFordArray(
+  graph: $G.IGraph,
+  start: $N.IBaseNode
+): BFArrrayResult {
   BFSanityChecks(graph, start);
 
   let distances: Array<number> = [],
@@ -47,10 +51,9 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult
     new_weight: number,
     neg_cycle: boolean = false;
 
-
   for (let n_idx = 0; n_idx < node_keys.length; ++n_idx) {
     node = nodes[node_keys[n_idx]];
-    distances[n_idx] = (node === start) ? 0 : Number.POSITIVE_INFINITY;
+    distances[n_idx] = node === start ? 0 : Number.POSITIVE_INFINITY;
     id_idx_map[node.getID()] = n_idx;
   }
 
@@ -59,13 +62,12 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult
   let bf_edges = [];
   for (let e_idx = 0; e_idx < graph_edges.length; ++e_idx) {
     edge = graph_edges[e_idx];
-    let bf_edge_entry =
-      bf_edges.push([
-        id_idx_map[edge.getNodes().a.getID()],
-        id_idx_map[edge.getNodes().b.getID()],
-        isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT,
-        edge.isDirected()
-      ]);
+    let bf_edge_entry = bf_edges.push([
+      id_idx_map[edge.getNodes().a.getID()],
+      id_idx_map[edge.getNodes().b.getID()],
+      isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT,
+      edge.isDirected(),
+    ]);
   }
 
   for (let i = 0; i < node_keys.length - 1; ++i) {
@@ -78,7 +80,10 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult
 
   for (let e_idx = 0; e_idx < bf_edges.length; ++e_idx) {
     edge = bf_edges[e_idx];
-    if (betterDist(edge[0], edge[1], edge[2]) || (!edge[3] && betterDist(edge[1], edge[0], edge[2]))) {
+    if (
+      betterDist(edge[0], edge[1], edge[2]) ||
+      (!edge[3] && betterDist(edge[1], edge[0], edge[2]))
+    ) {
       neg_cycle = true;
       break;
     }
@@ -92,18 +97,16 @@ function BellmanFordArray(graph: $G.IGraph, start: $N.IBaseNode): BFArrrayResult
   }
 
   function betterDist(u, v, weight) {
-    return (distances[v] > distances[u] + weight);
+    return distances[v] > distances[u] + weight;
   }
 
   return { distances, neg_cycle };
 }
 
-
-
 /**
- * 
- * @param graph 
- * @param start 
+ *
+ * @param graph
+ * @param start
  */
 function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult {
   BFSanityChecks(graph, start);
@@ -143,11 +146,13 @@ function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult {
     a = edge.getNodes().a.getID();
     b = edge.getNodes().b.getID();
     weight = isFinite(edge.getWeight()) ? edge.getWeight() : DEFAULT_WEIGHT;
-    if (betterDist(a, b, weight) || (!edge.isDirected() && betterDist(b, a, weight))) {
+    if (
+      betterDist(a, b, weight) ||
+      (!edge.isDirected() && betterDist(b, a, weight))
+    ) {
       neg_cycle = true;
     }
   }
-
 
   function updateDist(u, v, weight) {
     new_weight = distances[u] + weight;
@@ -157,15 +162,10 @@ function BellmanFordDict(graph: $G.IGraph, start: $N.IBaseNode): BFDictResult {
   }
 
   function betterDist(u, v, weight) {
-    return (distances[v] > distances[u] + weight);
+    return distances[v] > distances[u] + weight;
   }
 
-  return {distances, neg_cycle};
+  return { distances, neg_cycle };
 }
 
-
-
-export {
-  BellmanFordDict,
-  BellmanFordArray
-};
+export { BellmanFordDict, BellmanFordArray };
