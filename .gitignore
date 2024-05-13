@@ -52,3 +52,6 @@ yarn.lock
 
 # Test reports
 mochawesome-report
+
+# Mac
+.DS_Store
